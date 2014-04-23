@@ -1,0 +1,40 @@
+Dell Doradus
+Copyright 2014, Dell Inc.
+All Rights Reserved.
+
+This product includes software developed by The Apache Software Foundation:
+http://www.apache.org/
+Copyright (c) 2012 The Apache Software Foundation
+
+The Apache Cassandra client interface is used from:
+http://cassandra.apache.org/
+Copyright (c) 2009 The Apache Software Foundation
+
+This product uses the cron4j scheduling package from:
+http://www.sauronsoftware.it/projects/cron4j/index.php
+Copyright (c) Sauron Software 2007 - 2012
+The source code for this LGPL 2.1 licensed component is available here:
+http://opensource.dell.com/releases/Dell_Software/
+
+Some Google Guava library classes are used from:
+https://code.google.com/p/guava-libraries/
+Copyright (C) 2007 The Guava Authors
+
+This product embeds the Eclipse Jetty server from:
+http://www.eclipse.org/jetty/
+Copyright 1995-2014 Mort Bay Consulting Pty Ltd.
+
+This product uses Simple Logging Facade for Java (SLF4J) from:
+http://slf4j.org/
+Copyright (c) 2004-2013 QOS.ch
+
+This product uses Apache log4j 1.2 from:
+http://logging.apache.org/log4j/1.2/
+Copyright (c) 1999-2012 Apache Software Foundation
+
+YAML support provided by snakeyaml:
+http://code.google.com/p/snakeyaml/
+Copyright (c) 2008-2010 Andrey Somov
+
+XMLWriter is used from:
+http://www.megginson.com/downloads/

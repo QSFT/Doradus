@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<parent>
+		<groupId>com.dell.doradus</groupId>
+		<artifactId>doradus</artifactId>
+		<version>2.1.1</version>
+	</parent>
+	
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.dell.doradus</groupId>
+	<artifactId>doradus-common</artifactId>
+	<packaging>jar</packaging>
+	<version>2.1.1</version>
+    <name>doradus-common</name>
+
+	<properties>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+	</properties>	
+
+	<build>
+		<sourceDirectory>${basedir}/src</sourceDirectory>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.megginson.sax</groupId>
+			<artifactId>xml-writer</artifactId>
+			<version>0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>it.sauronsoftware.cron4j</groupId>
+			<artifactId>cron4j</artifactId>
+			<version>2.2.5</version>
+		</dependency>
+	</dependencies>
+</project>

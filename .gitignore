@@ -1,0 +1,6 @@
+*/lib/*
+*.project
+*/.settings/*
+.settings/*
+doradus-client/docs/*
+.DS_Store

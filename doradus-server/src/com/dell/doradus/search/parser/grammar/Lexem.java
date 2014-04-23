@@ -1,0 +1,69 @@
+/*
+ * Copyright (C) 2014 Dell, Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.dell.doradus.search.parser.grammar;
+
+public class Lexem implements GrammarRule {
+
+    String value;
+    Grammar.CharacterType characterType;
+
+
+    public String Name() {
+        return "lexem default " + value;
+    }
+
+    public Lexem(Grammar.CharacterType characterType, String value) {
+        this.characterType = characterType;
+        this.value = value;
+
+    }
+
+    public Context Match(Context context) {
+
+        int pointer = context.ptr;
+        if (characterType == Grammar.CharacterType.Digit) {
+            while (pointer < context.inputString.length()
+                    && (Character.isDigit(context.inputString.charAt(pointer))
+                    || value.indexOf(context.inputString.charAt(pointer)) != -1)) {
+                pointer++;
+            }
+        } else if (characterType == Grammar.CharacterType.Letter) {
+            while (pointer < context.inputString.length()
+                    && (Character.isLetter(context.inputString.charAt(pointer))
+                    || value.indexOf(context.inputString.charAt(pointer)) != -1)) {
+                pointer++;
+
+            }
+        } else if (characterType == Grammar.CharacterType.LetterOrDigit) {
+            while (pointer < context.inputString.length()
+                    && (Character.isLetterOrDigit(context.inputString.charAt(pointer))
+                    || value.indexOf(context.inputString.charAt(pointer)) != -1)) {
+                pointer++;
+            }
+        }
+
+        if (pointer > context.ptr) {
+            String lexem = context.inputString.substring(context.ptr, pointer);
+            context.items.add(new Literal(lexem, "lexem", context.ptr));
+            context.ptr = context.ptr + lexem.length();
+            return context;
+        }
+        return null;
+    }
+
+
+}
