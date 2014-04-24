@@ -4,3 +4,7 @@
 .settings/*
 doradus-client/docs/*
 .DS_Store
+*/bin/*
+.classpath
+doradus.log
+.metadata
