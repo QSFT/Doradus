@@ -1,12 +1,9 @@
 <?xml version="1.0"?>
 
-<project name="Doradus" default="DoradusBuild" basedir=".">
+<project name="Doradus" default="Build" basedir=".">
 
-    <property name="doradus.version"        value="2.1.1"/>
+    <property name="doradus.version"        value="2.1.3"/>
     <property name="ant.build.javac.target" value="1.7"/>
-
-    <target name="DoradusBuild"
-        depends="ServerBuild,ClientBuild,ClientDoc"/>
 
     <property name="doradus.dir" location="${basedir}"/>
     <property name="build.dir"   location="${doradus.dir}"/>
@@ -14,35 +11,34 @@
     <!-- ============================================================================== -->
     <!-- Set Proxy (if needed)                                                          -->
     <!-- ==============================================================================	-->
-    <target name="SetProxy">
-		<!--
-		<setproxy
-		    proxyuser="..."
-			proxypassword="..."
-			proxyhost="proxy.sitelocal"
-			proxyport="8080"
-		/>
-		-->
-		<setproxy
-			proxyhost="proxy.sitelocal"
-			proxyport="8080"
-		/>
+    <target name="_setProxy">
+		<setproxy proxyhost="proxy.sitelocal"
+			      proxyport="8080"/>
+	</target>
+	
+    <!-- ============================================================================== -->
+    <!-- ==============================================================================	-->
+	<target name="Build" depends="ServerJar,ClientJar,ClientDoc">
+	</target>
+	
+	<target name="Cleanup" depends="CommonCleanup,ServerCleanup,ClientCleanup,ClientDocCleanup">
 	</target>
 
     <!-- ============================================================================== -->
-    <!-- Doradus Common                                                                 -->
+    <!--                            Doradus Common                                      -->
+	<!-- Public Targets:																-->
+	<!--   CommonLoadLibs - load third party libraries to the ${common.lib.dir}			-->
+	<!--   CommonCompile  - compile to ${common.bin.dir}								-->
+	<!--   CommonJar      - create the ${common.lib.dir}/${common.jar.file}				-->
+	<!--   CommonCleanup  - delete ${common.bin.dir} and ${common.lib.dir}				-->
     <!-- ==============================================================================	-->
-    <property name="common.dir"      location="${doradus.dir}/doradus-common" />
-    <property name="common.bin.dir"  location="${common.dir}/bin" />
-    <property name="common.lib.dir"  location="${common.dir}/lib" />
-    <property name="common.src.dir"  location="${common.dir}/src" />
-    <property name="common.jar.file" value="doradus-common.jar" />
+    <property name="common.dir"      location="${doradus.dir}/doradus-common"/>
+    <property name="common.bin.dir"  location="${common.dir}/bin"/>
+    <property name="common.lib.dir"  location="${common.dir}/lib"/>
+    <property name="common.src.dir"  location="${common.dir}/src"/>
+    <property name="common.jar.file" value="doradus-common.jar"/>
 	
-    <target name="CommonBuild" depends="SetProxy">
-	
-        <delete dir="${common.bin.dir}" failonerror="false"/>
-        <mkdir  dir="${common.bin.dir}"/>
-		
+	<target name="CommonLoadLibs" depends="_setProxy">
         <delete dir="${common.lib.dir}" failonerror="false"/>
         <mkdir  dir="${common.lib.dir}"/>
 		
@@ -51,7 +47,7 @@
 		</get>
 		<get dest="${common.lib.dir}">
 			<url url="http://repo1.maven.org/maven2/log4j/log4j/1.2.16/log4j-1.2.16.jar"/> 
-		</get>
+		</get>		
 		<get dest="${common.lib.dir}">
 			<url url="http://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar"/> 
 		</get>
@@ -64,26 +60,31 @@
 		<get dest="${common.lib.dir}">
 			<url url="http://repo1.maven.org/maven2/com/megginson/sax/xml-writer/0.2/xml-writer-0.2.jar"/> 
 		</get>
+	</target>
+	
+	<target name="CommonCompile" depends="CommonLoadLibs">
+		<delete dir="${common.bin.dir}" failonerror="false"/>
+        <mkdir  dir="${common.bin.dir}"/>
 
-        <javac srcdir="${common.src.dir}" destdir="${common.bin.dir}"
-               verbose="yes" includeantruntime="false"
-               debug="true" debuglevel="lines,vars,source">
+        <javac srcdir="${common.src.dir}"
+              destdir="${common.bin.dir}"
+              verbose="yes" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
             <classpath>
                 <fileset dir="${common.lib.dir}" includes="**/*.jar" />
             </classpath>
         </javac>
-		
+	</target>
+	
+	<target name="CommonJar" depends="CommonCompile">
         <jar jarfile="${common.lib.dir}/${common.jar.file}">
             <fileset dir="${common.bin.dir}" includes="**/*.class"/>
             <manifest>
-                <attribute name="Implementation-Title"   value="Doradus" />
+                <attribute name="Implementation-Title"   value="Doradus Common" />
                 <attribute name="Implementation-Version" value="${doradus.version}" />
                 <attribute name="Implementation-Vendor"  value="DELL Inc." />
                 <attribute name="Javac-Target"           value="${ant.build.javac.target}" />
             </manifest>
         </jar>
-		
-        <delete dir="${common.bin.dir}" failonerror="false"/>
 	</target>
 	
 	<target name="CommonCleanup">
@@ -92,7 +93,12 @@
 	</target>
 
     <!-- ============================================================================== -->
-    <!-- Doradus Server                                                                 -->
+    <!--                            Doradus Server                                      -->
+	<!-- Public Targets:																-->
+	<!--   ServerLoadLibs - load third party libraries to the ${server.lib.dir}			-->
+	<!--   ServerCompile  - compile to ${server.bin.dir}								-->
+	<!--   ServerJar      - create the ${server.lib.dir}/${server.jar.file}				-->
+	<!--   ServerCleanup  - delete ${server.bin.dir} and ${server.lib.dir}				-->
     <!-- ==============================================================================	-->
     <property name="server.dir"        location="${doradus.dir}/doradus-server" />
     <property name="server.bin.dir"    location="${server.dir}/bin" />
@@ -100,29 +106,13 @@
     <property name="server.lib.dir"    location="${server.dir}/lib" />
     <property name="server.src.dir"    location="${server.dir}/src" />
     <property name="server.jar.file"   value="doradus.jar" />
-	
-    <target name="ServerBuild" depends="SetProxy,CommonBuild" >
-	
-        <delete dir="${server.bin.dir}" failonerror="false"/>
-        <mkdir  dir="${server.bin.dir}"/>
-		
+
+	<target name="ServerLoadLibs" depends="_setProxy">
         <delete dir="${server.lib.dir}" failonerror="false"/>
         <mkdir  dir="${server.lib.dir}"/>
 		
 		<get dest="${server.lib.dir}">
-			<url url="http://repo1.maven.org/maven2/org/apache/cassandra/cassandra-all/1.2.6/cassandra-all-1.2.6.jar"/> 
-		</get>
-		<get dest="${server.lib.dir}">
-			<url url="http://repo1.maven.org/maven2/org/apache/cassandra/cassandra-clientutil/1.2.6/cassandra-clientutil-1.2.6.jar"/> 
-		</get>
-		<get dest="${server.lib.dir}">
-			<url url="http://repo1.maven.org/maven2/org/apache/cassandra/cassandra-thrift/1.2.6/cassandra-thrift-1.2.6.jar"/> 
-		</get>
-		<get dest="${common.lib.dir}">
-			<url url="http://repo1.maven.org/maven2/it/sauronsoftware/cron4j/cron4j/2.2.5/cron4j-2.2.5.jar"/> 
-		</get>
-		<get dest="${server.lib.dir}">
-			<url url="http://repo1.maven.org/maven2/com/google/guava/guava/13.0.1/guava-13.0.1.jar"/> 
+			<url url="http://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/3.0.1/javax.servlet-api-3.0.1.jar"/> 
 		</get>
 		<get dest="${server.lib.dir}">
 			<url url="http://repo1.maven.org/maven2/org/eclipse/jetty/aggregate/jetty-all/9.0.6.v20130930/jetty-all-9.0.6.v20130930.jar"/> 
@@ -131,47 +121,57 @@
 			<url url="http://repo1.maven.org/maven2/org/apache/thrift/libthrift/0.7.0/libthrift-0.7.0.jar"/> 
 		</get>
 		<get dest="${server.lib.dir}">
-			<url url="http://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/3.0.1/javax.servlet-api-3.0.1.jar"/> 
+			<url url="http://repo1.maven.org/maven2/org/apache/cassandra/cassandra-thrift/1.2.6/cassandra-thrift-1.2.6.jar"/> 
 		</get>
-		<get dest="${common.lib.dir}">
-			<url url="http://repo1.maven.org/maven2/org/yaml/snakeyaml/1.6/snakeyaml-1.6.jar"/> 
+		<get dest="${server.lib.dir}">
+			<url url="http://repo1.maven.org/maven2/org/apache/cassandra/cassandra-all/1.2.6/cassandra-all-1.2.6.jar"/> 
 		</get>
-
-        <javac  srcdir="${server.src.dir}" destdir="${server.bin.dir}"
-                verbose="yes" includeantruntime="false"
-                debug="true" debuglevel="lines,vars,source">
+		<get dest="${server.lib.dir}">
+			<url url="http://repo1.maven.org/maven2/com/google/guava/guava/13.0.1/guava-13.0.1.jar"/> 
+		</get>
+	</target>
+	
+	<target name="ServerCompile" depends="CommonJar,ServerLoadLibs">
+        <delete dir="${server.bin.dir}" failonerror="false"/>
+        <mkdir  dir="${server.bin.dir}"/>
+		
+        <javac srcdir="${server.src.dir}"
+              destdir="${server.bin.dir}"
+              verbose="yes" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
             <classpath>
                 <fileset dir="${server.lib.dir}" includes="**/*.jar" />
                 <fileset dir="${common.lib.dir}" includes="**/*.jar" />
             </classpath>
         </javac>
-
+	</target>
+	
+	<target name="ServerJar" depends="ServerCompile">
         <jar jarfile="${server.lib.dir}/${server.jar.file}">
             <fileset dir="${server.bin.dir}" includes="**/*.class"/>
             <manifest>
-                <attribute name="Implementation-Title"   value="Doradus" />
+                <attribute name="Implementation-Title"   value="Doradus Server" />
                 <attribute name="Implementation-Version" value="${doradus.version}" />
                 <attribute name="Implementation-Vendor"  value="DELL Inc." />
                 <attribute name="Javac-Target"           value="${ant.build.javac.target}" />
-                <attribute name="Main-class"             value="com.dell.doradus.core.DoradusServer" />
-                <attribute name="Class-path"             value="../config/ cassandra-all-1.2.6.jar cassandra-clientutil-1.2.6.jar cassandra-thrift-1.2.6.jar cron4j-2.2.5.jar doradus-common.jar guava-13.0.1.jar javax.servlet-api-3.0.1.jar jetty-all-9.0.6.v20130930.jar libthrift-0.7.0.jar log4j-1.2.16.jar slf4j-api-1.6.1.jar slf4j-log4j12-1.6.1.jar snakeyaml-1.6.jar xml-writer-0.2.jar" />
             </manifest>
         </jar>
-		
-				<copy todir="${server.lib.dir}">
-    			<fileset dir="${common.lib.dir}"/>
-  			</copy>
-
-        <delete dir="${server.bin.dir}" failonerror="false"/>
+		<copy todir="${server.lib.dir}">
+			<fileset dir="${common.lib.dir}"/>
+		</copy>
 	</target>
 	
 	<target name="ServerCleanup">
         <delete dir="${server.bin.dir}" failonerror="false"/>
         <delete dir="${server.lib.dir}" failonerror="false"/>
 	</target>
-
+	
     <!-- ============================================================================== -->
-    <!-- Doradus Client                                                                 -->
+    <!--                            Doradus Client                                      -->
+	<!-- Public Targets:																-->
+	<!--   ClientLoadLibs - load third party libraries to the ${client.lib.dir}			-->
+	<!--   ClientCompile  - compile to ${client.bin.dir}								-->
+	<!--   ClientJar      - create the ${client.lib.dir}/${client.jar.file}				-->
+	<!--   ClientCleanup  - delete ${client.bin.dir} and ${client.lib.dir}				-->
     <!-- ==============================================================================	-->
     <property name="client.dir"        location="${doradus.dir}/doradus-client" />
     <property name="client.bin.dir"    location="${client.dir}/bin" />
@@ -180,23 +180,26 @@
     <property name="client.src.dir"    location="${client.dir}/src" />
     <property name="client.jar.file"   value="doradus-client.jar" />
 	
-    <target name="ClientBuild" depends="SetProxy,CommonBuild" >
+	<target name="ClientLoadLibs" depends="_setProxy">
+        <delete dir="${client.lib.dir}" failonerror="false"/>
+        <mkdir  dir="${client.lib.dir}"/>
+	</target>
 	
+	<target name="ClientCompile" depends="CommonJar,ClientLoadLibs">
         <delete dir="${client.bin.dir}" failonerror="false"/>
         <mkdir  dir="${client.bin.dir}"/>
 		
-        <delete dir="${client.lib.dir}" failonerror="false"/>
-        <mkdir  dir="${client.lib.dir}"/>
-		
-        <javac  srcdir="${client.src.dir}" destdir="${client.bin.dir}"
-                verbose="yes" includeantruntime="false"
-                debug="true" debuglevel="lines,vars,source">
+        <javac srcdir="${client.src.dir}"
+              destdir="${client.bin.dir}"
+              verbose="yes" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
             <classpath>
                 <fileset dir="${client.lib.dir}" includes="**/*.jar" />
                 <fileset dir="${common.lib.dir}" includes="**/*.jar" />
             </classpath>
         </javac>
-
+	</target>
+	
+	<target name="ClientJar" depends="ClientCompile">
         <jar jarfile="${client.lib.dir}/${client.jar.file}">
             <fileset dir="${client.bin.dir}" includes="**/*.class"/>
             <manifest>
@@ -206,55 +209,52 @@
                 <attribute name="Javac-Target"           value="${ant.build.javac.target}" />
             </manifest>
         </jar>
-
-        <delete dir="${client.bin.dir}" failonerror="false"/>
+		<copy todir="${client.lib.dir}">
+			<fileset dir="${common.lib.dir}"/>
+		</copy>
 	</target>
-	
+
 	<target name="ClientCleanup">
         <delete dir="${client.bin.dir}" failonerror="false"/>
         <delete dir="${client.lib.dir}" failonerror="false"/>
 	</target>
-
+	
     <!-- ============================================================================== -->
-    <!-- Doradus Client Doc                                                             -->
+    <!--                      Doradus Client Doc                                        -->
     <!-- ==============================================================================	-->
     <property name="client.doc.dir" location="${client.dir}/docs" />
-    <property name="client.tmp.doc.dir" location="${client.dir}/doc.tmp" />
 	
-    <target name="ClientDoc" depends="CommonBuild,ClientBuild">
-        <delete dir="${client.doc.dir}"     failonerror="false"/>
-        <delete dir="${client.tmp.doc.dir}" failonerror="false"/>
-	
+    <target name="ClientDoc" depends="ClientJar">
+        <delete dir="${client.doc.dir}" failonerror="false"/>
+		
         <javadoc access="public" author="true"
 		    classpath="${common.lib.dir}/doradus-common.jar:
 			           ${common.lib.dir}/xml-writer-0.2.jar:
-					   ${common.lib.dir}/snakeyaml-1.6.jar:
-					   ${common.lib.dir}/log4j-1.2.16.jar:
-					   ${common.lib.dir}/argo-small-2.21.jar:
-					   ${common.lib.dir}/slf4j-log4j12-1.6.1.jar:
 					   ${common.lib.dir}/cron4j-2.2.5.jar:
-					   ${common.lib.dir}/slf4j-api-1.6.1.jar"
-		    destdir="${client.tmp.doc.dir}"
+					   ${common.lib.dir}/slf4j-log4j12-1.6.1.jar:
+					   ${common.lib.dir}/slf4j-api-1.6.1.jar:
+					   ${common.lib.dir}/snakeyaml-1.6.jar:
+					   ${common.lib.dir}/log4j-1.2.16.jar"
+		    destdir="${client.doc.dir}"
 		    doctitle="Doradus Client"
 		    nodeprecated="false"
 		    nodeprecatedlist="false"
 		    noindex="false"
 		    nonavbar="false"
 		    notree="false"
-		    packagenames="com.dell.doradus.management,com.dell.doradus.common,com.dell.doradus.client.utils,com.dell.doradus.client"
+		    packagenames="com.dell.doradus.management,
+                          com.dell.doradus.common,
+                          com.dell.doradus.client.utils,
+                          com.dell.doradus.client"
 		    source="1.7"
 		    sourcepath="${common.src.dir}:src"
 		    splitindex="true" use="true" version="true"/>
+		
+	</target>
 
-		<zip destfile="${client.doc.dir}/docs.zip">
-			<zipfileset dir="${client.tmp.doc.dir}"/>
-		</zip>
-
-        <delete dir="${client.tmp.doc.dir}" failonerror="false"/>
-    </target>
-	
-    <target name="Cleanup" depends="CommonCleanup,ClientCleanup,ServerCleanup" />
-	
+	<target name="ClientDocCleanup">
+        <delete dir="${client.doc.dir}" failonerror="false"/>
+	</target>
 </project>
 
 
