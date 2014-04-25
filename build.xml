@@ -153,6 +153,8 @@
                 <attribute name="Implementation-Version" value="${doradus.version}" />
                 <attribute name="Implementation-Vendor"  value="DELL Inc." />
                 <attribute name="Javac-Target"           value="${ant.build.javac.target}" />
+                <attribute name="Main-class"             value="com.dell.doradus.core.DoradusServer" />
+                <attribute name="Class-path"             value="../config/ cassandra-all-1.2.6.jar cassandra-thrift-1.2.6.jar cron4j-2.2.5.jar doradus-common.jar guava-13.0.1.jar javax.servlet-api-3.0.1.jar jetty-all-9.0.6.v20130930.jar libthrift-0.7.0.jar log4j-1.2.16.jar slf4j-api-1.6.1.jar slf4j-log4j12-1.6.1.jar snakeyaml-1.6.jar xml-writer-0.2.jar" />
             </manifest>
         </jar>
 		<copy todir="${server.lib.dir}">
