@@ -90,7 +90,6 @@
         <delete dir="${common.bin.dir}" failonerror="false"/>
         <delete dir="${common.lib.dir}" failonerror="false"/>
 	</target>
-	
 
     <!-- ============================================================================== -->
     <!-- Doradus Server                                                                 -->
