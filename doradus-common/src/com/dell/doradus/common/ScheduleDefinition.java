@@ -47,7 +47,7 @@ public class ScheduleDefinition {
         	@Override
         	public void validate(ScheduleDefinition schedDef, String serviceName) {
         		super.validate(schedDef, serviceName);
-        		//Utils.require(schedDef.m_schedSpec != null, "Value should be defined for " + getName());
+        		Utils.require(schedDef.m_schedSpec != null, "Value should be defined for " + getName());
                 Utils.require(schedDef.m_tableName == null, "'table' attribute not valid for " + getName());
                 Utils.require(schedDef.m_taskDeclaration == null, "'statistic' attribute not valid for " + getName());
         	}
@@ -56,7 +56,7 @@ public class ScheduleDefinition {
         	@Override
         	public void validate(ScheduleDefinition schedDef, String serviceName) {
         		super.validate(schedDef, serviceName);
-        		//Utils.require(schedDef.m_schedSpec != null, "Value should be defined for " + getName());
+        		Utils.require(schedDef.m_schedSpec != null, "Value should be defined for " + getName());
                 Utils.require(schedDef.m_tableName != null, "'table' attribute should be defined for " + getName());
                 Utils.require(schedDef.m_appDef.getTableDef(schedDef.m_tableName) != null, "Table " + schedDef.m_tableName + " not defined for " + getName());
                 Utils.require(schedDef.m_taskDeclaration == null, "'statistic' attribute not valid for " + getName());
