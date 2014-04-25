@@ -344,11 +344,14 @@ public class TaskManagerService extends Service implements ITaskManager {
 				SchedType.TABLE_DEFAULT;
 		ApplicationDefinition oldAppDef = SchemaService.instance().getApplication(appName);
 		oldAppDef.getSchedules().remove(scheduleName);
-		oldAppDef.addSchedule(new ScheduleDefinition(
-				oldAppDef, taskType,
-				settings.getSchedule(),
-				settings.getTableName(),
-				taskIdParts.length <= 2 ? "" : taskIdParts[2]));
+		if (settings.getSchedule() != null ||
+				(taskType != SchedType.APP_DEFAULT && taskType != SchedType.TABLE_DEFAULT)) {
+			oldAppDef.addSchedule(new ScheduleDefinition(
+					oldAppDef, taskType,
+					settings.getSchedule(),
+					settings.getTableName(),
+					taskIdParts.length <= 2 ? "" : taskIdParts[2]));
+		}
 		SchemaService.instance().defineApplication(oldAppDef);
 	}
 
