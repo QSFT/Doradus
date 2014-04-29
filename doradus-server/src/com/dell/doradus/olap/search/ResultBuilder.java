@@ -245,6 +245,11 @@ public class ResultBuilder {
 						if(LinkQuery.ALL.equals(mvs.quantifier)) vr.not();
 						FieldSearcher field_searcher = searcher.getFieldSearcher(tableDef.getTableName(), field);
 						field_searcher.fillDocs(vr, r);
+						if(LinkQuery.ALL.equals(mvs.quantifier)) {
+							Result noValues = new Result(r.size());
+							field_searcher.fillCount(0, 1, noValues);
+							r.or(noValues);
+						}
 					}
 					else if(idx >= 0) {
 						value = value.substring(0, value.length() - 1);
