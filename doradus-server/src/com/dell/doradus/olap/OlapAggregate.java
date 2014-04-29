@@ -91,6 +91,7 @@ public class OlapAggregate {
     	m_query = query;
     	m_fields = fields;
     	m_metrics = metrics;
+    	m_pair = pair;
         checkDefaults();
     }
     
