@@ -139,45 +139,63 @@ public class AggregateResultConverter {
 	public static List<String> parseAggregationGroups(String groups) {
 		List<String> result = new ArrayList<String>();
 		if(groups == null) return result;
+		
 		while(groups.length() > 0) {
-			int commaPos = groups.indexOf(',');
-			int bracketPos = groups.indexOf('(');
-			while(bracketPos >= 0 && commaPos >= 0 && bracketPos < commaPos) {
-				int nested = 1;
-				while(nested > 0) {
-					int openBr = groups.indexOf('(', bracketPos + 1);
-					int closeBr = groups.indexOf(')', bracketPos + 1);
-					if(openBr >= 0 && openBr < commaPos) nested++;
-					else if(closeBr >= 0) {
-						nested--;
-						commaPos = groups.indexOf(',', closeBr + 1);
-						bracketPos = groups.indexOf('(', closeBr + 1);
-					}
-					else {
-						nested = 0;
-						commaPos = -1;
-						bracketPos = -1;
-					}
-				}
+			int index = scanForComma(groups);
+			if(index < 0) {
+				result.add(groups);
+				break;
 			}
-			String name = null;
-			if(commaPos < 0) {
-				name = groups;
-				groups = "";
-			}
-			else {
-				name = groups.substring(0, commaPos);
-				groups = groups.substring(commaPos + 1);
-			}
+			String name = groups.substring(0, index);
+			groups = groups.substring(index + 1);
 			int idx = name.indexOf(" AS ");
 			if(idx >= 0) name = name.substring(idx + 4);
 			else if(name.startsWith("TOP") || name.startsWith("BOTTOM")) {
 				name = name.substring(name.indexOf(',') + 1, name.lastIndexOf(')'));
 			}
-
 			result.add(name.trim());
 		}
 		return result;
+	}
+
+	private static int scanForComma(String groups) {
+		int nestedLevel = 0;
+		boolean doubleQuotes = false;
+		boolean singleQuotes = false;
+		int index = -1;
+		
+		while(true) {
+			index = indexOfAny(groups, index + 1, '(', ')', ',', '\'', '"');
+			if(index < 0) return -1;
+			
+			switch(groups.charAt(index)) {
+			case '(':
+				if(!doubleQuotes && !singleQuotes) nestedLevel++;
+				break;
+			case ')':
+				if(!doubleQuotes && !singleQuotes) nestedLevel--;
+				if(nestedLevel < 0) throw new RuntimeException("Error parsing groups");
+				break;
+			case ',':
+				if(nestedLevel == 0 && !doubleQuotes && !singleQuotes) return index;
+				break;
+			case '\'':
+				if(!doubleQuotes) singleQuotes = !singleQuotes;
+				break;
+			case '"':
+				if(!singleQuotes) doubleQuotes = !doubleQuotes;
+				break;
+			}
+		}
+	}
+		
+	private static int indexOfAny(String str, int fromIndex, char... chars) {
+		int index = -1;
+		for(int i=0; i<chars.length; i++) {
+			int newindex = str.indexOf(chars[i], fromIndex);
+			if(index < 0 || (newindex >= 0 && newindex < index)) index = newindex;
+		}
+		return index;
 	}
 }
 
