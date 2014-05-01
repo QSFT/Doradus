@@ -143,21 +143,28 @@ public class AggregateResultConverter {
 		while(groups.length() > 0) {
 			int index = scanForComma(groups);
 			if(index < 0) {
-				result.add(groups);
+				String name = extractGroupName(groups);
+				result.add(name);
 				break;
+			} else {
+				String name = groups.substring(0, index);
+				groups = groups.substring(index + 1);
+				name = extractGroupName(name);
+				result.add(name);
 			}
-			String name = groups.substring(0, index);
-			groups = groups.substring(index + 1);
-			int idx = name.indexOf(" AS ");
-			if(idx >= 0) name = name.substring(idx + 4);
-			else if(name.startsWith("TOP") || name.startsWith("BOTTOM")) {
-				name = name.substring(name.indexOf(',') + 1, name.lastIndexOf(')'));
-			}
-			result.add(name.trim());
 		}
 		return result;
 	}
 
+	private static String extractGroupName(String name) {
+		int idx = name.indexOf(" AS ");
+		if(idx >= 0) name = name.substring(idx + 4);
+		else if(name.startsWith("TOP") || name.startsWith("BOTTOM")) {
+			name = name.substring(name.indexOf(',') + 1, name.lastIndexOf(')'));
+		}
+		return name.trim();
+	}
+	
 	private static int scanForComma(String groups) {
 		int nestedLevel = 0;
 		boolean doubleQuotes = false;
