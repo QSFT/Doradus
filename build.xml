@@ -7,6 +7,7 @@
 
     <property name="doradus.dir" location="${basedir}"/>
     <property name="build.dir"   location="${doradus.dir}"/>
+    <property name="release.dir" location="${doradus.dir}/Release" />
 
     <!-- ============================================================================== -->
     <!-- Set Proxy (if needed)                                                          -->
@@ -22,6 +23,16 @@
 	</target>
 	
 	<target name="Cleanup" depends="CommonCleanup,ServerCleanup,ClientCleanup,ClientDocCleanup">
+	</target>
+	
+    <!-- ============================================================================== -->
+    <!-- ==============================================================================	-->
+	<target name="Release" depends="create-empty-release-dir,ServerRelease,ClientRelease">
+	</target>
+	
+	<target name="create-empty-release-dir">
+        <delete dir="${release.dir}" failonerror="false"/>
+        <mkdir  dir="${release.dir}"/>
 	</target>
 
     <!-- ============================================================================== -->
@@ -166,7 +177,63 @@
         <delete dir="${server.bin.dir}" failonerror="false"/>
         <delete dir="${server.lib.dir}" failonerror="false"/>
 	</target>
+
+    <!-- ============================================================================== -->
+    <!--                   Doradus Server Release                                       -->
+    <!-- ==============================================================================	-->
+    <property name="server.zip.file"                 value="doradus-server.zip" />
+    <property name="server-cassandra.zip.file"       value="doradus-server-cassandra.zip" />
 	
+	<target name="ServerRelease" depends="ServerZip,ServerCassandraZip"/>
+	
+	<target name="ServerZip" depends="ServerJar">
+        <mkdir   dir="${release.dir}" />
+        <delete file="${release.dir}/${server.zip.file}" failonerror="false" />
+
+		<zip destfile="${release.dir}/${server.zip.file}" update="false" duplicate="preserve">
+            <zipfileset dir="${common.lib.dir}"    prefix="lib" />
+            <zipfileset dir="${server.lib.dir}"    prefix="lib" />
+            <zipfileset dir="${server.config.dir}" prefix="config" />
+		</zip>
+	</target>
+
+	<target name="ServerCassandraZip" depends="ServerJar, get-cassandra,get-commons-daemon">
+        <mkdir   dir="${release.dir}"/>
+        <delete file="${release.dir}/${server-cassandra.zip.file}" failonerror="false"/>
+
+		<zip destfile="${release.dir}/${server-cassandra.zip.file}" update="false" duplicate="preserve">
+            <zipfileset dir="${common.lib.dir}"                                      prefix="doradus-server/lib" />
+            <zipfileset dir="${server.lib.dir}"                                      prefix="doradus-server/lib" />
+            <zipfileset dir="${server.config.dir}"                                   prefix="doradus-server/config" />
+            <zipfileset dir="${release.dir}/apache-cassandra/apache-cassandra-1.2.6" prefix="apache-cassandra" excludes="javadoc/**" />
+            <zipfileset src="${release.dir}/commons-daemon-1.0.8-bin-windows.zip"    prefix="commons-daemon" />
+		</zip>
+	</target>
+	
+	<target name="get-cassandra">
+        <mkdir   dir="${release.dir}"/>
+        <delete file="${release.dir}/apache-cassandra-1.2.6-bin.tar.gz" failonerror="false"/>
+        <delete file="${release.dir}/apache-cassandra-1.2.6-bin.tar" failonerror="false"/>
+        <delete  dir="${release.dir}/apache-cassandra" failonerror="false"/>
+		
+		<get dest="${release.dir}">
+			<url url="http://archive.apache.org/dist/cassandra/1.2.6/apache-cassandra-1.2.6-bin.tar.gz"/>
+		</get>
+		
+        <mkdir  dir="${release.dir}/apache-cassandra"/>
+		<gunzip src="${release.dir}/apache-cassandra-1.2.6-bin.tar.gz"/>
+		<untar  src="${release.dir}/apache-cassandra-1.2.6-bin.tar" dest="${release.dir}/apache-cassandra"/>
+	</target>
+	
+	<target name="get-commons-daemon">
+        <mkdir   dir="${release.dir}"/>
+        <delete file="${release.dir}/commons-daemon-1.0.8-bin-windows.zip" failonerror="false"/>
+
+		<get dest="${release.dir}">
+			<url url="http://archive.apache.org/dist/commons/daemon/binaries/windows/commons-daemon-1.0.8-bin-windows.zip"/>
+		</get>
+    </target>
+
     <!-- ============================================================================== -->
     <!--                            Doradus Client                                      -->
 	<!-- Public Targets:																-->
@@ -256,6 +323,25 @@
 
 	<target name="ClientDocCleanup">
         <delete dir="${client.doc.dir}" failonerror="false"/>
+	</target>
+	
+    <!-- ============================================================================== -->
+    <!--                   Doradus Client Release                                       -->
+    <!-- ==============================================================================	-->
+    <property name="client.zip.file" value="doradus-client.zip" />
+	
+	<target name="ClientRelease" depends="ClientZip"/>
+	
+	<target name="ClientZip" depends="ClientJar,ClientDoc">
+        <mkdir   dir="${release.dir}" />
+        <delete file="${release.dir}/${client.zip.file}" failonerror="false" />
+
+		<zip destfile="${release.dir}/${client.zip.file}" update="false" duplicate="preserve">
+            <zipfileset dir="${common.lib.dir}"    prefix="lib" />
+            <zipfileset dir="${client.lib.dir}"    prefix="lib" />
+            <zipfileset dir="${client.config.dir}" prefix="config" />
+            <zipfileset dir="${client.doc.dir}"    prefix="docs" />
+		</zip>
 	</target>
 </project>
 
