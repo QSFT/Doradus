@@ -127,8 +127,8 @@ public abstract class MFCollector {
 			if ("SECOND".equals(m_truncate)) m_divisor = 1000;
 			else if ("MINUTE".equals(m_truncate)) m_divisor = 60 * 1000;
 			else if ("HOUR".equals(m_truncate)) m_divisor = 3600 * 1000;
-			else if ("DAY".equals(m_truncate)) m_divisor = 24 * 3600 * 1000;
-			else m_divisor = 24 * 3600 * 1000;
+			//else if ("DAY".equals(m_truncate)) m_divisor = 24 * 3600 * 1000;
+			else m_divisor = 1 * 3600 * 1000;
 			m_Calendar = (GregorianCalendar)GregorianCalendar.getInstance(m_zone);
 		}
 
