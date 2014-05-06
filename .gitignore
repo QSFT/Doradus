@@ -8,3 +8,5 @@ doradus-client/docs/*
 .classpath
 doradus.log
 .metadata
+truststore
+keystore
