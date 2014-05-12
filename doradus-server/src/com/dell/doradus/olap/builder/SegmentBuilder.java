@@ -109,6 +109,7 @@ public class SegmentBuilder {
 	}
 
 	private void add(OlapDocument document) {
+		Utils.require(document.id != null, "_ID field is not set for a document");
 		TableDefinition tableDef = application.getTableDef(document.table);
 		Utils.require(tableDef != null, "Table '" + document.table + "' does not exist");
 		TableBuilder b = getTable(document.table);
