@@ -133,6 +133,26 @@ public abstract class EndFieldCollector implements IFieldCollector {
 		@Override public Long getFieldId(int field, String name) { return new Long(field + m_min); }
 	}
 
+	public static class NumDoubleCollector extends NumCollector {
+		public NumDoubleCollector(CubeSearcher searcher, FieldDefinition fieldDef) { super(searcher, fieldDef); }
+		
+		@Override public String getFieldName(int field) {
+			String fn = super.getFieldName(field);
+			if(fn == null) return null;
+			else return XType.toString(Double.longBitsToDouble(Long.parseLong(fn)));
+		}
+	}
+
+	public static class NumFloatCollector extends NumCollector {
+		public NumFloatCollector(CubeSearcher searcher, FieldDefinition fieldDef) { super(searcher, fieldDef); }
+		
+		@Override public String getFieldName(int field) {
+			String fn = super.getFieldName(field);
+			if(fn == null) return null;
+			else return XType.toString(Float.intBitsToFloat((int)Long.parseLong(fn)));
+		}
+	}
+	
 	public static class NumBatchCollector extends EndFieldCollector {
 		private NumSearcher m_searcher;
 		private long[] m_batches;
@@ -160,6 +180,82 @@ public abstract class EndFieldCollector implements IFieldCollector {
 			if(field == 0) v = "< " + m_batches[0];
 			else if(field == m_batches.length) v = ">= " + m_batches[field - 1];
 			else v = m_batches[field - 1] + " - " + m_batches[field]; 
+			return v;
+		}
+		
+		@Override public Long getFieldId(int field, String name) {
+			return new Long(field);
+		}
+		
+		@Override public boolean returnEmptyGroups() { return true; }
+	}
+
+	public static class NumDoubleBatchCollector extends EndFieldCollector {
+		private NumSearcher m_searcher;
+		private double[] m_batches;
+		
+		public NumDoubleBatchCollector(CubeSearcher searcher, FieldDefinition fieldDef, List<? extends Object> batches) {
+			m_searcher = searcher.getNumSearcher(fieldDef.getTableName(), fieldDef.getName());
+			m_batches = new double[batches.size()];
+			for(int i = 0; i < m_batches.length; i++) {
+				m_batches[i] = Double.parseDouble(batches.get(i).toString());
+			}
+		}
+		
+		@Override public int getSize() { return m_batches.length + 1; }
+		
+		@Override public int getIndex(int doc) { 
+			if(m_searcher.isNull(doc)) return -1; 
+			long lv = m_searcher.get(doc);
+			double v = Double.longBitsToDouble(lv);
+			int pos = 0;
+			while(pos < m_batches.length && m_batches[pos] <= v) pos++;
+			return pos;
+		}
+
+		@Override public String getFieldName(int field) {
+			String v = null;
+			if(field == 0) v = "< " + XType.toString(m_batches[0]);
+			else if(field == m_batches.length) v = ">= " + XType.toString(m_batches[field - 1]);
+			else v = XType.toString(m_batches[field - 1]) + " - " + XType.toString(m_batches[field]); 
+			return v;
+		}
+		
+		@Override public Long getFieldId(int field, String name) {
+			return new Long(field);
+		}
+		
+		@Override public boolean returnEmptyGroups() { return true; }
+	}
+
+	public static class NumFloatBatchCollector extends EndFieldCollector {
+		private NumSearcher m_searcher;
+		private float[] m_batches;
+		
+		public NumFloatBatchCollector(CubeSearcher searcher, FieldDefinition fieldDef, List<? extends Object> batches) {
+			m_searcher = searcher.getNumSearcher(fieldDef.getTableName(), fieldDef.getName());
+			m_batches = new float[batches.size()];
+			for(int i = 0; i < m_batches.length; i++) {
+				m_batches[i] = Float.parseFloat(batches.get(i).toString());
+			}
+		}
+		
+		@Override public int getSize() { return m_batches.length + 1; }
+		
+		@Override public int getIndex(int doc) { 
+			if(m_searcher.isNull(doc)) return -1; 
+			long lv = m_searcher.get(doc);
+			float v = Float.intBitsToFloat((int)lv);
+			int pos = 0;
+			while(pos < m_batches.length && m_batches[pos] <= v) pos++;
+			return pos;
+		}
+
+		@Override public String getFieldName(int field) {
+			String v = null;
+			if(field == 0) v = "< " + XType.toString(m_batches[0]);
+			else if(field == m_batches.length) v = ">= " + XType.toString(m_batches[field - 1]);
+			else v = XType.toString(m_batches[field - 1]) + " - " + XType.toString(m_batches[field]); 
 			return v;
 		}
 		

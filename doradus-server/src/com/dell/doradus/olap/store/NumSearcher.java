@@ -92,13 +92,20 @@ public class NumSearcher {
 	}
 	
 	public static boolean isNumericType(FieldType type) {
-		return type == FieldType.BOOLEAN || type == FieldType.INTEGER || type == FieldType.LONG || type == FieldType.TIMESTAMP;
+		return 	type == FieldType.BOOLEAN ||
+				type == FieldType.INTEGER ||
+				type == FieldType.LONG ||
+				type == FieldType.TIMESTAMP ||
+				type == FieldType.DOUBLE ||
+				type == FieldType.FLOAT;
 	}
 	
 	public static long parse(String value, FieldType type) {
 		if(type == FieldType.BOOLEAN) return value.equalsIgnoreCase("true") ? 1 : 0;
 		else if(type == FieldType.INTEGER || type == FieldType.LONG) return Long.parseLong(value);
 		else if(type == FieldType.TIMESTAMP) return new DateTrie().parse(value).getTime(); 
+		else if(type == FieldType.FLOAT) return Float.floatToRawIntBits(Float.parseFloat(value));
+		else if(type == FieldType.DOUBLE) return Double.doubleToRawLongBits(Double.parseDouble(value));
 		else throw new RuntimeException("Invalid numeric type: " + type);
 	}
 
@@ -106,6 +113,8 @@ public class NumSearcher {
 		if(type == FieldType.BOOLEAN) return value == 1 ? "True" : "False";
 		else if(type == FieldType.INTEGER || type == FieldType.LONG) return "" + value;
 		else if(type == FieldType.TIMESTAMP) return value == 0 ? null : XType.toString(new Date(value));
+		else if(type == FieldType.FLOAT) return XType.toString((double)Float.intBitsToFloat((int)value));
+		else if(type == FieldType.DOUBLE) return XType.toString(Double.longBitsToDouble(value));
 		else throw new RuntimeException("Invalid numeric type: " + type);
 	}
 	

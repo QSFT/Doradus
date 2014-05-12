@@ -44,6 +44,8 @@ public class MetricCollectorFactory {
 		m_map.put("COUNT/INTEGER", MetricCollectorCount.class);
 		m_map.put("COUNT/LONG", MetricCollectorCount.class);
 		m_map.put("COUNT/TIMESTAMP", MetricCollectorCount.class);
+		m_map.put("COUNT/FLOAT", MetricCollectorCount.class);
+		m_map.put("COUNT/DOUBLE", MetricCollectorCount.class);
 
 		m_map.put("SUM/LINK", MetricCollectorSum.class);
 		m_map.put("SUM/XLINK", MetricCollectorSum.class);
@@ -52,6 +54,8 @@ public class MetricCollectorFactory {
 		m_map.put("SUM/INTEGER", MetricCollectorSum.class);
 		m_map.put("SUM/LONG", MetricCollectorSum.class);
 		m_map.put("SUM/TIMESTAMP", MetricCollectorSum.class);
+		m_map.put("SUM/FLOAT", MetricCollectorFloat.Sum.class);
+		m_map.put("SUM/DOUBLE", MetricCollectorDouble.Sum.class);
 
 		m_map.put("MIN/LINK", MetricCollectorText.MinLink.class);
 		m_map.put("MIN/TEXT", MetricCollectorText.Min.class);
@@ -59,6 +63,8 @@ public class MetricCollectorFactory {
 		m_map.put("MIN/INTEGER", MetricCollectorMin.MinNum.class);
 		m_map.put("MIN/LONG", MetricCollectorMin.MinNum.class);
 		m_map.put("MIN/TIMESTAMP", MetricCollectorMin.MinDate.class);
+		m_map.put("MIN/FLOAT", MetricCollectorFloat.Min.class);
+		m_map.put("MIN/DOUBLE", MetricCollectorDouble.Min.class);
 		
 		m_map.put("MAX/LINK", MetricCollectorText.MaxLink.class);
 		m_map.put("MAX/TEXT", MetricCollectorText.Max.class);
@@ -66,6 +72,8 @@ public class MetricCollectorFactory {
 		m_map.put("MAX/INTEGER", MetricCollectorMax.MaxNum.class);
 		m_map.put("MAX/LONG", MetricCollectorMax.MaxNum.class);
 		m_map.put("MAX/TIMESTAMP", MetricCollectorMax.MaxDate.class);
+		m_map.put("MAX/FLOAT", MetricCollectorFloat.Max.class);
+		m_map.put("MAX/DOUBLE", MetricCollectorDouble.Max.class);
 
 		m_map.put("MINCOUNT/LINK", MetricCollectorMin.MinNum.class);
 		m_map.put("MINCOUNT/XLINK", MetricCollectorMin.MinNum.class);
@@ -82,6 +90,9 @@ public class MetricCollectorFactory {
 		m_map.put("AVERAGE/INTEGER", MetricCollectorAvg.AvgNum.class);
 		m_map.put("AVERAGE/LONG", MetricCollectorAvg.AvgNum.class);
 		m_map.put("AVERAGE/TIMESTAMP", MetricCollectorAvg.AvgDate.class);
+		m_map.put("AVERAGE/FLOAT", MetricCollectorFloat.Avg.class);
+		m_map.put("AVERAGE/DOUBLE", MetricCollectorDouble.Avg.class);
+		
 	}
 
 	public static MetricCollectorSet create(CubeSearcher searcher, List<MetricExpression> metrics) {

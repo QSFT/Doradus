@@ -156,6 +156,26 @@ public class SegmentBuilder {
 			    throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + f.get(0), e);
 			}
 			break;
+		case DOUBLE:
+			if(f.size() > 1) throw new IllegalArgumentException("Only Text and Link fields can be multi-valued");
+			try {
+				double val = Double.parseDouble(f.get(0));
+				long lval = Double.doubleToRawLongBits(val);
+			    b.addNum(doc, field.getName(), lval);
+			} catch (NumberFormatException e) {
+			    throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + f.get(0), e);
+			}
+			break;
+		case FLOAT:
+			if(f.size() > 1) throw new IllegalArgumentException("Only Text and Link fields can be multi-valued");
+			try {
+				float val = Float.parseFloat(f.get(0));
+				int ival = Float.floatToRawIntBits(val);
+			    b.addNum(doc, field.getName(), ival);
+			} catch (NumberFormatException e) {
+			    throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + f.get(0), e);
+			}
+			break;
 		case LINK:
 			TableBuilder b2 = getTable(field.getLinkExtent());
 			for(String id : f) {
