@@ -317,7 +317,7 @@
                           com.dell.doradus.client,
                           com.dell.doradus.client.utils"
 		    source="1.7"
-		    sourcepath="${common.src.dir}:src,${client.src.dir}:src"
+		    sourcepath="${common.src.dir}:${client.src.dir}"
 		    splitindex="true" use="true" version="true"/>
 		
 	</target>
