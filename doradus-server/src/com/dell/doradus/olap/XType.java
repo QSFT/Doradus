@@ -19,6 +19,7 @@ package com.dell.doradus.olap;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,6 +53,13 @@ public class XType {
 	public static String toString(boolean value) {
 		return "" + value;
 	}
+	
+	public static String toString(double value) {
+		long lval = Math.round(value);
+		if(Math.abs(value - lval) < 0.001) return "" + lval;
+		else return new DecimalFormat("#.#########").format(value);
+	}
+	
 	public static String toString(Date value) {
 		if(value == null) throw new IllegalArgumentException("date cannot be null");
 	    SimpleDateFormat format = new SimpleDateFormat(value.getTime() % 1000 == 0 ? DATE_FORMAT : DATE_FORMAT_MS);

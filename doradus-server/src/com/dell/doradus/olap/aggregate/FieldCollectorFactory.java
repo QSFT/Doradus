@@ -37,7 +37,6 @@ public class FieldCollectorFactory {
 	}
 
 	private static IFieldCollector create(CubeSearcher searcher, AggregationGroup group, int index) {
-		//Utils.require(group.stopWords == null, "TERMS function is not supported in OLAP");
 		AggregationGroupItem item = group.items.get(index);
 		FieldDefinition fieldDef = item.fieldDef;
 		Result filter = null;
@@ -61,6 +60,14 @@ public class FieldCollectorFactory {
 		case LONG: {
 			if(group.batch == null) return new EndFieldCollector.NumCollector(searcher, fieldDef);
 			else return new EndFieldCollector.NumBatchCollector(searcher, fieldDef, group.batch);
+		}
+		case FLOAT: {
+			if(group.batch == null) return new EndFieldCollector.NumFloatCollector(searcher, fieldDef);
+			else return new EndFieldCollector.NumFloatBatchCollector(searcher, fieldDef, group.batch);
+		}
+		case DOUBLE: {
+			if(group.batch == null) return new EndFieldCollector.NumDoubleCollector(searcher, fieldDef);
+			else return new EndFieldCollector.NumDoubleBatchCollector(searcher, fieldDef, group.batch);
 		}
 		case TEXT: {
 			IFieldCollector inner = new EndFieldCollector.TextCollector(searcher, fieldDef);

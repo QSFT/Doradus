@@ -26,6 +26,7 @@ import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.FieldType;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.olap.XType;
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.search.Result;
 import com.dell.doradus.olap.search.ResultBuilder;
@@ -111,6 +112,24 @@ public abstract class MFCollector {
 		@Override public MGName getField(long value) { return new MGName(value); }
 	}
 
+	public static class FloatField extends MFCollector
+	{
+		public FloatField(CubeSearcher searcher) { super(searcher); }
+		@Override public void collect(long doc, Set<Long> values) { values.add(doc); }
+		@Override public MGName getField(long value) {
+			return new MGName(XType.toString(Float.intBitsToFloat((int)value)), new BSTR(value));
+		}
+	}
+
+	public static class DoubleField extends MFCollector
+	{
+		public DoubleField(CubeSearcher searcher) { super(searcher); }
+		@Override public void collect(long doc, Set<Long> values) { values.add(doc); }
+		@Override public MGName getField(long value) {
+			return new MGName(XType.toString(Double.longBitsToDouble(value)), new BSTR(value));
+		}
+	}
+	
 	public class DateField extends MFCollector {
 		private String m_truncate;
 		private TimeZone m_zone;
@@ -228,6 +247,73 @@ public abstract class MFCollector {
 		}
 	}
 	
+	public static class NumDoubleBatchField extends MFCollector {
+		private double[] m_batches;
+		
+		public NumDoubleBatchField(CubeSearcher searcher, List<? extends Object> batches) {
+			super(searcher);
+			m_batches = new double[batches.size()];
+			for(int i = 0; i < m_batches.length; i++) {
+				m_batches[i] = Double.parseDouble(batches.get(i).toString());
+			}
+		}
+		
+		@Override public void collect(long doc, Set<Long> values) { 
+			double d = Double.longBitsToDouble(doc);
+			int pos = 0;
+			while(pos < m_batches.length && m_batches[pos] <= d) pos++;
+			values.add((long)pos);
+		}
+
+		@Override public MGName getField(long value) {
+			int field = (int)value;
+			String v = null;
+			if(field == 0) v = "< " + XType.toString(m_batches[0]);
+			else if(field == m_batches.length) v = ">= " + XType.toString(m_batches[field - 1]);
+			else v = XType.toString(m_batches[field - 1]) + " - " + XType.toString(m_batches[field]);
+			return new MGName(v, new BSTR(value));
+		}
+		
+		@Override public void collectEmptyGroups(Set<Long> values) {
+			for(long l = 0; l <= m_batches.length; l++) {
+				values.add(l);
+			}
+		}
+	}
+
+	public static class NumFloatBatchField extends MFCollector {
+		private float[] m_batches;
+		
+		public NumFloatBatchField(CubeSearcher searcher, List<? extends Object> batches) {
+			super(searcher);
+			m_batches = new float[batches.size()];
+			for(int i = 0; i < m_batches.length; i++) {
+				m_batches[i] = Float.parseFloat(batches.get(i).toString());
+			}
+		}
+		
+		@Override public void collect(long doc, Set<Long> values) { 
+			double d = Float.intBitsToFloat((int)doc);
+			int pos = 0;
+			while(pos < m_batches.length && m_batches[pos] <= d) pos++;
+			values.add((long)pos);
+		}
+
+		@Override public MGName getField(long value) {
+			int field = (int)value;
+			String v = null;
+			if(field == 0) v = "< " + XType.toString(m_batches[0]);
+			else if(field == m_batches.length) v = ">= " + XType.toString(m_batches[field - 1]);
+			else v = XType.toString(m_batches[field - 1]) + " - " + XType.toString(m_batches[field]);
+			return new MGName(v, new BSTR(value));
+		}
+		
+		@Override public void collectEmptyGroups(Set<Long> values) {
+			for(long l = 0; l <= m_batches.length; l++) {
+				values.add(l);
+			}
+		}
+	}
 	
 	public static class TextField extends MFCollector
 	{
@@ -272,6 +358,14 @@ public abstract class MFCollector {
 				case LONG:
 					if(group.batch != null) m_collector = new NumBatchField(searcher, group.batch);
 					else m_collector = new LongField(searcher);
+					break;
+				case FLOAT:
+					if(group.batch != null) m_collector = new NumFloatBatchField(searcher, group.batch);
+					else m_collector = new FloatField(searcher);
+					break;
+				case DOUBLE:
+					if(group.batch != null) m_collector = new NumDoubleBatchField(searcher, group.batch);
+					else m_collector = new DoubleField(searcher);
 					break;
 				case TIMESTAMP:
 					if(group.subField != null) m_collector = new DateSubField(searcher, group.subField);

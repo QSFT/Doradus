@@ -13,10 +13,11 @@
     <!-- Set Proxy (if needed)                                                          -->
     <!-- ==============================================================================	-->
     <target name="_setProxy">
+	<!--
 		<setproxy proxyhost="proxy.sitelocal"
 			      proxyport="8080"/>
+	-->
 	</target>
-	
     <!-- ============================================================================== -->
     <!-- ==============================================================================	-->
 	<target name="Build" depends="ServerJar,ClientJar,ClientDoc">
@@ -303,7 +304,8 @@
 					   ${common.lib.dir}/slf4j-log4j12-1.6.1.jar:
 					   ${common.lib.dir}/slf4j-api-1.6.1.jar:
 					   ${common.lib.dir}/snakeyaml-1.6.jar:
-					   ${common.lib.dir}/log4j-1.2.16.jar"
+					   ${common.lib.dir}/log4j-1.2.16.jar:
+                       ${client.lib.dir}/doradus-client.jar"
 		    destdir="${client.doc.dir}"
 		    doctitle="Doradus Client"
 		    nodeprecated="false"
@@ -311,12 +313,11 @@
 		    noindex="false"
 		    nonavbar="false"
 		    notree="false"
-		    packagenames="com.dell.doradus.management,
-                          com.dell.doradus.common,
-                          com.dell.doradus.client.utils,
-                          com.dell.doradus.client"
+		    packagenames="com.dell.doradus.common,
+                          com.dell.doradus.client,
+                          com.dell.doradus.client.utils"
 		    source="1.7"
-		    sourcepath="${common.src.dir}:src"
+		    sourcepath="${common.src.dir}:src,${client.src.dir}:src"
 		    splitindex="true" use="true" version="true"/>
 		
 	</target>
