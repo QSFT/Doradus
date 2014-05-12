@@ -445,41 +445,21 @@ public class SearchQueryBuilder {
                 throw new IllegalArgumentException("Error COUNT: " + QueryUtils.GetLinkQueryLink(last) + " is not a link");
             }
 
+            QueryFieldType fType = QueryUtils.GetBasicFieldType(path, builderContext.definition);
             switch (fieldType) {
-                case Group:
-                    QueryFieldType fType = QueryUtils.GetBasicFieldType(path, builderContext.definition);
-                    if (fType != QueryFieldType.Link) {
-                        Query mvs = DoradusQueryBuilder.traverseTree(new Stack<String>(), first,
-                                new MultiValueVisitor(QueryUtils.GetLinkQuantifier(last), lastname, op));
-                            QueryUtils.SetInnerQuery(last, mvs);
-
-                        break;
-                    }
-
-                case Link:
-
-                    if (last instanceof TransitiveLinkQuery) {
-                        Query newFirst = DoradusQueryBuilder.traverseTree(new Stack<String>(), first,
-                                new LinkIdReplaceVisitor(QueryUtils.GetLinkQuantifier(last), lastname));
-                        QueryUtils.SetInnerQuery(last, newFirst);
-                        break;
-                    }
-
-                    if (BinaryQuery.CONTAINS.equals(op))
-                        throw new IllegalArgumentException("Operation ':' is nor supported for links");
-
-                    Query newFirst = DoradusQueryBuilder.traverseTree(new Stack<String>(), first,
-                            new LinkIdVisitor(QueryUtils.GetLinkQuantifier(last), QueryUtils.GetLinkQueryLink(last)));
-                    QueryUtils.SetInnerQuery(pat, newFirst);
-                    break;
 
                 case MultiValueScalar:
-                    if (last instanceof TransitiveLinkQuery) {
-                        throw new IllegalArgumentException(lastname + "  is not a link");
+                    if (first instanceof RangeQuery) {
+                        DoradusQueryBuilder.traverse(first, new FieldVisitor(QueryUtils.GetLinkQueryLink(last), op));
+                        QueryUtils.SetInnerQuery(pat, first);
+                    } else {
+                        if (last instanceof TransitiveLinkQuery) {
+                            throw new IllegalArgumentException(lastname + "  is not a link");
+                        }
+                        Query mq = DoradusQueryBuilder.traverseTree(new Stack<String>(), first,
+                                new MultiValueVisitor(QueryUtils.GetLinkQuantifier(last), QueryUtils.GetLinkQueryLink(last), op));
+                        QueryUtils.SetInnerQuery(pat, mq);
                     }
-                    Query mq = DoradusQueryBuilder.traverseTree(new Stack<String>(), first,
-                            new MultiValueVisitor(QueryUtils.GetLinkQuantifier(last), QueryUtils.GetLinkQueryLink(last), op));
-                    QueryUtils.SetInnerQuery(pat, mq);
                     break;
 
                 case Field:
@@ -490,6 +470,23 @@ public class SearchQueryBuilder {
                     QueryUtils.SetInnerQuery(pat, first);
                     break;
 
+                case Group:
+                case Link:
+                    if (fType == QueryFieldType.Link) {
+                        if (last instanceof TransitiveLinkQuery) {
+                            Query newFirst = DoradusQueryBuilder.traverseTree(new Stack<String>(), first,
+                                    new LinkIdReplaceVisitor(QueryUtils.GetLinkQuantifier(last), lastname));
+                            QueryUtils.SetInnerQuery(last, newFirst);
+                            break;
+                        }
+                        if (BinaryQuery.CONTAINS.equals(op))
+                            throw new IllegalArgumentException("Operation ':' is nor supported for links");
+
+                        Query newFirst = DoradusQueryBuilder.traverseTree(new Stack<String>(), first,
+                                new LinkIdVisitor(QueryUtils.GetLinkQuantifier(last), QueryUtils.GetLinkQueryLink(last)));
+                        QueryUtils.SetInnerQuery(pat, newFirst);
+                        break;
+                    }
                 default:
                     if (last instanceof TransitiveLinkQuery) {
                         throw new IllegalArgumentException("Error :" + lastname + " is not a link");
@@ -560,7 +557,6 @@ public class SearchQueryBuilder {
                     } else {
                         throw new IllegalArgumentException("Error COUNT: " + fname + " is  not a link");
                     }
-
                 } else {
                     throw new IllegalArgumentException("Error COUNT: " + fname + " is  not a link");
                 }
@@ -571,51 +567,46 @@ public class SearchQueryBuilder {
                 switch (originalType) {
                     case MultiValueScalar:
                         if (first instanceof RangeQuery) {
-                            throw new IllegalArgumentException("Operation '" + op + "' is not supported for scalar collections");
-                        }
-
-                        Query mq = DoradusQueryBuilder.traverseTree(new Stack<String>(), first,
-                                new MultiValueVisitor(quantifier, fname, op));
-                        if (parent1 != null) {
-                            QueryUtils.SetInnerQuery(parent1, mq);
+                            DoradusQueryBuilder.traverse(first, new FieldVisitor(fname, op));
+                            if (parent1 != null) {
+                                QueryUtils.SetInnerQuery(parent1, first);
+                            } else {
+                                second = first;
+                            }
                         } else {
-                            if (second instanceof TransitiveLinkQuery)
-                                throw new IllegalArgumentException("Error:" + fname + " is not a link");
-                            second = mq;
+                            Query mq = DoradusQueryBuilder.traverseTree(new Stack<String>(), first,
+                                    new MultiValueVisitor(quantifier, fname, op));
+                            if (parent1 != null) {
+                                QueryUtils.SetInnerQuery(parent1, mq);
+                            } else {
+                                if (second instanceof TransitiveLinkQuery)
+                                    throw new IllegalArgumentException("Error:" + fname + " is not a link");
+                                second = mq;
+                            }
                         }
                         break;
                     case Group:
-                         if (fieldType != QueryFieldType.Link) {
-                             Query mvs = DoradusQueryBuilder.traverseTree(new Stack<String>(), first,
-                                     new MultiValueVisitor(quantifier, fname, op));
-                             if (parent1 != null) {
-                                 QueryUtils.SetInnerQuery(parent1, mvs);
-                             } else {
-                                 if (second instanceof TransitiveLinkQuery)
-                                     throw new IllegalArgumentException("Error:" + fname + " is not a link");
-                                 second = mvs;
-                             }
-                             break;
-                         }
-
                     case Link:
-                        if (lq instanceof TransitiveLinkQuery) {
-                            Query newFirst = DoradusQueryBuilder.traverseTree(new Stack<String>(), first,
-                                    new LinkIdReplaceVisitor(QueryUtils.GetLinkQuantifier(lq), fname));
-                            QueryUtils.SetInnerQuery(lq, newFirst);
+
+                        if (fieldType == QueryFieldType.Link) {
+                            if (lq instanceof TransitiveLinkQuery) {
+                                Query newFirst = DoradusQueryBuilder.traverseTree(new Stack<String>(), first,
+                                        new LinkIdReplaceVisitor(QueryUtils.GetLinkQuantifier(lq), fname));
+                                QueryUtils.SetInnerQuery(lq, newFirst);
+                                break;
+                            }
+
+                            if (BinaryQuery.CONTAINS.equals(op))
+                                throw new IllegalArgumentException("Operation ':' is nor supported for links");
+
+                            Query newF = DoradusQueryBuilder.traverseTree(new Stack<String>(), first, new LinkIdVisitor(quantifier, fname));
+                            if (parent1 != null) {
+                                QueryUtils.SetInnerQuery(parent1, newF);
+                            } else {
+                                second = newF;
+                            }
                             break;
                         }
-
-                        if (BinaryQuery.CONTAINS.equals(op))
-                            throw new IllegalArgumentException("Operation ':' is nor supported for links");
-
-                        Query newF = DoradusQueryBuilder.traverseTree(new Stack<String>(), first, new LinkIdVisitor(quantifier, fname));
-                        if (parent1 != null) {
-                            QueryUtils.SetInnerQuery(parent1, newF);
-                        } else {
-                            second = newF;
-                        }
-                        break;
 
                     default:
                         if (second instanceof TransitiveLinkQuery)
@@ -639,9 +630,7 @@ public class SearchQueryBuilder {
                             } else {
                                 second = first;
                             }
-
                         }
-
                         break;
                 }
             }
