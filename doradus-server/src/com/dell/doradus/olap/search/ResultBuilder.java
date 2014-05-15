@@ -272,10 +272,18 @@ public class ResultBuilder {
 							if(LinkQuery.ALL.equals(mvs.quantifier)) {
 								field_searcher.fill(Integer.MIN_VALUE, term_no, r);
 								field_searcher.fill(term_no + 1, Integer.MAX_VALUE, r);
+								
+								Result noValues = new Result(r.size());
+								field_searcher.fillCount(0, 1, r);
+								r.or(noValues);
+								
 							} else {
 								field_searcher.fill(term_no, r);
 							}
+						} else if(LinkQuery.ALL.equals(mvs.quantifier)) {
+							r.not();
 						}
+
 					}
 				}
 				else if(bq.operation.equals(BinaryQuery.CONTAINS)) {
@@ -287,6 +295,11 @@ public class ResultBuilder {
 					if(LinkQuery.ALL.equals(mvs.quantifier)) vr.not();
 					FieldSearcher field_searcher = searcher.getFieldSearcher(tableDef.getTableName(), field);
 					field_searcher.fillDocs(vr, r);
+					if(LinkQuery.ALL.equals(mvs.quantifier)) {
+						Result noValues = new Result(r.size());
+						field_searcher.fillCount(0, 1, r);
+						r.or(noValues);
+					}
 				}
 				else if(bq.operation.equals(BinaryQuery.REGEXP)) {
 					Result vr = new Result(vs.size());
@@ -297,6 +310,11 @@ public class ResultBuilder {
 					if(LinkQuery.ALL.equals(mvs.quantifier)) vr.not();
 					FieldSearcher field_searcher = searcher.getFieldSearcher(tableDef.getTableName(), field);
 					field_searcher.fillDocs(vr, r);
+					if(LinkQuery.ALL.equals(mvs.quantifier)) {
+						Result noValues = new Result(r.size());
+						field_searcher.fillCount(0, 1, r);
+						r.or(noValues);
+					}
 				}
 				else throw new IllegalArgumentException(bq.operation + " is not supported");
 			} else if(NumSearcher.isNumericType(f.getType())) throw new IllegalArgumentException("MVS query for numerics is not supported");
