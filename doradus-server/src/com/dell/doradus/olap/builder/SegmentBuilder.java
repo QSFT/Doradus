@@ -16,7 +16,6 @@
 
 package com.dell.doradus.olap.builder;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -122,13 +121,13 @@ public class SegmentBuilder {
 	
 	private void add(DBObject dbObj) {
 	    Utils.require(!Utils.isEmpty(dbObj.getObjectID()), "Object is missing '_ID' field");
-	    String tableName = dbObj.getFieldValue("_table");
+	    String tableName = dbObj.getTableName();
 	    Utils.require(!Utils.isEmpty(tableName), "Object is missing '_table' definition");
 	    TableDefinition tableDef = application.getTableDef(tableName);
 	    Utils.require(tableDef != null, "Unknown table for application '%s': %s", application.getAppName(), tableName);
 	    TableBuilder b = getTable(tableDef.getTableName());
 	    Doc doc = b.addDoc(dbObj.getObjectID());
-	    if("true".equals(dbObj.getFieldValue("_deleted"))) doc.deleted = true;
+	    if(dbObj.isDeleted()) doc.deleted = true;
 	    for(FieldDefinition field : tableDef.getFieldDefinitions()) {
 	        add(b, doc, field, dbObj);
 	    }
@@ -201,12 +200,12 @@ public class SegmentBuilder {
 	}
 	
 	private void add(TableBuilder b, Doc doc, FieldDefinition field, DBObject dbObj) {
-	    Collection<String> f = dbObj.getFieldValues(field.getName());
+	    List<String> f = dbObj.getFieldValues(field.getName());
 	    if(f == null || f.size() == 0) return;
 	    switch(field.getType()) {
 	    case BOOLEAN:
 	        if(f.size() > 1) throw new IllegalArgumentException("Only Text and Link fields can be multi-valued");
-	        boolean bvalue = "true".equalsIgnoreCase(f.iterator().next());
+	        boolean bvalue = "true".equalsIgnoreCase(f.get(0));
 	        b.addNum(doc, field.getName(), bvalue ? 1 : 0);
 	        break;
 	    case GROUP:
@@ -218,29 +217,29 @@ public class SegmentBuilder {
 	    case LONG:
 	        if(f.size() > 1) throw new IllegalArgumentException("Only Text and Link fields can be multi-valued");
 	        try {
-	            b.addNum(doc, field.getName(), Long.parseLong(f.iterator().next()));
+	            b.addNum(doc, field.getName(), Long.parseLong(f.get(0)));
 	        } catch (NumberFormatException e) {
-	            throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + f.iterator().next(), e);
+	            throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + f.get(0), e);
 	        }
 	        break;
         case DOUBLE:
             if(f.size() > 1) throw new IllegalArgumentException("Only Text and Link fields can be multi-valued");
             try {
-                double val = Double.parseDouble(f.iterator().next());
+                double val = Double.parseDouble(f.get(0));
                 long lval = Double.doubleToRawLongBits(val);
                 b.addNum(doc, field.getName(), lval);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + f.iterator().next(), e);
+                throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + f.get(0), e);
             }
             break;
         case FLOAT:
             if(f.size() > 1) throw new IllegalArgumentException("Only Text and Link fields can be multi-valued");
             try {
-                float val = Float.parseFloat(f.iterator().next());
+                float val = Float.parseFloat(f.get(0));
                 int ival = Float.floatToRawIntBits(val);
                 b.addNum(doc, field.getName(), ival);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + f.iterator().next(), e);
+                throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + f.get(0), e);
             }
             break;
 	    case LINK:
@@ -259,7 +258,7 @@ public class SegmentBuilder {
 	        break;
 	    case TIMESTAMP:
 	        if(f.size() > 1) throw new IllegalArgumentException("Only Text and Link fields can be multi-valued");
-	        Date dvalue = Utils.dateFromString(f.iterator().next());
+	        Date dvalue = Utils.dateFromString(f.get(0));
 	        b.addNum(doc, field.getName(), dvalue.getTime());
 	        break;
 	    default: throw new IllegalArgumentException("Unknown Olap type " + field.getType().toString());

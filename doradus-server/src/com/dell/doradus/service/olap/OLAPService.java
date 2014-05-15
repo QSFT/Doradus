@@ -187,7 +187,7 @@ public class OLAPService extends StorageService {
     public BatchResult deleteBatch(ApplicationDefinition appDef, String storeName, DBObjectBatch batch) {
         // Just add "_deleted" flag to all objects.
         for (DBObject dbObj : batch.getObjects()) {
-            dbObj.setFieldValue("_deleted", "true");
+            dbObj.setDeleted(true);
         }
         return addBatch(appDef, storeName, batch);
     }   // deleteBatch

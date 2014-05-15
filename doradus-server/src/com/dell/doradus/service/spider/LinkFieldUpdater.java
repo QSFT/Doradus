@@ -16,6 +16,8 @@
 
 package com.dell.doradus.service.spider;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -151,20 +153,21 @@ public class LinkFieldUpdater extends FieldUpdater {
 
     // Add new values for our link. Return true if at least one update made.
     private boolean updateLinkAddValues() {
-        Set<String> linkValues = m_dbObj.getFieldValues(m_linkDef.getName());
-        if (linkValues == null) {
+        List<String> linkValues = m_dbObj.getFieldValues(m_linkDef.getName());
+        if (linkValues == null || linkValues.size() == 0) {
             return false;
         }
-        for (String targetObjID : linkValues) {
+        Set<String> linkValueSet = new HashSet<>(linkValues);   // remove duplicates
+        for (String targetObjID : linkValueSet) {
             addLinkValue(targetObjID);
         }
-        return linkValues.size() > 0;
+        return true;
     }   // updateLinkAddValues
 
     // Process removes for our link. Return true if at least one update made.
     private boolean updateLinkRemoveValues() {
         Set<String> removeSet = m_dbObj.getRemoveValues(m_fieldName);
-        Set<String> addSet = m_dbObj.getFieldValues(m_fieldName);
+        List<String> addSet = m_dbObj.getFieldValues(m_fieldName);
         if (removeSet != null && addSet != null) {
             removeSet.removeAll(addSet);    // add+remove of same ID negates the remove
         }

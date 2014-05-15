@@ -172,6 +172,7 @@ public class ObjectUpdater {
             dbObj.setObjectID(Utils.base64FromBinary(IDGenerator.nextID()));
         }
         checkForNewShard(dbObj);
+        new IDFieldUpdater(m_dbTran, this, dbObj).addValuesForField();
         for (String fieldName : dbObj.getUpdatedFieldNames()) {
             FieldUpdater fieldUpdater = FieldUpdater.createFieldUpdater(m_dbTran, this, dbObj, fieldName);
             fieldUpdater.addValuesForField();
@@ -217,6 +218,7 @@ public class ObjectUpdater {
 
     // Delete term columns and inverses for field values and the object's primary row.
     private void deleteObject(DBObject dbObj) {
+        new IDFieldUpdater(m_dbTran, this, dbObj).deleteValuesForField();
         for (String fieldName : dbObj.getUpdatedFieldNames()) {
             FieldUpdater fieldUpdater = FieldUpdater.createFieldUpdater(m_dbTran, this, dbObj, fieldName);
             fieldUpdater.deleteValuesForField();
@@ -272,9 +274,11 @@ public class ObjectUpdater {
                     ScalarFieldUpdater.mergeMVFieldValues(tgtDBObj.getFieldValues(fieldName),
                                                           srcDBObj.getRemoveValues(fieldName),
                                                           srcDBObj.getFieldValues(fieldName));
-                tgtDBObj.setFieldValues(fieldName, newValueSet);
+                tgtDBObj.clearValues(fieldName);
+                tgtDBObj.addFieldValues(fieldName, newValueSet);
             } else {
-                tgtDBObj.setFieldValue(fieldName, srcDBObj.getFieldValue(fieldName));
+                tgtDBObj.clearValues(fieldName);
+                tgtDBObj.addFieldValue(fieldName, srcDBObj.getFieldValue(fieldName));
             }
         }
     }   // mergeAllFieldValues
@@ -299,7 +303,7 @@ public class ObjectUpdater {
         int newShardNumber = m_tableDef.getShardNumber(dbObj);
         String newShardFieldValue = dbObj.getFieldValue(shardingFieldName);
         if (newShardFieldValue == null && currShardFieldValue != null) {
-            dbObj.setFieldValue(shardingFieldName, currShardFieldValue);
+            dbObj.addFieldValue(shardingFieldName, currShardFieldValue);
             return false;
         }
         

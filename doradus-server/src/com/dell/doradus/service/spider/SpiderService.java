@@ -596,9 +596,9 @@ public class SpiderService extends StorageService {
                 if (fieldDef != null && fieldDef.isCollection()) {
                     // MV scalar field
                     Set<String> values = Utils.split(fieldValue, CommonDefs.MV_SCALAR_SEP_CHAR);
-                    dbObj.setFieldValues(fieldName, values);
+                    dbObj.addFieldValues(fieldName, values);
                 } else {
-                    dbObj.setFieldValue(col.getName(), fieldValue);
+                    dbObj.addFieldValue(col.getName(), fieldValue);
                 }
             // Skip links no longer present in schema
             } else if (tableDef.isLinkField(linkCol.left)) {

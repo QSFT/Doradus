@@ -696,7 +696,7 @@ public class CSVLoader {
         private DBObject createObject(Record record) {
             TableDefinition tableDef = record.m_csvFile.m_tableDef;
             DBObject dbObj = new DBObject();
-            dbObj.setFieldValue("_table", tableDef.getTableName());
+            dbObj.setTableName(tableDef.getTableName());
             
             for (Map.Entry<String, String> mapEntry : record.m_fieldMap.entrySet()) {
                 String fieldName = mapEntry.getKey();
@@ -721,9 +721,9 @@ public class CSVLoader {
                     }
                     dbObj.addFieldValues(fieldName, Arrays.asList(values));
                 } else if (fieldType == FieldType.TIMESTAMP) {
-                    dbObj.setFieldValue(fieldName, convertTimestamp(fieldValue));
+                    dbObj.addFieldValue(fieldName, convertTimestamp(fieldValue));
                 } else {
-                    dbObj.setFieldValue(fieldName, fieldValue);
+                    dbObj.addFieldValue(fieldName, fieldValue);
                 }
             }
             

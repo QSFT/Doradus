@@ -151,8 +151,7 @@ public class DBObjectBatch {
         
         // Create a DBObject for the just-parsed 'doc' element and add to batch.
         private void buildObject() {
-            DBObject dbObj = new DBObject();
-            addObject(dbObj);
+            DBObject dbObj = addObject(null, null);
             for (String dottedName : valueMap.keySet()) {
                 List<String> values = valueMap.get(dottedName);
                 String[] names = dottedName.split("\\.");
@@ -233,9 +232,7 @@ public class DBObjectBatch {
                 for (UNode docNode : childNode.getMemberList()) {
                     Utils.require(docNode.getName().equals("doc") && docNode.isMap(),
                                   "'doc' map node expected as child of 'docs': " + docNode);
-                    DBObject dbObj = new DBObject();
-                    dbObj.parse(docNode);
-                    m_dbObjList.add(dbObj);
+                    addObject(new DBObject()).parse(docNode);
                 }
             } else {
                 Utils.require(false, "Unrecognized child node of 'batch': " + memberName);
@@ -287,11 +284,27 @@ public class DBObjectBatch {
      * Add a {@link DBObject} to this batch.
      * 
      * @param dbObj     DBObject to add to this batch.
+     * @return          Same DBObject.
      */
-    public void addObject(DBObject dbObj) {
+    public DBObject addObject(DBObject dbObj) {
         m_dbObjList.add(dbObj);
+        return dbObj;
     }   // addObject
 
+    /**
+     * Create a new DBObject with the given object ID and table name, add it to this
+     * DBObjectBatch, and return it.
+     * 
+     * @param objID     New DBObject's object ID, if any.
+     * @param tableName New DBObject's table name, if any.
+     * @return          New DBObject.
+     */
+    public DBObject addObject(String objID, String tableName) {
+        DBObject dbObj = new DBObject(objID, tableName);
+        m_dbObjList.add(dbObj);
+        return dbObj;
+    }   // addObject
+    
     /**
      * Clear this batch of all {@link DBObject}s, if any.
      */

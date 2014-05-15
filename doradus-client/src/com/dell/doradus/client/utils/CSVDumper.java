@@ -369,13 +369,15 @@ public class CSVDumper {
         int totalObjs = 0;
         for (DBObject dbObj : objectSet) {
             totalObjs++;
-            for (String fieldName : dbObj.getLinkFieldNames(tableDef)) {
-                Set<String> linkValues = dbObj.getFieldValues(fieldName);
-                AtomicInteger totalLinkValues = linkValueCounts.get(fieldName);
-                if (totalLinkValues == null) {
-                    linkValueCounts.put(fieldName, new AtomicInteger(linkValues.size()));
-                } else {
-                    totalLinkValues.addAndGet(linkValues.size());
+            for (String fieldName : dbObj.getFieldNames()) {
+                if (tableDef.isLinkField(fieldName)) {
+                    Collection<String> linkValues = dbObj.getFieldValues(fieldName);
+                    AtomicInteger totalLinkValues = linkValueCounts.get(fieldName);
+                    if (totalLinkValues == null) {
+                        linkValueCounts.put(fieldName, new AtomicInteger(linkValues.size()));
+                    } else {
+                        totalLinkValues.addAndGet(linkValues.size());
+                    }
                 }
             }
         }
@@ -528,7 +530,7 @@ public class CSVDumper {
             for (FieldDefinition fieldDef : fieldDefList) {
                 buffer.append(",");
                 if (fieldDef.isLinkField()) {
-                    Set<String> linkValues = dbObj.getFieldValues(fieldDef.getName());
+                    Collection<String> linkValues = dbObj.getFieldValues(fieldDef.getName());
                     if (linkValues != null && linkValues.size() > 0) {
                         buffer.append("\"");
                         buffer.append(Utils.concatenate(linkValues, "~"));

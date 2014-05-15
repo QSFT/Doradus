@@ -16,45 +16,50 @@
 
 package com.dell.doradus.common;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * Holds field values for a Doradus database object. When a DBObject is created by
+ * Holds field values for a Doradus database object. Both user-defined and system-defined
+ * fields (_ID, _table, and _deleted) may be present. When a DBObject is created by
  * fetching an object from the database, the _ID values is always present. Additional
  * scalar and/or link field values are present if requested and if a value was found.
+ * The system fields _table and _deleted are only used for certain update operations.
  * Field values can be retrieved via these methods:
  * <pre>
  *      {@link #getFieldNames()}
  *      {@link #getFieldValue(String)}      // when field has a single value
  *      {@link #getFieldValues(String)}
  *      {@link #getObjectID()}
- *      {@link #hasFieldValue(String)}
+ *      {@link #isDeleted()}
+ *      {@link #getTableName()}
  * </pre>
  * 
  * When used to add a new object, a DBObject holds values to be added for both scalar and
  * link fields. A DBObject does not need an object ID if it is new and should receive a
  * unique, system-generated ID. To update an existing object, an ID must be defined.
- * The ID field and values to be added to a field are assigned via the methods:
+ * The user and system fields are assigned via the methods:
  * 
  * <pre>
  *      {@link #addFieldValue(String, String)}
  *      {@link #addFieldValues(String, Collection)}
- *      {@link #setFieldValue(String, String)}
  *      {@link #setObjectID(String)}
+ *      {@link #setDeleted(boolean)}
+ *      {@link #setTableName(String)}
  * </pre>
  * 
  * A DBObject that is used to update an existing object can also define values to be
  * removed for existing MV scalar and link fields. Values to be removed from a field are
- * assigned via these methods:
+ * assigned via this method:
  * 
  * <pre>
  *      {@link #removeFieldValues(String, Collection)}
- *      {@link #setFieldValue(String, String)}
  * </pre>
  * 
  * To determine which fields have been assigned new values, "remove" values, or either,
@@ -64,11 +69,7 @@ import java.util.TreeSet;
  *      {@link #getFieldNames()}
  *      {@link #getRemoveValues(String)}
  *      {@link #getUpdatedFieldNames()}
- *      {@link #getLinkFieldNames(TableDefinition)}
- *      {@link #getScalarFieldNames(TableDefinition)}
  *      {@link #getUpdatedScalarFieldNames(TableDefinition)}
- *      {@link #hasFieldValue(String)}
- *      {@link #hasObjectID()}
  * </pre>
  * 
  * DBObject does not verify field types or cardinality: if a field is assigned value(s)
@@ -85,63 +86,45 @@ import java.util.TreeSet;
  */
 final public class DBObject {
     // Members:
-    private final Map<String, Set<String>>  m_valueMap = new HashMap<>();
-    private final Map<String, Set<String>>  m_valueRemoveMap = new HashMap<>();
+    private final Map<String, List<String>> m_valueMap = new HashMap<>();
+    private final Map<String, List<String>> m_valueRemoveMap = new HashMap<>();
+    private String                          m_objID;
+    private String                          m_tableName;
+    private boolean                         m_deleted;
     
     /**
-     * Create a new, empty DBObject. The object will have no _ID value.
+     * Create a new, empty DBObject.
      */
-    public DBObject() {
+    public DBObject() {}
+    
+    /**
+     * Create a new DBObject with the given _ID and _table values.
+     * 
+     * @param objID     New object's ID (_ID field).
+     * @param tableName New object's table (_table field).
+     */
+    public DBObject(String objID, String tableName) {
+        m_objID = objID;
+        m_tableName = tableName;
     }   // constructor
     
     ///// Getters
 
     /**
      * Return the field names for which this DBObject has a value. The set does not
-     * include fields that have "remove" values stored. The set is copied.
+     * include fields that have "remove" values stored, but it does include system
+     * fields (e.g., _ID). The set is copied.
      * 
      * @return Field names for which this DBObject has a value. Empty if there are no
      *         field values for this object.
      * @see    #getUpdatedFieldNames()
      */
     public Set<String> getFieldNames() {
-        return new HashSet<String>(m_valueMap.keySet());
+        HashSet<String> result = new HashSet<>(m_valueMap.keySet());
+        result.addAll(getSystemFieldNames());
+        return result;
     }   // getFieldNames
     
-    /**
-     * Return the set of link field names that have values for this object. The given
-     * {@link TableDefinition} is used to determine which field names are links.
-     * 
-     * @param tableDef  {@link TableDefinition} of a table.
-     * @return          Set of link field names that have updates for this object.
-     */
-    public Set<String> getLinkFieldNames(TableDefinition tableDef) {
-        Set<String> nameSet = new HashSet<>();
-        for (String fieldName : m_valueMap.keySet()) {
-            if (tableDef.isLinkField(fieldName)) {
-                nameSet.add(fieldName);
-            }
-        }
-        return nameSet;
-    }   // getLinkFieldNames
-    
-    /**
-     * Return the set of scalar field names that have values for this object. The given
-     * {@link TableDefinition} is used to determine which field names are scalars.
-     * 
-     * @param tableDef  {@link TableDefinition} of a table.
-     * @return          Set of scalar field names that have updates for this object.
-     */
-    public Set<String> getScalarFieldNames(TableDefinition tableDef) {
-        Set<String> nameSet = new HashSet<>();
-        for (String fieldName : m_valueMap.keySet()) {
-            if (tableDef.isScalarField(fieldName)) {
-                nameSet.add(fieldName);
-            }
-        }
-        return nameSet;
-    }   // getScalarFieldNames
-
     /**
      * Get all values marked for removal for the given field. The result will be null
      * if the given field has no values to remove. Otherwise, the set is copied.
@@ -159,23 +142,27 @@ final public class DBObject {
     }   // getRemoveValues
     
     /**
-     * Get this object's ID or null if no object ID has yet been assigned. This is a
-     * convenience method that returns the value of the "_ID" field, if set. The _ID
-     * field can have only one value.
+     * Get this object's ID or null if no object ID has yet been assigned.
      * 
      * @return  This DBObject's ID or null if none has been assigned.
      */
     public String getObjectID() {
-        Set<String> values = m_valueMap.get(CommonDefs.ID_FIELD);
-        if (values != null && values.size() > 0) {
-            return values.iterator().next();
-        }
-        return null;
+        return m_objID;
     }   // getObjectID
     
     /**
+     * Get this object's assigned table name if any.
+     * 
+     * @return  This object's table name, if any.
+     */
+    public String getTableName() {
+        return m_tableName;
+    }   // getTableName
+    
+    /**
      * Get the names of all fields updated by this object, including fields that have new
-     * and/or remove values assigned. The set is copied and may be empty but not null.
+     * and/or remove values assigned. This set does *not* include system fields such as
+     * _ID. The set is copied and may be empty but not null.
      * 
      * @return Set of all field names being added or remove for this object.
      */
@@ -209,62 +196,56 @@ final public class DBObject {
     }   // getUpdatedScalarFieldNames
     
     /**
-     * Get the single value of the field with the given name or null if no value is
-     * assigned to the given field. This method is intended to be used for fields expected
-     * to have a single value. An exception is thrown if it is called for a field with
-     * multiple values.
+     * Get the single value of the user or system field with the given name or null if no
+     * value is assigned to the given field. This method is intended to be used for fields
+     * expected to have a single value. An exception is thrown if it is called for a field
+     * with multiple values.
      * 
      * @param fieldName Name of a field.
      * @return          Value of field for this object or null if there is none.
      */
     public String getFieldValue(String fieldName) {
         Utils.require(!Utils.isEmpty(fieldName), "fieldName");
-        Set<String> values = m_valueMap.get(fieldName);
+        
+        if (fieldName.charAt(0) == '_') {
+            return getSystemField(fieldName);
+        }
+        List<String> values = m_valueMap.get(fieldName);
         if (values == null || values.size() == 0) {
             return null;
-        } else {
-            Utils.require(values.size() == 1, "Field has more than 1 value: %s", fieldName);
-            return values.iterator().next();
         }
+        Utils.require(values.size() == 1, "Field has more than 1 value: %s", fieldName);
+        return values.get(0);
     }   // getFieldValue
     
     /**
      * Get all values of the field with the given name or null if no values are assigned
-     * to the given field. If the field has at least one value, the set is copied.
+     * to the given field. This method can only be called for user fields. If the field
+     * has at least one value, the list returned is *not* copied. This means it may have
+     * duplicate values as well.
      * 
      * @param  fieldName    Name of a field.
      * @return              Set of all values assigned to the field.
      */
-    public Set<String> getFieldValues(String fieldName) {
+    public List<String> getFieldValues(String fieldName) {
         Utils.require(!Utils.isEmpty(fieldName), "fieldName");
+        Utils.require(fieldName.charAt(0) != '_', "Method not valid for system fields: " + fieldName);
+        
         if (!m_valueMap.containsKey(fieldName)) {
             return null;
         }
-        return new HashSet<>(m_valueMap.get(fieldName));
+        return m_valueMap.get(fieldName);
     }   // getFieldValues
     
     /**
-     * Return true if this object has a value for the field with the given name. This
-     * method only indicates fields with new values; a field may have a "remove" value
-     * not reflected by this method.
+     * Get this object's deleted flag, if set.
      * 
-     * @param fieldName Name of a field.
-     * @return          True if this object has a value for the given field name.
+     * @return  This DBObject's deleted flag, if set through {@link #setDeleted(boolean)}
+     *          or parsed from a UNode tree.
      */
-    public boolean hasFieldValue(String fieldName) {
-        Utils.require(!Utils.isEmpty(fieldName), "fieldName");
-        return m_valueMap.containsKey(fieldName);
-    }   // hasFieldValue
-    
-    /**
-     * Indicate if this object has an object ID. This method returns true if a value
-     * for the field named "_ID".
-     * 
-     * @return True if this object has an object ID.
-     */
-    public boolean hasObjectID() {
-        return m_valueMap.containsKey(CommonDefs.ID_FIELD);
-    }   // hasObjectID
+    public boolean isDeleted() {
+        return m_deleted;
+    }   // isDeleted
     
     /**
      * Serialize this DBObject into a {@link UNode} tree, returning the root node. The
@@ -289,12 +270,13 @@ final public class DBObject {
      */
     public UNode toDoc() {
         UNode resultNode = UNode.createMapNode("doc");
+        addSystemFields(resultNode);
         for (String fieldName : getUpdatedFieldNames()) {
             leafFieldtoDoc(resultNode, fieldName);
         }
         return resultNode;
     }   // toDoc
-    
+
     /**
      * Serialize this DBObject into a {@link UNode} tree, showing nested fields within
      * their parent group fields. The root node of the UNode tree is returned. The tree
@@ -321,6 +303,7 @@ final public class DBObject {
     public UNode toGroupedDoc(TableDefinition tableDef) {
         Utils.require(tableDef != null, "tableDef");
         UNode resultNode = UNode.createMapNode("doc");
+        addSystemFields(resultNode);
         
         Set<FieldDefinition> deferredFields = new HashSet<FieldDefinition>();
         for (String fieldName : getUpdatedFieldNames()) {
@@ -358,23 +341,27 @@ final public class DBObject {
     ///// Setters
     
     /**
-     * Add the value(s) in the given collection to the field with the given name. An
-     * exception is thrown if the _ID field receives more than one value. If the given
-     * collection is null or empty, this method is a no-op.
+     * Add the value(s) in the given collection to the field with the given name. If the
+     * given collection is null or empty, this method is a no-op.
      * 
      * @param fieldName Name of field.
      * @param values    Collection of values. Ignored if null or empty.
      */
     public void addFieldValues(String fieldName, Collection<String> values) {
         Utils.require(!Utils.isEmpty(fieldName), "fieldName");
+        
         if (values != null && values.size() > 0) {
-            Set<String> currValues = m_valueMap.get(fieldName);
-            if (currValues == null) {
-                currValues = new HashSet<>();
-                m_valueMap.put(fieldName, currValues);
+            if (fieldName.charAt(0) == '_') {
+                Utils.require(values.size() == 1, "System fields can have only 1 value: " + fieldName);
+                setSystemField(fieldName, values.iterator().next());
+            } else {
+                List<String> currValues = m_valueMap.get(fieldName);
+                if (currValues == null) {
+                    currValues = new ArrayList<>();
+                    m_valueMap.put(fieldName, currValues);
+                }
+                currValues.addAll(values);
             }
-            currValues.addAll(values);
-            Utils.require(!fieldName.equals("_ID") || currValues.size() == 1, "Only 1 value can be set for _ID");
         }
     }   // addFieldValues
 
@@ -388,14 +375,18 @@ final public class DBObject {
      */
     public void addFieldValue(String fieldName, String value) {
         Utils.require(!Utils.isEmpty(fieldName), "fieldName");
+        
         if (!Utils.isEmpty(value)) {
-            Set<String> currValues = m_valueMap.get(fieldName);
-            if (currValues == null) {
-                currValues = new HashSet<>();
-                m_valueMap.put(fieldName, currValues);
+            if (fieldName.charAt(0) == '_') {
+                setSystemField(fieldName, value);
+            } else {
+                List<String> currValues = m_valueMap.get(fieldName);
+                if (currValues == null) {
+                    currValues = new ArrayList<>();
+                    m_valueMap.put(fieldName, currValues);
+                }
+                currValues.add(value);
             }
-            currValues.add(value);
-            Utils.require(!fieldName.equals("_ID") || currValues.size() == 1, "Only 1 value can be set for _ID");
         }
     }   // addFieldValue
 
@@ -405,11 +396,11 @@ final public class DBObject {
      * 
      * @param fieldName Name of a field.
      */
-    public void clearLinkValues(String fieldName) {
+    public void clearValues(String fieldName) {
         Utils.require(!Utils.isEmpty(fieldName), "fieldName");
         m_valueMap.remove(fieldName);
         m_valueRemoveMap.remove(fieldName);
-    }   // clearLinkValues
+    }   // clearValues
     
     /**
      * Parse an object rooted at the given "doc" UNode. All values parsed are stored in
@@ -417,8 +408,9 @@ final public class DBObject {
      * has an invalid value.
      * 
      * @param docNode   Root node of a "doc" UNode structure.
+     * @return          This object.
      */
-    public void parse(UNode docNode) {
+    public DBObject parse(UNode docNode) {
         Utils.require(docNode != null, "docNode");
         Utils.require(docNode.getName().equals("doc"), "'doc' node expected: %s", docNode.getName());
         Utils.require(docNode.isMap(), "'doc' node must be a map of unique names: %s", docNode);
@@ -427,6 +419,7 @@ final public class DBObject {
             UNode fieldValue = docNode.getMember(fieldName);
             parseFieldUpdate(fieldName, fieldValue);
         }
+        return this;
     }   // parse
 
     /**
@@ -442,9 +435,9 @@ final public class DBObject {
     public void removeFieldValues(String fieldName, Collection<String> values) {
         Utils.require(!Utils.isEmpty(fieldName), "fieldName");
         if (values != null && values.size() > 0) {
-            Set<String> valueSet = m_valueRemoveMap.get(fieldName);
+            List<String> valueSet = m_valueRemoveMap.get(fieldName);
             if (valueSet == null) {
-                valueSet = new HashSet<String>();
+                valueSet = new ArrayList<String>();
                 m_valueRemoveMap.put(fieldName, valueSet);
             }
             valueSet.addAll(values);
@@ -453,72 +446,48 @@ final public class DBObject {
 
     /**
      * Set this object's ID to the given string. If this DBObject already has an ID
-     * assigned, it is replaced with the given value. This is a convenience method sets
-     * the _ID field.
+     * assigned, it is replaced with the given value.
      * 
      * @param objID     The object's new ID.
      */
     public void setObjectID(String objID) {
-        Set<String> values = m_valueMap.get(CommonDefs.ID_FIELD);
-        if (values == null) {
-            values = new HashSet<>();
-            m_valueMap.put(CommonDefs.ID_FIELD, values);
-        } else {
-            values.clear();
-        }
-        values.add(objID);
+        m_objID = objID;
     }   // setObjectID
     
     /**
-     * Set the given field's value. It is intended to be used for SV scalar fields.
-     * Compared to {@link #addFieldValues(String, Collection)} and
-     * {@link #addFieldValue(String, String)}, this method replaces any current value(s)
-     * by the given value. Also, with this method the given value can be null or empty to
-     * nullify the field when the update is processed. 
+     * Set this object's _table field to the given value. If this DBObject already has a
+     * _table value, it is replaced. The _table field is only used in certain operations.
      * 
-     * @param fieldName     Name of field.
-     * @param value         Value to replace or add to existing scalar's value(s).
+     * @param tableName New value for _table field.
      */
-    public void setFieldValue(String fieldName, String value) {
-        Utils.require(!Utils.isEmpty(fieldName), "fieldName");
-        
-        Set<String> values = m_valueMap.get(fieldName);
-        if (values == null) {
-            values = new HashSet<>();
-            m_valueMap.put(fieldName, values);
-        } else {
-            values.clear();
-        }
-        if (Utils.isEmpty(value)) {
-            values.add("");
-        } else {
-            values.add(value);
-        }
-    }   // setFieldValue
+    public void setTableName(String tableName) {
+        m_tableName = tableName;
+    }   // setTableName
     
     /**
-     * Set the given field to the given set of values. It is intended to be used for MV
-     * fields.  Compared to {@link #addFieldValues(String, Collection)} and
-     * {@link #addFieldValue(String, String)}, this method first clears any current
-     * value(s) for the given field.
+     * Set this object's _deleted flag to the given value. Only certain operations use the
+     * _deleted field.
      * 
-     * @param fieldName     Name of field.
-     * @param values        One or more values to replace existing scalar's value(s).
+     * @param bDeleted  New value for the _deleted field.
      */
-    public void setFieldValues(String fieldName, Collection<String> values) {
-        Utils.require(!Utils.isEmpty(fieldName), "fieldName");
-        
-        Set<String> currValues = m_valueMap.get(fieldName);
-        if (currValues == null) {
-            currValues = new HashSet<>();
-            m_valueMap.put(fieldName, currValues);
-        } else {
-            currValues.clear();
-        }
-        currValues.addAll(values);
-    }   // setFieldValue
+    public void setDeleted(boolean bDeleted) {
+        m_deleted = bDeleted;
+    }   // setDeleted
     
     ///// Private methods for UNode handling
+    
+    // Add child UNodes to the given parent for system fields
+    private void addSystemFields(UNode parentNode) {
+        if (!Utils.isEmpty(m_objID)) {
+            parentNode.addValueNode("_ID", m_objID, "field");
+        }
+        if (!Utils.isEmpty(m_tableName)) {
+            parentNode.addValueNode("_table", m_tableName, "field");
+        }
+        if (m_deleted) {
+            parentNode.addValueNode("_deleted", "true", "field");
+        }
+    }   // addSystemFields
     
     // Create a UNode for the leaf field with the given name and add it to the given
     // parent node.
@@ -529,7 +498,7 @@ final public class DBObject {
         if (m_valueMap.containsKey(fieldName)) {
             addSet = new TreeSet<String>(m_valueMap.get(fieldName));
         }
-        Set<String> removeSet = m_valueRemoveMap.get(fieldName);
+        List<String> removeSet = m_valueRemoveMap.get(fieldName);
         if (addSet != null && addSet.size() == 1 && removeSet == null) {
             parentNode.addValueNode(fieldName, addSet.iterator().next(), "field");
         } else {
@@ -575,9 +544,8 @@ final public class DBObject {
 
     // Parse update to outer or nested field.
     private void parseFieldUpdate(String fieldName, UNode valueNode) {
-        Utils.require(!hasFieldValue(fieldName), "Duplicate assignment to field: %s", fieldName);
         if (valueNode.isValue()) {
-            setFieldValue(fieldName, valueNode.getValue());
+            addFieldValue(fieldName, valueNode.getValue());
         } else {
             for (UNode childNode : valueNode.getMemberList()) {
                 if (childNode.isCollection() && childNode.getName().equals("add") && childNode.hasMembers()) {
@@ -615,4 +583,51 @@ final public class DBObject {
         removeFieldValues(fieldName, removeValueSet);
     }   // parseFieldRemove
 
+    // Get the value of the given system field, which must begin with "_".
+    private String getSystemField(String fieldName) {
+        switch (fieldName) {
+        case "_ID":
+            return getObjectID();
+        case "_table":
+            return getTableName();
+        case "_deleted":
+            if (m_deleted) return "true";
+        default:
+            Utils.require(false, "Unknown system field: " + fieldName);
+            return null;
+        }
+    }   // getSystemField
+    
+    // Get the names of system fields that have a value: _ID, _table, _deleted.
+    private Collection<String> getSystemFieldNames() {
+        HashSet<String> result = new HashSet<>();
+        if (!Utils.isEmpty(m_objID)) {
+            result.add(m_objID);
+        }
+        if (!Utils.isEmpty(m_tableName)) {
+            result.add(m_tableName);
+        }
+        if (m_deleted) {
+            result.add("_deleted");
+        }
+        return result;
+    }   // getSystemFieldNames
+
+    // Set the given system field, which begins with an "_".
+    private void setSystemField(String fieldName, String value) {
+        switch (fieldName) {
+        case "_ID":
+            setObjectID(value);
+            break;
+        case "_deleted":
+            setDeleted(Boolean.parseBoolean(value));
+            break;
+        case "_table":
+            setTableName(value);
+            break;
+        default:
+            Utils.require(false, "Unknown system field: " + fieldName);
+        }
+    }   // setSystemField
+    
 }   // class DBObject

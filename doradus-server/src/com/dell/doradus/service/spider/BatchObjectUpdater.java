@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -293,13 +294,13 @@ public class BatchObjectUpdater {
     private Set<String> getLinkTargetObjIDs(FieldDefinition linkDef, DBObjectBatch dbObjBatch) {
         Set<String> targObjIDs = new HashSet<>();
         for (DBObject dbObj : dbObjBatch.getObjects()) {
-            Set<String> objIDs = dbObj.getFieldValues(linkDef.getName());
+            List<String> objIDs = dbObj.getFieldValues(linkDef.getName());
             if (objIDs != null) {
                 targObjIDs.addAll(objIDs);
             }
-            objIDs = dbObj.getRemoveValues(linkDef.getName());
-            if (objIDs != null) {
-                targObjIDs.addAll(objIDs);
+            Set<String> removeIDs = dbObj.getRemoveValues(linkDef.getName());
+            if (removeIDs != null) {
+                targObjIDs.addAll(removeIDs);
             }
         }
         return targObjIDs;

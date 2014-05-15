@@ -17,6 +17,7 @@
 package com.dell.doradus.service.spider;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -67,9 +68,9 @@ public class ScalarFieldUpdater extends FieldUpdater {
     }   // deleteValuesForField
     
     // Merge the given current, remove, and new MV field values into a new set.
-    public static Set<String> mergeMVFieldValues(Set<String>  currValueSet,
-                                                 Set<String>  removeValueSet,
-                                                 Set<String>  newValueSet) {
+    public static Set<String> mergeMVFieldValues(Collection<String>  currValueSet,
+                                                 Collection<String>  removeValueSet,
+                                                 Collection<String>  newValueSet) {
         Set<String> resultSet = new HashSet<>();
         if (currValueSet != null) {
             resultSet.addAll(currValueSet);
@@ -99,7 +100,7 @@ public class ScalarFieldUpdater extends FieldUpdater {
     
     // Add new MV scalar field.
     private void addMVScalar() {
-        Set<String> values = m_dbObj.getFieldValues(m_fieldName);
+        Set<String> values = new HashSet<>(m_dbObj.getFieldValues(m_fieldName));
         String fieldValue = Utils.concatenate(values, CommonDefs.MV_SCALAR_SEP_CHAR);
         m_dbTran.addScalarValueColumn(m_tableDef, m_dbObj.getObjectID(), m_fieldName, fieldValue);
         addTermColumns(fieldValue);
@@ -174,8 +175,8 @@ public class ScalarFieldUpdater extends FieldUpdater {
         boolean bUpdated = false;
         Set<String> currentValues = Utils.split(currentValue, CommonDefs.MV_SCALAR_SEP_CHAR);
         Set<String> newValueSet = mergeMVFieldValues(currentValues,
-                                                      m_dbObj.getRemoveValues(m_fieldName),
-                                                      m_dbObj.getFieldValues(m_fieldName));
+                                                     m_dbObj.getRemoveValues(m_fieldName),
+                                                     m_dbObj.getFieldValues(m_fieldName));
         String newValue = Utils.concatenate(newValueSet, CommonDefs.MV_SCALAR_SEP_CHAR);
         if (!newValue.equals(currentValue)) {
             if (newValue.length() == 0) {

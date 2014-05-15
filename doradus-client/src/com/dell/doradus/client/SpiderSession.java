@@ -185,10 +185,8 @@ public class SpiderSession extends ApplicationSession {
         TableDefinition tableDef = m_appDef.getTableDef(tableName);
         Utils.require(tableDef != null,
                       "Unknown table for application '%s': %s", m_appDef.getAppName(), tableName);
-        DBObject dbObj = new DBObject();
-        dbObj.setObjectID(objID);
         DBObjectBatch dbObjBatch = new DBObjectBatch();
-        dbObjBatch.addObject(dbObj);
+        dbObjBatch.addObject(objID, tableName);
         BatchResult batchResult = deleteBatch(tableName, dbObjBatch);
         return batchResult.getObjectResult(objID);
     }   // deleteObject
@@ -358,9 +356,7 @@ public class SpiderSession extends ApplicationSession {
             if (response.getCode() != HttpCode.OK) {
                 return null;
             }
-            DBObject dbObj = new DBObject();
-            dbObj.parse(getUNodeResult(response));
-            return dbObj;
+            return new DBObject().parse(getUNodeResult(response));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

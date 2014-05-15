@@ -248,7 +248,7 @@ public class QueryResult {
                 // Simple SV scalar value.
                 Utils.require(childNode.isValue(),
                               "Value of an SV scalar must be a value: " + childNode);
-                dbObj.setFieldValue(fieldName, childNode.getValue());
+                dbObj.addFieldValue(fieldName, childNode.getValue());
             }
         }
         
