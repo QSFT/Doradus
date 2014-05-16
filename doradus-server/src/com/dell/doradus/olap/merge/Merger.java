@@ -242,7 +242,6 @@ public class Merger {
 	        field_writer.close(destination, table, field);
 	        stats.addTextField(fieldDef, field_writer);
         }
-        
     }
 
     private void mergeLinkField(FieldDefinition fieldDef)
@@ -253,7 +252,9 @@ public class Merger {
         Remap docRemap = remaps.get(table);
         Remap valRemap = remaps.get(fieldDef.getLinkExtent());
 
-        if(fieldDef.isCollection()) {
+        //all links are multi-valued because of referential integrity and idempotent updates
+        //if(fieldDef.isCollection())
+        {
 	        FieldWriter field_writer = new FieldWriter(docRemap.dstSize());
 	        
 	        HeapList<IxVal> heap = new HeapList<IxVal>(sources.size() - 1);
@@ -274,6 +275,7 @@ public class Merger {
 	        field_writer.close(destination, table, link);
 	        stats.addLinkField(fieldDef, field_writer);
         }
+        /*
         else {
 	        FieldWriterSV field_writer = new FieldWriterSV(docRemap.dstSize());
 	        
@@ -291,6 +293,7 @@ public class Merger {
 	        field_writer.close(destination, table, link);
 	        stats.addTextField(fieldDef, field_writer);
         }
+        */
     }
 
 }
