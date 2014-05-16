@@ -388,6 +388,8 @@ public class OLAPService extends StorageService {
         } else if (fieldDef.isLinkType()) {
             Utils.require(!fieldDef.isSharded(),
                           "Link and xlink fields cannot be sharded: {}", fieldDef);
+            Utils.require(!fieldDef.isXLinkField() || !fieldDef.getName().equals(fieldDef.getLinkInverse()),
+                          "xlinks cannot be their own inverse (self-reflexive): " + fieldDef);
         }
     }   // validateField
     
