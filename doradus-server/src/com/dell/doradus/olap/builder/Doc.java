@@ -23,18 +23,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.store.FieldWriter;
+import com.dell.doradus.olap.store.FieldWriterSV;
 
 public class Doc {
 	
 	public BSTR id;
 	public int number;
 	public boolean deleted;
+
+	public Map<String, Long> sv_numerics = new HashMap<String, Long>();
+	public Map<String, Term> sv_fields = new HashMap<String, Term>();
+	public Map<String, Doc> sv_links = new HashMap<String, Doc>();
 	
-	public Map<String, List<Long>> numerics = new HashMap<String, List<Long>>(1);
-	public Map<String, List<Term>> fields = new HashMap<String, List<Term>>(1);
-	public Map<String, List<Doc>> links = new HashMap<String, List<Doc>>(1);
+	public Map<String, List<Long>> numerics = new HashMap<String, List<Long>>();
+	public Map<String, List<Term>> fields = new HashMap<String, List<Term>>();
+	public Map<String, List<Doc>> links = new HashMap<String, List<Doc>>();
 	
 	public static Comparator<Doc> COMP_ID = new DocIdComparator();
 	public static Comparator<Doc> COMP_NO = new DocNumberComparator();
@@ -42,7 +48,7 @@ public class Doc {
 	public Doc(BSTR id) {
 		this.id = new BSTR(id);
 	}
-	
+
 	public void addNum(String field, long value) {
 		List<Long> f = numerics.get(field);
 		if(f == null) {
@@ -50,9 +56,9 @@ public class Doc {
 			numerics.put(field, f);
 		}
 		f.add(value);
-		//numerics.put(field, new Long(value));
 	}
 	
+
 	public void addField(String field, Term value) {
 		List<Term> f = fields.get(field);
 		if(f == null) {
@@ -70,7 +76,7 @@ public class Doc {
 		}
 		d.add(linkedDoc);
 	}
-	
+
 	public void flushField(String field, FieldWriter writer) {
 		List<Term> list = fields.get(field);
 		if(list == null) return;
@@ -87,6 +93,34 @@ public class Doc {
 		for(Doc d : list) {
 			writer.add(number, d.number);
 		}
+	}
+
+	
+	public void addSVNum(String field, long value) {
+		Utils.require(sv_numerics.get(field) == null, "Single-valued field cannot contain multiple values");
+		sv_numerics.put(field, new Long(value));
+	}
+	
+	public void addSVField(String field, Term value) {
+		Utils.require(sv_fields.get(field) == null, "Single-valued field cannot contain multiple values");
+		sv_fields.put(field, value);
+	}
+	
+	public void addSVLink(String field, Doc linkedDoc) {
+		Utils.require(sv_links.get(field) == null, "Single-valued field cannot contain multiple values");
+		sv_links.put(field, linkedDoc);
+	}
+	
+	public void flushSVField(String field, FieldWriterSV writer) {
+		Term term = sv_fields.get(field);
+		if(term == null) return;
+		writer.set(number, term.number);
+	}
+	
+	public void flushSVLink(String field, FieldWriterSV writer) {
+		Doc doc = sv_links.get(field);
+		if(doc == null) return;
+		writer.set(number, doc.number);
 	}
 	
 	public static class DocIdComparator implements Comparator<Doc> {
