@@ -67,29 +67,40 @@ public class SegmentBuilder {
 		for(TableBuilder b : tables.values()) {
 			SegmentStats.Table t = stats.getTable(b.table);
 			TableDefinition tableDef = application.getTableDef(b.table);
-			for(String numField : b.numericFields) {
-				NumWriterMV num_writer = new NumWriterMV(t.documents);
-				b.documents.flush(numField, num_writer);
-				num_writer.close(dir, b.table, numField);
-				FieldDefinition fieldDef = tableDef.getFieldDef(numField);
-				stats.addNumField(fieldDef, num_writer);
-			}
-			for(FieldBuilder fb : b.fields.values()) {
-				ValueWriter term_writer = new ValueWriter(dir, b.table, fb.fieldName);
-				fb.flush(term_writer);
-				term_writer.close();
-				FieldWriter pos_writer = new FieldWriter(t.documents);
-				b.documents.flushField(fb.fieldName, pos_writer);
-				pos_writer.close(dir, b.table, fb.fieldName);
-				FieldDefinition fieldDef = tableDef.getFieldDef(fb.fieldName);
-				stats.addTextField(fieldDef, pos_writer);
-			}
-			for(String link : b.linkFields) {
-				FieldWriter pos_writer = new FieldWriter(t.documents);
-				b.documents.flushLink(link, pos_writer);
-				pos_writer.close(dir, b.table, link);
-				FieldDefinition fieldDef = tableDef.getFieldDef(link);
-				stats.addLinkField(fieldDef, pos_writer);
+			for(int fieldIndex = 0; fieldIndex < b.fieldsCount; fieldIndex++) {
+				String fieldName = b.fieldNames[fieldIndex];
+				TableBuilder.FType type = b.fieldTypes[fieldIndex];
+				if(type == null) continue;
+				switch(type) {
+				case NUMERIC: {
+					NumWriterMV num_writer = new NumWriterMV(t.documents);
+					b.documents.flushNumField(fieldIndex, num_writer);
+					num_writer.close(dir, b.table, fieldName);
+					FieldDefinition fieldDef = tableDef.getFieldDef(fieldName);
+					stats.addNumField(fieldDef, num_writer);
+					break;
+				}
+				case TEXT: {
+					ValueWriter term_writer = new ValueWriter(dir, b.table, fieldName);
+					b.fieldBuilders[fieldIndex].flush(term_writer);
+					term_writer.close();
+					FieldWriter pos_writer = new FieldWriter(t.documents);
+					b.documents.flushTextField(fieldIndex, pos_writer);
+					pos_writer.close(dir, b.table, fieldName);
+					FieldDefinition fieldDef = tableDef.getFieldDef(fieldName);
+					stats.addTextField(fieldDef, pos_writer);
+					break;
+				}
+				case LINK: {
+					FieldWriter pos_writer = new FieldWriter(t.documents);
+					b.documents.flushLinkField(fieldIndex, pos_writer);
+					pos_writer.close(dir, b.table, fieldName);
+					FieldDefinition fieldDef = tableDef.getFieldDef(fieldName);
+					stats.addLinkField(fieldDef, pos_writer);
+					break;
+				}
+				default: throw new RuntimeException("Invalid field type");
+				}
 			}
 		}
 		
@@ -98,10 +109,10 @@ public class SegmentBuilder {
 	}
 	
 	
-	private TableBuilder getTable(String tableName) {
-		TableBuilder b = tables.get(tableName);
+	private TableBuilder getTable(TableDefinition tableDef) {
+		TableBuilder b = tables.get(tableDef.getTableName());
 		if(b == null) {
-			b = new TableBuilder(tableName);
+			b = new TableBuilder(tableDef.getTableName(), tableDef.getFieldDefinitions().size());
 			tables.put(b.table, b);
 		}
 		return b;
@@ -111,11 +122,11 @@ public class SegmentBuilder {
 		Utils.require(document.id != null, "_ID field is not set for a document");
 		TableDefinition tableDef = application.getTableDef(document.table);
 		Utils.require(tableDef != null, "Table '" + document.table + "' does not exist");
-		TableBuilder b = getTable(document.table);
+		TableBuilder b = getTable(tableDef);
 		Doc doc = b.addDoc(document.id);
 		if(document.deleted) doc.deleted = true;
 		for(FieldDefinition field : tableDef.getFieldDefinitions()) {
-			add(b, doc, field, document);
+			add(b, doc, field, document.fields.get(field.getName()));
 		}
 	}
 	
@@ -125,87 +136,15 @@ public class SegmentBuilder {
 	    Utils.require(!Utils.isEmpty(tableName), "Object is missing '_table' definition");
 	    TableDefinition tableDef = application.getTableDef(tableName);
 	    Utils.require(tableDef != null, "Unknown table for application '%s': %s", application.getAppName(), tableName);
-	    TableBuilder b = getTable(tableDef.getTableName());
+	    TableBuilder b = getTable(tableDef);
 	    Doc doc = b.addDoc(dbObj.getObjectID());
 	    if(dbObj.isDeleted()) doc.deleted = true;
 	    for(FieldDefinition field : tableDef.getFieldDefinitions()) {
-	        add(b, doc, field, dbObj);
+	        add(b, doc, field, dbObj.getFieldValues(field.getName()));
 	    }
 	}
 	
-	private void add(TableBuilder b, Doc doc, FieldDefinition field, OlapDocument document) {
-		List<String> f = document.fields.get(field.getName());
-		if(f == null || f.size() == 0) return;
-		switch(field.getType()) {
-		case BOOLEAN:
-			for(String fv: f) {
-				boolean bvalue = "true".equalsIgnoreCase(fv);
-				b.addNum(doc, field.getName(), bvalue ? 1 : 0);
-			}
-			break;
-		case GROUP:
-			for(FieldDefinition child : field.getNestedFields()) {
-				add(b, doc, child, document);
-			}
-			break;
-		case INTEGER:
-		case LONG:
-			try {
-				for(String fv: f) {
-					b.addNum(doc, field.getName(), Long.parseLong(fv));
-				}
-			} catch (NumberFormatException e) {
-			    throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + f.get(0), e);
-			}
-			break;
-		case DOUBLE:
-			try {
-				for(String fv: f) {
-					double val = Double.parseDouble(fv);
-					long lval = Double.doubleToRawLongBits(val);
-				    b.addNum(doc, field.getName(), lval);
-				}
-			} catch (NumberFormatException e) {
-			    throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + f.get(0), e);
-			}
-			break;
-		case FLOAT:
-			try {
-				for(String fv: f) {
-					float val = Float.parseFloat(fv);
-					int ival = Float.floatToRawIntBits(val);
-				    b.addNum(doc, field.getName(), ival);
-				}
-			} catch (NumberFormatException e) {
-			    throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + f.get(0), e);
-			}
-			break;
-		case LINK:
-			TableBuilder b2 = getTable(field.getLinkExtent());
-			for(String id : f) {
-				Doc linkedDoc = b2.addDoc(id);
-				b.addLink(doc, field.getName(), linkedDoc);
-				b2.addLink(linkedDoc, field.getLinkInverse(), doc);
-			}
-			break;
-		case TEXT:
-		case BINARY:
-			for(String term : f) {
-				b.addTerm(doc, field.getName(), term);
-			}
-			break;
-		case TIMESTAMP:
-			for(String fv: f) {
-				Date dvalue = Utils.dateFromString(fv);
-				b.addNum(doc, field.getName(), dvalue.getTime());
-			}
-			break;
-			default: throw new IllegalArgumentException("Unknown Olap type " + field.getType().toString());
-		}
-	}
-	
-	private void add(TableBuilder b, Doc doc, FieldDefinition field, DBObject dbObj) {
-	    List<String> f = dbObj.getFieldValues(field.getName());
+	private void add(TableBuilder b, Doc doc, FieldDefinition field, List<String> f) {
 	    if(f == null || f.size() == 0) return;
 	    switch(field.getType()) {
 	    case BOOLEAN:
@@ -214,12 +153,15 @@ public class SegmentBuilder {
 		        b.addNum(doc, field.getName(), bvalue ? 1 : 0);
 			}
 	        break;
-	    case GROUP:
-	        for(FieldDefinition child : field.getNestedFields()) {
-	            add(b, doc, child, dbObj);
+	    case INTEGER:
+	        try {
+				for(String fv: f) {
+					b.addNum(doc, field.getName(), Integer.parseInt(fv));
+				}
+	        } catch (NumberFormatException e) {
+	            throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + f.get(0), e);
 	        }
 	        break;
-	    case INTEGER:
 	    case LONG:
 	        try {
 				for(String fv: f) {
@@ -252,7 +194,7 @@ public class SegmentBuilder {
             }
             break;
 	    case LINK:
-	        TableBuilder b2 = getTable(field.getLinkExtent());
+	        TableBuilder b2 = getTable(field.getInverseTableDef());
 	        for(String id : f) {
 	            Doc linkedDoc = b2.addDoc(id);
 	            b.addLink(doc, field.getName(), linkedDoc);

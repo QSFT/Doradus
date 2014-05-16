@@ -17,6 +17,7 @@
 package com.dell.doradus.common;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -423,7 +424,7 @@ final public class TableDefinition {
     }   // getTableName
     
     /**
-     * Get the field definitions for this table as an Iterable&lt;{@link FieldDefinition}&gt;
+     * Get the field definitions for this table as an Collection&lt;{@link FieldDefinition}&gt;
      * object. All outer and nested group, link, and scalar fields are returned. To expand
      * group fields without traversing the same {@link FieldDefinition} twice, call this
      * method and skip fields for which {@link FieldDefinition#isNestedField()} is true.
@@ -435,7 +436,7 @@ final public class TableDefinition {
      * 
      * @return  An iterator that returns all {@link FieldDefinition}s owned by this table.
      */
-    public Iterable<FieldDefinition> getFieldDefinitions() {
+    public Collection<FieldDefinition> getFieldDefinitions() {
         return m_fieldDefMap.values();
     }   // getFieldDefinitions
 

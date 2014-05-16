@@ -17,52 +17,77 @@
 package com.dell.doradus.olap.builder;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import com.dell.doradus.olap.io.BSTR;
 
 public class TableBuilder {
-	public String table;
+	public static enum FType {
+		NUMERIC,
+		TEXT,
+		LINK
+	}
 	
+	public String table;
 	public IdBuilder documents = new IdBuilder();
-	public Set<String> numericFields = new HashSet<String>();
-	public Set<String> linkFields = new HashSet<String>();
-	public Map<String, FieldBuilder> fields = new HashMap<String, FieldBuilder>();
+	public Map<String, Integer> fieldIndexMap = new HashMap<String, Integer>();
+	public FieldBuilder[] fieldBuilders;
+	public FType[] fieldTypes;
+	public String[] fieldNames;
+	public int fieldsCount;
 	
 	private BSTR bstr = new BSTR();
 	private BSTR orig = new BSTR();
 	
-	public TableBuilder(String table) {
-		this.table = table;
+	public TableBuilder(String tableName, int fieldsCount) {
+		this.table = tableName;
+		this.fieldsCount = fieldsCount;
+		this.fieldBuilders = new FieldBuilder[fieldsCount];  
+		this.fieldTypes = new FType[fieldsCount];  
+		this.fieldNames = new String[fieldsCount];  
 	}
 
 	public Doc addDoc(String id) {
 		bstr.set(id);
-		return documents.add(bstr);
+		return documents.add(bstr, fieldsCount);
+	}
+	
+	private int getFieldIndex(String field) {
+		Integer findex = fieldIndexMap.get(field);
+		if(findex == null) {
+			findex = new Integer(fieldIndexMap.size());
+			fieldIndexMap.put(field, findex);
+		}
+		return findex.intValue(); 
 	}
 	
 	public void addNum(Doc doc, String field, long value) {
-		numericFields.add(field);
-		doc.addNum(field, value);
+		int fieldIndex = getFieldIndex(field);
+		fieldTypes[fieldIndex] = FType.NUMERIC;
+		fieldNames[fieldIndex] = field;
+		
+		doc.addNumField(fieldIndex, value);
 	}
 
 	public void addTerm(Doc doc, String field, String term) {
-		FieldBuilder b = fields.get(field);
-		if(b == null) {
-			b = new FieldBuilder(field);
-			fields.put(field, b);
-		}
+		int fieldIndex = getFieldIndex(field);
+		fieldTypes[fieldIndex] = FType.TEXT;
+		fieldNames[fieldIndex] = field;
+		
+		FieldBuilder b = fieldBuilders[fieldIndex];
+		if(b == null) b = fieldBuilders[fieldIndex] = new FieldBuilder(field);
 		orig.set(term);
 		bstr.set(term.toLowerCase());
 		Term t = b.add(bstr, orig);
-		doc.addField(field, t);
+		doc.addTextField(fieldIndex, t);
 	}
 
-	public void addLink(Doc doc, String link, Doc linkedDoc) {
-		linkFields.add(link);
-		doc.addLink(link, linkedDoc);
+	public void addLink(Doc doc, String field, Doc linkedDoc) {
+		int fieldIndex = getFieldIndex(field);
+		fieldTypes[fieldIndex] = FType.LINK;
+		fieldNames[fieldIndex] = field;
+		
+		doc.addLinkField(fieldIndex, linkedDoc);
 	}
 
 }

@@ -19,73 +19,106 @@ package com.dell.doradus.olap.builder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.store.FieldWriter;
+import com.dell.doradus.olap.store.NumWriterMV;
 
+@SuppressWarnings("unchecked")
 public class Doc {
 	
 	public BSTR id;
 	public int number;
 	public boolean deleted;
 
-	public Map<String, List<Long>> numerics = new HashMap<String, List<Long>>(1);
-	public Map<String, List<Term>> fields = new HashMap<String, List<Term>>(1);
-	public Map<String, List<Doc>> links = new HashMap<String, List<Doc>>(1);
+	private Object[] values;
 	
 	public static Comparator<Doc> COMP_ID = new DocIdComparator();
 	public static Comparator<Doc> COMP_NO = new DocNumberComparator();
 	
-	public Doc(BSTR id) {
+	public Doc(BSTR id, int fieldsCount) {
 		this.id = new BSTR(id);
+		values = new Object[fieldsCount];
 	}
 
-	public void addNum(String field, long value) {
-		List<Long> f = numerics.get(field);
-		if(f == null) {
-			f = new ArrayList<Long>(1);
-			numerics.put(field, f);
-		}
-		f.add(value);
+	public void addNumField(int fieldIndex, long value) {
+		Object item = values[fieldIndex];
+		Long val = new Long(value);
+		if(item == null) values[fieldIndex] = val;
+		else if(item instanceof Long) {
+			List<Long> lst = new ArrayList<Long>(2);
+			lst.add((Long)item);
+			lst.add(val);
+			values[fieldIndex] = lst;
+		} else ((List<Long>)item).add(val);
 	}
 	
 
-	public void addField(String field, Term value) {
-		List<Term> f = fields.get(field);
-		if(f == null) {
-			f = new ArrayList<Term>(1);
-			fields.put(field, f);
-		}
-		f.add(value);
+	public void addTextField(int fieldIndex, Term value) {
+		Object item = values[fieldIndex];
+		if(item == null) values[fieldIndex] = value;
+		else if(item instanceof Term) {
+			List<Term> lst = new ArrayList<Term>(2);
+			lst.add((Term)item);
+			lst.add(value);
+			values[fieldIndex] = lst;
+		} else ((List<Term>)item).add(value);
 	}
 
-	public void addLink(String link, Doc linkedDoc) {
-		List<Doc> d = links.get(link);
-		if(d == null) {
-			d = new ArrayList<Doc>(1);
-			links.put(link, d);
-		}
-		d.add(linkedDoc);
+	public void addLinkField(int fieldIndex, Doc linkedDoc) {
+		Object item = values[fieldIndex];
+		if(item == null) values[fieldIndex] = linkedDoc;
+		else if(item instanceof Doc) {
+			List<Doc> lst = new ArrayList<Doc>(2);
+			lst.add((Doc)item);
+			lst.add(linkedDoc);
+			values[fieldIndex] = lst;
+		} else ((List<Doc>)item).add(linkedDoc);
 	}
 
-	public void flushField(String field, FieldWriter writer) {
-		List<Term> list = fields.get(field);
-		if(list == null) return;
-		Collections.sort(list, Term.COMP_NO);
-		for(Term t : list) {
-			writer.add(number, t.number);
+	public void flushNumField(int fieldIndex, NumWriterMV writer) {
+		Object item = values[fieldIndex];
+		if(item == null) return;
+		if(item instanceof Long) {
+			Long value = (Long)item;
+			writer.add(number, value.longValue());
+		} else {
+			List<Long> list = (List<Long>)item;
+			Collections.sort(list);
+			for(Long v : list) {
+				writer.add(number, v.longValue());
+			}
+		}
+	}
+	
+	public void flushTextField(int fieldIndex, FieldWriter writer) {
+		Object item = values[fieldIndex];
+		if(item == null) return;
+		if(item instanceof Term) {
+			Term term = (Term)item;
+			writer.add(number, term.number);
+		} else {
+			List<Term> list = (List<Term>)item;
+			Collections.sort(list, Term.COMP_NO);
+			for(Term t : list) {
+				writer.add(number, t.number);
+			}
 		}
 	}
 
-	public void flushLink(String link, FieldWriter writer) {
-		List<Doc> list = links.get(link);
-		if(list == null) return;
-		Collections.sort(list, Doc.COMP_NO);
-		for(Doc d : list) {
-			writer.add(number, d.number);
+	public void flushLinkField(int fieldIndex, FieldWriter writer) {
+		Object item = values[fieldIndex];
+		if(item == null) return;
+		if(item instanceof Doc) {
+			Doc doc = (Doc)item;
+			writer.add(number, doc.number);
+		} else {
+			List<Doc> list = (List<Doc>)item;
+			Collections.sort(list, Doc.COMP_NO);
+			for(Doc d : list) {
+				writer.add(number, d.number);
+			}
 		}
 	}
 

@@ -17,9 +17,7 @@
 package com.dell.doradus.olap.builder;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.dell.doradus.olap.io.BSTR;
@@ -33,10 +31,10 @@ public class IdBuilder {
 	private Doc[] list = null;
 	private BitVector bvDeleted = null;
 	
-	public Doc add(BSTR id) {
+	public Doc add(BSTR id, int fieldsCount) {
 		Doc d = docs.get(id);
 		if(d == null) {
-			d = new Doc(id);
+			d = new Doc(id, fieldsCount);
 			docs.put(d.id, d);
 		}
 		return d;
@@ -49,7 +47,6 @@ public class IdBuilder {
 			list[c++] = doc;
 		}
 		docs = null;
-		//Collections.sort(list, Doc.COMP_ID);
 		Arrays.sort(list, Doc.COMP_ID);
 		for(int i = 0; i < list.length; i++) {
 			Doc doc = list[i];
@@ -63,26 +60,21 @@ public class IdBuilder {
 		if(bvDeleted != null) writer.setDeletedVector(bvDeleted);
 	}
 	
-	public void flush(String field, NumWriterMV writer) {
+	public void flushNumField(int fieldIndex, NumWriterMV writer) {
 		for(Doc d : list) {
-			List<Long> nums = d.numerics.get(field);
-			if(nums == null) continue;
-			Collections.sort(nums);
-			for(Long num : nums) {
-				writer.add(d.number, num.longValue());
-			}
+			d.flushNumField(fieldIndex, writer);
 		}
 	}
 
-	public void flushField(String field, FieldWriter writer) {
+	public void flushTextField(int fieldIndex, FieldWriter writer) {
 		for(Doc d : list) {
-			d.flushField(field, writer);
+			d.flushTextField(fieldIndex, writer);
 		}
 	}
 	
-	public void flushLink(String link, FieldWriter writer) {
+	public void flushLinkField(int fieldIndex, FieldWriter writer) {
 		for(Doc d : list) {
-			d.flushLink(link, writer);
+			d.flushLinkField(fieldIndex, writer);
 		}
 	}
 	
