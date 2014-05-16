@@ -913,6 +913,8 @@ final public class TableDefinition {
                     inverseFieldDef.setName(linkInverse);
                     inverseFieldDef.setLinkInverse(fieldName);
                     inverseFieldDef.setLinkExtent(m_tableName);
+                    // by default, links are multi-valued
+                    inverseFieldDef.setCollection(true);
                     addFieldDefinition(inverseFieldDef);
                 } else {
                     // Inverse was explicitly defined. Ensure it points back to this link

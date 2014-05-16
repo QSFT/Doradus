@@ -51,6 +51,8 @@ public class NumSearcher {
 			VInputStream mask_stream = dir.open(table + "." + field + ".num.mask");
 			mask_stream.read(m_mask.getBuffer(), 0, m_mask.getBuffer().length);  
 		}
+		
+		if(dir.fileExists(table + "." + field + ".pos")) throw new RuntimeException("Cannot open mv num field in sv mode");
 	}
 
 	public boolean isDefined(int doc) { return m_values == null ? false : m_mask == null ? true : m_mask.get(doc); }

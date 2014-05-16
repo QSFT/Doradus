@@ -29,7 +29,6 @@ import com.dell.doradus.common.CommonDefs;
 import com.dell.doradus.common.DBObject;
 import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.FieldDefinition;
-import com.dell.doradus.common.FieldType;
 import com.dell.doradus.common.ScheduleDefinition;
 import com.dell.doradus.common.StatisticDefinition;
 import com.dell.doradus.common.TableDefinition;

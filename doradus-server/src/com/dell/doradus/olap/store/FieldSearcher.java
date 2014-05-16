@@ -71,6 +71,12 @@ public class FieldSearcher {
 	public int fields() { return m_fields; }
 	public boolean isSingleValued() { return m_bSingleValued; }
 	
+	public int sv_get(int doc) {
+		if(m_docterms == null) return -1;
+		else if(m_bSingleValued) return m_docterms[doc];
+		else return m_positions[doc] == m_positions[doc + 1] ? -1 : m_docterms[m_positions[doc]];  
+	}
+	
 	public void fields(int doc, IntIterator iter) {
 		if(m_docterms == null) {
 			iter.setup(null, 0, 0);
@@ -147,7 +153,21 @@ public class FieldSearcher {
 	
 	
 	public void fill(int term, Result r) {
-		fill(term, term + 1, r);
+		if(m_docterms == null) return;
+		
+		if(m_bSingleValued) {
+			for(int i = 0; i < m_documents; i++) {
+				if(m_docterms[i] == term) r.set(i);
+			}
+		} else {
+			for(int i = 0; i < m_documents; i++) {
+				int st = m_positions[i];
+				int fn = m_positions[i + 1];
+				for(int j = st; j < fn; j++) {
+					if(m_docterms[j] == term) r.set(i);
+				}
+			}
+		}
 	}
 	
 	public void fill(int min, int max, Result r) {

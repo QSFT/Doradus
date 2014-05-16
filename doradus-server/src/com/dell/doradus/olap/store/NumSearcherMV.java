@@ -88,15 +88,23 @@ public class NumSearcherMV {
 		else return m_values.get(m_positions[doc] + index);
 	}
 	
-	public boolean isSVDefined(int doc) { return m_values == null ? false : m_mask == null ? true : m_mask.get(doc); }
-	public boolean isSVNull(int doc) { return !isSVDefined(doc); }
+	public boolean sv_isNull(int doc) {
+		if(m_values == null) return true;
+		else if(m_bSingleValued) return m_mask == null ? false : !m_mask.get(doc);
+		else return m_positions[doc + 1] == m_positions[doc]; 
+	}
+	public long sv_get(int doc) {
+		if(sv_isNull(doc)) throw new RuntimeException("sv_get: no value");
+		return m_values.get(doc);
+	}
+	
 	public boolean isNull(int doc) { return size(doc) == 0; }
 	
 	public void fill(long value, Result r) {
+		if(m_values == null) return;
 		if(m_bSingleValued) {
-			if(m_values == null) return;
 			for(int i = 0; i < m_values.size(); i++) {
-				if(isSVNull(i)) continue;
+				if(sv_isNull(i)) continue;
 				if(m_values.get(i) != value) continue; 
 				r.set(i);
 			}
@@ -118,7 +126,7 @@ public class NumSearcherMV {
 		if(m_bSingleValued) {
 			if(m_mask == null) { return; }
 			for(int i = 0; i < m_values.size(); i++) {
-				if(isSVNull(i)) r.set(i);
+				if(sv_isNull(i)) r.set(i);
 			}
 		} else fillCount(0, 1, r);
 	}
@@ -127,7 +135,7 @@ public class NumSearcherMV {
 		if(m_values == null) return;
 		if(m_bSingleValued) {
 			for(int i = 0; i < m_values.size(); i++) {
-				if(isSVNull(i)) continue;
+				if(sv_isNull(i)) continue;
 				if(m_values.get(i) < start) continue; 
 				if(m_values.get(i) >= finish) continue; 
 				r.set(i);

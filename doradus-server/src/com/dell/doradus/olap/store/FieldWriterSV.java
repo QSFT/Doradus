@@ -33,7 +33,7 @@ public class FieldWriterSV {
 	public int getDocsCount() { return m_docsCount; }
 	public int getValuesCount() { return m_maxTerm + 1; }
 	
-	public void add(int doc, int term) {
+	public void set(int doc, int term) {
 		if(term < 0) return;
 		if(m_maxTerm < term) m_maxTerm = term;
 		m_docs[doc] = term;

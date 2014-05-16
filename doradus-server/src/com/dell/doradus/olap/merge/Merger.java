@@ -164,11 +164,9 @@ public class Merger {
             	for(int j = 0; j < remap.size(i); j++) {
             		int doc = remap.get(i, j);
             		if(doc < 0) continue;
-            		int sz = num_searcher.size(j);
-            		for(int k = 0; k < sz; k++) {
-                		long d = num_searcher.get(j, k);
-                		num_writer.add(doc, d); 
-            		}
+            		if(num_searcher.sv_isNull(j)) continue;
+            		long d = num_searcher.sv_get(j);
+            		num_writer.add(doc, d); 
             	}
             }
             
@@ -230,20 +228,16 @@ public class Merger {
         else {
 	        FieldWriterSV field_writer = new FieldWriterSV(docRemap.dstSize());
 	        
-	        HeapList<IxSeg> heap = new HeapList<IxSeg>(sources.size() - 1);
-	        IxSeg current = null;
-	        for(int i = 0; i < sources.size(); i++) {
-	            current = new IxSeg(i, docRemap, valRemap, new FieldSearcher(sources.get(i), table, field));
-	            current.next();
-	            current = heap.AddEx(current);
-	        }
-	
-	        while (current.doc != Integer.MAX_VALUE)
-	        {
-	        	field_writer.add(current.doc, current.val);
-	            current.next();
-	            current = heap.AddEx(current);
-	        }
+            for(int i = 0; i < sources.size(); i++) {
+            	FieldSearcher field_searcher = new FieldSearcher(sources.get(i), table, field);
+            	for(int j = 0; j < docRemap.size(i); j++) {
+            		int doc = docRemap.get(i, j);
+            		if(doc < 0) continue;
+            		int d = field_searcher.sv_get(j);
+            		if(d < 0) continue;
+            		field_writer.set(doc, valRemap.get(i, d));
+            	}
+            }
 	        
 	        field_writer.close(destination, table, field);
 	        stats.addTextField(fieldDef, field_writer);
@@ -258,26 +252,45 @@ public class Merger {
 		
         Remap docRemap = remaps.get(table);
         Remap valRemap = remaps.get(fieldDef.getLinkExtent());
-        
-        FieldWriter field_writer = new FieldWriter(docRemap.dstSize());
-        
-        HeapList<IxVal> heap = new HeapList<IxVal>(sources.size() - 1);
-        IxVal current = null;
-        for(int i = 0; i < sources.size(); i++) {
-            current = new IxVal(i, docRemap, valRemap, new FieldSearcher(sources.get(i), table, link));
-            current.next();
-            current = heap.AddEx(current);
-        }
 
-        while (current.doc != Integer.MAX_VALUE)
-        {
-        	field_writer.add(current.doc, current.val);
-            current.next();
-            current = heap.AddEx(current);
+        if(fieldDef.isCollection()) {
+	        FieldWriter field_writer = new FieldWriter(docRemap.dstSize());
+	        
+	        HeapList<IxVal> heap = new HeapList<IxVal>(sources.size() - 1);
+	        IxVal current = null;
+	        for(int i = 0; i < sources.size(); i++) {
+	            current = new IxVal(i, docRemap, valRemap, new FieldSearcher(sources.get(i), table, link));
+	            current.next();
+	            current = heap.AddEx(current);
+	        }
+	
+	        while (current.doc != Integer.MAX_VALUE)
+	        {
+	        	field_writer.add(current.doc, current.val);
+	            current.next();
+	            current = heap.AddEx(current);
+	        }
+	        
+	        field_writer.close(destination, table, link);
+	        stats.addLinkField(fieldDef, field_writer);
         }
-        
-        field_writer.close(destination, table, link);
-        stats.addLinkField(fieldDef, field_writer);
+        else {
+	        FieldWriterSV field_writer = new FieldWriterSV(docRemap.dstSize());
+	        
+            for(int i = 0; i < sources.size(); i++) {
+            	FieldSearcher field_searcher = new FieldSearcher(sources.get(i), table, link);
+            	for(int j = 0; j < docRemap.size(i); j++) {
+            		int doc = docRemap.get(i, j);
+            		if(doc < 0) continue;
+            		int d = field_searcher.sv_get(j);
+            		if(d < 0) continue;
+            		field_writer.set(doc, valRemap.get(i, d));
+            	}
+            }
+	        
+	        field_writer.close(destination, table, link);
+	        stats.addTextField(fieldDef, field_writer);
+        }
     }
 
 }
