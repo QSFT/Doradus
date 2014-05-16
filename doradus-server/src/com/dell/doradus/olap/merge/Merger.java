@@ -34,7 +34,9 @@ import com.dell.doradus.olap.store.FieldWriterSV;
 import com.dell.doradus.olap.store.IdReader;
 import com.dell.doradus.olap.store.IdWriter;
 import com.dell.doradus.olap.store.NumSearcher;
+import com.dell.doradus.olap.store.NumSearcherMV;
 import com.dell.doradus.olap.store.NumWriter;
+import com.dell.doradus.olap.store.NumWriterMV;
 import com.dell.doradus.olap.store.SegmentStats;
 import com.dell.doradus.olap.store.ValueReader;
 import com.dell.doradus.olap.store.ValueWriter;
@@ -132,21 +134,48 @@ public class Merger {
 		String table = fieldDef.getTableName();
 		String field = fieldDef.getName();
 		Remap remap = remaps.get(table);
-        NumWriter num_writer = new NumWriter(remap.dstSize());
-        
-        for(int i = 0; i < sources.size(); i++) {
-        	NumSearcher num_searcher = new NumSearcher(sources.get(i), table, field);
-        	for(int j = 0; j < remap.size(i); j++) {
-        		if(num_searcher.isNull(j)) continue;
-        		long d = num_searcher.get(j);
-        		int doc = remap.get(i, j);
-        		if(doc < 0) continue;
-        		num_writer.add(doc, d); 
-        	}
+		
+        if(fieldDef.isCollection()) {
+            NumWriterMV num_writer = new NumWriterMV(remap.dstSize());
+	        
+	        HeapList<IxNum> heap = new HeapList<IxNum>(sources.size() - 1);
+	        IxNum current = null;
+	        for(int i = 0; i < sources.size(); i++) {
+	            current = new IxNum(i, remap, new NumSearcherMV(sources.get(i), table, field));
+	            current.next();
+	            current = heap.AddEx(current);
+	        }
+	
+	        while (current.doc != Integer.MAX_VALUE)
+	        {
+	        	num_writer.add(current.doc, current.num);
+	            current.next();
+	            current = heap.AddEx(current);
+	        }
+	        
+	        num_writer.close(destination, table, field);
+	        stats.addNumField(fieldDef, num_writer);
+        }
+        else {
+            NumWriter num_writer = new NumWriter(remap.dstSize());
+            
+            for(int i = 0; i < sources.size(); i++) {
+            	NumSearcherMV num_searcher = new NumSearcherMV(sources.get(i), table, field);
+            	for(int j = 0; j < remap.size(i); j++) {
+            		int doc = remap.get(i, j);
+            		if(doc < 0) continue;
+            		int sz = num_searcher.size(j);
+            		for(int k = 0; k < sz; k++) {
+                		long d = num_searcher.get(j, k);
+                		num_writer.add(doc, d); 
+            		}
+            	}
+            }
+            
+            num_writer.close(destination, table, field);
+            stats.addNumField(fieldDef, num_writer);
         }
         
-        num_writer.close(destination, table, field);
-        stats.addNumField(fieldDef, num_writer);
     }
 	
     private void mergeTextField(FieldDefinition fieldDef) {

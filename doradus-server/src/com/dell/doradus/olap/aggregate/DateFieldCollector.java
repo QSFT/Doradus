@@ -25,10 +25,10 @@ import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.XType;
 import com.dell.doradus.olap.store.CubeSearcher;
-import com.dell.doradus.olap.store.NumSearcher;
+import com.dell.doradus.olap.store.NumSearcherMV;
 
 public class DateFieldCollector extends EndFieldCollector {
-	private NumSearcher m_searcher;
+	private NumSearcherMV m_searcher;
 	private String m_truncate;
 	private long m_minDate;
 	private long m_maxDate;
@@ -63,7 +63,7 @@ public class DateFieldCollector extends EndFieldCollector {
 
 	@Override public int getIndex(int doc) {
 		if(m_searcher.isNull(doc)) return -1; 
-		long v = m_searcher.get(doc);
+		long v = m_searcher.get(doc, 0);
 		if(v == 0) return -1;
 		v = (v + m_shift) / m_divisor - m_minDate;
 		int pos = (int) v;

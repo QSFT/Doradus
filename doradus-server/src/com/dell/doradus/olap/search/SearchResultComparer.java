@@ -20,6 +20,7 @@ import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.FieldSearcher;
 import com.dell.doradus.olap.store.IntIterator;
 import com.dell.doradus.olap.store.NumSearcher;
+import com.dell.doradus.olap.store.NumSearcherMV;
 import com.dell.doradus.search.aggregate.AggregationGroupItem;
 import com.dell.doradus.search.aggregate.SortOrder;
 import com.dell.doradus.search.util.HeapList;
@@ -44,12 +45,12 @@ public class SearchResultComparer {
 		DocAndField cur = new DocAndField();
 		
 		if(NumSearcher.isNumericType(item.fieldDef.getType())) {
-			NumSearcher s = searcher.getNumSearcher(item.fieldDef.getTableName(), item.fieldDef.getName());
+			NumSearcherMV s = searcher.getNumSearcher(item.fieldDef.getTableName(), item.fieldDef.getName());
 			for(int i = 0; i < result.size(); i++) {
 				if(!result.get(i)) continue;
 				if(cur == null) cur = new DocAndField();
 				cur.doc = i;
-				cur.field = s.isNull(i) ? Long.MIN_VALUE : s.get(i);
+				cur.field = s.isNull(i) ? Long.MIN_VALUE : s.get(i, 0);
 				if(!order.ascending) cur.field = -cur.field;
 				cur = heap.AddEx(cur);
 			}

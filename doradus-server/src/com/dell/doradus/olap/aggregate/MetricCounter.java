@@ -21,7 +21,7 @@ import com.dell.doradus.olap.search.Result;
 import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.FieldSearcher;
 import com.dell.doradus.olap.store.IntIterator;
-import com.dell.doradus.olap.store.NumSearcher;
+import com.dell.doradus.olap.store.NumSearcherMV;
 
 public abstract class MetricCounter {
 	
@@ -60,15 +60,17 @@ public abstract class MetricCounter {
 	}
 	
 	public static class Num extends MetricCounter {
-		private NumSearcher m_ns;
+		private NumSearcherMV m_ns;
 		
 		public Num(FieldDefinition fieldDef, CubeSearcher cs) {
 			m_ns = cs.getNumSearcher(fieldDef.getTableName(), fieldDef.getName());
 		}
 		
 		@Override public void add(int doc, IMetricValue value) {
-			if(m_ns.isNull(doc)) return; 
-			value.add(m_ns.get(doc));
+			int fcount = m_ns.size((int)doc);
+			for(int index = 0; index < fcount; index++) {
+				value.add(m_ns.get(doc, index));
+			}
 		}
 	}
 	

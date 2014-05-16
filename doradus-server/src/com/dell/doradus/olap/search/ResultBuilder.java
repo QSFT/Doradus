@@ -33,6 +33,7 @@ import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.FieldSearcher;
 import com.dell.doradus.olap.store.IdSearcher;
 import com.dell.doradus.olap.store.NumSearcher;
+import com.dell.doradus.olap.store.NumSearcherMV;
 import com.dell.doradus.olap.store.ValueSearcher;
 import com.dell.doradus.olap.xlink.XLinkContext;
 import com.dell.doradus.olap.xlink.XLinkQuery;
@@ -199,11 +200,11 @@ public class ResultBuilder {
 			} else if(NumSearcher.isNumericType(f.getType())) {
 				if(!bq.operation.equals(BinaryQuery.EQUALS)) throw new IllegalArgumentException("Contains is not supported for numeric types");
 				if(value == null) {
-					NumSearcher num_searcher = searcher.getNumSearcher(tableDef.getTableName(), field);
+					NumSearcherMV num_searcher = searcher.getNumSearcher(tableDef.getTableName(), field);
 					num_searcher.fillNull(r);
 				} else {
 					if(value.indexOf('*') >= 0 ||value.indexOf('?') >= 0) throw new IllegalArgumentException("Wildcard search not supported for numeric types");
-					NumSearcher num_searcher = searcher.getNumSearcher(tableDef.getTableName(), field);
+					NumSearcherMV num_searcher = searcher.getNumSearcher(tableDef.getTableName(), field);
 					num_searcher.fill(NumSearcher.parse(value, f.getType()), r);
 				}
 			} else throw new IllegalArgumentException("Field type '" + f.getType() + "' not supported");
@@ -317,7 +318,24 @@ public class ResultBuilder {
 					}
 				}
 				else throw new IllegalArgumentException(bq.operation + " is not supported");
-			} else if(NumSearcher.isNumericType(f.getType())) throw new IllegalArgumentException("MVS query for numerics is not supported");
+			} else if(NumSearcher.isNumericType(f.getType())) {
+				if(LinkQuery.ANY.equals(mvs.quantifier)) {
+					return searchInternal(tableDef, mvs.innerQuery, searcher);
+				}
+				else if(LinkQuery.NONE.equals(mvs.quantifier)) {
+					Result result = searchInternal(tableDef, mvs.innerQuery, searcher);
+					result.not();
+					return result;
+				}
+				else if(LinkQuery.ALL.equals(mvs.quantifier)) {
+					Result result = searchInternal(tableDef, mvs.innerQuery, searcher);
+					NumSearcherMV ns = searcher.getNumSearcher(tableDef.getTableName(), field);
+					Result countOne = new Result(result.size());
+					ns.fillCount(1,2,countOne);
+					result.and(countOne);
+					return result;
+				}
+			}
 			else throw new IllegalArgumentException("Field type '" + f.getType() + "' not supported");
 			if(!LinkQuery.ANY.equals(mvs.quantifier)) r.not();
 		} else if(query instanceof LinkQuery) {
@@ -377,7 +395,7 @@ public class ResultBuilder {
 				if(rq.max != null) max = NumSearcher.parse(rq.max, f.getType());
 				if(!rq.minInclusive) min++;
 				if(rq.maxInclusive) max++;
-				NumSearcher num_searcher = searcher.getNumSearcher(tableDef.getTableName(), field);
+				NumSearcherMV num_searcher = searcher.getNumSearcher(tableDef.getTableName(), field);
 				num_searcher.fill(min, max, r);
 			} else throw new IllegalArgumentException("Field type '" + f.getType() + "' not supported");
 		} else if(query instanceof TransitiveLinkQuery) {
@@ -502,14 +520,16 @@ public class ResultBuilder {
 			//Months in Calendar start with 0 instead of 1
 			if(datePart == Calendar.MONTH) partValue--;
 			
-			NumSearcher num_searcher = searcher.getNumSearcher(tableDef.getTableName(), field);
+			NumSearcherMV num_searcher = searcher.getNumSearcher(tableDef.getTableName(), field);
 			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 			for(int i = 0; i < r.size(); i++) {
-				if(num_searcher.isNull(i)) continue; 
-				long millis = num_searcher.get(i);
-				if(millis == 0) continue;
-				cal.setTimeInMillis(millis);
-				if(cal.get(datePart) == partValue) r.set(i);
+				int sz = num_searcher.size(i);
+				for(int j = 0; j < sz; j++) {
+					long millis = num_searcher.get(i, j);
+					if(millis == 0) continue;
+					cal.setTimeInMillis(millis);
+					if(cal.get(datePart) == partValue) r.set(i);
+				}
 			}
 			
 		} else throw new IllegalArgumentException("Query " + query.getClass().getSimpleName() + " not supported");

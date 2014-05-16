@@ -63,12 +63,12 @@ public class CubeSearcher {
 		}
 	}
 
-	public NumSearcher getNumSearcher(String table, String field) {
+	public NumSearcherMV getNumSearcher(String table, String field) {
 		String key = getId() + "/num/" + table + "/" + field;
 		synchronized(this) {
-			NumSearcher s = (NumSearcher)m_fieldsCache.get(key);
+			NumSearcherMV s = (NumSearcherMV)m_fieldsCache.get(key);
 			if(s == null) {
-				s = new NumSearcher(m_directory, table, field);
+				s = new NumSearcherMV(m_directory, table, field);
 				m_fieldsCache.put(key, s, s.cacheSize() + 2 * key.length());
 			}
 			return s;

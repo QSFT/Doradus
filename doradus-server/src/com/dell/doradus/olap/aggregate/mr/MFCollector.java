@@ -35,13 +35,14 @@ import com.dell.doradus.olap.store.FieldSearcher;
 import com.dell.doradus.olap.store.IdSearcher;
 import com.dell.doradus.olap.store.IntIterator;
 import com.dell.doradus.olap.store.NumSearcher;
+import com.dell.doradus.olap.store.NumSearcherMV;
 import com.dell.doradus.olap.store.ValueSearcher;
 import com.dell.doradus.olap.xlink.DirectXLinkCollector;
 import com.dell.doradus.olap.xlink.InverseXLinkCollector;
 import com.dell.doradus.olap.xlink.XLinkGroupContext.XGroups;
 import com.dell.doradus.search.aggregate.AggregationGroup;
-import com.dell.doradus.search.aggregate.AggregationGroupItem;
 import com.dell.doradus.search.aggregate.AggregationGroup.SubField;
+import com.dell.doradus.search.aggregate.AggregationGroupItem;
 
 public abstract class MFCollector {
 	public CubeSearcher searcher;
@@ -344,7 +345,7 @@ public abstract class MFCollector {
 	
 	public static class EndNumField extends MFCollector
 	{
-		private NumSearcher m_numSearcher;
+		private NumSearcherMV m_numSearcher;
 		private MFCollector m_collector;
 		
 		public EndNumField(CubeSearcher searcher, FieldDefinition fieldDef, AggregationGroup group) {
@@ -376,8 +377,10 @@ public abstract class MFCollector {
 		}
 		
 		@Override public void collect(long doc, Set<Long> values) {
-			if(m_numSearcher.isNull((int)doc)) return;
-			m_collector.collect(m_numSearcher.get((int)doc), values);
+			int fcount = m_numSearcher.size((int)doc);
+			for(int index = 0; index < fcount; index++) {
+				m_collector.collect(m_numSearcher.get((int)doc, index), values);
+			}
 		}
 		
 		@Override public void collectEmptyGroups(Set<Long> values) { m_collector.collectEmptyGroups(values); }

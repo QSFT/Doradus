@@ -18,11 +18,11 @@ package com.dell.doradus.olap.search;
 
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.olap.store.CubeSearcher;
-import com.dell.doradus.olap.store.NumSearcher;
+import com.dell.doradus.olap.store.NumSearcherMV;
 import com.dell.doradus.search.util.HeapList;
 
 public class NumFieldCollector extends AggregationCollector {
-	private NumSearcher m_num_searcher;
+	private NumSearcherMV m_num_searcher;
 	private int[] m_counts;
 	private int[] m_lastDocs;
 	private boolean m_isPositiveOnly; 
@@ -42,17 +42,19 @@ public class NumFieldCollector extends AggregationCollector {
 	}
 	
 	@Override public void collect(int doc, int value) {
-		if(m_num_searcher.isNull(value)) return; 
-		long v = m_num_searcher.get(value);
-		if(m_isPositiveOnly) {
-			if(v != 0) value = (int)(v - m_min + 1);
-			else value = 0;
-		} else {
-			value = (int)(v - m_min);
+		int count = m_num_searcher.size(value);
+		for(int index = 0; index < count; index++) {
+			long v = m_num_searcher.get(value, index);
+			if(m_isPositiveOnly) {
+				if(v != 0) v = (int)(v - m_min + 1);
+				else v = 0;
+			} else {
+				v = (int)(v - m_min);
+			}
+			if(m_lastDocs[(int)v] == doc) return;
+			m_lastDocs[(int)v] = doc;
+			m_counts[(int)v]++;
 		}
-		if(m_lastDocs[value] == doc) return;
-		m_lastDocs[value] = doc;
-		m_counts[value]++;
 	}
 
 	@Override public GroupResult getResult(int top) {

@@ -24,7 +24,7 @@ import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.olap.XType;
 import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.IdSearcher;
-import com.dell.doradus.olap.store.NumSearcher;
+import com.dell.doradus.olap.store.NumSearcherMV;
 import com.dell.doradus.olap.store.ValueSearcher;
 
 public abstract class EndFieldCollector implements IFieldCollector {
@@ -96,7 +96,7 @@ public abstract class EndFieldCollector implements IFieldCollector {
 	}
 	
 	public static class BooleanCollector extends EndFieldCollector {
-		private NumSearcher m_searcher;
+		private NumSearcherMV m_searcher;
 		
 		public BooleanCollector(CubeSearcher searcher, FieldDefinition fieldDef) {
 			m_searcher = searcher.getNumSearcher(fieldDef.getTableName(), fieldDef.getName());
@@ -104,7 +104,7 @@ public abstract class EndFieldCollector implements IFieldCollector {
 		
 		@Override public int getSize() { return 2; }
 		
-		@Override public int getIndex(int doc) { return m_searcher.isNull(doc) ? -1 : (int)m_searcher.get(doc); }
+		@Override public int getIndex(int doc) { return m_searcher.isNull(doc) ? -1 : (int)m_searcher.get(doc, 0); }
 
 		@Override public String getFieldName(int field) { return XType.toString(field != 0); }
 		
@@ -113,7 +113,7 @@ public abstract class EndFieldCollector implements IFieldCollector {
 	}
 
 	public static class NumCollector extends EndFieldCollector {
-		private NumSearcher m_searcher;
+		private NumSearcherMV m_searcher;
 		private long m_max;
 		private long m_min;
 		
@@ -126,7 +126,7 @@ public abstract class EndFieldCollector implements IFieldCollector {
 		
 		@Override public int getSize() { return (int)(m_max - m_min) + 1 ; }
 		
-		@Override public int getIndex(int doc) { return m_searcher.isNull(doc) ? -1 : (int)(m_searcher.get(doc) - m_min); }
+		@Override public int getIndex(int doc) { return m_searcher.isNull(doc) ? -1 : (int)(m_searcher.get(doc, 0) - m_min); }
 
 		@Override public String getFieldName(int field) { return "" + (field + m_min); }
 		
@@ -154,7 +154,7 @@ public abstract class EndFieldCollector implements IFieldCollector {
 	}
 	
 	public static class NumBatchCollector extends EndFieldCollector {
-		private NumSearcher m_searcher;
+		private NumSearcherMV m_searcher;
 		private long[] m_batches;
 		
 		public NumBatchCollector(CubeSearcher searcher, FieldDefinition fieldDef, List<? extends Object> batches) {
@@ -169,7 +169,7 @@ public abstract class EndFieldCollector implements IFieldCollector {
 		
 		@Override public int getIndex(int doc) { 
 			if(m_searcher.isNull(doc)) return -1; 
-			long v = m_searcher.get(doc);
+			long v = m_searcher.get(doc, 0);
 			int pos = 0;
 			while(pos < m_batches.length && m_batches[pos] <= v) pos++;
 			return pos;
@@ -191,7 +191,7 @@ public abstract class EndFieldCollector implements IFieldCollector {
 	}
 
 	public static class NumDoubleBatchCollector extends EndFieldCollector {
-		private NumSearcher m_searcher;
+		private NumSearcherMV m_searcher;
 		private double[] m_batches;
 		
 		public NumDoubleBatchCollector(CubeSearcher searcher, FieldDefinition fieldDef, List<? extends Object> batches) {
@@ -206,7 +206,7 @@ public abstract class EndFieldCollector implements IFieldCollector {
 		
 		@Override public int getIndex(int doc) { 
 			if(m_searcher.isNull(doc)) return -1; 
-			long lv = m_searcher.get(doc);
+			long lv = m_searcher.get(doc, 0);
 			double v = Double.longBitsToDouble(lv);
 			int pos = 0;
 			while(pos < m_batches.length && m_batches[pos] <= v) pos++;
@@ -229,7 +229,7 @@ public abstract class EndFieldCollector implements IFieldCollector {
 	}
 
 	public static class NumFloatBatchCollector extends EndFieldCollector {
-		private NumSearcher m_searcher;
+		private NumSearcherMV m_searcher;
 		private float[] m_batches;
 		
 		public NumFloatBatchCollector(CubeSearcher searcher, FieldDefinition fieldDef, List<? extends Object> batches) {
@@ -244,7 +244,7 @@ public abstract class EndFieldCollector implements IFieldCollector {
 		
 		@Override public int getIndex(int doc) { 
 			if(m_searcher.isNull(doc)) return -1; 
-			long lv = m_searcher.get(doc);
+			long lv = m_searcher.get(doc, 0);
 			float v = Float.intBitsToFloat((int)lv);
 			int pos = 0;
 			while(pos < m_batches.length && m_batches[pos] <= v) pos++;

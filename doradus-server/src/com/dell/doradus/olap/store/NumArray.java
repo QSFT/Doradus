@@ -17,6 +17,7 @@
 package com.dell.doradus.olap.store;
 
 import com.dell.doradus.olap.io.VInputStream;
+import com.dell.doradus.olap.io.VOutputStream;
 
 public class NumArray {
 	private int m_size;
@@ -88,6 +89,52 @@ public class NumArray {
 			break;
 		default: throw new RuntimeException("Unknown bits: " + m_bits);
 		}
+	}
+	
+	public static byte writeArray(long[] values, long min, long max, VOutputStream stream) {
+		byte bits = 0;
+		int size = values.length;
+		stream.writeVInt(size);
+		if(max <= 1 && min >= 0) { // BitVector
+			bits = 1;
+			stream.writeByte(bits);
+			BitVector bv = new BitVector(size);
+			for(int i = 0; i < size; i++) {
+				if(values[i] != 0) bv.set(i);
+				else bv.clear(i);
+			}
+			stream.write(bv.getBuffer(), 0, bv.getBuffer().length);
+		}
+		else if(max <= Byte.MAX_VALUE && min >= Byte.MIN_VALUE) { // 1 byte
+			bits = 8;
+			stream.writeByte(bits);
+			for(int i = 0; i < size; i++) {
+				stream.writeByte((byte)values[i]);
+			}
+		}
+		else if(max <= Short.MAX_VALUE && min >= Short.MIN_VALUE) { // 2 bytes
+			bits = 16;
+			stream.writeByte(bits);
+			for(int i = 0; i < size; i++) {
+				stream.writeShort((short)values[i]);
+			}
+		}
+		else if(max <= Integer.MAX_VALUE && min >= Integer.MIN_VALUE) { // 4 bytes
+			bits = 32;
+			stream.writeByte(bits);
+			for(int i = 0; i < size; i++) {
+				stream.writeInt((int)values[i]);
+			}
+		}
+		else { // 8 bytes
+			bits = 64;
+			stream.writeByte(bits);
+			for(int i = 0; i < size; i++) {
+				stream.writeLong((long)values[i]);
+			}
+		}
+		stream.close();
+		return bits;
 	}
 	
 	public long cacheSize()

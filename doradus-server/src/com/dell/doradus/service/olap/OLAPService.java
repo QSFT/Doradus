@@ -386,8 +386,6 @@ public class OLAPService extends StorageService {
         if (fieldDef.isScalarField()) {
             Utils.require(Utils.isEmpty(fieldDef.getAnalyzerName()),
                           "'analyzer' not allowed for OLAP application fields:" + fieldDef);
-            Utils.require(fieldDef.getType() == FieldType.TEXT || !fieldDef.isCollection(),
-                          "Only text scalar fields can be collections: " + fieldDef);
         } else if (fieldDef.isLinkType()) {
             Utils.require(!fieldDef.isSharded(),
                           "Link and xlink fields cannot be sharded: {}", fieldDef);

@@ -20,11 +20,11 @@ import java.util.List;
 
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.olap.store.CubeSearcher;
-import com.dell.doradus.olap.store.NumSearcher;
+import com.dell.doradus.olap.store.NumSearcherMV;
 import com.dell.doradus.search.util.HeapList;
 
 public class NumBatchFieldCollector extends AggregationCollector {
-	private NumSearcher m_num_searcher;
+	private NumSearcherMV m_num_searcher;
 	private int[] m_counts;
 	private int[] m_lastDocs;
 	private long[] m_batches;
@@ -41,13 +41,15 @@ public class NumBatchFieldCollector extends AggregationCollector {
 	}
 	
 	@Override public void collect(int doc, int value) {
-		if(m_num_searcher.isNull(value)) return; 
-		long v = m_num_searcher.get(value);
-		int pos = 0;
-		while(pos < m_batches.length && m_batches[pos] <= v) pos++;
-		if(m_lastDocs[pos] == doc) return;
-		m_lastDocs[pos] = doc;
-		m_counts[pos]++;
+		int fcount = m_num_searcher.size(value);
+		for(int index = 0; index < fcount; index++) {
+			long v = m_num_searcher.get(value, index);
+			int pos = 0;
+			while(pos < m_batches.length && m_batches[pos] <= v) pos++;
+			if(m_lastDocs[pos] == doc) return;
+			m_lastDocs[pos] = doc;
+			m_counts[pos]++;
+		}
 	}
 
 	@Override public GroupResult getResult(int top) {

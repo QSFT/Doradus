@@ -18,11 +18,11 @@ package com.dell.doradus.olap.search;
 
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.olap.store.CubeSearcher;
-import com.dell.doradus.olap.store.NumSearcher;
+import com.dell.doradus.olap.store.NumSearcherMV;
 import com.dell.doradus.search.util.HeapList;
 
 public class BooleanFieldCollector extends AggregationCollector {
-	private NumSearcher m_num_searcher;
+	private NumSearcherMV m_num_searcher;
 	private int[] m_counts;
 	private int[] m_lastDocs;
 
@@ -34,12 +34,14 @@ public class BooleanFieldCollector extends AggregationCollector {
 	}
 	
 	@Override public void collect(int doc, int value) {
-		if(m_num_searcher.isNull(value)) return; 
-		long v = m_num_searcher.get(value);
-		value = (int) v;
-		if(m_lastDocs[value] == doc) return;
-		m_lastDocs[value] = doc;
-		m_counts[value]++;
+		int fcount = m_num_searcher.size(value);
+		for(int index = 0; index < fcount; index++) {
+			long v = m_num_searcher.get(value, index);
+			int val = (int) v;
+			if(m_lastDocs[val] == doc) return;
+			m_lastDocs[val] = doc;
+			m_counts[val]++;
+		}
 	}
 
 	@Override public GroupResult getResult(int top) {

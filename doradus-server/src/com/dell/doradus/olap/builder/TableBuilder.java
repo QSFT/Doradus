@@ -45,7 +45,7 @@ public class TableBuilder {
 	
 	public void addNum(Doc doc, String field, long value) {
 		numericFields.add(field);
-		doc.numerics.put(field, value);
+		doc.addNum(field, value);
 	}
 
 	public void addTerm(Doc doc, String field, String term) {

@@ -65,6 +65,20 @@ public class SegmentStats {
 		t.numFields.put(field.name, field);
 	}
 
+	public void addNumField(FieldDefinition fieldDef, NumWriterMV writer) {
+		Table t = tables.get(fieldDef.getTableName());
+		Table.NumField field = t.new NumField();
+		field.name = fieldDef.getName();
+		field.type = fieldDef.getType().toString();
+		field.min = writer.min;
+		field.max = writer.max;
+		field.min_pos = writer.min_pos;
+		field.bits = writer.bits;
+		field.doclistSize = writer.getDocListSize();
+		field.isSingleValued = writer.isSingleValued();
+		t.numFields.put(field.name, field);
+	}
+	
 	public void addTextField(FieldDefinition fieldDef, FieldWriter writer) {
 		Table t = tables.get(fieldDef.getTableName());
 		Table.TextField field = t.new TextField();
@@ -139,6 +153,8 @@ public class SegmentStats {
                 child.addValueNode("max", XType.toString(field.max), true);
                 child.addValueNode("min_pos", XType.toString(field.min_pos), true);
                 child.addValueNode("bits", XType.toString(field.bits), true);
+                child.addValueNode("doclistSize", XType.toString(field.doclistSize), true);
+                child.addValueNode("isSingleValued", XType.toString(field.isSingleValued), true);
                 child.addValueNode("memory", XType.sizeToString(field.memory()), true);
             }
             UNode textFieldsNode = tableNode.addMapNode("textFields");
@@ -180,6 +196,10 @@ public class SegmentStats {
 	                field.max = XType.getLong(childNode.getMemberValue("max"));
 	                field.min_pos = XType.getLong(childNode.getMemberValue("min_pos"));
 	                field.bits = XType.getInt(childNode.getMemberValue("bits"));
+	                Integer doclistsize = XType.getInt(childNode.getMemberValue("doclistSize"));
+                    field.doclistSize = doclistsize == null ? 0 : doclistsize;
+                    Boolean issinglevalued = XType.getBoolean(childNode.getMemberValue("isSingleValued"));
+                    field.isSingleValued = issinglevalued == null ? true : issinglevalued;
 	                table.numFields.put(field.name, field);
 	            }
 	        }
@@ -235,13 +255,18 @@ public class SegmentStats {
 			public long max;
 			public long min_pos;
 			public int bits;
+			public int doclistSize;
+			public boolean isSingleValued;
 			
 			public NumField() { }
 			public NumField(String name) { this.name = name; }
 			
 			public String table() { return Table.this.name; }
 			public int documents() { return Table.this.documents; }
-			public long memory() { return documents() * bits / 8; }
+			public long memory() {
+				if(isSingleValued) return documents() * bits / 8;
+				else return documents() * 4 + doclistSize * bits / 8;
+			}
 		}
 
 		public class TextField {

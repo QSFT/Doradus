@@ -17,14 +17,16 @@
 package com.dell.doradus.olap.builder;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.store.BitVector;
 import com.dell.doradus.olap.store.FieldWriter;
 import com.dell.doradus.olap.store.IdWriter;
-import com.dell.doradus.olap.store.NumWriter;
+import com.dell.doradus.olap.store.NumWriterMV;
 
 public class IdBuilder {
 	public Map<BSTR, Doc> docs = new HashMap<BSTR, Doc>();
@@ -61,10 +63,14 @@ public class IdBuilder {
 		if(bvDeleted != null) writer.setDeletedVector(bvDeleted);
 	}
 	
-	public void flush(String field, NumWriter writer) {
+	public void flush(String field, NumWriterMV writer) {
 		for(Doc d : list) {
-			Long v = d.numerics.get(field);
-			if(v != null) writer.add(d.number, v.longValue());
+			List<Long> nums = d.numerics.get(field);
+			if(nums == null) continue;
+			Collections.sort(nums);
+			for(Long num : nums) {
+				writer.add(d.number, num.longValue());
+			}
 		}
 	}
 

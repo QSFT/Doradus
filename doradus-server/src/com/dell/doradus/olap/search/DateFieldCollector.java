@@ -27,12 +27,12 @@ import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.XType;
 import com.dell.doradus.olap.store.CubeSearcher;
-import com.dell.doradus.olap.store.NumSearcher;
+import com.dell.doradus.olap.store.NumSearcherMV;
 import com.dell.doradus.search.util.HeapList;
 
 public class DateFieldCollector extends AggregationCollector {
 	//private static final long HOUR_MS = 3600 * 1000;
-	private NumSearcher m_num_searcher;
+	private NumSearcherMV m_num_searcher;
 	private String m_truncate;
 	private int[] m_counts;
 	private int[] m_lastDocs;
@@ -69,14 +69,16 @@ public class DateFieldCollector extends AggregationCollector {
 	}
 	
 	@Override public void collect(int doc, int value) {
-		if(m_num_searcher.isNull(value)) return; 
-		long v = m_num_searcher.get(value);
-		if(v == 0) return;
-		v = (v + m_shift) / m_divisor - m_minDate;
-		int pos = (int) v;
-		if(m_lastDocs[pos] == doc) return;
-		m_lastDocs[pos] = doc;
-		m_counts[pos]++;
+		int fcount = m_num_searcher.size(value);
+		for(int index = 0; index < fcount; index++) {
+			long v = m_num_searcher.get(value, index);
+			if(v == 0) return;
+			v = (v + m_shift) / m_divisor - m_minDate;
+			int pos = (int) v;
+			if(m_lastDocs[pos] == doc) return;
+			m_lastDocs[pos] = doc;
+			m_counts[pos]++;
+		}
 	}
 
 	@Override public GroupResult getResult(int top) {

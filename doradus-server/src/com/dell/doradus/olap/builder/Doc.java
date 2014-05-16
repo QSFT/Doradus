@@ -32,7 +32,7 @@ public class Doc {
 	public int number;
 	public boolean deleted;
 	
-	public Map<String, Long> numerics = new HashMap<String, Long>(1);
+	public Map<String, List<Long>> numerics = new HashMap<String, List<Long>>(1);
 	public Map<String, List<Term>> fields = new HashMap<String, List<Term>>(1);
 	public Map<String, List<Doc>> links = new HashMap<String, List<Doc>>(1);
 	
@@ -43,8 +43,14 @@ public class Doc {
 		this.id = new BSTR(id);
 	}
 	
-	public void setLong(String field, long value) {
-		numerics.put(field, new Long(value));
+	public void addNum(String field, long value) {
+		List<Long> f = numerics.get(field);
+		if(f == null) {
+			f = new ArrayList<Long>(1);
+			numerics.put(field, f);
+		}
+		f.add(value);
+		//numerics.put(field, new Long(value));
 	}
 	
 	public void addField(String field, Term value) {

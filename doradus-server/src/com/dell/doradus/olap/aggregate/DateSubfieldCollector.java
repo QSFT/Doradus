@@ -22,11 +22,11 @@ import java.util.GregorianCalendar;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.store.CubeSearcher;
-import com.dell.doradus.olap.store.NumSearcher;
+import com.dell.doradus.olap.store.NumSearcherMV;
 import com.dell.doradus.search.aggregate.AggregationGroup.SubField;
 
 public class DateSubfieldCollector extends EndFieldCollector {
-	private NumSearcher m_searcher;
+	private NumSearcherMV m_searcher;
 	private SubField m_subfield;
 	private Calendar m_calendar;
 	private int m_calendarField;
@@ -52,7 +52,7 @@ public class DateSubfieldCollector extends EndFieldCollector {
 
 	@Override public int getIndex(int doc) {
 		if(m_searcher.isNull(doc)) return -1; 
-		long v = m_searcher.get(doc);
+		long v = m_searcher.get(doc, 0);
 		if(v == 0) return -1;
 		m_calendar.setTimeInMillis(v);
 		int pos = m_calendar.get(m_calendarField);
