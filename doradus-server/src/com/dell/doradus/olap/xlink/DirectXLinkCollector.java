@@ -16,13 +16,10 @@
 
 package com.dell.doradus.olap.xlink;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.olap.aggregate.mr.MFCollector;
 import com.dell.doradus.olap.aggregate.mr.MGName;
+import com.dell.doradus.olap.collections.BdLongSet;
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.FieldSearcher;
@@ -35,32 +32,32 @@ public class DirectXLinkCollector extends MFCollector
 	private XGroups groups;
 	private FieldSearcher fs;
 	private IntIterator iter;
-	private List<Set<Long>> fieldSets = new ArrayList<Set<Long>>();
+	private BdLongSet[] fieldSets;
 	
 	public DirectXLinkCollector(CubeSearcher searcher, FieldDefinition fieldDef, XGroups groups) {
 		super(searcher);
 		this.groups = groups;
 		ValueSearcher vs = searcher.getValueSearcher(fieldDef.getTableName(), fieldDef.getXLinkJunction());
-		for(int i=0; i<vs.size(); i++) {
+		fieldSets = new BdLongSet[vs.size()];
+		for(int i = 0; i < vs.size(); i++) {
 			BSTR val = vs.getValue(i);
-			Set<Long> set = groups.groupsMap.get(val);
-			fieldSets.add(set);
+			BdLongSet set = groups.groupsMap.get(val);
+			fieldSets[i] = set;
 		}
 		fs = searcher.getFieldSearcher(fieldDef.getTableName(), fieldDef.getXLinkJunction());
 		iter = new IntIterator();
 	}
 	
-	@Override public void collect(long doc, Set<Long> values) {
+	@Override public void collect(long doc, BdLongSet values) {
 		fs.fields((int)doc, iter);
 		for(int i = 0; i < iter.count(); i++) {
 			int val = iter.get(i);
-			Set<Long> set = fieldSets.get(val);
+			BdLongSet set = fieldSets[val];
 			if(set == null) continue;
 			values.addAll(set);
 		}
 	}
 	
-	@Override public void collectEmptyGroups(Set<Long> values) { }
-	
 	@Override public MGName getField(long value) { return groups.groupNames.get((int)value); }
+	@Override public boolean requiresOrdering() { return false; }
 }

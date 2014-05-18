@@ -19,7 +19,6 @@ package com.dell.doradus.olap.aggregate.mr;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Set;
 import java.util.TimeZone;
 
 import com.dell.doradus.common.FieldDefinition;
@@ -27,6 +26,7 @@ import com.dell.doradus.common.FieldType;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.XType;
+import com.dell.doradus.olap.collections.BdLongSet;
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.search.Result;
 import com.dell.doradus.olap.search.ResultBuilder;
@@ -49,12 +49,12 @@ public abstract class MFCollector {
 	
 	public MFCollector(CubeSearcher searcher) { this.searcher = searcher; }
 	
-	public void collectEmptyGroups(Set<Long> values) { }
-	public abstract void collect(long doc, Set<Long> values);
+	public void collectEmptyGroups(BdLongSet values) { }
+	public abstract void collect(long doc, BdLongSet values);
 	public abstract MGName getField(long value);
+	public abstract boolean requiresOrdering(); 
 
 	public static MFCollector create(CubeSearcher searcher, AggregationGroup group) {
-		//Utils.require(group.stopWords == null, "TERMS function is not supported in OLAP");
 		AggregationGroupItem last = group.items.get(group.items.size() - 1);
 		FieldDefinition fieldDef = last.fieldDef;
 		MFCollector collector = null;
@@ -89,46 +89,48 @@ public abstract class MFCollector {
 
 	public static class NullField extends MFCollector
 	{
-		private static Long ZERO = new Long(0L); 
 		public NullField(CubeSearcher searcher) { super(searcher); }
-		@Override public void collect(long doc, Set<Long> values) { values.add(ZERO); }
-		@Override public MGName getField(long value) {
-			return new MGName("*");
-		}
+		@Override public void collect(long doc, BdLongSet values) { values.add(0); }
+		@Override public MGName getField(long value) { return new MGName("*"); }
+		@Override public boolean requiresOrdering() { return false; }
 	}
 	
 	public static class BooleanField extends MFCollector
 	{
 		public BooleanField(CubeSearcher searcher) { super(searcher); }
-		@Override public void collect(long doc, Set<Long> values) { values.add(doc); }
+		@Override public void collect(long doc, BdLongSet values) { values.add(doc); }
 		@Override public MGName getField(long value) {
 			return new MGName(value == 0 ? "false" : "true", new BSTR(value == 0 ? "0" : "1"));
 		}
+		@Override public boolean requiresOrdering() { return false; }
 	}
 	
 	public static class LongField extends MFCollector
 	{
 		public LongField(CubeSearcher searcher) { super(searcher); }
-		@Override public void collect(long doc, Set<Long> values) { values.add(doc); }
+		@Override public void collect(long doc, BdLongSet values) { values.add(doc); }
 		@Override public MGName getField(long value) { return new MGName(value); }
+		@Override public boolean requiresOrdering() { return false; }
 	}
 
 	public static class FloatField extends MFCollector
 	{
 		public FloatField(CubeSearcher searcher) { super(searcher); }
-		@Override public void collect(long doc, Set<Long> values) { values.add(doc); }
+		@Override public void collect(long doc, BdLongSet values) { values.add(doc); }
 		@Override public MGName getField(long value) {
 			return new MGName(XType.toString(Float.intBitsToFloat((int)value)), new BSTR(value));
 		}
+		@Override public boolean requiresOrdering() { return false; }
 	}
 
 	public static class DoubleField extends MFCollector
 	{
 		public DoubleField(CubeSearcher searcher) { super(searcher); }
-		@Override public void collect(long doc, Set<Long> values) { values.add(doc); }
+		@Override public void collect(long doc, BdLongSet values) { values.add(doc); }
 		@Override public MGName getField(long value) {
 			return new MGName(XType.toString(Double.longBitsToDouble(value)), new BSTR(value));
 		}
+		@Override public boolean requiresOrdering() { return false; }
 	}
 	
 	public class DateField extends MFCollector {
@@ -147,12 +149,12 @@ public abstract class MFCollector {
 			if ("SECOND".equals(m_truncate)) m_divisor = 1000;
 			else if ("MINUTE".equals(m_truncate)) m_divisor = 60 * 1000;
 			else if ("HOUR".equals(m_truncate)) m_divisor = 3600 * 1000;
-			//else if ("DAY".equals(m_truncate)) m_divisor = 24 * 3600 * 1000;
 			else m_divisor = 1 * 3600 * 1000;
 			m_Calendar = (GregorianCalendar)GregorianCalendar.getInstance(m_zone);
 		}
 
-		@Override public void collect(long doc, Set<Long> values) { values.add(doc / m_divisor); }
+		@Override public void collect(long doc, BdLongSet values) { values.add(doc / m_divisor); }
+		@Override public boolean requiresOrdering() { return false; }
 
 		@Override public MGName getField(long value) {
 			m_Calendar.setTimeInMillis(value * m_divisor);
@@ -203,16 +205,18 @@ public abstract class MFCollector {
 			}
 		}
 
-		@Override public void collect(long doc, Set<Long> values) {
+		@Override public void collect(long doc, BdLongSet values) {
 			m_calendar.setTimeInMillis(doc);
 			int pos = m_calendar.get(m_calendarField);
-			values.add(new Long(pos));
+			values.add((long)pos);
 		}
 
 		@Override public MGName getField(long value) {
 			if(m_subfield == SubField.MONTH) return new MGName(m_months[(int)value], new BSTR(value));
 			else return new MGName(value);
 		}
+		
+		@Override public boolean requiresOrdering() { return false; }
 	}
 	
 	public static class NumBatchField extends MFCollector {
@@ -226,7 +230,7 @@ public abstract class MFCollector {
 			}
 		}
 		
-		@Override public void collect(long doc, Set<Long> values) { 
+		@Override public void collect(long doc, BdLongSet values) { 
 			int pos = 0;
 			while(pos < m_batches.length && m_batches[pos] <= doc) pos++;
 			values.add((long)pos);
@@ -241,11 +245,13 @@ public abstract class MFCollector {
 			return new MGName(v, new BSTR(value));
 		}
 		
-		@Override public void collectEmptyGroups(Set<Long> values) {
+		@Override public void collectEmptyGroups(BdLongSet values) {
 			for(long l = 0; l <= m_batches.length; l++) {
 				values.add(l);
 			}
 		}
+		
+		@Override public boolean requiresOrdering() { return false; }
 	}
 	
 	public static class NumDoubleBatchField extends MFCollector {
@@ -259,7 +265,7 @@ public abstract class MFCollector {
 			}
 		}
 		
-		@Override public void collect(long doc, Set<Long> values) { 
+		@Override public void collect(long doc, BdLongSet values) { 
 			double d = Double.longBitsToDouble(doc);
 			int pos = 0;
 			while(pos < m_batches.length && m_batches[pos] <= d) pos++;
@@ -275,11 +281,13 @@ public abstract class MFCollector {
 			return new MGName(v, new BSTR(value));
 		}
 		
-		@Override public void collectEmptyGroups(Set<Long> values) {
+		@Override public void collectEmptyGroups(BdLongSet values) {
 			for(long l = 0; l <= m_batches.length; l++) {
 				values.add(l);
 			}
 		}
+		
+		@Override public boolean requiresOrdering() { return false; }
 	}
 
 	public static class NumFloatBatchField extends MFCollector {
@@ -293,7 +301,7 @@ public abstract class MFCollector {
 			}
 		}
 		
-		@Override public void collect(long doc, Set<Long> values) { 
+		@Override public void collect(long doc, BdLongSet values) { 
 			double d = Float.intBitsToFloat((int)doc);
 			int pos = 0;
 			while(pos < m_batches.length && m_batches[pos] <= d) pos++;
@@ -309,11 +317,13 @@ public abstract class MFCollector {
 			return new MGName(v, new BSTR(value));
 		}
 		
-		@Override public void collectEmptyGroups(Set<Long> values) {
+		@Override public void collectEmptyGroups(BdLongSet values) {
 			for(long l = 0; l <= m_batches.length; l++) {
 				values.add(l);
 			}
 		}
+		
+		@Override public boolean requiresOrdering() { return false; }
 	}
 	
 	public static class TextField extends MFCollector
@@ -324,11 +334,13 @@ public abstract class MFCollector {
 			super(searcher);
 			m_valueSearcher = searcher.getValueSearcher(fieldDef.getTableName(), fieldDef.getName());
 		}
-		@Override public void collect(long doc, Set<Long> values) { values.add(doc); }
+		@Override public void collect(long doc, BdLongSet values) { values.add(doc); }
 		@Override public MGName getField(long value) {
 			String name = m_valueSearcher.getValue((int)value).toString();
 			return new MGName(name, new BSTR(name.toLowerCase()));
 		}
+		
+		@Override public boolean requiresOrdering() { return true; }
 	}
 
 	public static class IdField extends MFCollector
@@ -339,8 +351,9 @@ public abstract class MFCollector {
 			super(searcher);
 			m_idSearcher = searcher.getIdSearcher(tableDef.getTableName());
 		}
-		@Override public void collect(long doc, Set<Long> values) { values.add(doc); }
+		@Override public void collect(long doc, BdLongSet values) { values.add(doc); }
 		@Override public MGName getField(long value) { return new MGName(m_idSearcher.getId((int)value).toString()); }
+		@Override public boolean requiresOrdering() { return true; }
 	}
 	
 	public static class EndNumField extends MFCollector
@@ -376,16 +389,16 @@ public abstract class MFCollector {
 			}
 		}
 		
-		@Override public void collect(long doc, Set<Long> values) {
+		@Override public void collect(long doc, BdLongSet values) {
 			int fcount = m_numSearcher.size((int)doc);
 			for(int index = 0; index < fcount; index++) {
 				m_collector.collect(m_numSearcher.get((int)doc, index), values);
 			}
 		}
 		
-		@Override public void collectEmptyGroups(Set<Long> values) { m_collector.collectEmptyGroups(values); }
-		
+		@Override public void collectEmptyGroups(BdLongSet values) { m_collector.collectEmptyGroups(values); }
 		@Override public MGName getField(long value) { return m_collector.getField(value); }
+		@Override public boolean requiresOrdering() { return m_collector.requiresOrdering(); }
 	}
 	
 	public static class EndTextField extends MFCollector
@@ -400,16 +413,17 @@ public abstract class MFCollector {
 			m_collector = new TextField(searcher, fieldDef);
 		}
 		
-		@Override public void collect(long doc, Set<Long> values) {
+		@Override public void collect(long doc, BdLongSet values) {
 			m_fieldSearcher.fields((int)doc, m_iter);
 			for(int i = 0; i < m_iter.count(); i++) {
 				m_collector.collect(m_iter.get(i), values);
 			}
 		}
 		
-		@Override public void collectEmptyGroups(Set<Long> values) { m_collector.collectEmptyGroups(values); }
+		@Override public void collectEmptyGroups(BdLongSet values) { m_collector.collectEmptyGroups(values); }
 		
 		@Override public MGName getField(long value) { return m_collector.getField(value); }
+		@Override public boolean requiresOrdering() { return m_collector.requiresOrdering(); }
 	}
 	
 	public static class LinkField extends MFCollector
@@ -426,7 +440,7 @@ public abstract class MFCollector {
 			m_collector = inner;
 		}
 		
-		@Override public void collect(long doc, Set<Long> values) {
+		@Override public void collect(long doc, BdLongSet values) {
 			m_fieldSearcher.fields((int)doc, m_iter);
 			for(int i = 0; i < m_iter.count(); i++) {
 				int d = m_iter.get(i);
@@ -435,9 +449,9 @@ public abstract class MFCollector {
 			}
 		}
 		
-		@Override public void collectEmptyGroups(Set<Long> values) { m_collector.collectEmptyGroups(values); }
-		
+		@Override public void collectEmptyGroups(BdLongSet values) { m_collector.collectEmptyGroups(values); }
 		@Override public MGName getField(long value) { return m_collector.getField(value); }
+		@Override public boolean requiresOrdering() { return m_collector.requiresOrdering(); }
 	}
 	
 	

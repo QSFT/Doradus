@@ -17,9 +17,7 @@
 package com.dell.doradus.olap.aggregate.mr;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +30,7 @@ import com.dell.doradus.olap.aggregate.MetricCollectorSet;
 import com.dell.doradus.olap.aggregate.MetricCounterFactory;
 import com.dell.doradus.olap.aggregate.MetricCounterSet;
 import com.dell.doradus.olap.aggregate.MetricValueSet;
+import com.dell.doradus.olap.collections.BdLongSet;
 import com.dell.doradus.olap.io.FileDeletedException;
 import com.dell.doradus.olap.search.Result;
 import com.dell.doradus.olap.search.ResultBuilder;
@@ -90,9 +89,6 @@ public class MFAggregationBuilder {
 		if(groupsCount == 0) groupsCount = 1;
 		MetricCollectorSet collectorSet = MetricCollectorFactory.create(searcher, request.metrics);
 		MetricCounterSet counterSet = MetricCounterFactory.create(searcher, request.metrics);
-		MGBuilder builder = new MGBuilder(searcher, collectorSet, groupsCount);
-		List<Set<Long>> sets = new ArrayList<Set<Long>>(groupsCount);
-		for(int i = 0; i < groupsCount; i++)sets.add(new HashSet<Long>());
 		
 		Result[] filters = new Result[request.parts.length];
 		MFCollectorSet[] fieldCollectors = new MFCollectorSet[filters.length];
@@ -112,15 +108,22 @@ public class MFAggregationBuilder {
 			res.groupsCount = 0;
 			return res;
 		}
+
+		BdLongSet[] sets = new BdLongSet[groupsCount];
+		for(int i = 0; i < groupsCount; i++) {
+			sets[i] = new BdLongSet(1024);
+			sets[i].enableClearBuffer();
+		}
+		MGBuilder builder = new MGBuilder(searcher, collectorSet, groupsCount);
 		
 		MetricValueSet valueSet = collectorSet.get(-1);
 		//collect emtpy groups: only for top group
 		if(fieldCollectors[0].collectors.length > 0) {
-			fieldCollectors[0].collectors[0].collectEmptyGroups(sets.get(0));
-			if(!sets.get(0).isEmpty()) {
+			fieldCollectors[0].collectors[0].collectEmptyGroups(sets[0]);
+			if(sets[0].size() > 0) {
 				builder.add(-1, sets, valueSet);
 			}
-			sets.get(0).clear();
+			sets[0].clear();
 		}
 		
 		for(int doc = 0; doc < filters[0].size(); doc++) {
@@ -136,11 +139,12 @@ public class MFAggregationBuilder {
 			}
 			if(collected) {
 				builder.add(doc, sets, valueSet);
-				for(int i = 0; i < sets.size(); i++) sets.get(i).clear();
+				for(int i = 0; i < sets.length; i++) sets[i].clear();
 			}
 		}
 		
 		AggregationResult result = builder.createResult(request.parts[0].groups, collectorSet, fieldCollectors[0]);
+
 		return result;
 	}
 

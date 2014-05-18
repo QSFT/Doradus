@@ -30,48 +30,50 @@ import com.dell.doradus.olap.aggregate.AggregationGroupTokenizer;
 import com.dell.doradus.olap.aggregate.AggregationResult;
 import com.dell.doradus.olap.aggregate.MetricCollectorSet;
 import com.dell.doradus.olap.aggregate.MetricValueSet;
+import com.dell.doradus.olap.collections.BdLongMap;
+import com.dell.doradus.olap.collections.BdLongSet;
 import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.search.aggregate.AggregationGroup;
 
 public class MGBuilder {
 	private MetricCollectorSet m_metricSet;
-	private Map<MGValue, MetricValueSet> m_groups = new HashMap<MGValue, MetricValueSet>();
+	private Map<GroupKey, MetricValueSet> m_groups = new HashMap<GroupKey, MetricValueSet>(4096);
+	private GroupKey m_key;
 	private int m_documents;
 	
-	public MGBuilder(CubeSearcher searcher, MetricCollectorSet metricSet, int groups) {
+	public MGBuilder(CubeSearcher searcher, MetricCollectorSet metricSet, int groupsCount) {
 		m_metricSet = metricSet;
+		m_key = new GroupKey(groupsCount);
 	}
 	
-	public void add(int doc, List<Set<Long>> sets, MetricValueSet valueSet) {
-		MGValue value = new MGValue(sets.size());
-		addValue(value, sets, valueSet, 0);
+	public void add(int doc, BdLongSet[] sets, MetricValueSet valueSet) {
+		addValue(sets, valueSet, 0);
 		if(doc >= 0) m_documents++;
 	}
 	
-	private void addValue(MGValue value, List<Set<Long>> sets, MetricValueSet valueSet, int index) {
-		if(index == sets.size()) {
-			MetricValueSet oldSet = m_groups.get(value);
+	private void addValue(BdLongSet[] sets, MetricValueSet valueSet, int index) {
+		if(index == sets.length) {
+			MetricValueSet oldSet = m_groups.get(m_key);
 			if(oldSet != null) {
 				oldSet.add(valueSet);
 				return;
 			}
-			
-			MGValue newval = new MGValue(value);
+			GroupKey key = new GroupKey(m_key);
 			MetricValueSet newSet = m_metricSet.get(-1);
 			newSet.add(valueSet);
-			m_groups.put(newval, newSet);
+			m_groups.put(key, newSet);
 			return;
 		}
 		
-		if(sets.get(index).isEmpty()) {
-			value.Values[index] = Long.MIN_VALUE;
-			addValue(value, sets, valueSet, index + 1);
+		if(sets[index].size() == 0) {
+			m_key.values[index] = Long.MIN_VALUE;
+			addValue(sets, valueSet, index + 1);
 			return;
 		}
-		
-		for(Long l : sets.get(index)) {
-			value.Values[index] = l;
-			addValue(value, sets, valueSet, index + 1);
+
+		for(int i = 0; i < sets[index].size(); i++) {
+			m_key.values[index] = sets[index].get(i); 
+			addValue(sets, valueSet, index + 1);
 		}
 	}
 	
@@ -79,24 +81,44 @@ public class MGBuilder {
 		if(ag == null) ag = new ArrayList<AggregationGroup>(0);
 		int len = mfc.collectors.length;
 		//1. Fill set of MGValues
-		List<Set<Long>> valuesSet = new ArrayList<Set<Long>>(len);
-		for(int i = 0; i < len; i++) valuesSet.add(new HashSet<Long>());
-		for(MGValue mg : m_groups.keySet()) {
+		BdLongSet[] valuesSet = new BdLongSet[len];
+		
+		for(int i = 0; i < len; i++) {
+			valuesSet[i] = new BdLongSet(len == 1 ? m_groups.size() : 1024);
+			//valuesSet[i] = new BdLongSet(1024);
+		}
+		for(GroupKey mg : m_groups.keySet()) {
 			for(int i = 0; i < len; i++) {
-				valuesSet.get(i).add(mg.Values[i]);
+				if(valuesSet[i] != null && mg.values[i] != Long.MIN_VALUE) {
+					valuesSet[i].add(mg.values[i]);
+				}
 			}
 		}
 		
 		//2. Map value to name
-		List<Map<Long, MGName>> mapSet = new ArrayList<Map<Long, MGName>>();
+		//List<Map<Long, MGName>> mapSet = new ArrayList<Map<Long, MGName>>(valuesSet.length);
+		List<BdLongMap<MGName>> mapSet = new ArrayList<BdLongMap<MGName>>(valuesSet.length);
 		for(int i = 0; i < len; i++) {
-			Map<Long, MGName> map = new HashMap<Long, MGName>();
+			BdLongSet vset = valuesSet[i];
+			if(vset == null) {
+				mapSet.add(null);
+				continue;
+			}
+			
+			if(mfc.collectors[i].requiresOrdering()) {
+				vset.sort();
+			}
+			//Map<Long, MGName> map = new HashMap<Long, MGName>(vset.size());
+			BdLongMap<MGName> map = new BdLongMap<MGName>(vset.size());
+			//BdLongMap<MGName> map = new BdLongMap<MGName>(vset);
 			mapSet.add(map);
-			List<Long> list = new ArrayList<Long>(valuesSet.get(i));
-			Collections.sort(list);
-			for(Long l : list) if(l != Long.MIN_VALUE) map.put(l, mfc.collectors[i].getField(l));
+			for(int j = 0; j < vset.size(); j++) {
+				long val = vset.get(j);
+				if(val == Long.MIN_VALUE) continue;
+				map.put(val, mfc.collectors[i].getField(val));
+			}
 		}
-		
+
 		//2.1 Exclude list
 		List<Set<String>> exList = new ArrayList<Set<String>>();
 		for(int i=0; i<ag.size(); i++) {
@@ -120,20 +142,24 @@ public class MGBuilder {
 		AggregationResult result = new AggregationResult();
 		result.documentsCount = m_documents;
 		AggregationResult.AggregationGroup summary = new AggregationResult.AggregationGroup();
-		List<MGValue> values = new ArrayList<MGValue>(m_groups.keySet());
+		List<GroupKey> values = new ArrayList<GroupKey>(m_groups.keySet());
 		Collections.sort(values);
 		summary.metricSet = collectorSet.get(-1);
 		collectorSet.convert(summary.metricSet);
 		result.summary = summary;
-		for(MGValue mg : values) {
+		for(GroupKey mg : values) {
 			MetricValueSet value = m_groups.get(mg);
 			collectorSet.convert(value);
 			AggregationResult r = result;
-			for(int i = 0; i < mg.Values.length; i++) {
+			for(int i = 0; i < mg.values.length; i++) {
 				AggregationResult.AggregationGroup g = new AggregationResult.AggregationGroup();
-				Long l = mg.Values[i];
-				if(l != Long.MIN_VALUE) {
-					MGName mgName = mapSet.get(i).get(mg.Values[i]);
+				long val = mg.values[i];
+				if(val != Long.MIN_VALUE) {
+					//Map<Long, MGName> map = mapSet.get(i);
+					BdLongMap<MGName> map = mapSet.get(i);
+					MGName mgName = map == null ?
+							mfc.collectors[i].getField(val) :
+							map.get(val);
 					g.id = mgName.id;
 					g.name = mgName.name;
 				}
@@ -156,7 +182,7 @@ public class MGBuilder {
 					r.groups.add(g);
 				}
 				g.metricSet.add(value);
-				if(i < mg.Values.length - 1) {
+				if(i < mg.values.length - 1) {
 					if(g.innerResult != null) r = g.innerResult;
 					else {
 						r = new AggregationResult();

@@ -17,17 +17,15 @@
 package com.dell.doradus.olap.xlink;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.olap.aggregate.mr.MFCollector;
 import com.dell.doradus.olap.aggregate.mr.MGName;
+import com.dell.doradus.olap.collections.BdLongSet;
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.search.Result;
 import com.dell.doradus.olap.search.ResultBuilder;
@@ -46,7 +44,7 @@ public class XLinkGroupContext {
 	
 	public static class XGroups {
 		public int maxValues;
-		public Map<BSTR, Set<Long>> groupsMap = new HashMap<BSTR, Set<Long>>();
+		public Map<BSTR, BdLongSet> groupsMap = new HashMap<BSTR, BdLongSet>();
 		public List<MGName> groupNames = new ArrayList<MGName>();
 	}
 	
@@ -96,30 +94,31 @@ public class XLinkGroupContext {
 					MFCollector.create(searcher, group);
 			IdSearcher ids = searcher.getIdSearcher(invTable.getTableName());
 			int docsCount = ids.size();
-			List<Set<Long>> docToFields = new ArrayList<Set<Long>>(docsCount);
-			Set<Long> allFields = new HashSet<Long>();
+			BdLongSet[] docToFields = new BdLongSet[docsCount];
+			BdLongSet allFields = new BdLongSet(1024);
 			
-			Set<Long> values = new HashSet<Long>();
-			Set<Long> emptySet = new HashSet<Long>(0);
+			BdLongSet values = new BdLongSet(1024);
+			values.enableClearBuffer();
+			BdLongSet emptySet = new BdLongSet(1024);
 			for(int doc = 0; doc < docsCount; doc++) {
-				docToFields.add(emptySet);
+				docToFields[doc] = emptySet;
 				if(!bvQuery.get(doc)) continue;
 				collector.collect(doc, values);
 				if(values.size() > 0) {
 					allFields.addAll(values);
-					HashSet<Long> vals = new HashSet<Long>(values.size());
+					BdLongSet vals = new BdLongSet(values.size());
 					vals.addAll(values);
-					docToFields.set(doc, vals);
+					docToFields[doc] = vals;
 					values.clear();
 				}
 			}
 			
-			List<Long> fieldsList = new ArrayList<Long>(allFields);
-			Collections.sort(fieldsList);
+			if(collector.requiresOrdering()) allFields.sort();
 
 			Map<Long, Long> remap = new HashMap<Long, Long>();
 			
-			for(Long num : fieldsList) {
+			for(int i = 0; i < allFields.size(); i++) {
+				long num = allFields.get(i);
 				MGName fieldName = collector.getField(num);
 				Long mappedNum = names.get(fieldName);
 				if(mappedNum == null) {
@@ -131,15 +130,17 @@ public class XLinkGroupContext {
 			}
 			
 			allFields = null;
-			fieldsList = null;
 			
 			for(int i = 0; i < docsCount; i++) {
 				BSTR id = ids.getId(i);
-				Set<Long> orig = docToFields.get(i);
-				docToFields.set(i, null);
+				BdLongSet orig = docToFields[i];
+				docToFields[i] = null;
 				if(orig.size() > 0) {
-					Set<Long> remapped = new HashSet<Long>(orig.size());
-					for(Long num : orig) remapped.add(remap.get(num));
+					BdLongSet remapped = new BdLongSet(orig.size());
+					for(int j = 0; j < orig.size(); j++) {
+						long num = orig.get(j);
+						remapped.add(remap.get(num));
+					}
 					xgroups.groupsMap.put(new BSTR(id), remapped);
 				}
 			}
@@ -161,9 +162,10 @@ public class XLinkGroupContext {
 			FieldSearcher fs = searcher.getFieldSearcher(inv.getTableName(), inv.getXLinkJunction());
 			IntIterator iter = new IntIterator();
 			int docsCount = fs.size();
-			List<Set<Long>> docToFields = new ArrayList<Set<Long>>(fs.fields());
-			Set<Long> allFields = new HashSet<Long>();
-			Set<Long> values = new HashSet<Long>();
+			BdLongSet[] docToFields = new BdLongSet[fs.fields()];
+			BdLongSet allFields = new BdLongSet(1024);
+			BdLongSet values = new BdLongSet(1024);
+			values.enableClearBuffer();
 			for(int doc = 0; doc < docsCount; doc++) {
 				if(!bvQuery.get(doc)) continue;
 				collector.collect(doc, values);
@@ -171,24 +173,23 @@ public class XLinkGroupContext {
 				fs.fields(doc, iter);
 				for(int i = 0; i < iter.count(); i++) {
 					int val = iter.get(i);
-					while(docToFields.size() <= val) docToFields.add(null);
-					Set<Long> vals = docToFields.get(val);
+					BdLongSet vals = docToFields[val];
 					if(vals == null) {
-						vals = new HashSet<Long>(values.size());
-						docToFields.set(val, vals);
+						vals = new BdLongSet(values.size());
+						docToFields[val] = vals;
 					}
 					vals.addAll(values);
 				}
 				values.clear();
 			}
-			while(docToFields.size() < fs.fields()) docToFields.add(new HashSet<Long>(0));
+			//while(docToFields.size() < fs.fields()) docToFields.add(new HashSet<Long>(0));
 			
-			List<Long> fieldsList = new ArrayList<Long>(allFields);
-			Collections.sort(fieldsList);
+			if(collector.requiresOrdering()) allFields.sort();
 			
 			Map<Long, Long> remap = new HashMap<Long, Long>();
-			
-			for(Long num : fieldsList) {
+
+			for(int i = 0; i < allFields.size(); i++) {
+				long num = allFields.get(i);
 				MGName fieldName = collector.getField(num);
 				Long mappedNum = names.get(fieldName);
 				if(mappedNum == null) {
@@ -200,16 +201,18 @@ public class XLinkGroupContext {
 			}
 			
 			allFields = null;
-			fieldsList = null;
 			ValueSearcher vs = searcher.getValueSearcher(invTable.getTableName(), inv.getXLinkJunction());
 			for(int i = 0; i < vs.size(); i++) {
 				BSTR id = vs.getValue(i);
-				Set<Long> orig = docToFields.get(i);
-				docToFields.set(i, null);
+				BdLongSet orig = docToFields[i];
+				docToFields[i] = null;;
 				if(orig != null && orig.size() > 0) {
-					Set<Long> remapped = new HashSet<Long>(orig.size());
-					for(Long num : orig) remapped.add(remap.get(num));
-					Set<Long> currentSet = xgroups.groupsMap.get(id);
+					BdLongSet remapped = new BdLongSet(orig.size());
+					for(int j = 0; j < orig.size(); j++) {
+						long num = orig.get(j);
+						remapped.add(remap.get(num));
+					}
+					BdLongSet currentSet = xgroups.groupsMap.get(id);
 					if(currentSet == null) xgroups.groupsMap.put(new BSTR(id), remapped);
 					else currentSet.addAll(remapped);
 				}

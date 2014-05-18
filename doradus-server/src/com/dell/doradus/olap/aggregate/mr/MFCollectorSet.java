@@ -17,8 +17,8 @@
 package com.dell.doradus.olap.aggregate.mr;
 
 import java.util.List;
-import java.util.Set;
 
+import com.dell.doradus.olap.collections.BdLongSet;
 import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.search.aggregate.AggregationGroup;
 
@@ -37,10 +37,9 @@ public class MFCollectorSet {
 		}
 	}
 	
-	public void collect(long doc, List<Set<Long>> values) {
+	public void collect(long doc, BdLongSet[] values) {
 		for(int i = 0; i < collectors.length; i++) {
-			Set<Long> hs = values.get(i);
-			collectors[i].collect(doc, hs);
+			collectors[i].collect(doc, values[i]);
 		}
 	}
 	
