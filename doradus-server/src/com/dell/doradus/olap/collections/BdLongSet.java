@@ -12,11 +12,11 @@ public class BdLongSet {
 	
 	public BdLongSet(int capacity) {
 		m_size = 0;
-		m_mask = capacity - 1;
-		if((m_mask & capacity) != 0) {
+		m_mask = capacity * 2 - 1;
+		if((m_mask & (capacity * 2)) != 0) {
 			capacity = Integer.highestOneBit(capacity) * 2;
-			m_mask = capacity - 1;
-			if((m_mask & capacity) != 0) throw new RuntimeException("Capacity should be power of two");
+			m_mask = capacity * 2 - 1;
+			if((m_mask & (capacity * 2)) != 0) throw new RuntimeException("Capacity should be power of two");
 		}
 		m_values = new long[capacity];
 		m_indexBuffer = new int[capacity * 2];
@@ -107,7 +107,7 @@ public class BdLongSet {
 	private void resize() {
 		long[] values = m_values;
 		int capacity = m_indexBuffer.length;
-		m_mask = capacity - 1;
+		m_mask = capacity * 2 - 1;
 		m_values = new long[capacity];
 		if(m_valueIndexes != null) m_valueIndexes = new int[capacity];
 		m_indexBuffer = new int[capacity * 2];
