@@ -152,7 +152,7 @@ public class MetricCollectorFactory {
 		Utils.require(metricFunction != null, "Undefined metrics function");
 		metricFunction = metricFunction.toUpperCase();
 		if(fieldDef == null) {
-			if(metricFunction == "COUNT") return new MetricCollectorSum();
+			if("COUNT".equals(metricFunction)) return new MetricCollectorSum();
 			else throw new IllegalArgumentException(metricFunction + "(*) is not allowed");
 		}
 		
