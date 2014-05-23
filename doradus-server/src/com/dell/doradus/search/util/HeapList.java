@@ -17,8 +17,11 @@
 package com.dell.doradus.search.util;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 
 /**
@@ -94,6 +97,15 @@ public class HeapList<T> {
         else return value;
     }
 
+	public List<T> values() {
+    	List<T> array = new ArrayList<T>(m_Count);
+    	for(int i = 0; i < m_Count; i++) { array.add(m_Array[i + 1]); }
+    	if(m_Comparator != null)Collections.sort(array, m_Comparator);
+    	else Collections.sort(array, new Comparator<T>(){
+			@Override public int compare(T x, T y) { return ((Comparable<T>)x).compareTo(y); }}); 
+        return array;
+	}
+	
     public T[] GetValues(Class<T> c) {
     	T[] array = (T[])Array.newInstance(c, m_Count);
     	for(int i=0; i<m_Count; i++) {

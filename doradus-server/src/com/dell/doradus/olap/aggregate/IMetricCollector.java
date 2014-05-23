@@ -23,5 +23,6 @@ public interface IMetricCollector {
 	public abstract int getSize();
 	// for text metrics: convert field indexes to text values
 	public abstract IMetricValue convert(IMetricValue value);
+	public abstract boolean requiresConversion();
 	
 }

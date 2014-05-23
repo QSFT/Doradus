@@ -16,6 +16,7 @@
 
 package com.dell.doradus.olap.aggregate;
 
+
 public class MetricCounterSet {
 	public MetricCounter[] counters;
 	

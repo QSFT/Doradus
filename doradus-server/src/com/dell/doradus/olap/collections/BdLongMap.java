@@ -19,6 +19,7 @@ public class BdLongMap<V> {
 	//}
 	
 	public int size() { return m_set.size(); }
+	public V getAt(int index) { return m_values.get(index); }
 	public V get(long key) { 
 		int index = m_set.indexOf(key);
 		if(index < 0) return null;

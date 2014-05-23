@@ -55,6 +55,9 @@ public abstract class MetricCollectorExpr implements IMetricCollector {
 			b.second = second.convert(b.second);
 			return b;
 		}
+		
+		@Override public boolean requiresConversion() { return first.requiresConversion() || second.requiresConversion(); }
+		
 	}
 
 	public static class Constant extends MetricCollectorExpr {
@@ -73,6 +76,8 @@ public abstract class MetricCollectorExpr implements IMetricCollector {
 		@Override public int getSize() { return 1; }
 
 		@Override public IMetricValue convert(IMetricValue value) { return value; }
+		@Override public boolean requiresConversion() { return false; }
+		
 	}
 	
 }	

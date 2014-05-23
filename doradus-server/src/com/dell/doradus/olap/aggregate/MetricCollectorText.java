@@ -27,6 +27,7 @@ public abstract class MetricCollectorText implements IMetricCollector {
 	public long[] metric;
 
 	@Override public int getSize() { return metric.length; }
+	@Override public boolean requiresConversion() { return true; }
 	
 	public static class Min extends MetricCollectorText {
 		@Override public void setSize(int size) { 

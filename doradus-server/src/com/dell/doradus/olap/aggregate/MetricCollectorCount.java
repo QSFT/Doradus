@@ -22,6 +22,7 @@ public class MetricCollectorCount implements IMetricCollector {
 	@Override public void setSize(int size) { metric = new long[size]; }
 	@Override public int getSize() { return metric.length; }
 	@Override public IMetricValue convert(IMetricValue value) { return value; }
+	@Override public boolean requiresConversion() { return false; }
 	
 	@Override public void add(int field, IMetricValue value) {
 		MetricValueCount v = (MetricValueCount)value;

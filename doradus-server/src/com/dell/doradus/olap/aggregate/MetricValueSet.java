@@ -16,8 +16,13 @@
 
 package com.dell.doradus.olap.aggregate;
 
+
 public class MetricValueSet implements Comparable<MetricValueSet> {
 	public IMetricValue[] values;
+	
+	public MetricValueSet(int size) {
+		values = new IMetricValue[size];
+	}
 	
 	public void add(MetricValueSet other) {
 		for(int i = 0; i < values.length; i++) {
@@ -35,4 +40,11 @@ public class MetricValueSet implements Comparable<MetricValueSet> {
 		return values[0].compareTo(o.values[0]);
 	}
 	
+	@Override public String toString() {
+		StringBuilder sb = new StringBuilder();
+		if(values.length > 1) sb.append('[');
+		for(IMetricValue v: values) sb.append(v.toString());
+		if(values.length > 1) sb.append(']');
+		return sb.toString();
+	}
 }

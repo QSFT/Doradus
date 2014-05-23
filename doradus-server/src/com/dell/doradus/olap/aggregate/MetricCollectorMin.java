@@ -18,6 +18,8 @@ package com.dell.doradus.olap.aggregate;
 
 public abstract class MetricCollectorMin implements IMetricCollector {
 	public long[] metric;
+	
+	@Override public boolean requiresConversion() { return false; }
 
 	@Override public void setSize(int size) { 
 		metric = new long[size];

@@ -27,6 +27,7 @@ public abstract class MetricCollectorAvg implements IMetricCollector {
 	
 	@Override public int getSize() { return metric.length; }
 	@Override public IMetricValue convert(IMetricValue value) { return value; }
+	@Override public boolean requiresConversion() { return false; }
 	
 	@Override public void add(int field, IMetricValue value) {
 		MetricValueAvg v = (MetricValueAvg)value;

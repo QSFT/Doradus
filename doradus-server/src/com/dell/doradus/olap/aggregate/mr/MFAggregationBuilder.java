@@ -17,7 +17,6 @@
 package com.dell.doradus.olap.aggregate.mr;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,39 +34,24 @@ import com.dell.doradus.olap.io.FileDeletedException;
 import com.dell.doradus.olap.search.Result;
 import com.dell.doradus.olap.search.ResultBuilder;
 import com.dell.doradus.olap.store.CubeSearcher;
-import com.dell.doradus.olap.xlink.XLinkGroupContext;
 import com.dell.doradus.search.aggregate.AggregationGroup;
 
 public class MFAggregationBuilder {
     private static Logger LOG = LoggerFactory.getLogger("MFggregationBuilder");
 	
-    public static boolean ALWAYS_USE_MLG = false;
-    
-    public static boolean shouldUseMF(List<AggregationGroup> groups) {
-    	if(ALWAYS_USE_MLG) return true;
-    	if(groups.size() > 1) return true;
-    	if(groups.size() == 0) return false;
-    	if(XLinkGroupContext.hasXLink(groups.get(0))) return true;
-    	//AggregationGroup ag = groups.get(0);
-    	//if(ag.items.size() == 0) return false;
-    	//FieldDefinition fieldDef = ag.items.get(ag.items.size() - 1).fieldDef;
-    	//if((fieldDef.getType() == FieldType.INTEGER || fieldDef.getType() == FieldType.LONG) && ag.batch == null) return true;
-    	//if(fieldDef.getType() == FieldType.TIMESTAMP && ag.truncate == null) return true;
-    	return false;
-    }
-    
 	public static AggregationResult aggregate(Olap olap, AggregationRequest request) {
-		AggregationResult[] results = new AggregationResult[request.shards.size()];
-		for(int i = 0; i < results.length; i++) {
-			results[i] = aggregate(olap, request.application, request.shards.get(i), request);
+		AggregationCollector collector = null;
+		for(String shard: request.shards) {
+			AggregationCollector agg = aggregate(olap, request.application, shard, request);
+			if(collector == null) collector = agg;
+			else collector.merge(agg);
 		}
-		AggregationResult result = AggregationResult.merge(results, request.getTop(0));
-		AggregationResult.applyLimits(result, request, 0);
+		AggregationResult result = AggregationResultBuilder.build(request, collector);
 		return result;
 	}
 	
 	
-	private static AggregationResult aggregate(Olap olap, String application, String shard, AggregationRequest request) {
+	private static AggregationCollector aggregate(Olap olap, String application, String shard, AggregationRequest request) {
 		// repeat if segment was merged
 		for(int i = 0; i < 2; i++) {
 			try {
@@ -82,11 +66,11 @@ public class MFAggregationBuilder {
 		return aggregate(searcher, request);
 	}
 	
-	public static AggregationResult aggregate(CubeSearcher searcher, AggregationRequest request) {
+	public static AggregationCollector aggregate(CubeSearcher searcher, AggregationRequest request) {
 		for(AggregationRequest.Part p : request.parts) if(p.groups == null) p.groups=new ArrayList<AggregationGroup>();
 		
 		int groupsCount = request.parts[0].groups == null ? 0 : request.parts[0].groups.size();
-		if(groupsCount == 0) groupsCount = 1;
+		//if(groupsCount == 0) groupsCount = 1;
 		MetricCollectorSet collectorSet = MetricCollectorFactory.create(searcher, request.metrics);
 		MetricCounterSet counterSet = MetricCounterFactory.create(searcher, request.metrics);
 		
@@ -103,10 +87,8 @@ public class MFAggregationBuilder {
 			for(int i = 1; i < filters.length; i++) {
 				r.or(filters[i]);
 			}
-			AggregationResult res = new AggregationResult();
-			res.documentsCount = r.countSet();
-			res.groupsCount = 0;
-			return res;
+			AggregationCollector collector = new AggregationCollector(r.countSet());
+			return collector;
 		}
 
 		BdLongSet[] sets = new BdLongSet[groupsCount];
@@ -118,7 +100,7 @@ public class MFAggregationBuilder {
 		
 		MetricValueSet valueSet = collectorSet.get(-1);
 		//collect emtpy groups: only for top group
-		if(fieldCollectors[0].collectors.length > 0) {
+		if(groupsCount > 0 && fieldCollectors[0].collectors.length > 0) {
 			fieldCollectors[0].collectors[0].collectEmptyGroups(sets[0]);
 			if(sets[0].size() > 0) {
 				builder.add(-1, sets, valueSet);
@@ -143,7 +125,7 @@ public class MFAggregationBuilder {
 			}
 		}
 		
-		AggregationResult result = builder.createResult(request.parts[0].groups, collectorSet, fieldCollectors[0]);
+		AggregationCollector result = builder.createResult(request.parts[0].groups, fieldCollectors[0]);
 
 		return result;
 	}

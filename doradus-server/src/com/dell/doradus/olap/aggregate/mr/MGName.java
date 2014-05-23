@@ -21,6 +21,7 @@ import com.dell.doradus.olap.io.BSTR;
 public class MGName implements Comparable<MGName> {
 	public String name;
 	public BSTR id;
+	private int hashCode = -1;
 	
 	public static MGName NullGroup = new MGName(null, new BSTR("")); 
 	
@@ -53,10 +54,13 @@ public class MGName implements Comparable<MGName> {
 		else return id.equals(other.id);
 	}
 	@Override public int hashCode() {
-		return id == null ? 1 : id.hashCode();
+		if(hashCode != -1) return hashCode;
+		hashCode = id == null ? 1 : id.hashCode(); 
+		return hashCode;
 	}
 	
 	@Override public String toString() {
+		if(name == null) return "*";
 		return name + " [" + id + "]";
 	}
 }

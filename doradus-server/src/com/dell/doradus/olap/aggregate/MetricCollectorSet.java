@@ -16,6 +16,7 @@
 
 package com.dell.doradus.olap.aggregate;
 
+
 public class MetricCollectorSet {
 	public IMetricCollector[] collectors;
 	public MetricValueSet nullGroup;
@@ -24,6 +25,8 @@ public class MetricCollectorSet {
 	public int lastCountedDoc;
 	public int documentsCount;
 	public int[] documents;
+	
+	public MetricCollectorSet() {}
 	
 	public void setSize(int size) {
 		if(documents != null) {
@@ -71,8 +74,7 @@ public class MetricCollectorSet {
 	}
 	
 	public MetricValueSet get(int index) {
-		MetricValueSet valueSet = new MetricValueSet();
-		valueSet.values = new IMetricValue[collectors.length];
+		MetricValueSet valueSet = new MetricValueSet(collectors.length);
 		for(int i = 0; i < collectors.length; i++) {
 			valueSet.values[i] = collectors[i].get(index);
 		}
@@ -80,6 +82,8 @@ public class MetricCollectorSet {
 	}
 	
 	public void convert(MetricValueSet set) {
-		for(int i = 0; i < set.values.length; i++) set.values[i] = collectors[i].convert(set.values[i]);
+		for(int i = 0; i < set.values.length; i++) {
+			set.values[i] = collectors[i].convert(set.values[i]);
+		}
 	}
 }

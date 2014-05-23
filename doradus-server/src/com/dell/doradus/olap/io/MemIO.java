@@ -30,54 +30,64 @@ public class MemIO implements IO {
 	public MemIO() { }
 	
 	@Override public byte[] getValue(String app, String key, String column) {
-		Map<String, byte[]> m = m_map.get(app + "/" + key);
-		if(m == null) return null;
-		else return m.get(column);
+		synchronized(m_map) {
+			Map<String, byte[]> m = m_map.get(app + "/" + key);
+			if(m == null) return null;
+			else return m.get(column);
+		}
 	}
 	
 	@Override public List<ColumnValue> get(String app, String key, String prefix) {
 		List<ColumnValue> result = new ArrayList<ColumnValue>();
-		Map<String, byte[]> m = m_map.get(app + "/" + key);
-		if(m == null) return result;
-		for(Map.Entry<String, byte[]> entry: m.entrySet()) {
-			if(!entry.getKey().startsWith(prefix)) continue;
-			result.add(new ColumnValue(entry.getKey().substring(prefix.length()), entry.getValue()));
+		synchronized(m_map) {
+			Map<String, byte[]> m = m_map.get(app + "/" + key);
+			if(m == null) return result;
+			for(Map.Entry<String, byte[]> entry: m.entrySet()) {
+				if(!entry.getKey().startsWith(prefix)) continue;
+				result.add(new ColumnValue(entry.getKey().substring(prefix.length()), entry.getValue()));
+			}
 		}
-		Collections.sort(result);
-		return result;
+			Collections.sort(result);
+			return result;
 	}
 	
 	@Override public void createCF(String name) {
 	}
 
 	@Override public void deleteCF(String name) {
-		Set<String> toDelete = new HashSet<String>();
-		for(String key: m_map.keySet()) {
-			if(key.startsWith(name)) toDelete.add(key);
-		}
-		for(String key: toDelete) {
-			m_map.remove(key);
+		synchronized(m_map) {
+			Set<String> toDelete = new HashSet<String>();
+			for(String key: m_map.keySet()) {
+				if(key.startsWith(name)) toDelete.add(key);
+			}
+			for(String key: toDelete) {
+				m_map.remove(key);
+			}
 		}
 	}
 	
 	@Override public void write(String app, String key, List<ColumnValue> values) {
-		Map<String, byte[]> m = m_map.get(app + "/" + key);
-		if(m == null) {
-			m = new HashMap<String, byte[]>(1);
-			m_map.put(app + "/" + key, m);
-		}
-		for(ColumnValue v: values) {
-			m.put(v.columnName, v.columnValue);
+		synchronized(m_map) {
+			Map<String, byte[]> m = m_map.get(app + "/" + key);
+			if(m == null) {
+				m = new HashMap<String, byte[]>(1);
+				m_map.put(app + "/" + key, m);
+			}
+			for(ColumnValue v: values) {
+				m.put(v.columnName, v.columnValue);
+			}
 		}
 	}
 	
 	@Override public void delete(String columnFamily, String sKey, String columnName) {
-		Map<String, byte[]> m = m_map.get(columnFamily + "/" + sKey);
-		if(m == null) return;
-		if(columnName == null) {
-			m_map.remove(columnFamily + "/" + sKey);
-		} else {
-			m.remove(columnName);
+		synchronized(m_map) {
+			Map<String, byte[]> m = m_map.get(columnFamily + "/" + sKey);
+			if(m == null) return;
+			if(columnName == null) {
+				m_map.remove(columnFamily + "/" + sKey);
+			} else {
+				m.remove(columnName);
+			}
 		}
 	}
 

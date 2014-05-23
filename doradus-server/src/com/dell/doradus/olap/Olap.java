@@ -32,7 +32,6 @@ import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
-import com.dell.doradus.olap.aggregate.AggregationBuilder;
 import com.dell.doradus.olap.aggregate.AggregationRequest;
 import com.dell.doradus.olap.aggregate.AggregationRequestData;
 import com.dell.doradus.olap.aggregate.AggregationResult;
@@ -158,13 +157,8 @@ public class Olap {
 	public AggregationResult aggregate(String application, String table, OlapAggregate olapAggregate) {
 		AggregationRequestData requestData = olapAggregate.createRequestData(this, application, table);
 		AggregationRequest aggregationRequest = new AggregationRequest(this, requestData);
-		if(MFAggregationBuilder.shouldUseMF(aggregationRequest.parts[0].groups)) {
-			AggregationResult result = MFAggregationBuilder.aggregate(this, aggregationRequest);
-			return result;
-		} else {
-			AggregationResult result = AggregationBuilder.aggregate(this, aggregationRequest);
-			return result;
-		}
+		AggregationResult result = MFAggregationBuilder.aggregate(this, aggregationRequest);
+		return result;
 	}
 
 	public SearchResultList search(String application, String table, OlapQuery olapQuery) {

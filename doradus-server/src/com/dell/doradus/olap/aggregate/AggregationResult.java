@@ -49,7 +49,7 @@ public class AggregationResult {
 	}
 	
 	@Override public String toString() {
-		String str = toUNode().toXML();
+		String str = toUNode().toXML(true);
 		if(str.length() > 10000) str = str.substring(0, 10000) + "...";
 		return str;
 	}

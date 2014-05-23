@@ -26,16 +26,13 @@ public class MFCollectorSet {
 	public MFCollector[] collectors;
 	
 	public MFCollectorSet(CubeSearcher searcher, List<AggregationGroup> groups) {
-		if(groups.size() == 0) {
-			collectors = new MFCollector[1];
-			collectors[0] = new MFCollector.NullField(searcher);
-			return;
-		}
 		collectors = new MFCollector[groups.size()];
 		for(int i = 0; i < collectors.length; i++) {
 			collectors[i] = MFCollector.create(searcher, groups.get(i));
 		}
 	}
+	
+	public int size() { return collectors.length; }
 	
 	public void collect(long doc, BdLongSet[] values) {
 		for(int i = 0; i < collectors.length; i++) {
