@@ -15,7 +15,7 @@ public class AggregationCollectorRaw {
 
 	public AggregationCollectorRaw(MetricCollectorSet mcs) {
 		m_mcs = mcs;
-		m_group = new Group(Long.MIN_VALUE, mcs.get(-1));
+		m_group = new Group(Long.MIN_VALUE, mcs.get());
 	}
 	
 	public int documentsCount() { return m_documentsCount; }
@@ -105,7 +105,7 @@ public class AggregationCollectorRaw {
 				long key = keySet.get(i);
 				Group group = m_groups.get(key);
 				if(group == null) {
-					MetricValueSet m = m_mcs.get(-1);
+					MetricValueSet m = m_mcs.get();
 					group = new Group(key, m);
 					m_groups.put(key, group);
 				}
@@ -116,7 +116,7 @@ public class AggregationCollectorRaw {
 				long key = Long.MIN_VALUE;
 				Group group = m_groups.get(key);
 				if(group == null) {
-					MetricValueSet m = m_mcs.get(-1);
+					MetricValueSet m = m_mcs.get();
 					group = new Group(key, m);
 					m_groups.put(key, group);
 				}

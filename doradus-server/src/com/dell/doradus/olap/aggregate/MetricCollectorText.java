@@ -24,25 +24,10 @@ import com.dell.doradus.olap.store.ValueSearcher;
 public abstract class MetricCollectorText implements IMetricCollector {
 	public CubeSearcher searcher;
 	public FieldDefinition fieldDef;
-	public long[] metric;
 
-	@Override public int getSize() { return metric.length; }
-	@Override public boolean requiresConversion() { return true; }
-	
 	public static class Min extends MetricCollectorText {
-		@Override public void setSize(int size) { 
-			metric = new long[size];
-			for(int i = 0; i < size; i++) metric[i] = Long.MAX_VALUE;
-		}
-		
-		@Override public void add(int field, IMetricValue value) {
-			MetricValueMin v = (MetricValueMin)value;
-			if(metric[field] > v.metric) metric[field] = v.metric;
-		}
-	
-		@Override public IMetricValue get(int field) {
+		@Override public IMetricValue get() {
 			MetricValueMin.MinNum m = new MetricValueMin.MinNum();
-			if(field >= 0) m.metric = metric[field];
 			return m;
 		}
 		
@@ -71,19 +56,8 @@ public abstract class MetricCollectorText implements IMetricCollector {
 	}
 
 	public static class Max extends MetricCollectorText {
-		@Override public void setSize(int size) { 
-			metric = new long[size];
-			for(int i = 0; i < size; i++) metric[i] = Long.MIN_VALUE;
-		}
-		
-		@Override public void add(int field, IMetricValue value) {
-			MetricValueMax v = (MetricValueMax)value;
-			if(metric[field] < v.metric) metric[field] = v.metric;
-		}
-	
-		@Override public IMetricValue get(int field) {
+		@Override public IMetricValue get() {
 			MetricValueMax.MaxNum m = new MetricValueMax.MaxNum();
-			if(field >= 0) m.metric = metric[field];
 			return m;
 		}
 		

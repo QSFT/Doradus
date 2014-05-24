@@ -98,8 +98,8 @@ public class MFAggregationBuilder {
 		}
 		MGBuilder builder = new MGBuilder(searcher, collectorSet, groupsCount);
 		
-		MetricValueSet valueSet = collectorSet.get(-1);
-		//collect emtpy groups: only for top group
+		MetricValueSet valueSet = collectorSet.get();
+		//collect empty groups: only for top group
 		if(groupsCount > 0 && fieldCollectors[0].collectors.length > 0) {
 			fieldCollectors[0].collectors[0].collectEmptyGroups(sets[0]);
 			if(sets[0].size() > 0) {

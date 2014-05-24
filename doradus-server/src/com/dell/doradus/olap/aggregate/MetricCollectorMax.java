@@ -17,43 +17,25 @@
 package com.dell.doradus.olap.aggregate;
 
 public abstract class MetricCollectorMax implements IMetricCollector {
-	public long[] metric;
-
-	@Override public boolean requiresConversion() { return false; }
-	
-	@Override public void setSize(int size) { 
-		metric = new long[size];
-		for(int i = 0; i < size; i++) metric[i] = Long.MIN_VALUE;
-	}
-	
-	@Override public int getSize() { return metric.length; }
 	@Override public IMetricValue convert(IMetricValue value) { return value; }
-	
-	@Override public void add(int field, IMetricValue value) {
-		MetricValueMax v = (MetricValueMax)value;
-		if(metric[field] < v.metric) metric[field] = v.metric;
-	}
 
 	public static class MaxNum extends MetricCollectorMax {
-		@Override public IMetricValue get(int field) {
+		@Override public IMetricValue get() {
 			MetricValueMax.MaxNum v = new MetricValueMax.MaxNum();
-			if(field >= 0) v.metric = metric[field];
 			return v;
 		}
 	}
 	
 	public static class MaxDate extends MetricCollectorMax {
-		@Override public IMetricValue get(int field) {
+		@Override public IMetricValue get() {
 			MetricValueMax.MaxDate v = new MetricValueMax.MaxDate();
-			if(field >= 0) v.metric = metric[field];
 			return v;
 		}
 	}
 	
 	public static class MaxBoolean extends MetricCollectorMax {
-		@Override public IMetricValue get(int field) {
+		@Override public IMetricValue get() {
 			MetricValueMax.MaxBoolean v = new MetricValueMax.MaxBoolean();
-			if(field >= 0) v.metric = metric[field];
 			return v;
 		}
 	}

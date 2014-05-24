@@ -19,64 +19,13 @@ package com.dell.doradus.olap.aggregate;
 
 public class MetricCollectorSet {
 	public IMetricCollector[] collectors;
-	public MetricValueSet nullGroup;
-	public MetricValueSet summaryGroup;
-	public int lastDoc;
-	public int lastCountedDoc;
-	public int documentsCount;
-	public int[] documents;
 	
 	public MetricCollectorSet() {}
 	
-	public void setSize(int size) {
-		if(documents != null) {
-			if(documents.length != size) throw new IllegalArgumentException("Metrics cannot be applied to different fields");
-			return;
-		}
-		lastDoc = -1;
-		lastCountedDoc = -1;
-		documents = new int[size];
-		for(int i = 0; i < size; i++) {
-			documents[i] = -1;
-		}
-		
-		for(int i = 0; i < collectors.length; i++) {
-			collectors[i].setSize(size);
-		}
-	}
-
-	// should be called after all possible calls add(doc, index, valueSet) to ensure a doc is counted
-	// against docsCount and nullGroup if necessary 
-	public void add(int doc, MetricValueSet valueSet) {
-		if(lastCountedDoc != doc) {
-			if(nullGroup == null) nullGroup = get(-1);
-			nullGroup.add(valueSet);
-			lastCountedDoc = doc;
-		}
-		if(lastDoc != doc) {
-			if(summaryGroup == null) summaryGroup = get(-1);
-			summaryGroup.add(valueSet);
-			lastDoc = doc;
-			documentsCount++;
-		}
-	}
-	
-	
-	public void add(int doc, int index, MetricValueSet valueSet) {
-		//if(index < 0) return;
-		if(documents[index] == doc) return;
-		documents[index] = doc;
-		lastCountedDoc = doc;
-		
-		for(int i = 0; i < collectors.length; i++) {
-			collectors[i].add(index, valueSet.values[i]);
-		}
-	}
-	
-	public MetricValueSet get(int index) {
+	public MetricValueSet get() {
 		MetricValueSet valueSet = new MetricValueSet(collectors.length);
 		for(int i = 0; i < collectors.length; i++) {
-			valueSet.values[i] = collectors[i].get(index);
+			valueSet.values[i] = collectors[i].get();
 		}
 		return valueSet;
 	}

@@ -19,53 +19,29 @@ package com.dell.doradus.olap.aggregate;
 public abstract class MetricCollectorFloat {
 	
 	public static class Sum extends MetricCollectorDouble.Sum {
-		@Override public void add(int field, IMetricValue value) {
-			MetricValueFloat.Sum v = (MetricValueFloat.Sum)value;
-			metric[field] += v.metric;
-		}
-		@Override public IMetricValue get(int field) {
+		@Override public IMetricValue get() {
 			MetricValueFloat.Sum v = new MetricValueFloat.Sum();
-			if(field >= 0) v.metric = metric[field];
 			return v;
 		}
 	}
 	
 	public static class Min extends MetricCollectorDouble.Min {
-		@Override public void add(int field, IMetricValue value) {
-			MetricValueFloat.Min v = (MetricValueFloat.Min)value;
-			if(metric[field] > v.metric) metric[field] = v.metric;
-		}
-		@Override public IMetricValue get(int field) {
+		@Override public IMetricValue get() {
 			MetricValueFloat.Min v = new MetricValueFloat.Min();
-			if(field >= 0) v.metric = metric[field];
 			return v;
 		}
 	}
 
 	public static class Max extends MetricCollectorDouble.Max {
-		@Override public void add(int field, IMetricValue value) {
-			MetricValueFloat.Max v = (MetricValueFloat.Max)value;
-			if(metric[field] < v.metric) metric[field] = v.metric;
-		}
-		@Override public IMetricValue get(int field) {
+		@Override public IMetricValue get() {
 			MetricValueFloat.Max v = new MetricValueFloat.Max();
-			if(field >= 0) v.metric = metric[field];
 			return v;
 		}
 	}
 	
 	public static class Avg extends MetricCollectorDouble.Avg {
-		@Override public void add(int field, IMetricValue value) {
-			MetricValueFloat.Avg v = (MetricValueFloat.Avg)value;
-			count[field] += v.count;
-			metric[field] += v.metric;
-		}
-		@Override public IMetricValue get(int field) {
+		@Override public IMetricValue get() {
 			MetricValueFloat.Avg v = new MetricValueFloat.Avg();
-			if(field >= 0) {
-				v.count = count[field];
-				v.metric = metric[field];
-			}
 			return v;
 		}
 	}

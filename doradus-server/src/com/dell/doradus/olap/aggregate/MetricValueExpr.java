@@ -86,6 +86,8 @@ public abstract class MetricValueExpr implements IMetricValue {
 	public static class Constant extends MetricValueExpr {
 		public double value;
 
+		public Constant(double value) { this.value = value; }
+		
 		@Override public double getValue() { return value; }
 		
 		@Override public void reset() { }

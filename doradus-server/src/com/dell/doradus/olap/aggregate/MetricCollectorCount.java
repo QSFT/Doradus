@@ -17,21 +17,10 @@
 package com.dell.doradus.olap.aggregate;
 
 public class MetricCollectorCount implements IMetricCollector {
-	public long[] metric;
-
-	@Override public void setSize(int size) { metric = new long[size]; }
-	@Override public int getSize() { return metric.length; }
 	@Override public IMetricValue convert(IMetricValue value) { return value; }
-	@Override public boolean requiresConversion() { return false; }
 	
-	@Override public void add(int field, IMetricValue value) {
-		MetricValueCount v = (MetricValueCount)value;
-		metric[field] += v.metric;
-	}
-
-	@Override public IMetricValue get(int field) {
+	@Override public IMetricValue get() {
 		MetricValueCount v = new MetricValueCount();
-		if(field >= 0) v.metric = metric[field];
 		return v;
 	}
 

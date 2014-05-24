@@ -19,7 +19,6 @@ package com.dell.doradus.olap.io;
 import com.dell.doradus.common.Utils;
 
 public class BSTR implements Comparable<BSTR>  {
-	
     public byte[] buffer;
     public int length;
 
@@ -77,10 +76,11 @@ public class BSTR implements Comparable<BSTR>  {
 		buffer[0] = (byte)value;
     }
     
-    public void set(String value)
+    public void set(Utf8Encoder encoder, String value)
     {
-        byte[] bytes = Utils.toBytes(value);
-        set(bytes);
+    	assertLength(value.length() * 4);
+    	length = encoder.encode(value, buffer);
+        //set(bytes);
     }
 
     public void set(BSTR other)

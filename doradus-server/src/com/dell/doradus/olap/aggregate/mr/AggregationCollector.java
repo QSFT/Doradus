@@ -148,7 +148,7 @@ public class AggregationCollector {
 					for(MGName term: m_tokenizer.tokenize(level, grp.m_key)) {
 						Group g = map.get(term);
 						if(g == null) {
-							MetricValueSet v = m_mcs.get(-1);
+							MetricValueSet v = m_mcs.get();
 							g = new Group(term, v);
 							map.put(term, g);
 						}

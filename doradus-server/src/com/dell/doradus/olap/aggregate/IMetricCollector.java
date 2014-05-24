@@ -17,12 +17,7 @@
 package com.dell.doradus.olap.aggregate;
 
 public interface IMetricCollector {
-	public abstract void add(int field, IMetricValue value);
-	public abstract IMetricValue get(int field);
-	public abstract void setSize(int size);
-	public abstract int getSize();
+	public abstract IMetricValue get();
 	// for text metrics: convert field indexes to text values
 	public abstract IMetricValue convert(IMetricValue value);
-	public abstract boolean requiresConversion();
-	
 }

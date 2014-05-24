@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.dell.doradus.olap.io.BSTR;
+import com.dell.doradus.olap.io.Utf8Encoder;
 
 public class TableBuilder {
 	public static enum FType {
@@ -38,6 +39,7 @@ public class TableBuilder {
 	
 	private BSTR bstr = new BSTR();
 	private BSTR orig = new BSTR();
+	private Utf8Encoder encoder = new Utf8Encoder();
 	
 	public TableBuilder(String tableName, int fieldsCount) {
 		this.table = tableName;
@@ -48,7 +50,7 @@ public class TableBuilder {
 	}
 
 	public Doc addDoc(String id) {
-		bstr.set(id);
+		bstr.set(encoder, id);
 		return documents.add(bstr, fieldsCount);
 	}
 	
@@ -76,8 +78,8 @@ public class TableBuilder {
 		
 		FieldBuilder b = fieldBuilders[fieldIndex];
 		if(b == null) b = fieldBuilders[fieldIndex] = new FieldBuilder(field);
-		orig.set(term);
-		bstr.set(term.toLowerCase());
+		orig.set(encoder, term);
+		bstr.set(encoder, term.toLowerCase());
 		Term t = b.add(bstr, orig);
 		doc.addTextField(fieldIndex, t);
 	}

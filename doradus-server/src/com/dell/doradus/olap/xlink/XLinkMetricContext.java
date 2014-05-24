@@ -114,7 +114,7 @@ public class XLinkMetricContext {
 			int docsCount = ids.size();
 			for(int doc = 0; doc < docsCount; doc++) {
 				if(!bvQuery.get(doc)) continue;
-				IMetricValue value = metricCollector.get(-1);
+				IMetricValue value = metricCollector.get();
 				metricCounter.add(doc, value);
 				xmetrics.metricsMap.put(new BSTR(ids.getId(doc)), value);
 			}
@@ -136,12 +136,12 @@ public class XLinkMetricContext {
 			IMetricValue[] vals = new IMetricValue[fs.fields()];
 			for(int doc = 0; doc < docsCount; doc++) {
 				if(!bvQuery.get(doc)) continue;
-				IMetricValue value = metricCollector.get(-1);
+				IMetricValue value = metricCollector.get();
 				metricCounter.add(doc, value);
 				fs.fields(doc, iter);
 				for(int i = 0; i < iter.count(); i++) {
 					int val = iter.get(i);
-					if(vals[val] == null) vals[val] = metricCollector.get(-1);
+					if(vals[val] == null) vals[val] = metricCollector.get();
 					vals[val].add(value);
 				}
 			}

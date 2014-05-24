@@ -17,42 +17,18 @@
 package com.dell.doradus.olap.aggregate;
 
 public abstract class MetricCollectorAvg implements IMetricCollector {
-	public int[] count;
-	public long[] metric;
-
-	@Override public void setSize(int size) {
-		count = new int[size];
-		metric = new long[size];
-	}
-	
-	@Override public int getSize() { return metric.length; }
 	@Override public IMetricValue convert(IMetricValue value) { return value; }
-	@Override public boolean requiresConversion() { return false; }
 	
-	@Override public void add(int field, IMetricValue value) {
-		MetricValueAvg v = (MetricValueAvg)value;
-		count[field] += v.count;
-		metric[field] += v.metric;
-	}
-
 	public static class AvgNum extends MetricCollectorAvg {
-		@Override public IMetricValue get(int field) {
+		@Override public IMetricValue get() {
 			MetricValueAvg.AvgNum v = new MetricValueAvg.AvgNum();
-			if(field >= 0) {
-				v.count = count[field];
-				v.metric = metric[field];
-			}
 			return v;
 		}
 	}
 	
 	public static class AvgDate extends MetricCollectorAvg {
-		@Override public IMetricValue get(int field) {
+		@Override public IMetricValue get() {
 			MetricValueAvg.AvgDate v = new MetricValueAvg.AvgDate();
-			if(field >= 0) {
-				v.count = count[field];
-				v.metric = metric[field];
-			}
 			return v;
 		}
 	}
