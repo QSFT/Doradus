@@ -808,20 +808,22 @@ public class AggregationQueryBuilder {
                 }
 
                 if (type.equals(SemanticNames.EXCLUDEVALUE)) {
+                    String value = item.item.getValue();
+                    if ("NULL".equals(value))
+                        value = null;
 
                     if (includeList) {
                         if (aggregationGroup.include == null) {
                             aggregationGroup.include = new ArrayList<String>();
                         }
-                        aggregationGroup.include.add(item.item.getValue());
+                        aggregationGroup.include.add(value);
                         continue;
                     } else {
                         if (aggregationGroup.exclude == null) {
                             aggregationGroup.exclude = new ArrayList<String>();
                         }
-                        aggregationGroup.exclude.add(item.item.getValue());
+                        aggregationGroup.exclude.add(value);
                         continue;
-
                     }
                 }
 

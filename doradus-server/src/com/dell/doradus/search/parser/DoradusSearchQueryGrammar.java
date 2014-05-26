@@ -674,8 +674,12 @@ public class DoradusSearchQueryGrammar {
                 Grammar.emptyRule
         );
 
+        GrammarRule ExcludeItemValue = new SwitchRule(SwitchRule.First, "ExcludeItemValue",
+                StringLiteral,
+                NULL
+        );
 
-        ExcludeNameList.body = Grammar.asRule(StringLiteral, Grammar.SetType("excludeValue"), ExcludeNameListContinue);
+        ExcludeNameList.body = Grammar.asRule(ExcludeItemValue, Grammar.SetType("excludeValue"), ExcludeNameListContinue);
 
         SequenceRule AggregationFieldPath = new SequenceRule("AggregationFieldPath");
 
