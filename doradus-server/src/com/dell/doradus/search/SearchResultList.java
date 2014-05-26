@@ -42,4 +42,8 @@ public class SearchResultList {
         return rootNode;
     }
     
+    @Override public String toString() {
+    	return toDoc().toXML(true);
+    	//return toDoc().toJSON(true);
+    }
 }

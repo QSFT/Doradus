@@ -117,11 +117,11 @@ public class FieldSetQueryBuilder {
     }
 
     public static FieldSetItem GetChild(FieldSetItem parent, String value) {
-        for (int i = 0; i < parent.children.size(); i++) {
-            FieldSetItem fieldSetItem = parent.children.get(i);
-            if (fieldSetItem.name.equals(value))
-                return fieldSetItem;
-        }
+        //for (int i = 0; i < parent.children.size(); i++) {
+        //    FieldSetItem fieldSetItem = parent.children.get(i);
+        //    if (fieldSetItem.name.equals(value))
+        //        return fieldSetItem;
+        //}
         return null;
     }
 }

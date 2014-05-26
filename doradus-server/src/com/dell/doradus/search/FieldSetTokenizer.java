@@ -73,9 +73,9 @@ class FieldSetTokenizer {
                         throw new IllegalArgumentException(fieldDefinition + " is not a link");
 
                     if (fieldDefinition.isLinkField()) {
-                        if (set.LinkFields.containsKey(fieldDefinition.getName()))
-                            current = set.LinkFields.get(fieldDefinition.getName());
-                        else   {
+                        //if (set.LinkFields.containsKey(fieldDefinition.getName()))
+                        //    current = set.LinkFields.get(fieldDefinition.getName());
+                        //else   {
                             current = new FieldSet(def.getLinkExtentTableDef(fieldDefinition));
                             current.limit = item.limit;
                             if (item.grammarItems != null) {
@@ -83,9 +83,10 @@ class FieldSetTokenizer {
                                         current.filter =  AggregationQueryBuilder.CompileQuery(current.tableDef,current.filter, item.grammarItems.get(j)  );
                                     }
                              }
-                        }
+                        //}
 
-                        set.LinkFields.put(fieldDefinition.getName(), current);
+                        //set.LinkFields.put(fieldDefinition.getName(), current);
+                            set.addLink(fieldDefinition.getName(), current);
 
                         for (int k = 0; k < item.children.size(); k++) {
                             FieldSetItem nextItem = item.children.get(k);

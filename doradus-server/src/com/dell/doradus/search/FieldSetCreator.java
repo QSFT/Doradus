@@ -42,7 +42,7 @@ public class FieldSetCreator {
 	public TableDefinition tableDef;
 	public List<String> scalarFields;
 	public List<String> loadedFields;
-	public TreeMap<String, FieldSetCreator> links = new TreeMap<String, FieldSetCreator>();
+	public TreeMap<String, List<FieldSetCreator>> links = new TreeMap<String, List<FieldSetCreator>>();
 	public FieldSet fieldSet;
 	
 	public FieldSetCreator(FieldSet fieldSet, SortOrder order) {
@@ -72,8 +72,12 @@ public class FieldSetCreator {
 		}
 		loadedFields = new ArrayList<String>(flds);
 		
-		for(Map.Entry<String, FieldSet> e : fieldSet.LinkFields.entrySet()) {
-			links.put(e.getKey(), new FieldSetCreator(e.getValue(), null));
+		for(String link: fieldSet.getLinks()) {
+			List<FieldSetCreator> list = new ArrayList<FieldSetCreator>();
+			links.put(link, list);
+			for(FieldSet fs: fieldSet.getLinks(link)) {
+				list.add(new FieldSetCreator(fs, null));
+			}
 		}
 		
 	}
@@ -134,12 +138,16 @@ public class FieldSetCreator {
                 if(v != null) result.scalars.put(f, v);
             }
         }
-        for(Map.Entry<String, FieldSetCreator> entry: links.entrySet()) {
+        for(Map.Entry<String, List<FieldSetCreator>> entry: links.entrySet()) {
             String linkName = entry.getKey();
-            FieldSetCreator linkedSet = entry.getValue();
-            EntitySequence linkedSequence = entity.getLinkedEntities(linkName, linkedSet.loadedFields);
-            SearchResultList linkedResultList = linkedSet.create(linkedSequence, 0);
-            result.links.put(linkName, linkedResultList);
+            List<FieldSetCreator> linkedSetList = entry.getValue();
+            List<SearchResultList> searchResultList = new ArrayList<SearchResultList>();
+            result.links.put(linkName, searchResultList);
+            for(FieldSetCreator linkedSet: linkedSetList) {
+	            EntitySequence linkedSequence = entity.getLinkedEntities(linkName, linkedSet.loadedFields);
+	            SearchResultList linkedResultList = linkedSet.create(linkedSequence, 0);
+	            searchResultList.add(linkedResultList);
+            }
         }
     	return result;
 	}

@@ -85,19 +85,21 @@ public class SearchResultBuilder {
 				}
 			}
 		}
-		for(Map.Entry<String, FieldSetCreator> e : fieldSetCreator.links.entrySet()) {
+		for(Map.Entry<String, List<FieldSetCreator>> e : fieldSetCreator.links.entrySet()) {
 			String link = e.getKey();
-			FieldSetCreator linkedSet = e.getValue();
-			FieldSearcher field_searcher = searcher.getFieldSearcher(table, link);
-			IntIterator iter2 = new IntIterator();
-			int num = 0;
-			for(int doc = 0; doc < documents.count(); doc++) {
-				if(num >= fieldSetCreator.limit) break;
-				int d = documents.get(doc);
-				if(fieldSetCreator.filter != null && !fieldSetCreator.filter.get(d)) continue;
-				field_searcher.fields(d, iter);
-				fill(searcher, iter, fvs, linkedSet, iter2);
-				num++;
+			List<FieldSetCreator> linkedSetList = e.getValue();
+			for(FieldSetCreator linkedSet: linkedSetList) {
+				FieldSearcher field_searcher = searcher.getFieldSearcher(table, link);
+				IntIterator iter2 = new IntIterator();
+				int num = 0;
+				for(int doc = 0; doc < documents.count(); doc++) {
+					if(num >= fieldSetCreator.limit) break;
+					int d = documents.get(doc);
+					if(fieldSetCreator.filter != null && !fieldSetCreator.filter.get(d)) continue;
+					field_searcher.fields(d, iter);
+					fill(searcher, iter, fvs, linkedSet, iter2);
+					num++;
+				}
 			}
 		}
 	}
@@ -134,23 +136,27 @@ public class SearchResultBuilder {
 				sr.scalars.put(field, value);
 			} else throw new IllegalArgumentException("Invalid type: " + type + " for field " + field);
 		}
-		for(Map.Entry<String, FieldSetCreator> e : fieldSetCreator.links.entrySet()) {
+		for(Map.Entry<String, List<FieldSetCreator>> e : fieldSetCreator.links.entrySet()) {
 			String link = e.getKey();
-			FieldSetCreator linkedSet = e.getValue();
-			FieldSearcher field_searcher = searcher.getFieldSearcher(table, link);
-			IntIterator iter2 = new IntIterator();
-			field_searcher.fields(document, iter);
-			SearchResultList childList = new SearchResultList();
-			int num = 0;
-			for(int doc = 0; doc < iter.count(); doc++) {
-				if(num >= linkedSet.limit) break;
-				int d = iter.get(doc);
-				if(linkedSet.filter != null && !linkedSet.filter.get(d)) continue;
-				SearchResult child = build(searcher, iter.get(doc), fvs, linkedSet, iter2);
-				childList.results.add(child);
-				num++;
+			List<FieldSetCreator> linkedSetList = e.getValue();
+			List<SearchResultList> childrenList = new ArrayList<SearchResultList>();
+			sr.links.put(link, childrenList);
+			for(FieldSetCreator linkedSet: linkedSetList) {
+				FieldSearcher field_searcher = searcher.getFieldSearcher(table, link);
+				IntIterator iter2 = new IntIterator();
+				field_searcher.fields(document, iter);
+				SearchResultList childList = new SearchResultList();
+				int num = 0;
+				for(int doc = 0; doc < iter.count(); doc++) {
+					if(num >= linkedSet.limit) break;
+					int d = iter.get(doc);
+					if(linkedSet.filter != null && !linkedSet.filter.get(d)) continue;
+					SearchResult child = build(searcher, iter.get(doc), fvs, linkedSet, iter2);
+					childList.results.add(child);
+					num++;
+				}
+				childrenList.add(childList);
 			}
-			sr.links.put(link, childList);
 		}
 		return sr;
 	}

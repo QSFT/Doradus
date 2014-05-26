@@ -17,11 +17,14 @@
 package com.dell.doradus.search;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.TreeMap;
 
 import com.dell.doradus.common.CommonDefs;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
+import com.dell.doradus.common.Utils;
 import com.dell.doradus.search.query.Query;
 
 public class FieldSet {
@@ -32,7 +35,7 @@ public class FieldSet {
 	public Query filter = null;
 	public TableDefinition tableDef;
 	public ArrayList<String> ScalarFields = new ArrayList<String>();
-	public TreeMap<String, FieldSet> LinkFields = new TreeMap<String, FieldSet>();
+	private TreeMap<String, List<FieldSet>> LinkFields = new TreeMap<String, List<FieldSet>>();
 	
 	public FieldSet(TableDefinition tableDef) {
 		this.tableDef = tableDef;
@@ -43,6 +46,22 @@ public class FieldSet {
 		this.tableDef = tableDef;
 		Set(text);
 		Fixup();
+		mergeLinks();
+	}
+	
+	public void addLink(String linkName, FieldSet fieldSet) {
+		List<FieldSet> fieldSetList = LinkFields.get(linkName);
+		if(fieldSetList == null) {
+			fieldSetList = new ArrayList<FieldSet>();
+			LinkFields.put(linkName, fieldSetList);
+		}
+		fieldSetList.add(fieldSet);
+	}
+	
+	public Collection<String> getLinks() { return LinkFields.keySet(); }
+	
+	public List<FieldSet> getLinks(String linkName) {
+		return LinkFields.get(linkName);
 	}
 	
 	public boolean IsOnlyID() {
@@ -70,7 +89,7 @@ public class FieldSet {
 			LinkFields.clear();
 		    for(FieldDefinition fieldDef: tableDef.getFieldDefinitions()) {
 		        if(!fieldDef.isLinkField()) continue;
-		        LinkFields.put(fieldDef.getName(), new FieldSet(tableDef.getLinkExtentTableDef(fieldDef), "*"));
+		        addLink(fieldDef.getName(), new FieldSet(tableDef.getLinkExtentTableDef(fieldDef), "*"));
 		    }
 		}
 
@@ -81,12 +100,14 @@ public class FieldSet {
             LinkFields.clear();
             for(FieldDefinition fieldDef: tableDef.getFieldDefinitions()) {
                 if(!fieldDef.isLinkField()) continue;
-                LinkFields.put(fieldDef.getName(), new FieldSet(tableDef.getLinkExtentTableDef(fieldDef), CommonDefs.ID_FIELD));
+                addLink(fieldDef.getName(), new FieldSet(tableDef.getLinkExtentTableDef(fieldDef), CommonDefs.ID_FIELD));
             }
         }
         
-		for(FieldSet linkSet: LinkFields.values()) {
-			linkSet.Fixup();
+		for(List<FieldSet> linkSetList: LinkFields.values()) {
+			for(FieldSet linkSet: linkSetList) {
+				linkSet.Fixup();
+			}
 		}
 		
 		ScalarFields.remove("_ID");
@@ -100,8 +121,51 @@ public class FieldSet {
 				ScalarFields.add(fd.getName());
 			}
 		}
-		for(FieldSet fs : LinkFields.values()) {
-			fs.expand();
+		for(List<FieldSet> linkSetList: LinkFields.values()) {
+			for(FieldSet linkSet: linkSetList) {
+				linkSet.expand();
+			}
 		}
+	}
+	
+	private void mergeLinks() {
+		List<String> allLinks = new ArrayList<String>(getLinks());
+		for(String linkName: allLinks) {
+			List<FieldSet> linkSet = getLinks(linkName);
+			if(linkSet.size() <= 1) continue;
+			List<FieldSet> newLinkSet = new ArrayList<FieldSet>();
+			for(FieldSet link: linkSet) {
+				int curSize = newLinkSet.size();
+				boolean merged = false;
+				for(int i = 0; i < curSize; i++) {
+					FieldSet existingLink = newLinkSet.get(i);
+					String filter1 = link.filter == null ? null : link.filter.toString();
+					String filter2 = existingLink.filter == null ? null : existingLink.filter.toString();
+					if((filter1 == null && filter2 == null) || (filter1 != null && filter1.equals(filter2))) {
+						existingLink.merge(link);
+						merged = true;
+						break;
+					}
+				}
+				if(!merged) {
+					link.mergeLinks();
+					newLinkSet.add(link);
+				}
+			}
+			LinkFields.put(linkName, newLinkSet);
+ 		}
+		
+	}
+	
+	private void merge(FieldSet other) {
+		Utils.require(limit == -1 || other.limit == -1 || limit == other.limit, "Inconsistent field sizes");
+		if(limit == -1) limit = other.limit;
+		ScalarFields.addAll(other.ScalarFields);
+		for(String link: other.getLinks()) {
+			for(FieldSet linkSet: other.getLinks(link)) {
+				addLink(link, linkSet);
+			}
+ 		}
+		mergeLinks();
 	}
 }

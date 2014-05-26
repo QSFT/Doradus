@@ -16,8 +16,8 @@
 
 package com.dell.doradus.olap.search;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 import com.dell.doradus.common.TableDefinition;
@@ -31,7 +31,7 @@ public class FieldSetCreator {
 	public SortOrder order;
 	public TableDefinition tableDef;
 	public List<String> scalarFields;
-	public TreeMap<String, FieldSetCreator> links = new TreeMap<String, FieldSetCreator>();
+	public TreeMap<String, List<FieldSetCreator>> links = new TreeMap<String, List<FieldSetCreator>>();
 	public FieldSet fieldSet;
 	
 	public FieldSetCreator(CubeSearcher searcher, FieldSet fieldSet, SortOrder order) {
@@ -46,8 +46,13 @@ public class FieldSetCreator {
 			filter = ResultBuilder.search(tableDef, fieldSet.filter, searcher);
 		}
 		
-		for(Map.Entry<String, FieldSet> e : fieldSet.LinkFields.entrySet()) {
-			links.put(e.getKey(), new FieldSetCreator(searcher, e.getValue(), null));
+		for(String linkName: fieldSet.getLinks()) {
+			List<FieldSet> linkSetList = fieldSet.getLinks(linkName);
+			List<FieldSetCreator> creatorList = new ArrayList<FieldSetCreator>();
+			links.put(linkName, creatorList);
+			for(FieldSet linkSet: linkSetList) {
+				creatorList.add(new FieldSetCreator(searcher, linkSet, null));
+			}
 		}
 		
 	}

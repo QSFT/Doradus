@@ -16,6 +16,7 @@
 
 package com.dell.doradus.search;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -33,7 +34,7 @@ public class SearchResult implements Comparable<SearchResult> {
 	public FieldSet fieldSet;
 	public SortOrder order;
 	public TreeMap<String, String> scalars = new TreeMap<String, String>();
-	public TreeMap<String, SearchResultList> links = new TreeMap<String, SearchResultList>();
+	public TreeMap<String, List<SearchResultList>> links = new TreeMap<String, List<SearchResultList>>();
 	
     public SearchResult() { }
 
@@ -55,13 +56,19 @@ public class SearchResult implements Comparable<SearchResult> {
                 docNode.addValueNode(scalar.getKey(), scalar.getValue(), "field");
             }
         }
-        for(Map.Entry<String, SearchResultList> link : links.entrySet()) {
-            UNode linkNode = docNode.addArrayNode(link.getKey(), "field");
-            if(link.getValue().results.size() > 0) {
-                for (SearchResult sr : link.getValue().results) {
-                    linkNode.addChildNode(sr.toDoc());
-                }
-            }
+        for(Map.Entry<String, List<SearchResultList>> link : links.entrySet()) {
+        	for(SearchResultList l: link.getValue()) {
+        		String linkKey = link.getKey();
+        		if(link.getValue().size() > 1 && l.results.size() > 0 && l.results.get(0).fieldSet.filter != null) {
+        			linkKey += ".WHERE(" + l.results.get(0).fieldSet.filter + ")";
+        		}
+	            UNode linkNode = docNode.addArrayNode(linkKey, "field");
+		            if(l.results.size() > 0) {
+		                for (SearchResult sr : l.results) {
+		                    linkNode.addChildNode(sr.toDoc());
+		                }
+		            }
+	        	}
         }
         return docNode;
     }
@@ -74,8 +81,10 @@ public class SearchResult implements Comparable<SearchResult> {
 			if(order.items.size() != 1) throw new IllegalArgumentException("Paths are not supported in the sort order");
 			AggregationGroupItem item = order.items.get(0);
 			if(item.fieldDef.isLinkField()) {
-				SearchResultList ch1 = links.get(item.fieldDef.getName());
-				SearchResultList ch2 = o.links.get(item.fieldDef.getName());
+				List<SearchResultList> list1 = links.get(item.fieldDef.getName());
+				List<SearchResultList> list2 = o.links.get(item.fieldDef.getName());
+				SearchResultList ch1 = list1 == null || list1.size() == 0 ? null : list1.get(0);
+				SearchResultList ch2 = list2 == null || list2.size() == 0 ? null : list2.get(0);
 				if(ch1.results.size() == 0 && ch2.results.size() == 0) return 0;
 				int d = 0;
 				if(ch1.results.size() == 0) d = -1;
@@ -106,6 +115,9 @@ public class SearchResult implements Comparable<SearchResult> {
 		}
 	}
 
+	@Override public String toString() {
+		return toDoc().toXML(true);
+	}
 }
 
 
