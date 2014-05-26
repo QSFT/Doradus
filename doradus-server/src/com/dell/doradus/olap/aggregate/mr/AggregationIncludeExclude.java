@@ -32,24 +32,27 @@ public class AggregationIncludeExclude {
 			List<String> exclude = groups.get(i).exclude;
 			if(exclude == null) m_exclude.add(null);
 			else {
-				for(int j = 0; j < exclude.size(); j++) exclude.set(j, exclude.get(j).toLowerCase());
-				m_exclude.add(new HashSet<String>(exclude));
+				HashSet<String> hs = new HashSet<String>(exclude.size());
+				for(String str: exclude) hs.add(str == null ? null : str.toLowerCase());
+				m_exclude.add(hs);
 			}
 			
 			List<String> include = groups.get(i).include;
 			if(include == null) m_include.add(null);
 			else {
-				for(int j = 0; j < include.size(); j++) include.set(j, include.get(j).toLowerCase());
-				m_include.add(new HashSet<String>(include));
+				HashSet<String> hs = new HashSet<String>(include.size());
+				for(String str: include) hs.add(str == null ? null : str.toLowerCase());
+				m_include.add(hs);
 			}
 		}
 	}
 	
 	public boolean accept(MGName name, int level) {
+		String text = name.name == null ? null : name.name.toLowerCase();
 		Set<String> excl = m_exclude.get(level);
-		if(excl != null && name.name != null && excl.contains(name.name.toLowerCase())) return false;
+		if(excl != null && excl.contains(text)) return false;
 		Set<String> incl = m_include.get(level);
-		if(incl != null && (name.name == null || !incl.contains(name.name.toLowerCase()))) return false;
+		if(incl != null && (!incl.contains(text))) return false;
 		return true;
 	}
 	
