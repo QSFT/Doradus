@@ -115,8 +115,8 @@ public class NumSearcher {
 		if(type == FieldType.BOOLEAN) return value == 1 ? "True" : "False";
 		else if(type == FieldType.INTEGER || type == FieldType.LONG) return "" + value;
 		else if(type == FieldType.TIMESTAMP) return value == 0 ? null : XType.toString(new Date(value));
-		else if(type == FieldType.FLOAT) return XType.toString((double)Float.intBitsToFloat((int)value));
-		else if(type == FieldType.DOUBLE) return XType.toString(Double.longBitsToDouble(value));
+		else if(type == FieldType.FLOAT) return Double.toString((double)Float.intBitsToFloat((int)value));
+		else if(type == FieldType.DOUBLE) return Double.toString(Double.longBitsToDouble(value));
 		else throw new RuntimeException("Invalid numeric type: " + type);
 	}
 	
