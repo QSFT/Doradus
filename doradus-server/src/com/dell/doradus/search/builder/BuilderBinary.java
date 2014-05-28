@@ -128,7 +128,7 @@ public class BuilderBinary extends SearchBuilder {
 		FieldAnalyzer analyzer = analyzer(field);
     	
         if(BinaryQuery.EQUALS.equals(qu.operation)) {
-        	if(analyzer instanceof DateAnalyzer) {
+        	if(value != null && analyzer instanceof DateAnalyzer) {
         		DateTrie dt = new DateTrie();
         		Date date = dt.parse(value);
         		if(date.getTime() % 1000 == 0) value = dt.format(date);
