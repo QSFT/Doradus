@@ -714,7 +714,8 @@ public class DoradusSearchQueryGrammar {
         );
 
         GrammarRule ExcludeItemValue = new SwitchRule(SwitchRule.First, "ExcludeItemValue",
-                StringLiteral,
+                FloatPointNumber,
+                Term,
                 NULL
         );
 
