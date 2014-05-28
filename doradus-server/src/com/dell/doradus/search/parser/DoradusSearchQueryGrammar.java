@@ -362,6 +362,14 @@ public class DoradusSearchQueryGrammar {
         Keyword Months1 = new Keyword("MONTHS", WORD, false);
         Keyword Years1 = new Keyword("YEARS", WORD, false);
 
+        CharacterRule CharE = new CharacterRule('E');
+        CharacterRule Chare = new CharacterRule('e');
+
+        GrammarRule Exponent = new SwitchRule("Exponent",
+                CharE,
+                Chare
+        );
+
         //for option skip or not skip whitespaces
         GrammarRule SkipWhiteSpacesRule = new SwitchRule("AllowedWhitespaces",
                 Grammar.WhiteSpaces,
@@ -390,6 +398,32 @@ public class DoradusSearchQueryGrammar {
                 StringLiteral
         );
 
+
+        GrammarRule PlusMinus = new SwitchRule("PlusMinus",
+                PLUS,
+                MINUS
+        );
+
+        GrammarRule ExponentField = new SwitchRule("ExponentField",
+                Grammar.Rule(Exponent,  PlusMinus, NUMBER),
+                Grammar.Rule(Exponent, NUMBER),
+                Grammar.emptyRule
+        );
+
+        GrammarRule FloatPointNumberContinue = new SwitchRule("FloatPointNumberContinue",
+                Grammar.Rule(DOT , NUMBER, ExponentField),
+                ExponentField
+        );
+
+
+        GrammarRule FloatPointLiteral =  new SwitchRule("FloatPointNumber",
+                Grammar.Rule(PlusMinus, NUMBER,  FloatPointNumberContinue),
+                Grammar.Rule(NUMBER,  FloatPointNumberContinue)
+        );
+
+        GrammarRule FloatPointNumber = new Token(FloatPointLiteral);
+
+
         SequenceRule FieldName = Grammar.Rule("FieldName", FIELDNAMEWORD);
 
         SpaceSeparatedTermList.body = Grammar.asRule(Term, TermListContinue);
@@ -408,10 +442,14 @@ public class DoradusSearchQueryGrammar {
 
         SequenceRule NowFunction = new SequenceRule("NowFunction");
 
-        GrammarRule RangeExpressionValue = new SwitchRule(SwitchRule.First, "RangeExpressionValue",
+
+        SwitchRule TermOrFunction = new SwitchRule(SwitchRule.First, "TermOrFunction",
                 NowFunction,
+                FloatPointNumber,
                 Term
         );
+
+        GrammarRule RangeExpressionValue = Grammar.Rule("RangeExpressionValue", TermOrFunction);
 
         GrammarRule RangeExpression = new SwitchRule(SwitchRule.First, "RangeExpression",
                 Grammar.Rule(OptWhiteSpaces, RangeStart, OptWhiteSpaces, Grammar.MustMatchAction, RangeExpressionValue, Grammar.WhiteSpaces, TO, Grammar.WhiteSpaces, RangeExpressionValue, OptWhiteSpaces, RangeEnd),
@@ -425,17 +463,11 @@ public class DoradusSearchQueryGrammar {
                 Grammar.emptyRule
         );
 
-        SwitchRule TermOrFunction = new SwitchRule(SwitchRule.First, "TermOrFunction",
-                NowFunction,
-                Term
-        );
-
         CommaSeparatedTermList.body = Grammar.asRule(TermOrFunction, CommaSeparatedTermListContinue);
 
         GrammarRule EqualsExpressionValue = new SwitchRule(SwitchRule.First, "EqualsExpressionValue",
                 RangeExpression,
-                NowFunction,
-                Term,
+                TermOrFunction,
                 Grammar.Rule(LEFTPAREN, Grammar.MustMatchAction, OptWhiteSpaces, CommaSeparatedTermList, OptWhiteSpaces, RIGHTPAREN)
         );
 
@@ -454,10 +486,11 @@ public class DoradusSearchQueryGrammar {
 
         SequenceRule ContainsExpression = new SequenceRule("ContainsExpression");
 
+
+
         GrammarRule Value = new SwitchRule("Value",
                 Grammar.Rule(OptWhiteSpaces, LEFTPAREN, OptWhiteSpaces, ContainsExpression, OptWhiteSpaces, RIGHTPAREN),
-                NowFunction,
-                Term,
+                TermOrFunction,
                 RangeExpression
 
         );
@@ -640,6 +673,7 @@ public class DoradusSearchQueryGrammar {
         GrammarRule Expression = new SwitchRule(SwitchRule.First, "Expression",
                 CountExpression,
                 NowFunction,
+                FloatPointNumber,
                 Grammar.Rule( ExplicitQuantifierFunction, ExpressionContinue),
                 Grammar.Rule( FieldName, ExpressionContinue),
                 Term
@@ -660,12 +694,17 @@ public class DoradusSearchQueryGrammar {
 
         SequenceRule NumbersList = new SequenceRule("NumbersList");
 
+        GrammarRule FloatPointNumberOrTerm = new SwitchRule(SwitchRule.First, "FloatPointNumberOrTerm",
+                FloatPointNumber,
+                Term
+        );
+
         GrammarRule NumbersListContinue = new SwitchRule(SwitchRule.First, "NumbersListContinue",
                 Grammar.Rule(OptWhiteSpaces, COMMA, Grammar.SetType("ignore"), OptWhiteSpaces, NumbersList),
                 Grammar.Rule(Grammar.emptyRule)
         );
 
-        NumbersList.body = Grammar.asRule(Term, Grammar.SetType("BatchValue"), NumbersListContinue);
+        NumbersList.body = Grammar.asRule(FloatPointNumberOrTerm, Grammar.SetType("BatchValue"), NumbersListContinue);
 
         SequenceRule ExcludeNameList = new SequenceRule("ExcludeNameList");
 
@@ -767,11 +806,6 @@ public class DoradusSearchQueryGrammar {
                 TimestampSubfield,
                 WEEK,
                 QUARTER
-        );
-
-        GrammarRule PlusMinus = new SwitchRule("PlusMinus",
-                PLUS,
-                MINUS
         );
 
         /*
@@ -1176,6 +1210,7 @@ public class DoradusSearchQueryGrammar {
         //Statistic parameters definition
 
         SwitchRule StatisticParameterValue = new SwitchRule(SwitchRule.First, "StatisticParameterValue",
+                FloatPointNumber,
                 Term,
                 StringLiteral
         );
