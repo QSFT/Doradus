@@ -1059,7 +1059,7 @@ class PathEntry {
 		for (int i=0; i < branches.size(); i++){
 			if (branches.get(i).name.equals(name)){
 				branch = branches.get(i);
-				mergeParameters(this, branch);
+				mergeParameters(branch, entry);
 				break;
 			}
 		}
@@ -1088,12 +1088,17 @@ class PathEntry {
 			if (entry1.query != null){
 				 AndQuery query = new AndQuery();
 				 query.subqueries.add(entry1.query);
-				 query.subqueries.add(entry1.query);
+				 query.subqueries.add(entry2.query);
 				 entry1.query = query;
 			}
 			else {
 				entry1.query = entry2.query;
+				if (USEQUERYCACHE) {
+					entry1.queryCache = new LRUCache<ObjectID, Boolean>(QUERYCACHECAPACITY);
+				}
 			}
+		    QueryExecutor qe = new QueryExecutor(entry1.tableDef);
+		    entry1.filter = qe.filter(entry1.query);
 		}
 	}
 
