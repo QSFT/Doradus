@@ -1170,6 +1170,7 @@ public class DoradusSearchQueryGrammar {
                 AggregationMetricCountStarQuery,
                 DateDiffFunction,
                 AggregationMetricFunctionQuery,
+                Grammar.Rule(OptWhiteSpaces, FloatPointNumber, Grammar.SetType("number")),
                 Grammar.Rule(OptWhiteSpaces, DOUBLENUMBER, Grammar.SetType("number")),
                 Grammar.Rule(OptWhiteSpaces, Subfield)
                 //Grammar.Rule(OptWhiteSpaces, AggregationFieldPath, aaaaa,  Grammar.SetType("number") )
