@@ -209,6 +209,11 @@
             <zipfileset dir="${release.dir}/apache-cassandra/apache-cassandra-1.2.6" prefix="apache-cassandra" excludes="javadoc/**" />
             <zipfileset src="${release.dir}/commons-daemon-1.0.8-bin-windows.zip"    prefix="commons-daemon" />
 		</zip>
+		
+        <delete file="${release.dir}/apache-cassandra-1.2.6-bin.tar.gz"    failonerror="false"/>
+        <delete file="${release.dir}/apache-cassandra-1.2.6-bin.tar"       failonerror="false"/>
+        <delete  dir="${release.dir}/apache-cassandra"                     failonerror="false"/>
+        <delete file="${release.dir}/commons-daemon-1.0.8-bin-windows.zip" failonerror="false"/>
 	</target>
 	
 	<target name="get-cassandra">
@@ -317,7 +322,7 @@
                           com.dell.doradus.client,
                           com.dell.doradus.client.utils"
 		    source="1.7"
-		    sourcepath="${common.src.dir}:${client.src.dir}"
+		    sourcepath="${common.src.dir}:src,${client.src.dir}:src"
 		    splitindex="true" use="true" version="true"/>
 		
 	</target>
@@ -344,6 +349,81 @@
             <zipfileset dir="${client.doc.dir}"    prefix="docs" />
 		</zip>
 	</target>
+
+    <!-- ========================================================================================= -->
+    <!--                            Test Processor                                                 -->
+	<!-- Public Targets:																           -->
+	<!--   TestProcessorLoadLibs - load third party libraries to the ${test-processor.lib.dir}     -->
+	<!--   TestProcessorCompile  - compile to ${test-processor.bin.dir}							   -->
+	<!--   TestProcessorJar      - create the ${test-processor.lib.dir}/${test-processor.jar.file} -->
+	<!--   TestProcessorCleanup  - delete ${test-processor.bin.dir} and ${test-processor.lib.dir}  -->
+    <!-- ========================================================================================= -->
+    <property name="test-processor.dir"        location="${doradus.dir}/test-processor" />
+    <property name="test-processor.bin.dir"    location="${test-processor.dir}/bin" />
+    <property name="test-processor.config.dir" location="${test-processor.dir}/config" />
+    <property name="test-processor.lib.dir"    location="${test-processor.dir}/lib" />
+    <property name="test-processor.src.dir"    location="${test-processor.dir}/src" />
+    <property name="test-processor.jar.file"   value="test-processor.jar" />
+	
+	<target name="TestProcessorLoadLibs" depends="_setProxy">
+        <delete dir="${test-processor.lib.dir}" failonerror="false"/>
+        <mkdir  dir="${test-processor.lib.dir}"/>
+	</target>
+	
+	<target name="TestProcessorCompile" depends="CommonJar,TestProcessorLoadLibs">
+        <delete dir="${test-processor.bin.dir}" failonerror="false"/>
+        <mkdir  dir="${test-processor.bin.dir}"/>
+		
+        <javac srcdir="${test-processor.src.dir}"
+              destdir="${test-processor.bin.dir}"
+              verbose="yes" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
+            <classpath>
+                <fileset dir="${test-processor.lib.dir}" includes="**/*.jar" />
+                <fileset dir="${common.lib.dir}"         includes="**/*.jar" />
+            </classpath>
+        </javac>
+	</target>
+	
+	<target name="TestProcessorJar" depends="TestProcessorCompile">
+        <jar jarfile="${test-processor.lib.dir}/${test-processor.jar.file}">
+            <fileset dir="${test-processor.bin.dir}" includes="**/*.class"/>
+            <manifest>
+                <attribute name="Implementation-Title"   value="Doradus Test Processor" />
+                <attribute name="Implementation-Version" value="${doradus.version}" />
+                <attribute name="Implementation-Vendor"  value="DELL Inc." />
+                <attribute name="Javac-Target"           value="${ant.build.javac.target}" />
+                <attribute name="Class-path"             value="../config" />
+                <attribute name="Main-class"             value="com.dell.doradus.testprocessor.Program" />
+			</manifest>
+        </jar>
+		<copy todir="${test-processor.lib.dir}">
+			<fileset dir="${common.lib.dir}"/>
+		</copy>
+	</target>
+
+	<target name="TestProcessorCleanup">
+        <delete dir="${test-processor.bin.dir}" failonerror="false"/>
+        <delete dir="${test-processor.lib.dir}" failonerror="false"/>
+	</target>
+	
+    <!-- ============================================================================== -->
+    <!--                   Test Processor Release                                       -->
+    <!-- ==============================================================================	-->
+    <property name="test-processor.zip.file" value="test-processor.zip" />
+	
+	<target name="TestProcessorRelease" depends="TestProcessorZip"/>
+	
+	<target name="TestProcessorZip" depends="TestProcessorJar">
+        <mkdir   dir="${release.dir}" />
+        <delete file="${release.dir}/${test-processor.zip.file}" failonerror="false" />
+
+		<zip destfile="${release.dir}/${test-processor.zip.file}" update="false" duplicate="preserve">
+            <zipfileset dir="${common.lib.dir}"            prefix="lib" />
+            <zipfileset dir="${test-processor.lib.dir}"    prefix="lib" />
+            <zipfileset dir="${test-processor.config.dir}" prefix="config" />
+		</zip>
+	</target>
+	
 </project>
 
 
