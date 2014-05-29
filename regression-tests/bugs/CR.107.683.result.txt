@@ -1,0 +1,135 @@
+Test table content
+~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="_ID">0001</field>
+                <field name="f">ABC</field>
+            </doc>
+            <doc>
+                <field name="_ID">0002</field>
+                <field name="f">"ABC"</field>
+            </doc>
+            <doc>
+                <field name="_ID">0003</field>
+                <field name="f">xABCx</field>
+            </doc>
+        </docs>
+    </results>
+
+##### The following queries return correct results #####
+
+*** Request
+    GET /Application/Table/_query?q=f:ABC
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="_ID">0001</field>
+                <field name="f">ABC</field>
+            </doc>
+            <doc>
+                <field name="_ID">0002</field>
+                <field name="f">"ABC"</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=ABC
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="_ID">0001</field>
+                <field name="f">ABC</field>
+            </doc>
+            <doc>
+                <field name="_ID">0002</field>
+                <field name="f">"ABC"</field>
+            </doc>
+        </docs>
+    </results>
+
+##### The following queries return INCORRECT results #####
+
+*** Request
+    GET /Application/Table/_query?q=f:?ABC?
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="_ID">0003</field>
+                <field name="f">xABCx</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=?ABC?
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="_ID">0003</field>
+                <field name="f">xABCx</field>
+            </doc>
+        </docs>
+    </results>
+
+##### The following queries return correct results #####
+
+*** Request
+    GET /Application/Table/_query?q=f:*ABC*
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="_ID">0001</field>
+                <field name="f">ABC</field>
+            </doc>
+            <doc>
+                <field name="_ID">0002</field>
+                <field name="f">"ABC"</field>
+            </doc>
+            <doc>
+                <field name="_ID">0003</field>
+                <field name="f">xABCx</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=*ABC*
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="_ID">0001</field>
+                <field name="f">ABC</field>
+            </doc>
+            <doc>
+                <field name="_ID">0002</field>
+                <field name="f">"ABC"</field>
+            </doc>
+            <doc>
+                <field name="_ID">0003</field>
+                <field name="f">xABCx</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK

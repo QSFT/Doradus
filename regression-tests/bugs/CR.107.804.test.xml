@@ -1,0 +1,67 @@
+<TEST>
+    <!-- ******************************************************************* -->
+    <!-- CR 107,804: Aggregate COUNT metric for Integer return wrong results -->
+    <!-- (SUM instead COUNT) within Olap Service.                            -->
+    <!-- Reference:                                                          -->
+    <!-- OLAP\Aggregates - Total Groups value\                               -->
+    <!-- OLAP\Aggregates - Multi-metric Queries\                             -->
+    <!-- ******************************************************************* -->
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+    <POST path="_applications">
+    <XML>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+                <option name="StorageService">OLAPService</option>
+            </options>
+            <tables>
+                <table name="Table">
+                    <fields>
+                        <field name="Country" type="TEXT"/>
+                        <field name="City" type="TEXT"/>
+                        <field name="People" type="INTEGER"/>
+                        <field name="CreateDate" type="TIMESTAMP"/>
+                    </fields>
+                </table>
+            </tables>
+        </application>
+    </XML>
+    </POST>
+
+    <POST path="Application/shard">
+    <XML>
+        <batch>
+        <docs>
+            <doc _table="Table" _ID="2001" >
+                <field name="Country">Russia</field>
+                <field name="City">Moscow</field>
+                <field name="People">11980000</field>
+                <field name="CreateDate">2011-04-05 12:32:08</field>
+            </doc>
+            <doc _table="Table" _ID="2002" >
+                <field name="Country">USA</field>
+                <field name="City">Washington</field>
+                <field name="People">632323</field>
+                <field name="CreateDate">2011-04-05 22:12:14</field>
+            </doc>
+        </docs>
+        </batch>
+    </XML>
+    </POST>
+
+    <POST path="Application/_shards/shard" />
+
+    <enable-output/>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test table content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="*" shards="shard"/>
+
+    <AGGREGATE path="Application/Table" m="COUNT(People)" f="TOP(3, Country)" shards="shard" />
+
+<DELETE path="_applications/Application/ApplicationKey"/>
+<DISCONNECT/>
+</TEST>

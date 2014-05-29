@@ -1,0 +1,84 @@
+<!--
+Doradus Data Model and Query Language -v2.1
+6.4.5.4 TOP and BOTTOM Functions
+-->
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<IMPORT>top-bottom-functions.defs.xml</IMPORT>
+<DEFINE name="response.format" value="xml|json"/>
+<enable-output/>
+
+<FOR index="i" from="1" to="2">
+    <IF.EQ arg1="${i}" arg2="1">
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo>~ XML format ~</echo>
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" xml="${schema.xml}"/>
+        <POST path="Application/shard" xml="${data.xml}"/>
+        <enable-output/>
+        <POST path="Application/_shards/shard" />
+    </IF.EQ>
+    <IF.EQ arg1="${i}" arg2="2">
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo>~ JSON format ~</echo>
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" json="${schema.json}"/>
+        <POST path="Application/shard" json="${data.json}"/>
+        <enable-output/>
+        <POST path="Application/_shards/shard" />
+    </IF.EQ>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="*" f="_all" shards="shard"/>
+        
+   <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test for TOTAL GROUP for TOP and BOTTOM aggr queries ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Table" m="MAX(People)" f="TOP(1, Country)" shards="shard"/>
+    <AGGREGATE path="Application/Table" m="MIN(People)" f="TOP(2, Country)" shards="shard" />
+<!-- CR #107.804 fixed -->
+    <AGGREGATE path="Application/Table" m="COUNT(People)" f="TOP(3, Country)" shards="shard" />
+<!-- -->
+    <AGGREGATE path="Application/Table" m="SUM(People)" f="TOP(1, Country)" shards="shard" />
+    <AGGREGATE path="Application/Table" m="AVERAGE(People)" f="TOP(2, Country)" shards="shard" />
+    <AGGREGATE path="Application/Table" m="MAX(People)" f="BOTTOM(1, Country)" shards="shard" />
+    <AGGREGATE path="Application/Table" m="MIN(People)" f="BOTTOM(2, Country)" shards="shard" />
+<!-- CR #107.804 fixed -->
+    <AGGREGATE path="Application/Table" m="COUNT(People)" f="BOTTOM(3, Country)" shards="shard" />
+<!-- -->
+    <AGGREGATE path="Application/Table" m="SUM(People)" f="BOTTOM(1, Country)" shards="shard" />
+    <AGGREGATE path="Application/Table" m="AVERAGE(People)" f="BOTTOM(2, Country)" shards="shard" />
+    <AGGREGATE path="Application/Table" m="MAX(People)" f="TOP(1, City)" shards="shard" />
+    <AGGREGATE path="Application/Table" m="MIN(People)" f="TOP(2, City)" shards="shard" />
+<!-- CR #107.804 fixed -->
+    <AGGREGATE path="Application/Table" m="COUNT(People)" f="TOP(3, City)" shards="shard" />
+<!-- -->
+    <AGGREGATE path="Application/Table" m="SUM(People)" f="TOP(1, City)" shards="shard" />
+    <AGGREGATE path="Application/Table" m="AVERAGE(People)" f="TOP(2, City)" shards="shard" />
+    <AGGREGATE path="Application/Table" m="MAX(People)" f="BOTTOM(1, City)" shards="shard" />
+    <AGGREGATE path="Application/Table" m="MIN(People)" f="BOTTOM(2, City)" shards="shard" />
+<!-- CR #107.804 fixed -->
+    <AGGREGATE path="Application/Table" m="COUNT(People)" f="BOTTOM(3, City)" shards="shard" />
+<!-- -->
+    <AGGREGATE path="Application/Table" m="SUM(People)" f="BOTTOM(1, City)" shards="shard" />
+    <AGGREGATE path="Application/Table" m="AVERAGE(People)" f="BOTTOM(2, City)" shards="shard" />
+
+    <DELETE path="_applications/Application/ApplicationKey"/>
+</FOR>
+
+<DISCONNECT />
+</TEST>

@@ -1,0 +1,632 @@
+~~~~~~~~~~~~~~
+~ XML format ~
+~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /Application/_shards/shard
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>12</totalobjects>
+        <docs>
+            <doc>
+                <field name="SendDate">2014-12-31 10:11:22</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-31 11:11:22</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-31 14:11:22</field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-31 19:11:22</field>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-31 16:11:22</field>
+                <field name="_ID">1005</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-31 21:11:22</field>
+                <field name="_ID">1006</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-01 10:11:22</field>
+                <field name="_ID">1007</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-01 11:11:22</field>
+                <field name="_ID">1008</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-01 14:11:22</field>
+                <field name="_ID">1009</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-01 11:31:22</field>
+                <field name="_ID">1010</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-01 11:41:22</field>
+                <field name="_ID">1011</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-01 14:21:22</field>
+                <field name="_ID">1012</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"12",
+          "docs":[
+             {
+                "doc":{
+                   "SendDate":"2014-12-31 10:11:22",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-31 11:11:22",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-31 14:11:22",
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-31 19:11:22",
+                   "_ID":"1004",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-31 16:11:22",
+                   "_ID":"1005",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-31 21:11:22",
+                   "_ID":"1006",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-01 10:11:22",
+                   "_ID":"1007",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-01 11:11:22",
+                   "_ID":"1008",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-01 14:11:22",
+                   "_ID":"1009",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-01 11:31:22",
+                   "_ID":"1010",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-01 11:41:22",
+                   "_ID":"1011",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-01 14:21:22",
+                   "_ID":"1012",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Test for Group by Timestamp Subfield ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=BOTTOM(3,SendDate.HOUR)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="BOTTOM(3,SendDate.HOUR)" metric="COUNT(*)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>12</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="SendDate.HOUR">16</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="SendDate.HOUR">19</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="SendDate.HOUR">21</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"BOTTOM(3,SendDate.HOUR)"
+          },
+          "totalobjects":"12",
+          "summary":"12",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "SendDate.HOUR":"16"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "SendDate.HOUR":"19"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "SendDate.HOUR":"21"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=TOP(3,SendDate.HOUR)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="TOP(3,SendDate.HOUR)" metric="COUNT(*)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>12</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>4</metric>
+                <field name="SendDate.HOUR">11</field>
+            </group>
+            <group>
+                <metric>3</metric>
+                <field name="SendDate.HOUR">14</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="SendDate.HOUR">10</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"TOP(3,SendDate.HOUR)"
+          },
+          "totalobjects":"12",
+          "summary":"12",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"4",
+                   "field":{
+                      "SendDate.HOUR":"11"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"3",
+                   "field":{
+                      "SendDate.HOUR":"14"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "SendDate.HOUR":"10"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~
+~ JSON format ~
+~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /Application/_shards/shard
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>12</totalobjects>
+        <docs>
+            <doc>
+                <field name="SendDate">2014-12-31 10:11:22</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-31 11:11:22</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-31 14:11:22</field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-31 19:11:22</field>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-31 16:11:22</field>
+                <field name="_ID">1005</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-31 21:11:22</field>
+                <field name="_ID">1006</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-01 10:11:22</field>
+                <field name="_ID">1007</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-01 11:11:22</field>
+                <field name="_ID">1008</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-01 14:11:22</field>
+                <field name="_ID">1009</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-01 11:31:22</field>
+                <field name="_ID">1010</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-01 11:41:22</field>
+                <field name="_ID">1011</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="SendDate">2014-12-01 14:21:22</field>
+                <field name="_ID">1012</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"12",
+          "docs":[
+             {
+                "doc":{
+                   "SendDate":"2014-12-31 10:11:22",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-31 11:11:22",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-31 14:11:22",
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-31 19:11:22",
+                   "_ID":"1004",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-31 16:11:22",
+                   "_ID":"1005",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-31 21:11:22",
+                   "_ID":"1006",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-01 10:11:22",
+                   "_ID":"1007",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-01 11:11:22",
+                   "_ID":"1008",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-01 14:11:22",
+                   "_ID":"1009",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-01 11:31:22",
+                   "_ID":"1010",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-01 11:41:22",
+                   "_ID":"1011",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2014-12-01 14:21:22",
+                   "_ID":"1012",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Test for Group by Timestamp Subfield ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=BOTTOM(3,SendDate.HOUR)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="BOTTOM(3,SendDate.HOUR)" metric="COUNT(*)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>12</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="SendDate.HOUR">16</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="SendDate.HOUR">19</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="SendDate.HOUR">21</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"BOTTOM(3,SendDate.HOUR)"
+          },
+          "totalobjects":"12",
+          "summary":"12",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "SendDate.HOUR":"16"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "SendDate.HOUR":"19"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "SendDate.HOUR":"21"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=TOP(3,SendDate.HOUR)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="TOP(3,SendDate.HOUR)" metric="COUNT(*)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>12</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>4</metric>
+                <field name="SendDate.HOUR">11</field>
+            </group>
+            <group>
+                <metric>3</metric>
+                <field name="SendDate.HOUR">14</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="SendDate.HOUR">10</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"TOP(3,SendDate.HOUR)"
+          },
+          "totalobjects":"12",
+          "summary":"12",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"4",
+                   "field":{
+                      "SendDate.HOUR":"11"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"3",
+                   "field":{
+                      "SendDate.HOUR":"14"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "SendDate.HOUR":"10"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

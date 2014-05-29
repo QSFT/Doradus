@@ -1,0 +1,139 @@
+##### Creating application Application #####
+
+Test table content
+~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=Field
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Field">xxx</field>
+                <field name="_ID">0001</field>
+            </doc>
+            <doc>
+                <field name="Field">yyy</field>
+                <field name="_ID">0002</field>
+            </doc>
+            <doc>
+                <field name="Field">zzz</field>
+                <field name="_ID">0003</field>
+            </doc>
+        </docs>
+    </results>
+
+Queries
+~~~~~~~
+
+*** Request
+    GET /Application/Table/_query?q=Field:xxx
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Field">xxx</field>
+                <field name="_ID">0001</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=xxx
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Field">xxx</field>
+                <field name="_ID">0001</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=*:xxx
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Field">xxx</field>
+                <field name="_ID">0001</field>
+            </doc>
+        </docs>
+    </results>
+
+##### Deleting application Application #####
+##### Re-creating application Application #####
+
+Test table content
+~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=Field
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Field">xxx</field>
+                <field name="_ID">0001</field>
+            </doc>
+            <doc>
+                <field name="Field">yyy</field>
+                <field name="_ID">0002</field>
+            </doc>
+            <doc>
+                <field name="Field">zzz</field>
+                <field name="_ID">0003</field>
+            </doc>
+        </docs>
+    </results>
+
+Queries
+~~~~~~~
+
+*** Request
+    GET /Application/Table/_query?q=Field:xxx
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Field">xxx</field>
+                <field name="_ID">0001</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=xxx
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Field">xxx</field>
+                <field name="_ID">0001</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=*:xxx
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Field">xxx</field>
+                <field name="_ID">0001</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK

@@ -1,0 +1,208 @@
+<TEST>
+
+<DEFINE name="schema.xml">
+    <application name="Application">
+        <key>ApplicationKey</key>
+        <options>
+            <option name="AutoTables">false</option>
+        </options>
+        <tables>
+            <table name="People">
+                <fields>
+                    <field name="Name"   type="TEXT"/>
+                    <field name="Wife"   type="LINK" table="People" inverse="Husband"/>
+                    <field name="Spouse" type="LINK" table="People" inverse="Spouse"/>
+                </fields>
+            </table>
+            <table name="Publishers">
+                <fields>
+                    <field name="Name" type="TEXT"/>
+                </fields>
+            </table>
+            <table name="Books">
+                <fields>
+                    <field name="Title"       type="TEXT"/>
+                    <field name="Author"      type="LINK" table="People"     inverse="AuthorOf"/>
+                    <field name="PublishedBy" type="LINK" table="Publishers" inverse="Books"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+</DEFINE>
+
+<DEFINE name="people.data.xml">
+    <batch>
+        <docs>
+            <doc>
+                <field name="Name">Joshua</field>
+                <field name="_ID">1001</field>
+                <field name="Wife">
+                    <add>
+                        <value>1006</value>
+                    </add>
+                </field>
+                <field name="Spouse">
+                    <add>
+                        <value>1006</value>
+                    </add>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Neal</field>
+                <field name="_ID">1002</field>
+                <field name="Wife">
+                    <add>
+                        <value>1004</value>
+                    </add>
+                </field>
+                <field name="Spouse">
+                    <add>
+                        <value>1004</value>
+                    </add>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Jeffrey</field>
+                <field name="_ID">1003</field>
+            </doc>
+            <doc>
+                <field name="Name">Mary</field>
+                <field name="_ID">1004</field>
+            </doc>
+            <doc>
+                <field name="Name">Angela</field>
+                <field name="_ID">1005</field>
+                <field name="Husband">
+                    <add>
+                        <value>1003</value>
+                    </add>
+                </field>
+                <field name="Spouse">
+                    <add>
+                        <value>1003</value>
+                    </add>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Sara</field>
+                <field name="_ID">1006</field>
+            </doc>
+        </docs>
+    </batch>
+</DEFINE>
+
+<DEFINE name="publishers.data.xml">
+    <batch>
+        <docs>
+            <doc>
+                <field name="Name">Dinosaur Brothers Press</field>
+                <field name="_ID">2001</field>
+            </doc>
+            <doc>
+                <field name="Name">Cats ans Dogs Press</field>
+                <field name="_ID">2002</field>
+            </doc>
+            <doc>
+                <field name="Name">Just A Publisher</field>
+                <field name="_ID">2003</field>
+            </doc>
+        </docs>
+    </batch>
+</DEFINE>
+
+<DEFINE name="books.data.xml">
+    <batch>
+        <docs>
+            <doc>
+                <field name="Title">All About Everything</field>
+                <field name="_ID">3001</field>
+                <field name="Author">
+                    <add>
+                        <value>1001</value>
+                    </add>
+                </field>
+                <field name="PublishedBy">
+                    <add>
+                        <value>2001</value>
+                    </add>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">All About Something</field>
+                <field name="_ID">3002</field>
+                <field name="Author">
+                    <add>
+                        <value>1001</value>
+                        <value>1002</value>
+                    </add>
+                </field>
+                <field name="PublishedBy">
+                    <add>
+                        <value>2001</value>
+                    </add>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">All About Nothing</field>
+                <field name="_ID">3003</field>
+                <field name="Author">
+                    <add>
+                        <value>1003</value>
+                    </add>
+                </field>
+                <field name="PublishedBy">
+                    <add>
+                        <value>2002</value>
+                    </add>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Everything</field>
+                <field name="_ID">3004</field>
+                <field name="Author">
+                    <add>
+                        <value>1004</value>
+                        <value>1005</value>
+                    </add>
+                </field>
+                <field name="PublishedBy">
+                    <add>
+                        <value>2003</value>
+                    </add>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Something</field>
+                <field name="_ID">3005</field>
+                <field name="PublishedBy">
+                    <add>
+                        <value>2003</value>
+                    </add>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Nothing</field>
+                <field name="_ID">3006</field>
+                <field name="Author">
+                    <add>
+                        <value>1003</value>
+                        <value>1005</value>
+                    </add>
+                </field>
+                <field name="PublishedBy">
+                    <add>
+                        <value>2002</value>
+                    </add>
+                </field>
+            </doc>
+        </docs>
+    </batch>
+</DEFINE>
+
+<JSON-FROM-XML name ="schema.json" value="${schema.xml}"/>
+<JSON-FROM-XML name ="books.data.json" value="${books.data.xml}"/>
+<JSON-FROM-XML name ="people.data.json" value="${people.data.xml}"/>
+<JSON-FROM-XML name ="publishers.data.json" value="${publishers.data.xml}"/>
+
+</TEST>
+

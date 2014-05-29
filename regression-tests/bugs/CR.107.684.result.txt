@@ -1,0 +1,197 @@
+Content of table "Table"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="N">-3</field>
+                <field name="_ID">0001</field>
+            </doc>
+            <doc>
+                <field name="N">-2</field>
+                <field name="_ID">0002</field>
+            </doc>
+            <doc>
+                <field name="N">-1</field>
+                <field name="_ID">0003</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=N<-1&f=N
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="N">-3</field>
+                <field name="_ID">0001</field>
+            </doc>
+            <doc>
+                <field name="N">-2</field>
+                <field name="_ID">0002</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=N<-2&f=N
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="N">-3</field>
+                <field name="_ID">0001</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=N<-3&f=N
+*** Response: xml
+    200 OK
+    <results>
+        <docs/>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=N<=-2&f=N
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="N">-3</field>
+                <field name="_ID">0001</field>
+            </doc>
+            <doc>
+                <field name="N">-2</field>
+                <field name="_ID">0002</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=N<=-3&f=N
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="N">-3</field>
+                <field name="_ID">0001</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=N>=-1&f=N
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="N">-1</field>
+                <field name="_ID">0003</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=N>=-2&f=N
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="N">-2</field>
+                <field name="_ID">0002</field>
+            </doc>
+            <doc>
+                <field name="N">-1</field>
+                <field name="_ID">0003</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=N>=-3&f=N
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="N">-3</field>
+                <field name="_ID">0001</field>
+            </doc>
+            <doc>
+                <field name="N">-2</field>
+                <field name="_ID">0002</field>
+            </doc>
+            <doc>
+                <field name="N">-1</field>
+                <field name="_ID">0003</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=N>-2&f=N
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="N">-1</field>
+                <field name="_ID">0003</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=N>-3&f=N
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="N">-2</field>
+                <field name="_ID">0002</field>
+            </doc>
+            <doc>
+                <field name="N">-1</field>
+                <field name="_ID">0003</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=N>-4&f=N
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="N">-3</field>
+                <field name="_ID">0001</field>
+            </doc>
+            <doc>
+                <field name="N">-2</field>
+                <field name="_ID">0002</field>
+            </doc>
+            <doc>
+                <field name="N">-1</field>
+                <field name="_ID">0003</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK

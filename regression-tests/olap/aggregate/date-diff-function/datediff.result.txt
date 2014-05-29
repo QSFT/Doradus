@@ -1,0 +1,566 @@
+~~~~~~~~~~~~~~
+~ XML format ~
+~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /Application/_shards/shard
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Date">2010-11-21 10:53:03</field>
+                <field name="_ID">1000</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Date":"2010-11-21 10:53:03",
+                   "_ID":"1000",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER, and YEAR ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(YEAR,'2010-11-21 10:53:03','2014-03-21 21:34:56')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(YEAR,'2010-11-21 10:53:03','2014-03-21 21:34:56')" query="*"/>
+        <totalobjects>1</totalobjects>
+        <value>4</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(YEAR,'2010-11-21 10:53:03','2014-03-21 21:34:56')",
+             "query":"*"
+          },
+          "totalobjects":"1",
+          "value":"4"
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(QUARTER,'2010-11-21 10:53:03','2014-03-21 21:34:56')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(QUARTER,'2010-11-21 10:53:03','2014-03-21 21:34:56')" query="*"/>
+        <totalobjects>1</totalobjects>
+        <value>13</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(QUARTER,'2010-11-21 10:53:03','2014-03-21 21:34:56')",
+             "query":"*"
+          },
+          "totalobjects":"1",
+          "value":"13"
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(MONTH,'2010-11-21 10:53:03','2014-03-21 21:34:56')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(MONTH,'2010-11-21 10:53:03','2014-03-21 21:34:56')" query="*"/>
+        <totalobjects>1</totalobjects>
+        <value>40</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(MONTH,'2010-11-21 10:53:03','2014-03-21 21:34:56')",
+             "query":"*"
+          },
+          "totalobjects":"1",
+          "value":"40"
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(WEEK,'2010-11-21 10:53:03','2014-03-21 21:34:56')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(WEEK,'2010-11-21 10:53:03','2014-03-21 21:34:56')" query="*"/>
+        <totalobjects>1</totalobjects>
+        <value>173</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(WEEK,'2010-11-21 10:53:03','2014-03-21 21:34:56')",
+             "query":"*"
+          },
+          "totalobjects":"1",
+          "value":"173"
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(DAY,'2010-11-21 10:53:03','2014-03-21 21:34:56')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(DAY,'2010-11-21 10:53:03','2014-03-21 21:34:56')" query="*"/>
+        <totalobjects>1</totalobjects>
+        <value>1216</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(DAY,'2010-11-21 10:53:03','2014-03-21 21:34:56')",
+             "query":"*"
+          },
+          "totalobjects":"1",
+          "value":"1216"
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(HOUR,'2010-11-21 10:53:03','2014-03-21 21:34:56')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(HOUR,'2010-11-21 10:53:03','2014-03-21 21:34:56')" query="*"/>
+        <totalobjects>1</totalobjects>
+        <value>29194</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(HOUR,'2010-11-21 10:53:03','2014-03-21 21:34:56')",
+             "query":"*"
+          },
+          "totalobjects":"1",
+          "value":"29194"
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(MINUTE,'2010-11-21 10:53:03','2014-03-21 21:34:56')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(MINUTE,'2010-11-21 10:53:03','2014-03-21 21:34:56')" query="*"/>
+        <totalobjects>1</totalobjects>
+        <value>1751681</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(MINUTE,'2010-11-21 10:53:03','2014-03-21 21:34:56')",
+             "query":"*"
+          },
+          "totalobjects":"1",
+          "value":"1751681"
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(SECOND,'2010-11-21 10:53:03','2014-03-21 21:34:56')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(SECOND,'2010-11-21 10:53:03','2014-03-21 21:34:56')" query="*"/>
+        <totalobjects>1</totalobjects>
+        <value>105100913</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(SECOND,'2010-11-21 10:53:03','2014-03-21 21:34:56')",
+             "query":"*"
+          },
+          "totalobjects":"1",
+          "value":"105100913"
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ start_date greater than end_date ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(YEAR,'2014-03-21 21:34:56','2010-11-21 10:53:03')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(YEAR,'2014-03-21 21:34:56','2010-11-21 10:53:03')" query="*"/>
+        <totalobjects>1</totalobjects>
+        <value>-4</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(YEAR,'2014-03-21 21:34:56','2010-11-21 10:53:03')",
+             "query":"*"
+          },
+          "totalobjects":"1",
+          "value":"-4"
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ start_date and end_date are the same ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(SECOND,'2014-03-21 21:34:56','2014-03-21 21:34:56')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(SECOND,'2014-03-21 21:34:56','2014-03-21 21:34:56')" query="*"/>
+        <totalobjects>1</totalobjects>
+        <value>0</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(SECOND,'2014-03-21 21:34:56','2014-03-21 21:34:56')",
+             "query":"*"
+          },
+          "totalobjects":"1",
+          "value":"0"
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~
+~ JSON format ~
+~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /Application/_shards/shard
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER, and YEAR ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(YEAR,'2010-11-21 10:53:03','2014-03-21 21:34:56')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(YEAR,'2010-11-21 10:53:03','2014-03-21 21:34:56')" query="*"/>
+        <totalobjects>0</totalobjects>
+        <value>0</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(YEAR,'2010-11-21 10:53:03','2014-03-21 21:34:56')",
+             "query":"*"
+          },
+          "totalobjects":"0",
+          "value":"0"
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(QUARTER,'2010-11-21 10:53:03','2014-03-21 21:34:56')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(QUARTER,'2010-11-21 10:53:03','2014-03-21 21:34:56')" query="*"/>
+        <totalobjects>0</totalobjects>
+        <value>0</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(QUARTER,'2010-11-21 10:53:03','2014-03-21 21:34:56')",
+             "query":"*"
+          },
+          "totalobjects":"0",
+          "value":"0"
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(MONTH,'2010-11-21 10:53:03','2014-03-21 21:34:56')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(MONTH,'2010-11-21 10:53:03','2014-03-21 21:34:56')" query="*"/>
+        <totalobjects>0</totalobjects>
+        <value>0</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(MONTH,'2010-11-21 10:53:03','2014-03-21 21:34:56')",
+             "query":"*"
+          },
+          "totalobjects":"0",
+          "value":"0"
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(WEEK,'2010-11-21 10:53:03','2014-03-21 21:34:56')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(WEEK,'2010-11-21 10:53:03','2014-03-21 21:34:56')" query="*"/>
+        <totalobjects>0</totalobjects>
+        <value>0</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(WEEK,'2010-11-21 10:53:03','2014-03-21 21:34:56')",
+             "query":"*"
+          },
+          "totalobjects":"0",
+          "value":"0"
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(DAY,'2010-11-21 10:53:03','2014-03-21 21:34:56')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(DAY,'2010-11-21 10:53:03','2014-03-21 21:34:56')" query="*"/>
+        <totalobjects>0</totalobjects>
+        <value>0</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(DAY,'2010-11-21 10:53:03','2014-03-21 21:34:56')",
+             "query":"*"
+          },
+          "totalobjects":"0",
+          "value":"0"
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(HOUR,'2010-11-21 10:53:03','2014-03-21 21:34:56')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(HOUR,'2010-11-21 10:53:03','2014-03-21 21:34:56')" query="*"/>
+        <totalobjects>0</totalobjects>
+        <value>0</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(HOUR,'2010-11-21 10:53:03','2014-03-21 21:34:56')",
+             "query":"*"
+          },
+          "totalobjects":"0",
+          "value":"0"
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(MINUTE,'2010-11-21 10:53:03','2014-03-21 21:34:56')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(MINUTE,'2010-11-21 10:53:03','2014-03-21 21:34:56')" query="*"/>
+        <totalobjects>0</totalobjects>
+        <value>0</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(MINUTE,'2010-11-21 10:53:03','2014-03-21 21:34:56')",
+             "query":"*"
+          },
+          "totalobjects":"0",
+          "value":"0"
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(SECOND,'2010-11-21 10:53:03','2014-03-21 21:34:56')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(SECOND,'2010-11-21 10:53:03','2014-03-21 21:34:56')" query="*"/>
+        <totalobjects>0</totalobjects>
+        <value>0</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(SECOND,'2010-11-21 10:53:03','2014-03-21 21:34:56')",
+             "query":"*"
+          },
+          "totalobjects":"0",
+          "value":"0"
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ start_date greater than end_date ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(YEAR,'2014-03-21 21:34:56','2010-11-21 10:53:03')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(YEAR,'2014-03-21 21:34:56','2010-11-21 10:53:03')" query="*"/>
+        <totalobjects>0</totalobjects>
+        <value>0</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(YEAR,'2014-03-21 21:34:56','2010-11-21 10:53:03')",
+             "query":"*"
+          },
+          "totalobjects":"0",
+          "value":"0"
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ start_date and end_date are the same ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=DATEDIFF(SECOND,'2014-03-21 21:34:56','2014-03-21 21:34:56')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="DATEDIFF(SECOND,'2014-03-21 21:34:56','2014-03-21 21:34:56')" query="*"/>
+        <totalobjects>0</totalobjects>
+        <value>0</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DATEDIFF(SECOND,'2014-03-21 21:34:56','2014-03-21 21:34:56')",
+             "query":"*"
+          },
+          "totalobjects":"0",
+          "value":"0"
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

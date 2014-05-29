@@ -1,0 +1,1464 @@
+~~~~~~~~~~~~~~
+~ XML format ~
+~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /Application/_shards/shard
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>5</totalobjects>
+        <docs>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-04-05 12:32:08</field>
+                <field name="MV">
+                    <value>One</value>
+                    <value>Two</value>
+                </field>
+                <field name="People">11980000</field>
+                <field name="_ID">2001</field>
+                <field name="_shard">shard</field>
+                <field name="Manager">
+                    <doc>
+                        <field name="Name">Name 1001</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="City">Washington</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-05 22:12:14</field>
+                <field name="MV">
+                    <value>Four</value>
+                    <value>Three</value>
+                </field>
+                <field name="People">632323</field>
+                <field name="_ID">2002</field>
+                <field name="_shard">shard</field>
+                <field name="Manager">
+                    <doc>
+                        <field name="Name">Name 1001</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1002</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="City">New York</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-15 10:20:01</field>
+                <field name="MV">
+                    <value>Five</value>
+                    <value>Six</value>
+                </field>
+                <field name="People">8245000</field>
+                <field name="_ID">2003</field>
+                <field name="_shard">shard</field>
+                <field name="Manager">
+                    <doc>
+                        <field name="Name">Name 1001</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1002</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1003</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="City">Saint-Petersburg</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-06-22 09:05:20</field>
+                <field name="MV">
+                    <value>Eight</value>
+                    <value>Seven</value>
+                </field>
+                <field name="People">4880000</field>
+                <field name="_ID">2004</field>
+                <field name="_shard">shard</field>
+                <field name="Manager">
+                    <doc>
+                        <field name="Name">Name 1001</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1002</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1003</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1004</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="City">Novgorod</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2012-12-30 15:29:04</field>
+                <field name="MV">
+                    <value>Nine</value>
+                    <value>Ten</value>
+                </field>
+                <field name="People">1255000</field>
+                <field name="_ID">2005</field>
+                <field name="_shard">shard</field>
+                <field name="Manager">
+                    <doc>
+                        <field name="Name">Name 1001</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1002</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1003</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1004</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1005</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"5",
+          "docs":[
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "Country":"Russia",
+                   "CreateDate":"2011-04-05 12:32:08",
+                   "MV":[
+                      "One",
+                      "Two"
+                   ],
+                   "People":"11980000",
+                   "_ID":"2001",
+                   "_shard":"shard",
+                   "Manager":[
+                      {
+                         "doc":{
+                            "Name":"Name 1001",
+                            "_ID":"1001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "City":"Washington",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-05 22:12:14",
+                   "MV":[
+                      "Four",
+                      "Three"
+                   ],
+                   "People":"632323",
+                   "_ID":"2002",
+                   "_shard":"shard",
+                   "Manager":[
+                      {
+                         "doc":{
+                            "Name":"Name 1001",
+                            "_ID":"1001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1002",
+                            "_ID":"1002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "City":"New York",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-15 10:20:01",
+                   "MV":[
+                      "Five",
+                      "Six"
+                   ],
+                   "People":"8245000",
+                   "_ID":"2003",
+                   "_shard":"shard",
+                   "Manager":[
+                      {
+                         "doc":{
+                            "Name":"Name 1001",
+                            "_ID":"1001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1002",
+                            "_ID":"1002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1003",
+                            "_ID":"1003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "City":"Saint-Petersburg",
+                   "Country":"Russia",
+                   "CreateDate":"2011-06-22 09:05:20",
+                   "MV":[
+                      "Eight",
+                      "Seven"
+                   ],
+                   "People":"4880000",
+                   "_ID":"2004",
+                   "_shard":"shard",
+                   "Manager":[
+                      {
+                         "doc":{
+                            "Name":"Name 1001",
+                            "_ID":"1001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1002",
+                            "_ID":"1002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1003",
+                            "_ID":"1003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1004",
+                            "_ID":"1004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "City":"Novgorod",
+                   "Country":"Russia",
+                   "CreateDate":"2012-12-30 15:29:04",
+                   "MV":[
+                      "Nine",
+                      "Ten"
+                   ],
+                   "People":"1255000",
+                   "_ID":"2005",
+                   "_shard":"shard",
+                   "Manager":[
+                      {
+                         "doc":{
+                            "Name":"Name 1001",
+                            "_ID":"1001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1002",
+                            "_ID":"1002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1003",
+                            "_ID":"1003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1004",
+                            "_ID":"1004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1005",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~   Test for Aggregates: MIN ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+~ INTEGER ~
+~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(People)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="MIN(People)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <summary>632323</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>1255000</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>632323</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(People)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"5",
+          "summary":"632323",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1255000",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"632323",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(People)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="MIN(People)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <value>632323</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(People)",
+             "query":"*"
+          },
+          "totalobjects":"5",
+          "value":"632323"
+       }
+    }
+
+~~~~~~~~~~~~~
+~ TIMESTAMP ~
+~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(CreateDate)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="MIN(CreateDate)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <summary>2011-04-05 12:32:08</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>2011-04-05 12:32:08</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>2011-04-05 22:12:14</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(CreateDate)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"5",
+          "summary":"2011-04-05 12:32:08",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"2011-04-05 12:32:08",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2011-04-05 22:12:14",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(CreateDate)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="MIN(CreateDate)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <value>2011-04-05 12:32:08</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(CreateDate)",
+             "query":"*"
+          },
+          "totalobjects":"5",
+          "value":"2011-04-05 12:32:08"
+       }
+    }
+
+~~~~~~~~~~~~~
+~ STRING SV ~
+~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(City)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="MIN(City)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <summary>Moscow</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>Moscow</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>New York</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(City)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"5",
+          "summary":"Moscow",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"Moscow",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"New York",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(Country)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="MIN(Country)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <value>Russia</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(Country)",
+             "query":"*"
+          },
+          "totalobjects":"5",
+          "value":"Russia"
+       }
+    }
+
+~~~~~~~~~~~~~
+~ STRING MV ~
+~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(MV)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="MIN(MV)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <summary>Eight</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>Eight</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>Five</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(MV)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"5",
+          "summary":"Eight",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"Eight",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"Five",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(MV)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="MIN(MV)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <value>Eight</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(MV)",
+             "query":"*"
+          },
+          "totalobjects":"5",
+          "value":"Eight"
+       }
+    }
+
+~~~~~~~~
+~ LINK ~
+~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(Manager)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="MIN(Manager)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <summary>1001</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>1001</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>1001</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(Manager)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"5",
+          "summary":"1001",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1001",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1001",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table1/_aggregate?m=MIN(Report)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="MIN(Report)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <value>2001</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(Report)",
+             "query":"*"
+          },
+          "totalobjects":"5",
+          "value":"2001"
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~
+~ JSON format ~
+~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /Application/_shards/shard
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>5</totalobjects>
+        <docs>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-04-05 12:32:08</field>
+                <field name="MV">
+                    <value>One</value>
+                    <value>Two</value>
+                </field>
+                <field name="People">11980000</field>
+                <field name="_ID">2001</field>
+                <field name="_shard">shard</field>
+                <field name="Manager">
+                    <doc>
+                        <field name="Name">Name 1001</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="City">Washington</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-05 22:12:14</field>
+                <field name="MV">
+                    <value>Four</value>
+                    <value>Three</value>
+                </field>
+                <field name="People">632323</field>
+                <field name="_ID">2002</field>
+                <field name="_shard">shard</field>
+                <field name="Manager">
+                    <doc>
+                        <field name="Name">Name 1001</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1002</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="City">New York</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-15 10:20:01</field>
+                <field name="MV">
+                    <value>Five</value>
+                    <value>Six</value>
+                </field>
+                <field name="People">8245000</field>
+                <field name="_ID">2003</field>
+                <field name="_shard">shard</field>
+                <field name="Manager">
+                    <doc>
+                        <field name="Name">Name 1001</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1002</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1003</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="City">Saint-Petersburg</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-06-22 09:05:20</field>
+                <field name="MV">
+                    <value>Eight</value>
+                    <value>Seven</value>
+                </field>
+                <field name="People">4880000</field>
+                <field name="_ID">2004</field>
+                <field name="_shard">shard</field>
+                <field name="Manager">
+                    <doc>
+                        <field name="Name">Name 1001</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1002</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1003</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1004</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="City">Novgorod</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2012-12-30 15:29:04</field>
+                <field name="MV">
+                    <value>Nine</value>
+                    <value>Ten</value>
+                </field>
+                <field name="People">1255000</field>
+                <field name="_ID">2005</field>
+                <field name="_shard">shard</field>
+                <field name="Manager">
+                    <doc>
+                        <field name="Name">Name 1001</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1002</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1003</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1004</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Name 1005</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"5",
+          "docs":[
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "Country":"Russia",
+                   "CreateDate":"2011-04-05 12:32:08",
+                   "MV":[
+                      "One",
+                      "Two"
+                   ],
+                   "People":"11980000",
+                   "_ID":"2001",
+                   "_shard":"shard",
+                   "Manager":[
+                      {
+                         "doc":{
+                            "Name":"Name 1001",
+                            "_ID":"1001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "City":"Washington",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-05 22:12:14",
+                   "MV":[
+                      "Four",
+                      "Three"
+                   ],
+                   "People":"632323",
+                   "_ID":"2002",
+                   "_shard":"shard",
+                   "Manager":[
+                      {
+                         "doc":{
+                            "Name":"Name 1001",
+                            "_ID":"1001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1002",
+                            "_ID":"1002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "City":"New York",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-15 10:20:01",
+                   "MV":[
+                      "Five",
+                      "Six"
+                   ],
+                   "People":"8245000",
+                   "_ID":"2003",
+                   "_shard":"shard",
+                   "Manager":[
+                      {
+                         "doc":{
+                            "Name":"Name 1001",
+                            "_ID":"1001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1002",
+                            "_ID":"1002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1003",
+                            "_ID":"1003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "City":"Saint-Petersburg",
+                   "Country":"Russia",
+                   "CreateDate":"2011-06-22 09:05:20",
+                   "MV":[
+                      "Eight",
+                      "Seven"
+                   ],
+                   "People":"4880000",
+                   "_ID":"2004",
+                   "_shard":"shard",
+                   "Manager":[
+                      {
+                         "doc":{
+                            "Name":"Name 1001",
+                            "_ID":"1001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1002",
+                            "_ID":"1002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1003",
+                            "_ID":"1003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1004",
+                            "_ID":"1004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "City":"Novgorod",
+                   "Country":"Russia",
+                   "CreateDate":"2012-12-30 15:29:04",
+                   "MV":[
+                      "Nine",
+                      "Ten"
+                   ],
+                   "People":"1255000",
+                   "_ID":"2005",
+                   "_shard":"shard",
+                   "Manager":[
+                      {
+                         "doc":{
+                            "Name":"Name 1001",
+                            "_ID":"1001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1002",
+                            "_ID":"1002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1003",
+                            "_ID":"1003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1004",
+                            "_ID":"1004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Name 1005",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~   Test for Aggregates: MIN ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+~ INTEGER ~
+~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(People)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="MIN(People)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <summary>632323</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>1255000</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>632323</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(People)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"5",
+          "summary":"632323",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1255000",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"632323",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(People)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="MIN(People)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <value>632323</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(People)",
+             "query":"*"
+          },
+          "totalobjects":"5",
+          "value":"632323"
+       }
+    }
+
+~~~~~~~~~~~~~
+~ TIMESTAMP ~
+~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(CreateDate)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="MIN(CreateDate)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <summary>2011-04-05 12:32:08</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>2011-04-05 12:32:08</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>2011-04-05 22:12:14</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(CreateDate)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"5",
+          "summary":"2011-04-05 12:32:08",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"2011-04-05 12:32:08",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2011-04-05 22:12:14",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(CreateDate)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="MIN(CreateDate)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <value>2011-04-05 12:32:08</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(CreateDate)",
+             "query":"*"
+          },
+          "totalobjects":"5",
+          "value":"2011-04-05 12:32:08"
+       }
+    }
+
+~~~~~~~~~~~~~
+~ STRING SV ~
+~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(City)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="MIN(City)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <summary>Moscow</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>Moscow</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>New York</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(City)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"5",
+          "summary":"Moscow",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"Moscow",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"New York",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(Country)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="MIN(Country)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <value>Russia</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(Country)",
+             "query":"*"
+          },
+          "totalobjects":"5",
+          "value":"Russia"
+       }
+    }
+
+~~~~~~~~~~~~~
+~ STRING MV ~
+~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(MV)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="MIN(MV)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <summary>Eight</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>Eight</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>Five</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(MV)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"5",
+          "summary":"Eight",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"Eight",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"Five",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(MV)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="MIN(MV)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <value>Eight</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(MV)",
+             "query":"*"
+          },
+          "totalobjects":"5",
+          "value":"Eight"
+       }
+    }
+
+~~~~~~~~
+~ LINK ~
+~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(Manager)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="MIN(Manager)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <summary>1001</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>1001</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>1001</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(Manager)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"5",
+          "summary":"1001",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1001",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1001",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table1/_aggregate?m=MIN(Report)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="MIN(Report)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <value>2001</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(Report)",
+             "query":"*"
+          },
+          "totalobjects":"5",
+          "value":"2001"
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

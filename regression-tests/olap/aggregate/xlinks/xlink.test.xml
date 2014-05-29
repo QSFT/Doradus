@@ -1,0 +1,86 @@
+<!--
+Doradus OLAP Database -v2.1
+3.3 Cross-shard Relationships: Xlinks
+-->
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<IMPORT>xlink.defs.xml</IMPORT>
+<!--<SET response-format="xml|json"/> -->
+<DEFINE name="response.format" value="xml"/>
+<enable-output/>
+
+<FOR index="i" from="1" to="2">
+    <IF.EQ arg1="${i}" arg2="1">
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo>~ XML format ~</echo>
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" xml="${schema.xml}"/>
+        <POST path="Application/shard1" xml="${data1.xml}"/>
+        <POST path="Application/shard2" xml="${data2.xml}"/>
+        <POST path="Application/shard3" xml="${data3.xml}"/>
+        <enable-output/>
+        <POST path="Application/_shards/shard1" />
+        <POST path="Application/_shards/shard2" />
+        <POST path="Application/_shards/shard3" />
+    </IF.EQ>
+    <IF.EQ arg1="${i}" arg2="2">
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo>~ JSON format ~</echo>
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" json="${schema.json}"/>
+        <POST path="Application/shard1" json="${data1.json}"/>
+        <POST path="Application/shard2" json="${data2.json}"/>
+        <POST path="Application/shard3" json="${data3.json}"/>
+        <enable-output/>
+        <POST path="Application/_shards/shard1" />
+        <POST path="Application/_shards/shard2" />
+        <POST path="Application/_shards/shard3" />
+    </IF.EQ>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" range=""/>
+
+    <echo>~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test for XLinks ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Table" m="COUNT(InReplyTo)" f="Responses" q="*" range="*" xrange="*"/>
+    <AGGREGATE path="Application/Table" m="COUNT(Responses)" f="InReplyTo" q="*" range="*" xrange="*"/>
+    <AGGREGATE path="Application/Table" m="COUNT(InReplyTo)" f="Responses" q="*" range="*" xshards="shard1"/>
+    <AGGREGATE path="Application/Table" m="COUNT(Responses)" f="InReplyTo" q="*" range="*" xshards="shard1"/>
+    <AGGREGATE path="Application/Table" m="COUNT(InReplyTo)" f="Responses" q="*" range="*" xshards="shard2"/>
+    <AGGREGATE path="Application/Table" m="COUNT(Responses)" f="InReplyTo" q="*" range="*" xshards="shard2"/>
+    <AGGREGATE path="Application/Table" m="COUNT(InReplyTo)" f="Responses" q="*" range="*" xshards="shard3"/>
+    <AGGREGATE path="Application/Table" m="COUNT(Responses)" f="InReplyTo" q="*" range="*" xshards="shard3"/>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test for XLinks via Entity ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <IF.EQ arg1="${i}" arg2="1">
+	<PUT path="Application/Table/_aggregate" xml="${put_1.xml}"/>    
+	<PUT path="Application/Table/_aggregate" xml="${put_2.xml}"/>    
+    </IF.EQ>
+
+    <IF.EQ arg1="${i}" arg2="2">
+	<PUT path="Application/Table/_aggregate" json="${put_1.json}"/>    
+	<PUT path="Application/Table/_aggregate" json="${put_2.json}"/>    
+    </IF.EQ>
+
+    <DELETE path="_applications/Application/ApplicationKey"/>
+</FOR>
+
+<DISCONNECT />
+</TEST>

@@ -1,0 +1,728 @@
+~~~~~~~~~~~~~~
+~ XML format ~
+~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /Application/_shards/shard1
+*** Response: 
+    200 OK
+
+*** Request
+    POST /Application/_shards/shard2
+*** Response: 
+    200 OK
+
+*** Request
+    POST /Application/_shards/shard3
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?range=
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>7</totalobjects>
+        <docs>
+            <doc>
+                <field name="Body">Root 1</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard1</field>
+            </doc>
+            <doc>
+                <field name="Body">Root 2</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard1</field>
+            </doc>
+            <doc>
+                <field name="Body">SUB1 Root 1</field>
+                <field name="ThreadID">1001</field>
+                <field name="_ID">2001</field>
+                <field name="_shard">shard2</field>
+            </doc>
+            <doc>
+                <field name="Body">SUB1 Root 2</field>
+                <field name="ThreadID">1002</field>
+                <field name="_ID">2002</field>
+                <field name="_shard">shard2</field>
+            </doc>
+            <doc>
+                <field name="Body">SUB SUB Root 1</field>
+                <field name="ThreadID">2001</field>
+                <field name="_ID">3001</field>
+                <field name="_shard">shard3</field>
+            </doc>
+            <doc>
+                <field name="Body">SUB SUB Root 2</field>
+                <field name="ThreadID">2002</field>
+                <field name="_ID">3002</field>
+                <field name="_shard">shard3</field>
+            </doc>
+            <doc>
+                <field name="Body">SUB SUB Root 2</field>
+                <field name="ThreadID">2002</field>
+                <field name="_ID">3003</field>
+                <field name="_shard">shard3</field>
+            </doc>
+        </docs>
+    </results>
+
+~~~~~~~~~~~~~~~~~~~
+~ Test for XLinks ~
+~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(InReplyTo)&q=*&f=Responses&range=*&xrange=*
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Responses" metric="COUNT(InReplyTo)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>6</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>3</metric>
+                <field name="Responses">(null)</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">2001</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">2002</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Responses">3001</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Responses">3002</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Responses">3003</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(Responses)&q=*&f=InReplyTo&range=*&xrange=*
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="InReplyTo" metric="COUNT(Responses)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>5</summary>
+        <totalgroups>5</totalgroups>
+        <groups>
+            <group>
+                <metric>2</metric>
+                <field name="InReplyTo">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="InReplyTo">1001</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="InReplyTo">1002</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="InReplyTo">2001</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="InReplyTo">2002</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(InReplyTo)&q=*&f=Responses&range=*&xshards=shard1
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Responses" metric="COUNT(InReplyTo)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>2</summary>
+        <totalgroups>1</totalgroups>
+        <groups>
+            <group>
+                <metric>2</metric>
+                <field name="Responses">(null)</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(Responses)&q=*&f=InReplyTo&range=*&xshards=shard1
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="InReplyTo" metric="COUNT(Responses)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>0</summary>
+        <totalgroups>3</totalgroups>
+        <groups>
+            <group>
+                <metric>0</metric>
+                <field name="InReplyTo">(null)</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="InReplyTo">1001</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="InReplyTo">1002</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(InReplyTo)&q=*&f=Responses&range=*&xshards=shard2
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Responses" metric="COUNT(InReplyTo)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>3</summary>
+        <totalgroups>3</totalgroups>
+        <groups>
+            <group>
+                <metric>3</metric>
+                <field name="Responses">(null)</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">2001</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">2002</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(Responses)&q=*&f=InReplyTo&range=*&xshards=shard2
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="InReplyTo" metric="COUNT(Responses)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>2</summary>
+        <totalgroups>3</totalgroups>
+        <groups>
+            <group>
+                <metric>2</metric>
+                <field name="InReplyTo">(null)</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="InReplyTo">2001</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="InReplyTo">2002</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(InReplyTo)&q=*&f=Responses&range=*&xshards=shard3
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Responses" metric="COUNT(InReplyTo)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>0</summary>
+        <totalgroups>4</totalgroups>
+        <groups>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">(null)</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">3001</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">3002</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">3003</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(Responses)&q=*&f=InReplyTo&range=*&xshards=shard3
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="InReplyTo" metric="COUNT(Responses)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>3</summary>
+        <totalgroups>1</totalgroups>
+        <groups>
+            <group>
+                <metric>3</metric>
+                <field name="InReplyTo">(null)</field>
+            </group>
+        </groups>
+    </results>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Test for XLinks via Entity ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    PUT /Application/Table/_aggregate
+    <aggregate-search>
+        <query>*</query>
+        <metric>COUNT(InReplyTo)</metric>
+        <grouping-fields>Responses</grouping-fields>
+        <shards-range>*</shards-range>
+        <x-shards-range>*</x-shards-range>
+    </aggregate-search>
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Responses" metric="COUNT(InReplyTo)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>6</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>3</metric>
+                <field name="Responses">(null)</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">2001</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">2002</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Responses">3001</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Responses">3002</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Responses">3003</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    PUT /Application/Table/_aggregate
+    <aggregate-search>
+        <query>*</query>
+        <metric>COUNT(InReplyTo)</metric>
+        <grouping-fields>Responses</grouping-fields>
+        <shards-range>*</shards-range>
+        <x-shards>shard1</x-shards>
+    </aggregate-search>
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Responses" metric="COUNT(InReplyTo)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>2</summary>
+        <totalgroups>1</totalgroups>
+        <groups>
+            <group>
+                <metric>2</metric>
+                <field name="Responses">(null)</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~
+~ JSON format ~
+~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /Application/_shards/shard1
+*** Response: 
+    200 OK
+
+*** Request
+    POST /Application/_shards/shard2
+*** Response: 
+    200 OK
+
+*** Request
+    POST /Application/_shards/shard3
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?range=
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>7</totalobjects>
+        <docs>
+            <doc>
+                <field name="Body">Root 1</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard1</field>
+            </doc>
+            <doc>
+                <field name="Body">Root 2</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard1</field>
+            </doc>
+            <doc>
+                <field name="Body">SUB1 Root 1</field>
+                <field name="ThreadID">1001</field>
+                <field name="_ID">2001</field>
+                <field name="_shard">shard2</field>
+            </doc>
+            <doc>
+                <field name="Body">SUB1 Root 2</field>
+                <field name="ThreadID">1002</field>
+                <field name="_ID">2002</field>
+                <field name="_shard">shard2</field>
+            </doc>
+            <doc>
+                <field name="Body">SUB SUB Root 1</field>
+                <field name="ThreadID">2001</field>
+                <field name="_ID">3001</field>
+                <field name="_shard">shard3</field>
+            </doc>
+            <doc>
+                <field name="Body">SUB SUB Root 2</field>
+                <field name="ThreadID">2002</field>
+                <field name="_ID">3002</field>
+                <field name="_shard">shard3</field>
+            </doc>
+            <doc>
+                <field name="Body">SUB SUB Root 2</field>
+                <field name="ThreadID">2002</field>
+                <field name="_ID">3003</field>
+                <field name="_shard">shard3</field>
+            </doc>
+        </docs>
+    </results>
+
+~~~~~~~~~~~~~~~~~~~
+~ Test for XLinks ~
+~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(InReplyTo)&q=*&f=Responses&range=*&xrange=*
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Responses" metric="COUNT(InReplyTo)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>6</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>3</metric>
+                <field name="Responses">(null)</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">2001</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">2002</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Responses">3001</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Responses">3002</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Responses">3003</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(Responses)&q=*&f=InReplyTo&range=*&xrange=*
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="InReplyTo" metric="COUNT(Responses)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>5</summary>
+        <totalgroups>5</totalgroups>
+        <groups>
+            <group>
+                <metric>2</metric>
+                <field name="InReplyTo">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="InReplyTo">1001</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="InReplyTo">1002</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="InReplyTo">2001</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="InReplyTo">2002</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(InReplyTo)&q=*&f=Responses&range=*&xshards=shard1
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Responses" metric="COUNT(InReplyTo)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>2</summary>
+        <totalgroups>1</totalgroups>
+        <groups>
+            <group>
+                <metric>2</metric>
+                <field name="Responses">(null)</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(Responses)&q=*&f=InReplyTo&range=*&xshards=shard1
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="InReplyTo" metric="COUNT(Responses)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>0</summary>
+        <totalgroups>3</totalgroups>
+        <groups>
+            <group>
+                <metric>0</metric>
+                <field name="InReplyTo">(null)</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="InReplyTo">1001</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="InReplyTo">1002</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(InReplyTo)&q=*&f=Responses&range=*&xshards=shard2
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Responses" metric="COUNT(InReplyTo)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>3</summary>
+        <totalgroups>3</totalgroups>
+        <groups>
+            <group>
+                <metric>3</metric>
+                <field name="Responses">(null)</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">2001</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">2002</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(Responses)&q=*&f=InReplyTo&range=*&xshards=shard2
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="InReplyTo" metric="COUNT(Responses)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>2</summary>
+        <totalgroups>3</totalgroups>
+        <groups>
+            <group>
+                <metric>2</metric>
+                <field name="InReplyTo">(null)</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="InReplyTo">2001</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="InReplyTo">2002</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(InReplyTo)&q=*&f=Responses&range=*&xshards=shard3
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Responses" metric="COUNT(InReplyTo)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>0</summary>
+        <totalgroups>4</totalgroups>
+        <groups>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">(null)</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">3001</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">3002</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">3003</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(Responses)&q=*&f=InReplyTo&range=*&xshards=shard3
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="InReplyTo" metric="COUNT(Responses)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>3</summary>
+        <totalgroups>1</totalgroups>
+        <groups>
+            <group>
+                <metric>3</metric>
+                <field name="InReplyTo">(null)</field>
+            </group>
+        </groups>
+    </results>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Test for XLinks via Entity ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    PUT /Application/Table/_aggregate
+    {
+       "aggregate-search":{
+          "query":"*",
+          "metric":"COUNT(InReplyTo)",
+          "grouping-fields":"Responses",
+          "shards-range":"*",
+          "x-shards-range":"*"
+       }
+    }
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Responses" metric="COUNT(InReplyTo)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>6</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>3</metric>
+                <field name="Responses">(null)</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">2001</field>
+            </group>
+            <group>
+                <metric>0</metric>
+                <field name="Responses">2002</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Responses">3001</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Responses">3002</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Responses">3003</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    PUT /Application/Table/_aggregate
+    {
+       "aggregate-search":{
+          "query":"*",
+          "metric":"COUNT(InReplyTo)",
+          "grouping-fields":"Responses",
+          "shards-range":"*",
+          "x-shards":"shard1"
+       }
+    }
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Responses" metric="COUNT(InReplyTo)" query="*"/>
+        <totalobjects>7</totalobjects>
+        <summary>2</summary>
+        <totalgroups>1</totalgroups>
+        <groups>
+            <group>
+                <metric>2</metric>
+                <field name="Responses">(null)</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

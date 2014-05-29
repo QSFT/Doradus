@@ -1,0 +1,92 @@
+Create application
+~~~~~~~~~~~~~~~~~~
+table content
+~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=B
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="B">false</field>
+                <field name="_ID">0001</field>
+            </doc>
+            <doc>
+                <field name="B">true</field>
+                <field name="_ID">0002</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "B":"false",
+                   "_ID":"0001"
+                }
+             },
+             {
+                "doc":{
+                   "B":"true",
+                   "_ID":"0002"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+Create application
+~~~~~~~~~~~~~~~~~~
+table content
+~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=B
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="B">false</field>
+                <field name="_ID">0001</field>
+            </doc>
+            <doc>
+                <field name="B">true</field>
+                <field name="_ID">0002</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "B":"false",
+                   "_ID":"0001"
+                }
+             },
+             {
+                "doc":{
+                   "B":"true",
+                   "_ID":"0002"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

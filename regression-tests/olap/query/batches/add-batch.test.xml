@@ -1,0 +1,73 @@
+<!--
+Doradus OLAP Database -v2.1
+5.4.1 Add Batch
+-->
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<IMPORT>add-batch.defs.xml</IMPORT>
+<DEFINE name="response.format" value="xml|json"/>
+<enable-output/>
+
+
+<FOR index="i" from="1" to="2">
+    <enable-output/>
+    <IF.EQ arg1="${i}" arg2="1">
+        <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application with data using XML formats ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" xml="${schema.xml}"/>
+        <POST path="Application/shard" xml="${data.xml}"/>
+    </IF.EQ>
+    <IF.EQ arg1="${i}" arg2="2">
+        <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application with data using JSON formats ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" json="${schema.json}"/>
+        <POST path="Application/shard" json="${data.json}"/>
+    </IF.EQ>
+
+    <enable-output/>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test data before shard merging ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="*" f="SV,MV" shards="shard"/>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test data after shard merging ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <POST path="Application/_shards/shard" />
+    <QUERY path="Application/Table" q="*" f="SV,MV" shards="shard"/>
+
+    <disable-output/>
+    <IF.EQ arg1="${i}" arg2="1">
+        <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <POST path="Application/shard" xml="${data1.xml}"/>
+    </IF.EQ>
+    <IF.EQ arg1="${i}" arg2="2">
+        <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <POST path="Application/shard" json="${data1.json}"/>
+    </IF.EQ>
+    <enable-output/>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Assigning an SV and MV scalar fields for an existing object ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test data before shard merging ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="*" f="SV,MV" shards="shard"/>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test data after shard merging ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <POST path="Application/_shards/shard" />
+    <QUERY path="Application/Table" q="*" f="SV,MV" shards="shard"/>
+
+    <DELETE path="_applications/Application/ApplicationKey"/>
+</FOR>
+
+    <DISCONNECT />
+</TEST>

@@ -1,0 +1,93 @@
+<TEST>
+
+<DEFINE name="schema.xml">
+<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+        <option name="StorageService">OLAPService</option>
+    </options>
+    <tables>
+        <table name="Table">
+            <fields>
+                <field type="TEXT" name="DiskName" collection="false"/>
+            </fields>
+        </table>
+    </tables>
+</application>
+</DEFINE>
+
+<!-- shard=a -->
+<DEFINE name="data.xml">
+      <batch>
+        <docs>
+          <doc _table="Table" _ID="2001" >
+            <field name="DiskName">Disk_1</field>
+          </doc>
+          <doc _table="Table" _ID="2002" >
+            <field name="DiskName">Disk_2</field>
+          </doc>
+          <doc _table="Table" _ID="2003" >
+            <field name="DiskName">Disk_3</field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+<!-- shard=c -->
+<DEFINE name="data1.xml">
+      <batch>
+        <docs>
+          <doc _table="Table" _ID="2004" >
+            <field name="DiskName">Disk_4</field>
+          </doc>
+          <doc _table="Table" _ID="2005" >
+            <field name="DiskName">Disk_5</field>
+          </doc>
+          <doc _table="Table" _ID="2006" >
+            <field name="DiskName">Disk_6</field>
+          </doc>
+          <doc _table="Table" _ID="2001" >
+            <field name="DiskName">Disk_1</field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+<!-- shard=e -->
+<DEFINE name="data2.xml">
+      <batch>
+        <docs>
+          <doc _table="Table" _ID="2007" >
+            <field name="DiskName">Disk_7</field>
+          </doc>
+          <doc _table="Table" _ID="2008" >
+            <field name="DiskName">Disk_8</field>
+          </doc>
+          <doc _table="Table" _ID="2004" >
+            <field name="DiskName">Disk_4</field>
+          </doc>
+          <doc _table="Table" _ID="2009" >
+            <field name="DiskName">Disk_9</field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+<!-- shard=g -->
+<DEFINE name="data3.xml">
+      <batch>
+        <docs>
+          <doc _table="Table" _ID="2010" >
+            <field name="DiskName">Disk_10</field>
+          </doc>
+          <doc _table="Table" _ID="2011" >
+            <field name="DiskName">Disk_11</field>
+          </doc>
+          <doc _table="Table" _ID="2004" >
+            <field name="DiskName">Disk_4</field>
+          </doc>
+          <doc _table="Table" _ID="2001" >
+            <field name="DiskName">Disk_1</field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+
+</TEST>

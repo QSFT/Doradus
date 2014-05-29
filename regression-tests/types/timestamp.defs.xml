@@ -1,0 +1,122 @@
+<TEST>
+
+<DEFINE name="schema.xml">
+    <application name="Application">
+        <key>ApplicationKey</key>
+        <options>
+            <option name="AutoTables">false</option>
+        </options>
+        <tables>
+            <table name="Table">
+                <fields>
+                    <field name="D1" type="TIMESTAMP" />
+                    <field name="D2" type="TIMESTAMP" />
+                </fields>
+            </table>
+        </tables>
+    </application>
+</DEFINE>
+
+<DEFINE name="data.xml">
+    <batch>
+        <docs>
+            <doc>
+                <field name="D1">1832-02-03 08:50:01.123</field>
+                <field name="_ID">0001</field>
+            </doc>
+            <doc>
+                <field name="D1">1832-02-03 08:50:01</field>
+                <field name="_ID">0002</field>
+            </doc>
+            <doc>
+                <field name="D1">1832-02-03 08:50</field>
+                <field name="_ID">0003</field>
+            </doc>
+            <doc>
+                <field name="D1">1832-02-03 08</field>
+                <field name="_ID">0004</field>
+            </doc>
+            <doc>
+                <field name="D1">1832-02-03</field>
+                <field name="_ID">0005</field>
+            </doc>
+            <doc>
+                <field name="D1">1832-02</field>
+                <field name="_ID">0006</field>
+            </doc>
+            <doc>
+                <field name="D1">1832</field>
+                <field name="_ID">0007</field>
+            </doc>
+            <doc>
+                <field name="D1">1833-01-01 00:00:00.000</field>
+                <field name="_ID">0008</field>
+            </doc>
+            <doc>
+                <field name="D1">1833-01-01 00:00:00</field>
+                <field name="_ID">0009</field>
+            </doc>
+            <doc>
+                <field name="D1">1833-01-01 00:00</field>
+                <field name="_ID">0010</field>
+            </doc>
+            <doc>
+                <field name="D1">1833-01-01 00</field>
+                <field name="_ID">0011</field>
+            </doc>
+            <doc>
+                <field name="D1">1833-01-01</field>
+                <field name="_ID">0012</field>
+            </doc>
+            <doc>
+                <field name="D1">1833-01</field>
+                <field name="_ID">0013</field>
+            </doc>
+            <doc>
+                <field name="D1">1833</field>
+                <field name="_ID">0014</field>
+            </doc>
+            <doc>
+                <field name="D2">2000-05-20 16:00</field>
+                <field name="_ID">0015</field>
+            </doc>
+            <doc>
+                <field name="D2">2000-05-20 16:30</field>
+                <field name="_ID">0016</field>
+            </doc>
+            <doc>
+                <field name="D2">2000-05-27 12:00</field>
+                <field name="_ID">0017</field>
+            </doc>
+            <doc>
+                <field name="D2">2000-12-31 23:59</field>
+                <field name="_ID">0018</field>
+            </doc>
+            <doc>
+                <field name="D2">2010-10-23</field>
+                <field name="_ID">0019</field>
+            </doc>
+            <doc>
+                <field name="D2">2011-07</field>
+                <field name="_ID">0020</field>
+            </doc>
+            <doc>
+                <field name="D2">2011-08</field>
+                <field name="_ID">0021</field>
+            </doc>
+            <doc>
+                <field name="D2">2012</field>
+                <field name="_ID">0022</field>
+            </doc>
+            <doc>
+                <field name="D2">2013</field>
+                <field name="_ID">0023</field>
+            </doc>
+        </docs>
+    </batch>
+</DEFINE>
+
+<JSON-FROM-XML name ="schema.json" value="${schema.xml}"/>
+<JSON-FROM-XML name ="data.json" value="${data.xml}"/>
+
+</TEST>

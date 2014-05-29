@@ -1,0 +1,58 @@
+<TEST>
+    <!-- ************************************************ -->
+    <!-- CR 107,686: MAX(TIMESTAMP) returns wrong result. -->
+    <!-- ************************************************ -->
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+    <POST path="_applications">
+    <XML>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+                <option name="AutoTables">false</option>
+            </options>
+            <tables>
+                <table name="Table">
+                    <fields>
+                        <field name="D" type="TIMESTAMP" />
+                    </fields>
+                </table>
+            </tables>
+        </application>
+    </XML>
+    </POST>
+
+    <POST path="Application/Table">
+    <XML>
+        <batch>
+        <docs>
+            <doc>
+                <field name="D">1957-03-15</field>
+                <field name="_ID">0001</field>
+            </doc>
+            <doc>
+                <field name="D">1968-06-20</field>
+                <field name="_ID">0002</field>
+            </doc>
+            <doc>
+                <field name="D">1970-10-28</field>
+                <field name="_ID">0003</field>
+            </doc>
+        </docs>
+        </batch>
+    </XML>
+    </POST>
+    <enable-output/>
+    
+    <echo>Test table content</echo>
+    <echo>~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="*" f="D" />
+
+    <AGGREGATE path="Application/Table" m="MIN(D)" />
+    <AGGREGATE path="Application/Table" m="MAX(D)" />
+
+<DELETE path="_applications/Application/ApplicationKey"/>
+<DISCONNECT/>
+</TEST>

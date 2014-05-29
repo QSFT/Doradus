@@ -1,0 +1,96 @@
+<TEST>
+    <!-- ****************************************************************************** -->
+    <!-- CR 107,779: AVERAGE(integer) returns integer within Object Service             -->
+    <!-- and float-point within Olap Service.                                           -->
+    <!-- Reference.  Object\Aggregates - Other metric functions\aggr_metrics            -->
+    <!-- ****************************************************************************** -->
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+    <POST path="_applications">
+    <XML>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <tables>
+                <table name="Table">
+                    <fields>
+                        <field name="N" type="INTEGER"/>
+                    </fields>
+                </table>
+            </tables>
+        </application>
+    </XML>
+    </POST>
+
+    <POST path="Application/Table">
+    <XML>
+        <batch>
+        <docs>
+            <doc>
+                <field name="N">3</field>
+                <field name="_ID">0001</field>
+            </doc>
+            <doc>
+                <field name="N">4</field>
+                <field name="_ID">0002</field>
+            </doc>
+        </docs>
+        </batch>
+    </XML>
+    </POST>
+    <enable-output/>
+
+    <echo>Object table content</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="*"/>
+
+    <AGGREGATE path="Application/Table" m="AVERAGE(N)"/>
+
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+    <disable-output/>
+    <POST path="_applications">
+        <XML>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+                <option name="StorageService">OLAPService</option>
+            </options>
+            <tables>
+                <table name="Table">
+                    <fields>
+                        <field name="N" type="INTEGER"/>
+                    </fields>
+                </table>
+            </tables>
+        </application>
+        </XML>
+    </POST>
+
+    <POST path="Application/shard">
+        <XML>
+        <batch>
+            <docs>
+                <doc _table="Table" _ID="0001">
+                    <field name="N">3</field>
+                </doc>
+                <doc _table="Table" _ID="0002">
+                    <field name="N">4</field>
+                </doc>
+            </docs>
+        </batch>
+        </XML>
+    </POST>
+    <POST path="Application/_shards/shard" />
+    <enable-output/>
+
+    <echo>Olap table content</echo>
+    <echo>~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="*" shards="shard"/>
+
+    <AGGREGATE path="Application/Table" m="AVERAGE(N)" shards="shard"/>
+
+<DELETE path="_applications/Application/ApplicationKey"/>
+<DISCONNECT/>
+</TEST>

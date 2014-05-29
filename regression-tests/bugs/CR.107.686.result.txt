@@ -1,0 +1,45 @@
+Test table content
+~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=D
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="D">1957-03-15</field>
+                <field name="_ID">0001</field>
+            </doc>
+            <doc>
+                <field name="D">1968-06-20</field>
+                <field name="_ID">0002</field>
+            </doc>
+            <doc>
+                <field name="D">1970-10-28</field>
+                <field name="_ID">0003</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(D)
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="MIN(D)"/>
+        <value>1957-03-15 00:00:00</value>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=MAX(D)
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="MAX(D)"/>
+        <value>1970-10-28 00:00:00</value>
+    </results>
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK

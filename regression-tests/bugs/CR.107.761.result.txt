@@ -1,0 +1,88 @@
+~~~~~~~~~~~~~~~~~~~~~~
+~ Test table content ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>3</totalobjects>
+        <docs>
+            <doc>
+                <field name="MV">
+                    <value>John</value>
+                    <value>Smith</value>
+                </field>
+                <field name="SV">12226</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>A</value>
+                    <value>B</value>
+                </field>
+                <field name="SV">John</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>AA</value>
+                    <value>BB</value>
+                </field>
+                <field name="SV">F</field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Scalar "Contains" Clauses ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
+~ Term Clause ~
+~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=MV:John&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="MV">
+                    <value>John</value>
+                    <value>Smith</value>
+                </field>
+                <field name="SV">12226</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=SV:John&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="MV">
+                    <value>A</value>
+                    <value>B</value>
+                </field>
+                <field name="SV">John</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK

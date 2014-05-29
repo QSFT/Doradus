@@ -1,0 +1,73 @@
+<!--
+Doradus OLAP Database -v2.1
+4.2.2 DATEDIFF Function
+-->
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<IMPORT>datediff.defs.xml</IMPORT>
+<DEFINE name="response.format" value="xml|json"/>
+<enable-output/>
+
+<FOR index="i" from="1" to="2">
+    <IF.EQ arg1="${i}" arg2="1">
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo>~ XML format ~</echo>
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications"     xml="${schema.xml}"/>
+        <POST path="Application/shard" xml="${data.xml}"/>
+        <enable-output/>
+        <POST path="Application/_shards/shard" />
+    </IF.EQ>
+    <IF.EQ arg1="${i}" arg2="2">
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo>~ JSON format ~</echo>
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications"     json="${schema.json}"/>
+        <POST path="Application/shard" json="${data.json}"/>
+        <enable-output/>
+        <POST path="Application/_shards/shard" />
+    </IF.EQ>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="*" f="_all" shards="shard"/>
+        
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER, and YEAR ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Table" m="DATEDIFF(YEAR,'2010-11-21 10:53:03','2014-03-21 21:34:56')" shards="shard"/>
+    <AGGREGATE path="Application/Table" m="DATEDIFF(QUARTER,'2010-11-21 10:53:03','2014-03-21 21:34:56')" shards="shard"/>
+    <AGGREGATE path="Application/Table" m="DATEDIFF(MONTH,'2010-11-21 10:53:03','2014-03-21 21:34:56')" shards="shard"/>
+    <AGGREGATE path="Application/Table" m="DATEDIFF(WEEK,'2010-11-21 10:53:03','2014-03-21 21:34:56')" shards="shard"/>
+    <AGGREGATE path="Application/Table" m="DATEDIFF(DAY,'2010-11-21 10:53:03','2014-03-21 21:34:56')" shards="shard"/>
+    <AGGREGATE path="Application/Table" m="DATEDIFF(HOUR,'2010-11-21 10:53:03','2014-03-21 21:34:56')" shards="shard"/>
+    <AGGREGATE path="Application/Table" m="DATEDIFF(MINUTE,'2010-11-21 10:53:03','2014-03-21 21:34:56')" shards="shard"/>
+    <AGGREGATE path="Application/Table" m="DATEDIFF(SECOND,'2010-11-21 10:53:03','2014-03-21 21:34:56')" shards="shard"/>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ start_date greater than end_date ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Table" m="DATEDIFF(YEAR,'2014-03-21 21:34:56','2010-11-21 10:53:03')" shards="shard"/>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ start_date and end_date are the same ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Table" m="DATEDIFF(SECOND,'2014-03-21 21:34:56','2014-03-21 21:34:56')" shards="shard"/>
+
+    <DELETE path="_applications/Application/ApplicationKey"/>
+</FOR>
+<DISCONNECT/>
+</TEST>

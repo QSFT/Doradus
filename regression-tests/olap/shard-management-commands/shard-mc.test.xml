@@ -1,0 +1,100 @@
+<!--
+Doradus OLAP Database -v2.1
+5.5.1 List Shards
+5.5.3 Merge Shard
+5.5.4 Delete Shard
+-->
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<IMPORT>shard-mc.defs.xml</IMPORT>
+<DEFINE name="response.format" value="xml"/>
+<enable-output/>
+
+<FOR index="i" from="1" to="1">
+    <echo>~~~~~~~~~~~~~~</echo>
+    <echo>~ XML format ~</echo>
+    <echo>~~~~~~~~~~~~~~</echo>
+    <echo></echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Create application ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <disable-output/>
+    <POST path="_applications" xml="${schema.xml}"/>
+    <POST path="Application/shard0" xml="${data.xml}"/>
+    <POST path="Application/shard1" xml="${data.xml}"/>
+    <enable-output/>
+    <POST path="Application/_shards/shard1" />
+    <disable-output/>
+    <POST path="Application/shard2" xml="${data.xml}"/>
+    <enable-output/>
+    <POST path="Application/_shards/shard2?expire-date=2013-01-01" />
+    <disable-output/>
+    <POST path="Application/shard3" xml="${data.xml}"/>
+    <enable-output/>
+    <POST path="Application/_shards/shard3?expire-date=2013-01" />
+    <disable-output/>
+    <POST path="Application/shard4" xml="${data.xml}"/>
+    <enable-output/>
+    <POST path="Application/_shards/shard4?expire-date=2039" />
+
+    <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Get List of Shards ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <GET path="Application/_shards" />
+
+    <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo> ~ Check that shard0 has not been merged ~</echo>
+    <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <GET path="Application/_shards/shard0" />
+    <QUERY path="Application/Table1" q="*" f="_all" shards="shard0" />
+
+    <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo> ~ Check that shard merged ordinary ~</echo>
+    <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table1" q="*" f="Link_T1.Name" shards="shard1" />
+
+    <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo> ~ Check that shard2 and shard3 data still available ~</echo>
+    <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table1" q="*" f="Link_T1.Name" shards="shard2" />
+    <QUERY path="Application/Table1" q="*" f="Link_T1.Name" shards="shard3" />
+
+    <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo> ~ Change existing shard's expire-date for shard3 ~</echo>
+    <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <POST path="Application/_shards/shard3" />
+
+    <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo> ~ Launch Data-aging task ~</echo>
+    <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <PUT path="_tasks/Application/*/data-aging?start" />
+    <SLEEP sec="12"/>
+
+    <enable-output/>
+    <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo> ~ Get list of Shards again ~</echo>
+    <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <GET path="Application/_shards" />
+
+    <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo> ~ Check that shard2 has been deleted ~</echo>
+    <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <GET path="Application/_shards/shard2" />
+    <QUERY path="Application/Table1" q="*" f="_all" shards="shard2" />
+
+    <echo> ~~~~~~~~~~~~~~~~~</echo>
+    <echo> ~ Delete shard1 ~</echo>
+    <echo> ~~~~~~~~~~~~~~~~~</echo>
+    <DELETE path="Application/_shards/shard1" />
+
+    <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo> ~ Get list of Shards again ~</echo>
+    <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <GET path="Application/_shards" />
+</FOR>
+
+<DELETE path="_applications/Application/ApplicationKey"/>
+<DISCONNECT />
+</TEST>

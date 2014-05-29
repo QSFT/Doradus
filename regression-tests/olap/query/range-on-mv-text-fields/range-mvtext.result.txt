@@ -1,0 +1,960 @@
+~~~~~~~~~~~~~~
+~ XML format ~
+~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /Application/_shards/shard
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=MV&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>9</totalobjects>
+        <docs>
+            <doc>
+                <field name="MV">
+                    <value>AAAAAA</value>
+                    <value>ABBBBB</value>
+                    <value>BCCCCC</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>DEEEEE</value>
+                    <value>EFFFFF</value>
+                    <value>FGGGGG</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>GHHHHH</value>
+                    <value>HIIIII</value>
+                    <value>IJJJJJ</value>
+                </field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>JKKKKK</value>
+                    <value>KLLLLL</value>
+                    <value>LMMMMM</value>
+                </field>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>MNNNNN</value>
+                    <value>NOOOOO</value>
+                    <value>OPPPPP</value>
+                </field>
+                <field name="_ID">1005</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>PQQQQQ</value>
+                    <value>QRRRRR</value>
+                    <value>RSSSSS</value>
+                </field>
+                <field name="_ID">1006</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>STTTTT</value>
+                    <value>TUUUUU</value>
+                    <value>UVVVVV</value>
+                </field>
+                <field name="_ID">1007</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>VWWWWW</value>
+                    <value>WXXXXX</value>
+                    <value>XYYYYY</value>
+                </field>
+                <field name="_ID">1008</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>YZZZZZ</value>
+                    <value>ZAAAAA</value>
+                </field>
+                <field name="_ID">1009</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"9",
+          "docs":[
+             {
+                "doc":{
+                   "MV":[
+                      "AAAAAA",
+                      "ABBBBB",
+                      "BCCCCC"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "DEEEEE",
+                      "EFFFFF",
+                      "FGGGGG"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "GHHHHH",
+                      "HIIIII",
+                      "IJJJJJ"
+                   ],
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "JKKKKK",
+                      "KLLLLL",
+                      "LMMMMM"
+                   ],
+                   "_ID":"1004",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "MNNNNN",
+                      "NOOOOO",
+                      "OPPPPP"
+                   ],
+                   "_ID":"1005",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "PQQQQQ",
+                      "QRRRRR",
+                      "RSSSSS"
+                   ],
+                   "_ID":"1006",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "STTTTT",
+                      "TUUUUU",
+                      "UVVVVV"
+                   ],
+                   "_ID":"1007",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "VWWWWW",
+                      "WXXXXX",
+                      "XYYYYY"
+                   ],
+                   "_ID":"1008",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "YZZZZZ",
+                      "ZAAAAA"
+                   ],
+                   "_ID":"1009",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Range Queries on MV Text Fields ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=MV>=AB AND MV<=DS&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="MV">
+                    <value>AAAAAA</value>
+                    <value>ABBBBB</value>
+                    <value>BCCCCC</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>DEEEEE</value>
+                    <value>EFFFFF</value>
+                    <value>FGGGGG</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "MV":[
+                      "AAAAAA",
+                      "ABBBBB",
+                      "BCCCCC"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "DEEEEE",
+                      "EFFFFF",
+                      "FGGGGG"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=MV=[AB TO DE}&shards=shard
+*** Response: text
+    400 Bad Request
+    Operation 'eq' is not supported for scalar collections
+
+*** Request
+    GET /Application/Table/_query?q=MV>FGK AND MV<=LA&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="MV">
+                    <value>GHHHHH</value>
+                    <value>HIIIII</value>
+                    <value>IJJJJJ</value>
+                </field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>JKKKKK</value>
+                    <value>KLLLLL</value>
+                    <value>LMMMMM</value>
+                </field>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "MV":[
+                      "GHHHHH",
+                      "HIIIII",
+                      "IJJJJJ"
+                   ],
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "JKKKKK",
+                      "KLLLLL",
+                      "LMMMMM"
+                   ],
+                   "_ID":"1004",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=MV>=MZ AND MV<=PO&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="MV">
+                    <value>MNNNNN</value>
+                    <value>NOOOOO</value>
+                    <value>OPPPPP</value>
+                </field>
+                <field name="_ID">1005</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "MV":[
+                      "MNNNNN",
+                      "NOOOOO",
+                      "OPPPPP"
+                   ],
+                   "_ID":"1005",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=MV>=QA AND MV<Z&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="MV">
+                    <value>PQQQQQ</value>
+                    <value>QRRRRR</value>
+                    <value>RSSSSS</value>
+                </field>
+                <field name="_ID">1006</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>STTTTT</value>
+                    <value>TUUUUU</value>
+                    <value>UVVVVV</value>
+                </field>
+                <field name="_ID">1007</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>VWWWWW</value>
+                    <value>WXXXXX</value>
+                    <value>XYYYYY</value>
+                </field>
+                <field name="_ID">1008</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>YZZZZZ</value>
+                    <value>ZAAAAA</value>
+                </field>
+                <field name="_ID">1009</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "MV":[
+                      "PQQQQQ",
+                      "QRRRRR",
+                      "RSSSSS"
+                   ],
+                   "_ID":"1006",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "STTTTT",
+                      "TUUUUU",
+                      "UVVVVV"
+                   ],
+                   "_ID":"1007",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "VWWWWW",
+                      "WXXXXX",
+                      "XYYYYY"
+                   ],
+                   "_ID":"1008",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "YZZZZZ",
+                      "ZAAAAA"
+                   ],
+                   "_ID":"1009",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~
+~ JSON format ~
+~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /Application/_shards/shard
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=MV&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>9</totalobjects>
+        <docs>
+            <doc>
+                <field name="MV">
+                    <value>AAAAAA</value>
+                    <value>ABBBBB</value>
+                    <value>BCCCCC</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>DEEEEE</value>
+                    <value>EFFFFF</value>
+                    <value>FGGGGG</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>GHHHHH</value>
+                    <value>HIIIII</value>
+                    <value>IJJJJJ</value>
+                </field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>JKKKKK</value>
+                    <value>KLLLLL</value>
+                    <value>LMMMMM</value>
+                </field>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>MNNNNN</value>
+                    <value>NOOOOO</value>
+                    <value>OPPPPP</value>
+                </field>
+                <field name="_ID">1005</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>PQQQQQ</value>
+                    <value>QRRRRR</value>
+                    <value>RSSSSS</value>
+                </field>
+                <field name="_ID">1006</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>STTTTT</value>
+                    <value>TUUUUU</value>
+                    <value>UVVVVV</value>
+                </field>
+                <field name="_ID">1007</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>VWWWWW</value>
+                    <value>WXXXXX</value>
+                    <value>XYYYYY</value>
+                </field>
+                <field name="_ID">1008</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>YZZZZZ</value>
+                    <value>ZAAAAA</value>
+                </field>
+                <field name="_ID">1009</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"9",
+          "docs":[
+             {
+                "doc":{
+                   "MV":[
+                      "AAAAAA",
+                      "ABBBBB",
+                      "BCCCCC"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "DEEEEE",
+                      "EFFFFF",
+                      "FGGGGG"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "GHHHHH",
+                      "HIIIII",
+                      "IJJJJJ"
+                   ],
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "JKKKKK",
+                      "KLLLLL",
+                      "LMMMMM"
+                   ],
+                   "_ID":"1004",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "MNNNNN",
+                      "NOOOOO",
+                      "OPPPPP"
+                   ],
+                   "_ID":"1005",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "PQQQQQ",
+                      "QRRRRR",
+                      "RSSSSS"
+                   ],
+                   "_ID":"1006",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "STTTTT",
+                      "TUUUUU",
+                      "UVVVVV"
+                   ],
+                   "_ID":"1007",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "VWWWWW",
+                      "WXXXXX",
+                      "XYYYYY"
+                   ],
+                   "_ID":"1008",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "YZZZZZ",
+                      "ZAAAAA"
+                   ],
+                   "_ID":"1009",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Range Queries on MV Text Fields ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=MV>=AB AND MV<=DS&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="MV">
+                    <value>AAAAAA</value>
+                    <value>ABBBBB</value>
+                    <value>BCCCCC</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>DEEEEE</value>
+                    <value>EFFFFF</value>
+                    <value>FGGGGG</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "MV":[
+                      "AAAAAA",
+                      "ABBBBB",
+                      "BCCCCC"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "DEEEEE",
+                      "EFFFFF",
+                      "FGGGGG"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=MV=[AB TO DE}&shards=shard
+*** Response: text
+    400 Bad Request
+    Operation 'eq' is not supported for scalar collections
+
+*** Request
+    GET /Application/Table/_query?q=MV>FGK AND MV<=LA&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="MV">
+                    <value>GHHHHH</value>
+                    <value>HIIIII</value>
+                    <value>IJJJJJ</value>
+                </field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>JKKKKK</value>
+                    <value>KLLLLL</value>
+                    <value>LMMMMM</value>
+                </field>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "MV":[
+                      "GHHHHH",
+                      "HIIIII",
+                      "IJJJJJ"
+                   ],
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "JKKKKK",
+                      "KLLLLL",
+                      "LMMMMM"
+                   ],
+                   "_ID":"1004",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=MV>=MZ AND MV<=PO&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="MV">
+                    <value>MNNNNN</value>
+                    <value>NOOOOO</value>
+                    <value>OPPPPP</value>
+                </field>
+                <field name="_ID">1005</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "MV":[
+                      "MNNNNN",
+                      "NOOOOO",
+                      "OPPPPP"
+                   ],
+                   "_ID":"1005",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=MV>=QA AND MV<Z&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="MV">
+                    <value>PQQQQQ</value>
+                    <value>QRRRRR</value>
+                    <value>RSSSSS</value>
+                </field>
+                <field name="_ID">1006</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>STTTTT</value>
+                    <value>TUUUUU</value>
+                    <value>UVVVVV</value>
+                </field>
+                <field name="_ID">1007</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>VWWWWW</value>
+                    <value>WXXXXX</value>
+                    <value>XYYYYY</value>
+                </field>
+                <field name="_ID">1008</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="MV">
+                    <value>YZZZZZ</value>
+                    <value>ZAAAAA</value>
+                </field>
+                <field name="_ID">1009</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "MV":[
+                      "PQQQQQ",
+                      "QRRRRR",
+                      "RSSSSS"
+                   ],
+                   "_ID":"1006",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "STTTTT",
+                      "TUUUUU",
+                      "UVVVVV"
+                   ],
+                   "_ID":"1007",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "VWWWWW",
+                      "WXXXXX",
+                      "XYYYYY"
+                   ],
+                   "_ID":"1008",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "MV":[
+                      "YZZZZZ",
+                      "ZAAAAA"
+                   ],
+                   "_ID":"1009",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

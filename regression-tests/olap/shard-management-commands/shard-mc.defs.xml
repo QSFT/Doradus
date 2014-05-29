@@ -1,0 +1,58 @@
+<TEST>
+
+<DEFINE name="schema.xml">
+<application name="Application">
+  <key>ApplicationKey</key>
+  <options>
+        <option name="StorageService">OLAPService</option>
+  </options>
+  <tables>
+    <table name="Table1">
+      <fields>
+        <field name="Link_T1" type="LINK" inverse="Link_T2" table="Table2"/>
+        <field name="MyDate" type="TIMESTAMP"/>
+        <field name="Name" type="TEXT"/>
+      </fields>
+    </table>
+    <table name="Table2">
+      <fields>
+        <field name="Link_T2" type="LINK" inverse="Link_T1" table="Table1"/>
+        <field name="MyDate" type="TIMESTAMP"/>
+        <field name="Name" type="TEXT"/>
+      </fields>
+    </table>
+  </tables>
+</application>
+</DEFINE>
+
+<DEFINE name="data.xml">
+<batch>
+  <docs>
+    <doc _table="Table1">
+        <field name="Name">Table1_1</field>
+        <field name="_ID">Table1_001</field>
+        <field name="MyDate">2012-10-31</field>
+        <field name="Link_T1">
+          <add>
+            <value>Table2_001</value>
+          </add>
+        </field>
+    </doc>
+    <doc _table="Table2">
+        <field name="Name">Table2_1</field>
+        <field name="_ID">Table2_001</field>
+        <field name="MyDate">2012-11-01</field>
+        <field name="Link_T2">
+          <add>
+            <value>Table1_001</value>
+          </add>
+        </field>
+    </doc>
+  </docs>
+</batch>                     
+</DEFINE>
+
+<JSON-FROM-XML name ="schema.json" value="${schema.xml}"/>
+<JSON-FROM-XML name ="data.json" value="${data.xml}"/>
+
+</TEST>

@@ -1,0 +1,62 @@
+<TEST>
+
+<DEFINE name="schema.xml">
+<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+        <option name="StorageService">OLAPService</option>
+    </options>
+    <tables>
+        <table name="Table">
+            <fields>
+                <field name="MV" type="TEXT" collection="true" />
+                <field name="SV" type="TEXT" collection="false" />
+                <field name="SendDate" type="TIMESTAMP" />
+                <field name="Number" type="INTEGER" />
+                <field name="BOOL" type="BOOLEAN" />
+                <field name="Link" type="LINK" inverse="test" />
+            </fields>
+        </table>
+    </tables>
+</application>
+</DEFINE>
+
+<DEFINE name="data.xml">
+<batch>
+  <docs>
+    <doc _table="Table" _ID="1001" >
+      <field name="MV">
+        <add>
+          <value>TEST</value>
+          <value>TEST1</value>
+          <value>TEST2</value>
+        </add>
+      </field>
+    </doc>
+    <doc _table="Table" _ID="1002" >
+      <field name="SV">SV TEST</field>
+    </doc>
+    <doc _table="Table" _ID="1003" >
+      <field name="SendDate">2013-06-04 01:01:01</field>
+    </doc>
+    <doc _table="Table" _ID="1004" >
+      <field name="Number">100000</field>
+    </doc>
+    <doc _table="Table" _ID="1005" >
+      <field name="BOOL">true</field>
+    </doc>
+    <doc _table="Table" _ID="1006" >
+      <field name="Link">
+        <add>
+          <value>1006</value>
+        </add>
+      </field>
+    </doc>
+  </docs>
+</batch>
+</DEFINE>
+
+<JSON-FROM-XML name ="schema.json" value="${schema.xml}"/>
+<JSON-FROM-XML name ="data.json" value="${data.xml}"/>
+
+</TEST>

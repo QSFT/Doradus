@@ -1,0 +1,185 @@
+<TEST>
+
+<DEFINE name="schema.xml">
+<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+        <option name="StorageService">OLAPService</option>
+    </options>
+    <tables>
+        <table name="Table">
+            <fields>
+                <field name="MV" type="TEXT" collection="true"/>
+                <field name="Country" type="TEXT"/>
+                <field name="City" type="TEXT"/>
+                <field name="People" type="INTEGER"/>
+                <field name="CreateDate" type="TIMESTAMP"/>
+		<field name="Manager" type="LINK" table="Table1" inverse="Report"/>
+            </fields>
+        </table>
+        <table name="Table1">
+            <fields>
+                <field name="Name" type="TEXT"/>
+		<field name="Report" type="LINK" table="Table" inverse="Manager"/>
+            </fields>
+        </table>
+    </tables>
+</application>
+</DEFINE>
+
+<DEFINE name="data.xml">
+      <batch>
+        <docs>
+          <doc _table="Table1" _ID="1001" >
+            <field name="Name">Name 1001</field>
+            <field name="Report">
+	      <add>
+		<value>2001</value>
+		<value>2002</value>
+		<value>2003</value>
+		<value>2004</value>
+		<value>2005</value>
+	      </add>
+	    </field>
+          </doc>
+          <doc _table="Table1" _ID="1002" >
+            <field name="Name">Name 1002</field>
+            <field name="Report">
+	      <add>
+		<value>2002</value>
+		<value>2003</value>
+		<value>2004</value>
+		<value>2005</value>
+	      </add>
+	    </field>
+          </doc>
+          <doc _table="Table1" _ID="1003" >
+            <field name="Name">Name 1003</field>
+            <field name="Report">
+	      <add>
+		<value>2003</value>
+		<value>2004</value>
+		<value>2005</value>
+	      </add>
+	    </field>
+          </doc>
+          <doc _table="Table1" _ID="1004" >
+            <field name="Name">Name 1004</field>
+            <field name="Report">
+	      <add>
+		<value>2004</value>
+		<value>2005</value>
+	      </add>
+	    </field>
+          </doc>
+          <doc _table="Table1" _ID="1005" >
+            <field name="Name">Name 1005</field>
+            <field name="Report">
+	      <add>
+		<value>2005</value>
+	      </add>
+	    </field>
+          </doc>
+          <doc _table="Table" _ID="2001" >
+            <field name="MV">
+              <add>
+                <value>One</value>
+                <value>Two</value>
+              </add>
+            </field>
+            <field name="Country">Russia</field>
+            <field name="City">Moscow</field>
+            <field name="People">11980000</field>
+            <field name="CreateDate">2011-04-05 12:32:08</field>
+            <field name="Manager">
+	      <add>
+		<value>1001</value>
+	      </add>
+	    </field>
+          </doc>
+          <doc _table="Table" _ID="2002" >
+            <field name="MV">
+              <add>
+                <value>Three</value>
+                <value>Four</value>
+              </add>
+            </field>
+            <field name="Country">USA</field>
+            <field name="City">Washington</field>
+            <field name="People">632323</field>
+            <field name="CreateDate">2011-04-05 22:12:14</field>
+            <field name="Manager">
+	      <add>
+		<value>1001</value>
+		<value>1002</value>
+	      </add>
+	    </field>
+          </doc>
+          <doc _table="Table" _ID="2003" >
+            <field name="MV">
+              <add>
+                <value>Five</value>
+                <value>Six</value>
+              </add>
+            </field>
+            <field name="Country">USA</field>
+            <field name="City">New York</field>
+            <field name="People">8245000</field>
+            <field name="CreateDate">2011-04-15 10:20:01</field>
+            <field name="Manager">
+	      <add>
+		<value>1001</value>
+		<value>1002</value>
+		<value>1003</value>
+	      </add>
+	    </field>
+          </doc>
+          <doc _table="Table" _ID="2004" >
+            <field name="MV">
+              <add>
+                <value>Seven</value>
+                <value>Eight</value>
+              </add>
+            </field>
+            <field name="Country">Russia</field>
+            <field name="City">Saint-Petersburg</field>
+            <field name="People">4880000</field>
+            <field name="CreateDate">2011-06-22 09:05:20</field>
+            <field name="Manager">
+	      <add>
+		<value>1001</value>
+		<value>1002</value>
+		<value>1003</value>
+		<value>1004</value>
+	      </add>
+	    </field>
+          </doc>
+          <doc _table="Table" _ID="2005" >
+            <field name="MV">
+              <add>
+                <value>Nine</value>
+                <value>Ten</value>
+              </add>
+            </field>
+            <field name="Country">Russia</field>
+            <field name="City">Novgorod</field>
+            <field name="People">1255000</field>
+            <field name="CreateDate">2012-12-30 15:29:04</field>
+            <field name="Manager">
+	      <add>
+		<value>1001</value>
+		<value>1002</value>
+		<value>1003</value>
+		<value>1004</value>
+		<value>1005</value>
+	      </add>
+	    </field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+
+<JSON-FROM-XML name ="schema.json" value="${schema.xml}"/>
+<JSON-FROM-XML name ="data.json" value="${data.xml}"/>
+
+</TEST>

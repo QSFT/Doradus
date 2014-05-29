@@ -1,0 +1,130 @@
+<TEST>
+
+<DEFINE name="schema.xml">
+<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+	<option name="StorageService">OLAPService</option>
+    </options>
+    <tables>
+	<table name="Message">
+	    <fields>
+		<field name="Participants">
+		    <fields>
+			<field name="Recipients">
+			    <fields>
+				<field name="InternalRecipients" type="LINK" table="Participant" inverse="MessageAsInternalRecipient"/>
+			    </fields>
+			</field>
+		    </fields>
+		</field>
+	    </fields>
+	</table>
+	<table name="Participant">
+	    <fields>
+		<field name="MessageAsInternalRecipient" type="LINK" table="Message" inverse="InternalRecipients"/>
+		<field name="Person" type="LINK" table="Person" inverse="Messages"/>
+	    </fields>
+	</table>
+	<table name="Person">
+	    <fields>
+		<field name="DirectReports" type="LINK" table="Person" inverse="Manager"/>
+		<field name="Manager" type="LINK" table="Person" inverse="DirectReports"/>
+		<field name="FirstName" type="TEXT"/>
+		<field name="LastName" type="TEXT"/>
+		<field name="Messages" type="LINK" table="Participant" inverse="Person"/>
+	    </fields>
+	</table>
+    </tables>
+</application>
+</DEFINE>
+
+<DEFINE name="data.xml">
+      <batch>
+        <docs>
+          <doc _table="Message" _ID="3001" >
+            <field name="InternalRecipients">
+		<add>
+		    <value>2001</value>
+		    <value>2002</value>
+		</add>
+	    </field>
+          </doc>
+          <doc _table="Message" _ID="3002" >
+            <field name="InternalRecipients">
+		<add>
+		    <value>2003</value>
+		    <value>2004</value>
+		</add>
+	    </field>
+          </doc>
+          <doc _table="Participant" _ID="2001" >
+            <field name="MessageAsInternalRecipient">3001</field>
+            <field name="Person">
+		<add>
+		    <value>1001</value>
+		</add>
+	    </field>
+          </doc>
+          <doc _table="Participant" _ID="2002" >
+            <field name="MessageAsInternalRecipient">3001</field>
+            <field name="Person">
+		<add>
+		    <value>1002</value>
+		</add>
+	    </field>
+          </doc>
+          <doc _table="Participant" _ID="2003" >
+            <field name="MessageAsInternalRecipient">3002</field>
+            <field name="Person">
+		<add>
+		    <value>1003</value>
+		</add>
+	    </field>
+          </doc>
+          <doc _table="Participant" _ID="2004" >
+            <field name="MessageAsInternalRecipient">3002</field>
+            <field name="Person">
+		<add>
+		    <value>1004</value>
+		</add>
+	    </field>
+          </doc>
+          <doc _table="Person" _ID="1001" >
+            <field name="FirstName">Konstantin</field>
+            <field name="LastName">Gud</field>
+            <field name="Messages">2001</field>
+            <field name="DirectReport">
+		<add>
+		    <value>1002</value>
+		</add>
+	    </field>
+          </doc>
+          <doc _table="Person" _ID="1002" >
+            <field name="FirstName">Igor</field>
+            <field name="LastName">Ryzhov</field>
+            <field name="Messages">2002</field>
+            <field name="Manager">
+		<add>
+		    <value>1001</value>
+		</add>
+	    </field>
+          </doc>
+          <doc _table="Person" _ID="1003" >
+            <field name="FirstName">Oleg</field>
+            <field name="LastName">Tarakanov</field>
+            <field name="Messages">2003</field>
+          </doc>
+          <doc _table="Person" _ID="1004" >
+            <field name="FirstName">Larisa</field>
+            <field name="LastName">Cheraneva</field>
+            <field name="Messages">2004</field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+
+<JSON-FROM-XML name ="schema.json" value="${schema.xml}"/>
+<JSON-FROM-XML name ="data.json" value="${data.xml}"/>
+
+</TEST>

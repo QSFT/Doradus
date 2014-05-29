@@ -1,0 +1,60 @@
+<TEST>
+    <!-- ********************************************************************* -->
+    <!-- CR 107,835: Aggreagates metrics MIN, MAX return wrong results for     -->
+    <!-- TEXT values                                                           -->
+    <!-- Reference:                                                            -->
+    <!-- OLAP\Aggregates - Multi-metric Queries\                               -->
+    <!-- OLAP\Aggregates - Other metric functions\                             -->
+    <!-- ********************************************************************* -->
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+    <disable-output/>
+    <POST path="_applications">
+    <XML>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+                <option name="StorageService">OLAPService</option>
+            </options>
+            <tables>
+                <table name="Table">
+                    <fields>
+                        <field name="F1" type="TEXT"/>
+                    </fields>
+                </table>
+            </tables>
+        </application>
+    </XML>
+    </POST>
+
+    <POST path="Application/shard">
+    <XML>
+        <batch>
+        <docs>
+            <doc _table="Table" _ID="2001" >
+                <field name="F1">Adamant</field>
+            </doc>
+            <doc _table="Table" _ID="2002" >
+                <field name="F1">War</field>
+            </doc>
+        </docs>
+        </batch>
+    </XML>
+    </POST>
+
+    <POST path="Application/_shards/shard" />
+
+    <enable-output/>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test table content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="*" shards="shard"/>
+
+    <AGGREGATE path="Application/Table" m="MIN(F1)" shards="shard" />
+    <AGGREGATE path="Application/Table" m="MAX(F1)" shards="shard" />
+
+<DELETE path="_applications/Application/ApplicationKey"/>
+<DISCONNECT/>
+</TEST>
