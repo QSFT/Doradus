@@ -36,6 +36,11 @@ public class ConfigReflector
         Config.reportFilePath = value;
     }
 
+    @IXSetterReflector(name="summary")
+    public void setSummaryFile(String value) {
+        Config.ccnetSummaryFilePath = value;
+    }
+
     @IXSetterReflector(name="doradus-host")
     public void setDoradusHost(String value) {
         Config.doradusHost = value;

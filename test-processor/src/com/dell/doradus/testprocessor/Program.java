@@ -50,10 +50,6 @@ public class Program
             Log.println("*** Program: Test Processor Data:");
             Log.println(Data.toString("    "));
 
-            boolean ignoreWhiteSpace = true;
-            boolean ignoreCase = true;
-            Differ differ = new Differ(ignoreWhiteSpace, ignoreCase);
-
             if (Data.testSuiteInfo == null) {
                 String msg = "Test suite is not defined";
                 throw new Exception(msg);
@@ -74,23 +70,8 @@ public class Program
                 }
             }
 
-            if (Data.reportFilePath != null)
-            {
-                Log.println("*** Program: Generating tests report:  " + Data.reportFilePath);
-                System.out.println("Report: \"" + Data.reportFilePath + "\"");
-
-                if (FileUtils.fileExists(Data.reportFilePath))
-                    FileUtils.deleteFile(Data.reportFilePath);
-
-                OutputStream reportOutputStream = new FileOutputStream(Data.reportFilePath);
-                Writer reportWriter = new OutputStreamWriter(reportOutputStream);
-
-                String report = Reporter.generateHtmlReport(Data.testSuiteInfo);
-
-                reportWriter.write(report);
-                reportWriter.flush();
-                reportWriter.close();
-            }
+            writeHtmlTestReport();
+            writeXmlTestTestSummaryForCcnet();
         }
         catch (Exception ex) {
             Log.println("!!! Exception: " + Utils.unwind(ex));
@@ -99,5 +80,48 @@ public class Program
         finally {
             Log.close();
         }
+    }
+
+    static private void writeHtmlTestReport()
+    throws Exception
+    {
+        if (Data.reportFilePath == null)
+            return;
+
+        Log.println("*** Program: Generating tests report:  " + Data.reportFilePath);
+        System.out.println("Report: \"" + Data.reportFilePath + "\"");
+
+        if (FileUtils.fileExists(Data.reportFilePath))
+            FileUtils.deleteFile(Data.reportFilePath);
+
+        OutputStream reportOutputStream = new FileOutputStream(Data.reportFilePath);
+        Writer reportWriter = new OutputStreamWriter(reportOutputStream);
+
+        String report = Reporter.generateHtmlReport(Data.testSuiteInfo);
+
+        reportWriter.write(report);
+        reportWriter.flush();
+        reportWriter.close();
+    }
+
+    static private void writeXmlTestTestSummaryForCcnet()
+    throws Exception
+    {
+        if (Data.ccnetSummaryFilePath == null)
+            return;
+
+        Log.println("*** Program: Generating tests summary for ccnet:  " + Data.ccnetSummaryFilePath);
+
+        if (FileUtils.fileExists(Data.ccnetSummaryFilePath))
+            FileUtils.deleteFile(Data.ccnetSummaryFilePath);
+
+        OutputStream summaryOutputStream = new FileOutputStream(Data.ccnetSummaryFilePath);
+        Writer summaryWriter = new OutputStreamWriter(summaryOutputStream);
+
+        String summary = Reporter.generateXmlSummaryForCCNet(Data.testSuiteInfo);
+
+        summaryWriter.write(summary);
+        summaryWriter.flush();
+        summaryWriter.close();
     }
 }

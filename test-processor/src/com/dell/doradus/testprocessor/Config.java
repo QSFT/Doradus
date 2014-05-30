@@ -28,13 +28,14 @@ import java.util.List;
 
 public class Config
 {
-    static public String        logFilePath     = null;
-    static public String        reportFilePath  = null;
-    static public String        doradusHost     = null;
-    static public Integer       doradusPort     = null;
-    static public Boolean       outputEnabled   = null;
-    static public String        responseFormat  = null;
-    static public TestSuiteInfo testSuiteInfo   = null;
+    static public String        logFilePath          = null;
+    static public String        reportFilePath       = null;
+    static public String        ccnetSummaryFilePath = null;
+    static public String        doradusHost          = null;
+    static public Integer       doradusPort          = null;
+    static public Boolean       outputEnabled        = null;
+    static public String        responseFormat       = null;
+    static public TestSuiteInfo testSuiteInfo        = null;
 
     static public void load(String configFile)
     throws Exception
@@ -58,13 +59,14 @@ public class Config
 
     static public void modifyData()
     {
-        if (logFilePath    != null) Data.logFilePath    = logFilePath;
-        if (reportFilePath != null) Data.reportFilePath = reportFilePath;
-        if (doradusHost    != null) Data.doradusHost    = doradusHost;
-        if (doradusPort    != null) Data.doradusPort    = doradusPort;
-        if (outputEnabled  != null) Data.outputEnabled  = outputEnabled;
-        if (responseFormat != null) Data.responseFormat = responseFormat;
-        if (testSuiteInfo  != null) Data.testSuiteInfo  = testSuiteInfo;
+        if (logFilePath          != null) Data.logFilePath          = logFilePath;
+        if (reportFilePath       != null) Data.reportFilePath       = reportFilePath;
+        if (ccnetSummaryFilePath != null) Data.ccnetSummaryFilePath = ccnetSummaryFilePath;
+        if (doradusHost          != null) Data.doradusHost          = doradusHost;
+        if (doradusPort          != null) Data.doradusPort          = doradusPort;
+        if (outputEnabled        != null) Data.outputEnabled        = outputEnabled;
+        if (responseFormat       != null) Data.responseFormat       = responseFormat;
+        if (testSuiteInfo        != null) Data.testSuiteInfo        = testSuiteInfo;
     }
 
     static public String toString(String prefix)
@@ -73,14 +75,22 @@ public class Config
 
         StringBuilder result = new StringBuilder();
 
-        if (logFilePath    != null) result.append(prefix + "Log File:        " + logFilePath    + Utils.EOL);
-        if (reportFilePath != null) result.append(prefix + "Report File:     " + reportFilePath + Utils.EOL);
-        if (doradusHost    != null) result.append(prefix + "Doradus Host:    " + doradusHost    + Utils.EOL);
-        if (doradusPort    != null) result.append(prefix + "Doradus Port:    " + doradusPort    + Utils.EOL);
-        if (outputEnabled  != null) result.append(prefix + "Output Enabled:  " + outputEnabled  + Utils.EOL);
-        if (responseFormat != null) result.append(prefix + "Response Format: " + responseFormat + Utils.EOL);
+        if (logFilePath != null)
+            result.append(prefix + "Log File:          " + logFilePath    + Utils.EOL);
+        if (reportFilePath != null)
+            result.append(prefix + "Report File:       " + reportFilePath + Utils.EOL);
+        if (ccnetSummaryFilePath != null)
+            result.append(prefix + "ccnetSummary File: " + ccnetSummaryFilePath + Utils.EOL);
+        if (doradusHost != null)
+            result.append(prefix + "Doradus Host:      " + doradusHost    + Utils.EOL);
+        if (doradusPort != null)
+            result.append(prefix + "Doradus Port:      " + doradusPort    + Utils.EOL);
+        if (outputEnabled != null)
+            result.append(prefix + "Output Enabled:    " + outputEnabled  + Utils.EOL);
+        if (responseFormat != null)
+            result.append(prefix + "Response Format:   " + responseFormat + Utils.EOL);
         if (testSuiteInfo == null) {
-            result.append(prefix + "Test Suite:      <null>" + Utils.EOL);
+            result.append(prefix + "Test Suite:        <null>" + Utils.EOL);
         } else {
             result.append(prefix + "Test Suite:" + Utils.EOL +
                     testSuiteInfo.toString(prefix + "    ") + Utils.EOL);
