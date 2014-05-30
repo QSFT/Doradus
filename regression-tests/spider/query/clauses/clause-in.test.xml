@@ -1,0 +1,74 @@
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<IMPORT>clause-in.defs.xml</IMPORT>
+<DEFINE name="response.format" value="xml|json"/>
+<enable-output/>
+
+<FOR index="i" from="1" to="2">
+    <IF.EQ arg1="${i}" arg2="1">
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo>~ XML format ~</echo>
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" xml="${schema.xml}"/>
+        <POST path="Application/Table" xml="${data.xml}"/>
+        <enable-output/>
+    </IF.EQ>
+    <IF.EQ arg1="${i}" arg2="2">
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo>~ JSON format ~</echo>
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" json="${schema.json}"/>
+        <POST path="Application/Table" json="${data.json}"/>
+        <enable-output/>
+    </IF.EQ>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="*" f="_all"/>
+        
+    <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test for IN Clause ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Integer ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="Size IN (100, 120)"/>
+    <QUERY path="Application/Table" q="Size=(100, 120)"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Text SV ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="Name IN (Kon*, L?risa, Michail)"/>
+    <QUERY path="Application/Table" q="Name=L?risa OR Name=Kon* OR Name=Michail"/>
+
+    <echo>~~~~~~~~</echo>
+    <echo>~ Link ~</echo>
+    <echo>~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="Manager IN (4001, 3001)"/>
+    <QUERY path="Application/Table" q="Manager=(4001, 3001)"/>
+
+    <echo>~~~~~~~</echo>
+    <echo>~ _ID ~</echo>
+    <echo>~~~~~~~</echo>
+    <QUERY path="Application/Table" q="_ID IN (5003, 5001, 6001)"/>
+    <QUERY path="Application/Table" q="_ID=(5003, 5001, 6001)"/>
+
+    <DELETE path="_applications/Application/ApplicationKey"/>
+</FOR>
+
+<DISCONNECT />
+</TEST>

@@ -1,0 +1,88 @@
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<IMPORT>clause-equality.defs.xml</IMPORT>
+<DEFINE name="response.format" value="xml|json"/>
+<enable-output/>
+
+<FOR index="i" from="1" to="2">
+    <IF.EQ arg1="${i}" arg2="1">
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo>~ XML format ~</echo>
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" xml="${schema.xml}"/>
+        <POST path="Application/Folder" xml="${data1.xml}"/>
+        <POST path="Application/File" xml="${data2.xml}"/>
+        <enable-output/>
+    </IF.EQ>
+    <IF.EQ arg1="${i}" arg2="2">
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo>~ JSON format ~</echo>
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" json="${schema.json}"/>
+        <POST path="Application/Folder" json="${data1.json}"/>
+        <POST path="Application/File" json="${data2.json}"/>
+        <enable-output/>
+    </IF.EQ>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Folder" q="*" f="_all"/>
+    <QUERY path="Application/File" q="*" f="_all"/>
+        
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test for Clauses Equality ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~~~~~~~~~</echo>
+    <echo>~ Links ~</echo>
+    <echo>~~~~~~~~~</echo>
+    <QUERY path="Application/Folder" q="Files=2006"/>
+    <QUERY path="Application/Folder" q="Files=7000"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Integer ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <QUERY path="Application/File" q="FileSize=2000004"/>
+    <QUERY path="Application/File" q="FileSize=3000004"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Boolean ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <QUERY path="Application/File" q="IsFileTested=true"/>
+    <QUERY path="Application/File" q="IsFileTested=false"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Text MV ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <QUERY path="Application/Folder" q="Files.FoldersList='PROGRAM*3'"/>
+    <QUERY path="Application/Folder" q="Files.FoldersList='PROGRAM FILES 3'"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Text SV ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <QUERY path="Application/Folder" q="Files.FileName='F*6'"/>
+    <QUERY path="Application/Folder" q="Files.FileName='File_6'"/>
+    <QUERY path="Application/Folder" q="Files.FileName='F*8'"/>
+
+    <echo>~~~~~~~~~~~~~</echo>
+    <echo>~ TimeStamp ~</echo>
+    <echo>~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Folder" q="Files.FileCreateDate='2013-11-02 02:22:20'"/>
+
+    <DELETE path="_applications/Application/ApplicationKey"/>
+</FOR>
+
+<DISCONNECT />
+</TEST>

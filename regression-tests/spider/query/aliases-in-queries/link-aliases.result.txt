@@ -1,0 +1,1124 @@
+~~~~~~~~~~~~~~
+~ XML format ~
+~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Message/_query?q=*&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Size">1001</field>
+                <field name="_ID">2001</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">FALSE</field>
+                        <field name="IsSender">FALSE</field>
+                        <field name="Text">Recipient</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1002</field>
+                <field name="_ID">2002</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">TRUE</field>
+                        <field name="IsSender">FALSE</field>
+                        <field name="Text">Recipient</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1003</field>
+                <field name="_ID">2003</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">FALSE</field>
+                        <field name="IsSender">FALSE</field>
+                        <field name="Text">Recipient</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1004</field>
+                <field name="_ID">2004</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">FALSE</field>
+                        <field name="IsSender">TRUE</field>
+                        <field name="Text">Sender</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1005</field>
+                <field name="_ID">2005</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">TRUE</field>
+                        <field name="IsSender">TRUE</field>
+                        <field name="Text">Sender</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1006</field>
+                <field name="_ID">2006</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">FALSE</field>
+                        <field name="IsSender">TRUE</field>
+                        <field name="Text">Sender</field>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1001",
+                   "_ID":"2001",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"FALSE",
+                            "IsSender":"FALSE",
+                            "Text":"Recipient",
+                            "_ID":"1001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1002",
+                   "_ID":"2002",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"TRUE",
+                            "IsSender":"FALSE",
+                            "Text":"Recipient",
+                            "_ID":"1002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1003",
+                   "_ID":"2003",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"FALSE",
+                            "IsSender":"FALSE",
+                            "Text":"Recipient",
+                            "_ID":"1003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1004",
+                   "_ID":"2004",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"FALSE",
+                            "IsSender":"TRUE",
+                            "Text":"Sender",
+                            "_ID":"1004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1005",
+                   "_ID":"2005",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"TRUE",
+                            "IsSender":"TRUE",
+                            "Text":"Sender",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1006",
+                   "_ID":"2006",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"FALSE",
+                            "IsSender":"TRUE",
+                            "Text":"Sender",
+                            "_ID":"1006"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MessageParticipant/_query?q=*&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="IsExternal">FALSE</field>
+                <field name="IsSender">FALSE</field>
+                <field name="Text">Recipient</field>
+                <field name="_ID">1001</field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1001</field>
+                        <field name="_ID">2001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="IsExternal">TRUE</field>
+                <field name="IsSender">FALSE</field>
+                <field name="Text">Recipient</field>
+                <field name="_ID">1002</field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1002</field>
+                        <field name="_ID">2002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="IsExternal">FALSE</field>
+                <field name="IsSender">FALSE</field>
+                <field name="Text">Recipient</field>
+                <field name="_ID">1003</field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1003</field>
+                        <field name="_ID">2003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="IsExternal">FALSE</field>
+                <field name="IsSender">TRUE</field>
+                <field name="Text">Sender</field>
+                <field name="_ID">1004</field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1004</field>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="IsExternal">TRUE</field>
+                <field name="IsSender">TRUE</field>
+                <field name="Text">Sender</field>
+                <field name="_ID">1005</field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1005</field>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="IsExternal">FALSE</field>
+                <field name="IsSender">TRUE</field>
+                <field name="Text">Sender</field>
+                <field name="_ID">1006</field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1006</field>
+                        <field name="_ID">2006</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "IsExternal":"FALSE",
+                   "IsSender":"FALSE",
+                   "Text":"Recipient",
+                   "_ID":"1001",
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1001",
+                            "_ID":"2001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "IsExternal":"TRUE",
+                   "IsSender":"FALSE",
+                   "Text":"Recipient",
+                   "_ID":"1002",
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1002",
+                            "_ID":"2002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "IsExternal":"FALSE",
+                   "IsSender":"FALSE",
+                   "Text":"Recipient",
+                   "_ID":"1003",
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1003",
+                            "_ID":"2003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "IsExternal":"FALSE",
+                   "IsSender":"TRUE",
+                   "Text":"Sender",
+                   "_ID":"1004",
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1004",
+                            "_ID":"2004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "IsExternal":"TRUE",
+                   "IsSender":"TRUE",
+                   "Text":"Sender",
+                   "_ID":"1005",
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1005",
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "IsExternal":"FALSE",
+                   "IsSender":"TRUE",
+                   "Text":"Sender",
+                   "_ID":"1006",
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1006",
+                            "_ID":"2006"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Test for Aliases in Queries ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Message/_query?q=$Sender&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Size">1004</field>
+                <field name="_ID">2004</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">FALSE</field>
+                        <field name="IsSender">TRUE</field>
+                        <field name="Text">Sender</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1005</field>
+                <field name="_ID">2005</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">TRUE</field>
+                        <field name="IsSender">TRUE</field>
+                        <field name="Text">Sender</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1006</field>
+                <field name="_ID">2006</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">FALSE</field>
+                        <field name="IsSender">TRUE</field>
+                        <field name="Text">Sender</field>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1004",
+                   "_ID":"2004",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"FALSE",
+                            "IsSender":"TRUE",
+                            "Text":"Sender",
+                            "_ID":"1004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1005",
+                   "_ID":"2005",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"TRUE",
+                            "IsSender":"TRUE",
+                            "Text":"Sender",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1006",
+                   "_ID":"2006",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"FALSE",
+                            "IsSender":"TRUE",
+                            "Text":"Sender",
+                            "_ID":"1006"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Message/_query?q=$InternalRecipient&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Size">1001</field>
+                <field name="_ID">2001</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">FALSE</field>
+                        <field name="IsSender">FALSE</field>
+                        <field name="Text">Recipient</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1003</field>
+                <field name="_ID">2003</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">FALSE</field>
+                        <field name="IsSender">FALSE</field>
+                        <field name="Text">Recipient</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1001",
+                   "_ID":"2001",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"FALSE",
+                            "IsSender":"FALSE",
+                            "Text":"Recipient",
+                            "_ID":"1001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1003",
+                   "_ID":"2003",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"FALSE",
+                            "IsSender":"FALSE",
+                            "Text":"Recipient",
+                            "_ID":"1003"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~
+~ JSON format ~
+~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Message/_query?q=*&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Size">1001</field>
+                <field name="_ID">2001</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">FALSE</field>
+                        <field name="IsSender">FALSE</field>
+                        <field name="Text">Recipient</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1002</field>
+                <field name="_ID">2002</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">TRUE</field>
+                        <field name="IsSender">FALSE</field>
+                        <field name="Text">Recipient</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1003</field>
+                <field name="_ID">2003</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">FALSE</field>
+                        <field name="IsSender">FALSE</field>
+                        <field name="Text">Recipient</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1004</field>
+                <field name="_ID">2004</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">FALSE</field>
+                        <field name="IsSender">TRUE</field>
+                        <field name="Text">Sender</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1005</field>
+                <field name="_ID">2005</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">TRUE</field>
+                        <field name="IsSender">TRUE</field>
+                        <field name="Text">Sender</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1006</field>
+                <field name="_ID">2006</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">FALSE</field>
+                        <field name="IsSender">TRUE</field>
+                        <field name="Text">Sender</field>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1001",
+                   "_ID":"2001",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"FALSE",
+                            "IsSender":"FALSE",
+                            "Text":"Recipient",
+                            "_ID":"1001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1002",
+                   "_ID":"2002",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"TRUE",
+                            "IsSender":"FALSE",
+                            "Text":"Recipient",
+                            "_ID":"1002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1003",
+                   "_ID":"2003",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"FALSE",
+                            "IsSender":"FALSE",
+                            "Text":"Recipient",
+                            "_ID":"1003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1004",
+                   "_ID":"2004",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"FALSE",
+                            "IsSender":"TRUE",
+                            "Text":"Sender",
+                            "_ID":"1004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1005",
+                   "_ID":"2005",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"TRUE",
+                            "IsSender":"TRUE",
+                            "Text":"Sender",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1006",
+                   "_ID":"2006",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"FALSE",
+                            "IsSender":"TRUE",
+                            "Text":"Sender",
+                            "_ID":"1006"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MessageParticipant/_query?q=*&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="IsExternal">FALSE</field>
+                <field name="IsSender">FALSE</field>
+                <field name="Text">Recipient</field>
+                <field name="_ID">1001</field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1001</field>
+                        <field name="_ID">2001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="IsExternal">TRUE</field>
+                <field name="IsSender">FALSE</field>
+                <field name="Text">Recipient</field>
+                <field name="_ID">1002</field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1002</field>
+                        <field name="_ID">2002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="IsExternal">FALSE</field>
+                <field name="IsSender">FALSE</field>
+                <field name="Text">Recipient</field>
+                <field name="_ID">1003</field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1003</field>
+                        <field name="_ID">2003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="IsExternal">FALSE</field>
+                <field name="IsSender">TRUE</field>
+                <field name="Text">Sender</field>
+                <field name="_ID">1004</field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1004</field>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="IsExternal">TRUE</field>
+                <field name="IsSender">TRUE</field>
+                <field name="Text">Sender</field>
+                <field name="_ID">1005</field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1005</field>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="IsExternal">FALSE</field>
+                <field name="IsSender">TRUE</field>
+                <field name="Text">Sender</field>
+                <field name="_ID">1006</field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1006</field>
+                        <field name="_ID">2006</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "IsExternal":"FALSE",
+                   "IsSender":"FALSE",
+                   "Text":"Recipient",
+                   "_ID":"1001",
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1001",
+                            "_ID":"2001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "IsExternal":"TRUE",
+                   "IsSender":"FALSE",
+                   "Text":"Recipient",
+                   "_ID":"1002",
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1002",
+                            "_ID":"2002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "IsExternal":"FALSE",
+                   "IsSender":"FALSE",
+                   "Text":"Recipient",
+                   "_ID":"1003",
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1003",
+                            "_ID":"2003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "IsExternal":"FALSE",
+                   "IsSender":"TRUE",
+                   "Text":"Sender",
+                   "_ID":"1004",
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1004",
+                            "_ID":"2004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "IsExternal":"TRUE",
+                   "IsSender":"TRUE",
+                   "Text":"Sender",
+                   "_ID":"1005",
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1005",
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "IsExternal":"FALSE",
+                   "IsSender":"TRUE",
+                   "Text":"Sender",
+                   "_ID":"1006",
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1006",
+                            "_ID":"2006"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Test for Aliases in Queries ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Message/_query?q=$Sender&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Size">1004</field>
+                <field name="_ID">2004</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">FALSE</field>
+                        <field name="IsSender">TRUE</field>
+                        <field name="Text">Sender</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1005</field>
+                <field name="_ID">2005</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">TRUE</field>
+                        <field name="IsSender">TRUE</field>
+                        <field name="Text">Sender</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1006</field>
+                <field name="_ID">2006</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">FALSE</field>
+                        <field name="IsSender">TRUE</field>
+                        <field name="Text">Sender</field>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1004",
+                   "_ID":"2004",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"FALSE",
+                            "IsSender":"TRUE",
+                            "Text":"Sender",
+                            "_ID":"1004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1005",
+                   "_ID":"2005",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"TRUE",
+                            "IsSender":"TRUE",
+                            "Text":"Sender",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1006",
+                   "_ID":"2006",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"FALSE",
+                            "IsSender":"TRUE",
+                            "Text":"Sender",
+                            "_ID":"1006"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Message/_query?q=$InternalRecipient&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Size">1001</field>
+                <field name="_ID">2001</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">FALSE</field>
+                        <field name="IsSender">FALSE</field>
+                        <field name="Text">Recipient</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1003</field>
+                <field name="_ID">2003</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">FALSE</field>
+                        <field name="IsSender">FALSE</field>
+                        <field name="Text">Recipient</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1001",
+                   "_ID":"2001",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"FALSE",
+                            "IsSender":"FALSE",
+                            "Text":"Recipient",
+                            "_ID":"1001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1003",
+                   "_ID":"2003",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"FALSE",
+                            "IsSender":"FALSE",
+                            "Text":"Recipient",
+                            "_ID":"1003"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
