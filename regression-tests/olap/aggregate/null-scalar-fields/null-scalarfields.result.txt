@@ -409,7 +409,7 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="TRUNCATE(SendDate,DAY)">2013-06-04 00:00:00</field>
+                <field name="TRUNCATE(SendDate,DAY)">2013-06-04</field>
             </group>
         </groups>
     </results>
@@ -438,7 +438,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "TRUNCATE(SendDate,DAY)":"2013-06-04 00:00:00"
+                      "TRUNCATE(SendDate,DAY)":"2013-06-04"
                    }
                 }
              }
@@ -915,7 +915,7 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="TRUNCATE(SendDate,DAY)">2013-06-04 00:00:00</field>
+                <field name="TRUNCATE(SendDate,DAY)">2013-06-04</field>
             </group>
         </groups>
     </results>
@@ -944,7 +944,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "TRUNCATE(SendDate,DAY)":"2013-06-04 00:00:00"
+                      "TRUNCATE(SendDate,DAY)":"2013-06-04"
                    }
                 }
              }
