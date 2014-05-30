@@ -27,8 +27,6 @@ import org.apache.cassandra.thrift.KeyRange;
 import org.apache.cassandra.thrift.KeySlice;
 import org.apache.cassandra.thrift.SlicePredicate;
 
-import com.dell.doradus.common.Utils;
-
 /**
  * Stores a batch of rows from a Cassandra database store. Implements Iterator&lt;DRow&gt;
  * so that {@link #hasNext()} and {@link #next()} can be used to retrieve rows. When the
@@ -40,6 +38,8 @@ public class CassandraRowBatch implements Iterator<DRow> {
     ColumnParent m_columnParent;
     // Current length of key range
     int m_countRows;
+    // Last row key that was read
+    byte[] m_lastKey;
     
     // Current key range iterator (from a list of KeySlice objects)
     Iterator<KeySlice> m_iRows;
@@ -61,8 +61,9 @@ public class CassandraRowBatch implements Iterator<DRow> {
         KeyRange keyRange = CassandraDefs.KEY_RANGE_ALL_ROWS;
         SlicePredicate slicePredicate = CassandraDefs.SLICE_PRED_ALL_COLS;
         List<KeySlice> keySliceList = dbConn.getRangeSlices(columnParent, slicePredicate, keyRange);
-        m_countRows = keySliceList.size();
+        m_countRows = 0;
         m_iRows = keySliceList.iterator();
+        m_lastKey = CassandraDefs.EMPTY_BYTES;
         
         // Get a first row
         shiftRow();
@@ -88,48 +89,50 @@ public class CassandraRowBatch implements Iterator<DRow> {
         throw new UnsupportedOperationException("RowsIterator: Removing rows is not supported");
     }
     
+    private KeySlice nextSlice() {
+    	m_countRows++;
+    	return m_iRows.next();
+    }
+    
     /**
      * Provides retrieving of a next row.
      */
     private void shiftRow() {
-        if (m_iRows.hasNext()) {
-            // A next row is taken from the current List iterator.
-            KeySlice keySlice = m_iRows.next();
-            List<ColumnOrSuperColumn> columnsList = keySlice.getColumns();
-            if (columnsList.isEmpty()) {
-                // Tombstone; try to extract next row
-                shiftRow();
-            } else {
-                byte[] rowKey = keySlice.getKey();
-                m_next = new CassandraRow(rowKey, new CassandraColumnBatch(m_columnParent, rowKey, columnsList));
-            }
-        } else if (m_countRows < CassandraDefs.MAX_ROWS_BATCH_SIZE) {
-            // No more rows
-            m_next = null;
-        } else {
-            byte[] lastKey = Utils.toBytes(m_next.getKey());
-            List<KeySlice> keySliceList = getNextBatch(lastKey);
-            m_countRows = keySliceList.size();
-            m_iRows = keySliceList.iterator();
-            if (!m_iRows.hasNext()) {
-                // Last row is lost? Strange... Anyway no more rows exist.
-                m_next = null;
-            } else {
-                KeySlice keySlice = m_iRows.next();
-                List<ColumnOrSuperColumn> columnsList = keySlice.getColumns();
-                // Most probably it is the same last row...
-                byte[] rowKey = keySlice.getKey();
-                if (Arrays.equals(lastKey, rowKey)) {
-                    // Just shift to next row
-                    shiftRow();
-                } else if (columnsList.isEmpty()) {
-                    // Next row is a tombstone...
-                    shiftRow();
-                } else {
-                    m_next = new CassandraRow(rowKey, new CassandraColumnBatch(m_columnParent, rowKey, columnsList));
-                }
-            }
-        }
+    	for (;;) {
+	        if (m_iRows.hasNext()) {
+	            // A next row is taken from the current List iterator.
+	            KeySlice keySlice = nextSlice();
+	            m_lastKey = keySlice.getKey();
+	            List<ColumnOrSuperColumn> columnsList = keySlice.getColumns();
+	            if (!columnsList.isEmpty()) {
+	                m_next = new CassandraRow(m_lastKey, new CassandraColumnBatch(m_columnParent, m_lastKey, columnsList));
+	                break;
+	            }
+	        } else if (m_countRows < CassandraDefs.MAX_ROWS_BATCH_SIZE) {
+	            // No more rows
+	            m_next = null;
+	            break;
+	        } else {
+	            List<KeySlice> keySliceList = getNextBatch(m_lastKey);
+	            m_countRows = 0;
+	            m_iRows = keySliceList.iterator();
+	            if (m_iRows.hasNext()) {
+	                KeySlice keySlice = nextSlice();
+	                List<ColumnOrSuperColumn> columnsList = keySlice.getColumns();
+	                // Most probably it is the same last row...
+	                boolean equalKeys = Arrays.equals(m_lastKey, keySlice.getKey());
+	                m_lastKey = keySlice.getKey();
+	                if (!equalKeys && !columnsList.isEmpty()) {
+	                    m_next = new CassandraRow(m_lastKey, new CassandraColumnBatch(m_columnParent, m_lastKey, columnsList));
+	                    break;
+	                }
+	            } else {
+	                // Last row is lost? Strange... Anyway no more rows exist.
+	                m_next = null;
+	                break;
+	            }
+	        }
+    	}
     }   // shiftRow
     
     private List<KeySlice> getNextBatch(byte[] startKey) {

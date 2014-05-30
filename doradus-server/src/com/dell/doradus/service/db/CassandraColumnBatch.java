@@ -59,7 +59,7 @@ public class CassandraColumnBatch implements Iterator<DColumn> {
 		m_columnParent = columnParent;
 		// Row key is taken from the key slice
 		m_rowKey = rowKey;
-		m_sliceSize = columns.size(); 
+		m_sliceSize = 0;
 		m_iColumns = columns.iterator();
 		// The slice is not empty, so we can simply get the first column
 		shiftColumn();
@@ -70,7 +70,7 @@ public class CassandraColumnBatch implements Iterator<DColumn> {
 		m_columnParent = columnParent;
 		m_rowKey = rowKey;
 		List<ColumnOrSuperColumn> columns = thisConn.getSlice(m_columnParent, slicePredicate, ByteBuffer.wrap(m_rowKey));
-		m_sliceSize = columns.size(); 
+		m_sliceSize = 0;
 		m_iColumns = columns.iterator();
 		if (!m_iColumns.hasNext()) {
 			// tombstone? no columns to iterate
@@ -133,6 +133,7 @@ public class CassandraColumnBatch implements Iterator<DColumn> {
 		if (m_iColumns.hasNext()) {
 			// Current list may be used
 			ColumnOrSuperColumn cosc = m_iColumns.next();
+			m_sliceSize++;
 			Column column = cosc.getColumn();
 			m_next = new CassandraColumn(column.getName(), column.getValue());
 		} else if (m_sliceSize < CassandraDefs.MAX_COLS_BATCH_SIZE) {
@@ -143,7 +144,7 @@ public class CassandraColumnBatch implements Iterator<DColumn> {
 			// Save current column name
 			String lastName = m_next.getName();
 			List<ColumnOrSuperColumn> columns = getNextSlice(lastName);
-			m_sliceSize = columns.size();	// generally should not be zero
+			m_sliceSize = 0;
 			m_iColumns = columns.iterator();
 			if (!m_iColumns.hasNext()) {
 				// column was deleted? We cannot iterate correctly...
@@ -152,6 +153,7 @@ public class CassandraColumnBatch implements Iterator<DColumn> {
 			}
 			// Normally the first column is the same as was the previous one.
 			ColumnOrSuperColumn cosc = m_iColumns.next();
+			m_sliceSize++;
 			Column column = cosc.getColumn();
 			m_next = new CassandraColumn(column.getName(), column.getValue());
 			// Most probably we've got a column already read...
