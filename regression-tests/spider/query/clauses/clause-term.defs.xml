@@ -1,0 +1,216 @@
+<TEST>
+
+<DEFINE name="schema.xml">
+<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+	<option name="AutoTables">false</option>
+	<option name="StorageService">SpiderService</option>
+    </options>
+    <tables>
+        <table name="SV">
+            <fields>
+                <field name="Null" />
+                <field name="Location">
+	            <fields>
+			<field name="Department" type="Text" />
+			<field name="Office" type="Text" />
+        	    </fields>
+                </field>
+                <field name="Manager">
+	            <fields>
+			<field name="FirstName" type="Text" />
+			<field name="LastName" type="Text" />
+        	    </fields>
+                </field>
+            </fields>
+        </table>
+        <table name="MV">
+            <fields>
+                <field name="Null" collection="true" />
+                <field name="NameList" collection="true" />
+            </fields>
+        </table>
+    </tables>
+</application>
+</DEFINE>
+
+<DEFINE name="data1.xml">
+<batch>
+  <docs>
+    <doc _ID="1001" >
+	<field name="Null">test1</field>
+	<field name="Location">
+	    <fields>
+		<field name="Department">CTO</field>
+		<field name="Office">Saint-Petersburg</field>
+            </fields>
+        </field>
+        <field name="Manager">
+	    <fields>
+		<field name="FirstName">Terr</field>
+		<field name="LastName">Petrushkin</field>
+            </fields>
+        </field>
+    </doc>
+    <doc _ID="1002" >
+	<field name="Location">
+	    <fields>
+		<field name="Department">CTO</field>
+		<field name="Office">Moscov</field>
+            </fields>
+        </field>
+        <field name="Manager">
+	    <fields>
+		<field name="FirstName">Terr Agonyan</field>
+		<field name="LastName">Duraley</field>
+            </fields>
+        </field>
+    </doc>
+    <doc _ID="1003" >
+	<field name="Null">test2</field>
+	<field name="Location">
+	    <fields>
+		<field name="Department">Clouds</field>
+		<field name="Office">Saint-Petersburg</field>
+            </fields>
+        </field>
+        <field name="Manager">
+	    <fields>
+		<field name="FirstName">Petrosyan Terr Lopiany</field>
+		<field name="LastName">Rastyapa</field>
+            </fields>
+        </field>
+    </doc>
+    <doc _ID="1004" >
+	<field name="Location">
+	    <fields>
+		<field name="Department">Clouds</field>
+		<field name="Office">Moscov</field>
+            </fields>
+        </field>
+        <field name="Manager">
+	    <fields>
+		<field name="FirstName">Perterra Duliani</field>
+		<field name="LastName">Nevalyashka</field>
+            </fields>
+        </field>
+    </doc>
+    <doc _ID="1005" >
+	<field name="Location">
+	    <fields>
+		<field name="Department">Clauds</field>
+		<field name="Office">Rostov</field>
+            </fields>
+        </field>
+        <field name="Manager">
+	    <fields>
+		<field name="FirstName">Turka</field>
+		<field name="LastName">Lenin</field>
+            </fields>
+        </field>
+    </doc>
+    <doc _ID="1006" >
+	<field name="Location">
+	    <fields>
+		<field name="Department">R_D</field>
+		<field name="Office">Samara</field>
+            </fields>
+        </field>
+        <field name="Manager">
+	    <fields>
+		<field name="FirstName">Turka@Riga#Massa_Proto-Bote</field>
+		<field name="LastName">Lenin</field>
+            </fields>
+        </field>
+    </doc>
+  </docs>
+</batch>
+</DEFINE>
+<DEFINE name="data2.xml">
+<batch>
+  <docs>
+    <doc _ID="1001" >
+	<field name="NameList">
+        <add>
+          <value>World Revolution</value>
+          <value>Acceptance tests</value>
+          <value>Terr</value>
+        </add>
+      </field>
+    </doc>
+    <doc _ID="1002" >
+	<field name="NameList">
+        <add>
+          <value>World Wild Web</value>
+          <value>Smoke tests</value>
+          <value>Terr Agonyan</value>
+        </add>
+      </field>
+	<field name="Null">
+        <add>
+          <value>AAAAAA</value>
+          <value>Clouds</value>
+          <value>CCCCCC</value>
+        </add>
+      </field>
+    </doc>
+    <doc _ID="1003" >
+	<field name="NameList">
+        <add>
+          <value>Wild</value>
+          <value>Petrosyan Terr Lopiany</value>
+          <value>Port</value>
+        </add>
+      </field>
+	<field name="Null">
+        <add>
+          <value>DDDDDD</value>
+          <value>Clauds</value>
+          <value>FFFFFF</value>
+        </add>
+      </field>
+    </doc>
+    <doc _ID="1004" >
+	<field name="NameList">
+        <add>
+          <value>Perterra ibn Duliani</value>
+          <value>Smoke tests</value>
+          <value>Micke Porteron</value>
+        </add>
+      </field>
+    </doc>
+    <doc _ID="1005" >
+	<field name="NameList">
+        <add>
+          <value>Leiba Bronstein</value>
+          <value>Hidden Resident</value>
+          <value>Turka</value>
+        </add>
+      </field>
+	<field name="Null">
+        <add>
+          <value>GGGGGG</value>
+          <value>JJJJJJ</value>
+          <value>KKKKKK</value>
+        </add>
+      </field>
+    </doc>
+    <doc _ID="1006" >
+	<field name="NameList">
+        <add>
+          <value>exception list</value>
+          <value>Turka@Riga#Massa_Proto-Bote</value>
+          <value>Role of honor</value>
+        </add>
+      </field>
+    </doc>
+  </docs>
+</batch>
+</DEFINE>
+
+<JSON-FROM-XML name ="schema.json" value="${schema.xml}"/>
+<JSON-FROM-XML name ="data1.json" value="${data1.xml}"/>
+<JSON-FROM-XML name ="data2.json" value="${data2.xml}"/>
+
+</TEST>

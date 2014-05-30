@@ -1,0 +1,1544 @@
+~~~~~~~~~~~~~~
+~ XML format ~
+~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Message/_query?q=*&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Size">1001</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2001</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="Text">Support</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1002</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2002</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="Text">Support</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1003</field>
+                <field name="Status">Work in Logistic</field>
+                <field name="_ID">2003</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="Text">Logistic</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1004</field>
+                <field name="Status">Work in Logistic</field>
+                <field name="_ID">2004</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="Text">Logistic</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1005</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2005</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="Text">Support</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1006</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2006</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="Text">Support</field>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1001",
+                   "Status":"Work in Support",
+                   "_ID":"2001",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "Text":"Support",
+                            "_ID":"1001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1002",
+                   "Status":"Work in Support",
+                   "_ID":"2002",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "Text":"Support",
+                            "_ID":"1002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1003",
+                   "Status":"Work in Logistic",
+                   "_ID":"2003",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "Text":"Logistic",
+                            "_ID":"1003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1004",
+                   "Status":"Work in Logistic",
+                   "_ID":"2004",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "Text":"Logistic",
+                            "_ID":"1004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1005",
+                   "Status":"Work in Support",
+                   "_ID":"2005",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "Text":"Support",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1006",
+                   "Status":"Work in Support",
+                   "_ID":"2006",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "Text":"Support",
+                            "_ID":"1006"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MessageParticipant/_query?q=*&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Text">Support</field>
+                <field name="_ID">1001</field>
+                <field name="Department">
+                    <doc>
+                        <field name="DEP">Support Delivery</field>
+                        <field name="_ID">3001</field>
+                    </doc>
+                    <doc>
+                        <field name="DEP">Logistic Weapon</field>
+                        <field name="_ID">3004</field>
+                    </doc>
+                </field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1001</field>
+                        <field name="Status">Work in Support</field>
+                        <field name="_ID">2001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Text">Support</field>
+                <field name="_ID">1002</field>
+                <field name="Department">
+                    <doc>
+                        <field name="DEP">Support Weapon</field>
+                        <field name="_ID">3002</field>
+                    </doc>
+                </field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1002</field>
+                        <field name="Status">Work in Support</field>
+                        <field name="_ID">2002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Text">Logistic</field>
+                <field name="_ID">1003</field>
+                <field name="Department">
+                    <doc>
+                        <field name="DEP">Logistic Delivery</field>
+                        <field name="_ID">3003</field>
+                    </doc>
+                </field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1003</field>
+                        <field name="Status">Work in Logistic</field>
+                        <field name="_ID">2003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Text">Logistic</field>
+                <field name="_ID">1004</field>
+                <field name="Department">
+                    <doc>
+                        <field name="DEP">Support Delivery</field>
+                        <field name="_ID">3001</field>
+                    </doc>
+                    <doc>
+                        <field name="DEP">Logistic Weapon</field>
+                        <field name="_ID">3004</field>
+                    </doc>
+                </field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1004</field>
+                        <field name="Status">Work in Logistic</field>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Text">Support</field>
+                <field name="_ID">1005</field>
+                <field name="Department">
+                    <doc>
+                        <field name="DEP">Support Delivery</field>
+                        <field name="_ID">3001</field>
+                    </doc>
+                </field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1005</field>
+                        <field name="Status">Work in Support</field>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Text">Support</field>
+                <field name="_ID">1006</field>
+                <field name="Department">
+                    <doc>
+                        <field name="DEP">Support Weapon</field>
+                        <field name="_ID">3002</field>
+                    </doc>
+                </field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1006</field>
+                        <field name="Status">Work in Support</field>
+                        <field name="_ID">2006</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Text":"Support",
+                   "_ID":"1001",
+                   "Department":[
+                      {
+                         "doc":{
+                            "DEP":"Support Delivery",
+                            "_ID":"3001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "DEP":"Logistic Weapon",
+                            "_ID":"3004"
+                         }
+                      }
+                   ],
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1001",
+                            "Status":"Work in Support",
+                            "_ID":"2001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Text":"Support",
+                   "_ID":"1002",
+                   "Department":[
+                      {
+                         "doc":{
+                            "DEP":"Support Weapon",
+                            "_ID":"3002"
+                         }
+                      }
+                   ],
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1002",
+                            "Status":"Work in Support",
+                            "_ID":"2002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Text":"Logistic",
+                   "_ID":"1003",
+                   "Department":[
+                      {
+                         "doc":{
+                            "DEP":"Logistic Delivery",
+                            "_ID":"3003"
+                         }
+                      }
+                   ],
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1003",
+                            "Status":"Work in Logistic",
+                            "_ID":"2003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Text":"Logistic",
+                   "_ID":"1004",
+                   "Department":[
+                      {
+                         "doc":{
+                            "DEP":"Support Delivery",
+                            "_ID":"3001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "DEP":"Logistic Weapon",
+                            "_ID":"3004"
+                         }
+                      }
+                   ],
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1004",
+                            "Status":"Work in Logistic",
+                            "_ID":"2004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Text":"Support",
+                   "_ID":"1005",
+                   "Department":[
+                      {
+                         "doc":{
+                            "DEP":"Support Delivery",
+                            "_ID":"3001"
+                         }
+                      }
+                   ],
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1005",
+                            "Status":"Work in Support",
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Text":"Support",
+                   "_ID":"1006",
+                   "Department":[
+                      {
+                         "doc":{
+                            "DEP":"Support Weapon",
+                            "_ID":"3002"
+                         }
+                      }
+                   ],
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1006",
+                            "Status":"Work in Support",
+                            "_ID":"2006"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Department/_query?q=*&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="DEP">Support Delivery</field>
+                <field name="_ID">3001</field>
+                <field name="Support">
+                    <doc>
+                        <field name="Text">Support</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                    <doc>
+                        <field name="Text">Logistic</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                    <doc>
+                        <field name="Text">Support</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="DEP">Support Weapon</field>
+                <field name="_ID">3002</field>
+                <field name="Support">
+                    <doc>
+                        <field name="Text">Support</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                    <doc>
+                        <field name="Text">Support</field>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="DEP">Logistic Delivery</field>
+                <field name="_ID">3003</field>
+                <field name="Support">
+                    <doc>
+                        <field name="Text">Logistic</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="DEP">Logistic Weapon</field>
+                <field name="_ID">3004</field>
+                <field name="Support">
+                    <doc>
+                        <field name="Text">Support</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                    <doc>
+                        <field name="Text">Logistic</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "DEP":"Support Delivery",
+                   "_ID":"3001",
+                   "Support":[
+                      {
+                         "doc":{
+                            "Text":"Support",
+                            "_ID":"1001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Text":"Logistic",
+                            "_ID":"1004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Text":"Support",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "DEP":"Support Weapon",
+                   "_ID":"3002",
+                   "Support":[
+                      {
+                         "doc":{
+                            "Text":"Support",
+                            "_ID":"1002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Text":"Support",
+                            "_ID":"1006"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "DEP":"Logistic Delivery",
+                   "_ID":"3003",
+                   "Support":[
+                      {
+                         "doc":{
+                            "Text":"Logistic",
+                            "_ID":"1003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "DEP":"Logistic Weapon",
+                   "_ID":"3004",
+                   "Support":[
+                      {
+                         "doc":{
+                            "Text":"Support",
+                            "_ID":"1001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Text":"Logistic",
+                            "_ID":"1004"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Test for Link Paths - COUNT ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Message/_query?q=COUNT(Participants.Department)<0
+*** Response: xml
+    200 OK
+    <results>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/Message/_query?q=COUNT(Participants.Department.DEP)>1
+*** Response: text
+    400 Bad Request
+    Error COUNT: DEP is not a link
+
+*** Request
+    GET /Application/Message/_query?q=COUNT(Participants.Department)>1
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Size">1001</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2001</field>
+            </doc>
+            <doc>
+                <field name="Size">1004</field>
+                <field name="Status">Work in Logistic</field>
+                <field name="_ID">2004</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1001",
+                   "Status":"Work in Support",
+                   "_ID":"2001"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1004",
+                   "Status":"Work in Logistic",
+                   "_ID":"2004"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Message/_query?q=COUNT(Participants.Department)<4
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Size">1001</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2001</field>
+            </doc>
+            <doc>
+                <field name="Size">1002</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2002</field>
+            </doc>
+            <doc>
+                <field name="Size">1003</field>
+                <field name="Status">Work in Logistic</field>
+                <field name="_ID">2003</field>
+            </doc>
+            <doc>
+                <field name="Size">1004</field>
+                <field name="Status">Work in Logistic</field>
+                <field name="_ID">2004</field>
+            </doc>
+            <doc>
+                <field name="Size">1005</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2005</field>
+            </doc>
+            <doc>
+                <field name="Size">1006</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2006</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1001",
+                   "Status":"Work in Support",
+                   "_ID":"2001"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1002",
+                   "Status":"Work in Support",
+                   "_ID":"2002"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1003",
+                   "Status":"Work in Logistic",
+                   "_ID":"2003"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1004",
+                   "Status":"Work in Logistic",
+                   "_ID":"2004"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1005",
+                   "Status":"Work in Support",
+                   "_ID":"2005"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1006",
+                   "Status":"Work in Support",
+                   "_ID":"2006"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~
+~ JSON format ~
+~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Message/_query?q=*&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Size">1001</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2001</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="Text">Support</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1002</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2002</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="Text">Support</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1003</field>
+                <field name="Status">Work in Logistic</field>
+                <field name="_ID">2003</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="Text">Logistic</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1004</field>
+                <field name="Status">Work in Logistic</field>
+                <field name="_ID">2004</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="Text">Logistic</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1005</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2005</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="Text">Support</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1006</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2006</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="Text">Support</field>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1001",
+                   "Status":"Work in Support",
+                   "_ID":"2001",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "Text":"Support",
+                            "_ID":"1001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1002",
+                   "Status":"Work in Support",
+                   "_ID":"2002",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "Text":"Support",
+                            "_ID":"1002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1003",
+                   "Status":"Work in Logistic",
+                   "_ID":"2003",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "Text":"Logistic",
+                            "_ID":"1003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1004",
+                   "Status":"Work in Logistic",
+                   "_ID":"2004",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "Text":"Logistic",
+                            "_ID":"1004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1005",
+                   "Status":"Work in Support",
+                   "_ID":"2005",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "Text":"Support",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1006",
+                   "Status":"Work in Support",
+                   "_ID":"2006",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "Text":"Support",
+                            "_ID":"1006"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MessageParticipant/_query?q=*&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Text">Support</field>
+                <field name="_ID">1001</field>
+                <field name="Department">
+                    <doc>
+                        <field name="DEP">Support Delivery</field>
+                        <field name="_ID">3001</field>
+                    </doc>
+                    <doc>
+                        <field name="DEP">Logistic Weapon</field>
+                        <field name="_ID">3004</field>
+                    </doc>
+                </field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1001</field>
+                        <field name="Status">Work in Support</field>
+                        <field name="_ID">2001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Text">Support</field>
+                <field name="_ID">1002</field>
+                <field name="Department">
+                    <doc>
+                        <field name="DEP">Support Weapon</field>
+                        <field name="_ID">3002</field>
+                    </doc>
+                </field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1002</field>
+                        <field name="Status">Work in Support</field>
+                        <field name="_ID">2002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Text">Logistic</field>
+                <field name="_ID">1003</field>
+                <field name="Department">
+                    <doc>
+                        <field name="DEP">Logistic Delivery</field>
+                        <field name="_ID">3003</field>
+                    </doc>
+                </field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1003</field>
+                        <field name="Status">Work in Logistic</field>
+                        <field name="_ID">2003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Text">Logistic</field>
+                <field name="_ID">1004</field>
+                <field name="Department">
+                    <doc>
+                        <field name="DEP">Support Delivery</field>
+                        <field name="_ID">3001</field>
+                    </doc>
+                    <doc>
+                        <field name="DEP">Logistic Weapon</field>
+                        <field name="_ID">3004</field>
+                    </doc>
+                </field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1004</field>
+                        <field name="Status">Work in Logistic</field>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Text">Support</field>
+                <field name="_ID">1005</field>
+                <field name="Department">
+                    <doc>
+                        <field name="DEP">Support Delivery</field>
+                        <field name="_ID">3001</field>
+                    </doc>
+                </field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1005</field>
+                        <field name="Status">Work in Support</field>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Text">Support</field>
+                <field name="_ID">1006</field>
+                <field name="Department">
+                    <doc>
+                        <field name="DEP">Support Weapon</field>
+                        <field name="_ID">3002</field>
+                    </doc>
+                </field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1006</field>
+                        <field name="Status">Work in Support</field>
+                        <field name="_ID">2006</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Text":"Support",
+                   "_ID":"1001",
+                   "Department":[
+                      {
+                         "doc":{
+                            "DEP":"Support Delivery",
+                            "_ID":"3001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "DEP":"Logistic Weapon",
+                            "_ID":"3004"
+                         }
+                      }
+                   ],
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1001",
+                            "Status":"Work in Support",
+                            "_ID":"2001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Text":"Support",
+                   "_ID":"1002",
+                   "Department":[
+                      {
+                         "doc":{
+                            "DEP":"Support Weapon",
+                            "_ID":"3002"
+                         }
+                      }
+                   ],
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1002",
+                            "Status":"Work in Support",
+                            "_ID":"2002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Text":"Logistic",
+                   "_ID":"1003",
+                   "Department":[
+                      {
+                         "doc":{
+                            "DEP":"Logistic Delivery",
+                            "_ID":"3003"
+                         }
+                      }
+                   ],
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1003",
+                            "Status":"Work in Logistic",
+                            "_ID":"2003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Text":"Logistic",
+                   "_ID":"1004",
+                   "Department":[
+                      {
+                         "doc":{
+                            "DEP":"Support Delivery",
+                            "_ID":"3001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "DEP":"Logistic Weapon",
+                            "_ID":"3004"
+                         }
+                      }
+                   ],
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1004",
+                            "Status":"Work in Logistic",
+                            "_ID":"2004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Text":"Support",
+                   "_ID":"1005",
+                   "Department":[
+                      {
+                         "doc":{
+                            "DEP":"Support Delivery",
+                            "_ID":"3001"
+                         }
+                      }
+                   ],
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1005",
+                            "Status":"Work in Support",
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Text":"Support",
+                   "_ID":"1006",
+                   "Department":[
+                      {
+                         "doc":{
+                            "DEP":"Support Weapon",
+                            "_ID":"3002"
+                         }
+                      }
+                   ],
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1006",
+                            "Status":"Work in Support",
+                            "_ID":"2006"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Department/_query?q=*&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="DEP">Support Delivery</field>
+                <field name="_ID">3001</field>
+                <field name="Support">
+                    <doc>
+                        <field name="Text">Support</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                    <doc>
+                        <field name="Text">Logistic</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                    <doc>
+                        <field name="Text">Support</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="DEP">Support Weapon</field>
+                <field name="_ID">3002</field>
+                <field name="Support">
+                    <doc>
+                        <field name="Text">Support</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                    <doc>
+                        <field name="Text">Support</field>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="DEP">Logistic Delivery</field>
+                <field name="_ID">3003</field>
+                <field name="Support">
+                    <doc>
+                        <field name="Text">Logistic</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="DEP">Logistic Weapon</field>
+                <field name="_ID">3004</field>
+                <field name="Support">
+                    <doc>
+                        <field name="Text">Support</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                    <doc>
+                        <field name="Text">Logistic</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "DEP":"Support Delivery",
+                   "_ID":"3001",
+                   "Support":[
+                      {
+                         "doc":{
+                            "Text":"Support",
+                            "_ID":"1001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Text":"Logistic",
+                            "_ID":"1004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Text":"Support",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "DEP":"Support Weapon",
+                   "_ID":"3002",
+                   "Support":[
+                      {
+                         "doc":{
+                            "Text":"Support",
+                            "_ID":"1002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Text":"Support",
+                            "_ID":"1006"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "DEP":"Logistic Delivery",
+                   "_ID":"3003",
+                   "Support":[
+                      {
+                         "doc":{
+                            "Text":"Logistic",
+                            "_ID":"1003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "DEP":"Logistic Weapon",
+                   "_ID":"3004",
+                   "Support":[
+                      {
+                         "doc":{
+                            "Text":"Support",
+                            "_ID":"1001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Text":"Logistic",
+                            "_ID":"1004"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Test for Link Paths - COUNT ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Message/_query?q=COUNT(Participants.Department)<0
+*** Response: xml
+    200 OK
+    <results>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/Message/_query?q=COUNT(Participants.Department.DEP)>1
+*** Response: text
+    400 Bad Request
+    Error COUNT: DEP is not a link
+
+*** Request
+    GET /Application/Message/_query?q=COUNT(Participants.Department)>1
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Size">1001</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2001</field>
+            </doc>
+            <doc>
+                <field name="Size">1004</field>
+                <field name="Status">Work in Logistic</field>
+                <field name="_ID">2004</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1001",
+                   "Status":"Work in Support",
+                   "_ID":"2001"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1004",
+                   "Status":"Work in Logistic",
+                   "_ID":"2004"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Message/_query?q=COUNT(Participants.Department)<4
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Size">1001</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2001</field>
+            </doc>
+            <doc>
+                <field name="Size">1002</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2002</field>
+            </doc>
+            <doc>
+                <field name="Size">1003</field>
+                <field name="Status">Work in Logistic</field>
+                <field name="_ID">2003</field>
+            </doc>
+            <doc>
+                <field name="Size">1004</field>
+                <field name="Status">Work in Logistic</field>
+                <field name="_ID">2004</field>
+            </doc>
+            <doc>
+                <field name="Size">1005</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2005</field>
+            </doc>
+            <doc>
+                <field name="Size">1006</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2006</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1001",
+                   "Status":"Work in Support",
+                   "_ID":"2001"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1002",
+                   "Status":"Work in Support",
+                   "_ID":"2002"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1003",
+                   "Status":"Work in Logistic",
+                   "_ID":"2003"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1004",
+                   "Status":"Work in Logistic",
+                   "_ID":"2004"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1005",
+                   "Status":"Work in Support",
+                   "_ID":"2005"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1006",
+                   "Status":"Work in Support",
+                   "_ID":"2006"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

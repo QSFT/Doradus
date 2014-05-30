@@ -42,6 +42,7 @@ public class AggregationResultBuilder {
 		if(level == request.parts[0].groups.size()) return null;
 		AggregationResult result = new AggregationResult();
 		AggregationGroup requestGroup = request.parts[0].groups.get(level);
+		if(group == null) return result;
 		Collection<AggregationCollector.Group> groups = group.groups();
 		List<AggregationCollector.Group> grps;
 		switch(requestGroup.selection) {

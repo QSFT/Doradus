@@ -1,0 +1,61 @@
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<IMPORT>quantifiers-on-sv.defs.xml</IMPORT>
+<DEFINE name="response.format" value="xml|json"/>
+<enable-output/>
+
+<FOR index="i" from="1" to="2">
+    <IF.EQ arg1="${i}" arg2="1">
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo>~ XML format ~</echo>
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" xml="${schema.xml}"/>
+        <POST path="Application/Table" xml="${data.xml}"/>
+        <enable-output/>
+    </IF.EQ>
+    <IF.EQ arg1="${i}" arg2="2">
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo>~ JSON format ~</echo>
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" json="${schema.json}"/>
+        <POST path="Application/Table" json="${data.json}"/>
+        <enable-output/>
+    </IF.EQ>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="*" f="_all" />
+        
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test for Quantifies on SV ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="ANY(SV) = abrakadabara" />
+    <QUERY path="Application/Table" q="ANY(SV) = Confidential" />
+    <QUERY path="Application/Table" q="ANY(SV) = (*Confidential, *Secret)" />
+
+    <QUERY path="Application/Table" q="ALL(SV) = abrakadabara" />
+    <QUERY path="Application/Table" q="ALL(SV) = Confidential" />
+    <QUERY path="Application/Table" q="ALL(SV) = (Confidential, *Secret*)" />
+
+    <QUERY path="Application/Table" q="NONE(SV) = abrakadabara" />
+    <QUERY path="Application/Table" q="NONE(SV) = Confidential" />
+    <QUERY path="Application/Table" q="NONE(SV) = (Confidential, *Secret*)" />
+
+    <DELETE path="_applications/Application/ApplicationKey"/>
+</FOR>
+
+<DISCONNECT />
+</TEST>
