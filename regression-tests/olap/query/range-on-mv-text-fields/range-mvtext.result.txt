@@ -274,9 +274,42 @@
 
 *** Request
     GET /Application/Table/_query?q=MV=[AB TO DE}&shards=shard
-*** Response: text
-    400 Bad Request
-    Operation 'eq' is not supported for scalar collections
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="MV">
+                    <value>AAAAAA</value>
+                    <value>ABBBBB</value>
+                    <value>BCCCCC</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "MV":[
+                      "AAAAAA",
+                      "ABBBBB",
+                      "BCCCCC"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
 
 *** Request
     GET /Application/Table/_query?q=MV>FGK AND MV<=LA&shards=shard
@@ -754,9 +787,42 @@
 
 *** Request
     GET /Application/Table/_query?q=MV=[AB TO DE}&shards=shard
-*** Response: text
-    400 Bad Request
-    Operation 'eq' is not supported for scalar collections
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="MV">
+                    <value>AAAAAA</value>
+                    <value>ABBBBB</value>
+                    <value>BCCCCC</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "MV":[
+                      "AAAAAA",
+                      "ABBBBB",
+                      "BCCCCC"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
 
 *** Request
     GET /Application/Table/_query?q=MV>FGK AND MV<=LA&shards=shard

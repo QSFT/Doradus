@@ -83,7 +83,7 @@
     <results>
         <aggregate group="Responses" metric="COUNT(InReplyTo)" query="*"/>
         <totalobjects>7</totalobjects>
-        <summary>6</summary>
+        <summary>5</summary>
         <totalgroups>6</totalgroups>
         <groups>
             <group>
@@ -301,7 +301,7 @@
     <results>
         <aggregate group="Responses" metric="COUNT(InReplyTo)" query="*"/>
         <totalobjects>7</totalobjects>
-        <summary>6</summary>
+        <summary>5</summary>
         <totalgroups>6</totalgroups>
         <groups>
             <group>
@@ -445,7 +445,7 @@
     <results>
         <aggregate group="Responses" metric="COUNT(InReplyTo)" query="*"/>
         <totalobjects>7</totalobjects>
-        <summary>6</summary>
+        <summary>5</summary>
         <totalgroups>6</totalgroups>
         <groups>
             <group>
@@ -665,7 +665,7 @@
     <results>
         <aggregate group="Responses" metric="COUNT(InReplyTo)" query="*"/>
         <totalobjects>7</totalobjects>
-        <summary>6</summary>
+        <summary>5</summary>
         <totalgroups>6</totalgroups>
         <groups>
             <group>

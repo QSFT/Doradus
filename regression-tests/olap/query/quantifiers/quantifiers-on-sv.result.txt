@@ -233,85 +233,15 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>5</totalobjects>
-        <docs>
-            <doc>
-                <field name="Text">str1</field>
-                <field name="_ID">1001</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="SV">Confidential</field>
-                <field name="Text">str2</field>
-                <field name="_ID">1002</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="SV">Secret</field>
-                <field name="Text">str3</field>
-                <field name="_ID">1003</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="SV">Top Secret</field>
-                <field name="Text">str4</field>
-                <field name="_ID">1004</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="SV">Top Confidential</field>
-                <field name="Text">str5</field>
-                <field name="_ID">1005</field>
-                <field name="_shard">shard</field>
-            </doc>
-        </docs>
+        <totalobjects>0</totalobjects>
+        <docs/>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"5",
-          "docs":[
-             {
-                "doc":{
-                   "Text":"str1",
-                   "_ID":"1001",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "SV":"Confidential",
-                   "Text":"str2",
-                   "_ID":"1002",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "SV":"Secret",
-                   "Text":"str3",
-                   "_ID":"1003",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "SV":"Top Secret",
-                   "Text":"str4",
-                   "_ID":"1004",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "SV":"Top Confidential",
-                   "Text":"str5",
-                   "_ID":"1005",
-                   "_shard":"shard"
-                }
-             }
-          ]
+          "totalobjects":"0",
+          "docs":[]
        }
     }
 
@@ -320,13 +250,8 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>2</totalobjects>
+        <totalobjects>1</totalobjects>
         <docs>
-            <doc>
-                <field name="Text">str1</field>
-                <field name="_ID">1001</field>
-                <field name="_shard">shard</field>
-            </doc>
             <doc>
                 <field name="SV">Confidential</field>
                 <field name="Text">str2</field>
@@ -339,15 +264,8 @@
     200 OK
     {
        "results":{
-          "totalobjects":"2",
+          "totalobjects":"1",
           "docs":[
-             {
-                "doc":{
-                   "Text":"str1",
-                   "_ID":"1001",
-                   "_shard":"shard"
-                }
-             },
              {
                 "doc":{
                    "SV":"Confidential",
@@ -365,13 +283,8 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>4</totalobjects>
+        <totalobjects>3</totalobjects>
         <docs>
-            <doc>
-                <field name="Text">str1</field>
-                <field name="_ID">1001</field>
-                <field name="_shard">shard</field>
-            </doc>
             <doc>
                 <field name="SV">Confidential</field>
                 <field name="Text">str2</field>
@@ -396,15 +309,8 @@
     200 OK
     {
        "results":{
-          "totalobjects":"4",
+          "totalobjects":"3",
           "docs":[
-             {
-                "doc":{
-                   "Text":"str1",
-                   "_ID":"1001",
-                   "_shard":"shard"
-                }
-             },
              {
                 "doc":{
                    "SV":"Confidential",
@@ -878,85 +784,15 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>5</totalobjects>
-        <docs>
-            <doc>
-                <field name="Text">str1</field>
-                <field name="_ID">1001</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="SV">Confidential</field>
-                <field name="Text">str2</field>
-                <field name="_ID">1002</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="SV">Secret</field>
-                <field name="Text">str3</field>
-                <field name="_ID">1003</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="SV">Top Secret</field>
-                <field name="Text">str4</field>
-                <field name="_ID">1004</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="SV">Top Confidential</field>
-                <field name="Text">str5</field>
-                <field name="_ID">1005</field>
-                <field name="_shard">shard</field>
-            </doc>
-        </docs>
+        <totalobjects>0</totalobjects>
+        <docs/>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"5",
-          "docs":[
-             {
-                "doc":{
-                   "Text":"str1",
-                   "_ID":"1001",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "SV":"Confidential",
-                   "Text":"str2",
-                   "_ID":"1002",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "SV":"Secret",
-                   "Text":"str3",
-                   "_ID":"1003",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "SV":"Top Secret",
-                   "Text":"str4",
-                   "_ID":"1004",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "SV":"Top Confidential",
-                   "Text":"str5",
-                   "_ID":"1005",
-                   "_shard":"shard"
-                }
-             }
-          ]
+          "totalobjects":"0",
+          "docs":[]
        }
     }
 
@@ -965,13 +801,8 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>2</totalobjects>
+        <totalobjects>1</totalobjects>
         <docs>
-            <doc>
-                <field name="Text">str1</field>
-                <field name="_ID">1001</field>
-                <field name="_shard">shard</field>
-            </doc>
             <doc>
                 <field name="SV">Confidential</field>
                 <field name="Text">str2</field>
@@ -984,15 +815,8 @@
     200 OK
     {
        "results":{
-          "totalobjects":"2",
+          "totalobjects":"1",
           "docs":[
-             {
-                "doc":{
-                   "Text":"str1",
-                   "_ID":"1001",
-                   "_shard":"shard"
-                }
-             },
              {
                 "doc":{
                    "SV":"Confidential",
@@ -1010,13 +834,8 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>4</totalobjects>
+        <totalobjects>3</totalobjects>
         <docs>
-            <doc>
-                <field name="Text">str1</field>
-                <field name="_ID">1001</field>
-                <field name="_shard">shard</field>
-            </doc>
             <doc>
                 <field name="SV">Confidential</field>
                 <field name="Text">str2</field>
@@ -1041,15 +860,8 @@
     200 OK
     {
        "results":{
-          "totalobjects":"4",
+          "totalobjects":"3",
           "docs":[
-             {
-                "doc":{
-                   "Text":"str1",
-                   "_ID":"1001",
-                   "_shard":"shard"
-                }
-             },
              {
                 "doc":{
                    "SV":"Confidential",

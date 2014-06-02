@@ -377,145 +377,15 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>7</totalobjects>
-        <docs>
-            <doc>
-                <field name="Text">str1</field>
-                <field name="_ID">1001</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="MV">
-                    <value>Confidential</value>
-                </field>
-                <field name="Text">str2</field>
-                <field name="_ID">1002</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="MV">
-                    <value>Confidential</value>
-                    <value>Secret</value>
-                </field>
-                <field name="Text">str3</field>
-                <field name="_ID">1003</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="MV">
-                    <value>Public</value>
-                    <value>Secret</value>
-                    <value>Top Secret</value>
-                </field>
-                <field name="Text">str4</field>
-                <field name="_ID">1004</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="MV">
-                    <value>Top Confidential</value>
-                    <value>Top Secret</value>
-                </field>
-                <field name="Text">str5</field>
-                <field name="_ID">1005</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="MV">
-                    <value>Secret</value>
-                </field>
-                <field name="Text">str6</field>
-                <field name="_ID">1006</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="MV">
-                    <value>Extra Secret</value>
-                </field>
-                <field name="Text">str7</field>
-                <field name="_ID">1007</field>
-                <field name="_shard">shard</field>
-            </doc>
-        </docs>
+        <totalobjects>0</totalobjects>
+        <docs/>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"7",
-          "docs":[
-             {
-                "doc":{
-                   "Text":"str1",
-                   "_ID":"1001",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "MV":[
-                      "Confidential"
-                   ],
-                   "Text":"str2",
-                   "_ID":"1002",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "MV":[
-                      "Confidential",
-                      "Secret"
-                   ],
-                   "Text":"str3",
-                   "_ID":"1003",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "MV":[
-                      "Public",
-                      "Secret",
-                      "Top Secret"
-                   ],
-                   "Text":"str4",
-                   "_ID":"1004",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "MV":[
-                      "Top Confidential",
-                      "Top Secret"
-                   ],
-                   "Text":"str5",
-                   "_ID":"1005",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "MV":[
-                      "Secret"
-                   ],
-                   "Text":"str6",
-                   "_ID":"1006",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "MV":[
-                      "Extra Secret"
-                   ],
-                   "Text":"str7",
-                   "_ID":"1007",
-                   "_shard":"shard"
-                }
-             }
-          ]
+          "totalobjects":"0",
+          "docs":[]
        }
     }
 
@@ -524,13 +394,8 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>2</totalobjects>
+        <totalobjects>1</totalobjects>
         <docs>
-            <doc>
-                <field name="Text">str1</field>
-                <field name="_ID">1001</field>
-                <field name="_shard">shard</field>
-            </doc>
             <doc>
                 <field name="MV">
                     <value>Confidential</value>
@@ -545,15 +410,8 @@
     200 OK
     {
        "results":{
-          "totalobjects":"2",
+          "totalobjects":"1",
           "docs":[
-             {
-                "doc":{
-                   "Text":"str1",
-                   "_ID":"1001",
-                   "_shard":"shard"
-                }
-             },
              {
                 "doc":{
                    "MV":[
@@ -573,13 +431,8 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>4</totalobjects>
+        <totalobjects>3</totalobjects>
         <docs>
-            <doc>
-                <field name="Text">str1</field>
-                <field name="_ID">1001</field>
-                <field name="_shard">shard</field>
-            </doc>
             <doc>
                 <field name="MV">
                     <value>Confidential</value>
@@ -610,15 +463,8 @@
     200 OK
     {
        "results":{
-          "totalobjects":"4",
+          "totalobjects":"3",
           "docs":[
-             {
-                "doc":{
-                   "Text":"str1",
-                   "_ID":"1001",
-                   "_shard":"shard"
-                }
-             },
              {
                 "doc":{
                    "MV":[
@@ -1324,145 +1170,15 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>7</totalobjects>
-        <docs>
-            <doc>
-                <field name="Text">str1</field>
-                <field name="_ID">1001</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="MV">
-                    <value>Confidential</value>
-                </field>
-                <field name="Text">str2</field>
-                <field name="_ID">1002</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="MV">
-                    <value>Confidential</value>
-                    <value>Secret</value>
-                </field>
-                <field name="Text">str3</field>
-                <field name="_ID">1003</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="MV">
-                    <value>Public</value>
-                    <value>Secret</value>
-                    <value>Top Secret</value>
-                </field>
-                <field name="Text">str4</field>
-                <field name="_ID">1004</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="MV">
-                    <value>Top Confidential</value>
-                    <value>Top Secret</value>
-                </field>
-                <field name="Text">str5</field>
-                <field name="_ID">1005</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="MV">
-                    <value>Secret</value>
-                </field>
-                <field name="Text">str6</field>
-                <field name="_ID">1006</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="MV">
-                    <value>Extra Secret</value>
-                </field>
-                <field name="Text">str7</field>
-                <field name="_ID">1007</field>
-                <field name="_shard">shard</field>
-            </doc>
-        </docs>
+        <totalobjects>0</totalobjects>
+        <docs/>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"7",
-          "docs":[
-             {
-                "doc":{
-                   "Text":"str1",
-                   "_ID":"1001",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "MV":[
-                      "Confidential"
-                   ],
-                   "Text":"str2",
-                   "_ID":"1002",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "MV":[
-                      "Confidential",
-                      "Secret"
-                   ],
-                   "Text":"str3",
-                   "_ID":"1003",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "MV":[
-                      "Public",
-                      "Secret",
-                      "Top Secret"
-                   ],
-                   "Text":"str4",
-                   "_ID":"1004",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "MV":[
-                      "Top Confidential",
-                      "Top Secret"
-                   ],
-                   "Text":"str5",
-                   "_ID":"1005",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "MV":[
-                      "Secret"
-                   ],
-                   "Text":"str6",
-                   "_ID":"1006",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "MV":[
-                      "Extra Secret"
-                   ],
-                   "Text":"str7",
-                   "_ID":"1007",
-                   "_shard":"shard"
-                }
-             }
-          ]
+          "totalobjects":"0",
+          "docs":[]
        }
     }
 
@@ -1471,13 +1187,8 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>2</totalobjects>
+        <totalobjects>1</totalobjects>
         <docs>
-            <doc>
-                <field name="Text">str1</field>
-                <field name="_ID">1001</field>
-                <field name="_shard">shard</field>
-            </doc>
             <doc>
                 <field name="MV">
                     <value>Confidential</value>
@@ -1492,15 +1203,8 @@
     200 OK
     {
        "results":{
-          "totalobjects":"2",
+          "totalobjects":"1",
           "docs":[
-             {
-                "doc":{
-                   "Text":"str1",
-                   "_ID":"1001",
-                   "_shard":"shard"
-                }
-             },
              {
                 "doc":{
                    "MV":[
@@ -1520,13 +1224,8 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>4</totalobjects>
+        <totalobjects>3</totalobjects>
         <docs>
-            <doc>
-                <field name="Text">str1</field>
-                <field name="_ID">1001</field>
-                <field name="_shard">shard</field>
-            </doc>
             <doc>
                 <field name="MV">
                     <value>Confidential</value>
@@ -1557,15 +1256,8 @@
     200 OK
     {
        "results":{
-          "totalobjects":"4",
+          "totalobjects":"3",
           "docs":[
-             {
-                "doc":{
-                   "Text":"str1",
-                   "_ID":"1001",
-                   "_shard":"shard"
-                }
-             },
              {
                 "doc":{
                    "MV":[
