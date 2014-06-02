@@ -29,6 +29,7 @@ public class Data
     static public String    configFilePath;
     static public String    logFilePath;
     static public String    reportFilePath;
+    static public String    ccnetSummaryFilePath;
     static public String    doradusHost;
     static public int       doradusPort;
     static public boolean   outputEnabled;
@@ -39,16 +40,16 @@ public class Data
     static public void predefine()
     {
         workingDir      = System.getProperty("user.dir");
-        //configFilePath  = FileUtils.combinePaths(Data.workingDir, "config\\config.xml");
         configFilePath  = FileUtils.combinePaths(Data.workingDir, "..\\config\\config.xml");
 
-        logFilePath     = null;
-        reportFilePath  = null;
-        doradusHost     = "localhost";
-        doradusPort     = 1123;
-        outputEnabled   = true;
-        responseFormat  = "xml";
-        testSuiteInfo   = null;
+        logFilePath          = null;
+        reportFilePath       = null;
+        ccnetSummaryFilePath = null;
+        doradusHost          = "localhost";
+        doradusPort          = 1123;
+        outputEnabled        = true;
+        responseFormat       = "xml";
+        testSuiteInfo        = null;
     }
 
     static public String toString(String prefix)
@@ -57,14 +58,15 @@ public class Data
 
         StringBuilder result = new StringBuilder();
 
-        result.append(prefix + "Working Directory: " + stringOrNull(workingDir) + Utils.EOL);
-        result.append(prefix + "Config File:       " + stringOrNull(configFilePath) + Utils.EOL);
-        result.append(prefix + "Log File:          " + stringOrNull(logFilePath) + Utils.EOL);
-        result.append(prefix + "Report File:       " + stringOrNull(reportFilePath) + Utils.EOL);
-        result.append(prefix + "Doradus Host:      " + stringOrNull(doradusHost)    + Utils.EOL);
-        result.append(prefix + "Doradus Port:      " + doradusPort                  + Utils.EOL);
-        result.append(prefix + "Output Enabled:    " + outputEnabled                + Utils.EOL);
-        result.append(prefix + "Response Format:   " + stringOrNull(responseFormat) + Utils.EOL);
+        result.append(prefix + "Working Directory: " + stringOrNull(workingDir)           + Utils.EOL);
+        result.append(prefix + "Config File:       " + stringOrNull(configFilePath)       + Utils.EOL);
+        result.append(prefix + "Log File:          " + stringOrNull(logFilePath)          + Utils.EOL);
+        result.append(prefix + "Report File:       " + stringOrNull(reportFilePath)       + Utils.EOL);
+        result.append(prefix + "ccnetSummary File: " + stringOrNull(ccnetSummaryFilePath) + Utils.EOL);
+        result.append(prefix + "Doradus Host:      " + stringOrNull(doradusHost)          + Utils.EOL);
+        result.append(prefix + "Doradus Port:      " + doradusPort                        + Utils.EOL);
+        result.append(prefix + "Output Enabled:    " + outputEnabled                      + Utils.EOL);
+        result.append(prefix + "Response Format:   " + stringOrNull(responseFormat)       + Utils.EOL);
         if (testSuiteInfo == null) {
             result.append(prefix + "Test Suite:        <null>" + Utils.EOL);
         } else {
