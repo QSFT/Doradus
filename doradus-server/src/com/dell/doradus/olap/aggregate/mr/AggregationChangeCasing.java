@@ -41,6 +41,7 @@ public class AggregationChangeCasing {
 	public boolean needsChangeCasing(int level) { return m_bToUpper[level] || m_bToLower[level]; }
 	
 	public void changeCase(int level, MGName name) {
+		if(name.name == null) return;
 		if(m_bToUpper[level]) name.name = name.name.toUpperCase();
 		else if (m_bToLower[level]) name.name = name.name.toLowerCase();
 	}
