@@ -130,16 +130,16 @@
 			<url url="http://repo1.maven.org/maven2/org/eclipse/jetty/aggregate/jetty-all/9.0.6.v20130930/jetty-all-9.0.6.v20130930.jar"/> 
 		</get>
 		<get dest="${server.lib.dir}">
-			<url url="http://repo1.maven.org/maven2/org/apache/thrift/libthrift/0.7.0/libthrift-0.7.0.jar"/> 
+			<url url="http://repo1.maven.org/maven2/org/apache/thrift/libthrift/0.9.1/libthrift-0.9.1.jar"/>
 		</get>
 		<get dest="${server.lib.dir}">
-			<url url="http://repo1.maven.org/maven2/org/apache/cassandra/cassandra-thrift/1.2.6/cassandra-thrift-1.2.6.jar"/> 
+			<url url="http://repo1.maven.org/maven2/org/apache/cassandra/cassandra-thrift/2.0.7/cassandra-thrift-2.0.7.jar"/>
 		</get>
 		<get dest="${server.lib.dir}">
-			<url url="http://repo1.maven.org/maven2/org/apache/cassandra/cassandra-all/1.2.6/cassandra-all-1.2.6.jar"/> 
+			<url url="http://repo1.maven.org/maven2/org/apache/cassandra/cassandra-all/2.0.7/cassandra-all-2.0.7.jar"/>
 		</get>
 		<get dest="${server.lib.dir}">
-			<url url="http://repo1.maven.org/maven2/com/google/guava/guava/13.0.1/guava-13.0.1.jar"/> 
+			<url url="http://repo1.maven.org/maven2/com/google/guava/guava/15.0/guava-15.0.jar"/>
 		</get>
 	</target>
 	
@@ -206,29 +206,30 @@
             <zipfileset dir="${common.lib.dir}"                                      prefix="doradus-server/lib" />
             <zipfileset dir="${server.lib.dir}"                                      prefix="doradus-server/lib" />
             <zipfileset dir="${server.config.dir}"                                   prefix="doradus-server/config" />
-            <zipfileset dir="${release.dir}/apache-cassandra/apache-cassandra-1.2.6" prefix="apache-cassandra" excludes="javadoc/**" />
+            <!--<zipfileset dir="${release.dir}/apache-cassandra/apache-cassandra-1.2.6" prefix="apache-cassandra" excludes="javadoc/**" />-->
+            <zipfileset dir="${release.dir}/apache-cassandra/apache-cassandra-2.0.7" prefix="apache-cassandra" excludes="javadoc/**" />
             <zipfileset src="${release.dir}/commons-daemon-1.0.8-bin-windows.zip"    prefix="commons-daemon" />
 		</zip>
 		
-        <delete file="${release.dir}/apache-cassandra-1.2.6-bin.tar.gz"    failonerror="false"/>
-        <delete file="${release.dir}/apache-cassandra-1.2.6-bin.tar"       failonerror="false"/>
+        <delete file="${release.dir}/apache-cassandra-2.0.7-bin.tar.gz"    failonerror="false"/>
+        <delete file="${release.dir}/apache-cassandra-2.0.7-bin.tar"       failonerror="false"/>
         <delete  dir="${release.dir}/apache-cassandra"                     failonerror="false"/>
         <delete file="${release.dir}/commons-daemon-1.0.8-bin-windows.zip" failonerror="false"/>
 	</target>
 	
 	<target name="get-cassandra">
         <mkdir   dir="${release.dir}"/>
-        <delete file="${release.dir}/apache-cassandra-1.2.6-bin.tar.gz" failonerror="false"/>
-        <delete file="${release.dir}/apache-cassandra-1.2.6-bin.tar" failonerror="false"/>
+        <delete file="${release.dir}/apache-cassandra-2.0.7-bin.tar.gz" failonerror="false"/>
+        <delete file="${release.dir}/apache-cassandra-2.0.7-bin.tar" failonerror="false"/>
         <delete  dir="${release.dir}/apache-cassandra" failonerror="false"/>
 		
 		<get dest="${release.dir}">
-			<url url="http://archive.apache.org/dist/cassandra/1.2.6/apache-cassandra-1.2.6-bin.tar.gz"/>
+			<url url="http://archive.apache.org/dist/cassandra/2.0.7/apache-cassandra-2.0.7-bin.tar.gz"/>
 		</get>
 		
         <mkdir  dir="${release.dir}/apache-cassandra"/>
-		<gunzip src="${release.dir}/apache-cassandra-1.2.6-bin.tar.gz"/>
-		<untar  src="${release.dir}/apache-cassandra-1.2.6-bin.tar" dest="${release.dir}/apache-cassandra"/>
+		<gunzip src="${release.dir}/apache-cassandra-2.0.7-bin.tar.gz"/>
+		<untar  src="${release.dir}/apache-cassandra-2.0.7-bin.tar" dest="${release.dir}/apache-cassandra"/>
 	</target>
 	
 	<target name="get-commons-daemon">
