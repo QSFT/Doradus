@@ -46,6 +46,7 @@ public class MFAggregationBuilder {
 			if(collector == null) collector = agg;
 			else collector.merge(agg);
 		}
+		if(collector == null) collector = new AggregationCollector(0);
 		AggregationResult result = AggregationResultBuilder.build(request, collector);
 		return result;
 	}
