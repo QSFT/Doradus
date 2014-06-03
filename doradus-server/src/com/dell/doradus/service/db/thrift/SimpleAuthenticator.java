@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.service.db;
+package com.dell.doradus.service.db.thrift;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -26,6 +26,8 @@ import java.util.Properties;
 
 import org.apache.cassandra.auth.IAuthenticator;
 import org.apache.cassandra.thrift.AuthenticationRequest;
+
+import com.dell.doradus.service.db.IDBAuthenticator;
 
 public class SimpleAuthenticator implements IDBAuthenticator{
 	

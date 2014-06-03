@@ -29,7 +29,7 @@ import java.util.Collection;
  * definition row. These operations are performed on the Applications ColumnFamily in
  * Cassandra.
  * <p>
- * The accumulated updates are commited by calling {@link DBConn#commit(DBTransaction)},
+ * The accumulated updates are commited by calling {@link DBService#commit(DBTransaction)}
  * which also clears the updates. Updates can also be cleared by calling {@link #clear()}.
  * The transaction object subsequently can be reused, causing the same timestamp to be
  * used for all new updates. To use a new timestamp, a new object must be created.

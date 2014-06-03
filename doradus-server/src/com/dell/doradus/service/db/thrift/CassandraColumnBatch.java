@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.service.db;
+package com.dell.doradus.service.db.thrift;
 
 import java.nio.ByteBuffer;
 import java.util.Iterator;
@@ -27,6 +27,7 @@ import org.apache.cassandra.thrift.ColumnParent;
 import org.apache.cassandra.thrift.SlicePredicate;
 
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.service.db.DColumn;
 
 /**
  * Stores a batch of columns from a Cassandra database row. Implements Iterator&lt;DColumn&gt; 
@@ -65,7 +66,7 @@ public class CassandraColumnBatch implements Iterator<DColumn> {
 		shiftColumn();
 	}
 	
-	private CassandraColumnBatch(CassandraDBConn thisConn, ColumnParent columnParent,
+	private CassandraColumnBatch(DBConn thisConn, ColumnParent columnParent,
             byte[] rowKey, SlicePredicate slicePredicate) {
 		m_columnParent = columnParent;
 		m_rowKey = rowKey;
@@ -80,13 +81,13 @@ public class CassandraColumnBatch implements Iterator<DColumn> {
 		shiftColumn();
 	}	// constructor
 	
-	CassandraColumnBatch(CassandraDBConn thisConn, ColumnParent columnParent,
+	CassandraColumnBatch(DBConn thisConn, ColumnParent columnParent,
 			             byte[] rowKey, byte[] startCol, byte[] endCol, boolean reversed) {
 		this(thisConn, columnParent, rowKey, CassandraDefs.slicePredicateStartEndCol(startCol, endCol, reversed));
 	}	// constructor
 	
-	CassandraColumnBatch(CassandraDBConn thisConn, ColumnParent columnParent,
-			byte[] rowKey, byte[] startCol, byte[] endCol) {
+	CassandraColumnBatch(DBConn thisConn, ColumnParent columnParent,
+	                     byte[] rowKey, byte[] startCol, byte[] endCol) {
 		this(thisConn, columnParent, rowKey, CassandraDefs.slicePredicateStartEndCol(startCol, endCol));
 	}	// constructor
 
@@ -97,12 +98,12 @@ public class CassandraColumnBatch implements Iterator<DColumn> {
      * columns can be retrieved via {@link #next()}, and additional batches will be fetched
      * as needed using a new database connection.
      * 
-     * @param dbConn        {@link CassandraDBConn} to use to fetch first column batch
+     * @param dbConn        {@link DBConn} to use to fetch first column batch
      *                      (not saved -- only used by the constructor).
      * @param colPar        ColumnParent where columns come from.
      * @param rowKey        Row key where columns come from.
      */
-	CassandraColumnBatch(CassandraDBConn thisConn, ColumnParent columnParent, byte[] rowKey) {
+	CassandraColumnBatch(DBConn thisConn, ColumnParent columnParent, byte[] rowKey) {
 		this(thisConn, columnParent, rowKey, CassandraDefs.SLICE_PRED_ALL_COLS);
 	}	// constructor
 
@@ -169,11 +170,11 @@ public class CassandraColumnBatch implements Iterator<DColumn> {
 	
 	private List<ColumnOrSuperColumn> getNextSlice(String lastName) {
 		SlicePredicate slicePredicate = CassandraDefs.slicePredicateStartCol(Utils.toBytes(lastName));
-        CassandraDBConn dbConn = (CassandraDBConn)DBService.instance().getDBConnection();
+        DBConn dbConn = ThriftService.instance().getDBConnection();
         try {
         	return dbConn.getSlice(m_columnParent, slicePredicate, ByteBuffer.wrap(m_rowKey));
         } finally {
-        	DBService.instance().returnDBConnection(dbConn);
+            ThriftService.instance().returnDBConnection(dbConn);
         }
 	}	// getNextSlice
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.service.db;
+package com.dell.doradus.service.db.thrift;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.Defs;
+import com.dell.doradus.service.db.DBTransaction;
 
 /**
  * Extends {@link DBTransaction} for Cassandra-specific transactions. Holds a map of column
@@ -94,18 +95,18 @@ public class CassandraTransaction extends DBTransaction {
     @Override
     public void addAppColumn(String appName, String colName, String colValue) {
         Mutation mutation = createMutation(Utils.toBytes(colName), Utils.toBytes(colValue), m_timestamp);
-        addMutation(CassandraDBConn.COLUMN_FAMILY_APPS, appName, mutation);
+        addMutation(DBConn.COLUMN_FAMILY_APPS, appName, mutation);
     }   // addAppColumn
 
     @Override
     public void deleteAppRow(String appName) {
-        deleteRow(CassandraDBConn.COLUMN_FAMILY_APPS, appName);
+        deleteRow(DBConn.COLUMN_FAMILY_APPS, appName);
     }   // deleteAppRow
 
     @Override
     public void setDBOption(String optName, String optValue) {
         Mutation mutation = createMutation(Utils.toBytes(optName), Utils.toBytes(optValue), m_timestamp);
-        addMutation(CassandraDBConn.COLUMN_FAMILY_APPS, Defs.OPTIONS_ROW_KEY, mutation);
+        addMutation(DBConn.COLUMN_FAMILY_APPS, Defs.OPTIONS_ROW_KEY, mutation);
     }   // setDBOption
 
     //----- DBTransaction: Column/row update methods

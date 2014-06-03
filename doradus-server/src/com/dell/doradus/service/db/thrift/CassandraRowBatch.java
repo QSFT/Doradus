@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.service.db;
+package com.dell.doradus.service.db.thrift;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -26,6 +26,8 @@ import org.apache.cassandra.thrift.ColumnParent;
 import org.apache.cassandra.thrift.KeyRange;
 import org.apache.cassandra.thrift.KeySlice;
 import org.apache.cassandra.thrift.SlicePredicate;
+
+import com.dell.doradus.service.db.DRow;
 
 /**
  * Stores a batch of rows from a Cassandra database store. Implements Iterator&lt;DRow&gt;
@@ -52,11 +54,11 @@ public class CassandraRowBatch implements Iterator<DRow> {
      * but it is not retained -- a new connection is used as needed. If there are no rows
      * in the given store, {@link #hasNext()} will return false immediately.
      * 
-     * @param dbConn        {@link CassandraDBConn} to use for initial fetch (not saved --
+     * @param dbConn        {@link DBConn} to use for initial fetch (not saved --
      *                      only used by the constructor).
      * @param columnParent  Cassandra Column Family to fetch from.
      */
-    public CassandraRowBatch(CassandraDBConn dbConn, ColumnParent columnParent) {
+    public CassandraRowBatch(DBConn dbConn, ColumnParent columnParent) {
         m_columnParent = columnParent;
         KeyRange keyRange = CassandraDefs.KEY_RANGE_ALL_ROWS;
         SlicePredicate slicePredicate = CassandraDefs.SLICE_PRED_ALL_COLS;
@@ -138,11 +140,11 @@ public class CassandraRowBatch implements Iterator<DRow> {
     private List<KeySlice> getNextBatch(byte[] startKey) {
         KeyRange keyRange = CassandraDefs.keyRangeStartRow(startKey);
         SlicePredicate slicePredicate = CassandraDefs.SLICE_PRED_ALL_COLS;
-        CassandraDBConn dbConn = (CassandraDBConn)DBService.instance().getDBConnection();
+        DBConn dbConn = ThriftService.instance().getDBConnection();
         try {
             return dbConn.getRangeSlices(m_columnParent, slicePredicate, keyRange);
         } finally {
-            DBService.instance().returnDBConnection(dbConn);
+            ThriftService.instance().returnDBConnection(dbConn);
         }
     }   // getNextBatch
     

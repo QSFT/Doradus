@@ -20,12 +20,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.cassandra.thrift.Column;
-import org.apache.cassandra.thrift.ColumnOrSuperColumn;
-import org.apache.cassandra.thrift.Mutation;
-
-import com.dell.doradus.common.Utils;
-import com.dell.doradus.service.db.CassandraTransaction;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
@@ -76,32 +70,11 @@ public class CassandraIO implements IO {
 	}
 
 	@Override public void write(String app, String key, List<ColumnValue> values) {
-		long timestamp = Utils.getTimeMicros();
-		List<Mutation> mutations = new ArrayList<Mutation>();
-		for(ColumnValue v : values) {
-			Mutation m = new Mutation();
-			m.setColumn_or_supercolumn(createColumn(v, timestamp));
-			mutations.add(m);
-		}
-		mutate(key, app, mutations);
+	    DBTransaction transaction = DBService.instance().startTransaction();
+	    for(ColumnValue v : values) {
+	        transaction.addColumn(app, key, v.columnName, v.columnValue);
+	    }
+	    DBService.instance().commit(transaction);
 	}
 	
-	private ColumnOrSuperColumn createColumn(ColumnValue val, long timestamp) {
-		Column c = new Column(Utils.toByteBuffer(val.columnName));
-		c.setValue(val.columnValue);
-		c.setTimestamp(timestamp);
-		ColumnOrSuperColumn csc = new ColumnOrSuperColumn();
-		csc.setColumn(c);
-		return csc;
-	}
-	
-	private void mutate(String key, String columnFamily, List<Mutation> mutations) {
-		DBTransaction transaction = DBService.instance().startTransaction();
-		if (transaction instanceof CassandraTransaction) {
-			((CassandraTransaction)transaction).addMutationList(columnFamily, key, mutations);
-			DBService.instance().commit(transaction);
-		} else {
-			throw new RuntimeException("Only Cassandra transactions are supported");
-		}
-	}
 }

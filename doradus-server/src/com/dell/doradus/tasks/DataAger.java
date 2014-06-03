@@ -270,7 +270,7 @@ public class DataAger extends DoradusTask {
             // See if a "last aging check" timestamp was persisted for this table.
             // TODO: check whether we need it now?
 //            String lastAgingCheck = Utils.toString(
-//            		DBService.instance().getColumn(CassandraDBConn.COLUMN_FAMILY_APPS, getAppName(), lastAgingCheckColName(tableDef)));
+//            		DBService.instance().getColumn(DBConn.COLUMN_FAMILY_APPS, getAppName(), lastAgingCheckColName(tableDef)));
 //            if (lastAgingCheck != null) {
 //                // Found LastAgingCheck in the DB, so start with that.
 //                Date lastAgingDate;

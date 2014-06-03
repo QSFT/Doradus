@@ -14,32 +14,36 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.service.db;
-
-import java.util.Iterator;
+package com.dell.doradus.service.db.thrift;
 
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.service.db.DColumn;
 
 /**
- * Implements a Doradus {@link DRow} fetched from a Cassandra ColumnFamily row.
+ * Represents a Doradus {@link DColumn} extracted from a Cassandra ColumnFamily. 
  */
-public class CassandraRow implements DRow {
-    private final String m_rowKey;
-    private final CassandraColumnBatch m_colBatch;
+public class CassandraColumn implements DColumn {
+    private final String m_name;
+    private final byte[] m_value;
 
-    public CassandraRow(byte[] rowKey, CassandraColumnBatch colBatch) {
-        m_rowKey = Utils.toString(rowKey);
-        m_colBatch = colBatch;
+    public CassandraColumn(byte[] name, byte[] value) {
+        m_name = Utils.toString(name);
+        m_value = value;
     }   // constructor
     
     @Override
-    public String getKey() {
-        return m_rowKey;
-    }   // getKey
+    public String getName() {
+        return m_name;
+    }   // getName
 
     @Override
-    public Iterator<DColumn> getColumns() {
-        return m_colBatch;
-    }   // getColumns
+    public byte[] getRawValue() {
+        return m_value;
+    }   // getRawValue
 
-}   // class CassandraRow
+    @Override
+    public String getValue() {
+        return Utils.toString(m_value);
+    }   // getValue
+
+}   // class CassandraColumn
