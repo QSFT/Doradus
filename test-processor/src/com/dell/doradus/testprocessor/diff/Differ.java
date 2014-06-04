@@ -104,9 +104,9 @@ public class Differ
     private DiffResult createLineDiffs(String textA, String textB)
     throws Exception
     {
-        String[] sourceLinesA = textA.split(Utils.EOL);
-        String[] sourceLinesB = textB.split(Utils.EOL);
-        
+        String[] sourceLinesA = textA.split("[\\r\\n]+");
+        String[] sourceLinesB = textB.split("[\\r\\n]+");
+
         Map<String, Integer> lineHash = new HashMap<String, Integer>();
 
         int[] hashedLinesA = new int[sourceLinesA.length];
