@@ -80,6 +80,44 @@ public class Program
         finally {
             Log.close();
         }
+
+        System.out.println(Utils.EOL + "Summary:");
+        displaySummary("  ");
+    }
+
+    static public void displaySummary(String prefix)
+    {
+        if (prefix == null) prefix = "";
+
+        int cntSucceeded    = 0;
+        int cntFailed       = 0;
+        int cntInterrupted  = 0;
+        int cntNotExecuted  = 0;
+
+        for (TestDirInfo testDirInfo : Data.testSuiteInfo.getTestDirInfoList()) {
+            if (testDirInfo.isExcluded()) continue;
+
+            for (TestInfo testInfo : testDirInfo.testInfoList()) {
+                if (testInfo.isExcluded())
+                    continue;
+
+                if (testInfo.isInterrupted())
+                    { cntInterrupted += 1; continue; }
+                if (testInfo.isSucceeded())
+                    { cntSucceeded += 1; continue; }
+                if (!testInfo.isExecuted())
+                    { cntNotExecuted += 1; continue; }
+                cntFailed += 1;
+            }
+        }
+
+        System.out.println(prefix + "Succeeded:    " + cntSucceeded);
+        if (cntFailed > 0)
+            System.out.println(prefix + "Failed:       " + cntFailed);
+        if (cntInterrupted > 0)
+            System.out.println(prefix + "Interrupted:  " + cntInterrupted);
+        if (cntNotExecuted > 0)
+            System.out.println(prefix + "Not executed: " + cntNotExecuted);
     }
 
     static private void writeHtmlTestReport()
@@ -89,7 +127,7 @@ public class Program
             return;
 
         Log.println("*** Program: Generating tests report:  " + Data.reportFilePath);
-        System.out.println("Report: \"" + Data.reportFilePath + "\"");
+        System.out.println(Utils.EOL + "Generated report: \"" + Data.reportFilePath + "\"");
 
         if (FileUtils.fileExists(Data.reportFilePath))
             FileUtils.deleteFile(Data.reportFilePath);
