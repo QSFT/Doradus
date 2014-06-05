@@ -44,7 +44,7 @@ public class Program
 
             Log.toFile(Data.logFilePath);
             if (Log.isOpened()) {
-                System.out.println("Log: \"" + Data.configFilePath + "\"");
+                System.out.println("Log: \"" + Data.logFilePath + "\"");
             }
 
             Log.println("*** Program: Test Processor Data:");
@@ -93,6 +93,11 @@ public class Program
         int cntFailed       = 0;
         int cntInterrupted  = 0;
         int cntNotExecuted  = 0;
+        
+        if (Data.testSuiteInfo == null) {
+            System.out.println(prefix + "<No test results found>");
+            return;
+        }
 
         for (TestDirInfo testDirInfo : Data.testSuiteInfo.getTestDirInfoList()) {
             if (testDirInfo.isExcluded()) continue;
