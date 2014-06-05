@@ -89,10 +89,12 @@ public class Program
     {
         if (prefix == null) prefix = "";
 
-        int cntSucceeded    = 0;
-        int cntFailed       = 0;
-        int cntInterrupted  = 0;
-        int cntNotExecuted  = 0;
+        int cntTests         = 0;
+        int cntSucceeded     = 0;
+        int cntFailed        = 0;
+        int cntInterrupted   = 0;
+        int cntNotExecuted   = 0;
+        int cntResultCreated = 0;
         
         if (Data.testSuiteInfo == null) {
             System.out.println(prefix + "<No test results found>");
@@ -106,21 +108,27 @@ public class Program
                 if (testInfo.isExcluded())
                     continue;
 
+                cntTests += 1;
                 if (testInfo.isInterrupted())
                     { cntInterrupted += 1; continue; }
                 if (testInfo.isSucceeded())
                     { cntSucceeded += 1; continue; }
+                if (testInfo.requiredResultFileCreated())
+                    { cntResultCreated += 1; continue; }
                 if (!testInfo.isExecuted())
                     { cntNotExecuted += 1; continue; }
                 cntFailed += 1;
             }
         }
 
-        System.out.println(prefix + "Succeeded:    " + cntSucceeded);
+        //System.out.println(prefix + "Number of test(s): " + cntTests);
+        System.out.println(prefix + "Succeeded: " + cntSucceeded);
         if (cntFailed > 0)
-            System.out.println(prefix + "Failed:       " + cntFailed);
+            System.out.println(prefix + "Failed: " + cntFailed);
         if (cntInterrupted > 0)
-            System.out.println(prefix + "Interrupted:  " + cntInterrupted);
+            System.out.println(prefix + "Interrupted: " + cntInterrupted);
+        if (cntResultCreated > 0)
+            System.out.println(prefix + "Result(s) created: " + cntResultCreated);
         if (cntNotExecuted > 0)
             System.out.println(prefix + "Not executed: " + cntNotExecuted);
     }

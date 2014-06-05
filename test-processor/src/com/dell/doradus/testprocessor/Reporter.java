@@ -33,10 +33,11 @@ public class Reporter
 
     static public String generateXmlSummaryForCCNet(TestSuiteInfo testSuiteInfo)
     {
-        int cntSucceeded    = 0;
-        int cntFailed       = 0;
-        int cntInterrupted  = 0;
-        int cntNotExecuted  = 0;
+        int cntSucceeded      = 0;
+        int cntFailed         = 0;
+        int cntInterrupted    = 0;
+        int cntNotExecuted    = 0;
+        int cntResultsCreated = 0;
 
         for (TestDirInfo testDirInfo : testSuiteInfo.getTestDirInfoList()) {
             if (testDirInfo.isExcluded()) continue;
@@ -51,6 +52,8 @@ public class Reporter
                     { cntSucceeded += 1; continue; }
                 if (!testInfo.isExecuted())
                     { cntNotExecuted += 1; continue; }
+                if (!testInfo.requiredResultFileCreated())
+                    { cntResultsCreated += 1; continue; }
                 cntFailed += 1;
             }
         }
@@ -58,10 +61,11 @@ public class Reporter
         StringBuilder xmlSummary = new StringBuilder();
         xmlSummary.append("<tests-summary>\r\n");
 
-        xmlSummary.append("<succeeded>"    + cntSucceeded   + "</succeeded>\r\n");
-        xmlSummary.append("<failed>"       + cntFailed      + "</failed>\r\n");
-        xmlSummary.append("<interrupted>"  + cntInterrupted + "</interrupted>\r\n");
-        xmlSummary.append("<not-executed>" + cntNotExecuted + "</not-executed>\r\n");
+        xmlSummary.append("<succeeded>"       + cntSucceeded      + "</succeeded>\r\n");
+        xmlSummary.append("<failed>"          + cntFailed         + "</failed>\r\n");
+        xmlSummary.append("<interrupted>"     + cntInterrupted    + "</interrupted>\r\n");
+        xmlSummary.append("<not-executed>"    + cntNotExecuted    + "</not-executed>\r\n");
+        xmlSummary.append("<results-created>" + cntResultsCreated + "</results-created>\r\n");
 
         xmlSummary.append("</tests-summary>\r\n");
         return xmlSummary.toString();
@@ -101,6 +105,7 @@ public class Reporter
         htmlReport.append("  .row-test-failed       { color:#CC0000; font-weight:normal; font-style:normal; }\r\n");
         htmlReport.append("  .row-test-interrupted  { color:#CC0000; font-weight:normal; font-style:normal; }\r\n");
         htmlReport.append("  .row-test-not-executed { color:#CC0000; font-weight:normal; font-style:normal; }\r\n");
+        htmlReport.append("  .row-result-created    { color:#CC0000; font-weight:normal; font-style:normal; }\r\n");
         htmlReport.append("  .attach      { background-color:#FFFFFF; color:#000000; }\r\n");
         htmlReport.append("  .attach-head { font-family: verdana, helvetica, arial;\r\n");
         htmlReport.append("                 font-size: 10px; font-weight:bold; font-style:normal; }\r\n");
@@ -188,6 +193,17 @@ public class Reporter
                             "</td>\r\n");
                     htmlReport.append("<td class=\"column-test-2\">" +
                             "succeeded" +
+                            "</td>\r\n");
+                    htmlReport.append("</tr>\r\n");
+                    continue;
+                }
+                if (testInfo.requiredResultFileCreated()) {
+                    htmlReport.append("<tr class=\"row-result-created\">\r\n");
+                    htmlReport.append("<td class=\"column-test-1\">" +
+                            testInfo.name() +
+                            "</td>\r\n");
+                    htmlReport.append("<td class=\"column-test-2\">" +
+                            "result created" +
                             "</td>\r\n");
                     htmlReport.append("</tr>\r\n");
                     continue;

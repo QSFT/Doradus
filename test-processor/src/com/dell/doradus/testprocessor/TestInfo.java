@@ -123,6 +123,8 @@ public class TestInfo
             return "not executed";
         if (isSucceeded())
             return "succeeded";
+        if (requiredResultFileCreated())
+            return "result file created";
         return "failed";
     }
 
