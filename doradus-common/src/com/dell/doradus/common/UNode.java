@@ -907,8 +907,12 @@ final public class UNode {
                 m_childNodeMap = new LinkedHashMap<String, UNode>();
             }
             UNode priorNode = m_childNodeMap.put(childNode.m_name, childNode);
-            assert priorNode == null : "Duplicate name ('" + childNode.m_name +
-                                       "') added to the same parent: " + m_name;
+            //assert priorNode == null : "Duplicate name ('" + childNode.m_name +
+            //                           "') added to the same parent: " + m_name;
+            if(priorNode != null) {
+            	throw new RuntimeException("Duplicate name ('" + childNode.m_name +
+                        "') added to the same parent: " + m_name);
+            }
         }
         return childNode;
     }   // addChildNode
