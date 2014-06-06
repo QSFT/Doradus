@@ -31,8 +31,8 @@ import java.util.Stack;
 
 public class IncludeSection
 {
-    private List<DirIncluded>   m_dirList;
-    private Stack<DirIncluded>  m_dirStack;
+    private List<DirIncluded>  m_dirList;
+    private Stack<DirIncluded> m_dirStack;
 
     public void start(String rootPath)
     {
@@ -47,13 +47,15 @@ public class IncludeSection
     {
         DirIncluded rootDir = m_dirStack.pop();
 
-        if (!rootDir.getTestNames().isEmpty() || m_dirList.isEmpty())
+        if (!rootDir.testNames().isEmpty() || !rootDir.subDirsIncluded())
             m_dirList.add(rootDir);
     }
 
     public void openDir(String relativePath)
     {
-        String path = FileUtils.combinePaths(m_dirStack.peek().getPath(), relativePath);
+        DirIncluded parentDir = m_dirStack.peek();
+        String path = FileUtils.combinePaths(parentDir.path(), relativePath);
+        parentDir.subDirsIncluded(true);
         m_dirStack.push(new DirIncluded(path));
     }
 
@@ -72,8 +74,11 @@ public class IncludeSection
     {
         for (DirIncluded dirIncluded : m_dirList)
         {
-            TestDirInfo testDirInfo = new TestDirInfo(dirIncluded.getPath());
-            List<String> testNames = dirIncluded.getTestNames();
+            List<String> testNames = dirIncluded.testNames();
+            if (testNames.isEmpty() && dirIncluded.subDirsIncluded())
+                continue;
+
+            TestDirInfo testDirInfo = new TestDirInfo(dirIncluded.path());
             if (testNames.isEmpty()) {
                 testSuiteInfo.includeWholeDirectory(testDirInfo);
             } else {
@@ -84,6 +89,7 @@ public class IncludeSection
             }
         }
     }
+
     public String toString(String prefix)
     {
         if (prefix == null) prefix = "";

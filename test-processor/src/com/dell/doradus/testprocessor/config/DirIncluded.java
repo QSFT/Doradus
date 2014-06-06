@@ -24,33 +24,33 @@ import java.util.List;
 
 public class DirIncluded
 {
-    public String       m_path;
-    public List<String> m_testNames;
+    private String       m_path;
+    private List<String> m_testNames;
+    private boolean      m_subDirsIncluded;
 
     public DirIncluded(String path) {
         m_path = path;
         m_testNames = new ArrayList<String>();
-    }
-    public DirIncluded() {
-        this("");
+        m_subDirsIncluded = false;
     }
 
-    public void setPath(String value) {
-        m_path = value;
-    }
-    public String getPath() {
+    public String path() {
         return m_path;
     }
-    public List<String> getTestNames() {
+    public List<String> testNames() {
         return m_testNames;
+    }
+    public void subDirsIncluded(boolean value) {
+        m_subDirsIncluded = value;
+    }
+    public boolean subDirsIncluded() {
+        return m_subDirsIncluded;
     }
 
     public void addTest(String name)
     {
-        if (m_testNames.contains(name))
-            return;
-
-        m_testNames.add(name);
+        if (!m_testNames.contains(name))
+            m_testNames.add(name);
     }
 
     public String toString(String prefix)

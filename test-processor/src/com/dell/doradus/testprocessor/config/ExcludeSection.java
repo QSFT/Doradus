@@ -45,19 +45,21 @@ public class ExcludeSection
     {
         DirExcluded rootDir = m_dirStack.pop();
 
-        if (!rootDir.getTestNames().isEmpty())
+        if (!rootDir.testNames().isEmpty() || !rootDir.subDirsExcluded())
             m_dirList.add(rootDir);
     }
 
     public void openDir(String relativePath)
     {
-        String path = FileUtils.combinePaths(m_dirStack.peek().getPath(), relativePath);
+        DirExcluded parentDir = m_dirStack.peek();
+        String path = FileUtils.combinePaths(parentDir.path(), relativePath);
+        parentDir.subDirsExcluded(true);
         m_dirStack.push(new DirExcluded(path));
     }
 
     public void setDirReason(String reason)
     {
-        m_dirStack.peek().setReason(reason);
+        m_dirStack.peek().reason(reason);
     }
 
     public void closeDir()
@@ -77,17 +79,16 @@ public class ExcludeSection
     {
         for (DirExcluded dirExcluded : m_dirList)
         {
-            String dirPath = dirExcluded.getPath();
-            List<String> testNames = dirExcluded.getTestNames();
+            String dirPath = dirExcluded.path();
+            List<String> testNames = dirExcluded.testNames();
+            if (testNames.isEmpty() && dirExcluded.subDirsExcluded())
+                continue;
 
+            TestDirInfo testDirInfo = new TestDirInfo(dirPath, true, dirExcluded.reason());
             if (testNames.isEmpty()) {
-                TestDirInfo testDirInfo = new TestDirInfo(dirPath, true, dirExcluded.getReason());
                 testSuiteInfo.excludeWholeDirectory(testDirInfo);
             } else  {
-                boolean excluded = true;
-                List<String> testReasons = dirExcluded.getTestReasons();
-
-                TestDirInfo testDirInfo = new TestDirInfo(dirPath, excluded, dirExcluded.getReason());
+                List<String> testReasons = dirExcluded.testReasons();
                 for (int i = 0; i < testNames.size(); i++) {
                     testDirInfo.excludeTest(testNames.get(i), testReasons.get(i));
                 }
