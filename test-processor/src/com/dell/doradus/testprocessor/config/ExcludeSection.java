@@ -45,7 +45,7 @@ public class ExcludeSection
     {
         DirExcluded rootDir = m_dirStack.pop();
 
-        if (!rootDir.testNames().isEmpty() || !rootDir.subDirsExcluded())
+        if (!rootDir.testNames().isEmpty())
             m_dirList.add(rootDir);
     }
 
