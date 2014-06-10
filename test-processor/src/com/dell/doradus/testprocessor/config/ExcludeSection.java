@@ -73,27 +73,14 @@ public class ExcludeSection
         m_dirStack.peek().setTestReason(name, reason);
     }
 
-
-    public void applyTo(TestSuiteInfo testSuiteInfo)
-    throws Exception
+    public void applyTo(TestSuiteInfo suiteInfo)
     {
-        for (DirExcluded dirExcluded : m_dirList)
+        for (DirExcluded dir : m_dirList)
         {
-            String dirPath = dirExcluded.path();
-            List<String> testNames = dirExcluded.testNames();
-            if (testNames.isEmpty() && dirExcluded.subDirsExcluded())
-                continue;
-
-            TestDirInfo testDirInfo = new TestDirInfo(testSuiteInfo, dirPath, true, dirExcluded.reason());
-            if (testNames.isEmpty()) {
-                testSuiteInfo.excludeWholeDirectory(testDirInfo);
-            } else  {
-                List<String> testReasons = dirExcluded.testReasons();
-                for (int i = 0; i < testNames.size(); i++) {
-                    testDirInfo.excludeTest(testNames.get(i), testReasons.get(i));
-                }
-
-                testSuiteInfo.add(testDirInfo);
+            if (!dir.testNames().isEmpty()) {
+                suiteInfo.excludeTests(dir.path(), dir.testNames(), dir.testReasons());
+            } else if (!dir.subDirsExcluded()) {
+                suiteInfo.excludeDirectory(dir.path(), dir.reason());
             }
         }
     }

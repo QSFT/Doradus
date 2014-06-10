@@ -31,14 +31,11 @@ public class TestDirInfo
     private String          m_reasonToExclude;
 
     public TestDirInfo(TestSuiteInfo testSuiteInfo, String path) {
-        this(testSuiteInfo, path, false, "");
-    }
-    public TestDirInfo(TestSuiteInfo testSuiteInfo, String path, boolean isExcluded, String reasonToExclude) {
         m_testSuiteInfo   = testSuiteInfo;
         m_path            = path;
         m_testInfoList    = new ArrayList<TestInfo>();
-        m_isExcluded      = isExcluded;
-        m_reasonToExclude = reasonToExclude;
+        m_isExcluded      = false;
+        m_reasonToExclude = "";
     }
 
     public TestSuiteInfo testSuiteInfo()
@@ -62,40 +59,30 @@ public class TestDirInfo
     public String reasonToExclude()
         { return m_reasonToExclude;}
 
-    public int cntTests()
-        { return m_testInfoList.size(); }
-
-    public TestInfo includeTest(String name)
+    public void includeTest(String testName)
     {
-        TestInfo testInfo = new TestInfo(this, name);
+        TestInfo testInfo = findTestInfo(testName);
+        if (testInfo == null) {
+            testInfo = new TestInfo(this, testName);
+            m_testInfoList.add(testInfo);
+        }
+
         testInfo.isExcluded(false);
-        add(testInfo);
-        return testInfo;
     }
 
-    public TestInfo excludeTest(String name, String reason)
+    public void excludeTest(String testName, String reason)
     {
-        TestInfo testInfo = new TestInfo(this, name);
+        TestInfo testInfo = findTestInfo(testName);
+        if (testInfo == null) return;
+
         testInfo.isExcluded(true);
         testInfo.reasonToExclude(reason);
-        add(testInfo);
-        return testInfo;
     }
 
-    public void add(TestInfo testInfo) {
-        remove(testInfo.name());
-        m_testInfoList.add(testInfo);
-    }
-    private TestInfo remove(String name) {
-        TestInfo info = find(name);
-        if (info != null) m_testInfoList.remove(info);
-        return info;
-    }
-
-    private TestInfo find(String name)
+    private TestInfo findTestInfo(String testName)
     {
         for (TestInfo info : m_testInfoList) {
-            if (info.name().equalsIgnoreCase(name))
+            if (info.name().equalsIgnoreCase(testName))
                 return info;
         }
         return null;

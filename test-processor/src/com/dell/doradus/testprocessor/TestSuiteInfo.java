@@ -28,7 +28,7 @@ import java.util.List;
 
 public class TestSuiteInfo
 {
-    private List<TestDirInfo> m_testDirInfoList;
+    private List<TestDirInfo> m_dirsInfoList;
 
     private int m_cntTestsStarted;
     private int m_cntTestsAborted;
@@ -37,7 +37,7 @@ public class TestSuiteInfo
     private int m_cntTestsFailed;
 
     public TestSuiteInfo() {
-        m_testDirInfoList = new ArrayList<TestDirInfo>();
+        m_dirsInfoList      = new ArrayList<TestDirInfo>();
         m_cntTestsStarted   = 0;
         m_cntTestsAborted   = 0;
         m_cntResultsCreated = 0;
@@ -46,7 +46,7 @@ public class TestSuiteInfo
     }
 
     public List<TestDirInfo> getTestDirInfoList()
-        { return m_testDirInfoList; }
+        { return m_dirsInfoList; }
 
     public int nTestsStarted()   { return m_cntTestsStarted;   }
     public int nTestsAborted()   { return m_cntTestsAborted;   }
@@ -60,57 +60,92 @@ public class TestSuiteInfo
     public void incTestsSucceeded() { ++m_cntTestsSucceeded; }
     public void incTestsFailed()    { ++m_cntTestsFailed;    }
 
-    public void add(TestDirInfo dirInfo)
-    {
-        TestDirInfo existingDirInfo = findExistingDir(dirInfo);
-        if (existingDirInfo != null) {
-            for (TestInfo testInfo : dirInfo.testInfoList())
-                existingDirInfo.add(testInfo);
-        } else {
-            m_testDirInfoList.add(dirInfo);
-        }
-    }
-
-    public void includeWholeDirectory(TestDirInfo dirInfoToInclude)
+    public void includeDirectory(String absolutePath)
     throws Exception
     {
-        TestDirInfo dirToRemove = findExistingDir(dirInfoToInclude);
-        m_testDirInfoList.remove(dirToRemove);
+        TestDirInfo dirInfo = findIncludedDir(absolutePath);
+        if (dirInfo == null) {
+            dirInfo = new TestDirInfo(this, absolutePath);
+            m_dirsInfoList.add(dirInfo);
+        }
 
-        File   dir  = new File(dirInfoToInclude.path());
+        File   dir  = new File(absolutePath);
         File[] list = dir.listFiles();
         if (list == null) {
-            String msg = "Not directory: '" + dirInfoToInclude.path() + "'";
+            String msg = "Not a directory: '" + absolutePath + "'";
             throw new Exception(msg);
         }
 
-        List<TestDirInfo> subdirsToInclude = new ArrayList<TestDirInfo>();
+        List<String> subDirsToInclude = new ArrayList<String>();
 
-        for (File file : list) {
+        for (File file : list)
+        {
             String path = file.getAbsolutePath();
             if (file.isFile() && path.endsWith(Data.TEST_SCRIPT_EXTENSION)) {
-                dirInfoToInclude.includeTest(FileUtils.getTestName(path));
+                dirInfo.includeTest(FileUtils.getTestName(path));
             } else if (file.isDirectory()) {
-                TestDirInfo dirInfo = new TestDirInfo(this, path);
-                subdirsToInclude.add(dirInfo);
+                subDirsToInclude.add(path);
             }
         }
 
-        if (dirInfoToInclude.cntTests() > 0) {
-            m_testDirInfoList.add(dirInfoToInclude);
-        }
-
-        for (TestDirInfo subdir : subdirsToInclude) {
-            includeWholeDirectory(subdir);
+        for (String path : subDirsToInclude) {
+            includeDirectory(path);
         }
     }
 
-    public void excludeWholeDirectory(TestDirInfo dirInfoToExclude)
+    public void includeTests(String absolutePath, List<String> testNames)
     {
-        List<TestDirInfo> dirsToRemove = findExistingDirAndSubdirs(dirInfoToExclude);
-        for (TestDirInfo dir : dirsToRemove)
-            m_testDirInfoList.remove(dir);
-        m_testDirInfoList.add(dirInfoToExclude);
+        TestDirInfo dirInfo = findIncludedDir(absolutePath);
+        if (dirInfo == null) {
+            dirInfo = new TestDirInfo(this, absolutePath);
+            m_dirsInfoList.add(dirInfo);
+        }
+
+        for (String name : testNames) {
+            dirInfo.includeTest(name);
+        }
+    }
+
+    public void excludeDirectory(String absolutePath, String reason)
+    {
+        List<TestDirInfo> dirsToRemove = findIncludedDirAndSubDirs(absolutePath);
+        for (TestDirInfo dir : dirsToRemove) {
+            dir.isExcluded(true);
+            dir.reasonToExclude(reason);
+        }
+    }
+
+    public void excludeTests(String absolutePath, List<String> testNames, List<String> reasons)
+    {
+        TestDirInfo dirInfo = findIncludedDir(absolutePath);
+        if (dirInfo == null) return;
+
+        for (int i = 0; i < testNames.size(); i++) {
+            dirInfo.excludeTest(testNames.get(i), reasons.get(i));
+        }
+    }
+
+    private TestDirInfo findIncludedDir(String absolutePath)
+    {
+        Path path1 = Paths.get(absolutePath);
+        for (TestDirInfo dirInfo : m_dirsInfoList) {
+            Path path2 = Paths.get(dirInfo.path());
+            if (path2.equals(path1)) return dirInfo;
+        }
+        return null;
+    }
+
+    private List<TestDirInfo> findIncludedDirAndSubDirs(String absolutePath)
+    {
+        List<TestDirInfo> result = new ArrayList<TestDirInfo>();
+
+        Path path1 = Paths.get(absolutePath);
+        for (TestDirInfo dirInfo : m_dirsInfoList) {
+            Path path2 = Paths.get(dirInfo.path());
+            if (path2.startsWith(path1)) result.add(dirInfo);
+        }
+
+        return result;
     }
 
     public String toString(String prefix)
@@ -118,33 +153,10 @@ public class TestSuiteInfo
         if (prefix == null) prefix = "";
 
         StringBuilder result = new StringBuilder();
-        for (TestDirInfo testDirInfo : m_testDirInfoList) {
-            result.append(testDirInfo.toString(prefix) + Utils.EOL);
+        for (TestDirInfo dirInfo : m_dirsInfoList) {
+            result.append(dirInfo.toString(prefix) + Utils.EOL);
         }
 
         return StringUtils.trimEnd(result.toString(), "\r\n");
-    }
-
-    private TestDirInfo findExistingDir(TestDirInfo infoToFind)
-    {
-        for (TestDirInfo existingInfo : m_testDirInfoList) {
-            if (existingInfo.path().equalsIgnoreCase(infoToFind.path()))
-                return existingInfo;
-        }
-        return null;
-    }
-
-    private List<TestDirInfo> findExistingDirAndSubdirs(TestDirInfo rootInfo)
-    {
-        List<TestDirInfo> result = new ArrayList<TestDirInfo>();
-        String root = rootInfo.path();
-
-        for (TestDirInfo existingInfo : m_testDirInfoList) {
-            Path path = Paths.get(existingInfo.path());
-            if (path.startsWith(root))
-                result.add(existingInfo);
-        }
-
-        return result;
     }
 }

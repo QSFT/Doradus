@@ -69,23 +69,15 @@ public class IncludeSection
         m_dirStack.peek().addTest(name);
     }
 
-    public void applyTo(TestSuiteInfo testSuiteInfo)
+    public void applyTo(TestSuiteInfo suiteInfo)
     throws Exception
     {
-        for (DirIncluded dirIncluded : m_dirList)
+        for (DirIncluded dir : m_dirList)
         {
-            List<String> testNames = dirIncluded.testNames();
-            if (testNames.isEmpty() && dirIncluded.subDirsIncluded())
-                continue;
-
-            TestDirInfo testDirInfo = new TestDirInfo(testSuiteInfo, dirIncluded.path());
-            if (testNames.isEmpty()) {
-                testSuiteInfo.includeWholeDirectory(testDirInfo);
-            } else {
-                for (String testName : testNames) {
-                    testDirInfo.includeTest(testName);
-                }
-                testSuiteInfo.add(testDirInfo);
+            if (!dir.testNames().isEmpty()) {
+                suiteInfo.includeTests(dir.path(), dir.testNames());
+            } else if (!dir.subDirsIncluded()) {
+                suiteInfo.includeDirectory(dir.path());
             }
         }
     }
