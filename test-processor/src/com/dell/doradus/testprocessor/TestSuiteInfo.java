@@ -30,12 +30,35 @@ public class TestSuiteInfo
 {
     private List<TestDirInfo> m_testDirInfoList;
 
+    private int m_cntTestsStarted;
+    private int m_cntTestsAborted;
+    private int m_cntResultsCreated;
+    private int m_cntTestsSucceeded;
+    private int m_cntTestsFailed;
+
     public TestSuiteInfo() {
         m_testDirInfoList = new ArrayList<TestDirInfo>();
+        m_cntTestsStarted   = 0;
+        m_cntTestsAborted   = 0;
+        m_cntResultsCreated = 0;
+        m_cntTestsSucceeded = 0;
+        m_cntTestsFailed    = 0;
     }
 
     public List<TestDirInfo> getTestDirInfoList()
         { return m_testDirInfoList; }
+
+    public int nTestsStarted()   { return m_cntTestsStarted;   }
+    public int nTestsAborted()   { return m_cntTestsAborted;   }
+    public int nResultsCreated() { return m_cntResultsCreated; }
+    public int nTestsSucceeded() { return m_cntTestsSucceeded; }
+    public int nTestsFailed()    { return m_cntTestsFailed;    }
+
+    public void incTestsStarted()   { ++m_cntTestsStarted;   }
+    public void incTestsAborted()   { ++m_cntTestsAborted;   }
+    public void incResultsCreated() { ++m_cntResultsCreated; }
+    public void incTestsSucceeded() { ++m_cntTestsSucceeded; }
+    public void incTestsFailed()    { ++m_cntTestsFailed;    }
 
     public void add(TestDirInfo dirInfo)
     {
@@ -68,7 +91,7 @@ public class TestSuiteInfo
             if (file.isFile() && path.endsWith(Data.TEST_SCRIPT_EXTENSION)) {
                 dirInfoToInclude.includeTest(FileUtils.getTestName(path));
             } else if (file.isDirectory()) {
-                TestDirInfo dirInfo = new TestDirInfo(path);
+                TestDirInfo dirInfo = new TestDirInfo(this, path);
                 subdirsToInclude.add(dirInfo);
             }
         }

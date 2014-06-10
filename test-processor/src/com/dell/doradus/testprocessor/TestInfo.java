@@ -23,123 +23,101 @@ public class TestInfo
 {
     private TestDirInfo m_testDirInfo;
     private String      m_name;
-    private boolean     m_excluded;
+    private boolean     m_isExcluded;
     private String      m_reasonToExclude;
-    private boolean     m_interrupted;
-    private String      m_reasonToInterrupt;
-    private boolean     m_executed;
-    private boolean     m_requiredResultFileCreated;
-    private boolean     m_succeeded;
+    private boolean     m_isStarted;
+    private boolean     m_isAborted;
+    private String      m_reasonToAbort;
+    private boolean     m_isResultCreated;
+    private boolean     m_isSucceeded;
     private String      m_diffHref;
-    private String      m_interruptionHref;
+    private String      m_abortHref;
 
     public TestInfo(TestDirInfo testDirInfo, String name) {
-        m_testDirInfo               = testDirInfo;
-        m_name                      = name;
-        m_excluded                  = false;
-        m_reasonToExclude           = "";
-        m_interrupted               = false;
-        m_reasonToInterrupt         = null;
-        m_executed                  = false;
-        m_requiredResultFileCreated = false;
-        m_succeeded                 = false;
-        m_diffHref                  = null;
-        m_interruptionHref          = null;
+        m_testDirInfo     = testDirInfo;
+        m_name            = name;
+        m_isExcluded      = false;
+        m_reasonToExclude = null;
+        m_isStarted       = false;
+        m_isAborted       = false;
+        m_reasonToAbort   = null;
+        m_isResultCreated = false;
+        m_isSucceeded     = false;
+        m_diffHref        = null;
+        m_abortHref       = null;
     }
 
-    // Test directory to which this test belongs
     public TestDirInfo testDirInfo()
-    { return m_testDirInfo; }
+        { return m_testDirInfo; }
 
-    // Test name
     public void name(String value)
-    { m_name = value; }
+        { m_name = value; }
     public String name()
-    { return m_name;  }
+        { return m_name;  }
 
-    // Is this test is excluded
     public void isExcluded(boolean value)
-    { m_excluded = value; }
+        { m_isExcluded = value; }
     public boolean isExcluded()
-    { return m_excluded; }
+        { return m_isExcluded; }
 
-    // Reason to exclude this test
     public void reasonToExclude(String value)
-    { m_reasonToExclude = value;}
+        { m_reasonToExclude = value;}
     public String reasonToExclude()
-    { return m_reasonToExclude;}
+        { return m_reasonToExclude;}
 
-    // Is execution of this test interrupted
-    public void isInterrupted(boolean value)
-    { m_interrupted = value; }
-    public boolean isInterrupted()
-    { return m_interrupted; }
+    public void isStarted(boolean value)
+        { m_isStarted = value; }
+    public boolean isStarted()
+        { return m_isStarted; }
 
-    // Reason to interrupt this test
-    public void reasonToInterrupt(String value)
-    { m_reasonToInterrupt = value;}
-    public String reasonToInterrupt()
-    { return m_reasonToInterrupt;}
+    public void isAborted(boolean value)
+        { m_isAborted = value; }
+    public boolean isAborted()
+        { return m_isAborted; }
 
-    // Is this test executed (without interruption)
-    public void isExecuted(boolean value)
-    { m_executed = value; }
-    public boolean isExecuted()
-    { return m_executed; }
+    public void reasonToAbort(String value)
+        { m_reasonToAbort = value;}
+    public String reasonToAbort()
+        { return m_reasonToAbort;}
 
-    // Is new required result file created
-    // (in case it was absent before)
-    public void requiredResultFileCreated(boolean value)
-    { m_requiredResultFileCreated = value; }
-    public boolean requiredResultFileCreated()
-    { return m_requiredResultFileCreated; }
+    public void isResultCreated(boolean value)
+        { m_isResultCreated = value; }
+    public boolean isResultCreated()
+        { return m_isResultCreated; }
 
-    // Is this test succeeded (meaning that obtained
-    // result is the same as required result)
     public void isSucceeded(boolean value)
-    { m_succeeded = value; }
+        { m_isSucceeded = value; }
     public boolean isSucceeded()
-    { return m_succeeded; }
+        { return m_isSucceeded; }
 
-    // Used by the Reporter
+    public boolean isFailed()
+        { return m_isStarted &&
+                !m_isAborted &&
+                !m_isResultCreated &&
+                !m_isSucceeded; }
+
     public void diffHref(String value)
-    { m_diffHref = value; }
+        { m_diffHref = value; }
     public String diffHref()
-    { return m_diffHref; }
+        { return m_diffHref; }
 
-    // Used by the Reporter
-    public void interruptionHref(String value)
-    { m_interruptionHref = value; }
-    public String interruptionHref()
-    { return m_interruptionHref; }
-
-    public String resultToString()
-    {
-        if (isExcluded())
-            return "excluded";
-        if (isInterrupted())
-            return "interrupted";
-        if (!isExecuted())
-            return "not executed";
-        if (isSucceeded())
-            return "succeeded";
-        if (requiredResultFileCreated())
-            return "result file created";
-        return "failed";
-    }
+    public void abortHref(String value)
+        { m_abortHref = value; }
+    public String abortHref()
+        { return m_abortHref; }
 
     public String toString(String prefix)
     {
         if (prefix == null) prefix = "";
-
         StringBuilder result = new StringBuilder();
-        result.append(prefix + "Test: " + m_name);
-        if (m_excluded) {
-            result.append(" excluded");
-            if (m_reasonToExclude != null && m_reasonToExclude.trim().length() > 0) {
-                result.append(" [reason: " + m_reasonToExclude + "]");
-            }
-        }
+
+        result.append(prefix + "Test: " + m_name + Utils.EOL);
+        result.append(prefix + "  | isExcluded =  " + m_isExcluded +
+                               " [reason: " + StringUtils.nullOrString(m_reasonToExclude) + "]" + Utils.EOL);
+        result.append(prefix + "  | isStarted =   " + m_isStarted + Utils.EOL);
+        result.append(prefix + "  | isAborted =   " + m_isAborted +
+                " [reason: " + StringUtils.nullOrString(m_reasonToAbort) + "]" + Utils.EOL);
+        result.append(prefix + "  | isSucceeded = " + m_isSucceeded + Utils.EOL);
 
         return StringUtils.trimEnd(result.toString(), "\r\n");
     }

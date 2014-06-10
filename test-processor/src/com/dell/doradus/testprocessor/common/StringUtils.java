@@ -21,6 +21,10 @@ import java.util.List;
 
 public class StringUtils
 {
+    static public String nullOrString(String value)
+    {
+        return (value == null) ? "<null>" : value;
+    }
     static public String trimStart(String text, String whiteSpaces)
     {
     	if (text == null || text.length() == 0)

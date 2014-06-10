@@ -37,6 +37,8 @@ public class TestProcessor
     {
         try
         {
+            testInfo.isStarted(true);
+
             TestDirInfo dirInfo = testInfo.testDirInfo();
             String      dirPath = dirInfo.path();
 
@@ -69,14 +71,13 @@ public class TestProcessor
                 }
             } else {
                 TestProcessor.execute(testPath, requiredResultPath);
-                testInfo.requiredResultFileCreated(true);
+                testInfo.isResultCreated(true);
             }
 
-            testInfo.isExecuted(true);
         }
         catch(Exception ex) {
-            testInfo.isInterrupted(true);
-            testInfo.reasonToInterrupt(Utils.unwind(ex));
+            testInfo.isAborted(true);
+            testInfo.reasonToAbort(Utils.unwind(ex));
         }
     }
 
