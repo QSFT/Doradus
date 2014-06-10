@@ -60,13 +60,26 @@ public class Program
             System.out.println("Running Tests");
             for (TestDirInfo testDirInfo : Data.testSuiteInfo.getTestDirInfoList()) {
                 System.out.println("Directory: " + testDirInfo.path());
+                if (testDirInfo.isExcluded()) {
+                    System.out.println("  Excluded");
+                    continue;
+                }
 
                 for (TestInfo testInfo : testDirInfo.testInfoList()) {
-                    if (testInfo.isExcluded()) continue;
-                    System.out.print("   " + testInfo.name() + ": ");
-                    try { TestProcessor.execute(testInfo); }
-                    catch(Exception ex) { System.out.println(); }
-                    System.out.println(testInfo.resultToString());
+                    System.out.print("  " + testInfo.name() + ": ");
+                    if (testInfo.isExcluded()) {
+                        System.out.println("excluded");
+                        continue;
+                    }
+
+                    TestProcessor.execute(testInfo);
+                    System.out.println(
+                        !testInfo.isStarted()      ? "not started" :
+                        testInfo.isAborted()       ? "aborted" :
+                        testInfo.isResultCreated() ? "result file created" :
+                        testInfo.isSucceeded()     ? "succeeded" :
+                        testInfo.isFailed()        ? "failed" :
+                        "???");
                 }
             }
 
@@ -82,55 +95,8 @@ public class Program
         }
 
         System.out.println(Utils.EOL + "Summary:");
-        displaySummary("  ");
-    }
-
-    static public void displaySummary(String prefix)
-    {
-        if (prefix == null) prefix = "";
-
-        int cntTests         = 0;
-        int cntSucceeded     = 0;
-        int cntFailed        = 0;
-        int cntInterrupted   = 0;
-        int cntNotExecuted   = 0;
-        int cntResultCreated = 0;
-        
-        if (Data.testSuiteInfo == null) {
-            System.out.println(prefix + "<No test results found>");
-            return;
-        }
-
-        for (TestDirInfo testDirInfo : Data.testSuiteInfo.getTestDirInfoList()) {
-            if (testDirInfo.isExcluded()) continue;
-
-            for (TestInfo testInfo : testDirInfo.testInfoList()) {
-                if (testInfo.isExcluded())
-                    continue;
-
-                cntTests += 1;
-                if (testInfo.isInterrupted())
-                    { cntInterrupted += 1; continue; }
-                if (testInfo.isSucceeded())
-                    { cntSucceeded += 1; continue; }
-                if (testInfo.requiredResultFileCreated())
-                    { cntResultCreated += 1; continue; }
-                if (!testInfo.isExecuted())
-                    { cntNotExecuted += 1; continue; }
-                cntFailed += 1;
-            }
-        }
-
-        //System.out.println(prefix + "Number of test(s): " + cntTests);
-        System.out.println(prefix + "Succeeded: " + cntSucceeded);
-        if (cntFailed > 0)
-            System.out.println(prefix + "Failed: " + cntFailed);
-        if (cntInterrupted > 0)
-            System.out.println(prefix + "Interrupted: " + cntInterrupted);
-        if (cntResultCreated > 0)
-            System.out.println(prefix + "Result(s) created: " + cntResultCreated);
-        if (cntNotExecuted > 0)
-            System.out.println(prefix + "Not executed: " + cntNotExecuted);
+        TestsSummary summary = new TestsSummary(Data.testSuiteInfo);
+        System.out.println(summary.toString("  "));
     }
 
     static private void writeHtmlTestReport()
