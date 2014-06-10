@@ -58,14 +58,14 @@ public class Program
             Log.println("*** Program: Running Tests");
 
             System.out.println("Running Tests");
-            for (TestDirInfo testDirInfo : Data.testSuiteInfo.getTestDirInfoList()) {
-                System.out.println("Directory: " + testDirInfo.path());
-                if (testDirInfo.isExcluded()) {
+            for (TestDirInfo dirInfo : Data.testSuiteInfo.getTestDirInfoList()) {
+                System.out.println("Directory: " + dirInfo.path());
+                if (dirInfo.isExcluded()) {
                     System.out.println("  Excluded");
                     continue;
                 }
 
-                for (TestInfo testInfo : testDirInfo.testInfoList()) {
+                for (TestInfo testInfo : dirInfo.testInfoList()) {
                     System.out.print("  " + testInfo.name() + ": ");
                     if (testInfo.isExcluded()) {
                         System.out.println("excluded");
