@@ -78,7 +78,7 @@ public class IncludeSection
             if (testNames.isEmpty() && dirIncluded.subDirsIncluded())
                 continue;
 
-            TestDirInfo testDirInfo = new TestDirInfo(dirIncluded.path());
+            TestDirInfo testDirInfo = new TestDirInfo(testSuiteInfo, dirIncluded.path());
             if (testNames.isEmpty()) {
                 testSuiteInfo.includeWholeDirectory(testDirInfo);
             } else {

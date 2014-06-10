@@ -84,7 +84,7 @@ public class ExcludeSection
             if (testNames.isEmpty() && dirExcluded.subDirsExcluded())
                 continue;
 
-            TestDirInfo testDirInfo = new TestDirInfo(dirPath, true, dirExcluded.reason());
+            TestDirInfo testDirInfo = new TestDirInfo(testSuiteInfo, dirPath, true, dirExcluded.reason());
             if (testNames.isEmpty()) {
                 testSuiteInfo.excludeWholeDirectory(testDirInfo);
             } else  {
