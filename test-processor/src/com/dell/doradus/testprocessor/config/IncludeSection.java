@@ -31,8 +31,8 @@ import java.util.Stack;
 
 public class IncludeSection
 {
-    private List<DirIncluded>   m_dirList;
-    private Stack<DirIncluded>  m_dirStack;
+    private List<DirIncluded>  m_dirList;
+    private Stack<DirIncluded> m_dirStack;
 
     public void start(String rootPath)
     {
@@ -47,13 +47,15 @@ public class IncludeSection
     {
         DirIncluded rootDir = m_dirStack.pop();
 
-        if (!rootDir.getTestNames().isEmpty() || m_dirList.isEmpty())
+        if (!rootDir.testNames().isEmpty() || !rootDir.subDirsIncluded())
             m_dirList.add(rootDir);
     }
 
     public void openDir(String relativePath)
     {
-        String path = FileUtils.combinePaths(m_dirStack.peek().getPath(), relativePath);
+        DirIncluded parentDir = m_dirStack.peek();
+        String path = FileUtils.combinePaths(parentDir.path(), relativePath);
+        parentDir.subDirsIncluded(true);
         m_dirStack.push(new DirIncluded(path));
     }
 
@@ -67,23 +69,19 @@ public class IncludeSection
         m_dirStack.peek().addTest(name);
     }
 
-    public void applyTo(TestSuiteInfo testSuiteInfo)
+    public void applyTo(TestSuiteInfo suiteInfo)
     throws Exception
     {
-        for (DirIncluded dirIncluded : m_dirList)
+        for (DirIncluded dir : m_dirList)
         {
-            TestDirInfo testDirInfo = new TestDirInfo(dirIncluded.getPath());
-            List<String> testNames = dirIncluded.getTestNames();
-            if (testNames.isEmpty()) {
-                testSuiteInfo.includeWholeDirectory(testDirInfo);
-            } else {
-                for (String testName : testNames) {
-                    testDirInfo.includeTest(testName);
-                }
-                testSuiteInfo.add(testDirInfo);
+            if (!dir.testNames().isEmpty()) {
+                suiteInfo.includeTests(dir.path(), dir.testNames());
+            } else if (!dir.subDirsIncluded()) {
+                suiteInfo.includeDirectory(dir.path());
             }
         }
     }
+
     public String toString(String prefix)
     {
         if (prefix == null) prefix = "";

@@ -30,36 +30,39 @@ public class DirExcluded
     public List<String> m_testNames;
     public List<String> m_testReasons;
 
+    private boolean m_subDirsExcluded;
+
     public DirExcluded(String path, String reason) {
-        m_path        = path;
-        m_reason      = reason;
-        m_testNames   = new ArrayList<String>();
+        m_path = path;
+        m_reason = reason;
+        m_testNames = new ArrayList<String>();
         m_testReasons = new ArrayList<String>();
+        m_subDirsExcluded = false;
     }
     public DirExcluded(String path) {
         this(path, "");
     }
-    public DirExcluded() {
-        this("");
-    }
 
-    public void setPath(String value) {
-        m_path = value;
-    }
-    public String getPath() {
+    public String path() {
         return m_path;
     }
-    public void setReason(String value) {
+    public void reason(String value) {
         m_reason = value;
     }
-    public String getReason() {
+    public String reason() {
         return m_reason;
     }
-    public List<String> getTestNames() {
+    public List<String> testNames() {
         return m_testNames;
     }
-    public List<String> getTestReasons() {
+    public List<String> testReasons() {
         return m_testReasons;
+    }
+    public void subDirsExcluded(boolean value) {
+        m_subDirsExcluded = value;
+    }
+    public boolean subDirsExcluded() {
+        return m_subDirsExcluded;
     }
 
     public void addTest(String name)

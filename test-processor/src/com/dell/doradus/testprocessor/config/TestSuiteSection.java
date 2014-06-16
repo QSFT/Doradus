@@ -33,6 +33,7 @@ public class TestSuiteSection
     public void start()
     {
     }
+
     public void finish()
     {
         if (m_includeSection == null) {

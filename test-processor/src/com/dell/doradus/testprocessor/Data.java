@@ -16,6 +16,8 @@
 
 package com.dell.doradus.testprocessor;
 
+import java.net.URL;
+
 import com.dell.doradus.testprocessor.common.*;
 
 public class Data
@@ -38,9 +40,19 @@ public class Data
     static public TestSuiteInfo testSuiteInfo;
 
     static public void predefine()
+    throws Exception
     {
-        workingDir      = System.getProperty("user.dir");
-        configFilePath  = FileUtils.combinePaths(Data.workingDir, "..\\config\\config.xml");
+        workingDir = System.getProperty("user.dir");
+        
+        Class dataClass = Data.class;
+        ClassLoader loader = dataClass.getClassLoader();
+        URL configURL = loader.getResource("config.xml");
+        if (configURL == null) {
+        	String msg = "Config file not found";
+        	Log.println("!!!" + msg);
+        	throw new Exception(msg);
+        }
+        configFilePath = configURL.getPath();
 
         logFilePath          = null;
         reportFilePath       = null;

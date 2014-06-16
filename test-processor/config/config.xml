@@ -24,8 +24,6 @@ limitations under the License.
 
     <test-suite root="${tests.root}">
         <include>
-		<dir path="types">
-		</dir>
         </include>
         <exclude>
         </exclude>

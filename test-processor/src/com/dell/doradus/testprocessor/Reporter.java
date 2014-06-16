@@ -25,53 +25,17 @@ import java.nio.file.Path;
 
 public class Reporter
 {
-    static TestSuiteInfo m_testSuiteInfo;
+    static TestSuiteInfo m_suiteInfo;
 
     static int m_tableWidthPx = 800;
     static int m_directoryLengthPx;
     static int m_testNameLengthPx;
 
-    static public String generateXmlSummaryForCCNet(TestSuiteInfo testSuiteInfo)
+    static public String generateHtmlReport(TestSuiteInfo suiteInfo)
     {
-        int cntSucceeded    = 0;
-        int cntFailed       = 0;
-        int cntInterrupted  = 0;
-        int cntNotExecuted  = 0;
+        m_suiteInfo = suiteInfo;
 
-        for (TestDirInfo testDirInfo : testSuiteInfo.getTestDirInfoList()) {
-            if (testDirInfo.isExcluded()) continue;
-
-            for (TestInfo testInfo : testDirInfo.testInfoList()) {
-                if (testInfo.isExcluded())
-                    continue;
-
-                if (testInfo.isInterrupted())
-                    { cntInterrupted += 1; continue; }
-                if (testInfo.isSucceeded())
-                    { cntSucceeded += 1; continue; }
-                if (!testInfo.isExecuted())
-                    { cntNotExecuted += 1; continue; }
-                cntFailed += 1;
-            }
-        }
-
-        StringBuilder xmlSummary = new StringBuilder();
-        xmlSummary.append("<tests-summary>\r\n");
-
-        xmlSummary.append("<succeeded>"    + cntSucceeded   + "</succeeded>\r\n");
-        xmlSummary.append("<failed>"       + cntFailed      + "</failed>\r\n");
-        xmlSummary.append("<interrupted>"  + cntInterrupted + "</interrupted>\r\n");
-        xmlSummary.append("<not-executed>" + cntNotExecuted + "</not-executed>\r\n");
-
-        xmlSummary.append("</tests-summary>\r\n");
-        return xmlSummary.toString();
-    }
-
-    static public String generateHtmlReport(TestSuiteInfo testSuiteInfo)
-    {
-        m_testSuiteInfo = testSuiteInfo;
-
-        setMaxDirectoryAndNameLengths(testSuiteInfo);
+        setMaxDirectoryAndNameLengths(m_suiteInfo);
 
         StringBuilder htmlReport = new StringBuilder();
 
@@ -94,13 +58,15 @@ public class Reporter
         htmlReport.append("  .table-test { border-collapse: collapse; width:800px; background-color:#FFFFFF;\r\n");
         htmlReport.append("                text-indent:20px;\r\n");
         htmlReport.append("                font-family: verdana, helvetica, arial; font-size: 11px; }\r\n");
-        htmlReport.append("  .column-test-1         { width:" + m_testNameLengthPx + "px; }\r\n");
-        htmlReport.append("  .column-test-2         { width:" + (m_tableWidthPx - m_testNameLengthPx) + "px; }\r\n");
-        htmlReport.append("  .row-test-excluded     { color:#777777; font-weight:normal; font-style:italic; }\r\n");
-        htmlReport.append("  .row-test-succeeded    { color:#008822; font-weight:normal; font-style:normal; }\r\n");
-        htmlReport.append("  .row-test-failed       { color:#CC0000; font-weight:normal; font-style:normal; }\r\n");
-        htmlReport.append("  .row-test-interrupted  { color:#CC0000; font-weight:normal; font-style:normal; }\r\n");
-        htmlReport.append("  .row-test-not-executed { color:#CC0000; font-weight:normal; font-style:normal; }\r\n");
+        htmlReport.append("  .column-test-1        { width:" + m_testNameLengthPx + "px; }\r\n");
+        htmlReport.append("  .column-test-2        { width:" + (m_tableWidthPx - m_testNameLengthPx) + "px; }\r\n");
+        htmlReport.append("  .row-test-excluded    { color:#777777; font-weight:normal; font-style:italic; }\r\n");
+        htmlReport.append("  .row-test-not-started { color:#CC0000; font-weight:normal; font-style:normal; }\r\n");
+        htmlReport.append("  .row-test-aborted     { color:#CC0000; font-weight:normal; font-style:normal; }\r\n");
+        htmlReport.append("  .row-test-succeeded   { color:#008822; font-weight:normal; font-style:normal; }\r\n");
+        htmlReport.append("  .row-test-failed      { color:#CC0000; font-weight:normal; font-style:normal; }\r\n");
+        htmlReport.append("  .row-result-created   { color:#CC0000; font-weight:normal; font-style:normal; }\r\n");
+        htmlReport.append("  .row-test-unknown     { color:#CC0000; font-weight:normal; font-style:normal; }\r\n");
         htmlReport.append("  .attach      { background-color:#FFFFFF; color:#000000; }\r\n");
         htmlReport.append("  .attach-head { font-family: verdana, helvetica, arial;\r\n");
         htmlReport.append("                 font-size: 10px; font-weight:bold; font-style:normal; }\r\n");
@@ -113,20 +79,20 @@ public class Reporter
         addReportHead(htmlReport);
         addSummary(htmlReport);
 
-        int cntTestsInterrupted = 0;
-        int cntTestsFailed      = 0;
+        int cntTestsAborted = 0;
+        int cntTestsFailed  = 0;
 
-        for (TestDirInfo testDirInfo : testSuiteInfo.getTestDirInfoList())
+        for (TestDirInfo dirInfo : suiteInfo.getTestDirInfoList())
         {
-            if (testDirInfo.isExcluded())
+            if (dirInfo.isExcluded())
             {
                 htmlReport.append("<table class=\"table-dir table-dir-excluded\">\r\n");
                 htmlReport.append("<tr>\r\n");
                 htmlReport.append("<td width=\"" + m_directoryLengthPx + "px\">" +
-                        testDirInfo.path() +
+                        dirInfo.path() +
                         "</td>\r\n");
                 htmlReport.append("<td width=\"" + (m_tableWidthPx - m_directoryLengthPx) + "px\">" +
-                        "excluded: " + testDirInfo.reasonToExclude() +
+                        "excluded: " + dirInfo.reasonToExclude() +
                         "</td>\r\n");
                 htmlReport.append("</tr>\r\n");
                 htmlReport.append("</table>\r\n");
@@ -135,14 +101,12 @@ public class Reporter
 
             htmlReport.append("<table class=\"table-dir table-dir-included\">\r\n");
             htmlReport.append("<tr>\r\n");
-            htmlReport.append("<td width=\"100%\">" +
-                    testDirInfo.path() +
-                    "</td>\r\n");
+            htmlReport.append("<td width=\"100%\">" + dirInfo.path() + "</td>\r\n");
             htmlReport.append("</tr>\r\n");
             htmlReport.append("</table>\r\n");
 
             htmlReport.append("<table class=\"table-test\">\r\n");
-            for (TestInfo testInfo : testDirInfo.testInfoList())
+            for (TestInfo testInfo : dirInfo.testInfoList())
             {
                 if (testInfo.isExcluded()) {
                     htmlReport.append("<tr class=\"row-test-excluded\">\r\n");
@@ -155,28 +119,28 @@ public class Reporter
                     htmlReport.append("</tr>\r\n");
                     continue;
                 }
-                if (testInfo.isInterrupted()) {
-                    cntTestsInterrupted += 1;
-                    String interruptionHref = "interrupted" + cntTestsInterrupted;
-                    testInfo.interruptionHref(interruptionHref);
-
-                    htmlReport.append("<tr class=\"row-test-interrupted\">\r\n");
+                if (!testInfo.isStarted()) {
+                    htmlReport.append("<tr class=\"row-test-not-started\">\r\n");
                     htmlReport.append("<td class=\"column-test-1\">" +
                             testInfo.name() +
                             "</td>\r\n");
                     htmlReport.append("<td class=\"column-test-2\">" +
-                            "<a href=\"#" + interruptionHref + "\">interrupted</a>" +
+                            "not started" +
                             "</td>\r\n");
                     htmlReport.append("</tr>\r\n");
                     continue;
                 }
-                if (!testInfo.isExecuted()) {
-                    htmlReport.append("<tr class=\"row-test-not-executed\">\r\n");
+                if (testInfo.isAborted()) {
+                    cntTestsAborted += 1;
+                    String abortHref = "aborted" + cntTestsAborted;
+                    testInfo.abortHref(abortHref);
+
+                    htmlReport.append("<tr class=\"row-test-aborted\">\r\n");
                     htmlReport.append("<td class=\"column-test-1\">" +
                             testInfo.name() +
                             "</td>\r\n");
                     htmlReport.append("<td class=\"column-test-2\">" +
-                            "not executed" +
+                            "<a href=\"#" + abortHref + "\">aborted</a>" +
                             "</td>\r\n");
                     htmlReport.append("</tr>\r\n");
                     continue;
@@ -192,17 +156,39 @@ public class Reporter
                     htmlReport.append("</tr>\r\n");
                     continue;
                 }
+                if (testInfo.isFailed()) {
+                    cntTestsFailed += 1;
+                    String diffHref = "diff" + cntTestsFailed;
+                    testInfo.diffHref(diffHref);
 
-                cntTestsFailed += 1;
-                String diffHref = "diff" + cntTestsFailed;
-                testInfo.diffHref(diffHref);
+                    htmlReport.append("<tr class=\"row-test-failed\">\r\n");
+                    htmlReport.append("<td class=\"column-test-1\">" +
+                            testInfo.name() +
+                            "</td>\r\n");
+                    htmlReport.append("<td class=\"column-test-2\">" +
+                            "<a href=\"#" + diffHref + "\">failed</a>" +
+                            "</td>\r\n");
+                    htmlReport.append("</tr>\r\n");
+                    continue;
+                }
+                if (testInfo.isResultCreated()) {
+                    htmlReport.append("<tr class=\"row-result-created\">\r\n");
+                    htmlReport.append("<td class=\"column-test-1\">" +
+                            testInfo.name() +
+                            "</td>\r\n");
+                    htmlReport.append("<td class=\"column-test-2\">" +
+                            "result created" +
+                            "</td>\r\n");
+                    htmlReport.append("</tr>\r\n");
+                    continue;
+                }
 
-                htmlReport.append("<tr class=\"row-test-failed\">\r\n");
+                htmlReport.append("<tr class=\"row-test-unknown\">\r\n");
                 htmlReport.append("<td class=\"column-test-1\">" +
                         testInfo.name() +
                         "</td>\r\n");
                 htmlReport.append("<td class=\"column-test-2\">" +
-                        "<a href=\"#" + diffHref + "\">failed</a>" +
+                        "???" +
                         "</td>\r\n");
                 htmlReport.append("</tr>\r\n");
             }
@@ -210,11 +196,11 @@ public class Reporter
             htmlReport.append("</table>\r\n");
         }
 
-        for (TestDirInfo testDirInfo : testSuiteInfo.getTestDirInfoList()) {
-            for (TestInfo testInfo : testDirInfo.testInfoList()) {
+        for (TestDirInfo dirInfo : suiteInfo.getTestDirInfoList()) {
+            for (TestInfo testInfo : dirInfo.testInfoList()) {
                 if (testInfo.diffHref() != null)
                 {
-                    String diffFilePath = testDirInfo.path() + "\\" + testInfo.name() + Data.DIFF_RESULT_EXTENSION;
+                    String diffFilePath = dirInfo.path() + "\\" + testInfo.name() + Data.DIFF_RESULT_EXTENSION;
                     String diffContent;
                     if (FileUtils.fileExists(diffFilePath)) {
                         try { diffContent = FileUtils.readAllText(diffFilePath); }
@@ -233,14 +219,14 @@ public class Reporter
                     htmlReport.append(XmlUtils.escapeXml(diffContent));
                     htmlReport.append("</PRE>\r\n");
                 }
-                if (testInfo.interruptionHref() != null)
+                if (testInfo.abortHref() != null)
                 {
-                    String testFilePath = testDirInfo.path() + "\\" + testInfo.name() + Data.TEST_SCRIPT_EXTENSION;
-                    String reason = testInfo.reasonToInterrupt();
-                    if (reason == null) reason = "Interrupted by unknown reason";
+                    String testFilePath = dirInfo.path() + "\\" + testInfo.name() + Data.TEST_SCRIPT_EXTENSION;
+                    String reason = testInfo.reasonToAbort();
+                    if (reason == null) reason = "Aborted by unknown reason";
 
                     htmlReport.append("<hr align=\"left\" width=\"60%\" size=\"1\" color=\"#000000\"/>");
-                    htmlReport.append("<a name=\"" + testInfo.interruptionHref() + "\"></a>\r\n");
+                    htmlReport.append("<a name=\"" + testInfo.abortHref() + "\"></a>\r\n");
                     htmlReport.append("<p class=\"attach attach-head\">" + testFilePath + "</p>\r\n");
 
                     htmlReport.append("<PRE class=\"attach attach-body\">\r\n");
@@ -295,54 +281,72 @@ public class Reporter
         htmlReport.append("  .summary-table    { border-collapse: collapse; width:800px; background-color:#FFFFFF;\r\n");
         htmlReport.append("                      font-family: verdana, helvetica, arial;\r\n");
         htmlReport.append("                      font-size: 11px; font-weight:normal;; font-style:normal; }\r\n");
-        htmlReport.append("  .summary-column-1 { width: 15%; text-indent:20px; }\r\n");
-        htmlReport.append("  .summary-column-2 { width: 85%; }\r\n");
+        htmlReport.append("  .summary-column-1 { width: 20%; text-indent:20px; }\r\n");
+        htmlReport.append("  .summary-column-2 { width: 80%; }\r\n");
     }
+
     static private void addSummary(StringBuilder htmlReport)
     {
-        int cntExcluded    = 0;
-        int cntNotExecuted = 0;
-        int cntInterrupted = 0;
-        int cntSucceeded   = 0;
-        int cntFailed      = 0;
-
-        for (TestDirInfo testDirInfo : m_testSuiteInfo.getTestDirInfoList()) {
-            for (TestInfo testInfo : testDirInfo.testInfoList()) {
-                if (testInfo.isExcluded())
-                    cntExcluded += 1;
-                else if (testInfo.isInterrupted())
-                    cntInterrupted += 1;
-                else if (!testInfo.isExecuted())
-                    cntNotExecuted += 1;
-                else if (testInfo.isSucceeded())
-                    cntSucceeded += 1;
-                else
-                    cntFailed += 1;
-            }
-        }
+        TestsSummary summary = new TestsSummary(m_suiteInfo);
 
         htmlReport.append("<table class=\"summary-table\">\r\n");
+
         htmlReport.append("<tr>\r\n");
-        htmlReport.append("<td class=\"summary-column-1\">Succeeded:</td>\r\n");
-        htmlReport.append("<td class=\"summary-column-2\">" + cntSucceeded + "</td>\r\n");
+        htmlReport.append("<td class=\"summary-column-1\">Tests included:</td>\r\n");
+        htmlReport.append("<td class=\"summary-column-2\">" + summary.nTestsIncluded() + "</td>\r\n");
         htmlReport.append("</tr>\r\n");
-        htmlReport.append("<tr>\r\n");
-        htmlReport.append("<td class=\"summary-column-1\">Failed:</td>\r\n");
-        htmlReport.append("<td class=\"summary-column-2\">" + cntFailed + "</td>\r\n");
-        htmlReport.append("</tr>\r\n");
-        if (cntInterrupted > 0) {
+
+        if (summary.nTestsStarted() < summary.nTestsIncluded()) {
             htmlReport.append("<tr>\r\n");
-            htmlReport.append("<td class=\"summary-column-1\">Interrupted:</td>\r\n");
-            htmlReport.append("<td class=\"summary-column-2\">" + cntInterrupted + "</td>\r\n");
+            htmlReport.append("<td class=\"summary-column-1\">Tests started:</td>\r\n");
+            htmlReport.append("<td class=\"summary-column-2\">" + summary.nTestsStarted() + "</td>\r\n");
             htmlReport.append("</tr>\r\n");
         }
-        if (cntNotExecuted > 0) {
+
+        htmlReport.append("<tr>\r\n");
+        htmlReport.append("<td class=\"summary-column-1\">Tests succeeded:</td>\r\n");
+        htmlReport.append("<td class=\"summary-column-2\">" + summary.nTestsSucceeded() + "</td>\r\n");
+        htmlReport.append("</tr>\r\n");
+
+        if (summary.nTestsFailed() > 0) {
             htmlReport.append("<tr>\r\n");
-            htmlReport.append("<td class=\"summary-column-1\">Not executed:</td>\r\n");
-            htmlReport.append("<td class=\"summary-column-2\">" + cntNotExecuted + "</td>\r\n");
+            htmlReport.append("<td class=\"summary-column-1\">Tests failed:</td>\r\n");
+            htmlReport.append("<td class=\"summary-column-2\">" + summary.nTestsFailed() + "</td>\r\n");
             htmlReport.append("</tr>\r\n");
         }
+
+        if (summary.nTestsAborted() > 0) {
+            htmlReport.append("<tr>\r\n");
+            htmlReport.append("<td class=\"summary-column-1\">Tests aborted:</td>\r\n");
+            htmlReport.append("<td class=\"summary-column-2\">" + summary.nTestsAborted() + "</td>\r\n");
+            htmlReport.append("</tr>\r\n");
+        }
+
+        if (summary.nResultsCreated() > 0) {
+            htmlReport.append("<tr>\r\n");
+            htmlReport.append("<td class=\"summary-column-1\">Results created:</td>\r\n");
+            htmlReport.append("<td class=\"summary-column-2\">" + summary.nResultsCreated() + "</td>\r\n");
+            htmlReport.append("</tr>\r\n");
+        }
+
         htmlReport.append("</table>\r\n");
         htmlReport.append("<hr align=\"left\" width=\"60%\" size=\"2\" color=\"#000000\"/>");
+    }
+
+    static public String generateXmlSummaryForCCNet(TestSuiteInfo suiteInfo)
+    {
+        StringBuilder xmlSummary = new StringBuilder();
+        xmlSummary.append("<tests-summary>\r\n");
+
+        TestsSummary summary = new TestsSummary(suiteInfo);
+        xmlSummary.append("<included>"        + summary.nTestsIncluded()  + "</included>\r\n");
+        xmlSummary.append("<started>"         + summary.nTestsStarted()   + "</started>\r\n");
+        xmlSummary.append("<succeeded>"       + summary.nTestsSucceeded() + "</succeeded>\r\n");
+        xmlSummary.append("<failed>"          + summary.nTestsFailed()    + "</failed>\r\n");
+        xmlSummary.append("<aborted>"         + summary.nTestsAborted()   + "</aborted>\r\n");
+        xmlSummary.append("<results-created>" + summary.nResultsCreated() + "</results-created>\r\n");
+
+        xmlSummary.append("</tests-summary>\r\n");
+        return xmlSummary.toString();
     }
 }

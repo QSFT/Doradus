@@ -393,7 +393,7 @@
                 <attribute name="Implementation-Version" value="${doradus.version}" />
                 <attribute name="Implementation-Vendor"  value="DELL Inc." />
                 <attribute name="Javac-Target"           value="${ant.build.javac.target}" />
-                <attribute name="Class-path"             value="../config" />
+                <attribute name="Class-path"             value="../config/" />
                 <attribute name="Main-class"             value="com.dell.doradus.testprocessor.Program" />
 			</manifest>
         </jar>

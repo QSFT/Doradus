@@ -44,7 +44,7 @@ public class Program
 
             Log.toFile(Data.logFilePath);
             if (Log.isOpened()) {
-                System.out.println("Log: \"" + Data.configFilePath + "\"");
+                System.out.println("Log: \"" + Data.logFilePath + "\"");
             }
 
             Log.println("*** Program: Test Processor Data:");
@@ -58,15 +58,28 @@ public class Program
             Log.println("*** Program: Running Tests");
 
             System.out.println("Running Tests");
-            for (TestDirInfo testDirInfo : Data.testSuiteInfo.getTestDirInfoList()) {
-                System.out.println("Directory: " + testDirInfo.path());
+            for (TestDirInfo dirInfo : Data.testSuiteInfo.getTestDirInfoList()) {
+                System.out.println("Directory: " + dirInfo.path());
+                if (dirInfo.isExcluded()) {
+                    System.out.println("  Excluded");
+                    continue;
+                }
 
-                for (TestInfo testInfo : testDirInfo.testInfoList()) {
-                    if (testInfo.isExcluded()) continue;
-                    System.out.print("   " + testInfo.name() + ": ");
-                    try { TestProcessor.execute(testInfo); }
-                    catch(Exception ex) { System.out.println(); }
-                    System.out.println(testInfo.resultToString());
+                for (TestInfo testInfo : dirInfo.testInfoList()) {
+                    System.out.print("  " + testInfo.name() + ": ");
+                    if (testInfo.isExcluded()) {
+                        System.out.println("excluded");
+                        continue;
+                    }
+
+                    TestProcessor.execute(testInfo);
+                    System.out.println(
+                        !testInfo.isStarted()      ? "not started" :
+                        testInfo.isAborted()       ? "aborted" :
+                        testInfo.isResultCreated() ? "result file created" :
+                        testInfo.isSucceeded()     ? "succeeded" :
+                        testInfo.isFailed()        ? "failed" :
+                        "???");
                 }
             }
 
@@ -80,6 +93,10 @@ public class Program
         finally {
             Log.close();
         }
+
+        System.out.println(Utils.EOL + "Summary:");
+        TestsSummary summary = new TestsSummary(Data.testSuiteInfo);
+        System.out.println(summary.toString("  "));
     }
 
     static private void writeHtmlTestReport()
@@ -89,7 +106,7 @@ public class Program
             return;
 
         Log.println("*** Program: Generating tests report:  " + Data.reportFilePath);
-        System.out.println("Report: \"" + Data.reportFilePath + "\"");
+        System.out.println(Utils.EOL + "Generated report: \"" + Data.reportFilePath + "\"");
 
         if (FileUtils.fileExists(Data.reportFilePath))
             FileUtils.deleteFile(Data.reportFilePath);

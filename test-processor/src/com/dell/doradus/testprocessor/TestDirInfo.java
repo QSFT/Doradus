@@ -24,86 +24,83 @@ import java.util.List;
 
 public class TestDirInfo
 {
+    private TestSuiteInfo   m_testSuiteInfo;
     private String          m_path;
     private List<TestInfo>  m_testInfoList;
-    private boolean         m_excluded;
-    private String          m_reason;
+    private boolean         m_isExcluded;
+    private String          m_reasonToExclude;
 
-    public TestDirInfo(String path) {
-        this(path, false, "");
+    public TestDirInfo(TestSuiteInfo testSuiteInfo, String path) {
+        m_testSuiteInfo   = testSuiteInfo;
+        m_path            = path;
+        m_testInfoList    = new ArrayList<TestInfo>();
+        m_isExcluded      = false;
+        m_reasonToExclude = "";
     }
-    public TestDirInfo(String path, boolean excluded, String reason) {
-        m_path          = path;
-        m_testInfoList  = new ArrayList<TestInfo>();
-        m_excluded      = excluded;
-        m_reason        = reason;
-    }
+
+    public TestSuiteInfo testSuiteInfo()
+        { return m_testSuiteInfo; }
 
     public void path(String value)
         { m_path = value;}
     public String path()
         { return m_path;}
-    public void isExcluded(boolean value)
-        { m_excluded = value; }
-    public boolean isExcluded()
-        { return m_excluded; }
-    public void reasonToExclude(String value)
-        { m_reason = value;}
-    public String reasonToExclude()
-        { return m_reason;}
+
     public List<TestInfo> testInfoList()
         { return m_testInfoList; }
 
-    public int cntTests()
-        { return m_testInfoList.size(); }
+    public void isExcluded(boolean value)
+        { m_isExcluded = value; }
+    public boolean isExcluded()
+        { return m_isExcluded; }
 
-    public TestInfo includeTest(String name)
+    public void reasonToExclude(String value)
+        { m_reasonToExclude = value;}
+    public String reasonToExclude()
+        { return m_reasonToExclude;}
+
+    public void includeTest(String testName)
     {
-        TestInfo testInfo = new TestInfo(this, name);
+        TestInfo testInfo = findTestInfo(testName);
+        if (testInfo == null) {
+            testInfo = new TestInfo(this, testName);
+            m_testInfoList.add(testInfo);
+        }
+
         testInfo.isExcluded(false);
-        add(testInfo);
-        return testInfo;
     }
 
-    public TestInfo excludeTest(String name, String reason)
+    public void excludeTest(String testName, String reason)
     {
-        TestInfo testInfo = new TestInfo(this, name);
+        TestInfo testInfo = findTestInfo(testName);
+        if (testInfo == null) return;
+
         testInfo.isExcluded(true);
         testInfo.reasonToExclude(reason);
-        add(testInfo);
-        return testInfo;
     }
 
-    public void add(TestInfo testInfo) {
-        remove(testInfo.name());
-        m_testInfoList.add(testInfo);
+    private TestInfo findTestInfo(String testName)
+    {
+        for (TestInfo info : m_testInfoList) {
+            if (info.name().equalsIgnoreCase(testName))
+                return info;
+        }
+        return null;
     }
 
     public String toString(String prefix)
     {
         if (prefix == null) prefix = "";
-
         StringBuilder result = new StringBuilder();
-        result.append(prefix + "Directory: " + m_path + (m_excluded ? " excluded [reason: " + m_reason + "]" : "") + Utils.EOL);
+
+        result.append(prefix + "Directory: " + m_path + Utils.EOL);
+        result.append(prefix + "  | isExcluded =  " + m_isExcluded +
+                " [reason: " + StringUtils.nullOrString(m_reasonToExclude) + "]" + Utils.EOL);
+
         for (TestInfo testInfo : m_testInfoList) {
-            result.append(testInfo.toString(prefix + "| ") + Utils.EOL);
+            result.append(testInfo.toString(prefix + "  | ") + Utils.EOL);
         }
 
         return StringUtils.trimEnd(result.toString(), "\r\n");
-    }
-
-    private TestInfo remove(String name) {
-        TestInfo info = find(name);
-        if (info != null) m_testInfoList.remove(info);
-        return info;
-    }
-
-    private TestInfo find(String name)
-    {
-        for (TestInfo info : m_testInfoList) {
-            if (info.name().equalsIgnoreCase(name))
-                return info;
-        }
-        return null;
     }
 }

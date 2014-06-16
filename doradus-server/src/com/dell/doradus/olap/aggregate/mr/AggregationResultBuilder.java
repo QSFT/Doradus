@@ -61,6 +61,12 @@ public class AggregationResultBuilder {
 					if(c != 0) return c;
 					return x.getKey().compareTo(y.getKey());
 				}};
+				
+			if(requestGroup.selectionValue == 0 || requestGroup.selectionValue > groups.size()) {
+				grps = new ArrayList<AggregationCollector.Group>(groups);
+				Collections.sort(grps, topComparer);
+				break;
+			}
 			HeapList<AggregationCollector.Group> heap =
 					new HeapList<AggregationCollector.Group>(requestGroup.selectionValue, topComparer);
 			for(AggregationCollector.Group g: groups) heap.Add(g);
@@ -73,6 +79,11 @@ public class AggregationResultBuilder {
 					if(c != 0) return c;
 					return x.getKey().compareTo(y.getKey());
 				}};
+			if(requestGroup.selectionValue == 0 || requestGroup.selectionValue > groups.size()) {
+				grps = new ArrayList<AggregationCollector.Group>(groups);
+				Collections.sort(grps, bottomComparer);
+				break;
+			}
 			HeapList<AggregationCollector.Group> heap =
 					new HeapList<AggregationCollector.Group>(requestGroup.selectionValue, bottomComparer);
 			for(AggregationCollector.Group g: groups) heap.Add(g);

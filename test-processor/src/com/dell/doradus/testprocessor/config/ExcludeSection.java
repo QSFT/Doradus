@@ -45,19 +45,21 @@ public class ExcludeSection
     {
         DirExcluded rootDir = m_dirStack.pop();
 
-        if (!rootDir.getTestNames().isEmpty())
+        if (!rootDir.testNames().isEmpty())
             m_dirList.add(rootDir);
     }
 
     public void openDir(String relativePath)
     {
-        String path = FileUtils.combinePaths(m_dirStack.peek().getPath(), relativePath);
+        DirExcluded parentDir = m_dirStack.peek();
+        String path = FileUtils.combinePaths(parentDir.path(), relativePath);
+        parentDir.subDirsExcluded(true);
         m_dirStack.push(new DirExcluded(path));
     }
 
     public void setDirReason(String reason)
     {
-        m_dirStack.peek().setReason(reason);
+        m_dirStack.peek().reason(reason);
     }
 
     public void closeDir()
@@ -71,28 +73,14 @@ public class ExcludeSection
         m_dirStack.peek().setTestReason(name, reason);
     }
 
-
-    public void applyTo(TestSuiteInfo testSuiteInfo)
-    throws Exception
+    public void applyTo(TestSuiteInfo suiteInfo)
     {
-        for (DirExcluded dirExcluded : m_dirList)
+        for (DirExcluded dir : m_dirList)
         {
-            String dirPath = dirExcluded.getPath();
-            List<String> testNames = dirExcluded.getTestNames();
-
-            if (testNames.isEmpty()) {
-                TestDirInfo testDirInfo = new TestDirInfo(dirPath, true, dirExcluded.getReason());
-                testSuiteInfo.excludeWholeDirectory(testDirInfo);
-            } else  {
-                boolean excluded = true;
-                List<String> testReasons = dirExcluded.getTestReasons();
-
-                TestDirInfo testDirInfo = new TestDirInfo(dirPath, excluded, dirExcluded.getReason());
-                for (int i = 0; i < testNames.size(); i++) {
-                    testDirInfo.excludeTest(testNames.get(i), testReasons.get(i));
-                }
-
-                testSuiteInfo.add(testDirInfo);
+            if (!dir.testNames().isEmpty()) {
+                suiteInfo.excludeTests(dir.path(), dir.testNames(), dir.testReasons());
+            } else if (!dir.subDirsExcluded()) {
+                suiteInfo.excludeDirectory(dir.path(), dir.reason());
             }
         }
     }

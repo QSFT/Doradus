@@ -57,18 +57,22 @@ public class SearchResult implements Comparable<SearchResult> {
             }
         }
         for(Map.Entry<String, List<SearchResultList>> link : links.entrySet()) {
-        	for(SearchResultList l: link.getValue()) {
+        	List<SearchResultList> linkList = link.getValue();
+        	List<FieldSet> fsList = fieldSet.getLinks(link.getKey());
+        	for(int i = 0; i < linkList.size(); i++) {
+        		SearchResultList l = linkList.get(i);
+        		FieldSet fs = fsList.get(i);
         		String linkKey = link.getKey();
-        		if(link.getValue().size() > 1 && l.results.size() > 0 && l.results.get(0).fieldSet.filter != null) {
-        			linkKey += ".WHERE(" + l.results.get(0).fieldSet.filter + ")";
+        		if(link.getValue().size() > 1 && fs.filter != null) {
+        			linkKey += ".WHERE(" + fs.filter + ")";
         		}
 	            UNode linkNode = docNode.addArrayNode(linkKey, "field");
-		            if(l.results.size() > 0) {
-		                for (SearchResult sr : l.results) {
-		                    linkNode.addChildNode(sr.toDoc());
-		                }
-		            }
-	        	}
+	            if(l.results.size() > 0) {
+	                for (SearchResult sr : l.results) {
+	                    linkNode.addChildNode(sr.toDoc());
+	                }
+	            }
+        	}
         }
         return docNode;
     }
