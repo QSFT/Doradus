@@ -206,7 +206,8 @@ public class CQLService extends DBService {
         String tableName = storeToCQLName(storeName);
         ResultSet rs = null;
         if (reversed) {
-            rs = executeQuery(Query.SELECT_1_ROW_COLUMN_RANGE_DESC, tableName, rowKey, startCol, endCol);
+            // Swap start/end columns for CQL reversed queries
+            rs = executeQuery(Query.SELECT_1_ROW_COLUMN_RANGE_DESC, tableName, rowKey, endCol, startCol);
         } else {
             rs = executeQuery(Query.SELECT_1_ROW_COLUMN_RANGE, tableName, rowKey, startCol, endCol);
         }
@@ -279,7 +280,8 @@ public class CQLService extends DBService {
         String tableName = storeToCQLName(storeName);
         ResultSet rs = null;
         if (reversed) {
-            rs = executeQuery(Query.SELECT_ROW_SET_COLUMN_RANGE_DESC, tableName, new ArrayList<String>(rowKeys), startCol, endCol);
+            // Swap start/end columns for CQL reversed queries
+            rs = executeQuery(Query.SELECT_ROW_SET_COLUMN_RANGE_DESC, tableName, new ArrayList<String>(rowKeys), endCol, startCol);
         } else {
             rs = executeQuery(Query.SELECT_ROW_SET_COLUMN_RANGE, tableName, new ArrayList<String>(rowKeys), startCol, endCol);
         }

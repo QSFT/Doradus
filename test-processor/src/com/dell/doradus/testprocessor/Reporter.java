@@ -200,7 +200,7 @@ public class Reporter
             for (TestInfo testInfo : dirInfo.testInfoList()) {
                 if (testInfo.diffHref() != null)
                 {
-                    String diffFilePath = dirInfo.path() + "\\" + testInfo.name() + Data.DIFF_RESULT_EXTENSION;
+                    String diffFilePath = dirInfo.path() + File.separator + testInfo.name() + Data.DIFF_RESULT_EXTENSION;
                     String diffContent;
                     if (FileUtils.fileExists(diffFilePath)) {
                         try { diffContent = FileUtils.readAllText(diffFilePath); }
@@ -221,7 +221,7 @@ public class Reporter
                 }
                 if (testInfo.abortHref() != null)
                 {
-                    String testFilePath = dirInfo.path() + "\\" + testInfo.name() + Data.TEST_SCRIPT_EXTENSION;
+                    String testFilePath = dirInfo.path() + File.separator + testInfo.name() + Data.TEST_SCRIPT_EXTENSION;
                     String reason = testInfo.reasonToAbort();
                     if (reason == null) reason = "Aborted by unknown reason";
 

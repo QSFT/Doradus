@@ -16,6 +16,7 @@
 
 package com.dell.doradus.testprocessor;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -43,18 +44,18 @@ public class TestProcessor
             String      dirPath = dirInfo.path();
 
             String testName = testInfo.name();
-            String testPath = dirPath + "\\" + testName + Data.TEST_SCRIPT_EXTENSION;
+            String testPath = dirPath + File.separator + testName + Data.TEST_SCRIPT_EXTENSION;
 
-            String obtainedResultPath = dirPath + "\\" + testName + Data.OBTAINED_RESULT_EXTENSION;
+            String obtainedResultPath = dirPath + File.separator + testName + Data.OBTAINED_RESULT_EXTENSION;
             if (FileUtils.fileExists(obtainedResultPath)) {
                 FileUtils.deleteFile(obtainedResultPath);
             }
-            String diffResultPath = dirPath + "\\" + testName + Data.DIFF_RESULT_EXTENSION;
+            String diffResultPath = dirPath + File.separator + testName + Data.DIFF_RESULT_EXTENSION;
             if (FileUtils.fileExists(diffResultPath)) {
                 FileUtils.deleteFile(diffResultPath);
             }
 
-            String requiredResultPath = dirPath + "\\" + testName + Data.REQUIRED_RESULT_EXTENSION;
+            String requiredResultPath = dirPath + File.separator + testName + Data.REQUIRED_RESULT_EXTENSION;
             if (FileUtils.fileExists(requiredResultPath))
             {
                 execute(testPath, obtainedResultPath);

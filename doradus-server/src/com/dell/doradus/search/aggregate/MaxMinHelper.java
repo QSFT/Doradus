@@ -43,7 +43,7 @@ public class MaxMinHelper {
     	String max = "";
     	List<String> res = null;
     	for(Integer shard : shards) {
-   			res = SpiderHelper.getTerms(tableDefinition, shard, dateField, "9999", "", 1, true);
+   			res = SpiderHelper.getTerms(tableDefinition, shard, dateField, "9999", "0000", 1, true);
 			if(res.size() > 0 && max.compareTo(res.get(0)) < 0) max = res.get(0);
     	}
     	if(max.length() == 0) return null;
