@@ -23,7 +23,7 @@ import java.util.List;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
-import com.dell.doradus.service.spider.ColFamTemplate;
+import com.dell.doradus.service.db.StoreTemplate;
 
 public class CassandraIO implements IO {
     private static Object g_createCFLock = new Object();
@@ -49,13 +49,13 @@ public class CassandraIO implements IO {
 	@Override
 	public void createCF(String name) {
 	    synchronized (g_createCFLock) {
-	        DBService.instance().createNewStore(ColFamTemplate.olapCFTemplate(name));
+	        DBService.instance().createStoreIfAbsent(new StoreTemplate(name, true));
 	    }
 	}
 
 	@Override
 	public void deleteCF(String name) {
-		DBService.instance().deleteStore(name);
+		DBService.instance().deleteStoreIfPresent(name);
 	}
 
 	@Override

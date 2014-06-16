@@ -23,6 +23,7 @@ import java.util.Set;
 
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;
+import com.dell.doradus.service.db.cql.CQLService;
 import com.dell.doradus.service.db.thrift.ThriftService;
 
 /**
@@ -51,8 +52,7 @@ import com.dell.doradus.service.db.thrift.ThriftService;
  * 
  * <pre>
  *      {@link #createStore(StoreTemplate)} - Create a new store.
- *      {@link #deleteStore(String)} - Delete an existing store.
- *      {@link #getAllStoreNames()} - Get the name of all stores present.
+ *      {@link #deleteStoreIfPresent(String)} - Delete an existing store.
  * </pre>
  * 
  * <h1>Schema management</h1>
@@ -92,8 +92,9 @@ import com.dell.doradus.service.db.thrift.ThriftService;
  * </pre>
  */
 public abstract class DBService extends Service {
-    // TODO: Initialize instance based on ServerConfig properties
-    private static final DBService INSTANCE = ThriftService.instance();
+    // Experimental: Choose service based on doradus.yaml setting
+    private static final DBService INSTANCE =
+        ServerConfig.getInstance().use_cql ? CQLService.instance() : ThriftService.instance();
 
     // Only subclasses can construct an object.
     protected DBService() {}
@@ -113,34 +114,20 @@ public abstract class DBService extends Service {
     //----- Public DBService methods: Store management
     
     /**
-     * Create a new store using the given template.
+     * Create a new store using the given template if a store with the given name does not
+     * exist. If the given store name already exists, this is a no-op.
      * 
-     * @param storeTemplate {@link StoreTemplate} that describes new store to be created.
-     *                      Must match the type of physical database we're using.
+     * @param storeTemplate {@link StoreTemplate} that describes new store to create.
      */
-    public abstract void createStore(StoreTemplate storeTemplate);
+    public abstract void createStoreIfAbsent(StoreTemplate storeTemplate);
     
     /**
-     * Delete the store with the given name.
+     * Delete the store with the given name if it exists. If the store does not exist,
+     * this is a no-op.
      * 
      * @param storeName Name of store to delete.
      */
-    public abstract void deleteStore(String storeName);
-    
-    /**
-     * Create a new store using the given template if a store with the given name does not exist.
-     * 
-     * @param storeTemplate {@link StoreTemplate} that describes new store to be created.
-     *                      Must match the type of physical database we're using.
-     */
-    public abstract void createNewStore(StoreTemplate storeTemplate);
-    
-    /**
-     * Enumerate all current store names used by this Doradus instance.
-     * 
-     * @return  List of all store names.
-     */
-    public abstract Collection<String> getAllStoreNames();
+    public abstract void deleteStoreIfPresent(String storeName);
     
     /**
      * Return true if the given store name exists in the database.
@@ -176,15 +163,6 @@ public abstract class DBService extends Service {
      */
     public abstract Map<String, String> getAppProperties(String appName);
     
-    /**
-     * Get the database-level options, if any, from the "options" row. If there are no
-     * options stored, an empty map is returned (but not null).
-     * 
-     * @return  Map of database-level options as key/value pairs. Empty if there are no
-     *          options stored.
-     */
-    public abstract Map<String, String> getDBOptions();
-
     //----- Public DBService methods: Updates
     
     /**

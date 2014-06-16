@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2014 Dell, Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.dell.doradus.service.db.thrift;
 
 import java.util.ArrayDeque;
@@ -22,7 +38,12 @@ public class ThriftService extends DBService {
     private ThriftService() { }
 
     //----- Public Service methods
-    
+
+    /**
+     * Return the singleton ThriftService service object.
+     * 
+     * @return  Static ThriftService object.
+     */
     public static ThriftService instance() {return INSTANCE;}
     
     @Override
@@ -52,76 +73,30 @@ public class ThriftService extends DBService {
 
     //----- Public DBService methods: Store management
     
-    /**
-     * Create a new store using the given template.
-     * 
-     * @param storeTemplate {@link StoreTemplate} that describes new store to be created.
-     *                      Must match the type of physical database we're using.
-     */
     @Override
-    public void createStore(StoreTemplate storeTemplate) {
+    public void createStoreIfAbsent(StoreTemplate storeTemplate) {
         DBConn dbConn = getDBConnection();
         try {
-            dbConn.createStore(storeTemplate);
-        } finally {
-            returnDBConnection(dbConn);
-        }
-    }   // createStore
-    
-    /**
-     * Delete the store with the given name.
-     * 
-     * @param storeName Name of store to delete.
-     */
-    @Override
-    public void deleteStore(String storeName) {
-        DBConn dbConn = getDBConnection();
-        try {
-            dbConn.deleteStore(storeName);
-        } finally {
-            returnDBConnection(dbConn);
-        }
-    }   // getAllStoreNames
-    
-    /**
-     * Create a new store using the given template if a store with the given name does not exist.
-     * 
-     * @param storeTemplate {@link StoreTemplate} that describes new store to be created.
-     *                      Must match the type of physical database we're using.
-     */
-    @Override
-    public void createNewStore(StoreTemplate storeTemplate) {
-        DBConn dbConn = getDBConnection();
-        try {
-            if (!dbConn.storeExists(storeTemplate.getStoreName())) {
+            if (!dbConn.storeExists(storeTemplate.getName())) {
                 dbConn.createStore(storeTemplate);
             }
         } finally {
             returnDBConnection(dbConn);
         }
-    }   // createNewStore
+    }   // createStoreIfAbsent
     
-    /**
-     * Enumerate all current store names used by this Doradus instance.
-     * 
-     * @return  List of all store names.
-     */
     @Override
-    public Collection<String> getAllStoreNames() {
+    public void deleteStoreIfPresent(String storeName) {
         DBConn dbConn = getDBConnection();
         try {
-            return dbConn.getAllStoreNames();
+            if (dbConn.storeExists(storeName)) {
+                dbConn.deleteStore(storeName);
+            }
         } finally {
             returnDBConnection(dbConn);
         }
-    }   // getAllStoreNames
-
-    /**
-     * Return true if the given store name exists in the database.
-     * 
-     * @param storeName Candidate store name.
-     * @return          True if the given store name exists in the database.
-     */
+    }   // deleteStoreIfPresent
+    
     @Override
     public boolean storeExists(String storeName) {
         DBConn dbConn = getDBConnection();
@@ -174,23 +149,6 @@ public class ThriftService extends DBService {
         }
     }   // getAppProperties
     
-    /**
-     * Get the database-level options, if any, from the "options" row. If there are no
-     * options stored, an empty map is returned (but not null).
-     * 
-     * @return  Map of database-level options as key/value pairs. Empty if there are no
-     *          options stored.
-     */
-    @Override
-    public Map<String, String> getDBOptions() {
-        DBConn dbConn = getDBConnection();
-        try {
-            return dbConn.getDBOptions();
-        } finally {
-            returnDBConnection(dbConn);
-        }
-    }   // getDBOptions
-
     //----- Public DBService methods: Updates
     
     /**

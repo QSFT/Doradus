@@ -42,7 +42,7 @@
 storage_services:
     - com.dell.doradus.service.spider.SpiderService
     - com.dell.doradus.service.olap.OLAPService
-  
+
 ########## Cassandra Keyspace Parameters
 #
 # These parameters are used to create the initial Cassandra Keyspace used by Doradus. When Doradus
@@ -104,8 +104,8 @@ jmxport: 7199
 # db_connect_retry_wait_millis: Database initial connection retry wait in milliseconds. If the
 # initial connection to Cassandra times-out (see db_timeout_millis), Doradus waits this amount of
 # time before trying again. Doradus keeps retrying indefinitely under the assumption that Cassandra
-# may take a while to start. Default: 30 seconds.
-# db_connect_retry_wait_millis: 30000
+# may take a while to start. Default: 5 seconds.
+# db_connect_retry_wait_millis: 5000
 
 # max_commit_attempts: Maximum number of times Doradus attempts an update (batch_mutate or row
 # remove) call to Cassandra. If an update fails, Doradus waits a while (see retry_wait_millis) and
@@ -129,6 +129,11 @@ max_read_attempts: 7
 # max_read_attempts, and max_reconnect_attempts.
 # retry_wait_millis: 5000
 
+# use_cql: Experimental: Set to true to use Cassandra's CQL API insead of Thrift. CQL is only
+# available if "start_native_transport: true" is set in cassandra.yaml.  Also, set "dbport" in this
+# file to the value of "native_transport_port" in cassandra.yaml, which is normally 9042.
+use_cql: false
+#dbport: 9042
 
 ########## Doradus REST API Parameters
 #

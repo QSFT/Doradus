@@ -38,8 +38,8 @@ import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
+import com.dell.doradus.service.db.StoreTemplate;
 import com.dell.doradus.service.schema.SchemaService;
-import com.dell.doradus.service.spider.ColFamTemplate;
 import com.dell.doradus.tasks.DoradusTask;
 
 import it.sauronsoftware.cron4j.InvalidPatternException;
@@ -135,7 +135,7 @@ public class TaskDBUtils {
 		for (String appName : appNames) {
 			allTaskNames.put(appName, new HashSet<String>());
 		}
-		String storeName = ColFamTemplate.TASKS_CF_NAME;
+		String storeName = StoreTemplate.TASKS_STORE_NAME;
 		Iterator<DRow> taskRows = DBService.instance().getAllRowsAllColumns(storeName);
 		while (taskRows.hasNext()) {
 		    String rowKey = taskRows.next().getKey();
@@ -193,7 +193,7 @@ public class TaskDBUtils {
 	 * @return			Task status (undefined if no status was actually found)
 	 */
 	public static TaskStatus getTaskStatus(String appName, String taskId) {
-		String storeName = ColFamTemplate.TASKS_CF_NAME;
+		String storeName = StoreTemplate.TASKS_STORE_NAME;
 		Iterator<DColumn> colIter = null;
 		TaskStatus status = new TaskStatus(TaskRunState.Undefined, -1, -1, -1, new HashMap<String, String>(), false, "0.0.0.0");
 		try {
@@ -251,7 +251,7 @@ public class TaskDBUtils {
 	 */
 	public static Set<TaskId> getLiveTasks(String appName) {
 		Set<TaskId> tasksSet = new HashSet<>();
-		String tasksStore = ColFamTemplate.TASKS_CF_NAME;
+		String tasksStore = StoreTemplate.TASKS_STORE_NAME;
     	Iterator<DRow> rowIter = DBService.instance().getAllRowsAllColumns(tasksStore);
     	while (rowIter.hasNext()) {
     	    DRow row = rowIter.next();
@@ -281,7 +281,7 @@ public class TaskDBUtils {
 	 * @param status	Task status
 	 */
 	public static void setTaskStatus(String appName, String taskId, TaskStatus status) {
-		String store = ColFamTemplate.TASKS_CF_NAME;
+		String store = StoreTemplate.TASKS_STORE_NAME;
 		String rowKey = appName + "/" + taskId;
 		DBTransaction transaction = DBService.instance().startTransaction();
 		transaction.addColumn(store, rowKey, TaskStatus.SCHEDULED_START_COL_NAME, status.getLastRunScheduledStartTime());
@@ -303,7 +303,7 @@ public class TaskDBUtils {
 	 * @return				true if the claim was confirmed
 	 */
 	public static boolean claim(String appName, String taskId, long scheduledAt) {
-		String store = ColFamTemplate.TASKS_CF_NAME;
+		String store = StoreTemplate.TASKS_STORE_NAME;
 		String rowKey = Defs.TASK_CLAIM_ROW_PREFIX + "/" + appName + "/" + taskId;
 		String host = TaskManagerService.instance().getLocalHostAddress();
 		String strScheduledAt = Long.toString(scheduledAt) + "/";
@@ -475,7 +475,7 @@ public class TaskDBUtils {
 	 * application. The function is called once on TaskManagmentService start.
 	 */
 	public static void checkUnknownTasks() {
-		String tasksStore = ColFamTemplate.TASKS_CF_NAME;
+		String tasksStore = StoreTemplate.TASKS_STORE_NAME;
     	Iterator<DRow> rowIter = DBService.instance().getAllRowsAllColumns(tasksStore);
     	Set<String> unknownApps = new HashSet<String>();
 
@@ -500,7 +500,7 @@ public class TaskDBUtils {
 	 */
 	public static void checkHangedTasks() {
 		String host = TaskManagerService.instance().getLocalHostAddress();
-		String tasksStore = ColFamTemplate.TASKS_CF_NAME;
+		String tasksStore = StoreTemplate.TASKS_STORE_NAME;
 		// Transaction for changing tasks status
 		DBTransaction transaction = DBService.instance().startTransaction();
     	Iterator<DRow> rowIter = DBService.instance().getAllRowsAllColumns(tasksStore);
@@ -586,7 +586,7 @@ public class TaskDBUtils {
 					}
 					tasks.put(row.getKey(), taskStatus);
 				}
-				DBService.instance().deleteStore(appName + "_Tasks");
+				DBService.instance().deleteStoreIfPresent(appName + "_Tasks");
 			}
 		}
 		return map;
@@ -599,7 +599,7 @@ public class TaskDBUtils {
 	 */
 	public static void deleteAppTasks(String appName) {
 		DBTransaction transaction = DBService.instance().startTransaction();
-		String tasksStore = ColFamTemplate.TASKS_CF_NAME;
+		String tasksStore = StoreTemplate.TASKS_STORE_NAME;
 		Iterator<DRow> rowIter = DBService.instance().getAllRowsAllColumns(tasksStore);
 		while (rowIter.hasNext()) {
 			DRow nextRow = rowIter.next();

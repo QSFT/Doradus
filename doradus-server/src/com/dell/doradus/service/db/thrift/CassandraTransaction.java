@@ -36,7 +36,6 @@ import org.apache.cassandra.thrift.SuperColumn;
 import org.slf4j.Logger;
 
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.Defs;
 import com.dell.doradus.service.db.DBTransaction;
 
 /**
@@ -103,14 +102,20 @@ public class CassandraTransaction extends DBTransaction {
         deleteRow(DBConn.COLUMN_FAMILY_APPS, appName);
     }   // deleteAppRow
 
-    @Override
-    public void setDBOption(String optName, String optValue) {
-        Mutation mutation = createMutation(Utils.toBytes(optName), Utils.toBytes(optValue), m_timestamp);
-        addMutation(DBConn.COLUMN_FAMILY_APPS, Defs.OPTIONS_ROW_KEY, mutation);
-    }   // setDBOption
-
     //----- DBTransaction: Column/row update methods
 
+    @Override
+    public void addColumn(String storeName, String rowKey, String colName) {
+        Mutation mutation = createMutation(Utils.toBytes(colName), EMPTY_BYTES, m_timestamp);
+        addMutation(storeName, rowKey, mutation);
+    }   // addColumn
+    
+    @Override
+    public void addColumn(String storeName, String rowKey, String colName, String colValue) {
+        Mutation mutation = createMutation(Utils.toBytes(colName), Utils.toBytes(colValue), m_timestamp);
+        addMutation(storeName, rowKey, mutation);
+    }   // addColumn
+    
     @Override
     public void addColumn(String storeName, String rowKey, String colName, byte[] colValue) {
         Mutation mutation = createMutation(Utils.toBytes(colName), colValue, m_timestamp);

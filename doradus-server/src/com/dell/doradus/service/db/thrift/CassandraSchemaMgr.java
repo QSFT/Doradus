@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.core.ServerConfig;
-import com.dell.doradus.service.spider.ColFamTemplate;
+import com.dell.doradus.service.db.StoreTemplate;
 
 /**
  * Provides methods for accessing and managing Cassandra schemas: creating keyspaces,
@@ -99,25 +99,32 @@ public class CassandraSchemaMgr {
     }   // initializeSchema
 
     /**
-     * Create a new ColumnFamily from the given ColFamTemplate object. If the new CF is
+     * Create a new ColumnFamily from the given StoreTemplate object. If the new CF is
      * created successfully, wait for all nodes in the cluster to receive the schema
      * change before returning. An exception is thrown if the CF create fails.
      * 
-     * @param cfTemplate    {@link ColFamTemplate} that describes new CF to create.
+     * @param cfTemplate    {@link StoreTemplate} that describes new CF to create.
      */
-    public void createColumnFamily(ColFamTemplate cfTemplate) {
+    public void createColumnFamily(StoreTemplate cfTemplate) {
         String keySpace = ServerConfig.getInstance().keyspace;
         m_logger.info("Creating ColumnFamily: {}", cfTemplate);
         
         CfDef cfDef = new CfDef();
         cfDef.setKeyspace(keySpace);
-        cfDef.setName(cfTemplate.getCFName());
-        cfDef.setColumn_type(cfTemplate.getColumnType());
-        cfDef.setComparator_type(cfTemplate.getComparatorType());
-        cfDef.setKey_validation_class(cfTemplate.getKeyValidator());
-        cfDef.setDefault_validation_class(cfTemplate.getDefaultColValueValidator());
+        cfDef.setName(cfTemplate.getName());
+        cfDef.setColumn_type("Standard");
+        cfDef.setComparator_type("UTF8Type");
+        cfDef.setKey_validation_class("UTF8Type");
+        if (cfTemplate.valuesAreBinary()) {
+            cfDef.setDefault_validation_class("BytesType");
+        } else {
+            cfDef.setDefault_validation_class("UTF8Type");
+        }
         
-        Map<String, Object> cfOptions = cfTemplate.getOptions();
+        // A little kludgey for now
+        Map<String, Object> cfOptions = cfTemplate.getName().startsWith("OLAP")
+                                      ? ServerConfig.getInstance().olap_cf_defaults
+                                      : ServerConfig.getInstance().cf_defaults;
         if (cfOptions != null) {
             for (String optName : cfOptions.keySet()) {
                 Object optValue = cfOptions.get(optName);
@@ -227,7 +234,7 @@ public class CassandraSchemaMgr {
         }
         if (!ksDef.isSetStrategy_options()) {
             Map<String, String> stratOpts = new HashMap<>();
-            stratOpts.put(KsDef._Fields.REPLICATION_FACTOR.getFieldName(), DEFAULT_KS_REPLICATION_FACTOR);
+            stratOpts.put("replication_factor", DEFAULT_KS_REPLICATION_FACTOR);
             ksDef.setStrategy_options(stratOpts);
         }
         if (!ksDef.isSetCf_defs()) {
@@ -242,10 +249,10 @@ public class CassandraSchemaMgr {
     // Check that the schema CF ("Applications") exists and create it if necessary. 
     private void checkGlobalColumnFamilies() {
         Collection<String> cfNames = getColumnFamilies();
-        if (!cfNames.contains(ColFamTemplate.APPLICATIONS_CF_NAME)) {
+        if (!cfNames.contains(StoreTemplate.APPLICATIONS_STORE_NAME)) {
             createApplicationsColumnFamily();
         }
-        if (!cfNames.contains(ColFamTemplate.TASKS_CF_NAME)) {
+        if (!cfNames.contains(StoreTemplate.TASKS_STORE_NAME)) {
         	createTasksColumnFamily();
         }
     }   // checkGlobalColumnFamilies
@@ -262,9 +269,16 @@ public class CassandraSchemaMgr {
             m_logger.error(errMsg, e);
             throw new RuntimeException(errMsg, e);
         }
-        ColFamTemplate appCF = ColFamTemplate.applicationCFTemplate();
-        createColumnFamily(appCF);
+        createColumnFamily(createApplicationsTemplate());
     }   // createApplicationsColumnFamily
+    
+    private StoreTemplate createApplicationsTemplate() {
+        return createTemplate(StoreTemplate.APPLICATIONS_STORE_NAME, false);
+    }
+
+    private StoreTemplate createTemplate(String cfName, boolean binaryValues) {
+        return new StoreTemplate(cfName, binaryValues);
+    }
     
     // Create the schema table, which is called "Tasks", which is need only once
     // per Doradus instance.
@@ -278,9 +292,12 @@ public class CassandraSchemaMgr {
             m_logger.error(errMsg, e);
             throw new RuntimeException(errMsg, e);
         }
-        ColFamTemplate tasksCF = ColFamTemplate.tasksCFTemplate();
-        createColumnFamily(tasksCF);
+        createColumnFamily(createTasksTemplate());
     }   // createTasksColumnFamily
+    
+    private StoreTemplate createTasksTemplate() {
+        return new StoreTemplate(StoreTemplate.TASKS_STORE_NAME, false);
+    }
     
     // Check that all Cassandra nodes are in agreement on the latest schema change.
     private void validateSchema(String currentVersionId) {

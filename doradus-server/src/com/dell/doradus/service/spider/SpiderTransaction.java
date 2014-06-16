@@ -112,7 +112,7 @@ public class SpiderTransaction {
     	if (shardNo > 0) {
     		rowKey = shardNo + "/" + Defs.ALL_OBJECTS_ROW_KEY;
     	}
-        m_dbTran.addColumn(SpiderService.termsStoreName(tableDef), rowKey, objID, null);
+        m_dbTran.addColumn(SpiderService.termsStoreName(tableDef), rowKey, objID);
     }   // addAllObjectsColumns
 
     /**
@@ -157,7 +157,7 @@ public class SpiderTransaction {
         }
         for (String fieldName : fieldNames) {
             if (currFieldNames.add(fieldName)) {
-                m_dbTran.addColumn(SpiderService.termsStoreName(tableDef), Defs.FIELD_REGISTRY_ROW_KEY, fieldName, null);
+                m_dbTran.addColumn(SpiderService.termsStoreName(tableDef), Defs.FIELD_REGISTRY_ROW_KEY, fieldName);
             }
         }
     }   // addFieldReferences
@@ -172,8 +172,7 @@ public class SpiderTransaction {
     public void addLinkValue(String ownerObjID, FieldDefinition linkDef, String targetObjID) {
         m_dbTran.addColumn(SpiderService.objectsStoreName(linkDef.getTableDef()),
                            ownerObjID,
-                           SpiderService.linkColumnName(linkDef, targetObjID),
-                           null);
+                           SpiderService.linkColumnName(linkDef, targetObjID));
     }   // addLinkValue
 
     /**
@@ -207,8 +206,7 @@ public class SpiderTransaction {
         assert targetShardNo > 0;
         m_dbTran.addColumn(SpiderService.termsStoreName(linkDef.getTableDef()),
                            SpiderService.shardedLinkTermRowKey(linkDef, ownerObjID, targetShardNo),
-                           targetObjID,
-                           null);
+                           targetObjID);
     }   // addShardedLinkValue
 
     /**
@@ -252,8 +250,7 @@ public class SpiderTransaction {
     public void addTermIndexColumn(TableDefinition tableDef, DBObject dbObj, String fieldName, String term) {
         m_dbTran.addColumn(SpiderService.termsStoreName(tableDef),
                            SpiderService.termIndexRowKey(tableDef, dbObj, fieldName, term),
-                           dbObj.getObjectID(),
-                           null);
+                           dbObj.getObjectID());
     }   // addTermIndexColumn
     
     /**
@@ -309,7 +306,7 @@ public class SpiderTransaction {
                     rowKey.append(Defs.TERMS_REGISTRY_ROW_PREFIX);
                     rowKey.append("/");
                     rowKey.append(fieldName);
-                    m_dbTran.addColumn(SpiderService.termsStoreName(tableDef), rowKey.toString(), term, null);
+                    m_dbTran.addColumn(SpiderService.termsStoreName(tableDef), rowKey.toString(), term);
                 }
             }
         }

@@ -57,6 +57,7 @@ import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
+import com.dell.doradus.service.db.StoreTemplate;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
@@ -612,24 +613,40 @@ public class SpiderService extends StorageService {
     // actually exist in case a previous delete-app failed.
     private void deleteApplicationCFs(ApplicationDefinition appDef) {
         // Application-level CFs:
-        Collection<String> columnFamilies = DBService.instance().getAllStoreNames();
-        ColFamTemplate cfTemplates[] = ColFamTemplate.applicationCFTemplates(appDef);
-        for (ColFamTemplate cfTemplate : cfTemplates) {
-            if (columnFamilies.contains(cfTemplate.getCFName())) {
-                DBService.instance().deleteStore(cfTemplate.getCFName());
-            }
+        for (StoreTemplate cfTemplate : applicationCFTemplates(appDef)) {
+            DBService.instance().deleteStoreIfPresent(cfTemplate.getName());
         }
         
         // Table-level CFs:
         for (TableDefinition tableDef : appDef.getTableDefinitions().values()) {
-            cfTemplates = ColFamTemplate.tableCFTemplates(tableDef);
-            for (ColFamTemplate cfTemplate : cfTemplates) {
-                if (columnFamilies.contains(cfTemplate.getCFName())) {
-                    DBService.instance().deleteStore(cfTemplate.getCFName());
-                }
+            for (StoreTemplate cfTemplate : tableCFTemplates(tableDef)) {
+                DBService.instance().deleteStoreIfPresent(cfTemplate.getName());
             }
         }
     }   // deleteApplicationCFs
+    
+    private Collection<StoreTemplate> applicationCFTemplates(ApplicationDefinition appDef) {
+        return Arrays.asList(new StoreTemplate[] {statisticsCFTemplate(appDef)});
+    }   // applicationCFTemplates
+
+    private StoreTemplate statisticsCFTemplate(ApplicationDefinition appDef) {
+        String cfName = appDef.getAppName() + "_Statistics";
+        return new StoreTemplate(cfName, true);
+    }
+    
+    private Collection<StoreTemplate> tableCFTemplates(TableDefinition tableDef) {
+        return Arrays.asList(new StoreTemplate[] {objectsCFTemplate(tableDef), termsCFTemplate(tableDef)});
+    }
+    
+    private StoreTemplate objectsCFTemplate(TableDefinition tableDef) {
+        String cfName = tableDef.getAppDef().getAppName() + "_" + tableDef.getTableName();
+        return new StoreTemplate(cfName, true);
+    }
+    
+    private StoreTemplate termsCFTemplate(TableDefinition tableDef) {
+        String cfName = tableDef.getAppDef().getAppName() + "_" + tableDef.getTableName() + "_Terms";
+        return new StoreTemplate(cfName, true);
+    }   
     
     // Get all target object IDs for the given sharded link.
     private Set<String> getShardedLinkValues(String objID, FieldDefinition linkDef, Set<Integer> shardNums) {
@@ -842,21 +859,14 @@ public class SpiderService extends StorageService {
     // Verify that all ColumnFamilies needed for the given application exist.
     private void verifyApplicationCFs(ApplicationDefinition oldAppDef, ApplicationDefinition appDef) {
         // Add new application-level CFs:
-        Collection<String> columnFamilies = DBService.instance().getAllStoreNames();
-        ColFamTemplate cfTemplates[] = ColFamTemplate.applicationCFTemplates(appDef);
-        for (ColFamTemplate cfTemplate : cfTemplates) {
-            if (!columnFamilies.contains(cfTemplate.getCFName())) {
-                DBService.instance().createStore(cfTemplate);
-            }
+        for (StoreTemplate cfTemplate : applicationCFTemplates(appDef)) {
+            DBService.instance().createStoreIfAbsent(cfTemplate);
         }
         
         // Add new table-level CFs:
         for (TableDefinition tableDef : appDef.getTableDefinitions().values()) {
-            cfTemplates = ColFamTemplate.tableCFTemplates(tableDef);
-            for (ColFamTemplate cfTemplate : cfTemplates) {
-                if (!columnFamilies.contains(cfTemplate.getCFName())) {
-                    DBService.instance().createStore(cfTemplate);
-                }
+            for (StoreTemplate cfTemplate : tableCFTemplates(tableDef)) {
+                DBService.instance().createStoreIfAbsent(cfTemplate);
             }
         }
         
@@ -864,11 +874,8 @@ public class SpiderService extends StorageService {
         if (oldAppDef != null) {
             for (TableDefinition oldTableDef : oldAppDef.getTableDefinitions().values()) {
                 if (appDef.getTableDef(oldTableDef.getTableName()) == null) {
-                    cfTemplates = ColFamTemplate.tableCFTemplates(oldTableDef);
-                    for (ColFamTemplate cfTemplate : cfTemplates) {
-                        if (columnFamilies.contains(cfTemplate.getCFName())) {
-                            DBService.instance().deleteStore(cfTemplate.getCFName());
-                        }
+                    for (StoreTemplate cfTemplate : tableCFTemplates(oldTableDef)) {
+                        DBService.instance().deleteStoreIfPresent(cfTemplate.getName());
                     }
                 }
             }

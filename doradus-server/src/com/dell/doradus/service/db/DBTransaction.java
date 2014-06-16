@@ -18,6 +18,9 @@ package com.dell.doradus.service.db;
 
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Abstract class that encapsulates a set of updates that will be committed together.
  * Provides methods to post updates based on a tabular model: add/replace column, delete
@@ -35,7 +38,9 @@ import java.util.Collection;
  * used for all new updates. To use a new timestamp, a new object must be created.
  */
 public abstract class DBTransaction {
-
+    // Protected logger available to concrete services:
+    protected final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
+    
     //----- General methods
     
     /**
@@ -70,16 +75,27 @@ public abstract class DBTransaction {
      */
     public abstract void deleteAppRow(String appName);
 
-    /**
-     * Add or replace the given database-level option to the given value. Database-level
-     * options live in a global Applications row.
-     * 
-     * @param optName   Name of option to set.
-     * @param optValue  New value for option.
-     */
-    public abstract void setDBOption(String optName, String optValue);
-
     //----- Column/row update methods
+    
+    /**
+     * Add or set a column to the given row in the given table with a null value.
+     * 
+     * @param storeName Name of store that owns row.
+     * @param rowKey    Key of row that owns column.
+     * @param colName   Name of column.
+     * @param colValue  Column value as a string.
+     */
+    public abstract void addColumn(String storeName, String rowKey, String colName);
+    
+    /**
+     * Add or set a column with the given string value.
+     * 
+     * @param storeName Name of store that owns row.
+     * @param rowKey    Key of row that owns column.
+     * @param colName   Name of column.
+     * @param colValue  Column value as a string.
+     */
+    public abstract void addColumn(String storeName, String rowKey, String colName, String colValue);
     
     /**
      * Add or set a column with the given binary value.
@@ -122,6 +138,15 @@ public abstract class DBTransaction {
      */
     public abstract void deleteColumn(String storeName, String rowKey, String colName);
 
-    public abstract void deleteColumns(String storeName, String rowKey, Collection<String> colName);
+    /**
+     * Add updates that will delete all given columns names for the given store name and
+     * row key. If a column update exists for the same store/row/column, the results are
+     * undefined when the transaction is committed.
+     * 
+     * @param storeName Name of store that owns row.
+     * @param rowKey    Row key in string form.
+     * @param colNames  Collection of column names in string form.
+     */
+    public abstract void deleteColumns(String storeName, String rowKey, Collection<String> colNames);
 
 }   // DBTransaction

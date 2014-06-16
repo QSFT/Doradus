@@ -97,7 +97,7 @@ public class ServerConfig {
     public static final int DEFAULT_MAX_READ_ATTEMPTS = 3;
     public static final int DEFAULT_RETRY_WAIT_MILLIS = 5000;
     public static final int DEFAULT_MAX_RECONNECT_ATTEMPTS = 3;
-    public static final int DEFAULT_DB_CONNECT_RETRY_WAIT_MILLIS = 30000;
+    public static final int DEFAULT_DB_CONNECT_RETRY_WAIT_MILLIS = 5000;
     public static final int DEFAULT_BATCH_MUTATION_THRESHOLD = 10000;
     // Default modified objects shard value:
     public static final String DEFAULT_DATA_CHECK_SHARD_GRAN = "1 DAY";
@@ -259,6 +259,9 @@ public class ServerConfig {
     public int olap_cache_size_mb = 100;
     public int olap_file_cache_size_mb = 100;
     public int olap_query_cache_size_mb = 100;
+    
+    // Temporary until CQL is fully adopted
+    public boolean use_cql = false;
     
     //
     // search configuration properties

@@ -49,7 +49,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.Defs;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBNotAvailableException;
 import com.dell.doradus.service.db.DBTransaction;
@@ -57,7 +56,6 @@ import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.IDBAuthenticator;
 import com.dell.doradus.service.db.StoreTemplate;
-import com.dell.doradus.service.spider.ColFamTemplate;
 
 /**
  * Represents a Thrift connection to a Cassandra database and provides methods for
@@ -92,10 +90,10 @@ public class DBConn {
     /**
      * Create a new ColumnFamily using the given definition.
      * 
-     * @param cfTemplate    {@link ColFamTemplate} object that describes CF to create.
+     * @param cfTemplate    {@link StoreTemplate} object that describes CF to create.
      */
     public void createStore(StoreTemplate storeTemplate) {
-        new CassandraSchemaMgr(m_client).createColumnFamily((ColFamTemplate) storeTemplate);
+        new CassandraSchemaMgr(m_client).createColumnFamily(storeTemplate);
     }   // createStore
     
     /**
@@ -129,15 +127,6 @@ public class DBConn {
         }
         return false;
     }	// storeExists
-    
-    /**
-     * Get the ColumnFamily names that exist within our configured keyspace.
-     * 
-     * @return  A collection of ColumnFamily names that exist within our configured keyspace.
-     */
-    public Collection<String> getAllStoreNames() {
-        return new CassandraSchemaMgr(m_client).getColumnFamilies();
-    }
     
     //----- DBConn: Connection management
 
@@ -251,25 +240,6 @@ public class DBConn {
         return propMap;
     }   // getAppProperties
     
-    /**
-     * Get the database-level options, if any, from the "options" row. If there are no
-     * options stored, an empty map is returned (but not null).
-     * 
-     * @return  Map of database-level options as key/value pairs. Empty if there are no
-     *          options stored.
-     */
-    public Map<String, String> getDBOptions() {
-        Map<String, String> dbOpts = new HashMap<>();
-        Iterator<DColumn> colIter = fetchAllColumns(COLUMN_PARENT_APPS, Utils.toBytes(Defs.OPTIONS_ROW_KEY));
-        if (colIter != null) {
-            while (colIter.hasNext()) {
-                DColumn col = colIter.next();
-                dbOpts.put(col.getName(), col.getValue());
-            }
-        }
-        return dbOpts;
-    }   // getDBOptions
-
     //----- DBConn: Updates 
     
     /**
