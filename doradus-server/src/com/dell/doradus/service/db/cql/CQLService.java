@@ -345,9 +345,9 @@ public class CQLService extends DBService {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Cluster cluster = buildClusterSpecs();
                 while (!getState().isRunning()) {
                     try {
+                        Cluster cluster = buildClusterSpecs();
                         createKeyspaceSession(cluster);
                         setRunning();
                     } catch (Exception e) {
