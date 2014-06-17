@@ -160,7 +160,9 @@ public class TaskManagerService extends Service implements ITaskManager {
     @Override
     public void stopService() {
         m_logger.info("Stopping");
-    	m_scheduler.stop();
+        if (m_scheduler.isStarted()) {
+            m_scheduler.stop();
+        }
     }   // stopService
     
     /**

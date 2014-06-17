@@ -20,18 +20,14 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import com.datastax.driver.core.BatchStatement;
-import com.datastax.driver.core.BatchStatement.Type;
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Cluster.Builder;
@@ -43,10 +39,8 @@ import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ProtocolOptions.Compression;
 import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SocketOptions;
-import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.TableMetadata;
 import com.datastax.driver.core.policies.RoundRobinPolicy;
 import com.dell.doradus.common.Utils;
@@ -57,7 +51,6 @@ import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.StoreTemplate;
 import com.dell.doradus.service.db.cql.CQLStatementCache.Query;
-import com.dell.doradus.service.db.cql.CQLStatementCache.Update;
 
 public class CQLService extends DBService {
     // Global CFs are quoted to enforce backwards compatibility/case-sensitivity:
@@ -142,36 +135,40 @@ public class CQLService extends DBService {
     public Map<String, Map<String, String>> getAllAppProperties() {
         Map<String, Map<String, String>> result = new HashMap<>();
         ResultSet rs = executeQuery(Query.SELECT_ALL_ROWS_ALL_COLUMNS, APPS_TABLE_NAME);
-        String lastKey = "";
-        Map<String, String> currentApp = null;
-        for (Row row : rs) {
-            String key = row.getString("key");
-            if (key.charAt(0) == '_') {
+        CQLRowIterator rowIter = new CQLRowIterator(rs);
+        while (rowIter.hasNext()) {
+        	DRow row = rowIter.next();
+            String appName = row.getKey();
+            if (appName.charAt(0) == '_') {
                 continue;
             }
-            String colName = row.getString("column1");
-            String colValue = row.getString("value");
-            if (!key.equals(lastKey)) {
-                currentApp = new HashMap<>();
-                result.put(key, currentApp);
-                lastKey = key;
+            Map<String, String> appProps = new HashMap<>();
+            result.put(appName, appProps);
+            Iterator<DColumn> colIter = row.getColumns();
+            while (colIter.hasNext()) {
+            	DColumn column = colIter.next();
+            	appProps.put(column.getName(), column.getValue());
             }
-            currentApp.put(colName, colValue);
         }
         return result;
     }   // getAllAppProperties
 
     @Override
     public Map<String, String> getAppProperties(String appName) {
-        Map<String, String> result = new HashMap<>();
         ResultSet rs = executeQuery(Query.SELECT_1_ROW_ALL_COLUMNS, APPS_TABLE_NAME, appName);
-        for (Row row : rs) {
-            String colName = row.getString("column1");
-            String colValue = row.getString("value");
-            result.put(colName, colValue);
+        CQLRowIterator rowIter = new CQLRowIterator(rs);
+        if (!rowIter.hasNext()) {
+        	return null;
+        }
+        Map<String, String> result = new HashMap<>();
+    	DRow row = rowIter.next();
+        Iterator<DColumn> colIter = row.getColumns();
+        while (colIter.hasNext()) {
+        	DColumn column = colIter.next();
+        	result.put(column.getName(), column.getValue());
         }
         return result;
-    }
+    }	// getAppProperties
 
     //----- Public DBService methods: Updates
     
@@ -182,11 +179,7 @@ public class CQLService extends DBService {
 
     @Override
     public void commit(DBTransaction dbTran) {
-        try {
-            applyUpdates((CQLTransaction)dbTran);
-        } finally {
-            dbTran.clear();
-        }
+        ((CQLTransaction)dbTran).commit();
     }   // commit
 
     //----- Public DBService methods: Queries
@@ -289,7 +282,36 @@ public class CQLService extends DBService {
     }
 
     //----- CQLService-specific public methods
+ 
+    /**
+     * Get the keyspace name being used by this CQL service in the form needed for CQL
+     * methods. In this form, it is quoted to invoke case sensitivity.
+     * 
+     * @return	Quoted keyspace name used by this CQL service.
+     */
+    public String getKeyspace() {
+    	return m_keyspace;
+    }	// getKeyspace
     
+    /**
+     * Get the {@link CQLStatementCache} object used by this CQL Service to cache prepared
+     * statements.
+     * 
+     * @return	Prepared statement query cache object.
+     */
+	public CQLStatementCache getQueryCache() {
+		return m_queryCache;
+	}	// getQueryCache
+ 
+	/**
+	 * Get the CQL session being used by this CQL service.
+	 * 
+	 * @return The CQL Session object connected to the appropriate keyspace.
+	 */
+	public Session getSession() {
+		return m_session;
+	}	// getSession
+	
     /**
      * Convert the given store name into a quoted CQL name if it isn't already quoted.
      * 
@@ -315,85 +337,6 @@ public class CQLService extends DBService {
         return m_session.execute(boundState);
     }   // executeQuery
     
-    // Execute and given update statement.
-    private ResultSet executeUpdate(CQLTransaction dbTran, Statement state) {
-        m_logger.debug("Executing batch with {} updates", dbTran.getUpdateCount());
-        try {
-            return m_session.execute(state);
-        } catch (Exception e) {
-            m_logger.error("Batch statement failed", e);
-            throw e;
-        }
-    }   // executeUpdate
-    
-    private void applyUpdates(CQLTransaction dbTran) {
-        if (dbTran.getUpdateCount() == 0) {
-            m_logger.debug("Skipping commit with no updates");
-            return;
-        }
-
-        // TODO: how do we set the timestamp? Don't bother?
-        BatchStatement batchState = new BatchStatement(Type.UNLOGGED);
-        addUpdates(dbTran, batchState);
-        addDeletes(dbTran, batchState);
-        executeUpdate(dbTran, batchState);
-    }   // applyUpdates
-
-    // Add row/column updates in the given transaction to the batch.
-    private void addUpdates(CQLTransaction dbTran, BatchStatement batchState) {
-        Map<String, Map<String, List<CQLColumn>>> updateMap = dbTran.getUpdateMap();
-        for (String tableName : updateMap.keySet()) {
-            boolean bBinaryValues = tableValuesAreBinary(tableName);
-            PreparedStatement prepState = m_queryCache.getPreparedUpdate(Update.INSERT_ROW, tableName);
-            Map<String, List<CQLColumn>> rowMap = updateMap.get(tableName);
-            for (String key : rowMap.keySet()) {
-                List<CQLColumn> colList = rowMap.get(key);
-                for (CQLColumn column : colList) {
-                    BoundStatement boundState = prepState.bind();
-                    boundState.setString(0, key);
-                    boundState.setString(1, column.getName());
-                    if (bBinaryValues) {
-                        boundState.setBytes(2, ByteBuffer.wrap(column.getRawValue()));
-                    } else {
-                        boundState.setString(2, column.getValue());
-                    }
-                    batchState.add(boundState);
-                }
-            }
-        }
-    }   // addUpdates
-    
-    // Add row/column deletes in the given transaction to the batch.
-    private void addDeletes(CQLTransaction dbTran, BatchStatement batchState) {
-        Map<String, Map<String, List<String>>> deleteMap = dbTran.getDeleteMap();
-        for (String tableName : deleteMap.keySet()) {
-            Map<String, List<String>> rowKeyMap = deleteMap.get(tableName);
-            for (String key : rowKeyMap.keySet()) {
-                List<String> colList = rowKeyMap.get(key);
-                if (colList != null && colList.size() > 0) {
-                    for (String colName : colList) {
-                        // Unfortunately, we have to delete one column at a time.
-                        PreparedStatement prepState = m_queryCache.getPreparedUpdate(Update.DELETE_COLUMN, tableName);
-                        BoundStatement boundState = prepState.bind(key, colName);
-                        batchState.add(boundState);
-                    }
-                } else {
-                    PreparedStatement prepState = m_queryCache.getPreparedUpdate(Update.DELETE_ROW, tableName);
-                    BoundStatement boundState = prepState.bind(key);
-                    batchState.add(boundState);
-                }
-            }
-        }
-    }   // addDeletes
-    
-    private boolean tableValuesAreBinary(String tableName) {
-        Metadata metadata = m_session.getCluster().getMetadata();
-        KeyspaceMetadata ksMetadata = metadata.getKeyspace(m_keyspace);
-        TableMetadata tableMetadata = ksMetadata.getTable(tableName);
-        ColumnMetadata colMetadata = tableMetadata.getColumn("value");
-        return colMetadata.getType().equals(DataType.blob());
-    }   // tableValuesAreBinary
-
     private void initializeCQLSession() {
         startCreateSessionThread();
     }   // initializeCQLSession
@@ -415,6 +358,11 @@ public class CQLService extends DBService {
                         } catch (InterruptedException ex2) {
                             // ignore
                         }
+                    } catch (Error e) {
+                        // These are fatal. Log and shutdown.
+                        m_logger.error("Fatal error", e);
+                        m_logger.info("Shutting down");
+                        System.exit(1);
                     }
                 }
             }
@@ -477,6 +425,7 @@ public class CQLService extends DBService {
         displayClusterInfo(cluster);
         checkKeyspace(cluster);
         connectToKeyspace(cluster);
+        checkColumnFamilyCompatibility();
         checkGlobalTables();
     }   // createKeyspaceSession
 
@@ -497,6 +446,44 @@ public class CQLService extends DBService {
         m_queryCache = new CQLStatementCache(m_session);
         m_schemaMgr = new CQLSchemaManager(m_session, m_keyspace);
     }   // connectToKeyspace
+    
+    // Check that all existing CFs have key and column1 types of text.
+    private void checkColumnFamilyCompatibility() {
+        Metadata metadata = m_session.getCluster().getMetadata();
+        KeyspaceMetadata ksMetadata = metadata.getKeyspace(CQLService.instance().getKeyspace());
+        for (TableMetadata tableMetadata : ksMetadata.getTables()) {
+            String errMsg = null;
+            ColumnMetadata colMetadata = tableMetadata.getColumn("key");
+            if (colMetadata == null) {
+                errMsg = "does not have a column named 'key'";
+            }
+            if (errMsg == null && !colMetadata.getType().equals(DataType.text())) {
+                errMsg = "the column 'key' must have type 'text' but is '" +
+                         colMetadata.getType().toString() + "'";
+            }
+            colMetadata = tableMetadata.getColumn("column1");
+            if (errMsg == null && colMetadata == null) {
+                errMsg = "does not have a column named 'column1'";
+            }
+            if (errMsg == null && !colMetadata.getType().equals(DataType.text())) {
+                errMsg = "the column 'column1' must have type 'text' but is '" +
+                         colMetadata.getType().toString() + "'";
+            }
+            colMetadata = tableMetadata.getColumn("value");
+            if (errMsg == null && colMetadata == null) {
+                errMsg = "does not have a column named 'value'";
+            }
+            if (errMsg != null) {
+                // Throw an Error to force server shutdown.
+                String throwMsg =
+                    String.format("This database is not compatible with the CQL API. " +
+                                  "ColumnFamily '%s': %s. Please create a new database " +
+                                  "or use the Thrift API.",
+                                  tableMetadata.getName(), errMsg);
+                throw new Error(throwMsg);
+            }
+        }
+    }   // checkColumnFamilyCompatibility
     
     // Check that the global required CFs exist, creating them if needed. 
     private void checkGlobalTables() {
@@ -536,5 +523,5 @@ public class CQLService extends DBService {
                 host.getRack(), policy.distance(host)});
         }
     }   // displayClusterInfo
-    
+
 }   // class CQLService
