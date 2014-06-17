@@ -38,3 +38,25 @@ Copyright (c) 2008-2010 Andrey Somov
 
 XMLWriter is used from:
 http://www.megginson.com/downloads/
+
+The CQL Java Driver is used from:
+https://github.com/datastax/java-driver
+Copyright 2012-2014, DataStax
+
+The CQL driver uses the following libraries, which are fetched by the build files:
+
+    LZ4 compression support provided by lz4-java (http://github.com/jpountz/lz4-java)
+    Written by Adrien Grand.
+    Contains bindings to the C LZ4 implementation (http://code.google.com/p/lz4/)
+    Copyright (C) 2011-2012, Yann Collet.
+
+    Compression support provided by snappy-java (http://code.google.com/p/snappy-java/)
+    Written by Taro L. Saito.
+
+    CQL Native transport uses Netty
+    (https://netty.io/)
+    Copyright (C) 2011 The Netty Project
+
+    Metrics Core library
+    http://metrics.codahale.com/
+    Copyright 2010-2013, Coda Hale, Yammer Inc.

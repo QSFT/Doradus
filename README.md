@@ -11,7 +11,7 @@ instance is a pure "peer"; multiple instances can access the same Cassandra
 cluster. A common practice is to run one Doradus and one Cassandra instance on
 each node. Each Doradus instance can be configured to rotate requests through
 multiple Cassandra instances. Doradus currently accesses Cassandra nodes using
-the Thrift API (CQL is on the TODO list.)
+either the Thrift API or CQL.
 
 #Storage Services
 A Doradus database cluster can host multiple tenants, called *applications*.
@@ -75,31 +75,40 @@ Doradus consists of following components:
   REST API provides basic features for connecting/reconnecting, connection
   pools, message compression, and exception handling. Requests and results are
   passed as simple Java classes.
+
+- **regression-tests**: This folder tree contains regression tests. The tests
+  are processed by the test-processor. We add new tests as new features are
+  implemented and when bugs are found.
+
+- **test-processor**: This module is the regression test processor, which
+  executes the tests defined in the regression-tests folder. The main config
+  file is in ./config/config.xml. The test processor's main() is located in
+  com.dell.doradus.testprocessor.Program.java.
   
 #Resources
 The following are the primary Doradus resources:
 
 - **Source code**: Source code can be downloaded from this Github project:
-    
+
        https://github.com/dell-oss/Doradus
        
-- **Documentation**: The Ant  script (build.xml) creates Java docs for the
+- **Documentation**: The Ant script (build.xml) creates Java docs for the
   doradus-client module, placed in the folder ./doradus-client/docs. A set of
   PDF files describing various aspects of Doradus can be found in the following
   folder:
-  
+
        https://github.com/dell-oss/Doradus/docs
     
 - **Issues**: Please feel free to post bug reports and feature enhancements in
   the Github Issues area:
   
-      https://github.com/dell-oss/Doradus/issues
+       https://github.com/dell-oss/Doradus/issues
     
 - **Downloads**: Source, binary, and doc download bundles will be available soon
   from Maven Central. Stay tuned!
 
 #Requirements
-Doradus requires Java 1.7 or higher and Cassandra 1.2.x, which must be installed
+Doradus requires Java 1.7 or higher and Cassandra 2.x, which must be installed
 separately.
 
 #Building Doradus
