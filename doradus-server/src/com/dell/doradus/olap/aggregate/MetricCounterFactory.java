@@ -88,7 +88,10 @@ public class MetricCounterFactory {
 		}
 		if(index == metric.items.size() - 1) {
 			if(NumSearcher.isNumericType(item.fieldDef.getType())) {
-				return new MetricCounter.Num(item.fieldDef, searcher);
+				if("MINCOUNT".equals(metric.function) || "MAXCOUNT".equals(metric.function)) {
+					return new MetricCounter.NumCount(item.fieldDef, searcher);
+				}
+				else return new MetricCounter.Num(item.fieldDef, searcher);
 			} else if(item.fieldDef.isXLinkDirect()) {
 				return new DirectXLinkMetricCounter(searcher, item.fieldDef, (XMetrics)item.xlinkContext);
 			} else if(item.fieldDef.isXLinkInverse()) {

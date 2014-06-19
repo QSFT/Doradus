@@ -78,10 +78,22 @@ public class MetricCollectorFactory {
 		m_map.put("MINCOUNT/LINK", MetricCollectorMin.MinNum.class);
 		m_map.put("MINCOUNT/XLINK", MetricCollectorMin.MinNum.class);
 		m_map.put("MINCOUNT/TEXT", MetricCollectorMin.MinNum.class);
+		m_map.put("MINCOUNT/BOOLEAN", MetricCollectorMin.MinNum.class);
+		m_map.put("MINCOUNT/INTEGER", MetricCollectorMin.MinNum.class);
+		m_map.put("MINCOUNT/LONG", MetricCollectorMin.MinNum.class);
+		m_map.put("MINCOUNT/TIMESTAMP", MetricCollectorMin.MinNum.class);
+		m_map.put("MINCOUNT/FLOAT", MetricCollectorMin.MinNum.class);
+		m_map.put("MINCOUNT/DOUBLE", MetricCollectorMin.MinNum.class);
 		
 		m_map.put("MAXCOUNT/LINK", MetricCollectorMax.MaxNum.class);
 		m_map.put("MAXCOUNT/XLINK", MetricCollectorMax.MaxNum.class);
 		m_map.put("MAXCOUNT/TEXT", MetricCollectorMax.MaxNum.class);
+		m_map.put("MAXCOUNT/BOOLEAN", MetricCollectorMax.MaxNum.class);
+		m_map.put("MAXCOUNT/INTEGER", MetricCollectorMax.MaxNum.class);
+		m_map.put("MAXCOUNT/LONG", MetricCollectorMax.MaxNum.class);
+		m_map.put("MAXCOUNT/TIMESTAMP", MetricCollectorMax.MaxNum.class);
+		m_map.put("MAXCOUNT/FLOAT", MetricCollectorMax.MaxNum.class);
+		m_map.put("MAXCOUNT/DOUBLE", MetricCollectorMax.MaxNum.class);
 		
 		m_map.put("AVERAGE/LINK", MetricCollectorAvg.AvgNum.class);
 		m_map.put("AVERAGE/XLINK", MetricCollectorAvg.AvgNum.class);

@@ -73,6 +73,19 @@ public abstract class MetricCounter {
 			}
 		}
 	}
+
+	public static class NumCount extends MetricCounter {
+		private NumSearcherMV m_ns;
+		
+		public NumCount(FieldDefinition fieldDef, CubeSearcher cs) {
+			m_ns = cs.getNumSearcher(fieldDef.getTableName(), fieldDef.getName());
+		}
+		
+		@Override public void add(int doc, IMetricValue value) {
+			int fcount = m_ns.size((int)doc);
+			value.add(fcount);
+		}
+	}
 	
 	public static class FieldCount extends MetricCounter {
 		private Result m_filter;
