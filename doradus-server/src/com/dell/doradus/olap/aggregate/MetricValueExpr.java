@@ -40,6 +40,7 @@ public abstract class MetricValueExpr implements IMetricValue {
 	@Override public String toString() {
 		double val = getValue();
 		if(val == Double.MIN_VALUE || val == Double.MAX_VALUE) return null;
+		if(val == Double.NEGATIVE_INFINITY || val == Double.POSITIVE_INFINITY) return null;
 		long lval = Math.round(val);
 		if(Math.abs(val - lval) < 0.001) return "" + lval;
 		else return new DecimalFormat("#.#########").format(getValue());
