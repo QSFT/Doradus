@@ -1,0 +1,135 @@
+*** Request
+    POST /_applications
+    <application name="Application">
+        <key>ApplicationKey</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+        </options>
+        <tables>
+            <table name="Table">
+                <fields>
+                    <field name="ThreadID" type="Text"/>
+                    <field inverse="Responses" junction="ThreadID"
+                        name="InReplyTo" table="Table" type="XLINK"/>
+                    <field inverse="InReplyTo" junction="_ID"
+                        name="Responses" table="Table" type="XLINK"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: 
+    200 OK
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+*** Request
+    POST /_applications
+    <application name="Application">
+        <key>ApplicationKey</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+        </options>
+        <tables>
+            <table name="Table">
+                <fields>
+                    <field name="ThreadID" type="Text"/>
+                    <field inverse="InReplyTo" junction="_ID"
+                        name="InReplyTo" table="Table" type="XLINK"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: text
+    400 Bad Request
+    xlinks cannot be their own inverse (self-reflexive): Field 'InReplyTo': XLINK
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: text
+    404 Not Found
+    Application not found: Application
+
+*** Request
+    POST /_applications
+    <application name="Application">
+        <key>ApplicationKey</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+        </options>
+        <tables>
+            <table name="Table">
+                <fields>
+                    <field name="ThreadID" type="Text"/>
+                    <field inverse="Responses" junction="" name="InReplyTo"
+                        table="Table" type="XLINK"/>
+                    <field inverse="InReplyTo" junction="_ID"
+                        name="Responses" table="Table" type="XLINK"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: 
+    200 OK
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+*** Request
+    POST /_applications
+    <application name="Application">
+        <key>ApplicationKey</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+        </options>
+        <tables>
+            <table name="Table">
+                <fields>
+                    <field name="ThreadID" type="Text"/>
+                    <field inverse="Responses" junction="_ID"
+                        name="InReplyTo" table="Table" type="XLINK"/>
+                    <field inverse="InReplyTo" junction="_ID"
+                        name="Responses" table="Table" type="XLINK"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: 
+    200 OK
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+*** Request
+    POST /_applications
+    <application name="Application">
+        <key>ApplicationKey</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+        </options>
+        <tables>
+            <table name="Table">
+                <fields>
+                    <field name="ThreadID" type="Text"/>
+                    <field inverse="InReplyTo" junction="ThreadID"
+                        name="InReplyTo" table="Table" type="XLINK"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: text
+    400 Bad Request
+    At least one xlink in 'Table.InReplyTo/Table.InReplyTo' must use '_ID' as the junction field
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: text
+    404 Not Found
+    Application not found: Application
+

@@ -1,0 +1,112 @@
+<TEST>
+<!--
+    ******************************************************
+    Key: BD-21, Bug
+    Summary: Floating point precision
+             When a fetch a double whose value is "1E-10", 
+             it comes back as 0.0. 
+    ******************************************************
+-->
+<CONNECT/>
+<DEFINE name="response.format" value="xml|json"/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+    <POST path="_applications">
+    <XML>
+	<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+	<option name="StorageService">OLAPService</option>
+    </options>
+    <tables>
+        <table name="Table">
+            <fields>
+                <field type="double" name="Number"/>
+            </fields>
+        </table>
+    </tables>
+	</application>
+    </XML>
+    </POST>
+
+    <POST path="Application/shard">
+    <XML>
+      <batch>
+        <docs>
+          <doc _ID="1001" _table="Table">
+            <field name="Number">1E-9</field>
+          </doc>
+          <doc _ID="1002" _table="Table">
+            <field name="Number">1E-6</field>
+          </doc>
+          <doc _ID="1003" _table="Table">
+            <field name="Number">1E-3</field>
+          </doc>
+          <doc _ID="1004" _table="Table">
+            <field name="Number">1E-1</field>
+          </doc>
+          <doc _ID="1005" _table="Table">
+            <field name="Number">1E-0</field>
+          </doc>
+          <doc _ID="1006" _table="Table">
+            <field name="Number">1E+0</field>
+          </doc>
+          <doc _ID="1007" _table="Table">
+            <field name="Number">1E+1</field>
+          </doc>
+          <doc _ID="1008" _table="Table">
+            <field name="Number">1E+3</field>
+          </doc>
+          <doc _ID="1009" _table="Table">
+            <field name="Number">1E+6</field>
+          </doc>
+          <doc _ID="1010" _table="Table">
+            <field name="Number">1E+9</field>
+          </doc>
+          <doc _ID="1011" _table="Table">
+            <field name="Number">0.000000001</field>
+          </doc>
+          <doc _ID="1012" _table="Table">
+            <field name="Number">0.000001</field>
+          </doc>
+          <doc _ID="1013" _table="Table">
+            <field name="Number">0.001</field>
+          </doc>
+          <doc _ID="1014" _table="Table">
+            <field name="Number">0.1</field>
+          </doc>
+          <doc _ID="1015" _table="Table">
+            <field name="Number">1</field>
+          </doc>
+          <doc _ID="1016" _table="Table">
+            <field name="Number">10</field>
+          </doc>
+          <doc _ID="1017" _table="Table">
+            <field name="Number">100</field>
+          </doc>
+          <doc _ID="1018" _table="Table">
+            <field name="Number">1000</field>
+          </doc>
+          <doc _ID="1019" _table="Table">
+            <field name="Number">1000000</field>
+          </doc>
+          <doc _ID="1020" _table="Table">
+            <field name="Number">1000000000</field>
+          </doc>
+        </docs>
+      </batch>
+    </XML>
+    </POST>
+
+    <POST path="Application/_shards/shard"/>
+
+    <enable-output/>
+    <echo>~~~~~~~~~~</echo>
+    <echo>~ Double ~</echo>
+    <echo>~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="*" shards="shard"/>
+
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+<DISCONNECT/>
+</TEST>

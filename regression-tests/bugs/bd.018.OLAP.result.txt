@@ -1,0 +1,474 @@
+*** Request
+    GET /Application/Disk/_query?q=*&f=Folder.File.FileName,Folder.WHERE(IsSender=True).File.FileName,Folder.WHERE(IsSender=False).File.FileName&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>3</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="Folder">
+                    <doc>
+                        <field name="_ID">2001</field>
+                        <field name="File">
+                            <doc>
+                                <field name="FileName">File_1</field>
+                                <field name="_ID">3001</field>
+                            </doc>
+                            <doc>
+                                <field name="FileName">File_2</field>
+                                <field name="_ID">3002</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2004</field>
+                        <field name="File">
+                            <doc>
+                                <field name="FileName">File_7</field>
+                                <field name="_ID">3007</field>
+                            </doc>
+                            <doc>
+                                <field name="FileName">File_8</field>
+                                <field name="_ID">3008</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+                <field name="Folder.WHERE(IsSender eq True)">
+                    <doc>
+                        <field name="_ID">2001</field>
+                        <field name="File">
+                            <doc>
+                                <field name="FileName">File_1</field>
+                                <field name="_ID">3001</field>
+                            </doc>
+                            <doc>
+                                <field name="FileName">File_2</field>
+                                <field name="_ID">3002</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+                <field name="Folder.WHERE(IsSender eq False)">
+                    <doc>
+                        <field name="_ID">2004</field>
+                        <field name="File">
+                            <doc>
+                                <field name="FileName">File_7</field>
+                                <field name="_ID">3007</field>
+                            </doc>
+                            <doc>
+                                <field name="FileName">File_8</field>
+                                <field name="_ID">3008</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="Folder">
+                    <doc>
+                        <field name="_ID">2002</field>
+                        <field name="File">
+                            <doc>
+                                <field name="FileName">File_3</field>
+                                <field name="_ID">3003</field>
+                            </doc>
+                            <doc>
+                                <field name="FileName">File_4</field>
+                                <field name="_ID">3004</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2005</field>
+                        <field name="File">
+                            <doc>
+                                <field name="FileName">File_9</field>
+                                <field name="_ID">3009</field>
+                            </doc>
+                            <doc>
+                                <field name="FileName">File_10</field>
+                                <field name="_ID">3010</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+                <field name="Folder.WHERE(IsSender eq True)">
+                    <doc>
+                        <field name="_ID">2005</field>
+                        <field name="File">
+                            <doc>
+                                <field name="FileName">File_9</field>
+                                <field name="_ID">3009</field>
+                            </doc>
+                            <doc>
+                                <field name="FileName">File_10</field>
+                                <field name="_ID">3010</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+                <field name="Folder.WHERE(IsSender eq False)">
+                    <doc>
+                        <field name="_ID">2002</field>
+                        <field name="File">
+                            <doc>
+                                <field name="FileName">File_3</field>
+                                <field name="_ID">3003</field>
+                            </doc>
+                            <doc>
+                                <field name="FileName">File_4</field>
+                                <field name="_ID">3004</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="Folder">
+                    <doc>
+                        <field name="_ID">2003</field>
+                        <field name="File">
+                            <doc>
+                                <field name="FileName">File_5</field>
+                                <field name="_ID">3005</field>
+                            </doc>
+                            <doc>
+                                <field name="FileName">File_6</field>
+                                <field name="_ID">3006</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2006</field>
+                        <field name="File">
+                            <doc>
+                                <field name="FileName">File_11</field>
+                                <field name="_ID">3011</field>
+                            </doc>
+                            <doc>
+                                <field name="FileName">File_12</field>
+                                <field name="_ID">3012</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+                <field name="Folder.WHERE(IsSender eq True)">
+                    <doc>
+                        <field name="_ID">2003</field>
+                        <field name="File">
+                            <doc>
+                                <field name="FileName">File_5</field>
+                                <field name="_ID">3005</field>
+                            </doc>
+                            <doc>
+                                <field name="FileName">File_6</field>
+                                <field name="_ID">3006</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+                <field name="Folder.WHERE(IsSender eq False)">
+                    <doc>
+                        <field name="_ID">2006</field>
+                        <field name="File">
+                            <doc>
+                                <field name="FileName">File_11</field>
+                                <field name="_ID">3011</field>
+                            </doc>
+                            <doc>
+                                <field name="FileName">File_12</field>
+                                <field name="_ID">3012</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"3",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "Folder":[
+                      {
+                         "doc":{
+                            "_ID":"2001",
+                            "File":[
+                               {
+                                  "doc":{
+                                     "FileName":"File_1",
+                                     "_ID":"3001"
+                                  }
+                               },
+                               {
+                                  "doc":{
+                                     "FileName":"File_2",
+                                     "_ID":"3002"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2004",
+                            "File":[
+                               {
+                                  "doc":{
+                                     "FileName":"File_7",
+                                     "_ID":"3007"
+                                  }
+                               },
+                               {
+                                  "doc":{
+                                     "FileName":"File_8",
+                                     "_ID":"3008"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ],
+                   "Folder.WHERE(IsSender eq True)":[
+                      {
+                         "doc":{
+                            "_ID":"2001",
+                            "File":[
+                               {
+                                  "doc":{
+                                     "FileName":"File_1",
+                                     "_ID":"3001"
+                                  }
+                               },
+                               {
+                                  "doc":{
+                                     "FileName":"File_2",
+                                     "_ID":"3002"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ],
+                   "Folder.WHERE(IsSender eq False)":[
+                      {
+                         "doc":{
+                            "_ID":"2004",
+                            "File":[
+                               {
+                                  "doc":{
+                                     "FileName":"File_7",
+                                     "_ID":"3007"
+                                  }
+                               },
+                               {
+                                  "doc":{
+                                     "FileName":"File_8",
+                                     "_ID":"3008"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "Folder":[
+                      {
+                         "doc":{
+                            "_ID":"2002",
+                            "File":[
+                               {
+                                  "doc":{
+                                     "FileName":"File_3",
+                                     "_ID":"3003"
+                                  }
+                               },
+                               {
+                                  "doc":{
+                                     "FileName":"File_4",
+                                     "_ID":"3004"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2005",
+                            "File":[
+                               {
+                                  "doc":{
+                                     "FileName":"File_9",
+                                     "_ID":"3009"
+                                  }
+                               },
+                               {
+                                  "doc":{
+                                     "FileName":"File_10",
+                                     "_ID":"3010"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ],
+                   "Folder.WHERE(IsSender eq True)":[
+                      {
+                         "doc":{
+                            "_ID":"2005",
+                            "File":[
+                               {
+                                  "doc":{
+                                     "FileName":"File_9",
+                                     "_ID":"3009"
+                                  }
+                               },
+                               {
+                                  "doc":{
+                                     "FileName":"File_10",
+                                     "_ID":"3010"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ],
+                   "Folder.WHERE(IsSender eq False)":[
+                      {
+                         "doc":{
+                            "_ID":"2002",
+                            "File":[
+                               {
+                                  "doc":{
+                                     "FileName":"File_3",
+                                     "_ID":"3003"
+                                  }
+                               },
+                               {
+                                  "doc":{
+                                     "FileName":"File_4",
+                                     "_ID":"3004"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "Folder":[
+                      {
+                         "doc":{
+                            "_ID":"2003",
+                            "File":[
+                               {
+                                  "doc":{
+                                     "FileName":"File_5",
+                                     "_ID":"3005"
+                                  }
+                               },
+                               {
+                                  "doc":{
+                                     "FileName":"File_6",
+                                     "_ID":"3006"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2006",
+                            "File":[
+                               {
+                                  "doc":{
+                                     "FileName":"File_11",
+                                     "_ID":"3011"
+                                  }
+                               },
+                               {
+                                  "doc":{
+                                     "FileName":"File_12",
+                                     "_ID":"3012"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ],
+                   "Folder.WHERE(IsSender eq True)":[
+                      {
+                         "doc":{
+                            "_ID":"2003",
+                            "File":[
+                               {
+                                  "doc":{
+                                     "FileName":"File_5",
+                                     "_ID":"3005"
+                                  }
+                               },
+                               {
+                                  "doc":{
+                                     "FileName":"File_6",
+                                     "_ID":"3006"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ],
+                   "Folder.WHERE(IsSender eq False)":[
+                      {
+                         "doc":{
+                            "_ID":"2006",
+                            "File":[
+                               {
+                                  "doc":{
+                                     "FileName":"File_11",
+                                     "_ID":"3011"
+                                  }
+                               },
+                               {
+                                  "doc":{
+                                     "FileName":"File_12",
+                                     "_ID":"3012"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

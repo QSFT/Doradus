@@ -1,0 +1,468 @@
+  *** Request
+-     GET /Application/Disk/_aggregate?m=COUNT(*)&f=Folder.File.WHERE(FileName>'G').FileName,Folder.File.WHERE(FoldersList>'G').FoldersList
++     GET /Application/Disk/_aggregate?m=COUNT(*)&f=Folder.FolderName,Folder.File.WHERE(FileName>'G').FileName,Folder.File.WHERE(FoldersList>'G').FoldersList
+  *** Response: xml
+      200 OK
+      <results>
+          <aggregate
+-             group="Folder.File.WHERE(FileName>'G').FileName,Folder.File.WHERE(FoldersList>'G').FoldersList" metric="COUNT(*)"/>
++             group="Folder.FolderName,Folder.File.WHERE(FileName>'G').FileName,Folder.File.WHERE(FoldersList>'G').FoldersList" metric="COUNT(*)"/>
+          <totalobjects>3</totalobjects>
+-         <summary>0</summary>
++         <summary>2</summary>
++         <groups>
++             <group>
++                 <summary>1</summary>
++                 <field name="Folder.FolderName">Folder_A_1</field>
++                 <groups>
++                     <group>
++                         <summary>1</summary>
++                         <field name="Folder.File.FileName">KFile_7</field>
++                         <groups>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Mother</field>
++                             </group>
++                         </groups>
++                     </group>
++                 </groups>
++             </group>
++             <group>
++                 <summary>1</summary>
++                 <field name="Folder.FolderName">Folder_A_2</field>
++                 <groups>
++                     <group>
++                         <summary>1</summary>
++                         <field name="Folder.File.FileName">KFile_7</field>
++                         <groups>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Mother</field>
++                             </group>
++                         </groups>
++                     </group>
++                 </groups>
++             </group>
++             <group>
++                 <summary>1</summary>
++                 <field name="Folder.FolderName">Folder_C_1</field>
++                 <groups>
++                     <group>
++                         <summary>1</summary>
++                         <field name="Folder.File.FileName">IFile_6</field>
++                         <groups>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Key</field>
++                             </group>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Up</field>
++                             </group>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Window</field>
++                             </group>
++                         </groups>
++                     </group>
++                     <group>
++                         <summary>1</summary>
++                         <field name="Folder.File.FileName">SFile_11</field>
++                         <groups>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Key</field>
++                             </group>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Up</field>
++                             </group>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Window</field>
++                             </group>
++                         </groups>
++                     </group>
++                     <group>
++                         <summary>1</summary>
++                         <field name="Folder.File.FileName">UFile_12</field>
++                         <groups>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Key</field>
++                             </group>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Up</field>
++                             </group>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Window</field>
++                             </group>
++                         </groups>
++                     </group>
++                 </groups>
++             </group>
++             <group>
++                 <summary>1</summary>
++                 <field name="Folder.FolderName">Folder_C_2</field>
++                 <groups>
++                     <group>
++                         <summary>1</summary>
++                         <field name="Folder.File.FileName">IFile_6</field>
++                         <groups>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Key</field>
++                             </group>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Up</field>
++                             </group>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Window</field>
++                             </group>
++                         </groups>
++                     </group>
++                     <group>
++                         <summary>1</summary>
++                         <field name="Folder.File.FileName">SFile_11</field>
++                         <groups>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Key</field>
++                             </group>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Up</field>
++                             </group>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Window</field>
++                             </group>
++                         </groups>
++                     </group>
++                     <group>
++                         <summary>1</summary>
++                         <field name="Folder.File.FileName">UFile_12</field>
++                         <groups>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Key</field>
++                             </group>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Up</field>
++                             </group>
++                             <group>
++                                 <metric>1</metric>
++                                 <field name="Folder.File.FoldersList">Window</field>
++                             </group>
++                         </groups>
++                     </group>
++                 </groups>
++             </group>
++         </groups>
+      </results>
+  *** Response: json
+      200 OK
+      {
+         "results":{
+            "aggregate":{
+               "metric":"COUNT(*)",
+-              "group":"Folder.File.WHERE(FileName>'G').FileName,Folder.File.WHERE(FoldersList>'G').FoldersList"
++              "group":"Folder.FolderName,Folder.File.WHERE(FileName>'G').FileName,Folder.File.WHERE(FoldersList>'G').FoldersList"
+            },
+            "totalobjects":"3",
+-           "summary":"0"
++           "summary":"2",
++           "groups":[
++              {
++                 "group":{
++                    "summary":"1",
++                    "field":{
++                       "Folder.FolderName":"Folder_A_1"
++                    },
++                    "groups":[
++                       {
++                          "group":{
++                             "summary":"1",
++                             "field":{
++                                "Folder.File.FileName":"KFile_7"
++                             },
++                             "groups":[
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Mother"
++                                      }
++                                   }
++                                }
++                             ]
++                          }
++                       }
++                    ]
++                 }
++              },
++              {
++                 "group":{
++                    "summary":"1",
++                    "field":{
++                       "Folder.FolderName":"Folder_A_2"
++                    },
++                    "groups":[
++                       {
++                          "group":{
++                             "summary":"1",
++                             "field":{
++                                "Folder.File.FileName":"KFile_7"
++                             },
++                             "groups":[
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Mother"
++                                      }
++                                   }
++                                }
++                             ]
++                          }
++                       }
++                    ]
++                 }
++              },
++              {
++                 "group":{
++                    "summary":"1",
++                    "field":{
++                       "Folder.FolderName":"Folder_C_1"
++                    },
++                    "groups":[
++                       {
++                          "group":{
++                             "summary":"1",
++                             "field":{
++                                "Folder.File.FileName":"IFile_6"
++                             },
++                             "groups":[
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Key"
++                                      }
++                                   }
++                                },
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Up"
++                                      }
++                                   }
++                                },
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Window"
++                                      }
++                                   }
++                                }
++                             ]
++                          }
++                       },
++                       {
++                          "group":{
++                             "summary":"1",
++                             "field":{
++                                "Folder.File.FileName":"SFile_11"
++                             },
++                             "groups":[
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Key"
++                                      }
++                                   }
++                                },
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Up"
++                                      }
++                                   }
++                                },
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Window"
++                                      }
++                                   }
++                                }
++                             ]
++                          }
++                       },
++                       {
++                          "group":{
++                             "summary":"1",
++                             "field":{
++                                "Folder.File.FileName":"UFile_12"
++                             },
++                             "groups":[
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Key"
++                                      }
++                                   }
++                                },
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Up"
++                                      }
++                                   }
++                                },
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Window"
++                                      }
++                                   }
++                                }
++                             ]
++                          }
++                       }
++                    ]
++                 }
++              },
++              {
++                 "group":{
++                    "summary":"1",
++                    "field":{
++                       "Folder.FolderName":"Folder_C_2"
++                    },
++                    "groups":[
++                       {
++                          "group":{
++                             "summary":"1",
++                             "field":{
++                                "Folder.File.FileName":"IFile_6"
++                             },
++                             "groups":[
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Key"
++                                      }
++                                   }
++                                },
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Up"
++                                      }
++                                   }
++                                },
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Window"
++                                      }
++                                   }
++                                }
++                             ]
++                          }
++                       },
++                       {
++                          "group":{
++                             "summary":"1",
++                             "field":{
++                                "Folder.File.FileName":"SFile_11"
++                             },
++                             "groups":[
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Key"
++                                      }
++                                   }
++                                },
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Up"
++                                      }
++                                   }
++                                },
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Window"
++                                      }
++                                   }
++                                }
++                             ]
++                          }
++                       },
++                       {
++                          "group":{
++                             "summary":"1",
++                             "field":{
++                                "Folder.File.FileName":"UFile_12"
++                             },
++                             "groups":[
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Key"
++                                      }
++                                   }
++                                },
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Up"
++                                      }
++                                   }
++                                },
++                                {
++                                   "group":{
++                                      "metric":"1",
++                                      "field":{
++                                         "Folder.File.FoldersList":"Window"
++                                      }
++                                   }
++                                }
++                             ]
++                          }
++                       }
++                    ]
++                 }
++              }
++           ]
+         }
+      }
+  
+  *** Request
+      DELETE /_applications/Application/ApplicationKey
+  *** Response: 
+      200 OK
