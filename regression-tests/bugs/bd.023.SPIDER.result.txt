@@ -1,0 +1,28 @@
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=SV:abrakadabara&f=SV
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="SV" metric="COUNT(*)" query="SV:abrakadabara"/>
+        <totalobjects>0</totalobjects>
+        <summary>0</summary>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"SV:abrakadabara",
+             "group":"SV"
+          },
+          "totalobjects":"0",
+          "summary":"0"
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

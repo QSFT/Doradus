@@ -1,0 +1,118 @@
+<TEST>
+<!--
+    ***************************************************
+    Key: BD-5, Bug
+    Summary: Self-reflexive xlinks should be disallowed
+    ***************************************************
+ -->
+<CONNECT/>
+<DEFINE name="response.format" value="xml|json"/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+    
+    <enable-output/>
+    <POST path="_applications">
+    <XML>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+                <option name="StorageService">OLAPService</option>
+            </options>
+            <tables>
+                <table name="Table">
+                    <fields>
+	    		<field name="ThreadID" type="Text"/>
+	    		<field name="InReplyTo" type="XLINK" table="Table" inverse="Responses" junction="ThreadID"/>
+			<field name="Responses" type="XLINK" table="Table" inverse="InReplyTo" junction="_ID"/>
+                    </fields>
+                </table>
+            </tables>
+        </application>
+    </XML>
+    </POST>
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+    <POST path="_applications">
+    <XML>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+                <option name="StorageService">OLAPService</option>
+            </options>
+            <tables>
+                <table name="Table">
+                    <fields>
+	    		<field name="ThreadID" type="Text"/>
+	    		<field name="InReplyTo" type="XLINK" table="Table" inverse="InReplyTo" junction="_ID"/>
+                    </fields>
+                </table>
+            </tables>
+        </application>
+    </XML>
+    </POST>
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+    <POST path="_applications">
+    <XML>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+                <option name="StorageService">OLAPService</option>
+            </options>
+            <tables>
+                <table name="Table">
+                    <fields>
+	    		<field name="ThreadID" type="Text"/>
+	    		<field name="InReplyTo" type="XLINK" table="Table" inverse="Responses" junction=""/>
+			<field name="Responses" type="XLINK" table="Table" inverse="InReplyTo" junction="_ID"/>
+                    </fields>
+                </table>
+            </tables>
+        </application>
+    </XML>
+    </POST>
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+    <POST path="_applications">
+    <XML>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+                <option name="StorageService">OLAPService</option>
+            </options>
+            <tables>
+                <table name="Table">
+                    <fields>
+	    		<field name="ThreadID" type="Text"/>
+	    		<field name="InReplyTo" type="XLINK" table="Table" inverse="Responses" junction="_ID"/>
+			<field name="Responses" type="XLINK" table="Table" inverse="InReplyTo" junction="_ID"/>
+                    </fields>
+                </table>
+            </tables>
+        </application>
+    </XML>
+    </POST>
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+    <POST path="_applications">
+    <XML>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+                <option name="StorageService">OLAPService</option>
+            </options>
+            <tables>
+                <table name="Table">
+                    <fields>
+	    		<field name="ThreadID" type="Text"/>
+	    		<field name="InReplyTo" type="XLINK" table="Table" inverse="InReplyTo" junction="ThreadID"/>
+                    </fields>
+                </table>
+            </tables>
+        </application>
+    </XML>
+    </POST>
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+<DISCONNECT/>
+</TEST>

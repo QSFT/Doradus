@@ -1,0 +1,48 @@
+*** Request
+    GET /Application/Vint/_aggregate?m=COUNT(*)&q=*&f=LOWER(Disk.WHERE(Folder.File.FileName='abracadabara'))&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            group="LOWER(Disk.WHERE(Folder.File.FileName='abracadabara'))"
+            metric="COUNT(*)" query="*"/>
+        <totalobjects>2</totalobjects>
+        <summary>2</summary>
+        <totalgroups>1</totalgroups>
+        <groups>
+            <group>
+                <metric>2</metric>
+                <field name="LOWER(Disk.WHERE(Folder.File.FileName='abracadabara'))">(null)</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"LOWER(Disk.WHERE(Folder.File.FileName='abracadabara'))"
+          },
+          "totalobjects":"2",
+          "summary":"2",
+          "totalgroups":"1",
+          "groups":[
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "LOWER(Disk.WHERE(Folder.File.FileName='abracadabara'))":"(null)"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

@@ -1,0 +1,56 @@
+<TEST>
+<!--
+    ******************************************************
+    Key: BD-21, Bug
+    Summary: Floating point precision
+             When a fetch a double whose value is "1E-10", 
+             it comes back as 0.0. 
+    ******************************************************
+-->
+<CONNECT/>
+<DEFINE name="response.format" value="xml|json"/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+    <POST path="_applications">
+    <XML>
+	<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+	<option name="StorageService">OLAPService</option>
+    </options>
+    <tables>
+        <table name="Table">
+            <fields>
+                <field type="double" name="Number"/>
+                <field type="double" name="Number1"/>
+            </fields>
+        </table>
+    </tables>
+	</application>
+    </XML>
+    </POST>
+
+    <POST path="Application/shard">
+    <XML>
+      <batch>
+        <docs>
+          <doc _ID="1001" _table="Table">
+            <field name="Number">.231</field>
+          </doc>
+        </docs>
+      </batch>
+    </XML>
+    </POST>
+
+    <POST path="Application/_shards/shard"/>
+
+    <enable-output/>
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ AVERAGE ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Table" q="*" m="AVERAGE(Number1)" f="Number" shards="shard"/>
+
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+<DISCONNECT/>
+</TEST>
