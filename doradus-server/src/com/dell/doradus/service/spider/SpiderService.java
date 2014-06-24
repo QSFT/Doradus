@@ -210,10 +210,19 @@ public class SpiderService extends StorageService {
     // be a table name.
     @Override
     public BatchResult addBatch(ApplicationDefinition appDef, String tableName, DBObjectBatch batch) {
+        return addBatch(appDef, tableName, batch, null);
+    }   // addBatch
+    
+    // Add and/or update a batch of objects. For a Spider application, the store name must
+    // be a table name.
+    @Override
+    public BatchResult addBatch(ApplicationDefinition appDef, String tableName,
+                                DBObjectBatch batch, Map<String, String> options) {
         checkRunning();
         TableDefinition tableDef = appDef.getTableDef(tableName);
         Utils.require(tableDef != null || appDef.allowsAutoTables(),
                       "Unknown table for application '%s': %s", appDef.getAppName(), tableName);
+        Utils.require(options == null || options.size() == 0, "No parameters expected");
         
         if (tableDef == null && appDef.allowsAutoTables()) {
             tableDef = addAutoTable(appDef, tableName);
@@ -243,7 +252,14 @@ public class SpiderService extends StorageService {
     // Same as addBatch()
     @Override
     public BatchResult updateBatch(ApplicationDefinition appDef, String storeName, DBObjectBatch batch) {
-        return addBatch(appDef, storeName, batch);
+        return addBatch(appDef, storeName, batch, null);
+    }   // updateBatch
+    
+    // Same as addBatch()
+    @Override
+    public BatchResult updateBatch(ApplicationDefinition appDef, String storeName,
+                                   DBObjectBatch batch, Map<String, String> paramMap) {
+        return addBatch(appDef, storeName, batch, paramMap);
     }   // updateBatch
     
     //----- Access to StatisticManager

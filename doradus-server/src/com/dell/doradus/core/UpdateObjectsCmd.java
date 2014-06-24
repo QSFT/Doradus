@@ -17,6 +17,7 @@
 package com.dell.doradus.core;
 
 import java.io.Reader;
+import java.util.Map;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.BatchResult;
@@ -54,8 +55,9 @@ public class UpdateObjectsCmd extends ReaderCallback {
             dbObjBatch.parse(rootNode);
         }
 
+        Map<String, String> paramMap = Utils.parseURIQuery(m_request.getVariable("params"));
         StorageService storageService = SchemaService.instance().getStorageService(appDef);
-        BatchResult batchResult = storageService.updateBatch(appDef, store, dbObjBatch);
+        BatchResult batchResult = storageService.updateBatch(appDef, store, dbObjBatch, paramMap);
         String body = batchResult.toDoc().toString(m_request.getOutputContentType());
         return new RESTResponse(HttpCode.OK, body, m_request.getOutputContentType());
     }   // invokeStreamIn

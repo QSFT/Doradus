@@ -169,8 +169,14 @@ public class OLAPService extends StorageService {
     
     @Override
     public BatchResult addBatch(ApplicationDefinition appDef, String shardName, DBObjectBatch batch) {
+        return addBatch(appDef, shardName, batch, null);
+    }   // addBatch
+    
+    @Override
+    public BatchResult addBatch(ApplicationDefinition appDef, String shardName,
+                                DBObjectBatch batch, Map<String, String> options) {
         waitForFullService();
-        String guid = m_olap.addSegment(appDef, shardName, batch);
+        String guid = m_olap.addSegment(appDef, shardName, batch, getOverwriteOption(options));
         BatchResult result = new BatchResult();
         result.setStatus(Status.OK);
         result.setComment("GUID=" + guid);
@@ -179,7 +185,13 @@ public class OLAPService extends StorageService {
 
     @Override
     public BatchResult updateBatch(ApplicationDefinition appDef, String shardName, DBObjectBatch batch) {
-        return addBatch(appDef, shardName, batch);
+        return addBatch(appDef, shardName, batch, null);
+    }   // updateBatch
+    
+    @Override
+    public BatchResult updateBatch(ApplicationDefinition appDef, String shardName,
+                                   DBObjectBatch batch, Map<String, String> options) {
+        return addBatch(appDef, shardName, batch, options);
     }   // updateBatch
 
     @Override
@@ -188,7 +200,7 @@ public class OLAPService extends StorageService {
         for (DBObject dbObj : batch.getObjects()) {
             dbObj.setDeleted(true);
         }
-        return addBatch(appDef, storeName, batch);
+        return addBatch(appDef, storeName, batch, null);
     }   // deleteBatch
 
     //----- OLAPService-specific public methods
@@ -343,6 +355,21 @@ public class OLAPService extends StorageService {
     
     // Singleton instantiation only.
     private OLAPService() { }
+
+    // Get case-insensitive "overwrite" option. Default to "true".
+    private boolean getOverwriteOption(Map<String, String> options) {
+        boolean bOverwrite = true;
+        if (options != null) {
+            for (String name : options.keySet()) {
+                if ("overwrite".equals(name.toLowerCase())) {
+                    bOverwrite = Boolean.parseBoolean(options.get(name));
+                } else {
+                    Utils.require(false, "Unknown OLAP batch option: " + name);
+                }
+            }
+        }
+        return bOverwrite;
+    }   // getOverwriteOption
 
     // Validate the given application for OLAP constraints.
     private void validateApplication(ApplicationDefinition appDef) {

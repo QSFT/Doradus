@@ -20,6 +20,8 @@ package com.dell.doradus.service;
  * Abstract root class for Doradus StorageService implementations. Defines methods that
  * must be implemented by a subclass to function as a storage service.
  */
+import java.util.Map;
+
 import com.dell.doradus.common.AggregateResult;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.BatchResult;
@@ -144,6 +146,19 @@ public abstract class StorageService extends Service {
     public abstract BatchResult addBatch(ApplicationDefinition appDef, String storeName, DBObjectBatch batch);
     
     /**
+     * Add the given batch of objects to the given store belonging to the given
+     * application using the given options.
+     * 
+     * @param appDef    {@link ApplicationDefinition} of application to update.
+     * @param storeName Name of store to which objects should be added.
+     * @param batch     {@link DBObjectBatch} of objects to add.
+     * @param options   Optional map of batch options. Options are service-specific.
+     * @return          {@link BatchResult} representing the results of the update.
+     */
+    public abstract BatchResult addBatch(ApplicationDefinition appDef, String storeName,
+                                         DBObjectBatch batch, Map<String, String> options);
+    
+    /**
      * Delete the given set of objects from the given store belonging to the given
      * application.
      * 
@@ -164,5 +179,18 @@ public abstract class StorageService extends Service {
      * @return          {@link BatchResult} representing the results of the update.
      */
     public abstract BatchResult updateBatch(ApplicationDefinition appDef, String storeName, DBObjectBatch batch);
+    
+    /**
+     * Update the given store belonging to the given application with the given batch of
+     * objects and options. The semantics of updates are defined by the storage service.
+     * 
+     * @param appDef    {@link ApplicationDefinition} of application to update.
+     * @param storeName Name of store in which objects should be updated.
+     * @param batch     {@link DBObjectBatch} of objects to update.
+     * @param options   Optional list of batch options. Options are service-specific.
+     * @return          {@link BatchResult} representing the results of the update.
+     */
+    public abstract BatchResult updateBatch(ApplicationDefinition appDef, String storeName,
+                                            DBObjectBatch batch, Map<String, String> options);
 
 }   // class StorageService

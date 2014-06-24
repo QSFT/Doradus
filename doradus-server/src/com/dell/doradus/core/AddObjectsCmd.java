@@ -17,6 +17,7 @@
 package com.dell.doradus.core;
 
 import java.io.Reader;
+import java.util.Map;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.BatchResult;
@@ -31,8 +32,8 @@ import com.dell.doradus.service.rest.ReaderCallback;
 import com.dell.doradus.service.schema.SchemaService;
 
 /**
- * Implements the REST command: POST /{application}/{store}. Verifies the given application
- * and passes the command to its registered storage service.
+ * Implements the REST command: POST /{application}/{store}[?{params}. Verifies the given
+ * application and passes the command to its registered storage service.
  */
 public class AddObjectsCmd extends ReaderCallback {
 
@@ -54,8 +55,9 @@ public class AddObjectsCmd extends ReaderCallback {
             dbObjBatch.parse(rootNode);
         }
 
+        Map<String, String> paramMap = Utils.parseURIQuery(m_request.getVariable("params"));
         StorageService storageService = SchemaService.instance().getStorageService(appDef);
-        BatchResult batchResult = storageService.addBatch(appDef, store, dbObjBatch);
+        BatchResult batchResult = storageService.addBatch(appDef, store, dbObjBatch, paramMap);
         String body = batchResult.toDoc().toString(m_request.getOutputContentType());
         return new RESTResponse(HttpCode.CREATED, body, m_request.getOutputContentType());
     }   // invokeStreamIn

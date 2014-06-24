@@ -86,9 +86,11 @@ public final class DoradusServer {
         new RESTCommand("PUT    /{application}/{table}/_aggregate           com.dell.doradus.core.AggregateDocCmd"),
         
         // Object updates supported by all storage services:
-        new RESTCommand("POST   /{application}/{store}  com.dell.doradus.core.AddObjectsCmd"),
-        new RESTCommand("PUT    /{application}/{store}  com.dell.doradus.core.UpdateObjectsCmd"),
-        new RESTCommand("DELETE /{application}/{store}  com.dell.doradus.core.DeleteObjectsCmd"),
+        new RESTCommand("POST   /{application}/{store}          com.dell.doradus.core.AddObjectsCmd"),
+        new RESTCommand("POST   /{application}/{store}?{params} com.dell.doradus.core.AddObjectsCmd"),
+        new RESTCommand("PUT    /{application}/{store}          com.dell.doradus.core.UpdateObjectsCmd"),
+        new RESTCommand("PUT    /{application}/{store}?{params} com.dell.doradus.core.UpdateObjectsCmd"),
+        new RESTCommand("DELETE /{application}/{store}          com.dell.doradus.core.DeleteObjectsCmd"),
     });
 
     ///// Public methods
