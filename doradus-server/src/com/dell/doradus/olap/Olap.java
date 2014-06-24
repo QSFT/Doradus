@@ -129,10 +129,15 @@ public class Olap {
 	
 	
 	public String addSegment(String application, String shard, OlapBatch batch) {
+		return addSegment(application, shard, batch, true);
+	}
+	
+	public String addSegment(String application, String shard, OlapBatch batch, boolean overwrite) {
 		Timer t = new Timer();
 		ApplicationDefinition appDef = getApplicationDefinition(application);
 		VDirectory shardDir = m_root.getDirectoryCreate(application).getDirectoryCreate(shard);
-		String guid = Long.toString(System.currentTimeMillis(), 32) + "-" + UUID.randomUUID().toString();
+		String prefix = overwrite ? "" : ".before.";
+		String guid = prefix + Long.toString(System.currentTimeMillis(), 32) + "-" + UUID.randomUUID().toString();
 		VDirectory segmentDir = shardDir.getDirectory(guid);
 		batch.flushSegment(appDef, segmentDir);
 		segmentDir.create();
@@ -141,10 +146,15 @@ public class Olap {
 	}
 
 	public String addSegment(ApplicationDefinition appDef, String shard, DBObjectBatch batch) {
+		return addSegment(appDef, shard, batch, true);
+	}
+	
+	public String addSegment(ApplicationDefinition appDef, String shard, DBObjectBatch batch, boolean overwrite) {
 	    Timer t = new Timer();
 	    String application = appDef.getAppName();
 	    VDirectory shardDir = m_root.getDirectoryCreate(application).getDirectoryCreate(shard);
-	    String guid = Long.toString(System.currentTimeMillis(), 32) + "-" + UUID.randomUUID().toString();
+		String prefix = overwrite ? "" : ".before.";
+	    String guid = prefix + Long.toString(System.currentTimeMillis(), 32) + "-" + UUID.randomUUID().toString();
 	    VDirectory segmentDir = shardDir.getDirectory(guid);
         SegmentBuilder builder = new SegmentBuilder(appDef);
         builder.add(batch);
