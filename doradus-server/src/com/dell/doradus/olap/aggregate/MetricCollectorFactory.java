@@ -104,6 +104,16 @@ public class MetricCollectorFactory {
 		m_map.put("AVERAGE/TIMESTAMP", MetricCollectorAvg.AvgDate.class);
 		m_map.put("AVERAGE/FLOAT", MetricCollectorFloat.Avg.class);
 		m_map.put("AVERAGE/DOUBLE", MetricCollectorDouble.Avg.class);
+
+		m_map.put("DISTINCT/LINK", MetricCollectorDistinct.Id.class);
+		//m_map.put("DISTINCT/XLINK", MetricCollectorAvg.AvgNum.class);
+		m_map.put("DISTINCT/TEXT", MetricCollectorDistinct.Text.class);
+		m_map.put("DISTINCT/BOOLEAN", MetricCollectorDistinct.class);
+		m_map.put("DISTINCT/INTEGER", MetricCollectorDistinct.class);
+		m_map.put("DISTINCT/LONG", MetricCollectorDistinct.class);
+		m_map.put("DISTINCT/TIMESTAMP", MetricCollectorDistinct.class);
+		m_map.put("DISTINCT/FLOAT", MetricCollectorDistinct.class);
+		m_map.put("DISTINCT/DOUBLE", MetricCollectorDistinct.class);
 		
 	}
 
@@ -176,9 +186,8 @@ public class MetricCollectorFactory {
 		if(clazz == null) throw new IllegalArgumentException("Unsupported combination " + key);
 		try {
 			IMetricCollector collector = clazz.newInstance();
-			if(collector instanceof MetricCollectorText) {
-				((MetricCollectorText)collector).searcher = searcher;
-				((MetricCollectorText)collector).fieldDef = fieldDef;
+			if(collector instanceof IMetricCollectorWithContext) {
+				((IMetricCollectorWithContext)collector).setContext(searcher, fieldDef);
 			}
 			return collector;
 		} catch (Exception e) { throw new RuntimeException(e.getMessage(), e); }

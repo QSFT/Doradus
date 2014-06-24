@@ -97,7 +97,7 @@ public class MetricCounterFactory {
 			} else if(item.fieldDef.isXLinkInverse()) {
 				return new InverseXLinkMetricCounter(searcher, item.fieldDef, (XMetrics)item.xlinkContext);
 			} else {
-				if("MIN".equals(metric.function) || "MAX".equals(metric.function)) {
+				if("MIN".equals(metric.function) || "MAX".equals(metric.function) || "DISTINCT".equals(metric.function)) {
 					return new MetricCounter.FieldValue(filter, item.fieldDef, searcher);
 				}
 				else return new MetricCounter.FieldCount(filter, item.fieldDef, searcher);

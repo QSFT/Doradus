@@ -21,9 +21,14 @@ import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.IdSearcher;
 import com.dell.doradus.olap.store.ValueSearcher;
 
-public abstract class MetricCollectorText implements IMetricCollector {
-	public CubeSearcher searcher;
-	public FieldDefinition fieldDef;
+public abstract class MetricCollectorText implements IMetricCollectorWithContext {
+	protected CubeSearcher searcher;
+	protected FieldDefinition fieldDef;
+	
+	@Override public void setContext(CubeSearcher searcher, FieldDefinition fieldDefinition) {
+		this.searcher = searcher;
+		this.fieldDef = fieldDefinition;
+	}
 
 	public static class Min extends MetricCollectorText {
 		@Override public IMetricValue get() {
