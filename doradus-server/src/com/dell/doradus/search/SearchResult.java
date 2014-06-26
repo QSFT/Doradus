@@ -63,7 +63,7 @@ public class SearchResult implements Comparable<SearchResult> {
         		SearchResultList l = linkList.get(i);
         		FieldSet fs = fsList.get(i);
         		String linkKey = link.getKey();
-        		if(link.getValue().size() > 1 && fs.filter != null) {
+        		if(fs.filter != null) {
         			linkKey += ".WHERE(" + fs.filter + ")";
         		}
 	            UNode linkNode = docNode.addArrayNode(linkKey, "field");

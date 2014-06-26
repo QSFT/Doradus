@@ -46,7 +46,12 @@ public class BinaryQuery implements Query {
 	
 	@Override
 	public String toString() {
-		return String.format("%s %s %s", field, operation, value);
+		String opsign = null;
+		if(CONTAINS.equals(operation)) opsign = ":";
+		else if(EQUALS.equals(operation)) opsign = "=";
+		else if(REGEXP.equals(operation)) opsign = "~=";
+		else opsign = operation;
+		return String.format("%s%s%s", field, opsign, value);
 	}
 	
 	
