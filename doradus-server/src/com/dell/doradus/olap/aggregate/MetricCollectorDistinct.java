@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.dell.doradus.common.FieldDefinition;
+import com.dell.doradus.olap.collections.BdLongSet;
 import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.IdSearcher;
 import com.dell.doradus.olap.store.ValueSearcher;
@@ -41,21 +42,19 @@ public class MetricCollectorDistinct implements IMetricCollectorWithContext {
 	public static class Text extends MetricCollectorDistinct {
 		@Override public IMetricValue convert(IMetricValue value) {
 			MetricValueDistinct m = (MetricValueDistinct)value;
+			BdLongSet longValues = m.getLongValues();
 			Set<Object> values = m.getValues();
-			if(values.size() == 0) return m; 
-			List<Long> longValues = new ArrayList<Long>(values.size());
-			for(Object v: values) if(v instanceof Long) longValues.add((Long)v);
-			Collections.sort(longValues);
-			values.clear();
+			if(longValues.size() == 0) return m;
+			longValues.sort();
 			ValueSearcher vs = searcher.getValueSearcher(fieldDef.getTableName(), fieldDef.getName());
-			for(Long v: longValues) {
-				if(v == -1) {
-					values.add(null);
-					continue;
+			for(int i = 0; i < longValues.size(); i++) {
+				long l = longValues.get(i);
+				if(l >= 0) {
+					String text = vs.getValue((int)l).toString();
+					values.add(text);
 				}
-				String text = vs.getValue(v.intValue()).toString();
-				values.add(text);
 			}
+			longValues.clear();
 			return value;
 		}
 		
