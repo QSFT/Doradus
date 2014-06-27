@@ -37,7 +37,7 @@
                                 </field>
                             </doc>
                         </field>
-                        <field name="Folder.WHERE(FolderName eq abracadabara)"/>
+                        <field name="Folder.WHERE(FolderName=abracadabara)"/>
                     </doc>
                 </field>
             </doc>
@@ -74,7 +74,7 @@
                                 </field>
                             </doc>
                         </field>
-                        <field name="Folder.WHERE(FolderName eq abracadabara)"/>
+                        <field name="Folder.WHERE(FolderName=abracadabara)"/>
                     </doc>
                     <doc>
                         <field name="_ID">1003</field>
@@ -106,7 +106,7 @@
                                 </field>
                             </doc>
                         </field>
-                        <field name="Folder.WHERE(FolderName eq abracadabara)"/>
+                        <field name="Folder.WHERE(FolderName=abracadabara)"/>
                     </doc>
                 </field>
             </doc>
@@ -164,7 +164,7 @@
                                   }
                                }
                             ],
-                            "Folder.WHERE(FolderName eq abracadabara)":[]
+                            "Folder.WHERE(FolderName=abracadabara)":[]
                          }
                       }
                    ]
@@ -217,7 +217,7 @@
                                   }
                                }
                             ],
-                            "Folder.WHERE(FolderName eq abracadabara)":[]
+                            "Folder.WHERE(FolderName=abracadabara)":[]
                          }
                       },
                       {
@@ -263,7 +263,7 @@
                                   }
                                }
                             ],
-                            "Folder.WHERE(FolderName eq abracadabara)":[]
+                            "Folder.WHERE(FolderName=abracadabara)":[]
                          }
                       }
                    ]

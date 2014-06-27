@@ -2,18 +2,13 @@
 ~ AVERAGE ~
 ~~~~~~~~~~~
 *** Request
-    GET /Application/Table/_aggregate?m=AVERAGE(Number1)&q=*&f=Number&shards=shard
+    GET /Application/Table/_aggregate?m=AVERAGE(Number1)&q=*&f=Number
 *** Response: xml
     200 OK
     <results>
         <aggregate group="Number" metric="AVERAGE(Number1)" query="*"/>
         <totalobjects>1</totalobjects>
-        <totalgroups>1</totalgroups>
-        <groups>
-            <group>
-                <field name="Number">0.231</field>
-            </group>
-        </groups>
+        <summary/>
     </results>
 *** Response: json
     200 OK
@@ -25,16 +20,7 @@
              "group":"Number"
           },
           "totalobjects":"1",
-          "totalgroups":"1",
-          "groups":[
-             {
-                "group":{
-                   "field":{
-                      "Number":"0.231"
-                   }
-                }
-             }
-          ]
+          "summary":""
        }
     }
 

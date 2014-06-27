@@ -24,22 +24,22 @@
     <tables>
         <table name="Disk">
             <fields>
-                <field type="TEXT" name="DiskName" collection="false"/>
+                <field type="TEXT" name="DiskName" />
                 <field type="LINK" collection="true" inverse="Disk" table="Folder" name="Folder"/>
             </fields>
         </table>
         <table name="Folder">
             <fields>
-                <field type="TEXT" name="FolderName" collection="false"/>
+                <field type="TEXT" name="FolderName" />
                 <field type="LINK" collection="true" inverse="Folder" table="Disk" name="Disk"/>
                 <field type="LINK" collection="true" inverse="FileFolder" table="File" name="File"/>
             </fields>
         </table>
         <table name="File">
             <fields>
-                <field type="TEXT" name="FileName" collection="false"/>
+                <field type="TEXT" name="FileName" />
                 <field type="LINK" collection="true" inverse="File" table="Folder" name="FileFolder"/>
-                <field type="TEXT" name="FoldersList" collection="true"/>
+                <field type="TEXT" name="FoldersList"/>
             </fields>
         </table>
     </tables>
@@ -51,7 +51,7 @@
     <XML>
         <batch>
             <docs>
-          <doc _ID="1001">
+          <doc _ID="1001" >
             <field name="DiskName">Disk_A</field>
             <field name="Folder">
               <add>
@@ -60,7 +60,7 @@
               </add>
 	    </field>
           </doc>
-          <doc _ID="1002">
+          <doc _ID="1002" >
             <field name="DiskName">Disk_B</field>
             <field name="Folder">
               <add>
@@ -69,7 +69,7 @@
               </add>
 	    </field>
           </doc>
-          <doc _ID="1003">
+          <doc _ID="1003" >
             <field name="DiskName">Disk_C</field>
             <field name="Folder">
               <add>
@@ -82,7 +82,6 @@
         </batch>
     </XML>
     </POST>
-
     <POST path="Application/Folder">
     <XML>
         <batch>
@@ -175,7 +174,6 @@
         </batch>
     </XML>
     </POST>
-
     <POST path="Application/File">
     <XML>
         <batch>

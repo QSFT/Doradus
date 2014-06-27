@@ -1,0 +1,166 @@
+  ~~~~~~~~~~~~~~
+  ~~~ Spider ~~~
+  ~~~~~~~~~~~~~~
+  *** Request
+      GET /Application/Message/_query?q=COUNT(Participants.WHERE(Department.DEP:Support AND Text=Support)) > 0&f=Participants.Department.DEP,Participants.Text
+  *** Response: xml
+      200 OK
+      <results>
+          <docs>
+              <doc>
+                  <field name="_ID">2001</field>
+                  <field name="Participants">
+                      <doc>
+                          <field name="Text">Support</field>
+                          <field name="_ID">1001</field>
+                          <field name="Department">
+                              <doc>
+                                  <field name="DEP">Support Delivery</field>
+                                  <field name="_ID">3001</field>
+                              </doc>
+                              <doc>
+                                  <field name="DEP">Support Weapon</field>
+                                  <field name="_ID">3002</field>
+                              </doc>
+                          </field>
+                      </doc>
+                  </field>
+              </doc>
+              <doc>
+                  <field name="_ID">2002</field>
+                  <field name="Participants">
+                      <doc>
+                          <field name="Text">Support</field>
+                          <field name="_ID">1002</field>
+                          <field name="Department">
+                              <doc>
+                                  <field name="DEP">Support Weapon</field>
+                                  <field name="_ID">3002</field>
+                              </doc>
+                          </field>
+                      </doc>
+                  </field>
+              </doc>
+              <doc>
++                 <field name="_ID">2003</field>
++                 <field name="Participants">
++                     <doc>
++                         <field name="Text">Logistic</field>
++                         <field name="_ID">1003</field>
++                         <field name="Department">
++                             <doc>
++                                 <field name="DEP">Logistic Delivery</field>
++                                 <field name="_ID">3003</field>
++                             </doc>
++                         </field>
++                     </doc>
++                 </field>
++             </doc>
++             <doc>
++                 <field name="_ID">2004</field>
++                 <field name="Participants">
++                     <doc>
++                         <field name="Text">Logistic</field>
++                         <field name="_ID">1004</field>
++                         <field name="Department">
++                             <doc>
++                                 <field name="DEP">Logistic Weapon</field>
++                                 <field name="_ID">3004</field>
++                             </doc>
++                         </field>
++                     </doc>
++                 </field>
++             </doc>
++             <doc>
+                  <field name="_ID">2005</field>
+                  <field name="Participants">
+                      <doc>
+                          <field name="Text">Support</field>
+                          <field name="_ID">1005</field>
+                          <field name="Department">
+                              <doc>
+                                  <field name="DEP">Support Delivery</field>
+                                  <field name="_ID">3001</field>
+                              </doc>
+                              <doc>
+                                  <field name="DEP">Support Weapon</field>
+                                  <field name="_ID">3002</field>
+                              </doc>
+                          </field>
+                      </doc>
+                  </field>
+              </doc>
+              <doc>
+                  <field name="_ID">2006</field>
+                  <field name="Participants">
+                      <doc>
+                          <field name="Text">Support</field>
+                          <field name="_ID">1001</field>
+                          <field name="Department">
+                              <doc>
+                                  <field name="DEP">Support Delivery</field>
+                                  <field name="_ID">3001</field>
+                              </doc>
+                              <doc>
+                                  <field name="DEP">Support Weapon</field>
+                                  <field name="_ID">3002</field>
+                              </doc>
+                          </field>
+                      </doc>
+                      <doc>
+                          <field name="Text">Support</field>
+                          <field name="_ID">1006</field>
+                          <field name="Department">
+                              <doc>
+                                  <field name="DEP">Support Weapon</field>
+                                  <field name="_ID">3002</field>
+                              </doc>
+                          </field>
+                      </doc>
+                  </field>
+              </doc>
+          </docs>
+      </results>
+  
+  *** Request
+      GET /Application/Message/_query?q=COUNT(Participants.WHERE(Department.DEP:Support AND Text=Support)) > 1&f=Participants.Department.DEP,Participants.Text
+  *** Response: xml
+      200 OK
+      <results>
+          <docs>
+              <doc>
+                  <field name="_ID">2006</field>
+                  <field name="Participants">
+                      <doc>
+                          <field name="Text">Support</field>
+                          <field name="_ID">1001</field>
+                          <field name="Department">
+                              <doc>
+                                  <field name="DEP">Support Delivery</field>
+                                  <field name="_ID">3001</field>
+                              </doc>
+                              <doc>
+                                  <field name="DEP">Support Weapon</field>
+                                  <field name="_ID">3002</field>
+                              </doc>
+                          </field>
+                      </doc>
+                      <doc>
+                          <field name="Text">Support</field>
+                          <field name="_ID">1006</field>
+                          <field name="Department">
+                              <doc>
+                                  <field name="DEP">Support Weapon</field>
+                                  <field name="_ID">3002</field>
+                              </doc>
+                          </field>
+                      </doc>
+                  </field>
+              </doc>
+          </docs>
+      </results>
+  
+  *** Request
+      DELETE /_applications/Application/ApplicationKey
+  *** Response: 
+      200 OK

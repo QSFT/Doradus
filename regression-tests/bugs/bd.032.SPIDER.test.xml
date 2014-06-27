@@ -2,9 +2,9 @@
 <!--
     ******************************************************
     Key: BD-32, Bug
-    Summary: 
-            AVERAGE(float) should return null for empty 
-	    result 
+    Summary: Floating point precision
+             When a fetch a double whose value is "1E-10", 
+             it comes back as 0.0. 
     ******************************************************
 -->
 <CONNECT/>
@@ -16,7 +16,8 @@
 	<application name="Application">
     <key>ApplicationKey</key>
     <options>
-	<option name="StorageService">OLAPService</option>
+		<option name="AutoTables">false</option>
+		<option name="StorageService">SpiderService</option>
     </options>
     <tables>
         <table name="Table">
@@ -30,11 +31,11 @@
     </XML>
     </POST>
 
-    <POST path="Application/shard">
+    <POST path="Application/Table">
     <XML>
       <batch>
         <docs>
-          <doc _ID="1001" _table="Table">
+          <doc _ID="1001" >
             <field name="Number">.231</field>
             <field name="int">1000</field>
           </doc>
@@ -43,13 +44,11 @@
     </XML>
     </POST>
 
-    <POST path="Application/_shards/shard"/>
-
     <enable-output/>
     <echo>~~~~~~~~~~~</echo>
     <echo>~ AVERAGE ~</echo>
     <echo>~~~~~~~~~~~</echo>
-    <AGGREGATE path="Application/Table" q="*" m="AVERAGE(Number1)" f="Number" shards="shard"/>
+    <AGGREGATE path="Application/Table" q="*" m="AVERAGE(Number1)" f="Number" />
 
 <DELETE path="_applications/Application/ApplicationKey"/>
 

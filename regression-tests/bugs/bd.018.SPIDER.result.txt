@@ -34,7 +34,7 @@
                         </field>
                     </doc>
                 </field>
-                <field name="Folder.WHERE(IsSender eq True)">
+                <field name="Folder.WHERE(IsSender=True)">
                     <doc>
                         <field name="_ID">2001</field>
                         <field name="File">
@@ -49,7 +49,7 @@
                         </field>
                     </doc>
                 </field>
-                <field name="Folder.WHERE(IsSender eq False)">
+                <field name="Folder.WHERE(IsSender=False)">
                     <doc>
                         <field name="_ID">2004</field>
                         <field name="File">
@@ -95,7 +95,7 @@
                         </field>
                     </doc>
                 </field>
-                <field name="Folder.WHERE(IsSender eq True)">
+                <field name="Folder.WHERE(IsSender=True)">
                     <doc>
                         <field name="_ID">2005</field>
                         <field name="File">
@@ -110,7 +110,7 @@
                         </field>
                     </doc>
                 </field>
-                <field name="Folder.WHERE(IsSender eq False)">
+                <field name="Folder.WHERE(IsSender=False)">
                     <doc>
                         <field name="_ID">2002</field>
                         <field name="File">
@@ -156,7 +156,7 @@
                         </field>
                     </doc>
                 </field>
-                <field name="Folder.WHERE(IsSender eq True)">
+                <field name="Folder.WHERE(IsSender=True)">
                     <doc>
                         <field name="_ID">2003</field>
                         <field name="File">
@@ -171,7 +171,7 @@
                         </field>
                     </doc>
                 </field>
-                <field name="Folder.WHERE(IsSender eq False)">
+                <field name="Folder.WHERE(IsSender=False)">
                     <doc>
                         <field name="_ID">2006</field>
                         <field name="File">
@@ -237,7 +237,7 @@
                          }
                       }
                    ],
-                   "Folder.WHERE(IsSender eq True)":[
+                   "Folder.WHERE(IsSender=True)":[
                       {
                          "doc":{
                             "_ID":"2001",
@@ -258,7 +258,7 @@
                          }
                       }
                    ],
-                   "Folder.WHERE(IsSender eq False)":[
+                   "Folder.WHERE(IsSender=False)":[
                       {
                          "doc":{
                             "_ID":"2004",
@@ -324,7 +324,7 @@
                          }
                       }
                    ],
-                   "Folder.WHERE(IsSender eq True)":[
+                   "Folder.WHERE(IsSender=True)":[
                       {
                          "doc":{
                             "_ID":"2005",
@@ -345,7 +345,7 @@
                          }
                       }
                    ],
-                   "Folder.WHERE(IsSender eq False)":[
+                   "Folder.WHERE(IsSender=False)":[
                       {
                          "doc":{
                             "_ID":"2002",
@@ -411,7 +411,7 @@
                          }
                       }
                    ],
-                   "Folder.WHERE(IsSender eq True)":[
+                   "Folder.WHERE(IsSender=True)":[
                       {
                          "doc":{
                             "_ID":"2003",
@@ -432,7 +432,7 @@
                          }
                       }
                    ],
-                   "Folder.WHERE(IsSender eq False)":[
+                   "Folder.WHERE(IsSender=False)":[
                       {
                          "doc":{
                             "_ID":"2006",
