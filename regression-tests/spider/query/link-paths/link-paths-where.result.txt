@@ -733,7 +733,7 @@
         <docs>
             <doc>
                 <field name="_ID">2001</field>
-                <field name="Participants">
+                <field name="Participants.WHERE(Any(Department).WHERE(DEP:Support))">
                     <doc>
                         <field name="_ID">1001</field>
                     </doc>
@@ -741,7 +741,7 @@
             </doc>
             <doc>
                 <field name="_ID">2002</field>
-                <field name="Participants">
+                <field name="Participants.WHERE(Any(Department).WHERE(DEP:Support))">
                     <doc>
                         <field name="_ID">1002</field>
                     </doc>
@@ -749,15 +749,15 @@
             </doc>
             <doc>
                 <field name="_ID">2003</field>
-                <field name="Participants"/>
+                <field name="Participants.WHERE(Any(Department).WHERE(DEP:Support))"/>
             </doc>
             <doc>
                 <field name="_ID">2004</field>
-                <field name="Participants"/>
+                <field name="Participants.WHERE(Any(Department).WHERE(DEP:Support))"/>
             </doc>
             <doc>
                 <field name="_ID">2005</field>
-                <field name="Participants">
+                <field name="Participants.WHERE(Any(Department).WHERE(DEP:Support))">
                     <doc>
                         <field name="_ID">1005</field>
                     </doc>
@@ -765,7 +765,7 @@
             </doc>
             <doc>
                 <field name="_ID">2006</field>
-                <field name="Participants">
+                <field name="Participants.WHERE(Any(Department).WHERE(DEP:Support))">
                     <doc>
                         <field name="_ID">1006</field>
                     </doc>
@@ -781,7 +781,7 @@
              {
                 "doc":{
                    "_ID":"2001",
-                   "Participants":[
+                   "Participants.WHERE(Any(Department).WHERE(DEP:Support))":[
                       {
                          "doc":{
                             "_ID":"1001"
@@ -793,7 +793,7 @@
              {
                 "doc":{
                    "_ID":"2002",
-                   "Participants":[
+                   "Participants.WHERE(Any(Department).WHERE(DEP:Support))":[
                       {
                          "doc":{
                             "_ID":"1002"
@@ -805,19 +805,19 @@
              {
                 "doc":{
                    "_ID":"2003",
-                   "Participants":[]
+                   "Participants.WHERE(Any(Department).WHERE(DEP:Support))":[]
                 }
              },
              {
                 "doc":{
                    "_ID":"2004",
-                   "Participants":[]
+                   "Participants.WHERE(Any(Department).WHERE(DEP:Support))":[]
                 }
              },
              {
                 "doc":{
                    "_ID":"2005",
-                   "Participants":[
+                   "Participants.WHERE(Any(Department).WHERE(DEP:Support))":[
                       {
                          "doc":{
                             "_ID":"1005"
@@ -829,7 +829,7 @@
              {
                 "doc":{
                    "_ID":"2006",
-                   "Participants":[
+                   "Participants.WHERE(Any(Department).WHERE(DEP:Support))":[
                       {
                          "doc":{
                             "_ID":"1006"
@@ -853,7 +853,7 @@
                 <field name="Participants">
                     <doc>
                         <field name="_ID">1001</field>
-                        <field name="Department">
+                        <field name="Department.WHERE(DEP:Support)">
                             <doc>
                                 <field name="_ID">3001</field>
                             </doc>
@@ -866,7 +866,7 @@
                 <field name="Participants">
                     <doc>
                         <field name="_ID">1002</field>
-                        <field name="Department">
+                        <field name="Department.WHERE(DEP:Support)">
                             <doc>
                                 <field name="_ID">3002</field>
                             </doc>
@@ -879,7 +879,7 @@
                 <field name="Participants">
                     <doc>
                         <field name="_ID">1003</field>
-                        <field name="Department"/>
+                        <field name="Department.WHERE(DEP:Support)"/>
                     </doc>
                 </field>
             </doc>
@@ -888,7 +888,7 @@
                 <field name="Participants">
                     <doc>
                         <field name="_ID">1004</field>
-                        <field name="Department"/>
+                        <field name="Department.WHERE(DEP:Support)"/>
                     </doc>
                 </field>
             </doc>
@@ -897,7 +897,7 @@
                 <field name="Participants">
                     <doc>
                         <field name="_ID">1005</field>
-                        <field name="Department">
+                        <field name="Department.WHERE(DEP:Support)">
                             <doc>
                                 <field name="_ID">3001</field>
                             </doc>
@@ -910,7 +910,7 @@
                 <field name="Participants">
                     <doc>
                         <field name="_ID">1006</field>
-                        <field name="Department">
+                        <field name="Department.WHERE(DEP:Support)">
                             <doc>
                                 <field name="_ID">3002</field>
                             </doc>
@@ -932,7 +932,7 @@
                       {
                          "doc":{
                             "_ID":"1001",
-                            "Department":[
+                            "Department.WHERE(DEP:Support)":[
                                {
                                   "doc":{
                                      "_ID":"3001"
@@ -951,7 +951,7 @@
                       {
                          "doc":{
                             "_ID":"1002",
-                            "Department":[
+                            "Department.WHERE(DEP:Support)":[
                                {
                                   "doc":{
                                      "_ID":"3002"
@@ -970,7 +970,7 @@
                       {
                          "doc":{
                             "_ID":"1003",
-                            "Department":[]
+                            "Department.WHERE(DEP:Support)":[]
                          }
                       }
                    ]
@@ -983,7 +983,7 @@
                       {
                          "doc":{
                             "_ID":"1004",
-                            "Department":[]
+                            "Department.WHERE(DEP:Support)":[]
                          }
                       }
                    ]
@@ -996,7 +996,7 @@
                       {
                          "doc":{
                             "_ID":"1005",
-                            "Department":[
+                            "Department.WHERE(DEP:Support)":[
                                {
                                   "doc":{
                                      "_ID":"3001"
@@ -1015,7 +1015,7 @@
                       {
                          "doc":{
                             "_ID":"1006",
-                            "Department":[
+                            "Department.WHERE(DEP:Support)":[
                                {
                                   "doc":{
                                      "_ID":"3002"
@@ -1771,7 +1771,7 @@
         <docs>
             <doc>
                 <field name="_ID">2001</field>
-                <field name="Participants">
+                <field name="Participants.WHERE(Any(Department).WHERE(DEP:Support))">
                     <doc>
                         <field name="_ID">1001</field>
                     </doc>
@@ -1779,7 +1779,7 @@
             </doc>
             <doc>
                 <field name="_ID">2002</field>
-                <field name="Participants">
+                <field name="Participants.WHERE(Any(Department).WHERE(DEP:Support))">
                     <doc>
                         <field name="_ID">1002</field>
                     </doc>
@@ -1787,15 +1787,15 @@
             </doc>
             <doc>
                 <field name="_ID">2003</field>
-                <field name="Participants"/>
+                <field name="Participants.WHERE(Any(Department).WHERE(DEP:Support))"/>
             </doc>
             <doc>
                 <field name="_ID">2004</field>
-                <field name="Participants"/>
+                <field name="Participants.WHERE(Any(Department).WHERE(DEP:Support))"/>
             </doc>
             <doc>
                 <field name="_ID">2005</field>
-                <field name="Participants">
+                <field name="Participants.WHERE(Any(Department).WHERE(DEP:Support))">
                     <doc>
                         <field name="_ID">1005</field>
                     </doc>
@@ -1803,7 +1803,7 @@
             </doc>
             <doc>
                 <field name="_ID">2006</field>
-                <field name="Participants">
+                <field name="Participants.WHERE(Any(Department).WHERE(DEP:Support))">
                     <doc>
                         <field name="_ID">1006</field>
                     </doc>
@@ -1819,7 +1819,7 @@
              {
                 "doc":{
                    "_ID":"2001",
-                   "Participants":[
+                   "Participants.WHERE(Any(Department).WHERE(DEP:Support))":[
                       {
                          "doc":{
                             "_ID":"1001"
@@ -1831,7 +1831,7 @@
              {
                 "doc":{
                    "_ID":"2002",
-                   "Participants":[
+                   "Participants.WHERE(Any(Department).WHERE(DEP:Support))":[
                       {
                          "doc":{
                             "_ID":"1002"
@@ -1843,19 +1843,19 @@
              {
                 "doc":{
                    "_ID":"2003",
-                   "Participants":[]
+                   "Participants.WHERE(Any(Department).WHERE(DEP:Support))":[]
                 }
              },
              {
                 "doc":{
                    "_ID":"2004",
-                   "Participants":[]
+                   "Participants.WHERE(Any(Department).WHERE(DEP:Support))":[]
                 }
              },
              {
                 "doc":{
                    "_ID":"2005",
-                   "Participants":[
+                   "Participants.WHERE(Any(Department).WHERE(DEP:Support))":[
                       {
                          "doc":{
                             "_ID":"1005"
@@ -1867,7 +1867,7 @@
              {
                 "doc":{
                    "_ID":"2006",
-                   "Participants":[
+                   "Participants.WHERE(Any(Department).WHERE(DEP:Support))":[
                       {
                          "doc":{
                             "_ID":"1006"
@@ -1891,7 +1891,7 @@
                 <field name="Participants">
                     <doc>
                         <field name="_ID">1001</field>
-                        <field name="Department">
+                        <field name="Department.WHERE(DEP:Support)">
                             <doc>
                                 <field name="_ID">3001</field>
                             </doc>
@@ -1904,7 +1904,7 @@
                 <field name="Participants">
                     <doc>
                         <field name="_ID">1002</field>
-                        <field name="Department">
+                        <field name="Department.WHERE(DEP:Support)">
                             <doc>
                                 <field name="_ID">3002</field>
                             </doc>
@@ -1917,7 +1917,7 @@
                 <field name="Participants">
                     <doc>
                         <field name="_ID">1003</field>
-                        <field name="Department"/>
+                        <field name="Department.WHERE(DEP:Support)"/>
                     </doc>
                 </field>
             </doc>
@@ -1926,7 +1926,7 @@
                 <field name="Participants">
                     <doc>
                         <field name="_ID">1004</field>
-                        <field name="Department"/>
+                        <field name="Department.WHERE(DEP:Support)"/>
                     </doc>
                 </field>
             </doc>
@@ -1935,7 +1935,7 @@
                 <field name="Participants">
                     <doc>
                         <field name="_ID">1005</field>
-                        <field name="Department">
+                        <field name="Department.WHERE(DEP:Support)">
                             <doc>
                                 <field name="_ID">3001</field>
                             </doc>
@@ -1948,7 +1948,7 @@
                 <field name="Participants">
                     <doc>
                         <field name="_ID">1006</field>
-                        <field name="Department">
+                        <field name="Department.WHERE(DEP:Support)">
                             <doc>
                                 <field name="_ID">3002</field>
                             </doc>
@@ -1970,7 +1970,7 @@
                       {
                          "doc":{
                             "_ID":"1001",
-                            "Department":[
+                            "Department.WHERE(DEP:Support)":[
                                {
                                   "doc":{
                                      "_ID":"3001"
@@ -1989,7 +1989,7 @@
                       {
                          "doc":{
                             "_ID":"1002",
-                            "Department":[
+                            "Department.WHERE(DEP:Support)":[
                                {
                                   "doc":{
                                      "_ID":"3002"
@@ -2008,7 +2008,7 @@
                       {
                          "doc":{
                             "_ID":"1003",
-                            "Department":[]
+                            "Department.WHERE(DEP:Support)":[]
                          }
                       }
                    ]
@@ -2021,7 +2021,7 @@
                       {
                          "doc":{
                             "_ID":"1004",
-                            "Department":[]
+                            "Department.WHERE(DEP:Support)":[]
                          }
                       }
                    ]
@@ -2034,7 +2034,7 @@
                       {
                          "doc":{
                             "_ID":"1005",
-                            "Department":[
+                            "Department.WHERE(DEP:Support)":[
                                {
                                   "doc":{
                                      "_ID":"3001"
@@ -2053,7 +2053,7 @@
                       {
                          "doc":{
                             "_ID":"1006",
-                            "Department":[
+                            "Department.WHERE(DEP:Support)":[
                                {
                                   "doc":{
                                      "_ID":"3002"
