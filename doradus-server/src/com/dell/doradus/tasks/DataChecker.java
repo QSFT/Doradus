@@ -484,7 +484,11 @@ public class DataChecker extends DoradusTask {
 				if (fieldName.charAt(0) == '~') {
 					// Link field
 					if (!SKIP_LINKS) {
-						collectLinkColumn(tabDef, shardPrefix, objectID, fieldName);
+						try {
+							collectLinkColumn(tabDef, shardPrefix, objectID, fieldName);
+						} catch (Exception x) {
+							// Couldn't create a link; skip the field
+						}
 					}
 				} else {
 					// Scalar field
