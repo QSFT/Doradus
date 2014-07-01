@@ -61,65 +61,69 @@ public class TaskDBUtils {
 	 */
 	public static TaskTable getTasksSchedule() {
 		TaskTable taskTable = new TaskTable();
-        for (ApplicationDefinition appDef : SchemaService.instance().getAllApplications()) {
-        	String appName = appDef.getAppName();
-        	String appDefaultSchedule = ServerConfig.getInstance().default_schedule;
-        	Map<String, String> tableDefSchedules = new HashMap<String, String>();
-        	Map<String, String> taskSchedules = new HashMap<String, String>();
-        	for (ScheduleDefinition schedDef : appDef.getSchedules().values()) {
-        		SchedType schedType = schedDef.getType();
-    			if (SchedType.APP_DEFAULT == schedType) {
-    				appDefaultSchedule = schedDef.getSchedSpec();
-    			} else if (SchedType.TABLE_DEFAULT == schedType) {
-    				tableDefSchedules.put(schedDef.getTableName(), schedDef.getSchedSpec());
-    			} else {
-    				String taskId = schedDef.getTableName();
-    				if (taskId == null) taskId = "*";
-    				taskId += '/' + schedType.getName();
-    				if (schedDef.getTaskDeclaration() != null) {
-    					taskId += '/' + schedDef.getTaskDeclaration();
-    				}
-    				taskSchedules.put(taskId, schedDef.getSchedSpec());
-    			}
-        	}
-        	
-        	// Define undefined schedules as default values
-        	for (Map.Entry<String, String> schedule : taskSchedules.entrySet()) {
-        		if (schedule.getValue() == null) {
-        			String tabName = schedule.getKey().split("/")[0];
-        			String defSched = tableDefSchedules.get(tabName);
-        			if (defSched == null) {
-        				defSched = appDefaultSchedule;
-        			}
-        			schedule.setValue(defSched);
-        		}
-        	}
-        	
-        	// Add to tasks table
-        	for (Map.Entry<String, String> schedule : taskSchedules.entrySet()) {
-        		
-    			String schedValue = schedule.getValue();
-    			String taskId = schedule.getKey();
-        		if (schedValue != null) {
-        			// Check status
-        			TaskStatus status = getTaskStatus(appName, taskId);
-        			if (status.isSchedulingSuspended() || status.isExecuting()) {
-        				continue;
-        			}
-        			
-        			try {
-        				SchedulingPattern pattern = new SchedulingPattern(schedValue);
-        				DoradusTask task = DoradusTask.createTask(appName, taskId);
-            			if (task != null) {
-            				taskTable.add(pattern, task);
-            			}
-        			} catch (InvalidPatternException e) {
-        				// Just skip the task
-        			}
-        		}
-        	}
-        }
-        
+		try {
+			for (ApplicationDefinition appDef : SchemaService.instance().getAllApplications()) {
+				String appName = appDef.getAppName();
+				String appDefaultSchedule = ServerConfig.getInstance().default_schedule;
+				Map<String, String> tableDefSchedules = new HashMap<String, String>();
+				Map<String, String> taskSchedules = new HashMap<String, String>();
+				for (ScheduleDefinition schedDef : appDef.getSchedules().values()) {
+					SchedType schedType = schedDef.getType();
+					if (SchedType.APP_DEFAULT == schedType) {
+						appDefaultSchedule = schedDef.getSchedSpec();
+					} else if (SchedType.TABLE_DEFAULT == schedType) {
+						tableDefSchedules.put(schedDef.getTableName(), schedDef.getSchedSpec());
+					} else {
+						String taskId = schedDef.getTableName();
+						if (taskId == null) taskId = "*";
+						taskId += '/' + schedType.getName();
+						if (schedDef.getTaskDeclaration() != null) {
+							taskId += '/' + schedDef.getTaskDeclaration();
+						}
+						taskSchedules.put(taskId, schedDef.getSchedSpec());
+					}
+				}
+
+				// Define undefined schedules as default values
+				for (Map.Entry<String, String> schedule : taskSchedules.entrySet()) {
+					if (schedule.getValue() == null) {
+						String tabName = schedule.getKey().split("/")[0];
+						String defSched = tableDefSchedules.get(tabName);
+						if (defSched == null) {
+							defSched = appDefaultSchedule;
+						}
+						schedule.setValue(defSched);
+					}
+				}
+
+				// Add to tasks table
+				for (Map.Entry<String, String> schedule : taskSchedules.entrySet()) {
+
+					String schedValue = schedule.getValue();
+					String taskId = schedule.getKey();
+					if (schedValue != null) {
+						// Check status
+						TaskStatus status = getTaskStatus(appName, taskId);
+						if (status.isSchedulingSuspended() || status.isExecuting()) {
+							continue;
+						}
+
+						try {
+							SchedulingPattern pattern = new SchedulingPattern(schedValue);
+							DoradusTask task = DoradusTask.createTask(appName, taskId);
+							if (task != null) {
+								taskTable.add(pattern, task);
+							}
+						} catch (InvalidPatternException e) {
+							// Just skip the task
+						}
+					}
+				}
+			}
+		} catch (Exception x) {
+			// Task table is incomplete; just return what was already added.
+		}
+
 		return taskTable;
 	}	// getTasksSchedule
 	

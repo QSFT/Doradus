@@ -459,10 +459,26 @@ public class TestProcessorReflector
     @IXTypeReflector(name = "POST")
     public class XPost extends XPathAndBody implements IXTask
     {
+        private Boolean m_overwrite = null;
+        @IXSetterReflector(name = "overwrite")
+        public void setOverwrite(boolean overwrite) {
+            m_overwrite = overwrite;
+        }
+
         public void Run(Node xmlNode)
         throws Exception
         {
-            executeRequest("POST", getPath(), getBody(), getBodyFormat());
+            StringBuilder uri = new StringBuilder();
+            uri.append(getPath());
+
+            String delim = "?";
+
+            if (m_overwrite != null) {
+                uri.append(delim + "overwrite=" + m_overwrite);
+                delim = "&";
+            }
+
+            executeRequest("POST", uri.toString(), getBody(), getBodyFormat());
         }
     }
 
@@ -478,10 +494,26 @@ public class TestProcessorReflector
     @IXTypeReflector(name = "PUT")
     public class XPut extends XPathAndBody implements IXTask
     {
+        private Boolean m_overwrite = null;
+        @IXSetterReflector(name = "overwrite")
+        public void setOverwrite(boolean overwrite) {
+            m_overwrite = overwrite;
+        }
+
         public void Run(Node xmlNode)
         throws Exception
         {
-            executeRequest("PUT", getPath(), getBody(), getBodyFormat());
+            StringBuilder uri = new StringBuilder();
+            uri.append(getPath());
+
+            String delim = "?";
+
+            if (m_overwrite != null) {
+                uri.append(delim + "overwrite=" + m_overwrite);
+                delim = "&";
+            }
+
+            executeRequest("PUT", uri.toString(), getBody(), getBodyFormat());
         }
     }
 
