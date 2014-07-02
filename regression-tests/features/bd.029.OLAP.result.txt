@@ -1,0 +1,501 @@
+~~~~~~~~~~~~~~
+~ XML format ~
+~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+~ Create applications ~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Bool_sngl">True</field>
+                <field name="Number_sngl">2000</field>
+                <field name="SendDate_sngl">2000-01-01 00:00:00</field>
+                <field name="Text_sngl">Text_sngl Original</field>
+                <field name="_ID">0001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Bool_sngl">True</field>
+                <field name="Number_sngl">2000</field>
+                <field name="SendDate_sngl">2000-01-01 00:00:00</field>
+                <field name="Text_sngl">Text_sngl Original</field>
+                <field name="_ID">0002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Bool_sngl":"True",
+                   "Number_sngl":"2000",
+                   "SendDate_sngl":"2000-01-01 00:00:00",
+                   "Text_sngl":"Text_sngl Original",
+                   "_ID":"0001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Bool_sngl":"True",
+                   "Number_sngl":"2000",
+                   "SendDate_sngl":"2000-01-01 00:00:00",
+                   "Text_sngl":"Text_sngl Original",
+                   "_ID":"0002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Modify data, overwrite=false ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Check that data has been modified correctly ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Bool_sngl">True</field>
+                <field name="Number_sngl">2000</field>
+                <field name="SendDate_sngl">2000-01-01 00:00:00</field>
+                <field name="Text_sngl">Text_sngl Original</field>
+                <field name="_ID">0001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Bool_sngl">True</field>
+                <field name="Number_sngl">2000</field>
+                <field name="SendDate_sngl">2000-01-01 00:00:00</field>
+                <field name="Text_sngl">Text_sngl Original</field>
+                <field name="_ID">0002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Bool_sngl":"True",
+                   "Number_sngl":"2000",
+                   "SendDate_sngl":"2000-01-01 00:00:00",
+                   "Text_sngl":"Text_sngl Original",
+                   "_ID":"0001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Bool_sngl":"True",
+                   "Number_sngl":"2000",
+                   "SendDate_sngl":"2000-01-01 00:00:00",
+                   "Text_sngl":"Text_sngl Original",
+                   "_ID":"0002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Modify data, overwrite=true  ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Check that data has been modified correctly ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Bool_sngl">False</field>
+                <field name="Number_sngl">3000</field>
+                <field name="SendDate_sngl">2010-01-01 00:00:00</field>
+                <field name="Text_sngl">Text_sngl Updated</field>
+                <field name="_ID">0001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Bool_sngl">False</field>
+                <field name="Number_sngl">3000</field>
+                <field name="SendDate_sngl">2010-01-01 00:00:00</field>
+                <field name="Text_sngl">Text_sngl Updated</field>
+                <field name="_ID">0002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Bool_sngl":"False",
+                   "Number_sngl":"3000",
+                   "SendDate_sngl":"2010-01-01 00:00:00",
+                   "Text_sngl":"Text_sngl Updated",
+                   "_ID":"0001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Bool_sngl":"False",
+                   "Number_sngl":"3000",
+                   "SendDate_sngl":"2010-01-01 00:00:00",
+                   "Text_sngl":"Text_sngl Updated",
+                   "_ID":"0002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Modify data, overwrite is not defined ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Check that data has been modified correctly ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Bool_sngl">True</field>
+                <field name="Number_sngl">2000</field>
+                <field name="SendDate_sngl">2000-01-01 00:00:00</field>
+                <field name="Text_sngl">Text_sngl Original</field>
+                <field name="_ID">0001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Bool_sngl">True</field>
+                <field name="Number_sngl">2000</field>
+                <field name="SendDate_sngl">2000-01-01 00:00:00</field>
+                <field name="Text_sngl">Text_sngl Original</field>
+                <field name="_ID">0002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Bool_sngl":"True",
+                   "Number_sngl":"2000",
+                   "SendDate_sngl":"2000-01-01 00:00:00",
+                   "Text_sngl":"Text_sngl Original",
+                   "_ID":"0001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Bool_sngl":"True",
+                   "Number_sngl":"2000",
+                   "SendDate_sngl":"2000-01-01 00:00:00",
+                   "Text_sngl":"Text_sngl Original",
+                   "_ID":"0002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~
+~ JSON format ~
+~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+~ Create applications ~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Bool_sngl">True</field>
+                <field name="Number_sngl">2000</field>
+                <field name="SendDate_sngl">2000-01-01 00:00:00</field>
+                <field name="Text_sngl">Text_sngl Original</field>
+                <field name="_ID">0001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Bool_sngl">True</field>
+                <field name="Number_sngl">2000</field>
+                <field name="SendDate_sngl">2000-01-01 00:00:00</field>
+                <field name="Text_sngl">Text_sngl Original</field>
+                <field name="_ID">0002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Bool_sngl":"True",
+                   "Number_sngl":"2000",
+                   "SendDate_sngl":"2000-01-01 00:00:00",
+                   "Text_sngl":"Text_sngl Original",
+                   "_ID":"0001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Bool_sngl":"True",
+                   "Number_sngl":"2000",
+                   "SendDate_sngl":"2000-01-01 00:00:00",
+                   "Text_sngl":"Text_sngl Original",
+                   "_ID":"0002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Modify data, overwrite=false ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Check that data has been modified correctly ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Bool_sngl">True</field>
+                <field name="Number_sngl">2000</field>
+                <field name="SendDate_sngl">2000-01-01 00:00:00</field>
+                <field name="Text_sngl">Text_sngl Original</field>
+                <field name="_ID">0001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Bool_sngl">True</field>
+                <field name="Number_sngl">2000</field>
+                <field name="SendDate_sngl">2000-01-01 00:00:00</field>
+                <field name="Text_sngl">Text_sngl Original</field>
+                <field name="_ID">0002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Bool_sngl":"True",
+                   "Number_sngl":"2000",
+                   "SendDate_sngl":"2000-01-01 00:00:00",
+                   "Text_sngl":"Text_sngl Original",
+                   "_ID":"0001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Bool_sngl":"True",
+                   "Number_sngl":"2000",
+                   "SendDate_sngl":"2000-01-01 00:00:00",
+                   "Text_sngl":"Text_sngl Original",
+                   "_ID":"0002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Modify data, overwrite=true  ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Check that data has been modified correctly ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Bool_sngl">False</field>
+                <field name="Number_sngl">3000</field>
+                <field name="SendDate_sngl">2010-01-01 00:00:00</field>
+                <field name="Text_sngl">Text_sngl Updated</field>
+                <field name="_ID">0001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Bool_sngl">False</field>
+                <field name="Number_sngl">3000</field>
+                <field name="SendDate_sngl">2010-01-01 00:00:00</field>
+                <field name="Text_sngl">Text_sngl Updated</field>
+                <field name="_ID">0002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Bool_sngl":"False",
+                   "Number_sngl":"3000",
+                   "SendDate_sngl":"2010-01-01 00:00:00",
+                   "Text_sngl":"Text_sngl Updated",
+                   "_ID":"0001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Bool_sngl":"False",
+                   "Number_sngl":"3000",
+                   "SendDate_sngl":"2010-01-01 00:00:00",
+                   "Text_sngl":"Text_sngl Updated",
+                   "_ID":"0002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Modify data, overwrite is not defined ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Check that data has been modified correctly ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Bool_sngl">True</field>
+                <field name="Number_sngl">2000</field>
+                <field name="SendDate_sngl">2000-01-01 00:00:00</field>
+                <field name="Text_sngl">Text_sngl Original</field>
+                <field name="_ID">0001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Bool_sngl">True</field>
+                <field name="Number_sngl">2000</field>
+                <field name="SendDate_sngl">2000-01-01 00:00:00</field>
+                <field name="Text_sngl">Text_sngl Original</field>
+                <field name="_ID">0002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Bool_sngl":"True",
+                   "Number_sngl":"2000",
+                   "SendDate_sngl":"2000-01-01 00:00:00",
+                   "Text_sngl":"Text_sngl Original",
+                   "_ID":"0001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Bool_sngl":"True",
+                   "Number_sngl":"2000",
+                   "SendDate_sngl":"2000-01-01 00:00:00",
+                   "Text_sngl":"Text_sngl Original",
+                   "_ID":"0002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
