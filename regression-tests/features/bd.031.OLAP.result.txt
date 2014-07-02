@@ -21,62 +21,117 @@
         <totalobjects>5</totalobjects>
         <docs>
             <doc>
-                <field name="City">Moscow</field>
-                <field name="Country">Russia</field>
-                <field name="CreateDate">2011-04-05 12:32:08</field>
-                <field name="MV">
-                    <value>One</value>
-                    <value>Two</value>
+                <field name="Bool">
+                    <value>True</value>
                 </field>
-                <field name="People">11980000</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2002-01-01 00:00:00</value>
+                    <value>2003-01-01 00:00:00</value>
+                </field>
+                <field name="MV">
+                    <value>14</value>
+                    <value>15</value>
+                    <value>One</value>
+                    <value>Three</value>
+                </field>
+                <field name="People">
+                    <value>1000</value>
+                    <value>11</value>
+                    <value>210</value>
+                    <value>2590</value>
+                </field>
                 <field name="_ID">2001</field>
                 <field name="_shard">shard</field>
             </doc>
             <doc>
-                <field name="City">Washington</field>
                 <field name="Country">USA</field>
-                <field name="CreateDate">2011-04-05 22:12:14</field>
-                <field name="MV">
-                    <value>Four</value>
-                    <value>Three</value>
+                <field name="CreateDate">
+                    <value>2010-01-01 00:00:00</value>
+                    <value>2011-01-01 00:00:00</value>
                 </field>
-                <field name="People">632323</field>
+                <field name="MV">
+                    <value>Three</value>
+                    <value>Two</value>
+                </field>
+                <field name="People">
+                    <value>1000</value>
+                    <value>11</value>
+                    <value>11000</value>
+                    <value>210</value>
+                    <value>2590</value>
+                </field>
                 <field name="_ID">2002</field>
                 <field name="_shard">shard</field>
             </doc>
             <doc>
-                <field name="City">New York</field>
+                <field name="Bool">
+                    <value>False</value>
+                </field>
                 <field name="Country">USA</field>
-                <field name="CreateDate">2011-04-15 10:20:01</field>
+                <field name="CreateDate">
+                    <value>2020-01-01 00:00:00</value>
+                    <value>2021-01-01 00:00:00</value>
+                    <value>2022-01-01 00:00:00</value>
+                </field>
                 <field name="MV">
                     <value>Five</value>
+                    <value>Four</value>
                     <value>Six</value>
                 </field>
-                <field name="People">8245000</field>
+                <field name="People">
+                    <value>10</value>
+                    <value>25</value>
+                </field>
                 <field name="_ID">2003</field>
                 <field name="_shard">shard</field>
             </doc>
             <doc>
-                <field name="City">Saint-Petersburg</field>
+                <field name="Bool">
+                    <value>True</value>
+                </field>
                 <field name="Country">Russia</field>
-                <field name="CreateDate">2011-06-22 09:05:20</field>
+                <field name="CreateDate">
+                    <value>2030-01-01 00:00:00</value>
+                    <value>2031-01-01 00:00:00</value>
+                    <value>2032-01-01 00:00:00</value>
+                    <value>2033-01-01 00:00:00</value>
+                    <value>2034-01-01 00:00:00</value>
+                </field>
                 <field name="MV">
                     <value>Eight</value>
+                    <value>Nine</value>
                     <value>Seven</value>
+                    <value>Ten</value>
                 </field>
-                <field name="People">4880000</field>
+                <field name="People">
+                    <value>4410</value>
+                    <value>4425</value>
+                    <value>4475</value>
+                </field>
                 <field name="_ID">2004</field>
                 <field name="_shard">shard</field>
             </doc>
             <doc>
-                <field name="City">Novgorod</field>
-                <field name="Country">Russia</field>
-                <field name="CreateDate">2012-12-30 15:29:04</field>
-                <field name="MV">
-                    <value>Nine</value>
-                    <value>Ten</value>
+                <field name="Bool">
+                    <value>False</value>
+                    <value>True</value>
                 </field>
-                <field name="People">1255000</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">
+                    <value>6012-01-01 00:00:00</value>
+                </field>
+                <field name="MV">
+                    <value>11</value>
+                    <value>12</value>
+                    <value>13</value>
+                    <value>14</value>
+                    <value>15</value>
+                </field>
+                <field name="People">
+                    <value>1255000</value>
+                </field>
                 <field name="_ID">2005</field>
                 <field name="_shard">shard</field>
             </doc>
@@ -90,70 +145,125 @@
           "docs":[
              {
                 "doc":{
-                   "City":"Moscow",
-                   "Country":"Russia",
-                   "CreateDate":"2011-04-05 12:32:08",
-                   "MV":[
-                      "One",
-                      "Two"
+                   "Bool":[
+                      "True"
                    ],
-                   "People":"11980000",
+                   "Country":"Russia",
+                   "CreateDate":[
+                      "2001-01-01 00:00:00",
+                      "2002-01-01 00:00:00",
+                      "2003-01-01 00:00:00"
+                   ],
+                   "MV":[
+                      "14",
+                      "15",
+                      "One",
+                      "Three"
+                   ],
+                   "People":[
+                      "1000",
+                      "11",
+                      "210",
+                      "2590"
+                   ],
                    "_ID":"2001",
                    "_shard":"shard"
                 }
              },
              {
                 "doc":{
-                   "City":"Washington",
                    "Country":"USA",
-                   "CreateDate":"2011-04-05 22:12:14",
-                   "MV":[
-                      "Four",
-                      "Three"
+                   "CreateDate":[
+                      "2010-01-01 00:00:00",
+                      "2011-01-01 00:00:00"
                    ],
-                   "People":"632323",
+                   "MV":[
+                      "Three",
+                      "Two"
+                   ],
+                   "People":[
+                      "1000",
+                      "11",
+                      "11000",
+                      "210",
+                      "2590"
+                   ],
                    "_ID":"2002",
                    "_shard":"shard"
                 }
              },
              {
                 "doc":{
-                   "City":"New York",
+                   "Bool":[
+                      "False"
+                   ],
                    "Country":"USA",
-                   "CreateDate":"2011-04-15 10:20:01",
+                   "CreateDate":[
+                      "2020-01-01 00:00:00",
+                      "2021-01-01 00:00:00",
+                      "2022-01-01 00:00:00"
+                   ],
                    "MV":[
                       "Five",
+                      "Four",
                       "Six"
                    ],
-                   "People":"8245000",
+                   "People":[
+                      "10",
+                      "25"
+                   ],
                    "_ID":"2003",
                    "_shard":"shard"
                 }
              },
              {
                 "doc":{
-                   "City":"Saint-Petersburg",
+                   "Bool":[
+                      "True"
+                   ],
                    "Country":"Russia",
-                   "CreateDate":"2011-06-22 09:05:20",
+                   "CreateDate":[
+                      "2030-01-01 00:00:00",
+                      "2031-01-01 00:00:00",
+                      "2032-01-01 00:00:00",
+                      "2033-01-01 00:00:00",
+                      "2034-01-01 00:00:00"
+                   ],
                    "MV":[
                       "Eight",
-                      "Seven"
+                      "Nine",
+                      "Seven",
+                      "Ten"
                    ],
-                   "People":"4880000",
+                   "People":[
+                      "4410",
+                      "4425",
+                      "4475"
+                   ],
                    "_ID":"2004",
                    "_shard":"shard"
                 }
              },
              {
                 "doc":{
-                   "City":"Novgorod",
-                   "Country":"Russia",
-                   "CreateDate":"2012-12-30 15:29:04",
-                   "MV":[
-                      "Nine",
-                      "Ten"
+                   "Bool":[
+                      "False",
+                      "True"
                    ],
-                   "People":"1255000",
+                   "Country":"Russia",
+                   "CreateDate":[
+                      "6012-01-01 00:00:00"
+                   ],
+                   "MV":[
+                      "11",
+                      "12",
+                      "13",
+                      "14",
+                      "15"
+                   ],
+                   "People":[
+                      "1255000"
+                   ],
                    "_ID":"2005",
                    "_shard":"shard"
                 }
@@ -175,15 +285,15 @@
     <results>
         <aggregate group="Country" metric="DISTINCT(People)" query="*"/>
         <totalobjects>5</totalobjects>
-        <summary>5</summary>
+        <summary>11</summary>
         <totalgroups>2</totalgroups>
         <groups>
             <group>
-                <metric>3</metric>
+                <metric>8</metric>
                 <field name="Country">Russia</field>
             </group>
             <group>
-                <metric>2</metric>
+                <metric>7</metric>
                 <field name="Country">USA</field>
             </group>
         </groups>
@@ -198,12 +308,12 @@
              "group":"Country"
           },
           "totalobjects":"5",
-          "summary":"5",
+          "summary":"11",
           "totalgroups":"2",
           "groups":[
              {
                 "group":{
-                   "metric":"3",
+                   "metric":"8",
                    "field":{
                       "Country":"Russia"
                    }
@@ -211,7 +321,7 @@
              },
              {
                 "group":{
-                   "metric":"2",
+                   "metric":"7",
                    "field":{
                       "Country":"USA"
                    }
@@ -228,7 +338,7 @@
     <results>
         <aggregate metric="DISTINCT(People)" query="*"/>
         <totalobjects>5</totalobjects>
-        <value>5</value>
+        <value>11</value>
     </results>
 *** Response: json
     200 OK
@@ -239,7 +349,7 @@
              "query":"*"
           },
           "totalobjects":"5",
-          "value":"5"
+          "value":"11"
        }
     }
 
@@ -253,15 +363,15 @@
     <results>
         <aggregate group="Country" metric="DISTINCT(CreateDate)" query="*"/>
         <totalobjects>5</totalobjects>
-        <summary>5</summary>
+        <summary>14</summary>
         <totalgroups>2</totalgroups>
         <groups>
             <group>
-                <metric>3</metric>
+                <metric>9</metric>
                 <field name="Country">Russia</field>
             </group>
             <group>
-                <metric>2</metric>
+                <metric>5</metric>
                 <field name="Country">USA</field>
             </group>
         </groups>
@@ -276,12 +386,12 @@
              "group":"Country"
           },
           "totalobjects":"5",
-          "summary":"5",
+          "summary":"14",
           "totalgroups":"2",
           "groups":[
              {
                 "group":{
-                   "metric":"3",
+                   "metric":"9",
                    "field":{
                       "Country":"Russia"
                    }
@@ -289,7 +399,7 @@
              },
              {
                 "group":{
-                   "metric":"2",
+                   "metric":"5",
                    "field":{
                       "Country":"USA"
                    }
@@ -306,7 +416,7 @@
     <results>
         <aggregate metric="DISTINCT(CreateDate)" query="*"/>
         <totalobjects>5</totalobjects>
-        <value>5</value>
+        <value>14</value>
     </results>
 *** Response: json
     200 OK
@@ -317,29 +427,29 @@
              "query":"*"
           },
           "totalobjects":"5",
-          "value":"5"
+          "value":"14"
        }
     }
 
-~~~~~~~~~~~~~
-~ STRING SV ~
-~~~~~~~~~~~~~
+~~~~~~~~~~~
+~ BOOLEAN ~
+~~~~~~~~~~~
 *** Request
-    GET /Application/Table/_aggregate?m=DISTINCT(City)&f=Country&shards=shard
+    GET /Application/Table/_aggregate?m=DISTINCT(Bool)&f=Country&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="Country" metric="DISTINCT(City)" query="*"/>
+        <aggregate group="Country" metric="DISTINCT(Bool)" query="*"/>
         <totalobjects>5</totalobjects>
-        <summary>5</summary>
+        <summary>2</summary>
         <totalgroups>2</totalgroups>
         <groups>
             <group>
-                <metric>3</metric>
+                <metric>2</metric>
                 <field name="Country">Russia</field>
             </group>
             <group>
-                <metric>2</metric>
+                <metric>1</metric>
                 <field name="Country">USA</field>
             </group>
         </groups>
@@ -349,17 +459,17 @@
     {
        "results":{
           "aggregate":{
-             "metric":"DISTINCT(City)",
+             "metric":"DISTINCT(Bool)",
              "query":"*",
              "group":"Country"
           },
           "totalobjects":"5",
-          "summary":"5",
+          "summary":"2",
           "totalgroups":"2",
           "groups":[
              {
                 "group":{
-                   "metric":"3",
+                   "metric":"2",
                    "field":{
                       "Country":"Russia"
                    }
@@ -367,7 +477,7 @@
              },
              {
                 "group":{
-                   "metric":"2",
+                   "metric":"1",
                    "field":{
                       "Country":"USA"
                    }
@@ -378,11 +488,11 @@
     }
 
 *** Request
-    GET /Application/Table/_aggregate?m=DISTINCT(Country)&shards=shard
+    GET /Application/Table/_aggregate?m=DISTINCT(Bool)&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate metric="DISTINCT(Country)" query="*"/>
+        <aggregate metric="DISTINCT(Bool)" query="*"/>
         <totalobjects>5</totalobjects>
         <value>2</value>
     </results>
@@ -391,7 +501,7 @@
     {
        "results":{
           "aggregate":{
-             "metric":"DISTINCT(Country)",
+             "metric":"DISTINCT(Bool)",
              "query":"*"
           },
           "totalobjects":"5",
@@ -409,15 +519,15 @@
     <results>
         <aggregate group="Country" metric="DISTINCT(MV)" query="*"/>
         <totalobjects>5</totalobjects>
-        <summary>10</summary>
+        <summary>15</summary>
         <totalgroups>2</totalgroups>
         <groups>
             <group>
-                <metric>6</metric>
+                <metric>11</metric>
                 <field name="Country">Russia</field>
             </group>
             <group>
-                <metric>4</metric>
+                <metric>5</metric>
                 <field name="Country">USA</field>
             </group>
         </groups>
@@ -432,12 +542,12 @@
              "group":"Country"
           },
           "totalobjects":"5",
-          "summary":"10",
+          "summary":"15",
           "totalgroups":"2",
           "groups":[
              {
                 "group":{
-                   "metric":"6",
+                   "metric":"11",
                    "field":{
                       "Country":"Russia"
                    }
@@ -445,7 +555,7 @@
              },
              {
                 "group":{
-                   "metric":"4",
+                   "metric":"5",
                    "field":{
                       "Country":"USA"
                    }
@@ -462,7 +572,7 @@
     <results>
         <aggregate metric="DISTINCT(MV)" query="*"/>
         <totalobjects>5</totalobjects>
-        <value>10</value>
+        <value>15</value>
     </results>
 *** Response: json
     200 OK
@@ -473,7 +583,7 @@
              "query":"*"
           },
           "totalobjects":"5",
-          "value":"10"
+          "value":"15"
        }
     }
 
@@ -505,62 +615,117 @@
         <totalobjects>5</totalobjects>
         <docs>
             <doc>
-                <field name="City">Moscow</field>
-                <field name="Country">Russia</field>
-                <field name="CreateDate">2011-04-05 12:32:08</field>
-                <field name="MV">
-                    <value>One</value>
-                    <value>Two</value>
+                <field name="Bool">
+                    <value>True</value>
                 </field>
-                <field name="People">11980000</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2002-01-01 00:00:00</value>
+                    <value>2003-01-01 00:00:00</value>
+                </field>
+                <field name="MV">
+                    <value>14</value>
+                    <value>15</value>
+                    <value>One</value>
+                    <value>Three</value>
+                </field>
+                <field name="People">
+                    <value>1000</value>
+                    <value>11</value>
+                    <value>210</value>
+                    <value>2590</value>
+                </field>
                 <field name="_ID">2001</field>
                 <field name="_shard">shard</field>
             </doc>
             <doc>
-                <field name="City">Washington</field>
                 <field name="Country">USA</field>
-                <field name="CreateDate">2011-04-05 22:12:14</field>
-                <field name="MV">
-                    <value>Four</value>
-                    <value>Three</value>
+                <field name="CreateDate">
+                    <value>2010-01-01 00:00:00</value>
+                    <value>2011-01-01 00:00:00</value>
                 </field>
-                <field name="People">632323</field>
+                <field name="MV">
+                    <value>Three</value>
+                    <value>Two</value>
+                </field>
+                <field name="People">
+                    <value>1000</value>
+                    <value>11</value>
+                    <value>11000</value>
+                    <value>210</value>
+                    <value>2590</value>
+                </field>
                 <field name="_ID">2002</field>
                 <field name="_shard">shard</field>
             </doc>
             <doc>
-                <field name="City">New York</field>
+                <field name="Bool">
+                    <value>False</value>
+                </field>
                 <field name="Country">USA</field>
-                <field name="CreateDate">2011-04-15 10:20:01</field>
+                <field name="CreateDate">
+                    <value>2020-01-01 00:00:00</value>
+                    <value>2021-01-01 00:00:00</value>
+                    <value>2022-01-01 00:00:00</value>
+                </field>
                 <field name="MV">
                     <value>Five</value>
+                    <value>Four</value>
                     <value>Six</value>
                 </field>
-                <field name="People">8245000</field>
+                <field name="People">
+                    <value>10</value>
+                    <value>25</value>
+                </field>
                 <field name="_ID">2003</field>
                 <field name="_shard">shard</field>
             </doc>
             <doc>
-                <field name="City">Saint-Petersburg</field>
+                <field name="Bool">
+                    <value>True</value>
+                </field>
                 <field name="Country">Russia</field>
-                <field name="CreateDate">2011-06-22 09:05:20</field>
+                <field name="CreateDate">
+                    <value>2030-01-01 00:00:00</value>
+                    <value>2031-01-01 00:00:00</value>
+                    <value>2032-01-01 00:00:00</value>
+                    <value>2033-01-01 00:00:00</value>
+                    <value>2034-01-01 00:00:00</value>
+                </field>
                 <field name="MV">
                     <value>Eight</value>
+                    <value>Nine</value>
                     <value>Seven</value>
+                    <value>Ten</value>
                 </field>
-                <field name="People">4880000</field>
+                <field name="People">
+                    <value>4410</value>
+                    <value>4425</value>
+                    <value>4475</value>
+                </field>
                 <field name="_ID">2004</field>
                 <field name="_shard">shard</field>
             </doc>
             <doc>
-                <field name="City">Novgorod</field>
-                <field name="Country">Russia</field>
-                <field name="CreateDate">2012-12-30 15:29:04</field>
-                <field name="MV">
-                    <value>Nine</value>
-                    <value>Ten</value>
+                <field name="Bool">
+                    <value>False</value>
+                    <value>True</value>
                 </field>
-                <field name="People">1255000</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">
+                    <value>6012-01-01 00:00:00</value>
+                </field>
+                <field name="MV">
+                    <value>11</value>
+                    <value>12</value>
+                    <value>13</value>
+                    <value>14</value>
+                    <value>15</value>
+                </field>
+                <field name="People">
+                    <value>1255000</value>
+                </field>
                 <field name="_ID">2005</field>
                 <field name="_shard">shard</field>
             </doc>
@@ -574,70 +739,125 @@
           "docs":[
              {
                 "doc":{
-                   "City":"Moscow",
-                   "Country":"Russia",
-                   "CreateDate":"2011-04-05 12:32:08",
-                   "MV":[
-                      "One",
-                      "Two"
+                   "Bool":[
+                      "True"
                    ],
-                   "People":"11980000",
+                   "Country":"Russia",
+                   "CreateDate":[
+                      "2001-01-01 00:00:00",
+                      "2002-01-01 00:00:00",
+                      "2003-01-01 00:00:00"
+                   ],
+                   "MV":[
+                      "14",
+                      "15",
+                      "One",
+                      "Three"
+                   ],
+                   "People":[
+                      "1000",
+                      "11",
+                      "210",
+                      "2590"
+                   ],
                    "_ID":"2001",
                    "_shard":"shard"
                 }
              },
              {
                 "doc":{
-                   "City":"Washington",
                    "Country":"USA",
-                   "CreateDate":"2011-04-05 22:12:14",
-                   "MV":[
-                      "Four",
-                      "Three"
+                   "CreateDate":[
+                      "2010-01-01 00:00:00",
+                      "2011-01-01 00:00:00"
                    ],
-                   "People":"632323",
+                   "MV":[
+                      "Three",
+                      "Two"
+                   ],
+                   "People":[
+                      "1000",
+                      "11",
+                      "11000",
+                      "210",
+                      "2590"
+                   ],
                    "_ID":"2002",
                    "_shard":"shard"
                 }
              },
              {
                 "doc":{
-                   "City":"New York",
+                   "Bool":[
+                      "False"
+                   ],
                    "Country":"USA",
-                   "CreateDate":"2011-04-15 10:20:01",
+                   "CreateDate":[
+                      "2020-01-01 00:00:00",
+                      "2021-01-01 00:00:00",
+                      "2022-01-01 00:00:00"
+                   ],
                    "MV":[
                       "Five",
+                      "Four",
                       "Six"
                    ],
-                   "People":"8245000",
+                   "People":[
+                      "10",
+                      "25"
+                   ],
                    "_ID":"2003",
                    "_shard":"shard"
                 }
              },
              {
                 "doc":{
-                   "City":"Saint-Petersburg",
+                   "Bool":[
+                      "True"
+                   ],
                    "Country":"Russia",
-                   "CreateDate":"2011-06-22 09:05:20",
+                   "CreateDate":[
+                      "2030-01-01 00:00:00",
+                      "2031-01-01 00:00:00",
+                      "2032-01-01 00:00:00",
+                      "2033-01-01 00:00:00",
+                      "2034-01-01 00:00:00"
+                   ],
                    "MV":[
                       "Eight",
-                      "Seven"
+                      "Nine",
+                      "Seven",
+                      "Ten"
                    ],
-                   "People":"4880000",
+                   "People":[
+                      "4410",
+                      "4425",
+                      "4475"
+                   ],
                    "_ID":"2004",
                    "_shard":"shard"
                 }
              },
              {
                 "doc":{
-                   "City":"Novgorod",
-                   "Country":"Russia",
-                   "CreateDate":"2012-12-30 15:29:04",
-                   "MV":[
-                      "Nine",
-                      "Ten"
+                   "Bool":[
+                      "False",
+                      "True"
                    ],
-                   "People":"1255000",
+                   "Country":"Russia",
+                   "CreateDate":[
+                      "6012-01-01 00:00:00"
+                   ],
+                   "MV":[
+                      "11",
+                      "12",
+                      "13",
+                      "14",
+                      "15"
+                   ],
+                   "People":[
+                      "1255000"
+                   ],
                    "_ID":"2005",
                    "_shard":"shard"
                 }
@@ -659,15 +879,15 @@
     <results>
         <aggregate group="Country" metric="DISTINCT(People)" query="*"/>
         <totalobjects>5</totalobjects>
-        <summary>5</summary>
+        <summary>11</summary>
         <totalgroups>2</totalgroups>
         <groups>
             <group>
-                <metric>3</metric>
+                <metric>8</metric>
                 <field name="Country">Russia</field>
             </group>
             <group>
-                <metric>2</metric>
+                <metric>7</metric>
                 <field name="Country">USA</field>
             </group>
         </groups>
@@ -682,12 +902,12 @@
              "group":"Country"
           },
           "totalobjects":"5",
-          "summary":"5",
+          "summary":"11",
           "totalgroups":"2",
           "groups":[
              {
                 "group":{
-                   "metric":"3",
+                   "metric":"8",
                    "field":{
                       "Country":"Russia"
                    }
@@ -695,7 +915,7 @@
              },
              {
                 "group":{
-                   "metric":"2",
+                   "metric":"7",
                    "field":{
                       "Country":"USA"
                    }
@@ -712,7 +932,7 @@
     <results>
         <aggregate metric="DISTINCT(People)" query="*"/>
         <totalobjects>5</totalobjects>
-        <value>5</value>
+        <value>11</value>
     </results>
 *** Response: json
     200 OK
@@ -723,7 +943,7 @@
              "query":"*"
           },
           "totalobjects":"5",
-          "value":"5"
+          "value":"11"
        }
     }
 
@@ -737,15 +957,15 @@
     <results>
         <aggregate group="Country" metric="DISTINCT(CreateDate)" query="*"/>
         <totalobjects>5</totalobjects>
-        <summary>5</summary>
+        <summary>14</summary>
         <totalgroups>2</totalgroups>
         <groups>
             <group>
-                <metric>3</metric>
+                <metric>9</metric>
                 <field name="Country">Russia</field>
             </group>
             <group>
-                <metric>2</metric>
+                <metric>5</metric>
                 <field name="Country">USA</field>
             </group>
         </groups>
@@ -760,12 +980,12 @@
              "group":"Country"
           },
           "totalobjects":"5",
-          "summary":"5",
+          "summary":"14",
           "totalgroups":"2",
           "groups":[
              {
                 "group":{
-                   "metric":"3",
+                   "metric":"9",
                    "field":{
                       "Country":"Russia"
                    }
@@ -773,7 +993,7 @@
              },
              {
                 "group":{
-                   "metric":"2",
+                   "metric":"5",
                    "field":{
                       "Country":"USA"
                    }
@@ -790,7 +1010,7 @@
     <results>
         <aggregate metric="DISTINCT(CreateDate)" query="*"/>
         <totalobjects>5</totalobjects>
-        <value>5</value>
+        <value>14</value>
     </results>
 *** Response: json
     200 OK
@@ -801,29 +1021,29 @@
              "query":"*"
           },
           "totalobjects":"5",
-          "value":"5"
+          "value":"14"
        }
     }
 
-~~~~~~~~~~~~~
-~ STRING SV ~
-~~~~~~~~~~~~~
+~~~~~~~~~~~
+~ BOOLEAN ~
+~~~~~~~~~~~
 *** Request
-    GET /Application/Table/_aggregate?m=DISTINCT(City)&f=Country&shards=shard
+    GET /Application/Table/_aggregate?m=DISTINCT(Bool)&f=Country&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="Country" metric="DISTINCT(City)" query="*"/>
+        <aggregate group="Country" metric="DISTINCT(Bool)" query="*"/>
         <totalobjects>5</totalobjects>
-        <summary>5</summary>
+        <summary>2</summary>
         <totalgroups>2</totalgroups>
         <groups>
             <group>
-                <metric>3</metric>
+                <metric>2</metric>
                 <field name="Country">Russia</field>
             </group>
             <group>
-                <metric>2</metric>
+                <metric>1</metric>
                 <field name="Country">USA</field>
             </group>
         </groups>
@@ -833,17 +1053,17 @@
     {
        "results":{
           "aggregate":{
-             "metric":"DISTINCT(City)",
+             "metric":"DISTINCT(Bool)",
              "query":"*",
              "group":"Country"
           },
           "totalobjects":"5",
-          "summary":"5",
+          "summary":"2",
           "totalgroups":"2",
           "groups":[
              {
                 "group":{
-                   "metric":"3",
+                   "metric":"2",
                    "field":{
                       "Country":"Russia"
                    }
@@ -851,7 +1071,7 @@
              },
              {
                 "group":{
-                   "metric":"2",
+                   "metric":"1",
                    "field":{
                       "Country":"USA"
                    }
@@ -862,11 +1082,11 @@
     }
 
 *** Request
-    GET /Application/Table/_aggregate?m=DISTINCT(Country)&shards=shard
+    GET /Application/Table/_aggregate?m=DISTINCT(Bool)&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate metric="DISTINCT(Country)" query="*"/>
+        <aggregate metric="DISTINCT(Bool)" query="*"/>
         <totalobjects>5</totalobjects>
         <value>2</value>
     </results>
@@ -875,7 +1095,7 @@
     {
        "results":{
           "aggregate":{
-             "metric":"DISTINCT(Country)",
+             "metric":"DISTINCT(Bool)",
              "query":"*"
           },
           "totalobjects":"5",
@@ -893,15 +1113,15 @@
     <results>
         <aggregate group="Country" metric="DISTINCT(MV)" query="*"/>
         <totalobjects>5</totalobjects>
-        <summary>10</summary>
+        <summary>15</summary>
         <totalgroups>2</totalgroups>
         <groups>
             <group>
-                <metric>6</metric>
+                <metric>11</metric>
                 <field name="Country">Russia</field>
             </group>
             <group>
-                <metric>4</metric>
+                <metric>5</metric>
                 <field name="Country">USA</field>
             </group>
         </groups>
@@ -916,12 +1136,12 @@
              "group":"Country"
           },
           "totalobjects":"5",
-          "summary":"10",
+          "summary":"15",
           "totalgroups":"2",
           "groups":[
              {
                 "group":{
-                   "metric":"6",
+                   "metric":"11",
                    "field":{
                       "Country":"Russia"
                    }
@@ -929,7 +1149,7 @@
              },
              {
                 "group":{
-                   "metric":"4",
+                   "metric":"5",
                    "field":{
                       "Country":"USA"
                    }
@@ -946,7 +1166,7 @@
     <results>
         <aggregate metric="DISTINCT(MV)" query="*"/>
         <totalobjects>5</totalobjects>
-        <value>10</value>
+        <value>15</value>
     </results>
 *** Response: json
     200 OK
@@ -957,7 +1177,7 @@
              "query":"*"
           },
           "totalobjects":"5",
-          "value":"10"
+          "value":"15"
        }
     }
 

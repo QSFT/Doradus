@@ -60,11 +60,11 @@ Summary - OLAP: Implement DISTINCT metric function
     <AGGREGATE path="Application/Table" m="DISTINCT(CreateDate)" f="Country" shards="shard"/>
     <AGGREGATE path="Application/Table" m="DISTINCT(CreateDate)" shards="shard"/>
 
-    <echo>~~~~~~~~~~~~~</echo>
-    <echo>~ STRING SV ~</echo>
-    <echo>~~~~~~~~~~~~~</echo>
-    <AGGREGATE path="Application/Table" m="DISTINCT(City)" f="Country" shards="shard" />
-    <AGGREGATE path="Application/Table" m="DISTINCT(Country)" shards="shard" />
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ BOOLEAN ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Table" m="DISTINCT(Bool)" f="Country" shards="shard" />
+    <AGGREGATE path="Application/Table" m="DISTINCT(Bool)" shards="shard" />
 
     <echo>~~~~~~~~~~~~~</echo>
     <echo>~ STRING MV ~</echo>
