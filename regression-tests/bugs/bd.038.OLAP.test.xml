@@ -1,0 +1,149 @@
+<TEST>
+<!--
+    ********************************************************
+    Key: BD-13, Bug
+    Summary: Link Paths. COUNT function returns wrong result 
+	     then is combined with WHERE filter
+    ********************************************************
+ -->
+<CONNECT/>
+<DEFINE name="response.format" value="xml|json"/>
+<DEFINE name="response.format" value="xml"/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+    
+    <POST path="_applications">
+    <XML>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+	<option name="StorageService">OLAPService</option>
+            </options>
+            <tables>
+        <table name="Message">
+            <fields>
+                <field name="Size" type="LONG"/>
+                <field name="Participants" type="LINK" table="MessageParticipant" inverse="Message"/>
+                <field name="Status" type="TEXT"/>
+            </fields>
+        </table>
+        <table name="MessageParticipant">
+            <fields>
+                <field name="Text" type="TEXT"/>
+                <field name="Message" type="LINK" table="Message" inverse="Participants"/>
+                <field name="Department" type="LINK" table="Department" inverse="Support"/>
+            </fields>
+        </table>
+        <table name="Department">
+            <fields>
+                <field name="Support" type="LINK" table="MessageParticipant" inverse="Department"/>
+                <field name="DEP" type="TEXT"/>
+            </fields>
+        </table>
+            </tables>
+        </application>
+    </XML>
+    </POST>
+
+    <POST path="Application/shard">
+    <XML>
+        <batch>
+            <docs>
+          <doc _ID="1001" _table="MessageParticipant">
+            <field name="Text">Support</field>
+            <field name="Message"><add><value>2001</value></add></field>
+            <field name="Department"><add><value>3001</value><value>3002</value></add></field>
+          </doc>
+          <doc _ID="1002" _table="MessageParticipant">
+            <field name="Text">Support</field>
+            <field name="Message"><add><value>2002</value></add></field>
+            <field name="Department"><add><value>3002</value></add></field>
+          </doc>
+          <doc _ID="1003" _table="MessageParticipant">
+            <field name="Text">Logistic</field>
+            <field name="Message"><add><value>2003</value></add></field>
+            <field name="Department"><add><value>3003</value></add></field>
+          </doc>
+          <doc _ID="1004" _table="MessageParticipant">
+            <field name="Text">Logistic</field>
+            <field name="Message"><add><value>2004</value></add></field>
+            <field name="Department"><add><value>3004</value></add></field>
+          </doc>
+          <doc _ID="1005" _table="MessageParticipant">
+            <field name="Text">Support</field>
+            <field name="Message"><add><value>2005</value></add></field>
+            <field name="Department"><add><value>3001</value><value>3002</value></add></field>
+          </doc>
+          <doc _ID="1006" _table="MessageParticipant">
+            <field name="Text">Support</field>
+            <field name="Message"><add><value>2006</value></add></field>
+            <field name="Department"><add><value>3002</value></add></field>
+          </doc>
+          <doc _ID="1007" _table="MessageParticipant">
+            <field name="Text">Logistic</field>
+            <field name="Message"><add><value>2003</value></add></field>
+            <field name="Department"><add><value>3003</value></add></field>
+          </doc>
+          <doc _ID="2001" _table="Message">
+            <field name="Status">Work in Support</field>
+            <field name="Participants"><add><value>1001</value></add></field>
+            <field name="Size">1001</field>
+          </doc>
+          <doc _ID="2002" _table="Message">
+            <field name="Status">Work in Support</field>
+            <field name="Participants"><add><value>1002</value></add></field>
+            <field name="Size">1002</field>
+          </doc>
+          <doc _ID="2003" _table="Message">
+            <field name="Status">Work in Logistic</field>
+            <field name="Participants"><add><value>1003</value><value>1007</value></add></field>
+            <field name="Size">1003</field>
+          </doc>
+          <doc _ID="2004" _table="Message">
+            <field name="Status">Work in Logistic</field>
+            <field name="Participants"><add><value>1004</value></add></field>
+            <field name="Size">1004</field>
+          </doc>
+          <doc _ID="2005" _table="Message">
+            <field name="Status">Work in Support</field>
+            <field name="Participants"><add><value>1005</value></add></field>
+            <field name="Size">1005</field>
+          </doc>
+          <doc _ID="2006" _table="Message">
+            <field name="Status">Work in Support</field>
+            <field name="Participants"><add><value>1006</value><value>1001</value></add></field>
+            <field name="Size">1006</field>
+          </doc>
+          <doc _ID="3001" _table="Department">
+            <field name="DEP">Support Delivery</field>
+            <field name="Support"><add><value>1001</value></add></field>
+          </doc>
+          <doc _ID="3002" _table="Department">
+            <field name="DEP">Support Weapon</field>
+            <field name="Support"><add><value>1002</value></add></field>
+          </doc>
+          <doc _ID="3003" _table="Department">
+            <field name="DEP">Logistic Delivery</field>
+            <field name="Support"><add><value>1003</value></add></field>
+          </doc>
+          <doc _ID="3004" _table="Department">
+            <field name="DEP">Logistic Weapon</field>
+            <field name="Support"><add><value>1004</value></add></field>
+          </doc>
+            </docs>
+        </batch>
+    </XML>
+    </POST>
+    <POST path="Application/_shards/shard"/>
+    <enable-output/>
+
+    <QUERY path="Application/Message" f="Participants.WHERE(Department.DEP:Logistic AND Text=Logistic)" q="COUNT(Participants) > 1" shards="shard" />
+<!--    <QUERY path="Application/Message" q="COUNT(Participants.WHERE(Department.DEP:Logistic AND Text=Logistic)) > 1" f="Participants.Department.DEP,Participants.Text" shards="shard" />
+
+    <QUERY path="Application/Message" q="COUNT(Participants.WHERE(Department.DEP:Support AND Text=Support)) > 0" f="Participants.Department.DEP,Participants.Text" shards="shard" />
+    <QUERY path="Application/Message" q="COUNT(Participants.WHERE(Department.DEP:Support AND Text=Support)) > 1" f="Participants.Department.DEP,Participants.Text" shards="shard" />
+-->
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+<DISCONNECT/>
+</TEST>
