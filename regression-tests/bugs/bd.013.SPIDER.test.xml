@@ -83,6 +83,11 @@
             <field name="Message"><add><value>2006</value></add></field>
             <field name="Department"><add><value>3002</value></add></field>
           </doc>
+          <doc _ID="1007" >
+            <field name="Text">Logistic</field>
+            <field name="Message"><add><value>2003</value></add></field>
+            <field name="Department"><add><value>3003</value></add></field>
+          </doc>
             </docs>
         </batch>
     </XML>
@@ -103,7 +108,7 @@
           </doc>
           <doc _ID="2003" >
             <field name="Status">Work in Logistic</field>
-            <field name="Participants"><add><value>1003</value></add></field>
+            <field name="Participants"><add><value>1003</value><value>1007</value></add></field>
             <field name="Size">1003</field>
           </doc>
           <doc _ID="2004" >
@@ -151,6 +156,9 @@
     </XML>
     </POST>
     <enable-output/>
+
+    <QUERY path="Application/Message" q="COUNT(Participants.WHERE(Department.DEP:Logistic AND Text=Logistic)) > 0" f="Participants.Department.DEP,Participants.Text"/>
+    <QUERY path="Application/Message" q="COUNT(Participants.WHERE(Department.DEP:Logistic AND Text=Logistic)) > 1" f="Participants.Department.DEP,Participants.Text"/>
 
     <QUERY path="Application/Message" q="COUNT(Participants.WHERE(Department.DEP:Support AND Text=Support)) > 0" f="Participants.Department.DEP,Participants.Text"/>
     <QUERY path="Application/Message" q="COUNT(Participants.WHERE(Department.DEP:Support AND Text=Support)) > 1" f="Participants.Department.DEP,Participants.Text"/>
