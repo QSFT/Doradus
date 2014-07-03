@@ -613,9 +613,24 @@ public class DoradusSearchQueryGrammar {
                 Grammar.Rule(OptWhiteSpaces, COLON, Grammar.MustMatchAction, OptWhiteSpaces, NumberRangeExpression)
         );
 
+        SwitchRule WhereClauseEnd = new SwitchRule("WhereContinue");
+        WhereClauseEnd.setMode(SwitchRule.First);
+
+        GrammarRule StartingWhereClause = Grammar.Rule("StartingWhereClause",
+                WHERE , Grammar.DropLexem, OptWhiteSpaces, LEFTPAREN, OptWhiteSpaces,
+                Query, OptWhiteSpaces, RIGHTPAREN,  WhereClauseEnd);
+
+
+        GrammarRule CountExpressionFieldPath = new SwitchRule(SwitchRule.First, "CountExpressionFieldPath",
+                Grammar.Rule(WHERE, Grammar.DropLexem, OptWhiteSpaces, LEFTPAREN, Grammar.DropLexem,
+                        OptWhiteSpaces, FieldPath, OptWhiteSpaces, RIGHTPAREN, Grammar.DropLexem ),
+                FieldPath
+        );
+
+
         GrammarRule CountExpression = Grammar.Rule("CountExpression",
                 COUNT, Grammar.MustMatchAction, OptWhiteSpaces, LEFTPAREN,
-                OptWhiteSpaces, FieldPath, OptWhiteSpaces, RIGHTPAREN, LinkFunctionEndSemantic,
+                OptWhiteSpaces,  CountExpressionFieldPath, OptWhiteSpaces, RIGHTPAREN, LinkFunctionEndSemantic,
                 OptWhiteSpaces, CountExpressionContinue
         );
 
@@ -670,13 +685,9 @@ public class DoradusSearchQueryGrammar {
 
         ExpressionContinue.body = body;
 
-        SwitchRule WhereClauseEnd = new SwitchRule("WhereContinue");
-        WhereClauseEnd.setMode(SwitchRule.First);
-
         GrammarRule Expression = new SwitchRule(SwitchRule.First, "Expression",
                 CountExpression,
-                Grammar.Rule( WHERE , Grammar.DropLexem, OptWhiteSpaces, LEFTPAREN, OptWhiteSpaces,
-                        Query, OptWhiteSpaces, RIGHTPAREN,  WhereClauseEnd ),
+                StartingWhereClause,
                 NowFunction,
                 FloatPointNumber,
                 Grammar.Rule( ExplicitQuantifierFunction, ExpressionContinue),
@@ -1130,15 +1141,16 @@ public class DoradusSearchQueryGrammar {
                 StatisticMetricFunctionName
         );
 
-        SwitchRule AggregationFieldSubfieldPath = new SwitchRule("AggregationFieldSubfieldPath",
+        SwitchRule AggregationFieldSubfieldPathWhere = new SwitchRule(SwitchRule.First,"AggregationFieldSubfieldPathWhere",
+                Grammar.Rule(WHERE, Grammar.DropLexem, OptWhiteSpaces, LEFTPAREN, Grammar.DropLexem,
+                        OptWhiteSpaces, AggregationFieldPath, OptWhiteSpaces, RIGHTPAREN, Grammar.DropLexem ),
                 AggregationFieldPath
         );
-
         GrammarRule AggregationMetricFunctionQuery = Grammar.Rule("AggregationMetricFunctionQuery",
                 OptWhiteSpaces, AggregationMetricFunctionName, Grammar.SetType("AggregationMetricFunctionName"), Grammar.MustMatchAction,
                 OptWhiteSpaces, LEFTPAREN,
                 OptWhiteSpaces,
-                AggregationFieldSubfieldPath, OptWhiteSpaces, RIGHTPAREN
+                AggregationFieldSubfieldPathWhere, OptWhiteSpaces, RIGHTPAREN
         );
 
         SwitchRule DateDiffParameterValue = new SwitchRule(SwitchRule.First, "DateDiffParameterValue",
