@@ -44,6 +44,7 @@ Summary - OLAP: Implement DISTINCT metric function
     <echo>~ Table of Content ~</echo>
     <echo>~~~~~~~~~~~~~~~~~~~~</echo>
     <QUERY path="Application/Table" q="*" f="_all" shards="shard"/>
+    <QUERY path="Application/Table1" q="*" f="_all" shards="shard"/>
         
     <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
     <echo>~   Test for Aggregates: DISTINCT ~</echo>
@@ -72,6 +73,11 @@ Summary - OLAP: Implement DISTINCT metric function
     <AGGREGATE path="Application/Table" m="DISTINCT(MV)" f="Country" shards="shard" />
     <AGGREGATE path="Application/Table" m="DISTINCT(MV)" shards="shard" />
 
+    <echo>~~~~~~~~</echo>
+    <echo>~ Link ~</echo>
+    <echo>~~~~~~~~</echo>
+    <AGGREGATE path="Application/Table" m="DISTINCT(Link.List)" f="Country" shards="shard" />
+    <AGGREGATE path="Application/Table" m="DISTINCT(Link.List)" shards="shard" />
     <DELETE path="_applications/Application/ApplicationKey"/>
 </FOR>
 
