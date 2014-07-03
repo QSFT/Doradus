@@ -670,8 +670,13 @@ public class DoradusSearchQueryGrammar {
 
         ExpressionContinue.body = body;
 
+        SwitchRule WhereClauseEnd = new SwitchRule("WhereContinue");
+        WhereClauseEnd.setMode(SwitchRule.First);
+
         GrammarRule Expression = new SwitchRule(SwitchRule.First, "Expression",
                 CountExpression,
+                Grammar.Rule( WHERE , Grammar.DropLexem, OptWhiteSpaces, LEFTPAREN, OptWhiteSpaces,
+                        Query, OptWhiteSpaces, RIGHTPAREN,  WhereClauseEnd ),
                 NowFunction,
                 FloatPointNumber,
                 Grammar.Rule( ExplicitQuantifierFunction, ExpressionContinue),
@@ -679,6 +684,12 @@ public class DoradusSearchQueryGrammar {
                 Term
 
         );
+
+        WhereClauseEnd.body = Grammar.asRule(
+                Grammar.Rule( DOT, Grammar.DropLexem, Grammar.Semantic("ImpliedAnd"), Expression  ),
+                Grammar.emptyRule
+        ) ;
+
 
         SwitchRule Clause = new SwitchRule(SwitchRule.First, "Clause",
                 Grammar.Rule(NOT, OptWhiteSpaces, Query),
