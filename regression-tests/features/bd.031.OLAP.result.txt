@@ -44,6 +44,17 @@
                 </field>
                 <field name="_ID">2001</field>
                 <field name="_shard">shard</field>
+                <field name="Link">
+                    <doc>
+                        <field name="List">
+                            <value>14</value>
+                            <value>15</value>
+                            <value>One</value>
+                            <value>Three</value>
+                        </field>
+                        <field name="_ID">0001</field>
+                    </doc>
+                </field>
             </doc>
             <doc>
                 <field name="Country">USA</field>
@@ -64,6 +75,24 @@
                 </field>
                 <field name="_ID">2002</field>
                 <field name="_shard">shard</field>
+                <field name="Link">
+                    <doc>
+                        <field name="List">
+                            <value>14</value>
+                            <value>15</value>
+                            <value>One</value>
+                            <value>Three</value>
+                        </field>
+                        <field name="_ID">0001</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>Three</value>
+                            <value>Two</value>
+                        </field>
+                        <field name="_ID">0002</field>
+                    </doc>
+                </field>
             </doc>
             <doc>
                 <field name="Bool">
@@ -86,6 +115,32 @@
                 </field>
                 <field name="_ID">2003</field>
                 <field name="_shard">shard</field>
+                <field name="Link">
+                    <doc>
+                        <field name="List">
+                            <value>14</value>
+                            <value>15</value>
+                            <value>One</value>
+                            <value>Three</value>
+                        </field>
+                        <field name="_ID">0001</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>Three</value>
+                            <value>Two</value>
+                        </field>
+                        <field name="_ID">0002</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>Five</value>
+                            <value>Four</value>
+                            <value>Six</value>
+                        </field>
+                        <field name="_ID">0003</field>
+                    </doc>
+                </field>
             </doc>
             <doc>
                 <field name="Bool">
@@ -112,6 +167,41 @@
                 </field>
                 <field name="_ID">2004</field>
                 <field name="_shard">shard</field>
+                <field name="Link">
+                    <doc>
+                        <field name="List">
+                            <value>14</value>
+                            <value>15</value>
+                            <value>One</value>
+                            <value>Three</value>
+                        </field>
+                        <field name="_ID">0001</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>Three</value>
+                            <value>Two</value>
+                        </field>
+                        <field name="_ID">0002</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>Five</value>
+                            <value>Four</value>
+                            <value>Six</value>
+                        </field>
+                        <field name="_ID">0003</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>Eight</value>
+                            <value>Nine</value>
+                            <value>Seven</value>
+                            <value>Ten</value>
+                        </field>
+                        <field name="_ID">0004</field>
+                    </doc>
+                </field>
             </doc>
             <doc>
                 <field name="Bool">
@@ -134,6 +224,51 @@
                 </field>
                 <field name="_ID">2005</field>
                 <field name="_shard">shard</field>
+                <field name="Link">
+                    <doc>
+                        <field name="List">
+                            <value>14</value>
+                            <value>15</value>
+                            <value>One</value>
+                            <value>Three</value>
+                        </field>
+                        <field name="_ID">0001</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>Three</value>
+                            <value>Two</value>
+                        </field>
+                        <field name="_ID">0002</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>Five</value>
+                            <value>Four</value>
+                            <value>Six</value>
+                        </field>
+                        <field name="_ID">0003</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>Eight</value>
+                            <value>Nine</value>
+                            <value>Seven</value>
+                            <value>Ten</value>
+                        </field>
+                        <field name="_ID">0004</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>11</value>
+                            <value>12</value>
+                            <value>13</value>
+                            <value>14</value>
+                            <value>15</value>
+                        </field>
+                        <field name="_ID">0005</field>
+                    </doc>
+                </field>
             </doc>
         </docs>
     </results>
@@ -167,7 +302,20 @@
                       "2590"
                    ],
                    "_ID":"2001",
-                   "_shard":"shard"
+                   "_shard":"shard",
+                   "Link":[
+                      {
+                         "doc":{
+                            "List":[
+                               "14",
+                               "15",
+                               "One",
+                               "Three"
+                            ],
+                            "_ID":"0001"
+                         }
+                      }
+                   ]
                 }
              },
              {
@@ -189,7 +337,29 @@
                       "2590"
                    ],
                    "_ID":"2002",
-                   "_shard":"shard"
+                   "_shard":"shard",
+                   "Link":[
+                      {
+                         "doc":{
+                            "List":[
+                               "14",
+                               "15",
+                               "One",
+                               "Three"
+                            ],
+                            "_ID":"0001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "Three",
+                               "Two"
+                            ],
+                            "_ID":"0002"
+                         }
+                      }
+                   ]
                 }
              },
              {
@@ -213,7 +383,39 @@
                       "25"
                    ],
                    "_ID":"2003",
-                   "_shard":"shard"
+                   "_shard":"shard",
+                   "Link":[
+                      {
+                         "doc":{
+                            "List":[
+                               "14",
+                               "15",
+                               "One",
+                               "Three"
+                            ],
+                            "_ID":"0001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "Three",
+                               "Two"
+                            ],
+                            "_ID":"0002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "Five",
+                               "Four",
+                               "Six"
+                            ],
+                            "_ID":"0003"
+                         }
+                      }
+                   ]
                 }
              },
              {
@@ -241,7 +443,50 @@
                       "4475"
                    ],
                    "_ID":"2004",
-                   "_shard":"shard"
+                   "_shard":"shard",
+                   "Link":[
+                      {
+                         "doc":{
+                            "List":[
+                               "14",
+                               "15",
+                               "One",
+                               "Three"
+                            ],
+                            "_ID":"0001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "Three",
+                               "Two"
+                            ],
+                            "_ID":"0002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "Five",
+                               "Four",
+                               "Six"
+                            ],
+                            "_ID":"0003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "Eight",
+                               "Nine",
+                               "Seven",
+                               "Ten"
+                            ],
+                            "_ID":"0004"
+                         }
+                      }
+                   ]
                 }
              },
              {
@@ -265,7 +510,897 @@
                       "1255000"
                    ],
                    "_ID":"2005",
-                   "_shard":"shard"
+                   "_shard":"shard",
+                   "Link":[
+                      {
+                         "doc":{
+                            "List":[
+                               "14",
+                               "15",
+                               "One",
+                               "Three"
+                            ],
+                            "_ID":"0001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "Three",
+                               "Two"
+                            ],
+                            "_ID":"0002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "Five",
+                               "Four",
+                               "Six"
+                            ],
+                            "_ID":"0003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "Eight",
+                               "Nine",
+                               "Seven",
+                               "Ten"
+                            ],
+                            "_ID":"0004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "11",
+                               "12",
+                               "13",
+                               "14",
+                               "15"
+                            ],
+                            "_ID":"0005"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table1/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>5</totalobjects>
+        <docs>
+            <doc>
+                <field name="List">
+                    <value>14</value>
+                    <value>15</value>
+                    <value>One</value>
+                    <value>Three</value>
+                </field>
+                <field name="_ID">0001</field>
+                <field name="_shard">shard</field>
+                <field name="MVLink">
+                    <doc>
+                        <field name="Bool">
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>2001-01-01 00:00:00</value>
+                            <value>2002-01-01 00:00:00</value>
+                            <value>2003-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>14</value>
+                            <value>15</value>
+                            <value>One</value>
+                            <value>Three</value>
+                        </field>
+                        <field name="People">
+                            <value>1000</value>
+                            <value>11</value>
+                            <value>210</value>
+                            <value>2590</value>
+                        </field>
+                        <field name="_ID">2001</field>
+                    </doc>
+                    <doc>
+                        <field name="Country">USA</field>
+                        <field name="CreateDate">
+                            <value>2010-01-01 00:00:00</value>
+                            <value>2011-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>Three</value>
+                            <value>Two</value>
+                        </field>
+                        <field name="People">
+                            <value>1000</value>
+                            <value>11</value>
+                            <value>11000</value>
+                            <value>210</value>
+                            <value>2590</value>
+                        </field>
+                        <field name="_ID">2002</field>
+                    </doc>
+                    <doc>
+                        <field name="Bool">
+                            <value>False</value>
+                        </field>
+                        <field name="Country">USA</field>
+                        <field name="CreateDate">
+                            <value>2020-01-01 00:00:00</value>
+                            <value>2021-01-01 00:00:00</value>
+                            <value>2022-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>Five</value>
+                            <value>Four</value>
+                            <value>Six</value>
+                        </field>
+                        <field name="People">
+                            <value>10</value>
+                            <value>25</value>
+                        </field>
+                        <field name="_ID">2003</field>
+                    </doc>
+                    <doc>
+                        <field name="Bool">
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>2030-01-01 00:00:00</value>
+                            <value>2031-01-01 00:00:00</value>
+                            <value>2032-01-01 00:00:00</value>
+                            <value>2033-01-01 00:00:00</value>
+                            <value>2034-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>Eight</value>
+                            <value>Nine</value>
+                            <value>Seven</value>
+                            <value>Ten</value>
+                        </field>
+                        <field name="People">
+                            <value>4410</value>
+                            <value>4425</value>
+                            <value>4475</value>
+                        </field>
+                        <field name="_ID">2004</field>
+                    </doc>
+                    <doc>
+                        <field name="Bool">
+                            <value>False</value>
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>6012-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>11</value>
+                            <value>12</value>
+                            <value>13</value>
+                            <value>14</value>
+                            <value>15</value>
+                        </field>
+                        <field name="People">
+                            <value>1255000</value>
+                        </field>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="List">
+                    <value>Three</value>
+                    <value>Two</value>
+                </field>
+                <field name="_ID">0002</field>
+                <field name="_shard">shard</field>
+                <field name="MVLink">
+                    <doc>
+                        <field name="Country">USA</field>
+                        <field name="CreateDate">
+                            <value>2010-01-01 00:00:00</value>
+                            <value>2011-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>Three</value>
+                            <value>Two</value>
+                        </field>
+                        <field name="People">
+                            <value>1000</value>
+                            <value>11</value>
+                            <value>11000</value>
+                            <value>210</value>
+                            <value>2590</value>
+                        </field>
+                        <field name="_ID">2002</field>
+                    </doc>
+                    <doc>
+                        <field name="Bool">
+                            <value>False</value>
+                        </field>
+                        <field name="Country">USA</field>
+                        <field name="CreateDate">
+                            <value>2020-01-01 00:00:00</value>
+                            <value>2021-01-01 00:00:00</value>
+                            <value>2022-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>Five</value>
+                            <value>Four</value>
+                            <value>Six</value>
+                        </field>
+                        <field name="People">
+                            <value>10</value>
+                            <value>25</value>
+                        </field>
+                        <field name="_ID">2003</field>
+                    </doc>
+                    <doc>
+                        <field name="Bool">
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>2030-01-01 00:00:00</value>
+                            <value>2031-01-01 00:00:00</value>
+                            <value>2032-01-01 00:00:00</value>
+                            <value>2033-01-01 00:00:00</value>
+                            <value>2034-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>Eight</value>
+                            <value>Nine</value>
+                            <value>Seven</value>
+                            <value>Ten</value>
+                        </field>
+                        <field name="People">
+                            <value>4410</value>
+                            <value>4425</value>
+                            <value>4475</value>
+                        </field>
+                        <field name="_ID">2004</field>
+                    </doc>
+                    <doc>
+                        <field name="Bool">
+                            <value>False</value>
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>6012-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>11</value>
+                            <value>12</value>
+                            <value>13</value>
+                            <value>14</value>
+                            <value>15</value>
+                        </field>
+                        <field name="People">
+                            <value>1255000</value>
+                        </field>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="List">
+                    <value>Five</value>
+                    <value>Four</value>
+                    <value>Six</value>
+                </field>
+                <field name="_ID">0003</field>
+                <field name="_shard">shard</field>
+                <field name="MVLink">
+                    <doc>
+                        <field name="Bool">
+                            <value>False</value>
+                        </field>
+                        <field name="Country">USA</field>
+                        <field name="CreateDate">
+                            <value>2020-01-01 00:00:00</value>
+                            <value>2021-01-01 00:00:00</value>
+                            <value>2022-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>Five</value>
+                            <value>Four</value>
+                            <value>Six</value>
+                        </field>
+                        <field name="People">
+                            <value>10</value>
+                            <value>25</value>
+                        </field>
+                        <field name="_ID">2003</field>
+                    </doc>
+                    <doc>
+                        <field name="Bool">
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>2030-01-01 00:00:00</value>
+                            <value>2031-01-01 00:00:00</value>
+                            <value>2032-01-01 00:00:00</value>
+                            <value>2033-01-01 00:00:00</value>
+                            <value>2034-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>Eight</value>
+                            <value>Nine</value>
+                            <value>Seven</value>
+                            <value>Ten</value>
+                        </field>
+                        <field name="People">
+                            <value>4410</value>
+                            <value>4425</value>
+                            <value>4475</value>
+                        </field>
+                        <field name="_ID">2004</field>
+                    </doc>
+                    <doc>
+                        <field name="Bool">
+                            <value>False</value>
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>6012-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>11</value>
+                            <value>12</value>
+                            <value>13</value>
+                            <value>14</value>
+                            <value>15</value>
+                        </field>
+                        <field name="People">
+                            <value>1255000</value>
+                        </field>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="List">
+                    <value>Eight</value>
+                    <value>Nine</value>
+                    <value>Seven</value>
+                    <value>Ten</value>
+                </field>
+                <field name="_ID">0004</field>
+                <field name="_shard">shard</field>
+                <field name="MVLink">
+                    <doc>
+                        <field name="Bool">
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>2030-01-01 00:00:00</value>
+                            <value>2031-01-01 00:00:00</value>
+                            <value>2032-01-01 00:00:00</value>
+                            <value>2033-01-01 00:00:00</value>
+                            <value>2034-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>Eight</value>
+                            <value>Nine</value>
+                            <value>Seven</value>
+                            <value>Ten</value>
+                        </field>
+                        <field name="People">
+                            <value>4410</value>
+                            <value>4425</value>
+                            <value>4475</value>
+                        </field>
+                        <field name="_ID">2004</field>
+                    </doc>
+                    <doc>
+                        <field name="Bool">
+                            <value>False</value>
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>6012-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>11</value>
+                            <value>12</value>
+                            <value>13</value>
+                            <value>14</value>
+                            <value>15</value>
+                        </field>
+                        <field name="People">
+                            <value>1255000</value>
+                        </field>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="List">
+                    <value>11</value>
+                    <value>12</value>
+                    <value>13</value>
+                    <value>14</value>
+                    <value>15</value>
+                </field>
+                <field name="_ID">0005</field>
+                <field name="_shard">shard</field>
+                <field name="MVLink">
+                    <doc>
+                        <field name="Bool">
+                            <value>False</value>
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>6012-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>11</value>
+                            <value>12</value>
+                            <value>13</value>
+                            <value>14</value>
+                            <value>15</value>
+                        </field>
+                        <field name="People">
+                            <value>1255000</value>
+                        </field>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"5",
+          "docs":[
+             {
+                "doc":{
+                   "List":[
+                      "14",
+                      "15",
+                      "One",
+                      "Three"
+                   ],
+                   "_ID":"0001",
+                   "_shard":"shard",
+                   "MVLink":[
+                      {
+                         "doc":{
+                            "Bool":[
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "2001-01-01 00:00:00",
+                               "2002-01-01 00:00:00",
+                               "2003-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "14",
+                               "15",
+                               "One",
+                               "Three"
+                            ],
+                            "People":[
+                               "1000",
+                               "11",
+                               "210",
+                               "2590"
+                            ],
+                            "_ID":"2001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Country":"USA",
+                            "CreateDate":[
+                               "2010-01-01 00:00:00",
+                               "2011-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "Three",
+                               "Two"
+                            ],
+                            "People":[
+                               "1000",
+                               "11",
+                               "11000",
+                               "210",
+                               "2590"
+                            ],
+                            "_ID":"2002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Bool":[
+                               "False"
+                            ],
+                            "Country":"USA",
+                            "CreateDate":[
+                               "2020-01-01 00:00:00",
+                               "2021-01-01 00:00:00",
+                               "2022-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "Five",
+                               "Four",
+                               "Six"
+                            ],
+                            "People":[
+                               "10",
+                               "25"
+                            ],
+                            "_ID":"2003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Bool":[
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "2030-01-01 00:00:00",
+                               "2031-01-01 00:00:00",
+                               "2032-01-01 00:00:00",
+                               "2033-01-01 00:00:00",
+                               "2034-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "Eight",
+                               "Nine",
+                               "Seven",
+                               "Ten"
+                            ],
+                            "People":[
+                               "4410",
+                               "4425",
+                               "4475"
+                            ],
+                            "_ID":"2004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Bool":[
+                               "False",
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "6012-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "11",
+                               "12",
+                               "13",
+                               "14",
+                               "15"
+                            ],
+                            "People":[
+                               "1255000"
+                            ],
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "List":[
+                      "Three",
+                      "Two"
+                   ],
+                   "_ID":"0002",
+                   "_shard":"shard",
+                   "MVLink":[
+                      {
+                         "doc":{
+                            "Country":"USA",
+                            "CreateDate":[
+                               "2010-01-01 00:00:00",
+                               "2011-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "Three",
+                               "Two"
+                            ],
+                            "People":[
+                               "1000",
+                               "11",
+                               "11000",
+                               "210",
+                               "2590"
+                            ],
+                            "_ID":"2002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Bool":[
+                               "False"
+                            ],
+                            "Country":"USA",
+                            "CreateDate":[
+                               "2020-01-01 00:00:00",
+                               "2021-01-01 00:00:00",
+                               "2022-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "Five",
+                               "Four",
+                               "Six"
+                            ],
+                            "People":[
+                               "10",
+                               "25"
+                            ],
+                            "_ID":"2003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Bool":[
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "2030-01-01 00:00:00",
+                               "2031-01-01 00:00:00",
+                               "2032-01-01 00:00:00",
+                               "2033-01-01 00:00:00",
+                               "2034-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "Eight",
+                               "Nine",
+                               "Seven",
+                               "Ten"
+                            ],
+                            "People":[
+                               "4410",
+                               "4425",
+                               "4475"
+                            ],
+                            "_ID":"2004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Bool":[
+                               "False",
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "6012-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "11",
+                               "12",
+                               "13",
+                               "14",
+                               "15"
+                            ],
+                            "People":[
+                               "1255000"
+                            ],
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "List":[
+                      "Five",
+                      "Four",
+                      "Six"
+                   ],
+                   "_ID":"0003",
+                   "_shard":"shard",
+                   "MVLink":[
+                      {
+                         "doc":{
+                            "Bool":[
+                               "False"
+                            ],
+                            "Country":"USA",
+                            "CreateDate":[
+                               "2020-01-01 00:00:00",
+                               "2021-01-01 00:00:00",
+                               "2022-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "Five",
+                               "Four",
+                               "Six"
+                            ],
+                            "People":[
+                               "10",
+                               "25"
+                            ],
+                            "_ID":"2003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Bool":[
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "2030-01-01 00:00:00",
+                               "2031-01-01 00:00:00",
+                               "2032-01-01 00:00:00",
+                               "2033-01-01 00:00:00",
+                               "2034-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "Eight",
+                               "Nine",
+                               "Seven",
+                               "Ten"
+                            ],
+                            "People":[
+                               "4410",
+                               "4425",
+                               "4475"
+                            ],
+                            "_ID":"2004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Bool":[
+                               "False",
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "6012-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "11",
+                               "12",
+                               "13",
+                               "14",
+                               "15"
+                            ],
+                            "People":[
+                               "1255000"
+                            ],
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "List":[
+                      "Eight",
+                      "Nine",
+                      "Seven",
+                      "Ten"
+                   ],
+                   "_ID":"0004",
+                   "_shard":"shard",
+                   "MVLink":[
+                      {
+                         "doc":{
+                            "Bool":[
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "2030-01-01 00:00:00",
+                               "2031-01-01 00:00:00",
+                               "2032-01-01 00:00:00",
+                               "2033-01-01 00:00:00",
+                               "2034-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "Eight",
+                               "Nine",
+                               "Seven",
+                               "Ten"
+                            ],
+                            "People":[
+                               "4410",
+                               "4425",
+                               "4475"
+                            ],
+                            "_ID":"2004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Bool":[
+                               "False",
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "6012-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "11",
+                               "12",
+                               "13",
+                               "14",
+                               "15"
+                            ],
+                            "People":[
+                               "1255000"
+                            ],
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "List":[
+                      "11",
+                      "12",
+                      "13",
+                      "14",
+                      "15"
+                   ],
+                   "_ID":"0005",
+                   "_shard":"shard",
+                   "MVLink":[
+                      {
+                         "doc":{
+                            "Bool":[
+                               "False",
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "6012-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "11",
+                               "12",
+                               "13",
+                               "14",
+                               "15"
+                            ],
+                            "People":[
+                               "1255000"
+                            ],
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
                 }
              }
           ]
@@ -587,6 +1722,84 @@
        }
     }
 
+~~~~~~~~
+~ Link ~
+~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=DISTINCT(Link.List)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="DISTINCT(Link.List)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <summary>15</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>15</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>8</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DISTINCT(Link.List)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"5",
+          "summary":"15",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"15",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"8",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=DISTINCT(Link.List)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="DISTINCT(Link.List)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <value>15</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DISTINCT(Link.List)",
+             "query":"*"
+          },
+          "totalobjects":"5",
+          "value":"15"
+       }
+    }
+
 *** Request
     DELETE /_applications/Application/ApplicationKey
 *** Response: 
@@ -638,6 +1851,17 @@
                 </field>
                 <field name="_ID">2001</field>
                 <field name="_shard">shard</field>
+                <field name="Link">
+                    <doc>
+                        <field name="List">
+                            <value>14</value>
+                            <value>15</value>
+                            <value>One</value>
+                            <value>Three</value>
+                        </field>
+                        <field name="_ID">0001</field>
+                    </doc>
+                </field>
             </doc>
             <doc>
                 <field name="Country">USA</field>
@@ -658,6 +1882,24 @@
                 </field>
                 <field name="_ID">2002</field>
                 <field name="_shard">shard</field>
+                <field name="Link">
+                    <doc>
+                        <field name="List">
+                            <value>14</value>
+                            <value>15</value>
+                            <value>One</value>
+                            <value>Three</value>
+                        </field>
+                        <field name="_ID">0001</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>Three</value>
+                            <value>Two</value>
+                        </field>
+                        <field name="_ID">0002</field>
+                    </doc>
+                </field>
             </doc>
             <doc>
                 <field name="Bool">
@@ -680,6 +1922,32 @@
                 </field>
                 <field name="_ID">2003</field>
                 <field name="_shard">shard</field>
+                <field name="Link">
+                    <doc>
+                        <field name="List">
+                            <value>14</value>
+                            <value>15</value>
+                            <value>One</value>
+                            <value>Three</value>
+                        </field>
+                        <field name="_ID">0001</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>Three</value>
+                            <value>Two</value>
+                        </field>
+                        <field name="_ID">0002</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>Five</value>
+                            <value>Four</value>
+                            <value>Six</value>
+                        </field>
+                        <field name="_ID">0003</field>
+                    </doc>
+                </field>
             </doc>
             <doc>
                 <field name="Bool">
@@ -706,6 +1974,41 @@
                 </field>
                 <field name="_ID">2004</field>
                 <field name="_shard">shard</field>
+                <field name="Link">
+                    <doc>
+                        <field name="List">
+                            <value>14</value>
+                            <value>15</value>
+                            <value>One</value>
+                            <value>Three</value>
+                        </field>
+                        <field name="_ID">0001</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>Three</value>
+                            <value>Two</value>
+                        </field>
+                        <field name="_ID">0002</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>Five</value>
+                            <value>Four</value>
+                            <value>Six</value>
+                        </field>
+                        <field name="_ID">0003</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>Eight</value>
+                            <value>Nine</value>
+                            <value>Seven</value>
+                            <value>Ten</value>
+                        </field>
+                        <field name="_ID">0004</field>
+                    </doc>
+                </field>
             </doc>
             <doc>
                 <field name="Bool">
@@ -728,6 +2031,51 @@
                 </field>
                 <field name="_ID">2005</field>
                 <field name="_shard">shard</field>
+                <field name="Link">
+                    <doc>
+                        <field name="List">
+                            <value>14</value>
+                            <value>15</value>
+                            <value>One</value>
+                            <value>Three</value>
+                        </field>
+                        <field name="_ID">0001</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>Three</value>
+                            <value>Two</value>
+                        </field>
+                        <field name="_ID">0002</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>Five</value>
+                            <value>Four</value>
+                            <value>Six</value>
+                        </field>
+                        <field name="_ID">0003</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>Eight</value>
+                            <value>Nine</value>
+                            <value>Seven</value>
+                            <value>Ten</value>
+                        </field>
+                        <field name="_ID">0004</field>
+                    </doc>
+                    <doc>
+                        <field name="List">
+                            <value>11</value>
+                            <value>12</value>
+                            <value>13</value>
+                            <value>14</value>
+                            <value>15</value>
+                        </field>
+                        <field name="_ID">0005</field>
+                    </doc>
+                </field>
             </doc>
         </docs>
     </results>
@@ -761,7 +2109,20 @@
                       "2590"
                    ],
                    "_ID":"2001",
-                   "_shard":"shard"
+                   "_shard":"shard",
+                   "Link":[
+                      {
+                         "doc":{
+                            "List":[
+                               "14",
+                               "15",
+                               "One",
+                               "Three"
+                            ],
+                            "_ID":"0001"
+                         }
+                      }
+                   ]
                 }
              },
              {
@@ -783,7 +2144,29 @@
                       "2590"
                    ],
                    "_ID":"2002",
-                   "_shard":"shard"
+                   "_shard":"shard",
+                   "Link":[
+                      {
+                         "doc":{
+                            "List":[
+                               "14",
+                               "15",
+                               "One",
+                               "Three"
+                            ],
+                            "_ID":"0001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "Three",
+                               "Two"
+                            ],
+                            "_ID":"0002"
+                         }
+                      }
+                   ]
                 }
              },
              {
@@ -807,7 +2190,39 @@
                       "25"
                    ],
                    "_ID":"2003",
-                   "_shard":"shard"
+                   "_shard":"shard",
+                   "Link":[
+                      {
+                         "doc":{
+                            "List":[
+                               "14",
+                               "15",
+                               "One",
+                               "Three"
+                            ],
+                            "_ID":"0001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "Three",
+                               "Two"
+                            ],
+                            "_ID":"0002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "Five",
+                               "Four",
+                               "Six"
+                            ],
+                            "_ID":"0003"
+                         }
+                      }
+                   ]
                 }
              },
              {
@@ -835,7 +2250,50 @@
                       "4475"
                    ],
                    "_ID":"2004",
-                   "_shard":"shard"
+                   "_shard":"shard",
+                   "Link":[
+                      {
+                         "doc":{
+                            "List":[
+                               "14",
+                               "15",
+                               "One",
+                               "Three"
+                            ],
+                            "_ID":"0001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "Three",
+                               "Two"
+                            ],
+                            "_ID":"0002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "Five",
+                               "Four",
+                               "Six"
+                            ],
+                            "_ID":"0003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "Eight",
+                               "Nine",
+                               "Seven",
+                               "Ten"
+                            ],
+                            "_ID":"0004"
+                         }
+                      }
+                   ]
                 }
              },
              {
@@ -859,7 +2317,897 @@
                       "1255000"
                    ],
                    "_ID":"2005",
-                   "_shard":"shard"
+                   "_shard":"shard",
+                   "Link":[
+                      {
+                         "doc":{
+                            "List":[
+                               "14",
+                               "15",
+                               "One",
+                               "Three"
+                            ],
+                            "_ID":"0001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "Three",
+                               "Two"
+                            ],
+                            "_ID":"0002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "Five",
+                               "Four",
+                               "Six"
+                            ],
+                            "_ID":"0003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "Eight",
+                               "Nine",
+                               "Seven",
+                               "Ten"
+                            ],
+                            "_ID":"0004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "List":[
+                               "11",
+                               "12",
+                               "13",
+                               "14",
+                               "15"
+                            ],
+                            "_ID":"0005"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table1/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>5</totalobjects>
+        <docs>
+            <doc>
+                <field name="List">
+                    <value>14</value>
+                    <value>15</value>
+                    <value>One</value>
+                    <value>Three</value>
+                </field>
+                <field name="_ID">0001</field>
+                <field name="_shard">shard</field>
+                <field name="MVLink">
+                    <doc>
+                        <field name="Bool">
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>2001-01-01 00:00:00</value>
+                            <value>2002-01-01 00:00:00</value>
+                            <value>2003-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>14</value>
+                            <value>15</value>
+                            <value>One</value>
+                            <value>Three</value>
+                        </field>
+                        <field name="People">
+                            <value>1000</value>
+                            <value>11</value>
+                            <value>210</value>
+                            <value>2590</value>
+                        </field>
+                        <field name="_ID">2001</field>
+                    </doc>
+                    <doc>
+                        <field name="Country">USA</field>
+                        <field name="CreateDate">
+                            <value>2010-01-01 00:00:00</value>
+                            <value>2011-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>Three</value>
+                            <value>Two</value>
+                        </field>
+                        <field name="People">
+                            <value>1000</value>
+                            <value>11</value>
+                            <value>11000</value>
+                            <value>210</value>
+                            <value>2590</value>
+                        </field>
+                        <field name="_ID">2002</field>
+                    </doc>
+                    <doc>
+                        <field name="Bool">
+                            <value>False</value>
+                        </field>
+                        <field name="Country">USA</field>
+                        <field name="CreateDate">
+                            <value>2020-01-01 00:00:00</value>
+                            <value>2021-01-01 00:00:00</value>
+                            <value>2022-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>Five</value>
+                            <value>Four</value>
+                            <value>Six</value>
+                        </field>
+                        <field name="People">
+                            <value>10</value>
+                            <value>25</value>
+                        </field>
+                        <field name="_ID">2003</field>
+                    </doc>
+                    <doc>
+                        <field name="Bool">
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>2030-01-01 00:00:00</value>
+                            <value>2031-01-01 00:00:00</value>
+                            <value>2032-01-01 00:00:00</value>
+                            <value>2033-01-01 00:00:00</value>
+                            <value>2034-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>Eight</value>
+                            <value>Nine</value>
+                            <value>Seven</value>
+                            <value>Ten</value>
+                        </field>
+                        <field name="People">
+                            <value>4410</value>
+                            <value>4425</value>
+                            <value>4475</value>
+                        </field>
+                        <field name="_ID">2004</field>
+                    </doc>
+                    <doc>
+                        <field name="Bool">
+                            <value>False</value>
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>6012-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>11</value>
+                            <value>12</value>
+                            <value>13</value>
+                            <value>14</value>
+                            <value>15</value>
+                        </field>
+                        <field name="People">
+                            <value>1255000</value>
+                        </field>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="List">
+                    <value>Three</value>
+                    <value>Two</value>
+                </field>
+                <field name="_ID">0002</field>
+                <field name="_shard">shard</field>
+                <field name="MVLink">
+                    <doc>
+                        <field name="Country">USA</field>
+                        <field name="CreateDate">
+                            <value>2010-01-01 00:00:00</value>
+                            <value>2011-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>Three</value>
+                            <value>Two</value>
+                        </field>
+                        <field name="People">
+                            <value>1000</value>
+                            <value>11</value>
+                            <value>11000</value>
+                            <value>210</value>
+                            <value>2590</value>
+                        </field>
+                        <field name="_ID">2002</field>
+                    </doc>
+                    <doc>
+                        <field name="Bool">
+                            <value>False</value>
+                        </field>
+                        <field name="Country">USA</field>
+                        <field name="CreateDate">
+                            <value>2020-01-01 00:00:00</value>
+                            <value>2021-01-01 00:00:00</value>
+                            <value>2022-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>Five</value>
+                            <value>Four</value>
+                            <value>Six</value>
+                        </field>
+                        <field name="People">
+                            <value>10</value>
+                            <value>25</value>
+                        </field>
+                        <field name="_ID">2003</field>
+                    </doc>
+                    <doc>
+                        <field name="Bool">
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>2030-01-01 00:00:00</value>
+                            <value>2031-01-01 00:00:00</value>
+                            <value>2032-01-01 00:00:00</value>
+                            <value>2033-01-01 00:00:00</value>
+                            <value>2034-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>Eight</value>
+                            <value>Nine</value>
+                            <value>Seven</value>
+                            <value>Ten</value>
+                        </field>
+                        <field name="People">
+                            <value>4410</value>
+                            <value>4425</value>
+                            <value>4475</value>
+                        </field>
+                        <field name="_ID">2004</field>
+                    </doc>
+                    <doc>
+                        <field name="Bool">
+                            <value>False</value>
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>6012-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>11</value>
+                            <value>12</value>
+                            <value>13</value>
+                            <value>14</value>
+                            <value>15</value>
+                        </field>
+                        <field name="People">
+                            <value>1255000</value>
+                        </field>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="List">
+                    <value>Five</value>
+                    <value>Four</value>
+                    <value>Six</value>
+                </field>
+                <field name="_ID">0003</field>
+                <field name="_shard">shard</field>
+                <field name="MVLink">
+                    <doc>
+                        <field name="Bool">
+                            <value>False</value>
+                        </field>
+                        <field name="Country">USA</field>
+                        <field name="CreateDate">
+                            <value>2020-01-01 00:00:00</value>
+                            <value>2021-01-01 00:00:00</value>
+                            <value>2022-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>Five</value>
+                            <value>Four</value>
+                            <value>Six</value>
+                        </field>
+                        <field name="People">
+                            <value>10</value>
+                            <value>25</value>
+                        </field>
+                        <field name="_ID">2003</field>
+                    </doc>
+                    <doc>
+                        <field name="Bool">
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>2030-01-01 00:00:00</value>
+                            <value>2031-01-01 00:00:00</value>
+                            <value>2032-01-01 00:00:00</value>
+                            <value>2033-01-01 00:00:00</value>
+                            <value>2034-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>Eight</value>
+                            <value>Nine</value>
+                            <value>Seven</value>
+                            <value>Ten</value>
+                        </field>
+                        <field name="People">
+                            <value>4410</value>
+                            <value>4425</value>
+                            <value>4475</value>
+                        </field>
+                        <field name="_ID">2004</field>
+                    </doc>
+                    <doc>
+                        <field name="Bool">
+                            <value>False</value>
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>6012-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>11</value>
+                            <value>12</value>
+                            <value>13</value>
+                            <value>14</value>
+                            <value>15</value>
+                        </field>
+                        <field name="People">
+                            <value>1255000</value>
+                        </field>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="List">
+                    <value>Eight</value>
+                    <value>Nine</value>
+                    <value>Seven</value>
+                    <value>Ten</value>
+                </field>
+                <field name="_ID">0004</field>
+                <field name="_shard">shard</field>
+                <field name="MVLink">
+                    <doc>
+                        <field name="Bool">
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>2030-01-01 00:00:00</value>
+                            <value>2031-01-01 00:00:00</value>
+                            <value>2032-01-01 00:00:00</value>
+                            <value>2033-01-01 00:00:00</value>
+                            <value>2034-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>Eight</value>
+                            <value>Nine</value>
+                            <value>Seven</value>
+                            <value>Ten</value>
+                        </field>
+                        <field name="People">
+                            <value>4410</value>
+                            <value>4425</value>
+                            <value>4475</value>
+                        </field>
+                        <field name="_ID">2004</field>
+                    </doc>
+                    <doc>
+                        <field name="Bool">
+                            <value>False</value>
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>6012-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>11</value>
+                            <value>12</value>
+                            <value>13</value>
+                            <value>14</value>
+                            <value>15</value>
+                        </field>
+                        <field name="People">
+                            <value>1255000</value>
+                        </field>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="List">
+                    <value>11</value>
+                    <value>12</value>
+                    <value>13</value>
+                    <value>14</value>
+                    <value>15</value>
+                </field>
+                <field name="_ID">0005</field>
+                <field name="_shard">shard</field>
+                <field name="MVLink">
+                    <doc>
+                        <field name="Bool">
+                            <value>False</value>
+                            <value>True</value>
+                        </field>
+                        <field name="Country">Russia</field>
+                        <field name="CreateDate">
+                            <value>6012-01-01 00:00:00</value>
+                        </field>
+                        <field name="MV">
+                            <value>11</value>
+                            <value>12</value>
+                            <value>13</value>
+                            <value>14</value>
+                            <value>15</value>
+                        </field>
+                        <field name="People">
+                            <value>1255000</value>
+                        </field>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"5",
+          "docs":[
+             {
+                "doc":{
+                   "List":[
+                      "14",
+                      "15",
+                      "One",
+                      "Three"
+                   ],
+                   "_ID":"0001",
+                   "_shard":"shard",
+                   "MVLink":[
+                      {
+                         "doc":{
+                            "Bool":[
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "2001-01-01 00:00:00",
+                               "2002-01-01 00:00:00",
+                               "2003-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "14",
+                               "15",
+                               "One",
+                               "Three"
+                            ],
+                            "People":[
+                               "1000",
+                               "11",
+                               "210",
+                               "2590"
+                            ],
+                            "_ID":"2001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Country":"USA",
+                            "CreateDate":[
+                               "2010-01-01 00:00:00",
+                               "2011-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "Three",
+                               "Two"
+                            ],
+                            "People":[
+                               "1000",
+                               "11",
+                               "11000",
+                               "210",
+                               "2590"
+                            ],
+                            "_ID":"2002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Bool":[
+                               "False"
+                            ],
+                            "Country":"USA",
+                            "CreateDate":[
+                               "2020-01-01 00:00:00",
+                               "2021-01-01 00:00:00",
+                               "2022-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "Five",
+                               "Four",
+                               "Six"
+                            ],
+                            "People":[
+                               "10",
+                               "25"
+                            ],
+                            "_ID":"2003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Bool":[
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "2030-01-01 00:00:00",
+                               "2031-01-01 00:00:00",
+                               "2032-01-01 00:00:00",
+                               "2033-01-01 00:00:00",
+                               "2034-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "Eight",
+                               "Nine",
+                               "Seven",
+                               "Ten"
+                            ],
+                            "People":[
+                               "4410",
+                               "4425",
+                               "4475"
+                            ],
+                            "_ID":"2004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Bool":[
+                               "False",
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "6012-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "11",
+                               "12",
+                               "13",
+                               "14",
+                               "15"
+                            ],
+                            "People":[
+                               "1255000"
+                            ],
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "List":[
+                      "Three",
+                      "Two"
+                   ],
+                   "_ID":"0002",
+                   "_shard":"shard",
+                   "MVLink":[
+                      {
+                         "doc":{
+                            "Country":"USA",
+                            "CreateDate":[
+                               "2010-01-01 00:00:00",
+                               "2011-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "Three",
+                               "Two"
+                            ],
+                            "People":[
+                               "1000",
+                               "11",
+                               "11000",
+                               "210",
+                               "2590"
+                            ],
+                            "_ID":"2002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Bool":[
+                               "False"
+                            ],
+                            "Country":"USA",
+                            "CreateDate":[
+                               "2020-01-01 00:00:00",
+                               "2021-01-01 00:00:00",
+                               "2022-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "Five",
+                               "Four",
+                               "Six"
+                            ],
+                            "People":[
+                               "10",
+                               "25"
+                            ],
+                            "_ID":"2003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Bool":[
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "2030-01-01 00:00:00",
+                               "2031-01-01 00:00:00",
+                               "2032-01-01 00:00:00",
+                               "2033-01-01 00:00:00",
+                               "2034-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "Eight",
+                               "Nine",
+                               "Seven",
+                               "Ten"
+                            ],
+                            "People":[
+                               "4410",
+                               "4425",
+                               "4475"
+                            ],
+                            "_ID":"2004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Bool":[
+                               "False",
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "6012-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "11",
+                               "12",
+                               "13",
+                               "14",
+                               "15"
+                            ],
+                            "People":[
+                               "1255000"
+                            ],
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "List":[
+                      "Five",
+                      "Four",
+                      "Six"
+                   ],
+                   "_ID":"0003",
+                   "_shard":"shard",
+                   "MVLink":[
+                      {
+                         "doc":{
+                            "Bool":[
+                               "False"
+                            ],
+                            "Country":"USA",
+                            "CreateDate":[
+                               "2020-01-01 00:00:00",
+                               "2021-01-01 00:00:00",
+                               "2022-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "Five",
+                               "Four",
+                               "Six"
+                            ],
+                            "People":[
+                               "10",
+                               "25"
+                            ],
+                            "_ID":"2003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Bool":[
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "2030-01-01 00:00:00",
+                               "2031-01-01 00:00:00",
+                               "2032-01-01 00:00:00",
+                               "2033-01-01 00:00:00",
+                               "2034-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "Eight",
+                               "Nine",
+                               "Seven",
+                               "Ten"
+                            ],
+                            "People":[
+                               "4410",
+                               "4425",
+                               "4475"
+                            ],
+                            "_ID":"2004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Bool":[
+                               "False",
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "6012-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "11",
+                               "12",
+                               "13",
+                               "14",
+                               "15"
+                            ],
+                            "People":[
+                               "1255000"
+                            ],
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "List":[
+                      "Eight",
+                      "Nine",
+                      "Seven",
+                      "Ten"
+                   ],
+                   "_ID":"0004",
+                   "_shard":"shard",
+                   "MVLink":[
+                      {
+                         "doc":{
+                            "Bool":[
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "2030-01-01 00:00:00",
+                               "2031-01-01 00:00:00",
+                               "2032-01-01 00:00:00",
+                               "2033-01-01 00:00:00",
+                               "2034-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "Eight",
+                               "Nine",
+                               "Seven",
+                               "Ten"
+                            ],
+                            "People":[
+                               "4410",
+                               "4425",
+                               "4475"
+                            ],
+                            "_ID":"2004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Bool":[
+                               "False",
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "6012-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "11",
+                               "12",
+                               "13",
+                               "14",
+                               "15"
+                            ],
+                            "People":[
+                               "1255000"
+                            ],
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "List":[
+                      "11",
+                      "12",
+                      "13",
+                      "14",
+                      "15"
+                   ],
+                   "_ID":"0005",
+                   "_shard":"shard",
+                   "MVLink":[
+                      {
+                         "doc":{
+                            "Bool":[
+                               "False",
+                               "True"
+                            ],
+                            "Country":"Russia",
+                            "CreateDate":[
+                               "6012-01-01 00:00:00"
+                            ],
+                            "MV":[
+                               "11",
+                               "12",
+                               "13",
+                               "14",
+                               "15"
+                            ],
+                            "People":[
+                               "1255000"
+                            ],
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
                 }
              }
           ]
@@ -1174,6 +3522,84 @@
        "results":{
           "aggregate":{
              "metric":"DISTINCT(MV)",
+             "query":"*"
+          },
+          "totalobjects":"5",
+          "value":"15"
+       }
+    }
+
+~~~~~~~~
+~ Link ~
+~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=DISTINCT(Link.List)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="DISTINCT(Link.List)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <summary>15</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>15</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>8</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DISTINCT(Link.List)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"5",
+          "summary":"15",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"15",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"8",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=DISTINCT(Link.List)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="DISTINCT(Link.List)" query="*"/>
+        <totalobjects>5</totalobjects>
+        <value>15</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"DISTINCT(Link.List)",
              "query":"*"
           },
           "totalobjects":"5",

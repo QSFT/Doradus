@@ -139,6 +139,8 @@ public class SearchQueryBuilder {
                             builderContext.queries.push(f);
                             DoOperation(opTop, builderContext);
                             builderContext.queries.push(t);
+                            builderContext.operationPush("ANDC") ;
+                            return;
                         } else
                             DoOperation(opTop, builderContext);
                     }
