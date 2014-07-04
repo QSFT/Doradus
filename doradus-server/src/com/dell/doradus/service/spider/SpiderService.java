@@ -730,6 +730,7 @@ public class SpiderService extends StorageService {
             switch (optName) {
             case CommonDefs.AUTO_TABLES:
                 validateBooleanOption(optName, optValue);
+                bAutoTablesSet = true;
                 break;
                 
             case CommonDefs.OPT_STORAGE_SERVICE:
