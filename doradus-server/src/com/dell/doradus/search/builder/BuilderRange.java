@@ -110,6 +110,8 @@ public class BuilderRange extends SearchBuilder {
     		List<String> counters = SpiderHelper.getTerms(m_table, field, prefix, 100);
 	    	if(counters.size() >= 100) return null;
 	    	for(String val : counters) {
+	    		if (val.startsWith("'") && val.endsWith("'"))
+	    			val = val.substring(1, val.length() - 1);
 	    		if(val.compareTo(min) < 0)continue;
 	    		if(val.compareTo(max) >= 0)continue;
     			terms.add(FieldAnalyzer.makeTermKey(field, val));
