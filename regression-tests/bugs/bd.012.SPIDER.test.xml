@@ -31,5 +31,27 @@
     <enable-output/>
     <GET path="_applications" />
     <DELETE path="_applications/Application/ApplicationKey"/>
+    <POST path="_applications">
+    <XML>
+	<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+	<option name="AutoTables">true</option>
+	<option name="StorageService">SpiderService</option>
+    </options>
+    <tables>
+	<table name="Table">
+	    <fields>
+		<field name="SV" type="TEXT"/>
+		<field name="Text" type="TEXT"/>
+	    </fields>
+	</table>
+    </tables>
+	</application>
+    </XML>
+    </POST>
+    <enable-output/>
+    <GET path="_applications" />
+    <DELETE path="_applications/Application/ApplicationKey"/>
 <DISCONNECT/>
 </TEST>
