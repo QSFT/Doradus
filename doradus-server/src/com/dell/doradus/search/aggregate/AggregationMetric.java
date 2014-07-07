@@ -18,6 +18,8 @@ package com.dell.doradus.search.aggregate;
 
 import java.util.List;
 
+import com.dell.doradus.search.query.Query;
+
 public class AggregationMetric implements MetricExpression {
     public String sourceText;
     // function name
@@ -26,4 +28,8 @@ public class AggregationMetric implements MetricExpression {
     // Subfield - MINUTE, HOUR, DAY, MONTH, YEAR
     public AggregationGroup.SubField subField;
     public List<AggregationGroupItem> items;
+    
+    //Global WHERE filter metric starts with: e.g. m=COUNT(WHERE(Attachments IS NULL).Sender.Person.Name)
+    public Query filter;
+    
 }

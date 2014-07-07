@@ -71,6 +71,9 @@ public class AggregationGroup {
     //INCLUDE filter
     public List<String> include;
 
+    //Global WHERE filter grouping starts with: e.g. f=WHERE(Subject:a*).Subject
+    public Query filter;
+    
     //List of links and associated queries
     public List<AggregationGroupItem> items; // = new ArrayList<AggregationGroupItem>();
     
