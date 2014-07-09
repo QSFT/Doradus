@@ -722,6 +722,32 @@ public class QueryUtils {
             }
         },
 
+        FieldCountRangeQuery {
+            Query Clone(Query q) {
+                if (q == null)
+                    return null;
+
+                FieldCountRangeQuery fcrq = (FieldCountRangeQuery) q;
+                FieldCountRangeQuery lc = new FieldCountRangeQuery(fcrq.field, (RangeQuery) CloneQuery(fcrq.range));
+                return lc;
+
+            }
+        },
+
+        FieldCountQuery {
+            Query Clone(Query q) {
+                if (q == null)
+                    return null;
+
+                FieldCountQuery fcq = (FieldCountQuery) q;
+                FieldCountQuery lc = new FieldCountQuery(fcq.field, fcq.count);
+                return lc;
+
+            }
+        },
+
+
+
         LinkIdQuery {
             Query Clone(Query q) {
                 if (q == null)

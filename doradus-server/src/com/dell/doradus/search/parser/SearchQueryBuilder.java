@@ -260,22 +260,31 @@ public class SearchQueryBuilder {
             Query pat = QueryUtils.GetParent(first, iq);
 
             if (QueryUtils.GetLinkQuantifier(iq).equals("COUNT")) {
-                if (fieldtype == QueryFieldType.Link) {
+                if (fieldtype == QueryFieldType.Link || fieldtype == QueryFieldType.Field ||
+                        fieldtype == QueryFieldType.MultiValueScalar || fieldtype == QueryFieldType.Unknown) {
+
+                    boolean isLink = fieldtype == QueryFieldType.Link;
                     if (iq instanceof LinkQuery) {
                         LinkQuery llq = (LinkQuery) iq;
                         if (llq.quantifier.equals("COUNT")) {
                             SetLinkQueryQuantifier(first, LinkQuery.ANY);
                             RangeQuery rq = CreateRangeQuery(op, (BinaryQuery) q, field);
-                            LinkCountRangeQuery lcrq = new LinkCountRangeQuery(field, rq);
-                            lcrq.filter = llq.filter;
-                            QueryUtils.SetInnerQuery(pat, lcrq);
+                            if (isLink) {
+                                LinkCountRangeQuery lcrq = new LinkCountRangeQuery(field, rq);
+                                lcrq.filter = llq.filter;
+                                QueryUtils.SetInnerQuery(pat, lcrq);
+                            } else {
+                                if (llq.filter != null)
+                                    throw new IllegalArgumentException("Filters are not supported for non link fields: " + field);
+                                QueryUtils.SetInnerQuery(pat, new FieldCountRangeQuery(field, rq));
+
+                            }
                             builderContext.queries.push(first);
                             return;
                         }
                     }
-
                 }
-                throw new IllegalArgumentException("Error COUNT: " + field + " is not a link");
+                throw new IllegalArgumentException("Error COUNT: " + field + " is not a link or field");
             }
 
             switch (fieldtype) {
@@ -300,12 +309,26 @@ public class SearchQueryBuilder {
             if (first instanceof LinkQuery && QueryUtils.GetLinkQuantifier(first).equals("COUNT")) {
                 LinkQuery lqOrigin = (LinkQuery) first;
                 String fname = lqOrigin.link;
-                RangeQuery rq = CreateRangeQuery(op, (BinaryQuery) q, fname);
-                LinkCountRangeQuery lcrq = new LinkCountRangeQuery(fname, rq);
-                lcrq.filter = lqOrigin.filter;
-                builderContext.queries.push(lcrq);
-                return;
+                QueryFieldType fieldtype = QueryUtils.GetFieldType(QueryUtils.GetPath(first, builderContext.definition), builderContext.definition);
 
+                RangeQuery rq = CreateRangeQuery(op, (BinaryQuery) q, fname);
+
+                switch (fieldtype) {
+                    case Link:
+                        LinkCountRangeQuery lcrq = new LinkCountRangeQuery(fname, rq);
+                        lcrq.filter = lqOrigin.filter;
+                        builderContext.queries.push(lcrq);
+                        return;
+                    case Group:
+                        throw new IllegalArgumentException("Error. COUNT is not supported for group fields: " + fname);
+                    default:
+                        if (lqOrigin.filter != null)
+                            throw new IllegalArgumentException("Filters are not supported for non link fields: " + fname);
+
+                        builderContext.queries.push(new FieldCountRangeQuery(fname, rq));
+                        return;
+
+                }
             }
             if (!(first instanceof BinaryQuery)) {
                 if (first instanceof LinkQuery) {
@@ -419,6 +442,48 @@ public class SearchQueryBuilder {
             }
 
             if (QueryUtils.GetLinkQuantifier(last).equals("COUNT")) {
+                switch (fieldType)  {
+                    case Link:
+                    case Field:
+                    case MultiValueScalar:
+
+                        boolean isLink = fieldType == QueryFieldType.Link;
+                        if (last instanceof LinkQuery) {
+                            LinkQuery llq = (LinkQuery) last;
+                            if (llq.quantifier.equals("COUNT")) {
+                                if (isLink)
+                                    SetLinkQueryQuantifier(second, LinkQuery.ANY);
+                                if (first instanceof BinaryQuery) {
+                                    int countValue = Integer.parseInt(((BinaryQuery)first).value);
+                                    if (isLink) {
+                                        QueryUtils.SetInnerQuery(pat, new LinkCountQuery(QueryUtils.GetLinkQueryLink(last), countValue));
+                                    } else {
+                                        QueryUtils.SetInnerQuery(pat, new FieldCountQuery(QueryUtils.GetLinkQueryLink(last), countValue));
+                                    }
+
+                                    builderContext.queries.push(second);
+                                    return false;
+                                }
+                                if (first instanceof RangeQuery) {
+                                    RangeQuery rq = (RangeQuery) first;
+                                    rq.field = lastname;
+                                    if (isLink) {
+                                        QueryUtils.SetInnerQuery(pat, new LinkCountRangeQuery(lastname, rq));
+                                    } else {
+                                        QueryUtils.SetInnerQuery(pat, new FieldCountRangeQuery(lastname, rq));
+                                    }
+
+                                    builderContext.queries.push(second);
+                                    return false;
+                                }
+                            }
+                        }
+                    default:
+                        throw new IllegalArgumentException("Error COUNT: " + QueryUtils.GetLinkQueryLink(last) + " is not a link or field" );
+
+                }
+
+                /*
                 if (fieldType == QueryFieldType.Link) {
                     if (last instanceof LinkQuery) {
                         LinkQuery llq = (LinkQuery) last;
@@ -438,15 +503,13 @@ public class SearchQueryBuilder {
                                 QueryUtils.SetInnerQuery(pat, lcrq);
                                 builderContext.queries.push(second);
                                 return false;
-
                             }
                         }
                     }
 
                 }
-                throw new IllegalArgumentException("Error COUNT: " + QueryUtils.GetLinkQueryLink(last) + " is not a link");
+                */
             }
-
             QueryFieldType fType = QueryUtils.GetBasicFieldType(path, builderContext.definition);
             switch (fieldType) {
 
@@ -536,31 +599,42 @@ public class SearchQueryBuilder {
             }
 
             if (quantifier.equals("COUNT")) {
-                if (fieldType == QueryFieldType.Link || fieldType == QueryFieldType.Unknown
-                        || (fieldType == QueryFieldType.Group && !replaceGroupMode)) {
+                if (fieldType == QueryFieldType.Link || fieldType == QueryFieldType.Unknown ||
+                        fieldType == QueryFieldType.Field || fieldType == QueryFieldType.MultiValueScalar ) {
+                    boolean isLink = fieldType == QueryFieldType.Link;
                     if (lq instanceof LinkQuery) {
                         LinkQuery llq = (LinkQuery) lq;
-                        SetLinkQueryQuantifier(second, LinkQuery.ANY);
+                        if (isLink)
+                            SetLinkQueryQuantifier(second, LinkQuery.ANY);
                         if (first instanceof BinaryQuery) {
                             int countValue = Integer.parseInt((String) ((BinaryQuery) first).value);
-                            LinkCountQuery newFirst = new LinkCountQuery(fname, countValue);
-                            newFirst.filter = llq.filter;
-                            second = newFirst;
+                            if (isLink) {
+                                LinkCountQuery newFirst = new LinkCountQuery(fname, countValue);
+                                newFirst.filter = llq.filter;
+                                second = newFirst;
+                            } else {
+                                if (llq.filter != null)
+                                    throw new IllegalArgumentException("Filters are not supported for non link fields: " + fname);
+                                second = new FieldCountQuery(fname, countValue);
+                            }
                         } else if (first instanceof RangeQuery) {
                             RangeQuery rq = (RangeQuery) first;
                             rq.field = fname;
-                            LinkCountRangeQuery lcrq = new LinkCountRangeQuery(fname, rq);
-                            lcrq.filter = llq.filter;
-                            second = lcrq;
+                            if (isLink) {
+                                LinkCountRangeQuery lcrq = new LinkCountRangeQuery(fname, rq);
+                                lcrq.filter = llq.filter;
+                                second = lcrq;
+                            } else {
+                                if (llq.filter != null)
+                                    throw new IllegalArgumentException("Filters are not supported for non link fields: " + fname);
+                                second = new FieldCountRangeQuery(fname, rq);
+                            }
                         } else {
-                            throw new IllegalArgumentException("Error : cannot parse int value for COUNT");
+                            throw new IllegalArgumentException("Error : unsupported type for COUNT value");
                         }
-
-                    } else {
-                        throw new IllegalArgumentException("Error COUNT: " + fname + " is  not a link");
                     }
-                } else {
-                    throw new IllegalArgumentException("Error COUNT: " + fname + " is  not a link");
+                }  else {
+                    throw new IllegalArgumentException("Error COUNT: " + fname + " is  not a link or field");
                 }
             } else
             {
