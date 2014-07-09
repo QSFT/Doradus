@@ -19,6 +19,7 @@ package com.dell.doradus.search.builder;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.search.FilteredIterable;
+import com.dell.doradus.search.QueryExecutor;
 import com.dell.doradus.search.filter.Filter;
 import com.dell.doradus.search.filter.FilterLinkCount;
 import com.dell.doradus.search.query.LinkCountQuery;
@@ -34,7 +35,12 @@ public class BuilderLinkCount extends SearchBuilder {
 		LinkCountQuery qu = (LinkCountQuery)query;
 		FieldDefinition fieldDef = m_table.getFieldDef(qu.link);
 		Utils.require(fieldDef.isLinkField(), qu.link + " is not a link field");
-        FilterLinkCount condition = new FilterLinkCount(qu.link, qu.count);
+		Filter inner = null;
+		if(qu.filter != null) {
+			QueryExecutor qe = new QueryExecutor(fieldDef.getTableDef().getLinkExtentTableDef(fieldDef));
+			inner = qe.filter(qu.filter);
+		}
+        FilterLinkCount condition = new FilterLinkCount(qu.link, qu.count, inner);
         return condition;
 	}
    
