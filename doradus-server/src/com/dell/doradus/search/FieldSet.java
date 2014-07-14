@@ -32,6 +32,7 @@ public class FieldSet {
 	 * limits the number of 
 	 */
 	public int limit = -1;
+	public String alias = null;
 	public Query filter = null;
 	public TableDefinition tableDef;
 	public ArrayList<String> ScalarFields = new ArrayList<String>();

@@ -43,6 +43,8 @@ public class AggregationGroup {
     // alias or name of group, excluding TOP N
     public String name;
     
+    public TableDefinition tableDef;
+    
     public String text;
 
     public Selection selection = Selection.None;
@@ -76,6 +78,8 @@ public class AggregationGroup {
     
     //List of links and associated queries
     public List<AggregationGroupItem> items; // = new ArrayList<AggregationGroupItem>();
+    
+    public AggregationGroup(TableDefinition tableDef) { this.tableDef = tableDef; }
     
     public static List<AggregationGroup> GetAggregationGroupsList(String input, TableDefinition tableDef)  {
         return AggregationQueryBuilder.Build(input, tableDef);

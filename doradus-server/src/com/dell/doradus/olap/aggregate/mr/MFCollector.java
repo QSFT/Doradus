@@ -84,6 +84,12 @@ public abstract class MFCollector {
 				collector = new LinkField(searcher, item.fieldDef, filter, collector);
 			} else throw new IllegalArgumentException("Invalid field in aggregation group: " + item.name);
 		}
+		
+		if(group.filter != null) {
+			Result filter = ResultBuilder.search(group.tableDef, group.filter, searcher);
+			collector = new MFCollector.FilteredCollector(filter, collector);
+		}
+		
 		return collector;
 	}
 
@@ -454,5 +460,24 @@ public abstract class MFCollector {
 		@Override public boolean requiresOrdering() { return m_collector.requiresOrdering(); }
 	}
 	
+	public static class FilteredCollector extends MFCollector
+	{
+		private Result m_filter;
+		private MFCollector m_collector;
+		
+		public FilteredCollector(Result filter, MFCollector inner) {
+			super(inner.searcher);
+			m_filter = filter;
+			m_collector = inner;
+		}
+		
+		@Override public void collect(long doc, BdLongSet values) {
+			if(doc < 0 || m_filter.get((int)doc)) m_collector.collect(doc, values);
+		}
+		
+		@Override public void collectEmptyGroups(BdLongSet values) { m_collector.collectEmptyGroups(values); }
+		@Override public MGName getField(long value) { return m_collector.getField(value); }
+		@Override public boolean requiresOrdering() { return m_collector.requiresOrdering(); }
+	}
 	
 }

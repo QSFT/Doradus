@@ -76,8 +76,14 @@ public class MetricCounterFactory {
 	
 	
 	public static MetricCounter create(CubeSearcher searcher, AggregationMetric metric) {
-		if(metric.items == null || metric.items.size() == 0) return new MetricCounter.Count();
-		else return create(searcher, metric, 0);
+		MetricCounter counter = null;
+		if(metric.items == null || metric.items.size() == 0) counter = new MetricCounter.Count();
+		else counter = create(searcher, metric, 0);
+		if(metric.filter != null) {
+			Result result = ResultBuilder.search(metric.tableDef, metric.filter, searcher);
+			counter = new MetricCounter.FilteredCounter(result, counter);
+		}
+		return counter;
 	}
 
 	private static MetricCounter create(CubeSearcher searcher, AggregationMetric metric, int index) {

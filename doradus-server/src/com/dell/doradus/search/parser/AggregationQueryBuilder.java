@@ -176,7 +176,7 @@ public class AggregationQueryBuilder {
 
         ArrayList<AggregationMetric> result = new ArrayList<AggregationMetric>();
 
-        AggregationMetric metric = new AggregationMetric();
+        AggregationMetric metric = new AggregationMetric(definition);
         ArrayList<Item> items = extractTokens(context);
 
         TableDefinition tableDef = definition;
@@ -203,7 +203,7 @@ public class AggregationQueryBuilder {
                 tableDef = definition;
                 fieldDetected = false;
                 metric.sourceText = context.inputString.substring(ptr, inputPtr);
-                metric = new AggregationMetric();
+                metric = new AggregationMetric(definition);
                 continue;
             }
 
@@ -352,7 +352,7 @@ public class AggregationQueryBuilder {
         if (context.items.isEmpty())
             return null;
 
-        AggregationMetric metric = new AggregationMetric();
+        AggregationMetric metric = new AggregationMetric(definition);
         ArrayList<Item> items = extractMetricTokens(context);
         TableDefinition tableDef = definition;
         boolean fieldDetected = false;
@@ -437,7 +437,7 @@ public class AggregationQueryBuilder {
                 }
                 tableDef = definition;
                 fieldDetected = false;
-                metric = new AggregationMetric();
+                metric = new AggregationMetric(definition);
 
                 continue;
 
@@ -461,7 +461,7 @@ public class AggregationQueryBuilder {
                 tableDef = definition;
                 fieldDetected = false;
                 //metric.sourceText = context.inputString.substring(ptr, item.item.getPtr());
-                metric = new AggregationMetric();
+                metric = new AggregationMetric(definition);
 
                 continue;
             }
@@ -647,7 +647,7 @@ public class AggregationQueryBuilder {
 
 
     private static ArrayList<AggregationGroup> processItems(Context context, TableDefinition definition, ArrayList<Item> items) {
-        AggregationGroup aggregationGroup = new AggregationGroup();
+        AggregationGroup aggregationGroup = new AggregationGroup(definition);
         TableDefinition tableDef = definition;
         boolean fieldDetected = false;
 
@@ -680,7 +680,7 @@ public class AggregationQueryBuilder {
                     result.add(aggregationGroup);
                     aggregationGroup.text = context.inputString.substring(startPos, item.item.getPtr());
                     startPos = item.item.getPtr() + item.item.getValue().length();
-                    aggregationGroup = new AggregationGroup();
+                    aggregationGroup = new AggregationGroup(definition);
                     tableDef = definition;
                     fieldDetected = false;
                 }
@@ -688,7 +688,7 @@ public class AggregationQueryBuilder {
                 result.add(aggregationGroup);
                 aggregationGroup.text = context.inputString.substring(startPos, item.item.getPtr());
                 startPos = item.item.getPtr() + item.item.getValue().length();
-                aggregationGroup = new AggregationGroup();
+                aggregationGroup = new AggregationGroup(definition);
                 SetFilter(aggregationGroup, tableDef, item);
                 tableDef = definition;
                 fieldDetected = false;

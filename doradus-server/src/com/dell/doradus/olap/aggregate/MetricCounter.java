@@ -27,6 +27,20 @@ public abstract class MetricCounter {
 	
 	public abstract void add(int doc, IMetricValue value);
 
+	public static class FilteredCounter extends MetricCounter {
+		private Result m_filter;
+		private MetricCounter m_inner;
+		public FilteredCounter(Result filter, MetricCounter inner) {
+			m_filter = filter;
+			m_inner = inner;
+		}
+		
+		@Override public void add(int doc, IMetricValue value) {
+			if(doc < 0 || m_filter.get(doc)) m_inner.add(doc, value);
+		}
+	}
+	
+	
 	public static class Count extends MetricCounter {
 		
 		public Count() { }

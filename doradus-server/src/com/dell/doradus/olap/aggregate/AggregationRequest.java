@@ -95,6 +95,7 @@ public class AggregationRequest {
 		AggregationMetric am = (AggregationMetric)me;
 		if(!"COUNT".equals(am.function)) return false;
 		if(am.items != null && am.items.size() != 0) return false;
+		if(am.filter != null) return false;
 		for(Part part : parts) {
 			if(part.groups != null && part.groups.size() != 0) return false;
 		}

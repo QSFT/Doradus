@@ -18,6 +18,7 @@ package com.dell.doradus.search.aggregate;
 
 import java.util.List;
 
+import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.search.query.Query;
 
 public class AggregationMetric implements MetricExpression {
@@ -25,6 +26,10 @@ public class AggregationMetric implements MetricExpression {
     // function name
     public String function;
 
+    public TableDefinition tableDef;
+    
+    public AggregationMetric(TableDefinition tableDef) { this.tableDef = tableDef; }
+    
     // Subfield - MINUTE, HOUR, DAY, MONTH, YEAR
     public AggregationGroup.SubField subField;
     public List<AggregationGroupItem> items;
