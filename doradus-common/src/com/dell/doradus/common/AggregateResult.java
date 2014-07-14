@@ -278,10 +278,11 @@ public class AggregateResult {
          * summary value for the groupset. For a multi-metric query without grouping, it is
          * the groupset's value. For a single-tree groupset, it is null. 
          * 
-         * @param groupsetValue New value for this groupset's groupset-value.
+         * @param groupsetValue New value for this groupset's groupset-value. If null is
+         *                      passed, the groupset-value is set to an empty string.
          */
         public void setGroupsetValue(String groupsetValue) {
-            m_groupsetValue = groupsetValue;
+            m_groupsetValue = groupsetValue == null ? "" : groupsetValue;
         }   // setGroupSetValue
         
         /**
@@ -517,10 +518,11 @@ public class AggregateResult {
          * Set the group-value of this group. For leaf groups, group-value holds the metric
          * value of the group. For parent groups, it holds the summary value of the group.
          * 
-         * @param groupValue    New group-value for this group.
+         * @param groupValue    New group-value for this group. If null is passed, the
+         *                      group-value is set to an empty string.
          */
         public void setGroupValue(String groupValue) {
-            m_groupValue = groupValue;
+            m_groupValue = groupValue == null ? "" : groupValue;
         }   // setGroupValue
         
         /**
@@ -859,10 +861,11 @@ public class AggregateResult {
      * aggregate or the summary value for single groupset aggregates. It is null for
      * multi-groupset aggregates.
      * 
-     * @param globalValue   New value for this AggregateResult's global-value.
+     * @param globalValue   New value for this AggregateResult's global-value. If null is
+     *                      passed, the global-value is set to an empty string.
      */
     public void setGlobalValue(String globalValue) {
-        m_globalValue = globalValue;
+        m_globalValue = globalValue == null ? "" : globalValue;
     }   // setGlobalValue
     
     /**

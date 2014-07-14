@@ -8,9 +8,11 @@
     <results>
         <aggregate group="Number" metric="AVERAGE(Number1)" query="*"/>
         <totalobjects>1</totalobjects>
+        <summary/>
         <totalgroups>1</totalgroups>
         <groups>
             <group>
+                <metric/>
                 <field name="Number">0.231</field>
             </group>
         </groups>
@@ -25,10 +27,12 @@
              "group":"Number"
           },
           "totalobjects":"1",
+          "summary":"",
           "totalgroups":"1",
           "groups":[
              {
                 "group":{
+                   "metric":"",
                    "field":{
                       "Number":"0.231"
                    }

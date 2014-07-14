@@ -25,10 +25,12 @@ import com.dell.doradus.search.aggregate.EntitySequence;
 public class FilterLinkCount implements Filter {
 	private String m_link;
 	private int m_count;
+	private Filter m_inner;
     
-    public FilterLinkCount(String link, int count) {
+    public FilterLinkCount(String link, int count, Filter inner) {
 		m_link = link;
 		m_count = count;
+		m_inner = inner;
     }
     
     @Override public boolean check(Entity entity) {
@@ -36,6 +38,9 @@ public class FilterLinkCount implements Filter {
         int count = 0;
         for(Entity e: links) {
         	if(e == null)break; // to suppress "unused" warning
+			if(m_inner != null) {
+				if(!m_inner.check(e)) continue;
+			}
         	count++;
         	if(count > m_count) return false;
         }

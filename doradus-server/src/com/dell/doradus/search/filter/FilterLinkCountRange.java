@@ -27,8 +27,9 @@ public class FilterLinkCountRange implements Filter {
 	private String m_link;
 	private int m_min;
 	private int m_max;
+	private Filter m_inner;
     
-    public FilterLinkCountRange(String link, RangeQuery query) {
+    public FilterLinkCountRange(String link, RangeQuery query, Filter inner) {
 		m_link = link;
 		m_min = Integer.MIN_VALUE;
 		m_max = Integer.MAX_VALUE;
@@ -40,6 +41,7 @@ public class FilterLinkCountRange implements Filter {
 			m_max = Integer.parseInt(query.max.toString());
 			if(query.maxInclusive) m_max++;
 		}
+		m_inner = inner;
     }
 
     @Override public boolean check(Entity entity) {
@@ -48,6 +50,9 @@ public class FilterLinkCountRange implements Filter {
         int count = 0;
         for(Entity e: links) {
         	if(e == null)break; // to suppress "unused" warning
+			if(m_inner != null) {
+				if(!m_inner.check(e)) continue;
+			}
         	count++;
         	if(m_max <= count) return false;
         }

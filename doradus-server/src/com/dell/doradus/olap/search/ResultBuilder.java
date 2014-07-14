@@ -42,6 +42,8 @@ import com.dell.doradus.search.query.AllQuery;
 import com.dell.doradus.search.query.AndQuery;
 import com.dell.doradus.search.query.BinaryQuery;
 import com.dell.doradus.search.query.DatePartBinaryQuery;
+import com.dell.doradus.search.query.FieldCountQuery;
+import com.dell.doradus.search.query.FieldCountRangeQuery;
 import com.dell.doradus.search.query.IdInQuery;
 import com.dell.doradus.search.query.IdQuery;
 import com.dell.doradus.search.query.LinkCountQuery;
@@ -531,7 +533,34 @@ public class ResultBuilder {
 					if(cal.get(datePart) == partValue) r.set(i);
 				}
 			}
-			
+		} else if(query instanceof FieldCountQuery) {
+			FieldCountQuery q = (FieldCountQuery)query;
+			FieldDefinition f = tableDef.getFieldDef(q.field);
+			Utils.require(f != null, q.field + " not found in " + tableDef.getTableName());
+			if(NumSearcher.isNumericType(f.getType())) {
+				NumSearcherMV num_searcher = searcher.getNumSearcher(f.getTableName(), f.getName());
+				num_searcher.fillCount(q.count, q.count + 1, r);
+			}
+			else {
+				FieldSearcher field_searcher = searcher.getFieldSearcher(f.getTableName(),f.getName());
+				field_searcher.fillCount(q.count, q.count + 1, r);
+			}
+		} else if(query instanceof FieldCountRangeQuery) {
+			FieldCountRangeQuery q = (FieldCountRangeQuery)query;
+			FieldDefinition f = tableDef.getFieldDef(q.field);
+			Utils.require(f != null, q.field + " not found in " + tableDef.getTableName());
+			int min = q.range.min == null ? Integer.MIN_VALUE : Integer.parseInt(q.range.min);
+			int max = q.range.max == null ? Integer.MAX_VALUE : Integer.parseInt(q.range.max);
+			if(!q.range.minInclusive) min++;
+			if(q.range.maxInclusive) max++;
+			if(NumSearcher.isNumericType(f.getType())) {
+				NumSearcherMV num_searcher = searcher.getNumSearcher(f.getTableName(), f.getName());
+				num_searcher.fillCount(min, max, r);
+			}
+			else {
+				FieldSearcher field_searcher = searcher.getFieldSearcher(f.getTableName(),f.getName());
+				field_searcher.fillCount(min, max, r);
+			}
 		} else throw new IllegalArgumentException("Query " + query.getClass().getSimpleName() + " not supported");
 		return r;
 	}
