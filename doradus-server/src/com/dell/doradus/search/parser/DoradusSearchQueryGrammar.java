@@ -778,7 +778,7 @@ public class DoradusSearchQueryGrammar {
 
         List<GrammarRule> obody = new ArrayList<>();
 
-        obody.add(Grammar.Rule(DOT, WHERE, Grammar.MustMatchAction, OptWhiteSpaces, LEFTPAREN,
+        obody.add(Grammar.Rule(DOT,  WHERE, Grammar.MustMatchAction, OptWhiteSpaces, LEFTPAREN,
                 OptWhiteSpaces, Query, OptWhiteSpaces, RIGHTPAREN, Grammar.Semantic("EOF"), Grammar.Semantic("ENDWHERE"), OptionalWhereClause ));
         obody.add(Grammar.emptyRule);
 
@@ -793,10 +793,13 @@ public class DoradusSearchQueryGrammar {
                 Grammar.Rule(UPPER, Grammar.SetType("UPPER"))
         );
 
+
+        SwitchRule AggregationFieldSubfieldPathWhere = new SwitchRule("AggregationFieldSubfieldPathWhere");
+
         SwitchRule AggregationFieldCaseFunctionClause = new SwitchRule("AggregationFieldCaseFunctionClause",
                 Grammar.Rule(AggregationFieldCaseFunctionName, OptWhiteSpaces, LEFTPAREN,
-                OptWhiteSpaces, AggregationFieldPath, OptWhiteSpaces, RIGHTPAREN),
-                AggregationFieldPath
+                OptWhiteSpaces, AggregationFieldSubfieldPathWhere, OptWhiteSpaces, RIGHTPAREN),
+                AggregationFieldSubfieldPathWhere
         );
 
         SequenceRule StopWordList = new SequenceRule("StopWordList");
@@ -1141,11 +1144,12 @@ public class DoradusSearchQueryGrammar {
                 StatisticMetricFunctionName
         );
 
-        SwitchRule AggregationFieldSubfieldPathWhere = new SwitchRule(SwitchRule.First,"AggregationFieldSubfieldPathWhere",
-                Grammar.Rule(WHERE, Grammar.DropLexem, OptWhiteSpaces, LEFTPAREN, Grammar.DropLexem,
-                        OptWhiteSpaces, AggregationFieldPath, OptWhiteSpaces, RIGHTPAREN, Grammar.DropLexem ),
+        AggregationFieldSubfieldPathWhere.body = Grammar.asRule(
+                Grammar.Rule(WHERE , OptWhiteSpaces, LEFTPAREN, OptWhiteSpaces,
+                        Query, OptWhiteSpaces, RIGHTPAREN, Grammar.Semantic("EOF"), Grammar.Semantic("ENDWHERE"),  DOT, Grammar.SetType("DOT") , AggregationFieldSubfieldPathWhere  ),
                 AggregationFieldPath
         );
+
         GrammarRule AggregationMetricFunctionQuery = Grammar.Rule("AggregationMetricFunctionQuery",
                 OptWhiteSpaces, AggregationMetricFunctionName, Grammar.SetType("AggregationMetricFunctionName"), Grammar.MustMatchAction,
                 OptWhiteSpaces, LEFTPAREN,
@@ -1170,9 +1174,18 @@ public class DoradusSearchQueryGrammar {
                 DateDiffParameters, OptWhiteSpaces, RIGHTPAREN, Grammar.DropLexem
         );
 
+
+
+        SwitchRule WhereStar = new SwitchRule("WhereStar");
+        WhereStar.body = Grammar.asRule(
+                Grammar.Rule(WHERE , OptWhiteSpaces, LEFTPAREN, OptWhiteSpaces,
+                        Query, OptWhiteSpaces, RIGHTPAREN, Grammar.Semantic("EOF"), Grammar.Semantic("ENDWHERE"),  DOT, Grammar.SetType("DOT") , WhereStar  ),
+                STAR
+        );
+
         GrammarRule AggregationMetricCountStarQuery = Grammar.Rule("AggregationMetricCountStarQuery",
                 OptWhiteSpaces, COUNT, Grammar.SetType("AggregationMetricFunctionName"), OptWhiteSpaces, LEFTPAREN,
-                OptWhiteSpaces, STAR, OptWhiteSpaces, RIGHTPAREN
+                OptWhiteSpaces, WhereStar, OptWhiteSpaces, RIGHTPAREN
         );
 
         SwitchRule SignNumberContinue = new SwitchRule("SignNumberContinue",

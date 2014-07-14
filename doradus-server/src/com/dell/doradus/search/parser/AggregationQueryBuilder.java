@@ -420,6 +420,13 @@ public class AggregationQueryBuilder {
             if (item.item.getType().equals(SemanticNames.AGGREGATION_METRIC_FUNCTION_NAME)) {
                 ptr = item.item.getPtr();
                 metric.function = item.item.getValue();
+
+                if (item.queryItems != null) {
+                    for (int j = 0; j < item.queryItems.size(); j++) {
+                        ArrayList<GrammarItem> filterItems = item.queryItems.get(j);
+                        metric.filter = CompileQuery(tableDef, metric.filter, filterItems);
+                    }
+                }
                 continue;
             }
 
@@ -663,6 +670,10 @@ public class AggregationQueryBuilder {
                 continue;
             }
 
+            if (item.item.getType().equals("global")) {
+                SetFilter(aggregationGroup, tableDef, item);
+                continue;
+            }
             if (item.item.getType().equals("endGroup")) {
                 lastPos = item.item.getPtr();
                 if (aggregationGroup.items != null) {
@@ -678,6 +689,7 @@ public class AggregationQueryBuilder {
                 aggregationGroup.text = context.inputString.substring(startPos, item.item.getPtr());
                 startPos = item.item.getPtr() + item.item.getValue().length();
                 aggregationGroup = new AggregationGroup();
+                SetFilter(aggregationGroup, tableDef, item);
                 tableDef = definition;
                 fieldDetected = false;
             } else {
@@ -692,6 +704,7 @@ public class AggregationQueryBuilder {
                     aggregationGroup.subField = AggregationGroup.SubField.valueOf(item.item.getValue());
                     continue;
                 }
+
 
                 if (type.equals(SemanticNames.TIMEZONEVALUE)) {
                     aggregationGroup.timeZone = item.item.getValue().trim();
@@ -765,6 +778,7 @@ public class AggregationQueryBuilder {
 
                 if (type.equals(SemanticNames.UPPER)) {
                     aggregationGroup.tocase = SemanticNames.UPPER;
+
                     continue;
                 }
 
@@ -773,10 +787,12 @@ public class AggregationQueryBuilder {
                     continue;
                 }
 
-                if (type.equals(SemanticNames.TRUNCATE) || type.equals(SemanticNames.BATCH) ||
-                        type.equals(SemanticNames.TERMS)) {
+                if (type.equals(SemanticNames.TRUNCATE) || type.equals(SemanticNames.BATCH)) {
+                    SetFilter(aggregationGroup, tableDef, item);
                     continue;
                 }
+                if (type.equals(SemanticNames.TERMS))
+                    continue;
 
                 if (type.equals(SemanticNames.EXCLUDELIST)) {
                     includeList=false;
@@ -837,11 +853,12 @@ public class AggregationQueryBuilder {
                 }
 
                 if (type.equals(SemanticNames.TOPBOTTOM)) {
-                    if (item.item.getValue().equals("TOP") || item.item.getValue().equals("top"))
+                    if (item.item.getValue().equals("TOP") )
                         aggregationGroup.selection = AggregationGroup.Selection.Top;
                     else
                         aggregationGroup.selection = AggregationGroup.Selection.Bottom;
 
+                    SetFilter(aggregationGroup, tableDef, item);
                     continue;
                 }
 
@@ -970,6 +987,14 @@ public class AggregationQueryBuilder {
         return result;
     }
 
+    private static void SetFilter(AggregationGroup aggregationGroup, TableDefinition tableDef, Item item) {
+        if (item.queryItems != null) {
+            for (int j = 0; j < item.queryItems.size(); j++) {
+                aggregationGroup.filter = CompileQuery(tableDef, aggregationGroup.filter, item.queryItems.get(j));
+            }
+        }
+    }
+
     private static LinkQuery GetLast(LinkQuery q) {
         while (q.innerQuery != null)
             q = (LinkQuery) q.innerQuery;
@@ -1084,11 +1109,17 @@ public class AggregationQueryBuilder {
                 items.add(item);
             }
 
-
-
             if (grammarItem.getValue().equals(SemanticNames.WHERE)) {
                 ArrayList<GrammarItem> sublist = new ArrayList<GrammarItem>();
-                Item prev = items.get(items.size() - 1);
+                Item prev = null;
+                if (items.size() == 0) {
+                    prev = new Item();
+                    prev.item= grammarItem;
+                    prev.item.setType("global");
+                    items.add(prev);
+                } else
+                 prev = items.get(items.size() - 1);
+
                 if (prev.queryItems == null)
                     prev.queryItems = new ArrayList<ArrayList<GrammarItem>>();
                 prev.queryItems.add(sublist);
