@@ -141,6 +141,12 @@ public class ResultBuilder {
 					field_searcher.fillCount(0, 1, r);
 					return r;
 				}
+				if("*".equals(value)) {
+					FieldSearcher field_searcher = searcher.getFieldSearcher(tableDef.getTableName(), field);
+					field_searcher.fillCount(0, 1, r);
+					r.not();
+					return r;
+				}
 				
 				value = value.toLowerCase();
 				ValueSearcher vs = searcher.getValueSearcher(tableDef.getTableName(), field);
@@ -200,15 +206,21 @@ public class ResultBuilder {
 				}
 				else throw new IllegalArgumentException(bq.operation + " is not supported");
 			} else if(NumSearcher.isNumericType(f.getType())) {
-				if(!bq.operation.equals(BinaryQuery.EQUALS)) throw new IllegalArgumentException("Contains is not supported for numeric types");
 				if(value == null) {
 					NumSearcherMV num_searcher = searcher.getNumSearcher(tableDef.getTableName(), field);
 					num_searcher.fillNull(r);
-				} else {
-					if(value.indexOf('*') >= 0 ||value.indexOf('?') >= 0) throw new IllegalArgumentException("Wildcard search not supported for numeric types");
-					NumSearcherMV num_searcher = searcher.getNumSearcher(tableDef.getTableName(), field);
-					num_searcher.fill(NumSearcher.parse(value, f.getType()), r);
+					return r;
 				}
+				if("*".equals(value)) {
+					NumSearcherMV num_searcher = searcher.getNumSearcher(tableDef.getTableName(), field);
+					num_searcher.fillNull(r);
+					r.not();
+					return r;
+				}
+				if(!bq.operation.equals(BinaryQuery.EQUALS)) throw new IllegalArgumentException("Contains is not supported for numeric types");
+				if(value.indexOf('*') >= 0 ||value.indexOf('?') >= 0) throw new IllegalArgumentException("Wildcard search not supported for numeric types");
+				NumSearcherMV num_searcher = searcher.getNumSearcher(tableDef.getTableName(), field);
+				num_searcher.fill(NumSearcher.parse(value, f.getType()), r);
 			} else throw new IllegalArgumentException("Field type '" + f.getType() + "' not supported");
 		} else if(query instanceof MVSBinaryQuery) {
 			MVSBinaryQuery mvs = (MVSBinaryQuery)query;
@@ -227,6 +239,12 @@ public class ResultBuilder {
 				if(value == null) {
 					FieldSearcher field_searcher = searcher.getFieldSearcher(tableDef.getTableName(), field);
 					field_searcher.fillCount(0, 1, r);
+					return r;
+				}
+				if("*".equals(value)) {
+					FieldSearcher field_searcher = searcher.getFieldSearcher(tableDef.getTableName(), field);
+					field_searcher.fillCount(0, 1, r);
+					r.not();
 					return r;
 				}
 				
@@ -321,6 +339,18 @@ public class ResultBuilder {
 				}
 				else throw new IllegalArgumentException(bq.operation + " is not supported");
 			} else if(NumSearcher.isNumericType(f.getType())) {
+				if(value == null) {
+					NumSearcherMV num_searcher = searcher.getNumSearcher(tableDef.getTableName(), field);
+					num_searcher.fillNull(r);
+					return r;
+				}
+				if("*".equals(value)) {
+					NumSearcherMV num_searcher = searcher.getNumSearcher(tableDef.getTableName(), field);
+					num_searcher.fillNull(r);
+					r.not();
+					return r;
+				}
+				
 				if(LinkQuery.ANY.equals(mvs.quantifier)) {
 					return searchInternal(tableDef, mvs.innerQuery, searcher);
 				}
@@ -451,6 +481,11 @@ public class ResultBuilder {
 			
 		} else if(query instanceof IdQuery) {
 			IdQuery iq = (IdQuery)query;
+			if("*".equals(iq.id)) {
+				r.clear();
+				r.not();
+				return r;
+			}
 			IdSearcher id_searcher = searcher.getIdSearcher(tableDef.getTableName());
 			BSTR id = new BSTR(iq.id);
 			int doc = id_searcher.find(id, true);
@@ -467,6 +502,14 @@ public class ResultBuilder {
 				if(f == null) throw new IllegalArgumentException("Link " + lq.link + " not found in table " + tableDef.getTableName());
 				FieldSearcher field_searcher = searcher.getFieldSearcher(f.getTableName(),f.getName());
 				field_searcher.fillCount(0,  1, r);
+				return r;
+			}
+			if("*".equals(lq.id)) {
+				FieldDefinition f = tableDef.getFieldDef(lq.link);
+				if(f == null) throw new IllegalArgumentException("Link " + lq.link + " not found in table " + tableDef.getTableName());
+				FieldSearcher field_searcher = searcher.getFieldSearcher(f.getTableName(),f.getName());
+				field_searcher.fillCount(0,  1, r);
+				r.not();
 				return r;
 			}
 			LinkQuery linkq = new LinkQuery(lq.quantifier, lq.link, new IdQuery(lq.id));
