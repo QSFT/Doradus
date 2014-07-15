@@ -748,12 +748,12 @@ public class DoradusQueryBuilder {
                 }
 
                 if (grammarItem.getValue().equals("IS")) {
-                    AddLinkItem(items, new Literal("=", "token", -1));
+                    AddLinkItem(items, new Literal("NULL", "token", -1));
                     continue;
                 }
 
                 if (grammarItem.getValue().equals("NULL")) {
-                    AddLinkItem(items, new Literal(null, "lexem", -1));
+                    AddLinkItem(items, new Literal("*", "lexem", -1));
                     continue;
                 }
 

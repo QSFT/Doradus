@@ -209,6 +209,13 @@ public class SearchQueryBuilder {
             return;
         }
 
+        if (op.equals("NULL")) {
+            PerformAssign(builderContext, BinaryQuery.EQUALS);
+            NotQuery query = new NotQuery(builderContext.queries.pop());
+            builderContext.queries.push(query);
+            return;
+        }
+
         if (op.equals(":")) {
             PerformAssign(builderContext, BinaryQuery.CONTAINS);
             return;
@@ -879,6 +886,7 @@ public class SearchQueryBuilder {
                     pushOperation(builderContext, "Criteria");
                     continue;
                 }
+
             }
 
             if (grammarItem.getValue().equals("EOF")) {
