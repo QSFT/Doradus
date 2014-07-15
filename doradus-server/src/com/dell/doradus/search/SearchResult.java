@@ -66,6 +66,9 @@ public class SearchResult implements Comparable<SearchResult> {
         		if(fs.filter != null) {
         			linkKey += ".WHERE(" + fs.filter + ")";
         		}
+        		if(fs.alias != null) {
+        			linkKey = fs.alias;
+        		}
 	            UNode linkNode = docNode.addArrayNode(linkKey, "field");
 	            if(l.results.size() > 0) {
 	                for (SearchResult sr : l.results) {
