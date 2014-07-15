@@ -77,6 +77,11 @@ public class FieldSetQueryBuilder {
                 continue;
             }
 
+            if (item.getType().equals("ALIAS_NAME")) {
+                parent.alias= item.getValue();
+                continue;
+            }
+
             if (item.getValue().equals("WHERE")) {
                 ArrayList<GrammarItem> subList = new ArrayList<GrammarItem>();
                 if (parent.grammarItems == null)
