@@ -78,6 +78,7 @@ class FieldSetTokenizer {
                         //else   {
                             current = new FieldSet(def.getLinkExtentTableDef(fieldDefinition));
                             current.limit = item.limit;
+                            current.alias= item.alias;
                             if (item.grammarItems != null) {
                                     for (int j = 0; j < item.grammarItems.size(); j++) {
                                         current.filter =  AggregationQueryBuilder.CompileQuery(current.tableDef,current.filter, item.grammarItems.get(j)  );

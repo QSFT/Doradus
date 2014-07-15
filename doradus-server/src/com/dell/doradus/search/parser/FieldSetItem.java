@@ -31,5 +31,5 @@ public class FieldSetItem {
     public List<FieldSetItem> children = new ArrayList<FieldSetItem>();
     public int limit =-1;
     public ArrayList<ArrayList<GrammarItem>> grammarItems;
-
+    public String alias;
 }

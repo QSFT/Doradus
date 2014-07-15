@@ -1290,11 +1290,16 @@ public class DoradusSearchQueryGrammar {
                 FieldOrLinkNameNext
         );
 
+        GrammarRule OptionalAlias = new SwitchRule(SwitchRule.First, "OptionalLimit",
+                Grammar.Rule(OptWhiteSpaces, DOT, Grammar.DropLexem, OptWhiteSpaces, AS, Grammar.DropLexem, OptWhiteSpaces, LEFTPAREN, Grammar.DropLexem,
+                        OptWhiteSpaces, Term, Grammar.SetType("ALIAS_NAME"), OptWhiteSpaces,  RIGHTPAREN, Grammar.DropLexem ) ,
+                Grammar.emptyRule
+        );
         GrammarRule OptionalLimit = new SwitchRule(SwitchRule.First, "OptionalLimit",
                 Grammar.Rule(OptWhiteSpaces, LEFTBRACKET, Grammar.SetType("BRACKET"), OptWhiteSpaces, NUMBER,
                         Grammar.SetType("LIMIT"), OptWhiteSpaces,
-                        RIGHTBRACKET, Grammar.SetType("BRACKET")),
-                Grammar.emptyRule
+                        RIGHTBRACKET, Grammar.SetType("BRACKET"), OptionalAlias),
+                OptionalAlias
         );
 
         SwitchRule OptionalWhereClause1 = new SwitchRule("OptionalWhereClause1");
