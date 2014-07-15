@@ -349,18 +349,13 @@ public class Aggregate {
 			}
 			else {
 				String value = obj.get(fieldName);
-				if(value == null) {
-				    groupKeys[groupIndex].add(Group.NULL_GROUP_NAME);
+				if(value == null || value.indexOf(CommonDefs.MV_SCALAR_SEP_CHAR) == -1) {
+				    groupSetEntry.m_groupPaths[groupIndex].addValueKeys(groupKeys[groupIndex], value);
 				}
 				else {
-					if(value.indexOf(CommonDefs.MV_SCALAR_SEP_CHAR) == -1) {
-					    groupSetEntry.m_groupPaths[groupIndex].addValueKeys(groupKeys[groupIndex], value);
-					}
-					else {
-						String[] values = value.split(CommonDefs.MV_SCALAR_SEP_CHAR);
-						for(String collectionValue : values) {
-						    groupSetEntry.m_groupPaths[groupIndex].addValueKeys(groupKeys[groupIndex], collectionValue);
-						}
+					String[] values = value.split(CommonDefs.MV_SCALAR_SEP_CHAR);
+					for(String collectionValue : values) {
+					    groupSetEntry.m_groupPaths[groupIndex].addValueKeys(groupKeys[groupIndex], collectionValue);
 					}
 				}
 			}
@@ -891,6 +886,7 @@ class MetricPath extends PathEntry {
 
 class GroupPath extends PathEntry {
     List<ValueConverter> converters;
+    ValueExcludeInclude excludeinclude;
     ValueTokenizer tokenizer;
 	GroupOutputParameters groupOutputParameters;
 	String path;
@@ -923,6 +919,10 @@ class GroupPath extends PathEntry {
 			}
 		}
 
+		if (path.exclude != null || path.include != null) {
+			entry.excludeinclude = new ValueExcludeInclude(path.exclude, path.include);
+		}
+
 		if (path.stopWords != null) {
 		    entry.tokenizer = new TextTokenizer(path.stopWords);
 		}
@@ -933,19 +933,25 @@ class GroupPath extends PathEntry {
 	}
 
 	void addValueKeys(Set<String> keys, String value) {
-        if (converters != null) {
-            for (ValueConverter converter : converters) {
-                value = converter.convert(value);
-            }
+        if (excludeinclude != null) {
+        	if (!excludeinclude.accept(value))
+        		return;
         }
-        if (tokenizer == null) {
-            keys.add(value == null ? Group.NULL_GROUP_NAME : value);
-        } else {
-            Collection<String> tokens = tokenizer.tokenize(value);
-            if (tokens != null && tokens.size() > 0) {
-                keys.addAll(tokens);
-            }
+        if (value != null) {
+	        if (converters != null) {
+	            for (ValueConverter converter : converters) {
+	                value = converter.convert(value);
+	            }
+	        }
+	        if (tokenizer != null) {
+	            Collection<String> tokens = tokenizer.tokenize(value);
+	            if (tokens != null && tokens.size() > 0) {
+	                keys.addAll(tokens);
+	            }
+	            return;
+	        }
         }
+        keys.add(value == null ? Group.NULL_GROUP_NAME : value);
 	}
 }
 
