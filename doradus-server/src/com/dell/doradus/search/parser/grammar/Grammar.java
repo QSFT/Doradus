@@ -41,6 +41,21 @@ public class Grammar {
         };
     }
 
+    public static GrammarRule NotLexem(String name) {
+        return new Semantic(name) {
+            @Override
+            public Context Match(Context context) {
+
+                GrammarItem item = context.items.get(context.items.size() - 1);
+                if (item.getValue().equals(name))
+                    return null;
+                else
+                    return context;
+            }
+        };
+    }
+
+
 
     public static GrammarRule SetTextValue(String name) {
         return new Semantic(name) {

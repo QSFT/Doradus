@@ -785,7 +785,7 @@ public class DoradusSearchQueryGrammar {
         OptionalWhereClause.body = obody;
 
         GrammarRule AggregationFieldName = Grammar.Rule("AggregationFieldName",
-                WORD, OptionalWhereClause
+                WORD, Grammar.NotLexem("AS"), OptionalWhereClause
         );
 
         GrammarRule AggregationFieldCaseFunctionName = new SwitchRule(SwitchRule.First, "AggregationFieldCaseFunctionName",
@@ -1064,7 +1064,9 @@ public class DoradusSearchQueryGrammar {
         );
 
         GrammarRule AggregationAliasName = new SwitchRule(SwitchRule.First, "AggregationAliasName",
-                Grammar.Rule(SkipWhiteSpacesRule, AS, Grammar.SetType("ignore"), SkipWhiteSpacesRule, WORD, Grammar.SetType("alias") ),
+                Grammar.Rule(SkipWhiteSpacesRule, AS, Grammar.SetType("ignore"), SkipWhiteSpacesRule, Term, Grammar.SetType("alias") ),
+                Grammar.Rule(OptWhiteSpaces, DOT, Grammar.DropLexem, OptWhiteSpaces, AS, Grammar.SetType("ignore"),
+                        OptWhiteSpaces, LEFTPAREN, Grammar.DropLexem, OptWhiteSpaces, Term, Grammar.SetType("alias"), OptWhiteSpaces, RIGHTPAREN, Grammar.DropLexem),
                 Grammar.emptyRule
         );
 
