@@ -1066,7 +1066,7 @@ public class DoradusSearchQueryGrammar {
         GrammarRule AggregationAliasName = new SwitchRule(SwitchRule.First, "AggregationAliasName",
                 Grammar.Rule(SkipWhiteSpacesRule, AS, Grammar.SetType("ignore"), SkipWhiteSpacesRule, Term, Grammar.SetType("alias") ),
                 Grammar.Rule(OptWhiteSpaces, DOT, Grammar.DropLexem, OptWhiteSpaces, AS, Grammar.SetType("ignore"),
-                        OptWhiteSpaces, LEFTPAREN, Grammar.DropLexem, OptWhiteSpaces, Term, Grammar.SetType("alias"), OptWhiteSpaces, RIGHTPAREN, Grammar.DropLexem),
+                        OptWhiteSpaces, LEFTPAREN, Grammar.DropLexem, OptWhiteSpaces, Term, Grammar.SetType("alias"), OptWhiteSpaces, RIGHTPAREN),
                 Grammar.emptyRule
         );
 
@@ -1294,7 +1294,7 @@ public class DoradusSearchQueryGrammar {
 
         GrammarRule OptionalAlias = new SwitchRule(SwitchRule.First, "OptionalLimit",
                 Grammar.Rule(OptWhiteSpaces, DOT, Grammar.DropLexem, OptWhiteSpaces, AS, Grammar.DropLexem, OptWhiteSpaces, LEFTPAREN, Grammar.DropLexem,
-                        OptWhiteSpaces, Term, Grammar.SetType("ALIAS_NAME"), OptWhiteSpaces,  RIGHTPAREN, Grammar.DropLexem ) ,
+                        OptWhiteSpaces, Term, Grammar.SetType("ALIAS_NAME"), OptWhiteSpaces,  RIGHTPAREN) ,
                 Grammar.emptyRule
         );
         GrammarRule OptionalLimit = new SwitchRule(SwitchRule.First, "OptionalLimit",

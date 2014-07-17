@@ -667,6 +667,7 @@ public class AggregationQueryBuilder {
                 startPos = item.item.getPtr();
 
             if (item.item.getType().equals("ignore")) {
+                SetFilter(aggregationGroup, tableDef, item);
                 continue;
             }
 
