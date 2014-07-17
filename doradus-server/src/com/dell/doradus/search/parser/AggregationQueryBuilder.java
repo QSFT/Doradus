@@ -504,9 +504,13 @@ public class AggregationQueryBuilder {
                 ai.tableDef = tableDef;
             }
             if (item.queryItems != null) {
-                for (int j = 0; j < item.queryItems.size(); j++) {
-                    ArrayList<GrammarItem> filterItems = item.queryItems.get(j);
-                    ai.query = CompileQuery(tableDef, ai.query, filterItems);
+                if (ai.isLink) {
+                    for (int j = 0; j < item.queryItems.size(); j++) {
+                        ArrayList<GrammarItem> filterItems = item.queryItems.get(j);
+                        ai.query = CompileQuery(tableDef, ai.query, filterItems);
+                    }
+                } else {
+                    throw new IllegalArgumentException(ai.name + " is not a link name. Filters are supported for links");
                 }
             }
 
