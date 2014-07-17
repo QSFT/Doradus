@@ -159,6 +159,10 @@ public class AggregateResultConverter {
 	private static String extractGroupName(String name) {
 		int idx = name.indexOf(" AS ");
 		if(idx >= 0) name = name.substring(idx + 4);
+		else if((idx = name.indexOf(".AS(")) >= 0) {
+			name = name.substring(idx + 4);
+			name = name.substring(0, name.length() - 1);
+		}
 		else if(name.startsWith("TOP") || name.startsWith("BOTTOM")) {
 			name = name.substring(name.indexOf(',') + 1, name.lastIndexOf(')'));
 		}
