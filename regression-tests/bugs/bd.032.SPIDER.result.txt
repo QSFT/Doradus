@@ -9,6 +9,12 @@
         <aggregate group="Number" metric="AVERAGE(Number1)" query="*"/>
         <totalobjects>1</totalobjects>
         <summary/>
+        <groups>
+            <group>
+                <metric/>
+                <field name="Number">.231</field>
+            </group>
+        </groups>
     </results>
 *** Response: json
     200 OK
@@ -20,7 +26,17 @@
              "group":"Number"
           },
           "totalobjects":"1",
-          "summary":""
+          "summary":"",
+          "groups":[
+             {
+                "group":{
+                   "metric":"",
+                   "field":{
+                      "Number":".231"
+                   }
+                }
+             }
+          ]
        }
     }
 

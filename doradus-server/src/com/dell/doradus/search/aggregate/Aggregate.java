@@ -318,15 +318,13 @@ public class Aggregate {
 			}
 			else {
 				String value = obj.get(entry.name);
-				if (value != null) {
-					String[] values = value.split(CommonDefs.MV_SCALAR_SEP_CHAR);
-					for (String collectionValue : values) {
-						for(Integer groupIndex: entry.matchingGroupIndexes) {
-						    groupKeys[groupIndex].clear();
-						    groupSetEntry.m_groupPaths[groupIndex].addValueKeys(groupKeys[groupIndex], collectionValue);
-						}
-						updateMetric(collectionValue, groupSetEntry, groupKeys);
+				String[] values = value == null ? new String[] { value } : value.split(CommonDefs.MV_SCALAR_SEP_CHAR);
+				for (String collectionValue : values) {
+					for(Integer groupIndex: entry.matchingGroupIndexes) {
+					    groupKeys[groupIndex].clear();
+					    groupSetEntry.m_groupPaths[groupIndex].addValueKeys(groupKeys[groupIndex], collectionValue);
 					}
+					updateMetric(collectionValue, groupSetEntry, groupKeys);
 				}
 			}
 		}
