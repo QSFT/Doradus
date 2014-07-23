@@ -301,13 +301,12 @@ public class Aggregate {
 			if (groupKeys[groupIndex].size()==0) return;
 		}
 
-		if(entry.isLink) {
-			if(entry.query != null) {
-				if(!entry.checkCondition(obj)) {
-					boolean result = entry.checkCondition(obj);
-					if (!result) return;
-				}
+		if(entry.query != null) {
+			if(!entry.checkCondition(obj)) {
+				return;
 			}
+		}
+		if(entry.isLink) {
 			for(Entity linkedObject : obj.getLinkedEntities(entry.name, entry.fieldNames)) {
 				process(linkedObject, entry.branches.get(0), groupSetEntry, groupKeys);
 			}
@@ -987,36 +986,27 @@ class PathEntry {
 		this.tableDef = item.tableDef;
 		this.groupIndex = groupIndex;
 		name = item.name;
-		query = item.query;
-		if (query != null) {
-			queryText = item.query.toString();
-			if (USEQUERYCACHE) {
-			    queryCache = new LRUCache<ObjectID, Boolean>(QUERYCACHECAPACITY);
-			}
-			QueryExecutor qe = new QueryExecutor(tableDef);
-			filter = qe.filter(item.query);
-			Set<String> filterFields = new HashSet<String>();
-			filter.addFields(filterFields);
-			if(filterFields.contains("*"))fieldNames.add("*");
-			else fieldNames.addAll(filterFields);
-		}
         nestedLinks = item.nestedLinks;
 		isLink = item.isLink;
+		PathEntry entry = null;
 		if(index == path.size() - 1) {
 			if(isLink) {
-				PathEntry entry = new PathEntry(item.tableDef, groupIndex);
+				entry = new PathEntry(item.tableDef, groupIndex);
 				entry.name = ANY;
 				entry.isLink = false;
-				add(entry,isGroupPath);
+				add(entry, isGroupPath);
 			}
 			else if(name != PathEntry.ANY) {
 				fieldNames.add(name);
 			}
 		}
 		else {
-			add(new PathEntry(path, index + 1, groupIndex, isGroupPath), isGroupPath);
+			entry = new PathEntry(path, index + 1, groupIndex, isGroupPath);
+			add(entry, isGroupPath);
 		}
-
+		if (item.query != null) {
+			setQuery(item, isGroupPath ? this : entry);
+		}
 	}
 
 	void add(PathEntry entry, boolean isGroupPath) {
@@ -1037,6 +1027,19 @@ class PathEntry {
 			}
 		}
 	}
+	
+	static void setQuery(AggregationGroupItem item, PathEntry entry) {
+		entry.query = item.query;
+		if (entry.query != null) {
+			entry.queryText = item.query.toString();
+			if (USEQUERYCACHE) {
+				entry.queryCache = new LRUCache<ObjectID, Boolean>(QUERYCACHECAPACITY);
+			}
+			QueryExecutor qe = new QueryExecutor(item.tableDef);
+			entry.filter = qe.filter(item.query);
+		}
+	}
+	
 
 	void addGroupPath(PathEntry anotherPath) {
 		//PathEntry next = branches.get(0);
