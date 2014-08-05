@@ -54,7 +54,10 @@ Doradus OLAP Database -v2.1
     <echo>~ Test for Link Paths - COUNT ~</echo>
     <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
     <QUERY path="Application/Message" q="COUNT(Participants.Department)&lt;0" shards="shard"/>
-    <QUERY path="Application/Message" q="COUNT(Participants.Department.DEP)>1" shards="shard"/>
+<!--
+Now LinkPath can be ended by not link only
+-->
+    <QUERY path="Application/Message" q="COUNT(Participants.Department.DEP)>0" shards="shard"/>
     <QUERY path="Application/Message" q="COUNT(Participants.Department)>1" shards="shard"/>
     <QUERY path="Application/Message" q="COUNT(Participants.Department)&lt;4" shards="shard"/>
 

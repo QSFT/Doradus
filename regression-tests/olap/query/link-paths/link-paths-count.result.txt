@@ -675,10 +675,107 @@
     }
 
 *** Request
-    GET /Application/Message/_query?q=COUNT(Participants.Department.DEP)>1&shards=shard
-*** Response: text
-    400 Bad Request
-    Error COUNT: DEP is not a link
+    GET /Application/Message/_query?q=COUNT(Participants.Department.DEP)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>6</totalobjects>
+        <docs>
+            <doc>
+                <field name="Size">1001</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Size">1002</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2002</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Size">1003</field>
+                <field name="Status">Work in Logistic</field>
+                <field name="_ID">2003</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Size">1004</field>
+                <field name="Status">Work in Logistic</field>
+                <field name="_ID">2004</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Size">1005</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2005</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Size">1006</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2006</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"6",
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1001",
+                   "Status":"Work in Support",
+                   "_ID":"2001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1002",
+                   "Status":"Work in Support",
+                   "_ID":"2002",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1003",
+                   "Status":"Work in Logistic",
+                   "_ID":"2003",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1004",
+                   "Status":"Work in Logistic",
+                   "_ID":"2004",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1005",
+                   "Status":"Work in Support",
+                   "_ID":"2005",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1006",
+                   "Status":"Work in Support",
+                   "_ID":"2006",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
 
 *** Request
     GET /Application/Message/_query?q=COUNT(Participants.Department)>1&shards=shard
@@ -1512,10 +1609,107 @@
     }
 
 *** Request
-    GET /Application/Message/_query?q=COUNT(Participants.Department.DEP)>1&shards=shard
-*** Response: text
-    400 Bad Request
-    Error COUNT: DEP is not a link
+    GET /Application/Message/_query?q=COUNT(Participants.Department.DEP)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>6</totalobjects>
+        <docs>
+            <doc>
+                <field name="Size">1001</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Size">1002</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2002</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Size">1003</field>
+                <field name="Status">Work in Logistic</field>
+                <field name="_ID">2003</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Size">1004</field>
+                <field name="Status">Work in Logistic</field>
+                <field name="_ID">2004</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Size">1005</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2005</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Size">1006</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2006</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"6",
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1001",
+                   "Status":"Work in Support",
+                   "_ID":"2001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1002",
+                   "Status":"Work in Support",
+                   "_ID":"2002",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1003",
+                   "Status":"Work in Logistic",
+                   "_ID":"2003",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1004",
+                   "Status":"Work in Logistic",
+                   "_ID":"2004",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1005",
+                   "Status":"Work in Support",
+                   "_ID":"2005",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1006",
+                   "Status":"Work in Support",
+                   "_ID":"2006",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
 
 *** Request
     GET /Application/Message/_query?q=COUNT(Participants.Department)>1&shards=shard
