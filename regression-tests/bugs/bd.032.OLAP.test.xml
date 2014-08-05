@@ -46,9 +46,9 @@
     <POST path="Application/_shards/shard"/>
 
     <enable-output/>
-    <echo>~~~~~~~~~~~</echo>
-    <echo>~ AVERAGE ~</echo>
-    <echo>~~~~~~~~~~~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ AVERAGE (float) ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~</echo>
     <AGGREGATE path="Application/Table" q="*" m="AVERAGE(Number1)" f="Number" shards="shard"/>
 
 <DELETE path="_applications/Application/ApplicationKey"/>

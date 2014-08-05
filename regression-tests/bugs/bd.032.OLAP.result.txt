@@ -1,6 +1,6 @@
-~~~~~~~~~~~
-~ AVERAGE ~
-~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+~ AVERAGE (float) ~
+~~~~~~~~~~~~~~~~~~~
 *** Request
     GET /Application/Table/_aggregate?m=AVERAGE(Number1)&q=*&f=Number&shards=shard
 *** Response: xml
