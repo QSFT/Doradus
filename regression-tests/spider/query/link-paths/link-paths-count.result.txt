@@ -633,7 +633,7 @@
     GET /Application/Message/_query?q=COUNT(Participants.Department.DEP)>1
 *** Response: text
     400 Bad Request
-    Error COUNT: DEP is not a link
+    query FieldCountRangeQuery not supported
 
 *** Request
     GET /Application/Message/_query?q=COUNT(Participants.Department)>1
@@ -1405,7 +1405,7 @@
     GET /Application/Message/_query?q=COUNT(Participants.Department.DEP)>1
 *** Response: text
     400 Bad Request
-    Error COUNT: DEP is not a link
+    query FieldCountRangeQuery not supported
 
 *** Request
     GET /Application/Message/_query?q=COUNT(Participants.Department)>1
