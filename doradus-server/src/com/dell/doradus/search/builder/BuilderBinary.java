@@ -144,16 +144,16 @@ public class BuilderBinary extends SearchBuilder {
    
 	private FilteredIterable getEquals(String field, String value, FieldAnalyzer analyzer, BinaryQuery query) {
 		TermsIterable terms = new TermsIterable(m_table, m_shards, m_params.continuation, m_params.inclusive);
-		if(analyzer instanceof DateAnalyzer) {
+		if(analyzer instanceof DateAnalyzer && !value.equals("*")) {
     		DateTrie dt = new DateTrie();
     		Date date = dt.parse(value);
     		terms.add(FieldAnalyzer.makeTermKey(field, dt.format(date)));
     		if(date.getTime() % 1000 != 0) {
     			return create(terms, new FilterEquals(field, value));
     		}
-		} else if(analyzer instanceof IntegerAnalyzer) {
+		} else if(analyzer instanceof IntegerAnalyzer && !value.equals("*")) {
     		terms.add(FieldAnalyzer.makeTermKey(field, value));
-		} else if(analyzer instanceof SimpleTextAnalyzer) {
+		} else if(analyzer instanceof SimpleTextAnalyzer && !value.equals("*")) {
 			FilteredIterable c = getContains(field,  value, analyzer, query);
 			return create(c.sequence(), new FilterEquals(field, value));
 		} else {
