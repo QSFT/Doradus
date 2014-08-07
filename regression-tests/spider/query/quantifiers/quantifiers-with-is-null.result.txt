@@ -409,6 +409,9 @@
     <results>
         <docs>
             <doc>
+                <field name="_ID">3001</field>
+            </doc>
+            <doc>
                 <field name="_ID">3002</field>
             </doc>
         </docs>
@@ -418,6 +421,11 @@
     {
        "results":{
           "docs":[
+             {
+                "doc":{
+                   "_ID":"3001"
+                }
+             },
              {
                 "doc":{
                    "_ID":"3002"
@@ -843,6 +851,9 @@
     <results>
         <docs>
             <doc>
+                <field name="_ID">3001</field>
+            </doc>
+            <doc>
                 <field name="_ID">3002</field>
             </doc>
         </docs>
@@ -852,6 +863,11 @@
     {
        "results":{
           "docs":[
+             {
+                "doc":{
+                   "_ID":"3001"
+                }
+             },
              {
                 "doc":{
                    "_ID":"3002"

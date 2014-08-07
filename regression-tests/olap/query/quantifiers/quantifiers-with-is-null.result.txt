@@ -438,8 +438,12 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>1</totalobjects>
+        <totalobjects>2</totalobjects>
         <docs>
+            <doc>
+                <field name="_ID">3001</field>
+                <field name="_shard">shard</field>
+            </doc>
             <doc>
                 <field name="_ID">3002</field>
                 <field name="_shard">shard</field>
@@ -450,8 +454,14 @@
     200 OK
     {
        "results":{
-          "totalobjects":"1",
+          "totalobjects":"2",
           "docs":[
+             {
+                "doc":{
+                   "_ID":"3001",
+                   "_shard":"shard"
+                }
+             },
              {
                 "doc":{
                    "_ID":"3002",
@@ -907,8 +917,12 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>1</totalobjects>
+        <totalobjects>2</totalobjects>
         <docs>
+            <doc>
+                <field name="_ID">3001</field>
+                <field name="_shard">shard</field>
+            </doc>
             <doc>
                 <field name="_ID">3002</field>
                 <field name="_shard">shard</field>
@@ -919,8 +933,14 @@
     200 OK
     {
        "results":{
-          "totalobjects":"1",
+          "totalobjects":"2",
           "docs":[
+             {
+                "doc":{
+                   "_ID":"3001",
+                   "_shard":"shard"
+                }
+             },
              {
                 "doc":{
                    "_ID":"3002",
