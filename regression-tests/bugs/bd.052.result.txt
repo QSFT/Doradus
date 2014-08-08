@@ -1,0 +1,178 @@
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Folder/_query?q=*&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="FolderName">Folder_A</field>
+                <field name="_ID">1001</field>
+                <field name="Files">
+                    <doc>
+                        <field name="FileName">File_1</field>
+                        <field name="_ID">2001</field>
+                    </doc>
+                    <doc>
+                        <field name="FileName">File_4</field>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="FolderName">Folder_B</field>
+                <field name="_ID">1002</field>
+                <field name="Files">
+                    <doc>
+                        <field name="FileName">File_2</field>
+                        <field name="_ID">2002</field>
+                    </doc>
+                    <doc>
+                        <field name="FileName">File_6</field>
+                        <field name="_ID">2006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="FolderName">Folder_C</field>
+                <field name="_ID">1003</field>
+                <field name="Files">
+                    <doc>
+                        <field name="FileName">File_3</field>
+                        <field name="_ID">2003</field>
+                    </doc>
+                    <doc>
+                        <field name="FileName">File_5</field>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="FolderName">Folder_D</field>
+                <field name="_ID">1004</field>
+                <field name="Files"/>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/File/_query?q=*&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="FileName">File_1</field>
+                <field name="_ID">2001</field>
+                <field name="ParentFolder">
+                    <doc>
+                        <field name="FolderName">Folder_A</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="FileName">File_2</field>
+                <field name="_ID">2002</field>
+                <field name="ParentFolder">
+                    <doc>
+                        <field name="FolderName">Folder_B</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="FileName">File_3</field>
+                <field name="_ID">2003</field>
+                <field name="ParentFolder">
+                    <doc>
+                        <field name="FolderName">Folder_C</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="FileName">File_4</field>
+                <field name="_ID">2004</field>
+                <field name="ParentFolder">
+                    <doc>
+                        <field name="FolderName">Folder_A</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="FileName">File_5</field>
+                <field name="_ID">2005</field>
+                <field name="ParentFolder">
+                    <doc>
+                        <field name="FolderName">Folder_C</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="FileName">File_6</field>
+                <field name="_ID">2006</field>
+                <field name="ParentFolder">
+                    <doc>
+                        <field name="FolderName">Folder_B</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="FileName">File_7</field>
+                <field name="_ID">2007</field>
+                <field name="ParentFolder"/>
+            </doc>
+        </docs>
+    </results>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Test for Clauses nullity ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~
+~ Links ~
+~~~~~~~~~
+*** Request
+    GET /Application/Folder/_query?q=Files IS NULL
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="FolderName">Folder_D</field>
+                <field name="_ID">1004</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Folder/_query?q=NOT Files IS NULL
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="FolderName">Folder_A</field>
+                <field name="_ID">1001</field>
+            </doc>
+            <doc>
+                <field name="FolderName">Folder_B</field>
+                <field name="_ID">1002</field>
+            </doc>
+            <doc>
+                <field name="FolderName">Folder_C</field>
+                <field name="_ID">1003</field>
+            </doc>
+        <docs/>
+    </results>
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
