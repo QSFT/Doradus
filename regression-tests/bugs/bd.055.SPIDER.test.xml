@@ -1,0 +1,77 @@
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+    <POST path="_applications">
+      <XML>
+<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+	<option name="AutoTables">false</option>
+	<option name="StorageService">SpiderService</option>
+    </options>
+    <tables>
+        <table name="Table">
+            <fields>
+                <field type="FLOAT" name="Float"/>
+                <field type="DOUBLE" name="Double"/>
+            </fields>
+        </table>
+    </tables>
+</application>
+      </XML>
+    </POST>
+
+    <POST path="Application/Table">
+    <XML>
+      <batch>
+        <docs>
+          <doc _ID="1000" >
+            <field name="Float">1.18E-38</field>
+            <field name="Double">2.23E-308</field>
+          </doc>
+          <doc _ID="1001">
+            <field name="Float">-1.18E-38</field>
+            <field name="Double">-2.23E-308</field>
+          </doc>
+          <doc _ID="1002">
+            <field name="Float">3.39E+38</field>
+            <field name="Double">1.79E+308</field>
+          </doc>
+          <doc _ID="1003">
+            <field name="Float">-3.39E+38</field>
+            <field name="Double">-1.79E+308</field>
+          </doc>
+        </docs>
+      </batch>
+</XML>
+</POST>
+
+<DEFINE name="response.format" value="xml"/>
+<enable-output/>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table"   q="*" f="_all"/>
+        
+    <echo>~~~~~~~~~</echo>
+    <echo>~ FLOAT ~</echo>
+    <echo>~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Table" m="COUNT(*)" f="Float.INCLUDE(-1.18E-38)" q="*"/>
+    <AGGREGATE path="Application/Table" m="COUNT(*)" f="Float.INCLUDE(1.18E-38)" q="*"/>
+    <AGGREGATE path="Application/Table" m="COUNT(*)" f="Float.INCLUDE(-3.39E+38)" q="*"/>
+    <AGGREGATE path="Application/Table" m="COUNT(*)" f="Float.INCLUDE(3.39E+38)" q="*"/>
+
+    <echo>~~~~~~~~~~</echo>
+    <echo>~ DOUBLE ~</echo>
+    <echo>~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Table" m="COUNT(*)" f="Double.INCLUDE(-2.23E-308)" q="*"/>
+    <AGGREGATE path="Application/Table" m="COUNT(*)" f="Double.INCLUDE(2.23E-308)" q="*"/>
+    <AGGREGATE path="Application/Table" m="COUNT(*)" f="Double.INCLUDE(-1.79E+308)" q="*"/>
+    <AGGREGATE path="Application/Table" m="COUNT(*)" f="Double.INCLUDE(1.79E+308)" q="*"/>
+
+    <DELETE path="_applications/Application/ApplicationKey"/>
+
+<DISCONNECT />
+</TEST>
