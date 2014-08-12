@@ -16,8 +16,10 @@
 
 package com.dell.doradus.common;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -506,13 +508,24 @@ final public class ApplicationDefinition {
 		if(str == null) return str;
 		// for performance
 		if(str.indexOf(CommonDefs.ALIAS_FIRST_CHAR) < 0) return str;
+		
+		PriorityQueue<AliasDefinition> aliasQueue = new PriorityQueue<AliasDefinition>(11, new Comparator<AliasDefinition>() {
+			public int compare(AliasDefinition alias1, AliasDefinition alias2) {
+				return (alias1.getName().startsWith(alias2.getName()) ? -1 : 1);
+			}
+		});
+		
+		for(TableDefinition tableDef : getTableDefinitions().values()) {
+			for(AliasDefinition aliasDef : tableDef.getAliasDefinitions()) {
+				aliasQueue.add(aliasDef);					
+			}
+		}
 		while(true) {
 			String newstring = str; 
-			for(TableDefinition tableDef : getTableDefinitions().values()) {
-				for(AliasDefinition aliasDef : tableDef.getAliasDefinitions()) {
-					newstring = newstring.replace(aliasDef.getName(), aliasDef.getExpression());
-				}
-			}
+			 while (aliasQueue.size() != 0) {			        
+				AliasDefinition aliasDef = aliasQueue.poll();
+		        newstring = newstring.replace(aliasDef.getName(), aliasDef.getExpression());
+			}	 
 			if(newstring.equals(str)) break;
 			str = newstring;
 		}
