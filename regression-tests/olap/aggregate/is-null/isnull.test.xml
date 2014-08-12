@@ -77,6 +77,16 @@
     <echo>~~~~~~~~~~~~~</echo>
     <AGGREGATE path="Application/File" m="COUNT(*)" q="FileCreateDate IS NULL" shards="shard"/>
     <AGGREGATE path="Application/File" m="COUNT(*)" q="NOT FileCreateDate IS NULL" shards="shard"/>
+    <echo>~~~~~~~~~</echo>
+    <echo>~ Float ~</echo>
+    <echo>~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" q="Float IS NULL" shards="shard"/>
+    <AGGREGATE path="Application/File" m="COUNT(*)" q="NOT Float IS NULL" shards="shard"/>
+    <echo>~~~~~~~~~~</echo>
+    <echo>~ Double ~</echo>
+    <echo>~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" q="Double IS NULL" shards="shard"/>
+    <AGGREGATE path="Application/File" m="COUNT(*)" q="NOT Double IS NULL" shards="shard"/>
 
     <DELETE path="_applications/Application/ApplicationKey"/>
 </FOR>

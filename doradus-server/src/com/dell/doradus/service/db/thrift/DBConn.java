@@ -38,6 +38,7 @@ import org.apache.cassandra.thrift.KeyRange;
 import org.apache.cassandra.thrift.KeySlice;
 import org.apache.cassandra.thrift.KsDef;
 import org.apache.cassandra.thrift.Mutation;
+import org.apache.cassandra.thrift.NotFoundException;
 import org.apache.cassandra.thrift.SlicePredicate;
 import org.apache.cassandra.thrift.SliceRange;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -563,6 +564,8 @@ public class DBConn {
                     m_logger.info("get() succeeded on attempt #{}", attempts);
                 }
                 bSuccess = true;
+            } catch (NotFoundException ex) {
+                return null;
             } catch (Exception ex) {
                 // Abort if all retries exceeded.
                 if (attempts >= ServerConfig.getInstance().max_read_attempts) {
@@ -796,7 +799,7 @@ public class DBConn {
     	colPath.setColumn_family(colPar.getColumn_family());
     	colPath.setColumn(colName);
     	Column col = getColumn(ByteBuffer.wrap(rowKey), colPath).getColumn();
-        return new CassandraColumn(col.getName(), col.getValue());
+        return col == null ? null : new CassandraColumn(col.getName(), col.getValue());
     }   // fetchColumn
 
     // Fetch all columns of the rows with the given keys from the given ColumnFamily.
