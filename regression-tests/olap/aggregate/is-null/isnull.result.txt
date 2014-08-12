@@ -36,9 +36,11 @@
                         <field name="_ID">2001</field>
                     </doc>
                     <doc>
+                        <field name="Double">1.79E308</field>
                         <field name="FileCreateDate">2013-11-04 04:44:40</field>
                         <field name="FileName">File_4</field>
-                        <field name="FileSize">2000004</field>
+                        <field name="FileSize">2000003</field>
+                        <field name="Float">3.38999991291338E38</field>
                         <field name="FoldersList">
                             <value>PROGRAM FILES 4</value>
                             <value>USERS 4</value>
@@ -55,9 +57,11 @@
                 <field name="_shard">shard</field>
                 <field name="Files">
                     <doc>
+                        <field name="Double">2.23E-308</field>
                         <field name="FileCreateDate">2013-11-02 02:22:20</field>
                         <field name="FileName">File_2</field>
                         <field name="FileSize">2000002</field>
+                        <field name="Float">1.179999945774631E-38</field>
                         <field name="FolderName">Folder</field>
                         <field name="IsFileTested">True</field>
                         <field name="_ID">2002</field>
@@ -82,9 +86,11 @@
                 <field name="_shard">shard</field>
                 <field name="Files">
                     <doc>
+                        <field name="Double">-2.23E-308</field>
                         <field name="FileCreateDate">2013-11-03 03:33:30</field>
                         <field name="FileName">File_3</field>
                         <field name="FileSize">2000003</field>
+                        <field name="Float">-1.179999945774631E-38</field>
                         <field name="FolderName">Folder 3</field>
                         <field name="FoldersList">
                             <value>PROGRAM FILES 3</value>
@@ -94,9 +100,11 @@
                         <field name="_ID">2003</field>
                     </doc>
                     <doc>
+                        <field name="Double">-1.79E308</field>
                         <field name="FileCreateDate">2013-11-05 05:55:50</field>
                         <field name="FileName">File_5</field>
                         <field name="FileSize">2000005</field>
+                        <field name="Float">-3.38999991291338E38</field>
                         <field name="FolderName">Folder 5</field>
                         <field name="_ID">2005</field>
                     </doc>
@@ -136,9 +144,11 @@
                       },
                       {
                          "doc":{
+                            "Double":"1.79E308",
                             "FileCreateDate":"2013-11-04 04:44:40",
                             "FileName":"File_4",
-                            "FileSize":"2000004",
+                            "FileSize":"2000003",
+                            "Float":"3.38999991291338E38",
                             "FoldersList":[
                                "PROGRAM FILES 4",
                                "USERS 4",
@@ -159,9 +169,11 @@
                    "Files":[
                       {
                          "doc":{
+                            "Double":"2.23E-308",
                             "FileCreateDate":"2013-11-02 02:22:20",
                             "FileName":"File_2",
                             "FileSize":"2000002",
+                            "Float":"1.179999945774631E-38",
                             "FolderName":"Folder",
                             "IsFileTested":"True",
                             "_ID":"2002"
@@ -192,9 +204,11 @@
                    "Files":[
                       {
                          "doc":{
+                            "Double":"-2.23E-308",
                             "FileCreateDate":"2013-11-03 03:33:30",
                             "FileName":"File_3",
                             "FileSize":"2000003",
+                            "Float":"-1.179999945774631E-38",
                             "FolderName":"Folder 3",
                             "FoldersList":[
                                "PROGRAM FILES 3",
@@ -206,9 +220,11 @@
                       },
                       {
                          "doc":{
+                            "Double":"-1.79E308",
                             "FileCreateDate":"2013-11-05 05:55:50",
                             "FileName":"File_5",
                             "FileSize":"2000005",
+                            "Float":"-3.38999991291338E38",
                             "FolderName":"Folder 5",
                             "_ID":"2005"
                          }
@@ -245,6 +261,12 @@
                 </field>
                 <field name="_ID">2001</field>
                 <field name="_shard">shard</field>
+                <field name="Disk">
+                    <doc>
+                        <field name="DiskName">Disk_A</field>
+                        <field name="_ID">3001</field>
+                    </doc>
+                </field>
                 <field name="ParentFolder">
                     <doc>
                         <field name="FolderName">Folder_A</field>
@@ -253,13 +275,21 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">2.23E-308</field>
                 <field name="FileCreateDate">2013-11-02 02:22:20</field>
                 <field name="FileName">File_2</field>
                 <field name="FileSize">2000002</field>
+                <field name="Float">1.179999945774631E-38</field>
                 <field name="FolderName">Folder</field>
                 <field name="IsFileTested">True</field>
                 <field name="_ID">2002</field>
                 <field name="_shard">shard</field>
+                <field name="Disk">
+                    <doc>
+                        <field name="DiskName">Disk_B</field>
+                        <field name="_ID">3002</field>
+                    </doc>
+                </field>
                 <field name="ParentFolder">
                     <doc>
                         <field name="FolderName">Folder_B</field>
@@ -268,9 +298,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">-2.23E-308</field>
                 <field name="FileCreateDate">2013-11-03 03:33:30</field>
                 <field name="FileName">File_3</field>
                 <field name="FileSize">2000003</field>
+                <field name="Float">-1.179999945774631E-38</field>
                 <field name="FolderName">Folder 3</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 3</value>
@@ -279,6 +311,12 @@
                 </field>
                 <field name="_ID">2003</field>
                 <field name="_shard">shard</field>
+                <field name="Disk">
+                    <doc>
+                        <field name="DiskName">Disk_C</field>
+                        <field name="_ID">3003</field>
+                    </doc>
+                </field>
                 <field name="ParentFolder">
                     <doc>
                         <field name="FolderName">Folder_C</field>
@@ -287,9 +325,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">1.79E308</field>
                 <field name="FileCreateDate">2013-11-04 04:44:40</field>
                 <field name="FileName">File_4</field>
-                <field name="FileSize">2000004</field>
+                <field name="FileSize">2000003</field>
+                <field name="Float">3.38999991291338E38</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 4</value>
                     <value>USERS 4</value>
@@ -298,6 +338,12 @@
                 <field name="IsFileTested">False</field>
                 <field name="_ID">2004</field>
                 <field name="_shard">shard</field>
+                <field name="Disk">
+                    <doc>
+                        <field name="DiskName">Disk_A</field>
+                        <field name="_ID">3001</field>
+                    </doc>
+                </field>
                 <field name="ParentFolder">
                     <doc>
                         <field name="FolderName">Folder_A</field>
@@ -306,12 +352,20 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">-1.79E308</field>
                 <field name="FileCreateDate">2013-11-05 05:55:50</field>
                 <field name="FileName">File_5</field>
                 <field name="FileSize">2000005</field>
+                <field name="Float">-3.38999991291338E38</field>
                 <field name="FolderName">Folder 5</field>
                 <field name="_ID">2005</field>
                 <field name="_shard">shard</field>
+                <field name="Disk">
+                    <doc>
+                        <field name="DiskName">Disk_C</field>
+                        <field name="_ID">3003</field>
+                    </doc>
+                </field>
                 <field name="ParentFolder">
                     <doc>
                         <field name="FolderName">Folder_C</field>
@@ -331,6 +385,12 @@
                 <field name="IsFileTested">True</field>
                 <field name="_ID">2006</field>
                 <field name="_shard">shard</field>
+                <field name="Disk">
+                    <doc>
+                        <field name="DiskName">Disk_B</field>
+                        <field name="_ID">3002</field>
+                    </doc>
+                </field>
                 <field name="ParentFolder">
                     <doc>
                         <field name="FolderName">Folder_B</field>
@@ -339,8 +399,10 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">-1.0E9</field>
                 <field name="FileName">File_7</field>
                 <field name="FileSize">2000007</field>
+                <field name="Float">-3.0E9</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 7</value>
                     <value>USERS 7</value>
@@ -349,6 +411,7 @@
                 <field name="IsFileTested">False</field>
                 <field name="_ID">2007</field>
                 <field name="_shard">shard</field>
+                <field name="Disk"/>
                 <field name="ParentFolder"/>
             </doc>
             <doc>
@@ -356,6 +419,7 @@
                 <field name="FileName">File_8</field>
                 <field name="_ID">2008</field>
                 <field name="_shard">shard</field>
+                <field name="Disk"/>
                 <field name="ParentFolder"/>
             </doc>
         </docs>
@@ -377,6 +441,14 @@
                    ],
                    "_ID":"2001",
                    "_shard":"shard",
+                   "Disk":[
+                      {
+                         "doc":{
+                            "DiskName":"Disk_A",
+                            "_ID":"3001"
+                         }
+                      }
+                   ],
                    "ParentFolder":[
                       {
                          "doc":{
@@ -389,13 +461,23 @@
              },
              {
                 "doc":{
+                   "Double":"2.23E-308",
                    "FileCreateDate":"2013-11-02 02:22:20",
                    "FileName":"File_2",
                    "FileSize":"2000002",
+                   "Float":"1.179999945774631E-38",
                    "FolderName":"Folder",
                    "IsFileTested":"True",
                    "_ID":"2002",
                    "_shard":"shard",
+                   "Disk":[
+                      {
+                         "doc":{
+                            "DiskName":"Disk_B",
+                            "_ID":"3002"
+                         }
+                      }
+                   ],
                    "ParentFolder":[
                       {
                          "doc":{
@@ -408,9 +490,11 @@
              },
              {
                 "doc":{
+                   "Double":"-2.23E-308",
                    "FileCreateDate":"2013-11-03 03:33:30",
                    "FileName":"File_3",
                    "FileSize":"2000003",
+                   "Float":"-1.179999945774631E-38",
                    "FolderName":"Folder 3",
                    "FoldersList":[
                       "PROGRAM FILES 3",
@@ -419,6 +503,14 @@
                    ],
                    "_ID":"2003",
                    "_shard":"shard",
+                   "Disk":[
+                      {
+                         "doc":{
+                            "DiskName":"Disk_C",
+                            "_ID":"3003"
+                         }
+                      }
+                   ],
                    "ParentFolder":[
                       {
                          "doc":{
@@ -431,9 +523,11 @@
              },
              {
                 "doc":{
+                   "Double":"1.79E308",
                    "FileCreateDate":"2013-11-04 04:44:40",
                    "FileName":"File_4",
-                   "FileSize":"2000004",
+                   "FileSize":"2000003",
+                   "Float":"3.38999991291338E38",
                    "FoldersList":[
                       "PROGRAM FILES 4",
                       "USERS 4",
@@ -442,6 +536,14 @@
                    "IsFileTested":"False",
                    "_ID":"2004",
                    "_shard":"shard",
+                   "Disk":[
+                      {
+                         "doc":{
+                            "DiskName":"Disk_A",
+                            "_ID":"3001"
+                         }
+                      }
+                   ],
                    "ParentFolder":[
                       {
                          "doc":{
@@ -454,12 +556,22 @@
              },
              {
                 "doc":{
+                   "Double":"-1.79E308",
                    "FileCreateDate":"2013-11-05 05:55:50",
                    "FileName":"File_5",
                    "FileSize":"2000005",
+                   "Float":"-3.38999991291338E38",
                    "FolderName":"Folder 5",
                    "_ID":"2005",
                    "_shard":"shard",
+                   "Disk":[
+                      {
+                         "doc":{
+                            "DiskName":"Disk_C",
+                            "_ID":"3003"
+                         }
+                      }
+                   ],
                    "ParentFolder":[
                       {
                          "doc":{
@@ -483,6 +595,14 @@
                    "IsFileTested":"True",
                    "_ID":"2006",
                    "_shard":"shard",
+                   "Disk":[
+                      {
+                         "doc":{
+                            "DiskName":"Disk_B",
+                            "_ID":"3002"
+                         }
+                      }
+                   ],
                    "ParentFolder":[
                       {
                          "doc":{
@@ -495,8 +615,10 @@
              },
              {
                 "doc":{
+                   "Double":"-1.0E9",
                    "FileName":"File_7",
                    "FileSize":"2000007",
+                   "Float":"-3.0E9",
                    "FoldersList":[
                       "PROGRAM FILES 7",
                       "USERS 7",
@@ -505,6 +627,7 @@
                    "IsFileTested":"False",
                    "_ID":"2007",
                    "_shard":"shard",
+                   "Disk":[],
                    "ParentFolder":[]
                 }
              },
@@ -514,6 +637,7 @@
                    "FileName":"File_8",
                    "_ID":"2008",
                    "_shard":"shard",
+                   "Disk":[],
                    "ParentFolder":[]
                 }
              }
@@ -847,6 +971,100 @@
           },
           "totalobjects":"7",
           "value":"7"
+       }
+    }
+
+~~~~~~~~~
+~ Float ~
+~~~~~~~~~
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=Float IS NULL&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="COUNT(*)" query="Float IS NULL"/>
+        <totalobjects>3</totalobjects>
+        <value>3</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"Float IS NULL"
+          },
+          "totalobjects":"3",
+          "value":"3"
+       }
+    }
+
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=NOT Float IS NULL&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="COUNT(*)" query="NOT Float IS NULL"/>
+        <totalobjects>5</totalobjects>
+        <value>5</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"NOT Float IS NULL"
+          },
+          "totalobjects":"5",
+          "value":"5"
+       }
+    }
+
+~~~~~~~~~~
+~ Double ~
+~~~~~~~~~~
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=Double IS NULL&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="COUNT(*)" query="Double IS NULL"/>
+        <totalobjects>3</totalobjects>
+        <value>3</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"Double IS NULL"
+          },
+          "totalobjects":"3",
+          "value":"3"
+       }
+    }
+
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=NOT Double IS NULL&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="COUNT(*)" query="NOT Double IS NULL"/>
+        <totalobjects>5</totalobjects>
+        <value>5</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"NOT Double IS NULL"
+          },
+          "totalobjects":"5",
+          "value":"5"
        }
     }
 
@@ -893,9 +1111,11 @@
                         <field name="_ID">2001</field>
                     </doc>
                     <doc>
+                        <field name="Double">1.79E308</field>
                         <field name="FileCreateDate">2013-11-04 04:44:40</field>
                         <field name="FileName">File_4</field>
-                        <field name="FileSize">2000004</field>
+                        <field name="FileSize">2000003</field>
+                        <field name="Float">3.38999991291338E38</field>
                         <field name="FoldersList">
                             <value>PROGRAM FILES 4</value>
                             <value>USERS 4</value>
@@ -912,9 +1132,11 @@
                 <field name="_shard">shard</field>
                 <field name="Files">
                     <doc>
+                        <field name="Double">2.23E-308</field>
                         <field name="FileCreateDate">2013-11-02 02:22:20</field>
                         <field name="FileName">File_2</field>
                         <field name="FileSize">2000002</field>
+                        <field name="Float">1.179999945774631E-38</field>
                         <field name="FolderName">Folder</field>
                         <field name="IsFileTested">True</field>
                         <field name="_ID">2002</field>
@@ -939,9 +1161,11 @@
                 <field name="_shard">shard</field>
                 <field name="Files">
                     <doc>
+                        <field name="Double">-2.23E-308</field>
                         <field name="FileCreateDate">2013-11-03 03:33:30</field>
                         <field name="FileName">File_3</field>
                         <field name="FileSize">2000003</field>
+                        <field name="Float">-1.179999945774631E-38</field>
                         <field name="FolderName">Folder 3</field>
                         <field name="FoldersList">
                             <value>PROGRAM FILES 3</value>
@@ -951,9 +1175,11 @@
                         <field name="_ID">2003</field>
                     </doc>
                     <doc>
+                        <field name="Double">-1.79E308</field>
                         <field name="FileCreateDate">2013-11-05 05:55:50</field>
                         <field name="FileName">File_5</field>
                         <field name="FileSize">2000005</field>
+                        <field name="Float">-3.38999991291338E38</field>
                         <field name="FolderName">Folder 5</field>
                         <field name="_ID">2005</field>
                     </doc>
@@ -993,9 +1219,11 @@
                       },
                       {
                          "doc":{
+                            "Double":"1.79E308",
                             "FileCreateDate":"2013-11-04 04:44:40",
                             "FileName":"File_4",
-                            "FileSize":"2000004",
+                            "FileSize":"2000003",
+                            "Float":"3.38999991291338E38",
                             "FoldersList":[
                                "PROGRAM FILES 4",
                                "USERS 4",
@@ -1016,9 +1244,11 @@
                    "Files":[
                       {
                          "doc":{
+                            "Double":"2.23E-308",
                             "FileCreateDate":"2013-11-02 02:22:20",
                             "FileName":"File_2",
                             "FileSize":"2000002",
+                            "Float":"1.179999945774631E-38",
                             "FolderName":"Folder",
                             "IsFileTested":"True",
                             "_ID":"2002"
@@ -1049,9 +1279,11 @@
                    "Files":[
                       {
                          "doc":{
+                            "Double":"-2.23E-308",
                             "FileCreateDate":"2013-11-03 03:33:30",
                             "FileName":"File_3",
                             "FileSize":"2000003",
+                            "Float":"-1.179999945774631E-38",
                             "FolderName":"Folder 3",
                             "FoldersList":[
                                "PROGRAM FILES 3",
@@ -1063,9 +1295,11 @@
                       },
                       {
                          "doc":{
+                            "Double":"-1.79E308",
                             "FileCreateDate":"2013-11-05 05:55:50",
                             "FileName":"File_5",
                             "FileSize":"2000005",
+                            "Float":"-3.38999991291338E38",
                             "FolderName":"Folder 5",
                             "_ID":"2005"
                          }
@@ -1102,6 +1336,12 @@
                 </field>
                 <field name="_ID">2001</field>
                 <field name="_shard">shard</field>
+                <field name="Disk">
+                    <doc>
+                        <field name="DiskName">Disk_A</field>
+                        <field name="_ID">3001</field>
+                    </doc>
+                </field>
                 <field name="ParentFolder">
                     <doc>
                         <field name="FolderName">Folder_A</field>
@@ -1110,13 +1350,21 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">2.23E-308</field>
                 <field name="FileCreateDate">2013-11-02 02:22:20</field>
                 <field name="FileName">File_2</field>
                 <field name="FileSize">2000002</field>
+                <field name="Float">1.179999945774631E-38</field>
                 <field name="FolderName">Folder</field>
                 <field name="IsFileTested">True</field>
                 <field name="_ID">2002</field>
                 <field name="_shard">shard</field>
+                <field name="Disk">
+                    <doc>
+                        <field name="DiskName">Disk_B</field>
+                        <field name="_ID">3002</field>
+                    </doc>
+                </field>
                 <field name="ParentFolder">
                     <doc>
                         <field name="FolderName">Folder_B</field>
@@ -1125,9 +1373,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">-2.23E-308</field>
                 <field name="FileCreateDate">2013-11-03 03:33:30</field>
                 <field name="FileName">File_3</field>
                 <field name="FileSize">2000003</field>
+                <field name="Float">-1.179999945774631E-38</field>
                 <field name="FolderName">Folder 3</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 3</value>
@@ -1136,6 +1386,12 @@
                 </field>
                 <field name="_ID">2003</field>
                 <field name="_shard">shard</field>
+                <field name="Disk">
+                    <doc>
+                        <field name="DiskName">Disk_C</field>
+                        <field name="_ID">3003</field>
+                    </doc>
+                </field>
                 <field name="ParentFolder">
                     <doc>
                         <field name="FolderName">Folder_C</field>
@@ -1144,9 +1400,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">1.79E308</field>
                 <field name="FileCreateDate">2013-11-04 04:44:40</field>
                 <field name="FileName">File_4</field>
-                <field name="FileSize">2000004</field>
+                <field name="FileSize">2000003</field>
+                <field name="Float">3.38999991291338E38</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 4</value>
                     <value>USERS 4</value>
@@ -1155,6 +1413,12 @@
                 <field name="IsFileTested">False</field>
                 <field name="_ID">2004</field>
                 <field name="_shard">shard</field>
+                <field name="Disk">
+                    <doc>
+                        <field name="DiskName">Disk_A</field>
+                        <field name="_ID">3001</field>
+                    </doc>
+                </field>
                 <field name="ParentFolder">
                     <doc>
                         <field name="FolderName">Folder_A</field>
@@ -1163,12 +1427,20 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">-1.79E308</field>
                 <field name="FileCreateDate">2013-11-05 05:55:50</field>
                 <field name="FileName">File_5</field>
                 <field name="FileSize">2000005</field>
+                <field name="Float">-3.38999991291338E38</field>
                 <field name="FolderName">Folder 5</field>
                 <field name="_ID">2005</field>
                 <field name="_shard">shard</field>
+                <field name="Disk">
+                    <doc>
+                        <field name="DiskName">Disk_C</field>
+                        <field name="_ID">3003</field>
+                    </doc>
+                </field>
                 <field name="ParentFolder">
                     <doc>
                         <field name="FolderName">Folder_C</field>
@@ -1188,6 +1460,12 @@
                 <field name="IsFileTested">True</field>
                 <field name="_ID">2006</field>
                 <field name="_shard">shard</field>
+                <field name="Disk">
+                    <doc>
+                        <field name="DiskName">Disk_B</field>
+                        <field name="_ID">3002</field>
+                    </doc>
+                </field>
                 <field name="ParentFolder">
                     <doc>
                         <field name="FolderName">Folder_B</field>
@@ -1196,8 +1474,10 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">-1.0E9</field>
                 <field name="FileName">File_7</field>
                 <field name="FileSize">2000007</field>
+                <field name="Float">-3.0E9</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 7</value>
                     <value>USERS 7</value>
@@ -1206,6 +1486,7 @@
                 <field name="IsFileTested">False</field>
                 <field name="_ID">2007</field>
                 <field name="_shard">shard</field>
+                <field name="Disk"/>
                 <field name="ParentFolder"/>
             </doc>
             <doc>
@@ -1213,6 +1494,7 @@
                 <field name="FileName">File_8</field>
                 <field name="_ID">2008</field>
                 <field name="_shard">shard</field>
+                <field name="Disk"/>
                 <field name="ParentFolder"/>
             </doc>
         </docs>
@@ -1234,6 +1516,14 @@
                    ],
                    "_ID":"2001",
                    "_shard":"shard",
+                   "Disk":[
+                      {
+                         "doc":{
+                            "DiskName":"Disk_A",
+                            "_ID":"3001"
+                         }
+                      }
+                   ],
                    "ParentFolder":[
                       {
                          "doc":{
@@ -1246,13 +1536,23 @@
              },
              {
                 "doc":{
+                   "Double":"2.23E-308",
                    "FileCreateDate":"2013-11-02 02:22:20",
                    "FileName":"File_2",
                    "FileSize":"2000002",
+                   "Float":"1.179999945774631E-38",
                    "FolderName":"Folder",
                    "IsFileTested":"True",
                    "_ID":"2002",
                    "_shard":"shard",
+                   "Disk":[
+                      {
+                         "doc":{
+                            "DiskName":"Disk_B",
+                            "_ID":"3002"
+                         }
+                      }
+                   ],
                    "ParentFolder":[
                       {
                          "doc":{
@@ -1265,9 +1565,11 @@
              },
              {
                 "doc":{
+                   "Double":"-2.23E-308",
                    "FileCreateDate":"2013-11-03 03:33:30",
                    "FileName":"File_3",
                    "FileSize":"2000003",
+                   "Float":"-1.179999945774631E-38",
                    "FolderName":"Folder 3",
                    "FoldersList":[
                       "PROGRAM FILES 3",
@@ -1276,6 +1578,14 @@
                    ],
                    "_ID":"2003",
                    "_shard":"shard",
+                   "Disk":[
+                      {
+                         "doc":{
+                            "DiskName":"Disk_C",
+                            "_ID":"3003"
+                         }
+                      }
+                   ],
                    "ParentFolder":[
                       {
                          "doc":{
@@ -1288,9 +1598,11 @@
              },
              {
                 "doc":{
+                   "Double":"1.79E308",
                    "FileCreateDate":"2013-11-04 04:44:40",
                    "FileName":"File_4",
-                   "FileSize":"2000004",
+                   "FileSize":"2000003",
+                   "Float":"3.38999991291338E38",
                    "FoldersList":[
                       "PROGRAM FILES 4",
                       "USERS 4",
@@ -1299,6 +1611,14 @@
                    "IsFileTested":"False",
                    "_ID":"2004",
                    "_shard":"shard",
+                   "Disk":[
+                      {
+                         "doc":{
+                            "DiskName":"Disk_A",
+                            "_ID":"3001"
+                         }
+                      }
+                   ],
                    "ParentFolder":[
                       {
                          "doc":{
@@ -1311,12 +1631,22 @@
              },
              {
                 "doc":{
+                   "Double":"-1.79E308",
                    "FileCreateDate":"2013-11-05 05:55:50",
                    "FileName":"File_5",
                    "FileSize":"2000005",
+                   "Float":"-3.38999991291338E38",
                    "FolderName":"Folder 5",
                    "_ID":"2005",
                    "_shard":"shard",
+                   "Disk":[
+                      {
+                         "doc":{
+                            "DiskName":"Disk_C",
+                            "_ID":"3003"
+                         }
+                      }
+                   ],
                    "ParentFolder":[
                       {
                          "doc":{
@@ -1340,6 +1670,14 @@
                    "IsFileTested":"True",
                    "_ID":"2006",
                    "_shard":"shard",
+                   "Disk":[
+                      {
+                         "doc":{
+                            "DiskName":"Disk_B",
+                            "_ID":"3002"
+                         }
+                      }
+                   ],
                    "ParentFolder":[
                       {
                          "doc":{
@@ -1352,8 +1690,10 @@
              },
              {
                 "doc":{
+                   "Double":"-1.0E9",
                    "FileName":"File_7",
                    "FileSize":"2000007",
+                   "Float":"-3.0E9",
                    "FoldersList":[
                       "PROGRAM FILES 7",
                       "USERS 7",
@@ -1362,6 +1702,7 @@
                    "IsFileTested":"False",
                    "_ID":"2007",
                    "_shard":"shard",
+                   "Disk":[],
                    "ParentFolder":[]
                 }
              },
@@ -1371,6 +1712,7 @@
                    "FileName":"File_8",
                    "_ID":"2008",
                    "_shard":"shard",
+                   "Disk":[],
                    "ParentFolder":[]
                 }
              }
@@ -1704,6 +2046,100 @@
           },
           "totalobjects":"7",
           "value":"7"
+       }
+    }
+
+~~~~~~~~~
+~ Float ~
+~~~~~~~~~
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=Float IS NULL&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="COUNT(*)" query="Float IS NULL"/>
+        <totalobjects>3</totalobjects>
+        <value>3</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"Float IS NULL"
+          },
+          "totalobjects":"3",
+          "value":"3"
+       }
+    }
+
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=NOT Float IS NULL&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="COUNT(*)" query="NOT Float IS NULL"/>
+        <totalobjects>5</totalobjects>
+        <value>5</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"NOT Float IS NULL"
+          },
+          "totalobjects":"5",
+          "value":"5"
+       }
+    }
+
+~~~~~~~~~~
+~ Double ~
+~~~~~~~~~~
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=Double IS NULL&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="COUNT(*)" query="Double IS NULL"/>
+        <totalobjects>3</totalobjects>
+        <value>3</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"Double IS NULL"
+          },
+          "totalobjects":"3",
+          "value":"3"
+       }
+    }
+
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=NOT Double IS NULL&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="COUNT(*)" query="NOT Double IS NULL"/>
+        <totalobjects>5</totalobjects>
+        <value>5</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"NOT Double IS NULL"
+          },
+          "totalobjects":"5",
+          "value":"5"
        }
     }
 
