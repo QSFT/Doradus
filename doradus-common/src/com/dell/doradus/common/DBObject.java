@@ -17,6 +17,7 @@
 package com.dell.doradus.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,10 +28,11 @@ import java.util.TreeSet;
 
 /**
  * Holds field values for a Doradus database object. Both user-defined and system-defined
- * fields (_ID, _table, and _deleted) may be present. When a DBObject is created by
+ * fields (_ID, _table, _deleted, _shard) may be present. When a DBObject is created by
  * fetching an object from the database, the _ID values is always present. Additional
  * scalar and/or link field values are present if requested and if a value was found.
- * The system fields _table and _deleted are only used for certain update operations.
+ * The system fields _table and _deleted are only used for certain update operations. The
+ * system field _shard is only used in certain OLAP queries.
  * Field values can be retrieved via these methods:
  * <pre>
  *      {@link #getFieldNames()}
@@ -149,6 +151,19 @@ final public class DBObject {
     public String getObjectID() {
         return m_objID;
     }   // getObjectID
+    
+    /**
+     * Get this object's _shard field, if any.
+     * 
+     * @return  This object's shard name, if any, otherwise null.
+     */
+    public String getShardName() {
+        List<String> values = m_valueMap.get("_shard");
+        if (values == null || values.isEmpty()) {
+            return null;
+        }
+        return values.get(0);
+    }   // getShardName
     
     /**
      * Get this object's assigned table name if any.
@@ -455,6 +470,16 @@ final public class DBObject {
     }   // setObjectID
     
     /**
+     * Set this object's _shard field to the given value. If this DBObject already has a
+     * _shard value, it is replaced. The _shard field is only used in certain operations.
+     * 
+     * @param shardName New value for _shard field.
+     */
+    public void setShardName(String shardName) {
+        m_valueMap.put("_shard", Arrays.asList(shardName));
+    }   // setShardName
+    
+    /**
      * Set this object's _table field to the given value. If this DBObject already has a
      * _table value, it is replaced. The _table field is only used in certain operations.
      * 
@@ -487,6 +512,7 @@ final public class DBObject {
         if (m_deleted) {
             parentNode.addValueNode("_deleted", "true", "field");
         }
+        // _shard lives in m_valueMap and is added separately 
     }   // addSystemFields
     
     // Create a UNode for the leaf field with the given name and add it to the given
@@ -591,24 +617,29 @@ final public class DBObject {
         case "_table":
             return getTableName();
         case "_deleted":
-            if (m_deleted) return "true";
+            return m_deleted ? "true" : null;
+        case "_shard":
+            return getShardName();
         default:
             Utils.require(false, "Unknown system field: " + fieldName);
             return null;
         }
     }   // getSystemField
     
-    // Get the names of system fields that have a value: _ID, _table, _deleted.
+    // Get the names of system fields that have a value: _ID, _table, _deleted, _shard.
     private Collection<String> getSystemFieldNames() {
         HashSet<String> result = new HashSet<>();
         if (!Utils.isEmpty(m_objID)) {
-            result.add(m_objID);
+            result.add("_ID");
         }
         if (!Utils.isEmpty(m_tableName)) {
-            result.add(m_tableName);
+            result.add("_table");
         }
         if (m_deleted) {
             result.add("_deleted");
+        }
+        if (m_valueMap.containsKey("_shard")) {
+            result.add("_shard");
         }
         return result;
     }   // getSystemFieldNames
@@ -621,6 +652,9 @@ final public class DBObject {
             break;
         case "_deleted":
             setDeleted(Boolean.parseBoolean(value));
+            break;
+        case "_shard":
+            setShardName(value);
             break;
         case "_table":
             setTableName(value);
