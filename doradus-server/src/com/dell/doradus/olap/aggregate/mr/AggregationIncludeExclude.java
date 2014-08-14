@@ -21,39 +21,64 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.dell.doradus.common.Utils;
 import com.dell.doradus.search.aggregate.AggregationGroup;
 
 public class AggregationIncludeExclude {
-	private List<Set<String>> m_exclude = new ArrayList<Set<String>>();
-	private List<Set<String>> m_include = new ArrayList<Set<String>>();
+	private List<Matcher> m_exclude = new ArrayList<Matcher>();
+	private List<Matcher> m_include = new ArrayList<Matcher>();
 	
 	public AggregationIncludeExclude(List<AggregationGroup> groups) {
 		for(int i = 0; i < groups.size(); i++) {
 			List<String> exclude = groups.get(i).exclude;
 			if(exclude == null) m_exclude.add(null);
-			else {
-				HashSet<String> hs = new HashSet<String>(exclude.size());
-				for(String str: exclude) hs.add(str == null ? null : str.toLowerCase());
-				m_exclude.add(hs);
-			}
+			else m_exclude.add(new Matcher(exclude));
 			
 			List<String> include = groups.get(i).include;
 			if(include == null) m_include.add(null);
-			else {
-				HashSet<String> hs = new HashSet<String>(include.size());
-				for(String str: include) hs.add(str == null ? null : str.toLowerCase());
-				m_include.add(hs);
-			}
+			else m_include.add(new Matcher(include));
 		}
 	}
 	
 	public boolean accept(MGName name, int level) {
-		String text = name.name == null ? null : name.name.toLowerCase();
-		Set<String> excl = m_exclude.get(level);
-		if(excl != null && excl.contains(text)) return false;
-		Set<String> incl = m_include.get(level);
-		if(incl != null && (!incl.contains(text))) return false;
+		String text = name.name == null ? null : name.name;
+		Matcher excl = m_exclude.get(level);
+		if(excl != null && excl.match(text)) return false;
+		Matcher incl = m_include.get(level);
+		if(incl != null && (!incl.match(text))) return false;
+		
+		
 		return true;
 	}
 	
+	public static class Matcher {
+		private Set<String> m_values;
+		private List<String> m_templates;
+		
+		public Matcher(List<String> values) {
+			if(values == null) return;
+			m_values = new HashSet<String>();
+			m_templates = new ArrayList<String>();
+			
+			for(String value: values) {
+				if(value == null) m_values.add(null);
+				else if(value.indexOf('*') >= 0 || value.indexOf('?') >= 0) m_templates.add(value);
+				else m_values.add(value);
+			}
+			
+			if(m_values.size() == 0) m_values = null;
+			if(m_templates.size() == 0) m_templates = null;
+		}
+		
+		public boolean match(String value)
+		{
+			if(value == null) return m_values != null && m_values.contains(null);
+			if(m_values != null && m_values.contains(value)) return true;
+			if(m_templates == null) return false;
+			for(String template: m_templates) {
+				if(Utils.matchesPattern(value, template)) return true;
+			}
+			return false;
+		}
+	}
 }
