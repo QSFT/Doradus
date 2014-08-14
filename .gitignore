@@ -10,3 +10,4 @@ doradus.log
 .metadata
 truststore
 keystore
+*/target/*
