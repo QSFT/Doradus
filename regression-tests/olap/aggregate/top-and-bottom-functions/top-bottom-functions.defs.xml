@@ -7,12 +7,23 @@
         <option name="StorageService">OLAPService</option>
     </options>
     <tables>
-        <table name="Table">
+        <table name="SV">
             <fields>
                 <field name="Country" type="TEXT"/>
                 <field name="City" type="TEXT"/>
-                <field name="People" type="INTEGER"/>
                 <field name="CreateDate" type="TIMESTAMP"/>
+                <field name="People" type="INTEGER"/>
+                <field name="Float" type="FLOAT"/>
+                <field name="Double" type="DOUBLE"/>
+                <field name="IsTested" type="BOOLEAN"/>
+                <field type="LINK" collection="true" inverse="SV" table="MV" name="MV"/>
+            </fields>
+        </table>
+        <table name="MV">
+            <fields>
+                <field name="Country" type="TEXT"/>
+                <field name="City" type="TEXT" collection="true"/>
+                <field type="LINK" collection="true" inverse="MV" table="SV" name="SV"/>
             </fields>
         </table>
     </tables>
@@ -22,77 +33,209 @@
 <DEFINE name="data.xml">
       <batch>
         <docs>
-          <doc _table="Table" _ID="2001" >
+          <doc _table="SV" _ID="2001" >
             <field name="Country">Russia</field>
             <field name="City">Moscow</field>
-            <field name="People">11980000</field>
-            <field name="CreateDate">2011-04-05 12:32:08.555</field>
+            <field name="CreateDate">2014</field>
+            <field name="People">2014</field>
+            <field name="Float">3.3E30</field>
+            <field name="Double">2.2E300</field>
+            <field name="IsTested">true</field>
+            <field name="MV">
+              <add>
+                <value>2001</value>
+              </add>
+	    </field>
           </doc>
-          <doc _table="Table" _ID="2002" >
-            <field name="Country">USA</field>
-            <field name="City">Washington</field>
-            <field name="People">632323</field>
-            <field name="CreateDate">2011-04-05 22:12:14.666</field>
-          </doc>
-          <doc _table="Table" _ID="2003" >
-            <field name="Country">USA</field>
-            <field name="City">New York</field>
-            <field name="People">8245000</field>
-            <field name="CreateDate">2011-04-15 10:20:01.777</field>
-          </doc>
-          <doc _table="Table" _ID="2004" >
+          <doc _table="SV" _ID="2002" >
             <field name="Country">Russia</field>
             <field name="City">Saint-Petersburg</field>
-            <field name="People">4880000</field>
-            <field name="CreateDate">2011-06-22 09:05:20.888</field>
+            <field name="CreateDate">2014</field>
+            <field name="People">2014</field>
+            <field name="Float">3.3E30</field>
+            <field name="Double">2.2E300</field>
+            <field name="IsTested">true</field>
+            <field name="MV">
+              <add>
+                <value>2001</value>
+              </add>
+	    </field>
           </doc>
-          <doc _table="Table" _ID="2005" >
+          <doc _table="SV" _ID="2003" >
             <field name="Country">Russia</field>
-            <field name="City">Novgorod</field>
-            <field name="People">1255000</field>
-            <field name="CreateDate">2012-12-30 15:29:04.999</field>
+            <field name="City">Tver</field>
+            <field name="CreateDate">2014</field>
+            <field name="People">2014</field>
+            <field name="Float">3.3E30</field>
+            <field name="Double">2.2E300</field>
+            <field name="IsTested">true</field>
+            <field name="MV">
+              <add>
+                <value>2001</value>
+              </add>
+	    </field>
           </doc>
-          <doc _table="Table" _ID="2006" >
-            <field name="Country">USA</field>
-            <field name="City">Chicago</field>
-            <field name="People">2707000</field>
-            <field name="CreateDate">2013-05-28 13:14:33.444</field>
-          </doc>
-          <doc _table="Table" _ID="2007" >
+          <doc _table="SV" _ID="2004" >
             <field name="Country">Russia</field>
-            <field name="City">Moscow</field>
-            <field name="People">21980000</field>
-            <field name="CreateDate">2011-04-05 12:32:08.555</field>
+            <field name="City">Pskov</field>
+            <field name="CreateDate">2014</field>
+            <field name="People">2014</field>
+            <field name="Float">3.3E30</field>
+            <field name="Double">2.2E300</field>
+            <field name="IsTested">true</field>
+            <field name="MV">
+              <add>
+                <value>2001</value>
+              </add>
+	    </field>
           </doc>
-          <doc _table="Table" _ID="2008" >
-            <field name="Country">USA</field>
-            <field name="City">Washington</field>
-            <field name="People">1632323</field>
-            <field name="CreateDate">2011-04-05 22:12:14.666</field>
+          <doc _table="SV" _ID="2005" >
+            <field name="Country">Belorussia</field>
+            <field name="City">Minsk</field>
+            <field name="CreateDate">2013</field>
+            <field name="People">2013</field>
+            <field name="Float">4.444</field>
+            <field name="Double">5.555</field>
+            <field name="IsTested">false</field>
+            <field name="MV">
+              <add>
+                <value>2002</value>
+              </add>
+	    </field>
           </doc>
-          <doc _table="Table" _ID="2009" >
-            <field name="Country">USA</field>
-            <field name="City">New York</field>
-            <field name="People">18245000</field>
-            <field name="CreateDate">2011-04-15 10:20:01.777</field>
+          <doc _table="SV" _ID="2006" >
+            <field name="Country">Belorussia</field>
+            <field name="City">Bryansk</field>
+            <field name="CreateDate">2013</field>
+            <field name="People">2013</field>
+            <field name="Float">4.444</field>
+            <field name="Double">5.555</field>
+            <field name="IsTested">false</field>
+            <field name="MV">
+              <add>
+                <value>2002</value>
+              </add>
+	    </field>
           </doc>
-          <doc _table="Table" _ID="2010" >
-            <field name="Country">Russia</field>
-            <field name="City">Saint-Petersburg</field>
-            <field name="People">14880000</field>
-            <field name="CreateDate">2011-06-22 09:05:20.888</field>
+          <doc _table="SV" _ID="2007" >
+            <field name="Country">Belorussia</field>
+            <field name="City">Brest</field>
+            <field name="CreateDate">2013</field>
+            <field name="People">2013</field>
+            <field name="Float">4.444</field>
+            <field name="Double">5.555</field>
+            <field name="IsTested">false</field>
+            <field name="MV">
+              <add>
+                <value>2002</value>
+              </add>
+	    </field>
           </doc>
-          <doc _table="Table" _ID="2011" >
-            <field name="Country">Russia</field>
-            <field name="City">Novgorod</field>
-            <field name="People">11255000</field>
-            <field name="CreateDate">2012-12-30 15:29:04.999</field>
+          <doc _table="SV" _ID="2008" >
+            <field name="Country">Ukraine</field>
+            <field name="City">Lugansk</field>
+            <field name="CreateDate">2012</field>
+            <field name="People">2012</field>
+            <field name="Float">-6.666</field>
+            <field name="Double">-7.777</field>
+            <field name="IsTested">true</field>
+            <field name="MV">
+              <add>
+                <value>2003</value>
+              </add>
+	    </field>
           </doc>
-          <doc _table="Table" _ID="2012" >
-            <field name="Country">USA</field>
-            <field name="City">Chicago</field>
-            <field name="People">12707000</field>
-            <field name="CreateDate">2013-05-28 13:14:33.444</field>
+          <doc _table="SV" _ID="2009" >
+            <field name="Country">Ukraine</field>
+            <field name="City">Gorlovka</field>
+            <field name="CreateDate">2012</field>
+            <field name="People">2012</field>
+            <field name="Float">-6.666</field>
+            <field name="Double">-7.777</field>
+            <field name="IsTested">true</field>
+            <field name="MV">
+              <add>
+                <value>2003</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="SV" _ID="2010" >
+            <field name="Country">Kazakhstan</field>
+            <field name="City">Pavlodar</field>
+            <field name="CreateDate">2011</field>
+            <field name="People">2011</field>
+            <field name="Float">-8.8E-2</field>
+            <field name="Double">-9.9E-2</field>
+            <field name="IsTested">false</field>
+            <field name="MV">
+              <add>
+                <value>2004</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="MV" _ID="2001" >
+            <field name="Country">Russia1</field>
+            <field name="City">
+              <add>
+                <value>Moscow</value>
+              </add>
+	    </field>
+            <field name="SV">
+              <add>
+                <value>2001</value>
+                <value>2002</value>
+                <value>2003</value>
+                <value>2004</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="MV" _ID="2002" >
+            <field name="Country">Russia2</field>
+            <field name="City">
+              <add>
+                <value>Tver</value>
+                <value>Moscow</value>
+              </add>
+	    </field>
+            <field name="SV">
+              <add>
+                <value>2005</value>
+                <value>2006</value>
+                <value>2007</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="MV" _ID="2003" >
+            <field name="Country">Russia3</field>
+            <field name="City">
+              <add>
+                <value>Tver</value>
+                <value>Moscow</value>
+                <value>Pskov</value>
+              </add>
+	    </field>
+            <field name="SV">
+              <add>
+                <value>2008</value>
+                <value>2009</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="MV" _ID="2004" >
+            <field name="Country">Russia4</field>
+            <field name="City">
+              <add>
+                <value>Tver</value>
+                <value>Moscow</value>
+                <value>Pskov</value>
+                <value>Pavlovsk</value>
+              </add>
+	    </field>
+            <field name="SV">
+              <add>
+                <value>2010</value>
+              </add>
+	    </field>
           </doc>
         </docs>
       </batch>

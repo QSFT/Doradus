@@ -1,7 +1,3 @@
-<!--
-Doradus Data Model and Query Language -v2.1
-6.4.5.4 TOP and BOTTOM Functions
--->
 <TEST>
 <CONNECT/>
 <disable-output/>
@@ -43,41 +39,93 @@ Doradus Data Model and Query Language -v2.1
     <echo>~~~~~~~~~~~~~~~~~~~~</echo>
     <echo>~ Table of Content ~</echo>
     <echo>~~~~~~~~~~~~~~~~~~~~</echo>
-    <QUERY path="Application/Table" q="*" f="_all" shards="shard"/>
-        
+    <QUERY path="Application/SV" q="*" f="_all" shards="shard"/>
+    <QUERY path="Application/MV" q="*" f="_all" shards="shard"/>
    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
     <echo>~ Test for TOTAL GROUP for TOP and BOTTOM aggr queries ~</echo>
     <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
-    <AGGREGATE path="Application/Table" m="MAX(People)" f="TOP(1, Country)" shards="shard"/>
-    <AGGREGATE path="Application/Table" m="MIN(People)" f="TOP(2, Country)" shards="shard" />
-<!-- CR #107.804 fixed -->
-    <AGGREGATE path="Application/Table" m="COUNT(People)" f="TOP(3, Country)" shards="shard" />
-<!-- -->
-    <AGGREGATE path="Application/Table" m="SUM(People)" f="TOP(1, Country)" shards="shard" />
-    <AGGREGATE path="Application/Table" m="AVERAGE(People)" f="TOP(2, Country)" shards="shard" />
-    <AGGREGATE path="Application/Table" m="MAX(People)" f="BOTTOM(1, Country)" shards="shard" />
-    <AGGREGATE path="Application/Table" m="MIN(People)" f="BOTTOM(2, Country)" shards="shard" />
-<!-- CR #107.804 fixed -->
-    <AGGREGATE path="Application/Table" m="COUNT(People)" f="BOTTOM(3, Country)" shards="shard" />
-<!-- -->
-    <AGGREGATE path="Application/Table" m="SUM(People)" f="BOTTOM(1, Country)" shards="shard" />
-    <AGGREGATE path="Application/Table" m="AVERAGE(People)" f="BOTTOM(2, Country)" shards="shard" />
-    <AGGREGATE path="Application/Table" m="MAX(People)" f="TOP(1, City)" shards="shard" />
-    <AGGREGATE path="Application/Table" m="MIN(People)" f="TOP(2, City)" shards="shard" />
-<!-- CR #107.804 fixed -->
-    <AGGREGATE path="Application/Table" m="COUNT(People)" f="TOP(3, City)" shards="shard" />
-<!-- -->
-    <AGGREGATE path="Application/Table" m="SUM(People)" f="TOP(1, City)" shards="shard" />
-    <AGGREGATE path="Application/Table" m="AVERAGE(People)" f="TOP(2, City)" shards="shard" />
-    <AGGREGATE path="Application/Table" m="MAX(People)" f="BOTTOM(1, City)" shards="shard" />
-    <AGGREGATE path="Application/Table" m="MIN(People)" f="BOTTOM(2, City)" shards="shard" />
-<!-- CR #107.804 fixed -->
-    <AGGREGATE path="Application/Table" m="COUNT(People)" f="BOTTOM(3, City)" shards="shard" />
-<!-- -->
-    <AGGREGATE path="Application/Table" m="SUM(People)" f="BOTTOM(1, City)" shards="shard" />
-    <AGGREGATE path="Application/Table" m="AVERAGE(People)" f="BOTTOM(2, City)" shards="shard" />
+    <echo>~~~~~~~~</echo>
+    <echo>~ LINK ~</echo>
+    <echo>~~~~~~~~</echo>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(0, MV)" shards="shard"/>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(1, MV)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(10, MV)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(0, MV)" shards="shard"/>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(1, MV)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(10, MV)" shards="shard" />
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ BOOLEAN ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(0, IsTested)" shards="shard"/>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(1, IsTested)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(10, IsTested)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(0, IsTested)" shards="shard"/>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(1, IsTested)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(10, IsTested)" shards="shard" />
+
+    <echo>~~~~~~~~~</echo>
+    <echo>~ FLOAT ~</echo>
+    <echo>~~~~~~~~~</echo>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(0, Float)" shards="shard"/>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(1, Float)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(10, Float)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(0, Float)" shards="shard"/>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(1, Float)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(10, Float)" shards="shard" />
+
+    <echo>~~~~~~~~~~</echo>
+    <echo>~ DOUBLE ~</echo>
+    <echo>~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(0, Double)" shards="shard"/>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(1, Double)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(10, Double)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(0, Double)" shards="shard"/>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(1, Double)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(10, Double)" shards="shard" />
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ INTEGER ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(0, People)" shards="shard"/>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(1, People)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(10, People)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(0, People)" shards="shard"/>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(1, People)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(10, People)" shards="shard" />
+
+    <echo>~~~~~~~~~~~~~</echo>
+    <echo>~ TIMESTAMP ~</echo>
+    <echo>~~~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(0, CreateDate)" shards="shard"/>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(1, CreateDate)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(10, CreateDate)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(0, CreateDate)" shards="shard"/>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(1, CreateDate)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(10, CreateDate)" shards="shard" />
+
+    <echo>~~~~~~</echo>
+    <echo>~ SV ~</echo>
+    <echo>~~~~~~</echo>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(0, Country)" shards="shard"/>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(1, Country)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="TOP(10, Country)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(0, Country)" shards="shard"/>
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(1, Country)" shards="shard" />
+    <AGGREGATE path="Application/SV" m="COUNT(City)" f="BOTTOM(10, Country)" shards="shard" />
+
+    <echo>~~~~~~</echo>
+    <echo>~ MV ~</echo>
+    <echo>~~~~~~</echo>
+    <AGGREGATE path="Application/MV" m="COUNT(Country)" f="TOP(0, City)" shards="shard"/>
+    <AGGREGATE path="Application/MV" m="COUNT(Country)" f="TOP(1, City)" shards="shard" />
+    <AGGREGATE path="Application/MV" m="COUNT(Country)" f="TOP(10, City)" shards="shard" />
+    <AGGREGATE path="Application/MV" m="COUNT(Country)" f="BOTTOM(0, City)" shards="shard"/>
+    <AGGREGATE path="Application/MV" m="COUNT(Country)" f="BOTTOM(1, City)" shards="shard" />
+    <AGGREGATE path="Application/MV" m="COUNT(Country)" f="BOTTOM(10, City)" shards="shard" />
 
     <DELETE path="_applications/Application/ApplicationKey"/>
+
 </FOR>
 
 <DISCONNECT />
