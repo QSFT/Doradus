@@ -1,7 +1,3 @@
-<!--
-Doradus Data Model and Query Language -v2.1
-6.4.5.2 INCLUDE and EXCLUDE Functions
--->
 <TEST>
 <CONNECT/>
 <disable-output/>
@@ -20,7 +16,7 @@ Doradus Data Model and Query Language -v2.1
         <echo>~ Create application ~</echo>
         <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
         <disable-output/>
-        <POST path="_applications"     xml="${schema.xml}"/>
+        <POST path="_applications" xml="${schema.xml}"/>
         <POST path="Application/shard" xml="${data.xml}"/>
         <enable-output/>
         <POST path="Application/_shards/shard" />
@@ -34,7 +30,7 @@ Doradus Data Model and Query Language -v2.1
         <echo>~ Create application ~</echo>
         <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
         <disable-output/>
-        <POST path="_applications"     json="${schema.json}"/>
+        <POST path="_applications" json="${schema.json}"/>
         <POST path="Application/shard" json="${data.json}"/>
         <enable-output/>
         <POST path="Application/_shards/shard" />
@@ -43,18 +39,86 @@ Doradus Data Model and Query Language -v2.1
     <echo>~~~~~~~~~~~~~~~~~~~~</echo>
     <echo>~ Table of Content ~</echo>
     <echo>~~~~~~~~~~~~~~~~~~~~</echo>
-	<DEFINE name="response.format" value="xml|json"/>
-    <QUERY path="Application/Disk"   q="*" f="_all" shards="shard"/>
-    <QUERY path="Application/Folder" q="*" f="_all" shards="shard"/>
-    <QUERY path="Application/File"   q="*" f="_all" shards="shard"/>
+    <QUERY path="Application/Disk"   q="*" f="_all" shards="shard" />
+    <QUERY path="Application/Folder" q="*" f="_all" shards="shard" />
+    <QUERY path="Application/File"   q="*" f="_all" shards="shard" />
         
     <echo>~~~~~~~~~~~~~~~~~~~~</echo>
     <echo>~ Test for Exclude ~</echo>
     <echo>~~~~~~~~~~~~~~~~~~~~</echo>
-    <AGGREGATE path="Application/Folder" m="COUNT(*)" f="Files.Disk.DiskName" q="NOT Files IS NULL" shards="shard"/>
-    <AGGREGATE path="Application/Folder" m="COUNT(*)" f="Files.Disk.DiskName.EXCLUDE('Disk_B')" q="NOT Files IS NULL" shards="shard"/>
-    <AGGREGATE path="Application/Folder" m="COUNT(*)" f="Files.FoldersList.EXCLUDE('WINDOWS 1')" q="NOT Files IS NULL" shards="shard"/>
-	
+    <echo>~~~~~~~~</echo>
+    <echo>~ LINK ~</echo>
+    <echo>~~~~~~~~</echo>
+    <AGGREGATE path="Application/Disk" m="COUNT(*)" f="Location.EXCLUDE(NULL)" q="*" shards="shard" />
+    <AGGREGATE path="Application/Disk" m="COUNT(*)" f="Location.EXCLUDE(2005)" q="*" shards="shard" />
+    <AGGREGATE path="Application/Disk" m="COUNT(*)" f="DiskName,Location.EXCLUDE(NULL)" q="*" shards="shard" />
+    <AGGREGATE path="Application/Disk" m="COUNT(*)" f="DiskName,Location.EXCLUDE(2005)" q="*" shards="shard" />
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ TEXT SV ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FolderName.EXCLUDE(NULL)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FolderName.EXCLUDE('Folder')" q="*" shards="shard" />
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FolderName.EXCLUDE(NULL)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FolderName.EXCLUDE('Folder')" q="*" shards="shard" />
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ TEXT MV ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE(NULL)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE('USERS 1')" q="*" shards="shard" />
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE(NULL)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE('USERS 1')" q="*" shards="shard" />
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ INTEGER ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileSize.EXCLUDE(NULL)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileSize.EXCLUDE(2000005)" q="*" shards="shard" />
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FileSize.EXCLUDE(NULL)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FileSize.EXCLUDE(2000005)" q="*" shards="shard" />
+
+    <echo>~~~~~~~~~~</echo>
+    <echo>~ DOUBLE ~</echo>
+    <echo>~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="Double.EXCLUDE(NULL)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="Double.EXCLUDE(0.022)" q="*" shards="shard" />
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,Double.EXCLUDE(NULL)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,Double.EXCLUDE(-0.023)" q="*" shards="shard" />
+
+    <echo>~~~~~~~~~</echo>
+    <echo>~ FLOAT ~</echo>
+    <echo>~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="Float.EXCLUDE(NULL)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="Float.EXCLUDE(0.017999999)" q="*" shards="shard" />
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,Float.EXCLUDE(NULL)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,Float.EXCLUDE(-0.017999999)" q="*" shards="shard" />
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ BOOLEAN ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="IsFileTested.EXCLUDE(NULL)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="IsFileTested.EXCLUDE(FALSE)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="IsFileTested.EXCLUDE(TRUE)" q="*" shards="shard" />
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,IsFileTested.EXCLUDE(NULL)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,IsFileTested.EXCLUDE(FALSE)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,IsFileTested.EXCLUDE(TRUE)" q="*" shards="shard" />
+
+    <echo>~~~~~~~~~~~~~</echo>
+    <echo>~ TIMESTAMP ~</echo>
+    <echo>~~~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileCreateDate.EXCLUDE(NULL)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileCreateDate.EXCLUDE('2013-11-03 03:33:30')" q="*" shards="shard" />
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FileCreateDate.EXCLUDE(NULL)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FileCreateDate.EXCLUDE('2013-11-03 03:33:30')" q="*" shards="shard" />
+
     <DELETE path="_applications/Application/ApplicationKey"/>
 </FOR>
 

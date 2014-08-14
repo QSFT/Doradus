@@ -342,7 +342,7 @@ public class Aggregate {
 			String fieldName = field.name;
 			int groupIndex = field.groupIndex;
 			if(fieldName == PathEntry.ANY) {
-			    groupKeys[groupIndex].add(obj.id().toString());
+			    groupSetEntry.m_groupPaths[groupIndex].addValueKeys(groupKeys[groupIndex], obj.id().toString());
 			}
 			else {
 				String value = obj.get(fieldName);
@@ -374,17 +374,18 @@ public class Aggregate {
                 }
             }
 			if(!hasLinkedEntities && !child.hasUnderlyingQuery())
-				nullifyGroupKeys(child, groupKeys);
+				nullifyGroupKeys(child, groupSetEntry, groupKeys);
         }
     }
 	
-	private void nullifyGroupKeys(PathEntry entry, Set<String>[] groupKeys)
+	private void nullifyGroupKeys(PathEntry entry, GroupSetEntry groupSetEntry, Set<String>[] groupKeys)
 	{
-		for(PathEntry field : entry.leafBranches) {
-			    groupKeys[field.groupIndex].add(Group.NULL_GROUP_NAME);
+		for (PathEntry field : entry.leafBranches) {
+			int groupIndex = field.groupIndex;
+			groupSetEntry.m_groupPaths[groupIndex].addValueKeys(groupKeys[groupIndex], null);
 		}
-		for(PathEntry child : entry.linkBranches) {
-			nullifyGroupKeys(child, groupKeys);
+		for (PathEntry child : entry.linkBranches) {
+			nullifyGroupKeys(child, groupSetEntry, groupKeys);
 		}
 	}
 

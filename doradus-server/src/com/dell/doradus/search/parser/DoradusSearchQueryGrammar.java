@@ -1294,7 +1294,9 @@ public class DoradusSearchQueryGrammar {
 
         GrammarRule OptionalAlias = new SwitchRule(SwitchRule.First, "OptionalLimit",
                 Grammar.Rule(DOT, Grammar.DropLexem, AS, Grammar.DropLexem, LEFTPAREN, Grammar.DropLexem,
-                        OptWhiteSpaces, Term, Grammar.SetType("ALIAS_NAME"), OptWhiteSpaces,  RIGHTPAREN) ,
+                        OptWhiteSpaces, Term, Grammar.SetType("ALIAS_NAME"), OptWhiteSpaces,  RIGHTPAREN, Grammar.DropLexem) ,
+                Grammar.Rule(Grammar.WhiteSpaces,  AS, Grammar.DropLexem,
+                        Grammar.WhiteSpaces, Term, Grammar.SetType("ALIAS_NAME") ) ,
                 Grammar.emptyRule
         );
         GrammarRule OptionalLimit = new SwitchRule(SwitchRule.First, "OptionalLimit",
@@ -1333,7 +1335,7 @@ public class DoradusSearchQueryGrammar {
         //);
 
         FieldSet.body = Grammar.asRule(
-                FieldOrLinkName, FieldSetContinue
+                FieldOrLinkName, FieldSetContinue, OptWhiteSpaces
         );
 
 
