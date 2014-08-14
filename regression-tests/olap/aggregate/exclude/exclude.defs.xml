@@ -4,7 +4,7 @@
 <application name="Application">
     <key>ApplicationKey</key>
     <options>
-        <option name="StorageService">OLAPService</option>
+	<option name="StorageService">OLAPService</option>
     </options>
     <tables>
         <table name="Disk">
@@ -29,6 +29,8 @@
                 <field type="TEXT" name="FoldersList" collection="true"/>
                 <field type="TEXT" name="FolderName" collection="false"/>
                 <field type="TIMESTAMP" name="FileCreateDate"/>
+                <field type="FLOAT" name="Float"/>
+                <field type="DOUBLE" name="Double"/>
             </fields>
         </table>
     </tables>
@@ -38,7 +40,7 @@
 <DEFINE name="data.xml">
       <batch>
         <docs>
-          <doc _table="Disk" _ID="3001" >
+          <doc _ID="3001" _table="Disk">
             <field name="Location">
               <add>
                 <value>2001</value>
@@ -47,7 +49,7 @@
 	    </field>
             <field name="DiskName">Disk_A</field>
           </doc>
-          <doc _table="Disk" _ID="3002" >
+          <doc _ID="3002" _table="Disk">
             <field name="Location">
               <add>
                 <value>2002</value>
@@ -56,7 +58,7 @@
 	    </field>
             <field name="DiskName">Disk_B</field>
           </doc>
-          <doc _table="Disk" _ID="3003" >
+          <doc _ID="3003" _table="Disk">
             <field name="Location">
               <add>
                 <value>2003</value>
@@ -65,7 +67,10 @@
 	    </field>
             <field name="DiskName">Disk_C</field>
           </doc>
-          <doc _table="Folder" _ID="1001" >
+          <doc _ID="3004" _table="Disk">
+            <field name="DiskName">Disk_D</field>
+          </doc>
+          <doc _ID="1001" _table="Folder">
             <field name="Files">
               <add>
                 <value>2001</value>
@@ -74,7 +79,7 @@
 	    </field>
             <field name="FolderName">Folder_A</field>
           </doc>
-          <doc _table="Folder" _ID="1002" >
+          <doc _ID="1002" _table="Folder">
             <field name="Files">
               <add>
                 <value>2002</value>
@@ -83,7 +88,7 @@
 	    </field>
             <field name="FolderName">Folder_B</field>
           </doc>
-          <doc _table="Folder" _ID="1003" >
+          <doc _ID="1003" _table="Folder">
             <field name="Files">
               <add>
                 <value>2003</value>
@@ -92,10 +97,10 @@
 	    </field>
             <field name="FolderName">Folder_C</field>
           </doc>
-          <doc _table="Folder" _ID="1004" >
+          <doc _ID="1004" _table="Folder">
             <field name="FolderName">Folder_D</field>
           </doc>
-          <doc _table="File" _ID="2001" >
+          <doc _ID="2001" _table="File">
             <field name="ParentFolder">
               <add>
                 <value>1001</value>
@@ -116,7 +121,7 @@
             </field>
             <field name="FileCreateDate">2013-11-01 01:11:10</field>
           </doc>
-          <doc _table="File" _ID="2002" >
+          <doc _ID="2002" _table="File">
             <field name="ParentFolder">
               <add>
                 <value>1002</value>
@@ -132,8 +137,10 @@
             <field name="FileSize">2000002</field>
             <field name="IsFileTested">TRUE</field>
             <field name="FileCreateDate">2013-11-02 02:22:20</field>
+            <field name="Float">1.8E-2</field>
+            <field name="Double">2.2E-2</field>
           </doc>
-          <doc _table="File" _ID="2003" >
+          <doc _ID="2003" _table="File">
             <field name="ParentFolder">
               <add>
                 <value>1003</value>
@@ -155,8 +162,10 @@
                 </add>
             </field>
             <field name="FileCreateDate">2013-11-03 03:33:30</field>
+            <field name="Float">-1.8E-2</field>
+            <field name="Double">-2.3E-2</field>
           </doc>
-          <doc _table="File" _ID="2004" >
+          <doc _ID="2004" _table="File">
             <field name="ParentFolder">
               <add>
                 <value>1001</value>
@@ -178,8 +187,10 @@
                 </add>
             </field>
             <field name="FileCreateDate">2013-11-04 04:44:40</field>
+            <field name="Float">3.39E+3</field>
+            <field name="Double">1.79E+13</field>
           </doc>
-          <doc _table="File" _ID="2005" >
+          <doc _ID="2005" _table="File">
             <field name="ParentFolder">
               <add>
                 <value>1003</value>
@@ -194,8 +205,10 @@
             <field name="FolderName">Folder 5</field>
             <field name="FileSize">2000005</field>
             <field name="FileCreateDate">2013-11-05 05:55:50</field>
+            <field name="Float">-3.39E+3</field>
+            <field name="Double">-1.79E+13</field>
           </doc>
-          <doc _table="File" _ID="2006" >
+          <doc _ID="2006" _table="File">
             <field name="ParentFolder">
               <add>
                 <value>1002</value>
@@ -218,7 +231,7 @@
             </field>
             <field name="FileCreateDate">2013-11-06 06:46:16</field>
           </doc>
-          <doc _table="File" _ID="2007" >
+          <doc _ID="2007" _table="File">
             <field name="FileName">File_7</field>
             <field name="FileSize">2000007</field>
             <field name="IsFileTested">FALSE</field>
@@ -229,8 +242,10 @@
                     <value>USERS 7</value>
                 </add>
             </field>
+            <field name="Float">-3000000000</field>
+            <field name="Double">-1000000000</field>
           </doc>
-          <doc _table="File" _ID="2008" >
+          <doc _ID="2008" _table="File">
             <field name="FileName">File_8</field>
             <field name="FileCreateDate">2013-11-08 08:48:18</field>
           </doc>
