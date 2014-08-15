@@ -24,6 +24,7 @@ import com.dell.doradus.common.Utils;
 import com.dell.doradus.fieldanalyzer.DateAnalyzer;
 import com.dell.doradus.fieldanalyzer.FieldAnalyzer;
 import com.dell.doradus.fieldanalyzer.IntegerAnalyzer;
+import com.dell.doradus.fieldanalyzer.NullAnalyzer;
 import com.dell.doradus.fieldanalyzer.OpaqueTextAnalyzer;
 import com.dell.doradus.fieldanalyzer.SimpleTextAnalyzer;
 import com.dell.doradus.fieldanalyzer.TextAnalyzer;
@@ -84,7 +85,10 @@ public class BuilderBinary extends SearchBuilder {
 		FieldAnalyzer analyzer = analyzer(field);
         
         if(BinaryQuery.EQUALS.equals(qu.operation)) {
-    		FilteredIterable fi = getEquals(field, value, analyzer, qu);
+    		FilteredIterable fi = null;
+    		if(!(analyzer instanceof NullAnalyzer)) {
+    			fi = getEquals(field, value, analyzer, qu);
+    		}
     		if(fi == null) return create(all(), filter(query));
     		else return fi;
         } else if(BinaryQuery.CONTAINS.equals(qu.operation)) {
