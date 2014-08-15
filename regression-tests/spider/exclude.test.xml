@@ -1,0 +1,128 @@
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<IMPORT>exclude.defs.xml</IMPORT>
+<DEFINE name="response.format" value="xml|json"/>
+<enable-output/>
+
+<FOR index="i" from="1" to="2">
+    <IF.EQ arg1="${i}" arg2="1">
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo>~ XML format ~</echo>
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" xml="${schema.xml}"/>
+        <POST path="Application/Disk" xml="${data1.xml}"/>
+        <POST path="Application/Folder" xml="${data2.xml}"/>
+        <POST path="Application/File" xml="${data3.xml}"/>
+        <enable-output/>
+    </IF.EQ>
+    <IF.EQ arg1="${i}" arg2="2">
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo>~ JSON format ~</echo>
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications"     json="${schema.json}"/>
+        <POST path="Application/Disk" json="${data1.json}"/>
+        <POST path="Application/Folder" json="${data2.json}"/>
+        <POST path="Application/File" json="${data3.json}"/>
+        <enable-output/>
+    </IF.EQ>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Disk"   q="*" f="_all" />
+    <QUERY path="Application/Folder" q="*" f="_all" />
+    <QUERY path="Application/File"   q="*" f="_all" />
+        
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test for Exclude ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~~~~~~~~</echo>
+    <echo>~ LINK ~</echo>
+    <echo>~~~~~~~~</echo>
+    <AGGREGATE path="Application/Disk" m="COUNT(*)" f="Location.EXCLUDE(NULL)" q="*" />
+    <AGGREGATE path="Application/Disk" m="COUNT(*)" f="Location.EXCLUDE(2005)" q="*" />
+    <AGGREGATE path="Application/Disk" m="COUNT(*)" f="DiskName,Location.EXCLUDE(NULL)" q="*" />
+    <AGGREGATE path="Application/Disk" m="COUNT(*)" f="DiskName,Location.EXCLUDE(2005)" q="*" />
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ TEXT SV ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FolderName.EXCLUDE(NULL)" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FolderName.EXCLUDE('Folder')" q="*" />
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FolderName.EXCLUDE(NULL)" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FolderName.EXCLUDE('Folder')" q="*" />
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ TEXT MV ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE(NULL)" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE('USERS 1')" q="*" />
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE(NULL)" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE('USERS 1')" q="*" />
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ INTEGER ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileSize.EXCLUDE(NULL)" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileSize.EXCLUDE(2000005)" q="*" />
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FileSize.EXCLUDE(NULL)" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FileSize.EXCLUDE(2000005)" q="*" />
+
+    <echo>~~~~~~~~~~</echo>
+    <echo>~ DOUBLE ~</echo>
+    <echo>~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="Double.EXCLUDE(NULL)" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="Double.EXCLUDE(-2.23E-308)" q="*" />
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,Double.EXCLUDE(NULL)" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,Double.EXCLUDE(-2.23E-308)" q="*" />
+
+    <echo>~~~~~~~~~</echo>
+    <echo>~ FLOAT ~</echo>
+    <echo>~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="Float.EXCLUDE(NULL)" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="Float.EXCLUDE(-1.18E-38)" q="*" />
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,Float.EXCLUDE(NULL)" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,Float.EXCLUDE(-1.18E-38)" q="*" />
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ BOOLEAN ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="IsFileTested.EXCLUDE(NULL)" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="IsFileTested.EXCLUDE(FALSE)" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="IsFileTested.EXCLUDE(TRUE)" q="*" />
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,IsFileTested.EXCLUDE(NULL)" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,IsFileTested.EXCLUDE(FALSE)" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,IsFileTested.EXCLUDE(TRUE)" q="*" />
+
+    <echo>~~~~~~~~~~~~~</echo>
+    <echo>~ TIMESTAMP ~</echo>
+    <echo>~~~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileCreateDate.EXCLUDE(NULL)" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileCreateDate.EXCLUDE('2013-11-03 03:33:30')" q="*" />
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FileCreateDate.EXCLUDE(NULL)" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FileCreateDate.EXCLUDE('2013-11-03 03:33:30')" q="*" />
+
+    <DELETE path="_applications/Application/ApplicationKey"/>
+</FOR>
+
+<DISCONNECT />
+</TEST>
