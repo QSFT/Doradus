@@ -50,10 +50,55 @@ Doradus Data Model and Query Language - v2.1
     <echo>~~~~~~~~~~~~~~~~~~~~</echo>
     <echo>~ Test for Aliases ~</echo>
     <echo>~~~~~~~~~~~~~~~~~~~~</echo>
-    <AGGREGATE path="Application/Folder" m="COUNT(*)" f="Files.Disk.DiskName" q="*" shards="shard"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Text SV ~</echo>
+    <echo>~~~~~~~~~~~</echo>
     <AGGREGATE path="Application/Folder" m="COUNT(*)" f="Files.Disk.DiskName AS Disk" q="*" shards="shard"/>
+    <QUERY path="Application/Folder" f="Files.Disk.WHERE(DiskName:*).AS(Disk)" q="*" shards="shard"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Text MV ~</echo>
+    <echo>~~~~~~~~~~~</echo>
     <AGGREGATE path="Application/Folder" m="COUNT(*)" f="Files.FoldersList AS Folder" q="*" shards="shard"/>
+    <QUERY path="Application/Folder" f="Files.WHERE(FoldersList:*).AS(Folder)" q="*" shards="shard"/>
 	
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Integer ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Folder" m="COUNT(*)" f="Files.FileSize AS FSize" q="*" shards="shard"/>
+    <QUERY path="Application/Folder" f="Files.WHERE(FileSize:*).AS(FSize)" q="*" shards="shard"/>
+
+    <echo>~~~~~~~~~</echo>
+    <echo>~ Float ~</echo>
+    <echo>~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Folder" m="COUNT(*)" f="Files.Float AS Float" q="*" shards="shard"/>
+    <QUERY path="Application/Folder" f="Files.WHERE(Float:*).AS(Float)" q="*" shards="shard"/>
+
+    <echo>~~~~~~~~~~</echo>
+    <echo>~ Double ~</echo>
+    <echo>~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Folder" m="COUNT(*)" f="Files.Double AS Double" q="*" shards="shard"/>
+    <QUERY path="Application/Folder" f="Files.WHERE(Double:*).AS(Double)" q="*" shards="shard"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Boolean ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Folder" m="COUNT(*)" f="Files.IsFileTested AS Bool" q="*" shards="shard"/>
+    <QUERY path="Application/Folder" f="Files.WHERE(IsFileTested:*).AS(Bool)" q="*" shards="shard"/>
+
+    <echo>~~~~~~~~~~~~~</echo>
+    <echo>~ TimeStamp ~</echo>
+    <echo>~~~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Folder" m="COUNT(*)" f="Files.FileCreateDate AS CreateDate" q="*" shards="shard"/>
+    <QUERY path="Application/Folder" f="Files.WHERE(FileCreateDate:*).AS(CreateDate)" q="*" shards="shard"/>
+
+    <echo>~~~~~~~~</echo>
+    <echo>~ Link ~</echo>
+    <echo>~~~~~~~~</echo>
+    <AGGREGATE path="Application/Folder" m="COUNT(*)" f="Files.Disk AS Disks" q="*" shards="shard"/>
+    <QUERY path="Application/Folder" f="Files.Disk.AS(Disk)" q="*" shards="shard"/>
+
     <DELETE path="_applications/Application/ApplicationKey"/>
 </FOR>
 

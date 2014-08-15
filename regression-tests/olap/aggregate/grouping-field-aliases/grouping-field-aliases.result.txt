@@ -18,7 +18,7 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>3</totalobjects>
+        <totalobjects>4</totalobjects>
         <docs>
             <doc>
                 <field name="DiskName">Disk_A</field>
@@ -36,9 +36,11 @@
                         <field name="_ID">2001</field>
                     </doc>
                     <doc>
+                        <field name="Double">1.79E13</field>
                         <field name="FileCreateDate">2013-11-04 04:44:40</field>
                         <field name="FileName">File_4</field>
                         <field name="FileSize">2000003</field>
+                        <field name="Float">3.39E8</field>
                         <field name="FoldersList">
                             <value>PROGRAM FILES 4</value>
                             <value>USERS 4</value>
@@ -55,9 +57,11 @@
                 <field name="_shard">shard</field>
                 <field name="Location">
                     <doc>
+                        <field name="Double">0.022</field>
                         <field name="FileCreateDate">2013-11-02 02:22:20</field>
                         <field name="FileName">File_2</field>
                         <field name="FileSize">2000002</field>
+                        <field name="Float">0.017999999225139618</field>
                         <field name="FolderName">Folder</field>
                         <field name="IsFileTested">True</field>
                         <field name="_ID">2002</field>
@@ -82,9 +86,11 @@
                 <field name="_shard">shard</field>
                 <field name="Location">
                     <doc>
+                        <field name="Double">-0.022</field>
                         <field name="FileCreateDate">2013-11-03 03:33:30</field>
                         <field name="FileName">File_3</field>
                         <field name="FileSize">2000003</field>
+                        <field name="Float">-0.017999999225139618</field>
                         <field name="FolderName">Folder 3</field>
                         <field name="FoldersList">
                             <value>PROGRAM FILES 3</value>
@@ -94,13 +100,21 @@
                         <field name="_ID">2003</field>
                     </doc>
                     <doc>
+                        <field name="Double">-1.79E13</field>
                         <field name="FileCreateDate">2013-11-05 05:55:50</field>
                         <field name="FileName">File_5</field>
                         <field name="FileSize">2000005</field>
+                        <field name="Float">-3.39E8</field>
                         <field name="FolderName">Folder 5</field>
                         <field name="_ID">2005</field>
                     </doc>
                 </field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_D</field>
+                <field name="_ID">3004</field>
+                <field name="_shard">shard</field>
+                <field name="Location"/>
             </doc>
         </docs>
     </results>
@@ -108,7 +122,7 @@
     200 OK
     {
        "results":{
-          "totalobjects":"3",
+          "totalobjects":"4",
           "docs":[
              {
                 "doc":{
@@ -130,9 +144,11 @@
                       },
                       {
                          "doc":{
+                            "Double":"1.79E13",
                             "FileCreateDate":"2013-11-04 04:44:40",
                             "FileName":"File_4",
                             "FileSize":"2000003",
+                            "Float":"3.39E8",
                             "FoldersList":[
                                "PROGRAM FILES 4",
                                "USERS 4",
@@ -153,9 +169,11 @@
                    "Location":[
                       {
                          "doc":{
+                            "Double":"0.022",
                             "FileCreateDate":"2013-11-02 02:22:20",
                             "FileName":"File_2",
                             "FileSize":"2000002",
+                            "Float":"0.017999999225139618",
                             "FolderName":"Folder",
                             "IsFileTested":"True",
                             "_ID":"2002"
@@ -186,9 +204,11 @@
                    "Location":[
                       {
                          "doc":{
+                            "Double":"-0.022",
                             "FileCreateDate":"2013-11-03 03:33:30",
                             "FileName":"File_3",
                             "FileSize":"2000003",
+                            "Float":"-0.017999999225139618",
                             "FolderName":"Folder 3",
                             "FoldersList":[
                                "PROGRAM FILES 3",
@@ -200,14 +220,24 @@
                       },
                       {
                          "doc":{
+                            "Double":"-1.79E13",
                             "FileCreateDate":"2013-11-05 05:55:50",
                             "FileName":"File_5",
                             "FileSize":"2000005",
+                            "Float":"-3.39E8",
                             "FolderName":"Folder 5",
                             "_ID":"2005"
                          }
                       }
                    ]
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_D",
+                   "_ID":"3004",
+                   "_shard":"shard",
+                   "Location":[]
                 }
              }
           ]
@@ -237,9 +267,11 @@
                         <field name="_ID">2001</field>
                     </doc>
                     <doc>
+                        <field name="Double">1.79E13</field>
                         <field name="FileCreateDate">2013-11-04 04:44:40</field>
                         <field name="FileName">File_4</field>
                         <field name="FileSize">2000003</field>
+                        <field name="Float">3.39E8</field>
                         <field name="FoldersList">
                             <value>PROGRAM FILES 4</value>
                             <value>USERS 4</value>
@@ -256,9 +288,11 @@
                 <field name="_shard">shard</field>
                 <field name="Files">
                     <doc>
+                        <field name="Double">0.022</field>
                         <field name="FileCreateDate">2013-11-02 02:22:20</field>
                         <field name="FileName">File_2</field>
                         <field name="FileSize">2000002</field>
+                        <field name="Float">0.017999999225139618</field>
                         <field name="FolderName">Folder</field>
                         <field name="IsFileTested">True</field>
                         <field name="_ID">2002</field>
@@ -283,9 +317,11 @@
                 <field name="_shard">shard</field>
                 <field name="Files">
                     <doc>
+                        <field name="Double">-0.022</field>
                         <field name="FileCreateDate">2013-11-03 03:33:30</field>
                         <field name="FileName">File_3</field>
                         <field name="FileSize">2000003</field>
+                        <field name="Float">-0.017999999225139618</field>
                         <field name="FolderName">Folder 3</field>
                         <field name="FoldersList">
                             <value>PROGRAM FILES 3</value>
@@ -295,9 +331,11 @@
                         <field name="_ID">2003</field>
                     </doc>
                     <doc>
+                        <field name="Double">-1.79E13</field>
                         <field name="FileCreateDate">2013-11-05 05:55:50</field>
                         <field name="FileName">File_5</field>
                         <field name="FileSize">2000005</field>
+                        <field name="Float">-3.39E8</field>
                         <field name="FolderName">Folder 5</field>
                         <field name="_ID">2005</field>
                     </doc>
@@ -337,9 +375,11 @@
                       },
                       {
                          "doc":{
+                            "Double":"1.79E13",
                             "FileCreateDate":"2013-11-04 04:44:40",
                             "FileName":"File_4",
                             "FileSize":"2000003",
+                            "Float":"3.39E8",
                             "FoldersList":[
                                "PROGRAM FILES 4",
                                "USERS 4",
@@ -360,9 +400,11 @@
                    "Files":[
                       {
                          "doc":{
+                            "Double":"0.022",
                             "FileCreateDate":"2013-11-02 02:22:20",
                             "FileName":"File_2",
                             "FileSize":"2000002",
+                            "Float":"0.017999999225139618",
                             "FolderName":"Folder",
                             "IsFileTested":"True",
                             "_ID":"2002"
@@ -393,9 +435,11 @@
                    "Files":[
                       {
                          "doc":{
+                            "Double":"-0.022",
                             "FileCreateDate":"2013-11-03 03:33:30",
                             "FileName":"File_3",
                             "FileSize":"2000003",
+                            "Float":"-0.017999999225139618",
                             "FolderName":"Folder 3",
                             "FoldersList":[
                                "PROGRAM FILES 3",
@@ -407,9 +451,11 @@
                       },
                       {
                          "doc":{
+                            "Double":"-1.79E13",
                             "FileCreateDate":"2013-11-05 05:55:50",
                             "FileName":"File_5",
                             "FileSize":"2000005",
+                            "Float":"-3.39E8",
                             "FolderName":"Folder 5",
                             "_ID":"2005"
                          }
@@ -460,9 +506,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">0.022</field>
                 <field name="FileCreateDate">2013-11-02 02:22:20</field>
                 <field name="FileName">File_2</field>
                 <field name="FileSize">2000002</field>
+                <field name="Float">0.017999999225139618</field>
                 <field name="FolderName">Folder</field>
                 <field name="IsFileTested">True</field>
                 <field name="_ID">2002</field>
@@ -481,9 +529,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">-0.022</field>
                 <field name="FileCreateDate">2013-11-03 03:33:30</field>
                 <field name="FileName">File_3</field>
                 <field name="FileSize">2000003</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="FolderName">Folder 3</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 3</value>
@@ -506,9 +556,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">1.79E13</field>
                 <field name="FileCreateDate">2013-11-04 04:44:40</field>
                 <field name="FileName">File_4</field>
                 <field name="FileSize">2000003</field>
+                <field name="Float">3.39E8</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 4</value>
                     <value>USERS 4</value>
@@ -531,9 +583,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">-1.79E13</field>
                 <field name="FileCreateDate">2013-11-05 05:55:50</field>
                 <field name="FileName">File_5</field>
                 <field name="FileSize">2000005</field>
+                <field name="Float">-3.39E8</field>
                 <field name="FolderName">Folder 5</field>
                 <field name="_ID">2005</field>
                 <field name="_shard">shard</field>
@@ -576,8 +630,10 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">-1.0E9</field>
                 <field name="FileName">File_7</field>
                 <field name="FileSize">2000007</field>
+                <field name="Float">-3.0E9</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 7</value>
                     <value>USERS 7</value>
@@ -636,9 +692,11 @@
              },
              {
                 "doc":{
+                   "Double":"0.022",
                    "FileCreateDate":"2013-11-02 02:22:20",
                    "FileName":"File_2",
                    "FileSize":"2000002",
+                   "Float":"0.017999999225139618",
                    "FolderName":"Folder",
                    "IsFileTested":"True",
                    "_ID":"2002",
@@ -663,9 +721,11 @@
              },
              {
                 "doc":{
+                   "Double":"-0.022",
                    "FileCreateDate":"2013-11-03 03:33:30",
                    "FileName":"File_3",
                    "FileSize":"2000003",
+                   "Float":"-0.017999999225139618",
                    "FolderName":"Folder 3",
                    "FoldersList":[
                       "PROGRAM FILES 3",
@@ -694,9 +754,11 @@
              },
              {
                 "doc":{
+                   "Double":"1.79E13",
                    "FileCreateDate":"2013-11-04 04:44:40",
                    "FileName":"File_4",
                    "FileSize":"2000003",
+                   "Float":"3.39E8",
                    "FoldersList":[
                       "PROGRAM FILES 4",
                       "USERS 4",
@@ -725,9 +787,11 @@
              },
              {
                 "doc":{
+                   "Double":"-1.79E13",
                    "FileCreateDate":"2013-11-05 05:55:50",
                    "FileName":"File_5",
                    "FileSize":"2000005",
+                   "Float":"-3.39E8",
                    "FolderName":"Folder 5",
                    "_ID":"2005",
                    "_shard":"shard",
@@ -782,8 +846,10 @@
              },
              {
                 "doc":{
+                   "Double":"-1.0E9",
                    "FileName":"File_7",
                    "FileSize":"2000007",
+                   "Float":"-3.0E9",
                    "FoldersList":[
                       "PROGRAM FILES 7",
                       "USERS 7",
@@ -813,83 +879,9 @@
 ~~~~~~~~~~~~~~~~~~~~
 ~ Test for Aliases ~
 ~~~~~~~~~~~~~~~~~~~~
-*** Request
-    GET /Application/Folder/_aggregate?m=COUNT(*)&q=*&f=Files.Disk.DiskName&shards=shard
-*** Response: xml
-    200 OK
-    <results>
-        <aggregate group="Files.Disk.DiskName" metric="COUNT(*)" query="*"/>
-        <totalobjects>4</totalobjects>
-        <summary>4</summary>
-        <totalgroups>4</totalgroups>
-        <groups>
-            <group>
-                <metric>1</metric>
-                <field name="Files.Disk.DiskName">(null)</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Files.Disk.DiskName">Disk_A</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Files.Disk.DiskName">Disk_B</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Files.Disk.DiskName">Disk_C</field>
-            </group>
-        </groups>
-    </results>
-*** Response: json
-    200 OK
-    {
-       "results":{
-          "aggregate":{
-             "metric":"COUNT(*)",
-             "query":"*",
-             "group":"Files.Disk.DiskName"
-          },
-          "totalobjects":"4",
-          "summary":"4",
-          "totalgroups":"4",
-          "groups":[
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Files.Disk.DiskName":"(null)"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Files.Disk.DiskName":"Disk_A"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Files.Disk.DiskName":"Disk_B"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Files.Disk.DiskName":"Disk_C"
-                   }
-                }
-             }
-          ]
-       }
-    }
-
+~~~~~~~~~~~
+~ Text SV ~
+~~~~~~~~~~~
 *** Request
     GET /Application/Folder/_aggregate?m=COUNT(*)&q=*&f=Files.Disk.DiskName AS Disk&shards=shard
 *** Response: xml
@@ -967,6 +959,202 @@
        }
     }
 
+*** Request
+    GET /Application/Folder/_query?q=*&f=Files.Disk.WHERE(DiskName:*).AS(Disk)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="Files">
+                    <doc>
+                        <field name="_ID">2001</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3001</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2004</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3001</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="Files">
+                    <doc>
+                        <field name="_ID">2002</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3002</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2006</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3002</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="Files">
+                    <doc>
+                        <field name="_ID">2003</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3003</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2005</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3003</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="Files"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "Files":[
+                      {
+                         "doc":{
+                            "_ID":"2001",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3001"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2004",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3001"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "Files":[
+                      {
+                         "doc":{
+                            "_ID":"2002",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3002"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2006",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3002"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "Files":[
+                      {
+                         "doc":{
+                            "_ID":"2003",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3003"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2005",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3003"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "Files":[]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~
+~ Text MV ~
+~~~~~~~~~~~
 *** Request
     GET /Application/Folder/_aggregate?m=COUNT(*)&q=*&f=Files.FoldersList AS Folder&shards=shard
 *** Response: xml
@@ -1146,6 +1334,1384 @@
                    "field":{
                       "Folder":"WINDOWS 6"
                    }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Folder/_query?q=*&f=Files.WHERE(FoldersList:*).AS(Folder)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="Folder">
+                    <doc>
+                        <field name="_ID">2001</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="Folder">
+                    <doc>
+                        <field name="_ID">2006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="Folder">
+                    <doc>
+                        <field name="_ID">2003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="Folder"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "Folder":[
+                      {
+                         "doc":{
+                            "_ID":"2001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "Folder":[
+                      {
+                         "doc":{
+                            "_ID":"2006"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "Folder":[
+                      {
+                         "doc":{
+                            "_ID":"2003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "Folder":[]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~
+~ Integer ~
+~~~~~~~~~~~
+*** Request
+    GET /Application/Folder/_aggregate?m=COUNT(*)&q=*&f=Files.FileSize AS FSize&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Files.FileSize AS FSize" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>4</summary>
+        <totalgroups>5</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="FSize">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FSize">2000002</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="FSize">2000003</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FSize">2000005</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FSize">2000006</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"Files.FileSize AS FSize"
+          },
+          "totalobjects":"4",
+          "summary":"4",
+          "totalgroups":"5",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FSize":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FSize":"2000002"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "FSize":"2000003"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FSize":"2000005"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FSize":"2000006"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Folder/_query?q=*&f=Files.WHERE(FileSize:*).AS(FSize)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="FSize">
+                    <doc>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="FSize">
+                    <doc>
+                        <field name="_ID">2002</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="FSize">
+                    <doc>
+                        <field name="_ID">2003</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="FSize"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "FSize":[
+                      {
+                         "doc":{
+                            "_ID":"2004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "FSize":[
+                      {
+                         "doc":{
+                            "_ID":"2002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2006"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "FSize":[
+                      {
+                         "doc":{
+                            "_ID":"2003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "FSize":[]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~
+~ Float ~
+~~~~~~~~~
+*** Request
+    GET /Application/Folder/_aggregate?m=COUNT(*)&q=*&f=Files.Float AS Float&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Files.Float AS Float" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>4</summary>
+        <totalgroups>5</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Float">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Float">0.017999999</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Float">339000000</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Float">-0.017999999</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Float">-339000000</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"Files.Float AS Float"
+          },
+          "totalobjects":"4",
+          "summary":"4",
+          "totalgroups":"5",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Float":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Float":"0.017999999"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Float":"339000000"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Float":"-0.017999999"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Float":"-339000000"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Folder/_query?q=*&f=Files.WHERE(Float:*).AS(Float)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="Float">
+                    <doc>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="Float">
+                    <doc>
+                        <field name="_ID">2002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="Float">
+                    <doc>
+                        <field name="_ID">2003</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="Float"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "Float":[
+                      {
+                         "doc":{
+                            "_ID":"2004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "Float":[
+                      {
+                         "doc":{
+                            "_ID":"2002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "Float":[
+                      {
+                         "doc":{
+                            "_ID":"2003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "Float":[]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~
+~ Double ~
+~~~~~~~~~~
+*** Request
+    GET /Application/Folder/_aggregate?m=COUNT(*)&q=*&f=Files.Double AS Double&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Files.Double AS Double" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>4</summary>
+        <totalgroups>5</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Double">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Double">0.022</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Double">17900000000000</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Double">-0.022</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Double">-17900000000000</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"Files.Double AS Double"
+          },
+          "totalobjects":"4",
+          "summary":"4",
+          "totalgroups":"5",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Double":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Double":"0.022"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Double":"17900000000000"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Double":"-0.022"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Double":"-17900000000000"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Folder/_query?q=*&f=Files.WHERE(Double:*).AS(Double)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="Double">
+                    <doc>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="Double">
+                    <doc>
+                        <field name="_ID">2002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="Double">
+                    <doc>
+                        <field name="_ID">2003</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="Double"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "Double":[
+                      {
+                         "doc":{
+                            "_ID":"2004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "Double":[
+                      {
+                         "doc":{
+                            "_ID":"2002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "Double":[
+                      {
+                         "doc":{
+                            "_ID":"2003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "Double":[]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~
+~ Boolean ~
+~~~~~~~~~~~
+*** Request
+    GET /Application/Folder/_aggregate?m=COUNT(*)&q=*&f=Files.IsFileTested AS Bool&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Files.IsFileTested AS Bool" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>4</summary>
+        <totalgroups>3</totalgroups>
+        <groups>
+            <group>
+                <metric>2</metric>
+                <field name="Bool">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Bool">false</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Bool">true</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"Files.IsFileTested AS Bool"
+          },
+          "totalobjects":"4",
+          "summary":"4",
+          "totalgroups":"3",
+          "groups":[
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "Bool":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Bool":"false"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Bool":"true"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Folder/_query?q=*&f=Files.WHERE(IsFileTested:*).AS(Bool)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="Bool">
+                    <doc>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="Bool">
+                    <doc>
+                        <field name="_ID">2002</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="Bool"/>
+            </doc>
+            <doc>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="Bool"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "Bool":[
+                      {
+                         "doc":{
+                            "_ID":"2004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "Bool":[
+                      {
+                         "doc":{
+                            "_ID":"2002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2006"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "Bool":[]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "Bool":[]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~
+~ TimeStamp ~
+~~~~~~~~~~~~~
+*** Request
+    GET /Application/Folder/_aggregate?m=COUNT(*)&q=*&f=Files.FileCreateDate AS CreateDate&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Files.FileCreateDate AS CreateDate"
+            metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>4</summary>
+        <totalgroups>7</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="CreateDate">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="CreateDate">2013-11-01 01:11:10</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="CreateDate">2013-11-02 02:22:20</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="CreateDate">2013-11-03 03:33:30</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="CreateDate">2013-11-04 04:44:40</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="CreateDate">2013-11-05 05:55:50</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="CreateDate">2013-11-06 06:46:16</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"Files.FileCreateDate AS CreateDate"
+          },
+          "totalobjects":"4",
+          "summary":"4",
+          "totalgroups":"7",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "CreateDate":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "CreateDate":"2013-11-01 01:11:10"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "CreateDate":"2013-11-02 02:22:20"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "CreateDate":"2013-11-03 03:33:30"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "CreateDate":"2013-11-04 04:44:40"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "CreateDate":"2013-11-05 05:55:50"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "CreateDate":"2013-11-06 06:46:16"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Folder/_query?q=*&f=Files.WHERE(FileCreateDate:*).AS(CreateDate)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="CreateDate">
+                    <doc>
+                        <field name="_ID">2001</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="CreateDate">
+                    <doc>
+                        <field name="_ID">2002</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="CreateDate">
+                    <doc>
+                        <field name="_ID">2003</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="CreateDate"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "CreateDate":[
+                      {
+                         "doc":{
+                            "_ID":"2001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "CreateDate":[
+                      {
+                         "doc":{
+                            "_ID":"2002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2006"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "CreateDate":[
+                      {
+                         "doc":{
+                            "_ID":"2003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "CreateDate":[]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~
+~ Link ~
+~~~~~~~~
+*** Request
+    GET /Application/Folder/_aggregate?m=COUNT(*)&q=*&f=Files.Disk AS Disks&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Files.Disk AS Disks" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>4</summary>
+        <totalgroups>4</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Disks">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Disks">3001</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Disks">3002</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Disks">3003</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"Files.Disk AS Disks"
+          },
+          "totalobjects":"4",
+          "summary":"4",
+          "totalgroups":"4",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Disks":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Disks":"3001"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Disks":"3002"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Disks":"3003"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Folder/_query?q=*&f=Files.Disk.AS(Disk)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="Files">
+                    <doc>
+                        <field name="_ID">2001</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3001</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2004</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3001</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="Files">
+                    <doc>
+                        <field name="_ID">2002</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3002</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2006</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3002</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="Files">
+                    <doc>
+                        <field name="_ID">2003</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3003</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2005</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3003</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="Files"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "Files":[
+                      {
+                         "doc":{
+                            "_ID":"2001",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3001"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2004",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3001"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "Files":[
+                      {
+                         "doc":{
+                            "_ID":"2002",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3002"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2006",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3002"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "Files":[
+                      {
+                         "doc":{
+                            "_ID":"2003",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3003"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2005",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3003"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "Files":[]
                 }
              }
           ]
@@ -1177,7 +2743,7 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>3</totalobjects>
+        <totalobjects>4</totalobjects>
         <docs>
             <doc>
                 <field name="DiskName">Disk_A</field>
@@ -1195,9 +2761,11 @@
                         <field name="_ID">2001</field>
                     </doc>
                     <doc>
+                        <field name="Double">1.79E13</field>
                         <field name="FileCreateDate">2013-11-04 04:44:40</field>
                         <field name="FileName">File_4</field>
                         <field name="FileSize">2000003</field>
+                        <field name="Float">3.39E8</field>
                         <field name="FoldersList">
                             <value>PROGRAM FILES 4</value>
                             <value>USERS 4</value>
@@ -1214,9 +2782,11 @@
                 <field name="_shard">shard</field>
                 <field name="Location">
                     <doc>
+                        <field name="Double">0.022</field>
                         <field name="FileCreateDate">2013-11-02 02:22:20</field>
                         <field name="FileName">File_2</field>
                         <field name="FileSize">2000002</field>
+                        <field name="Float">0.017999999225139618</field>
                         <field name="FolderName">Folder</field>
                         <field name="IsFileTested">True</field>
                         <field name="_ID">2002</field>
@@ -1241,9 +2811,11 @@
                 <field name="_shard">shard</field>
                 <field name="Location">
                     <doc>
+                        <field name="Double">-0.022</field>
                         <field name="FileCreateDate">2013-11-03 03:33:30</field>
                         <field name="FileName">File_3</field>
                         <field name="FileSize">2000003</field>
+                        <field name="Float">-0.017999999225139618</field>
                         <field name="FolderName">Folder 3</field>
                         <field name="FoldersList">
                             <value>PROGRAM FILES 3</value>
@@ -1253,13 +2825,21 @@
                         <field name="_ID">2003</field>
                     </doc>
                     <doc>
+                        <field name="Double">-1.79E13</field>
                         <field name="FileCreateDate">2013-11-05 05:55:50</field>
                         <field name="FileName">File_5</field>
                         <field name="FileSize">2000005</field>
+                        <field name="Float">-3.39E8</field>
                         <field name="FolderName">Folder 5</field>
                         <field name="_ID">2005</field>
                     </doc>
                 </field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_D</field>
+                <field name="_ID">3004</field>
+                <field name="_shard">shard</field>
+                <field name="Location"/>
             </doc>
         </docs>
     </results>
@@ -1267,7 +2847,7 @@
     200 OK
     {
        "results":{
-          "totalobjects":"3",
+          "totalobjects":"4",
           "docs":[
              {
                 "doc":{
@@ -1289,9 +2869,11 @@
                       },
                       {
                          "doc":{
+                            "Double":"1.79E13",
                             "FileCreateDate":"2013-11-04 04:44:40",
                             "FileName":"File_4",
                             "FileSize":"2000003",
+                            "Float":"3.39E8",
                             "FoldersList":[
                                "PROGRAM FILES 4",
                                "USERS 4",
@@ -1312,9 +2894,11 @@
                    "Location":[
                       {
                          "doc":{
+                            "Double":"0.022",
                             "FileCreateDate":"2013-11-02 02:22:20",
                             "FileName":"File_2",
                             "FileSize":"2000002",
+                            "Float":"0.017999999225139618",
                             "FolderName":"Folder",
                             "IsFileTested":"True",
                             "_ID":"2002"
@@ -1345,9 +2929,11 @@
                    "Location":[
                       {
                          "doc":{
+                            "Double":"-0.022",
                             "FileCreateDate":"2013-11-03 03:33:30",
                             "FileName":"File_3",
                             "FileSize":"2000003",
+                            "Float":"-0.017999999225139618",
                             "FolderName":"Folder 3",
                             "FoldersList":[
                                "PROGRAM FILES 3",
@@ -1359,14 +2945,24 @@
                       },
                       {
                          "doc":{
+                            "Double":"-1.79E13",
                             "FileCreateDate":"2013-11-05 05:55:50",
                             "FileName":"File_5",
                             "FileSize":"2000005",
+                            "Float":"-3.39E8",
                             "FolderName":"Folder 5",
                             "_ID":"2005"
                          }
                       }
                    ]
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_D",
+                   "_ID":"3004",
+                   "_shard":"shard",
+                   "Location":[]
                 }
              }
           ]
@@ -1396,9 +2992,11 @@
                         <field name="_ID">2001</field>
                     </doc>
                     <doc>
+                        <field name="Double">1.79E13</field>
                         <field name="FileCreateDate">2013-11-04 04:44:40</field>
                         <field name="FileName">File_4</field>
                         <field name="FileSize">2000003</field>
+                        <field name="Float">3.39E8</field>
                         <field name="FoldersList">
                             <value>PROGRAM FILES 4</value>
                             <value>USERS 4</value>
@@ -1415,9 +3013,11 @@
                 <field name="_shard">shard</field>
                 <field name="Files">
                     <doc>
+                        <field name="Double">0.022</field>
                         <field name="FileCreateDate">2013-11-02 02:22:20</field>
                         <field name="FileName">File_2</field>
                         <field name="FileSize">2000002</field>
+                        <field name="Float">0.017999999225139618</field>
                         <field name="FolderName">Folder</field>
                         <field name="IsFileTested">True</field>
                         <field name="_ID">2002</field>
@@ -1442,9 +3042,11 @@
                 <field name="_shard">shard</field>
                 <field name="Files">
                     <doc>
+                        <field name="Double">-0.022</field>
                         <field name="FileCreateDate">2013-11-03 03:33:30</field>
                         <field name="FileName">File_3</field>
                         <field name="FileSize">2000003</field>
+                        <field name="Float">-0.017999999225139618</field>
                         <field name="FolderName">Folder 3</field>
                         <field name="FoldersList">
                             <value>PROGRAM FILES 3</value>
@@ -1454,9 +3056,11 @@
                         <field name="_ID">2003</field>
                     </doc>
                     <doc>
+                        <field name="Double">-1.79E13</field>
                         <field name="FileCreateDate">2013-11-05 05:55:50</field>
                         <field name="FileName">File_5</field>
                         <field name="FileSize">2000005</field>
+                        <field name="Float">-3.39E8</field>
                         <field name="FolderName">Folder 5</field>
                         <field name="_ID">2005</field>
                     </doc>
@@ -1496,9 +3100,11 @@
                       },
                       {
                          "doc":{
+                            "Double":"1.79E13",
                             "FileCreateDate":"2013-11-04 04:44:40",
                             "FileName":"File_4",
                             "FileSize":"2000003",
+                            "Float":"3.39E8",
                             "FoldersList":[
                                "PROGRAM FILES 4",
                                "USERS 4",
@@ -1519,9 +3125,11 @@
                    "Files":[
                       {
                          "doc":{
+                            "Double":"0.022",
                             "FileCreateDate":"2013-11-02 02:22:20",
                             "FileName":"File_2",
                             "FileSize":"2000002",
+                            "Float":"0.017999999225139618",
                             "FolderName":"Folder",
                             "IsFileTested":"True",
                             "_ID":"2002"
@@ -1552,9 +3160,11 @@
                    "Files":[
                       {
                          "doc":{
+                            "Double":"-0.022",
                             "FileCreateDate":"2013-11-03 03:33:30",
                             "FileName":"File_3",
                             "FileSize":"2000003",
+                            "Float":"-0.017999999225139618",
                             "FolderName":"Folder 3",
                             "FoldersList":[
                                "PROGRAM FILES 3",
@@ -1566,9 +3176,11 @@
                       },
                       {
                          "doc":{
+                            "Double":"-1.79E13",
                             "FileCreateDate":"2013-11-05 05:55:50",
                             "FileName":"File_5",
                             "FileSize":"2000005",
+                            "Float":"-3.39E8",
                             "FolderName":"Folder 5",
                             "_ID":"2005"
                          }
@@ -1619,9 +3231,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">0.022</field>
                 <field name="FileCreateDate">2013-11-02 02:22:20</field>
                 <field name="FileName">File_2</field>
                 <field name="FileSize">2000002</field>
+                <field name="Float">0.017999999225139618</field>
                 <field name="FolderName">Folder</field>
                 <field name="IsFileTested">True</field>
                 <field name="_ID">2002</field>
@@ -1640,9 +3254,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">-0.022</field>
                 <field name="FileCreateDate">2013-11-03 03:33:30</field>
                 <field name="FileName">File_3</field>
                 <field name="FileSize">2000003</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="FolderName">Folder 3</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 3</value>
@@ -1665,9 +3281,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">1.79E13</field>
                 <field name="FileCreateDate">2013-11-04 04:44:40</field>
                 <field name="FileName">File_4</field>
                 <field name="FileSize">2000003</field>
+                <field name="Float">3.39E8</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 4</value>
                     <value>USERS 4</value>
@@ -1690,9 +3308,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">-1.79E13</field>
                 <field name="FileCreateDate">2013-11-05 05:55:50</field>
                 <field name="FileName">File_5</field>
                 <field name="FileSize">2000005</field>
+                <field name="Float">-3.39E8</field>
                 <field name="FolderName">Folder 5</field>
                 <field name="_ID">2005</field>
                 <field name="_shard">shard</field>
@@ -1735,8 +3355,10 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">-1.0E9</field>
                 <field name="FileName">File_7</field>
                 <field name="FileSize">2000007</field>
+                <field name="Float">-3.0E9</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 7</value>
                     <value>USERS 7</value>
@@ -1795,9 +3417,11 @@
              },
              {
                 "doc":{
+                   "Double":"0.022",
                    "FileCreateDate":"2013-11-02 02:22:20",
                    "FileName":"File_2",
                    "FileSize":"2000002",
+                   "Float":"0.017999999225139618",
                    "FolderName":"Folder",
                    "IsFileTested":"True",
                    "_ID":"2002",
@@ -1822,9 +3446,11 @@
              },
              {
                 "doc":{
+                   "Double":"-0.022",
                    "FileCreateDate":"2013-11-03 03:33:30",
                    "FileName":"File_3",
                    "FileSize":"2000003",
+                   "Float":"-0.017999999225139618",
                    "FolderName":"Folder 3",
                    "FoldersList":[
                       "PROGRAM FILES 3",
@@ -1853,9 +3479,11 @@
              },
              {
                 "doc":{
+                   "Double":"1.79E13",
                    "FileCreateDate":"2013-11-04 04:44:40",
                    "FileName":"File_4",
                    "FileSize":"2000003",
+                   "Float":"3.39E8",
                    "FoldersList":[
                       "PROGRAM FILES 4",
                       "USERS 4",
@@ -1884,9 +3512,11 @@
              },
              {
                 "doc":{
+                   "Double":"-1.79E13",
                    "FileCreateDate":"2013-11-05 05:55:50",
                    "FileName":"File_5",
                    "FileSize":"2000005",
+                   "Float":"-3.39E8",
                    "FolderName":"Folder 5",
                    "_ID":"2005",
                    "_shard":"shard",
@@ -1941,8 +3571,10 @@
              },
              {
                 "doc":{
+                   "Double":"-1.0E9",
                    "FileName":"File_7",
                    "FileSize":"2000007",
+                   "Float":"-3.0E9",
                    "FoldersList":[
                       "PROGRAM FILES 7",
                       "USERS 7",
@@ -1972,83 +3604,9 @@
 ~~~~~~~~~~~~~~~~~~~~
 ~ Test for Aliases ~
 ~~~~~~~~~~~~~~~~~~~~
-*** Request
-    GET /Application/Folder/_aggregate?m=COUNT(*)&q=*&f=Files.Disk.DiskName&shards=shard
-*** Response: xml
-    200 OK
-    <results>
-        <aggregate group="Files.Disk.DiskName" metric="COUNT(*)" query="*"/>
-        <totalobjects>4</totalobjects>
-        <summary>4</summary>
-        <totalgroups>4</totalgroups>
-        <groups>
-            <group>
-                <metric>1</metric>
-                <field name="Files.Disk.DiskName">(null)</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Files.Disk.DiskName">Disk_A</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Files.Disk.DiskName">Disk_B</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Files.Disk.DiskName">Disk_C</field>
-            </group>
-        </groups>
-    </results>
-*** Response: json
-    200 OK
-    {
-       "results":{
-          "aggregate":{
-             "metric":"COUNT(*)",
-             "query":"*",
-             "group":"Files.Disk.DiskName"
-          },
-          "totalobjects":"4",
-          "summary":"4",
-          "totalgroups":"4",
-          "groups":[
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Files.Disk.DiskName":"(null)"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Files.Disk.DiskName":"Disk_A"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Files.Disk.DiskName":"Disk_B"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Files.Disk.DiskName":"Disk_C"
-                   }
-                }
-             }
-          ]
-       }
-    }
-
+~~~~~~~~~~~
+~ Text SV ~
+~~~~~~~~~~~
 *** Request
     GET /Application/Folder/_aggregate?m=COUNT(*)&q=*&f=Files.Disk.DiskName AS Disk&shards=shard
 *** Response: xml
@@ -2126,6 +3684,202 @@
        }
     }
 
+*** Request
+    GET /Application/Folder/_query?q=*&f=Files.Disk.WHERE(DiskName:*).AS(Disk)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="Files">
+                    <doc>
+                        <field name="_ID">2001</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3001</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2004</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3001</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="Files">
+                    <doc>
+                        <field name="_ID">2002</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3002</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2006</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3002</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="Files">
+                    <doc>
+                        <field name="_ID">2003</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3003</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2005</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3003</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="Files"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "Files":[
+                      {
+                         "doc":{
+                            "_ID":"2001",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3001"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2004",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3001"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "Files":[
+                      {
+                         "doc":{
+                            "_ID":"2002",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3002"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2006",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3002"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "Files":[
+                      {
+                         "doc":{
+                            "_ID":"2003",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3003"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2005",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3003"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "Files":[]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~
+~ Text MV ~
+~~~~~~~~~~~
 *** Request
     GET /Application/Folder/_aggregate?m=COUNT(*)&q=*&f=Files.FoldersList AS Folder&shards=shard
 *** Response: xml
@@ -2305,6 +4059,1384 @@
                    "field":{
                       "Folder":"WINDOWS 6"
                    }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Folder/_query?q=*&f=Files.WHERE(FoldersList:*).AS(Folder)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="Folder">
+                    <doc>
+                        <field name="_ID">2001</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="Folder">
+                    <doc>
+                        <field name="_ID">2006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="Folder">
+                    <doc>
+                        <field name="_ID">2003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="Folder"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "Folder":[
+                      {
+                         "doc":{
+                            "_ID":"2001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "Folder":[
+                      {
+                         "doc":{
+                            "_ID":"2006"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "Folder":[
+                      {
+                         "doc":{
+                            "_ID":"2003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "Folder":[]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~
+~ Integer ~
+~~~~~~~~~~~
+*** Request
+    GET /Application/Folder/_aggregate?m=COUNT(*)&q=*&f=Files.FileSize AS FSize&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Files.FileSize AS FSize" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>4</summary>
+        <totalgroups>5</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="FSize">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FSize">2000002</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="FSize">2000003</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FSize">2000005</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FSize">2000006</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"Files.FileSize AS FSize"
+          },
+          "totalobjects":"4",
+          "summary":"4",
+          "totalgroups":"5",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FSize":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FSize":"2000002"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "FSize":"2000003"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FSize":"2000005"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FSize":"2000006"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Folder/_query?q=*&f=Files.WHERE(FileSize:*).AS(FSize)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="FSize">
+                    <doc>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="FSize">
+                    <doc>
+                        <field name="_ID">2002</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="FSize">
+                    <doc>
+                        <field name="_ID">2003</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="FSize"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "FSize":[
+                      {
+                         "doc":{
+                            "_ID":"2004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "FSize":[
+                      {
+                         "doc":{
+                            "_ID":"2002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2006"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "FSize":[
+                      {
+                         "doc":{
+                            "_ID":"2003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "FSize":[]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~
+~ Float ~
+~~~~~~~~~
+*** Request
+    GET /Application/Folder/_aggregate?m=COUNT(*)&q=*&f=Files.Float AS Float&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Files.Float AS Float" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>4</summary>
+        <totalgroups>5</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Float">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Float">0.017999999</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Float">339000000</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Float">-0.017999999</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Float">-339000000</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"Files.Float AS Float"
+          },
+          "totalobjects":"4",
+          "summary":"4",
+          "totalgroups":"5",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Float":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Float":"0.017999999"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Float":"339000000"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Float":"-0.017999999"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Float":"-339000000"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Folder/_query?q=*&f=Files.WHERE(Float:*).AS(Float)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="Float">
+                    <doc>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="Float">
+                    <doc>
+                        <field name="_ID">2002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="Float">
+                    <doc>
+                        <field name="_ID">2003</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="Float"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "Float":[
+                      {
+                         "doc":{
+                            "_ID":"2004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "Float":[
+                      {
+                         "doc":{
+                            "_ID":"2002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "Float":[
+                      {
+                         "doc":{
+                            "_ID":"2003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "Float":[]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~
+~ Double ~
+~~~~~~~~~~
+*** Request
+    GET /Application/Folder/_aggregate?m=COUNT(*)&q=*&f=Files.Double AS Double&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Files.Double AS Double" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>4</summary>
+        <totalgroups>5</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Double">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Double">0.022</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Double">17900000000000</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Double">-0.022</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Double">-17900000000000</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"Files.Double AS Double"
+          },
+          "totalobjects":"4",
+          "summary":"4",
+          "totalgroups":"5",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Double":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Double":"0.022"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Double":"17900000000000"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Double":"-0.022"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Double":"-17900000000000"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Folder/_query?q=*&f=Files.WHERE(Double:*).AS(Double)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="Double">
+                    <doc>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="Double">
+                    <doc>
+                        <field name="_ID">2002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="Double">
+                    <doc>
+                        <field name="_ID">2003</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="Double"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "Double":[
+                      {
+                         "doc":{
+                            "_ID":"2004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "Double":[
+                      {
+                         "doc":{
+                            "_ID":"2002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "Double":[
+                      {
+                         "doc":{
+                            "_ID":"2003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "Double":[]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~
+~ Boolean ~
+~~~~~~~~~~~
+*** Request
+    GET /Application/Folder/_aggregate?m=COUNT(*)&q=*&f=Files.IsFileTested AS Bool&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Files.IsFileTested AS Bool" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>4</summary>
+        <totalgroups>3</totalgroups>
+        <groups>
+            <group>
+                <metric>2</metric>
+                <field name="Bool">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Bool">false</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Bool">true</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"Files.IsFileTested AS Bool"
+          },
+          "totalobjects":"4",
+          "summary":"4",
+          "totalgroups":"3",
+          "groups":[
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "Bool":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Bool":"false"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Bool":"true"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Folder/_query?q=*&f=Files.WHERE(IsFileTested:*).AS(Bool)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="Bool">
+                    <doc>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="Bool">
+                    <doc>
+                        <field name="_ID">2002</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="Bool"/>
+            </doc>
+            <doc>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="Bool"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "Bool":[
+                      {
+                         "doc":{
+                            "_ID":"2004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "Bool":[
+                      {
+                         "doc":{
+                            "_ID":"2002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2006"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "Bool":[]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "Bool":[]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~
+~ TimeStamp ~
+~~~~~~~~~~~~~
+*** Request
+    GET /Application/Folder/_aggregate?m=COUNT(*)&q=*&f=Files.FileCreateDate AS CreateDate&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Files.FileCreateDate AS CreateDate"
+            metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>4</summary>
+        <totalgroups>7</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="CreateDate">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="CreateDate">2013-11-01 01:11:10</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="CreateDate">2013-11-02 02:22:20</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="CreateDate">2013-11-03 03:33:30</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="CreateDate">2013-11-04 04:44:40</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="CreateDate">2013-11-05 05:55:50</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="CreateDate">2013-11-06 06:46:16</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"Files.FileCreateDate AS CreateDate"
+          },
+          "totalobjects":"4",
+          "summary":"4",
+          "totalgroups":"7",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "CreateDate":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "CreateDate":"2013-11-01 01:11:10"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "CreateDate":"2013-11-02 02:22:20"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "CreateDate":"2013-11-03 03:33:30"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "CreateDate":"2013-11-04 04:44:40"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "CreateDate":"2013-11-05 05:55:50"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "CreateDate":"2013-11-06 06:46:16"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Folder/_query?q=*&f=Files.WHERE(FileCreateDate:*).AS(CreateDate)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="CreateDate">
+                    <doc>
+                        <field name="_ID">2001</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="CreateDate">
+                    <doc>
+                        <field name="_ID">2002</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="CreateDate">
+                    <doc>
+                        <field name="_ID">2003</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="CreateDate"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "CreateDate":[
+                      {
+                         "doc":{
+                            "_ID":"2001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "CreateDate":[
+                      {
+                         "doc":{
+                            "_ID":"2002"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2006"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "CreateDate":[
+                      {
+                         "doc":{
+                            "_ID":"2003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "CreateDate":[]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~
+~ Link ~
+~~~~~~~~
+*** Request
+    GET /Application/Folder/_aggregate?m=COUNT(*)&q=*&f=Files.Disk AS Disks&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Files.Disk AS Disks" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>4</summary>
+        <totalgroups>4</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Disks">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Disks">3001</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Disks">3002</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Disks">3003</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"Files.Disk AS Disks"
+          },
+          "totalobjects":"4",
+          "summary":"4",
+          "totalgroups":"4",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Disks":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Disks":"3001"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Disks":"3002"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Disks":"3003"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Folder/_query?q=*&f=Files.Disk.AS(Disk)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="Files">
+                    <doc>
+                        <field name="_ID">2001</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3001</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2004</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3001</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="Files">
+                    <doc>
+                        <field name="_ID">2002</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3002</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2006</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3002</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="Files">
+                    <doc>
+                        <field name="_ID">2003</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3003</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">2005</field>
+                        <field name="Disk">
+                            <doc>
+                                <field name="_ID">3003</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="Files"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "Files":[
+                      {
+                         "doc":{
+                            "_ID":"2001",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3001"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2004",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3001"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "Files":[
+                      {
+                         "doc":{
+                            "_ID":"2002",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3002"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2006",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3002"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "Files":[
+                      {
+                         "doc":{
+                            "_ID":"2003",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3003"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"2005",
+                            "Disk":[
+                               {
+                                  "doc":{
+                                     "_ID":"3003"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "Files":[]
                 }
              }
           ]
