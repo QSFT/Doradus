@@ -1,12 +1,4 @@
 <TEST>
-<!--
-    ******************************************************
-    Key: BD-32, Bug
-    Summary: Floating point precision
-             When a fetch a double whose value is "1E-10", 
-             it comes back as 0.0. 
-    ******************************************************
--->
 <CONNECT/>
 <DEFINE name="response.format" value="xml|json"/>
 <disable-output/>
@@ -32,7 +24,7 @@
     </XML>
     </POST>
 
-    <POST path="Application1/Table">
+    <POST path="Application/Table">
     <XML>
       <batch>
         <docs>
