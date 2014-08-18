@@ -1,0 +1,221 @@
+~~~~~~~~~~~~~~~~~~~
+~ AVERAGE (float) ~
+~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=AVERAGE(Float),COUNT(Float)&q=*&f=GroupName&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="GroupName" metric="AVERAGE(Float),COUNT(Float)" query="*"/>
+        <totalobjects>2</totalobjects>
+        <groupsets>
+            <groupset group="GroupName" metric="AVERAGE(Float)">
+                <summary/>
+                <totalgroups>2</totalgroups>
+                <groups>
+                    <group>
+                        <metric/>
+                        <field name="GroupName">Group 1</field>
+                    </group>
+                    <group>
+                        <metric/>
+                        <field name="GroupName">Group 2</field>
+                    </group>
+                </groups>
+            </groupset>
+            <groupset group="GroupName" metric="COUNT(Float)">
+                <summary>2</summary>
+                <totalgroups>2</totalgroups>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="GroupName">Group 1</field>
+                    </group>
+                    <group>
+                        <metric>1</metric>
+                        <field name="GroupName">Group 2</field>
+                    </group>
+                </groups>
+            </groupset>
+        </groupsets>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"AVERAGE(Float),COUNT(Float)",
+             "query":"*",
+             "group":"GroupName"
+          },
+          "totalobjects":"2",
+          "groupsets":[
+             {
+                "groupset":{
+                   "group":"GroupName",
+                   "metric":"AVERAGE(Float)",
+                   "summary":"",
+                   "totalgroups":"2",
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"",
+                            "field":{
+                               "GroupName":"Group 1"
+                            }
+                         }
+                      },
+                      {
+                         "group":{
+                            "metric":"",
+                            "field":{
+                               "GroupName":"Group 2"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "groupset":{
+                   "group":"GroupName",
+                   "metric":"COUNT(Float)",
+                   "summary":"2",
+                   "totalgroups":"2",
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "GroupName":"Group 1"
+                            }
+                         }
+                      },
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "GroupName":"Group 2"
+                            }
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~
+~ AVERAGE (double) ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=AVERAGE(Double),COUNT(Double)&q=*&f=GroupName&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="GroupName" metric="AVERAGE(Double),COUNT(Double)" query="*"/>
+        <totalobjects>2</totalobjects>
+        <groupsets>
+            <groupset group="GroupName" metric="AVERAGE(Double)">
+                <summary/>
+                <totalgroups>2</totalgroups>
+                <groups>
+                    <group>
+                        <metric/>
+                        <field name="GroupName">Group 1</field>
+                    </group>
+                    <group>
+                        <metric/>
+                        <field name="GroupName">Group 2</field>
+                    </group>
+                </groups>
+            </groupset>
+            <groupset group="GroupName" metric="COUNT(Double)">
+                <summary>2</summary>
+                <totalgroups>2</totalgroups>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="GroupName">Group 1</field>
+                    </group>
+                    <group>
+                        <metric>1</metric>
+                        <field name="GroupName">Group 2</field>
+                    </group>
+                </groups>
+            </groupset>
+        </groupsets>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"AVERAGE(Double),COUNT(Double)",
+             "query":"*",
+             "group":"GroupName"
+          },
+          "totalobjects":"2",
+          "groupsets":[
+             {
+                "groupset":{
+                   "group":"GroupName",
+                   "metric":"AVERAGE(Double)",
+                   "summary":"",
+                   "totalgroups":"2",
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"",
+                            "field":{
+                               "GroupName":"Group 1"
+                            }
+                         }
+                      },
+                      {
+                         "group":{
+                            "metric":"",
+                            "field":{
+                               "GroupName":"Group 2"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "groupset":{
+                   "group":"GroupName",
+                   "metric":"COUNT(Double)",
+                   "summary":"2",
+                   "totalgroups":"2",
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "GroupName":"Group 1"
+                            }
+                         }
+                      },
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "GroupName":"Group 2"
+                            }
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
