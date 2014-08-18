@@ -113,9 +113,9 @@ public class XLinkContext {
 			LinkQuery lq = (LinkQuery)query;
 			FieldDefinition fieldDef = tableDef.getFieldDef(lq.link);
 			Utils.require(fieldDef != null, "Field " + lq.link + " does not exist");
-			if(!fieldDef.isXLinkField()) return;
 			setupXLinkQuery(fieldDef.getInverseTableDef(), lq.innerQuery);
 			setupXLinkQuery(fieldDef.getInverseTableDef(), lq.filter);
+			if(!fieldDef.isXLinkField()) return;
 			if(fieldDef.isXLinkInverse()) {
 				if(LinkQuery.ALL.equals(lq.quantifier)) {
 					lq.xlink = new InverseXLinkQueryAll(this, tableDef, lq);
