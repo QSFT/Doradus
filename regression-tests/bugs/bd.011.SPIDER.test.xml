@@ -292,7 +292,15 @@
     </POST>
 
     <enable-output/>
-    <AGGREGATE path="Application/Disk" m="COUNT(*)" f="Folder.FolderName,Folder.File.WHERE(FileName>'G').FileName,Folder.File.WHERE(FoldersList>'G').FoldersList" />
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Disk" q="*" f="_all"/>
+    <QUERY path="Application/Folder" q="*" f="_all"/>
+    <QUERY path="Application/File" q="*" f="_all"/>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Disk" m="COUNT(*)" f="DiskName,Folder.FolderName,Folder.File.WHERE(FileName>'G').FileName,Folder.File.WHERE(FoldersList>'G').FoldersList" />
 
 <DELETE path="_applications/Application/ApplicationKey"/>
 <DISCONNECT/>
