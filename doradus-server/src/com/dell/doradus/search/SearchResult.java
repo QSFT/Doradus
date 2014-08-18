@@ -112,6 +112,12 @@ public class SearchResult implements Comparable<SearchResult> {
 					d = s1.compareToIgnoreCase(s2);
 				}
 				else if(type == FieldType.INTEGER || type == FieldType.LONG) {
+					if(s1.contains(CommonDefs.MV_SCALAR_SEP_CHAR)) {
+						s1 = s1.substring(0, s1.indexOf(CommonDefs.MV_SCALAR_SEP_CHAR));
+					}
+					if(s2.contains(CommonDefs.MV_SCALAR_SEP_CHAR)) {
+						s2 = s2.substring(0, s2.indexOf(CommonDefs.MV_SCALAR_SEP_CHAR));
+					}
 					long l1 = Long.parseLong(s1);
 					long l2 = Long.parseLong(s2);
 					if(l1 < l2) d = -1; else if (l1 > l2) d = 1; else d = 0;
