@@ -26,6 +26,8 @@ public abstract class MetricValueAvg implements IMetricValue {
 
 	public double getValue() { return count == 0 ? Double.NEGATIVE_INFINITY : (double)metric / count; }
 	
+	@Override public boolean isDegenerate() { return count == 0; } 
+	
 	@Override public int compareTo(IMetricValue o) {
 		MetricValueAvg other = (MetricValueAvg)o;
 		return Double.compare(getValue(), other.getValue());

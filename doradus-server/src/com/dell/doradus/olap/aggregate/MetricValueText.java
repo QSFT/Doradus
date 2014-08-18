@@ -30,6 +30,8 @@ public abstract class MetricValueText implements IMetricValue {
 		else if(t.value == null) return 1;
 		else return value.compareToIgnoreCase(t.value);
 	}
+
+	@Override public boolean isDegenerate() { return value == null; } 
 	
 	public static class Min extends MetricValueText {
 		@Override public void add(IMetricValue o) {

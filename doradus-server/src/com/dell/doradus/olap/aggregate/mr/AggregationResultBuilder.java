@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.dell.doradus.olap.aggregate.AggregationRequest;
 import com.dell.doradus.olap.aggregate.AggregationResult;
+import com.dell.doradus.olap.aggregate.MetricValueSet;
 import com.dell.doradus.olap.aggregate.mr.AggregationCollector.Group;
 import com.dell.doradus.search.aggregate.AggregationGroup;
 import com.dell.doradus.search.util.HeapList;
@@ -57,9 +58,15 @@ public class AggregationResultBuilder {
 		} case Top: {
 			Comparator<AggregationCollector.Group> topComparer = new Comparator<AggregationCollector.Group>() {
 				@Override public int compare(Group x, Group y) {
-					int c = y.getValue().compareTo(x.getValue());
-					if(c != 0) return c;
-					return x.getKey().compareTo(y.getKey());
+					MetricValueSet valueX = x.getValue();
+					MetricValueSet valueY = y.getValue();
+					boolean specialX = valueX.isDegenerate();
+					boolean specialY = valueY.isDegenerate();
+					int c = valueY.compareTo(valueX);
+					if(c == 0) return x.getKey().compareTo(y.getKey());
+					if(specialX && specialY) return c;
+					if(!specialX && !specialY) return c;
+					return specialX ? 1 : -1;
 				}};
 				
 			if(requestGroup.selectionValue == 0 || requestGroup.selectionValue > groups.size()) {
@@ -75,9 +82,15 @@ public class AggregationResultBuilder {
 		} case Bottom: {
 			Comparator<AggregationCollector.Group> bottomComparer = new Comparator<AggregationCollector.Group>() {
 				@Override public int compare(Group x, Group y) {
-					int c = x.getValue().compareTo(y.getValue());
-					if(c != 0) return c;
-					return x.getKey().compareTo(y.getKey());
+					MetricValueSet valueX = x.getValue();
+					MetricValueSet valueY = y.getValue();
+					boolean specialX = valueX.isDegenerate();
+					boolean specialY = valueY.isDegenerate();
+					int c = valueX.compareTo(valueY);
+					if(c == 0) return x.getKey().compareTo(y.getKey());
+					if(specialX && specialY) return c;
+					if(!specialX && !specialY) return c;
+					return specialX ? 1 : -1;
 				}};
 			if(requestGroup.selectionValue == 0 || requestGroup.selectionValue > groups.size()) {
 				grps = new ArrayList<AggregationCollector.Group>(groups);

@@ -27,6 +27,8 @@ public class MetricValueSum implements IMetricValue {
 		else return 0;
 	}
 	
+	@Override public boolean isDegenerate() { return false; }
+	
 	@Override public void reset() { metric = 0; }
 
 	@Override public void add(IMetricValue value) {

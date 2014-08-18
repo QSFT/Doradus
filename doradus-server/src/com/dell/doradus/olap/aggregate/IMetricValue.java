@@ -20,5 +20,5 @@ public interface IMetricValue extends Comparable<IMetricValue> {
 	public void reset();
 	public void add(long value);
 	public void add(IMetricValue value);
-
+	public boolean isDegenerate();
 }

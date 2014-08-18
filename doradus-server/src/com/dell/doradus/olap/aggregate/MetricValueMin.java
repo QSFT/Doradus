@@ -31,6 +31,8 @@ public abstract class MetricValueMin implements IMetricValue {
 		else return 0;
 	}
 
+	@Override public boolean isDegenerate() { return metric == Long.MAX_VALUE; } 
+	
 	@Override public void reset() { metric = Long.MAX_VALUE; }
 
 	@Override public void add(IMetricValue value) {

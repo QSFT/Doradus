@@ -26,6 +26,8 @@ public class MetricValueCount implements IMetricValue {
 		else if(metric < other_metric) return -1;
 		else return 0;
 	}
+
+	@Override public boolean isDegenerate() { return false; } 
 	
 	@Override public void reset() { metric = 0; }
 

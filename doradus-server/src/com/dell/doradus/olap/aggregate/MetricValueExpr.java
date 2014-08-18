@@ -33,6 +33,11 @@ public abstract class MetricValueExpr implements IMetricValue {
 	
 	public abstract double getValue();
 	
+	@Override public boolean isDegenerate() {
+		double x = getValue();
+		return x == Double.NEGATIVE_INFINITY || x == Double.POSITIVE_INFINITY || Double.isNaN(x);
+	} 
+	
 	@Override public int compareTo(IMetricValue o) {
 		return Double.compare(getValue(), getValue(o));
 	}

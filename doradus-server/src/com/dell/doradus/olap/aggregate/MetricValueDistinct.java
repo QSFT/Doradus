@@ -52,5 +52,7 @@ public class MetricValueDistinct implements IMetricValue {
 		m_LongValues.add(value);
 		//m_Values.add(new Long(value));
 	}
+
+	@Override public boolean isDegenerate() { return false; } 
 	
 }

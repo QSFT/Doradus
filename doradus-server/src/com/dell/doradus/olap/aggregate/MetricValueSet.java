@@ -40,6 +40,8 @@ public class MetricValueSet implements Comparable<MetricValueSet> {
 		return values[0].compareTo(o.values[0]);
 	}
 	
+	public boolean isDegenerate() { return values[0].isDegenerate(); }
+	
 	@Override public String toString() {
 		StringBuilder sb = new StringBuilder();
 		if(values.length > 1) sb.append('[');
