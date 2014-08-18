@@ -832,10 +832,14 @@ public class SearchQueryBuilder {
                 }
                 allIsDone = true;
             } else {
+                if (op.equals("COUNT")) {
+                    result = new LinkQuery(op, item.item.getValue(), null);
+                } else {
                 if (item.operation == null)
                     result = new LinkQuery(LinkQuery.ANY, item.item.getValue(), null);
                 else
                     result = new LinkQuery(op, item.item.getValue(), null);
+                }
                 op = operation;
             }
         }
