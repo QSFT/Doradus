@@ -8,8 +8,7 @@
 	<application name="Application">
     <key>ApplicationKey</key>
     <options>
-		<option name="AutoTables">false</option>
-		<option name="StorageService">SpiderService</option>
+	<option name="StorageService">OLAPService</option>
     </options>
     <tables>
         <table name="Table">
@@ -24,14 +23,14 @@
     </XML>
     </POST>
 
-    <POST path="Application/Table">
+    <POST path="Application/shard">
     <XML>
       <batch>
         <docs>
-          <doc _ID="1001">
+          <doc _ID="1001" _table="Table">
             <field name="GroupName">Group 1</field>
           </doc>
-          <doc _ID="1002">
+          <doc _ID="1002" _table="Table">
             <field name="GroupName">Group 2</field>
           </doc>
         </docs>
@@ -39,15 +38,17 @@
     </XML>
     </POST>
 
+    <POST path="Application/_shards/shard"/>
+
     <enable-output/>
     <echo>~~~~~~~~~~~~~~~~~~~</echo>
     <echo>~ AVERAGE (float) ~</echo>
     <echo>~~~~~~~~~~~~~~~~~~~</echo>
-    <AGGREGATE path="Application/Table" q="*" m="AVERAGE(Float)" f="GroupName" />
+    <AGGREGATE path="Application/Table" q="*" m="AVERAGE(Float),COUNT(Float)" f="GroupName" shards="shard"/>
     <echo>~~~~~~~~~~~~~~~~~~~~</echo>
     <echo>~ AVERAGE (double) ~</echo>
     <echo>~~~~~~~~~~~~~~~~~~~~</echo>
-    <AGGREGATE path="Application/Table" q="*" m="AVERAGE(Double)" f="GroupName" />
+    <AGGREGATE path="Application/Table" q="*" m="AVERAGE(Double),COUNT(Double)" f="GroupName" shards="shard"/>
 
 <DELETE path="_applications/Application/ApplicationKey"/>
 

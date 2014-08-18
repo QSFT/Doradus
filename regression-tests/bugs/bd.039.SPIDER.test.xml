@@ -43,11 +43,11 @@
     <echo>~~~~~~~~~~~~~~~~~~~</echo>
     <echo>~ AVERAGE (float) ~</echo>
     <echo>~~~~~~~~~~~~~~~~~~~</echo>
-    <AGGREGATE path="Application/Table" q="*" m="AVERAGE(Float)" f="GroupName" />
+    <AGGREGATE path="Application/Table" q="*" m="AVERAGE(Float),COUNT(Float)" f="GroupName" />
     <echo>~~~~~~~~~~~~~~~~~~~~</echo>
     <echo>~ AVERAGE (double) ~</echo>
     <echo>~~~~~~~~~~~~~~~~~~~~</echo>
-    <AGGREGATE path="Application/Table" q="*" m="AVERAGE(Double)" f="GroupName" />
+    <AGGREGATE path="Application/Table" q="*" m="AVERAGE(Double),COUNT(Double)" f="GroupName" />
 
 <DELETE path="_applications/Application/ApplicationKey"/>
 
