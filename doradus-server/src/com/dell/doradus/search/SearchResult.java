@@ -122,6 +122,17 @@ public class SearchResult implements Comparable<SearchResult> {
 					long l2 = Long.parseLong(s2);
 					if(l1 < l2) d = -1; else if (l1 > l2) d = 1; else d = 0;
 				}
+				else if(type == FieldType.DOUBLE || type == FieldType.FLOAT) {
+					if(s1.contains(CommonDefs.MV_SCALAR_SEP_CHAR)) {
+						s1 = s1.substring(0, s1.indexOf(CommonDefs.MV_SCALAR_SEP_CHAR));
+					}
+					if(s2.contains(CommonDefs.MV_SCALAR_SEP_CHAR)) {
+						s2 = s2.substring(0, s2.indexOf(CommonDefs.MV_SCALAR_SEP_CHAR));
+					}
+					double d1 = Double.parseDouble(s1);
+					double d2 = Double.parseDouble(s2);
+					if(d1 < d2) d = -1; else if (d1 > d2) d = 1; else d = 0;
+				}
 				if(!order.ascending) d = -d;
 				return d;
 			}
