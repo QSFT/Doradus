@@ -211,8 +211,35 @@ public class SearchQueryBuilder {
 
         if (op.equals("NULL")) {
             PerformAssign(builderContext, BinaryQuery.EQUALS);
-            NotQuery query = new NotQuery(builderContext.queries.pop());
-            builderContext.queries.push(query);
+            Query current = builderContext.queries.pop();
+            if (current instanceof LinkQuery) {
+                LinkQuery lq = (LinkQuery)current;
+                if (LinkQuery.ALL.equals(lq.quantifier) || LinkQuery.NONE.equals(lq.quantifier)) {
+                    while (lq.innerQuery != null) {
+                        Query q = lq.innerQuery;
+                        if (q instanceof LinkQuery) {
+                            LinkQuery candidad  = (LinkQuery)q;
+                            if (candidad.quantifier.equals(LinkQuery.ANY)) {
+                                lq.innerQuery=new NotQuery(candidad);
+                                builderContext.queries.push(current);
+                                return;
+                            }else {
+                             lq =candidad;
+                            }
+                        } else {
+                            lq.innerQuery=new NotQuery(q);
+                            builderContext.queries.push(current);
+                            return;
+                        }
+                    }
+                    throw new RuntimeException("Wrong usage of ALL");
+                    //builderContext.queries.push(new NotQuery(current));
+                } else {
+                    builderContext.queries.push(new NotQuery(current));
+                }
+            } else {
+                builderContext.queries.push(new NotQuery(current));
+            }
             return;
         }
 
@@ -752,8 +779,8 @@ public class SearchQueryBuilder {
             if (item.operation.equals("ANY"))
                 op = LinkQuery.ANY;
             if (item.operation.equals("NONE")) {
-                op = LinkQuery.ANY;
-                notQuery = new NotQuery();
+                op = LinkQuery.NONE;
+                //notQuery = new NotQuery();
             }
             if (item.operation.equals("ALL"))
                 op = LinkQuery.ALL;
@@ -787,8 +814,11 @@ public class SearchQueryBuilder {
         boolean allIsDone = false;
 
         if (item.item != null) {
-            if (item.operation != null && item.operation.equals("^")) {
+            if (item.transitive != null && item.transitive.equals("^")) {
                 TransitiveLinkQuery tq = new TransitiveLinkQuery(op, 0, item.item.getValue(), null);
+                if (item.operation == null)
+                    tq.quantifier=LinkQuery.ANY;
+
                 if (item.value != null) {
                     int tValue = Integer.parseInt(item.value.getValue());
                     tq.depth = tValue;
@@ -802,7 +832,10 @@ public class SearchQueryBuilder {
                 }
                 allIsDone = true;
             } else {
-                result = new LinkQuery(op, item.item.getValue(), null);
+                if (item.operation == null)
+                    result = new LinkQuery(LinkQuery.ANY, item.item.getValue(), null);
+                else
+                    result = new LinkQuery(op, item.item.getValue(), null);
                 op = operation;
             }
         }

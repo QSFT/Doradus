@@ -310,6 +310,7 @@ class LinkCheckVisitor implements QueryTreeVisitor {
 
 class LinkItem {
     public String operation;
+    public String transitive;
     public GrammarItem item;
     public GrammarItem value;
     public ArrayList<LinkItem> items = new ArrayList<LinkItem>();
@@ -515,9 +516,9 @@ public class DoradusQueryBuilder {
     private static void SetOperation(ArrayList<LinkItem> grammarItems, GrammarItem gi) {
         LinkItem bi1 = grammarItems.get(grammarItems.size() - 1);
         if (bi1.items.size() > 0)
-            bi1.items.get(bi1.items.size() - 1).operation = gi.getValue();
+            bi1.items.get(bi1.items.size() - 1).transitive = gi.getValue();
         else
-            bi1.operation = gi.getValue();
+            bi1.transitive = gi.getValue();
     }
 
     private static void SetValue(ArrayList<LinkItem> grammarItems, GrammarItem gi) {
@@ -651,6 +652,13 @@ public class DoradusQueryBuilder {
                     function.item = null;
                     function.items.add(bi);
 
+                    if (function.operation.equals("ALL")|| function.operation.equals("ANY") || function.operation.equals("NONE")) {
+                        bi.operation= function.operation;
+                        for (int k = 0; k < bi.items.size(); k++) {
+                            LinkItem next = bi.items.get(k);
+                            next.operation= function.operation;
+                        }
+                    }
                     items.add(function);
                     continue;
                 }
