@@ -94,21 +94,29 @@ class FieldSetTokenizer {
                             CreateItemSet(nextItem, def.getLinkExtentTableDef(fieldDefinition), current);
                         }
                     } else {
-                        if (!set.ScalarFields.contains(fieldDefinition.getName()))
+                        if (!set.ScalarFields.contains(fieldDefinition.getName())) {
                             set.ScalarFields.add(fieldDefinition.getName());
+                            if (item.alias != null)
+                                set.ScalarFieldAliases.put(fieldDefinition.getName(), item.alias);
+                        }
                     }
                 }
             } else {
                 if (item.children.size() > 0)
                     throw new IllegalArgumentException(item.name + " is not a link");
 
-                if (!set.ScalarFields.contains(item.name))
+                if (!set.ScalarFields.contains(item.name))   {
                 	set.ScalarFields.add(item.name);
+                    if (item.alias != null)
+                        set.ScalarFieldAliases.put(item.name, item.alias);
+                }
             }
         } else {
             for (int i = 0; i < item.children.size(); i++) {
                 FieldSetItem nextItem = item.children.get(i);
                 set.ScalarFields.add(nextItem.name);
+                if (nextItem.alias != null)
+                    set.ScalarFieldAliases.put(item.name, item.alias);
                 //Check size ?
             }
         }
