@@ -1,0 +1,595 @@
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Message/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>6</totalobjects>
+        <docs>
+            <doc>
+                <field name="Size">1001</field>
+                <field name="_ID">2001</field>
+                <field name="_shard">shard</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">False</field>
+                        <field name="IsSender">False</field>
+                        <field name="Text">Recipient</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1002</field>
+                <field name="_ID">2002</field>
+                <field name="_shard">shard</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">True</field>
+                        <field name="IsSender">False</field>
+                        <field name="Text">Recipient</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1003</field>
+                <field name="_ID">2003</field>
+                <field name="_shard">shard</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">False</field>
+                        <field name="IsSender">False</field>
+                        <field name="Text">Recipient</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1004</field>
+                <field name="_ID">2004</field>
+                <field name="_shard">shard</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">False</field>
+                        <field name="IsSender">True</field>
+                        <field name="Text">Sender</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1005</field>
+                <field name="_ID">2005</field>
+                <field name="_shard">shard</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">True</field>
+                        <field name="IsSender">True</field>
+                        <field name="Text">Sender</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1006</field>
+                <field name="_ID">2006</field>
+                <field name="_shard">shard</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">False</field>
+                        <field name="IsSender">True</field>
+                        <field name="Text">Sender</field>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"6",
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1001",
+                   "_ID":"2001",
+                   "_shard":"shard",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"False",
+                            "IsSender":"False",
+                            "Text":"Recipient",
+                            "_ID":"1001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1002",
+                   "_ID":"2002",
+                   "_shard":"shard",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"True",
+                            "IsSender":"False",
+                            "Text":"Recipient",
+                            "_ID":"1002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1003",
+                   "_ID":"2003",
+                   "_shard":"shard",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"False",
+                            "IsSender":"False",
+                            "Text":"Recipient",
+                            "_ID":"1003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1004",
+                   "_ID":"2004",
+                   "_shard":"shard",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"False",
+                            "IsSender":"True",
+                            "Text":"Sender",
+                            "_ID":"1004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1005",
+                   "_ID":"2005",
+                   "_shard":"shard",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"True",
+                            "IsSender":"True",
+                            "Text":"Sender",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1006",
+                   "_ID":"2006",
+                   "_shard":"shard",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"False",
+                            "IsSender":"True",
+                            "Text":"Sender",
+                            "_ID":"1006"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MessageParticipant/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>6</totalobjects>
+        <docs>
+            <doc>
+                <field name="IsExternal">False</field>
+                <field name="IsSender">False</field>
+                <field name="Text">Recipient</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1001</field>
+                        <field name="_ID">2001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="IsExternal">True</field>
+                <field name="IsSender">False</field>
+                <field name="Text">Recipient</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1002</field>
+                        <field name="_ID">2002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="IsExternal">False</field>
+                <field name="IsSender">False</field>
+                <field name="Text">Recipient</field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1003</field>
+                        <field name="_ID">2003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="IsExternal">False</field>
+                <field name="IsSender">True</field>
+                <field name="Text">Sender</field>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1004</field>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="IsExternal">True</field>
+                <field name="IsSender">True</field>
+                <field name="Text">Sender</field>
+                <field name="_ID">1005</field>
+                <field name="_shard">shard</field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1005</field>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="IsExternal">False</field>
+                <field name="IsSender">True</field>
+                <field name="Text">Sender</field>
+                <field name="_ID">1006</field>
+                <field name="_shard">shard</field>
+                <field name="Message">
+                    <doc>
+                        <field name="Size">1006</field>
+                        <field name="_ID">2006</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"6",
+          "docs":[
+             {
+                "doc":{
+                   "IsExternal":"False",
+                   "IsSender":"False",
+                   "Text":"Recipient",
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1001",
+                            "_ID":"2001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "IsExternal":"True",
+                   "IsSender":"False",
+                   "Text":"Recipient",
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1002",
+                            "_ID":"2002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "IsExternal":"False",
+                   "IsSender":"False",
+                   "Text":"Recipient",
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1003",
+                            "_ID":"2003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "IsExternal":"False",
+                   "IsSender":"True",
+                   "Text":"Sender",
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1004",
+                            "_ID":"2004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "IsExternal":"True",
+                   "IsSender":"True",
+                   "Text":"Sender",
+                   "_ID":"1005",
+                   "_shard":"shard",
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1005",
+                            "_ID":"2005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "IsExternal":"False",
+                   "IsSender":"True",
+                   "Text":"Sender",
+                   "_ID":"1006",
+                   "_shard":"shard",
+                   "Message":[
+                      {
+                         "doc":{
+                            "Size":"1006",
+                            "_ID":"2006"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Message/_query?q=$Sender&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>3</totalobjects>
+        <docs>
+            <doc>
+                <field name="Size">1004</field>
+                <field name="_ID">2004</field>
+                <field name="_shard">shard</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">False</field>
+                        <field name="IsSender">True</field>
+                        <field name="Text">Sender</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1005</field>
+                <field name="_ID">2005</field>
+                <field name="_shard">shard</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">True</field>
+                        <field name="IsSender">True</field>
+                        <field name="Text">Sender</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1006</field>
+                <field name="_ID">2006</field>
+                <field name="_shard">shard</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">False</field>
+                        <field name="IsSender">True</field>
+                        <field name="Text">Sender</field>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"3",
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1004",
+                   "_ID":"2004",
+                   "_shard":"shard",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"False",
+                            "IsSender":"True",
+                            "Text":"Sender",
+                            "_ID":"1004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1005",
+                   "_ID":"2005",
+                   "_shard":"shard",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"True",
+                            "IsSender":"True",
+                            "Text":"Sender",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1006",
+                   "_ID":"2006",
+                   "_shard":"shard",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"False",
+                            "IsSender":"True",
+                            "Text":"Sender",
+                            "_ID":"1006"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Message/_query?q=$SenderRecipient&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Size">1001</field>
+                <field name="_ID">2001</field>
+                <field name="_shard">shard</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">False</field>
+                        <field name="IsSender">False</field>
+                        <field name="Text">Recipient</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Size">1003</field>
+                <field name="_ID">2003</field>
+                <field name="_shard">shard</field>
+                <field name="Participants">
+                    <doc>
+                        <field name="IsExternal">False</field>
+                        <field name="IsSender">False</field>
+                        <field name="Text">Recipient</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1001",
+                   "_ID":"2001",
+                   "_shard":"shard",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"False",
+                            "IsSender":"False",
+                            "Text":"Recipient",
+                            "_ID":"1001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1003",
+                   "_ID":"2003",
+                   "_shard":"shard",
+                   "Participants":[
+                      {
+                         "doc":{
+                            "IsExternal":"False",
+                            "IsSender":"False",
+                            "Text":"Recipient",
+                            "_ID":"1003"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

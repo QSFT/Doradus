@@ -1,0 +1,121 @@
+<TEST>
+<CONNECT/>
+<DEFINE name="response.format" value="xml|json"/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<POST path="_applications">
+    <XML>
+<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+        <option name="StorageService">OLAPService</option>
+    </options>
+    <tables>
+        <table name="Message">
+            <fields>
+                <field name="Size" type="LONG"/>
+                <field name="Participants" type="LINK" table="MessageParticipant" inverse="Message"/>
+            </fields>
+            <aliases>
+              <alias name="$Sender" expression="Participants.WHERE(IsSender=true)"/>
+              <alias name="$SenderRecipient" expression="Participants.WHERE(IsSender=false AND IsExternal=false)"/>
+            </aliases>
+        </table>
+        <table name="MessageParticipant">
+            <fields>
+                <field name="Text" type="TEXT"/>
+                <field name="Message" type="LINK" table="Message" inverse="Participants"/>
+                <field name="IsSender" type="BOOLEAN"/>
+                <field name="IsExternal" type="BOOLEAN"/>
+            </fields>
+        </table>
+    </tables>
+</application>
+    </XML>
+</POST>
+<POST path="Application/shard">
+    <XML>
+	<batch>
+            <docs>
+          <doc _table="MessageParticipant" _ID="1001" >
+            <field name="Text">Recipient</field>
+            <field name="Message"><add><value>2001</value></add></field>
+            <field name="IsSender">FALSE</field>
+            <field name="IsExternal">FALSE</field>
+          </doc>
+          <doc _table="MessageParticipant" _ID="1002" >
+            <field name="Text">Recipient</field>
+            <field name="Message"><add><value>2002</value></add></field>
+            <field name="IsSender">FALSE</field>
+            <field name="IsExternal">TRUE</field>
+          </doc>
+          <doc _table="MessageParticipant" _ID="1003" >
+            <field name="Text">Recipient</field>
+            <field name="Message"><add><value>2003</value></add></field>
+            <field name="IsSender">FALSE</field>
+            <field name="IsExternal">FALSE</field>
+          </doc>
+          <doc _table="MessageParticipant" _ID="1004" >
+            <field name="Text">Sender</field>
+            <field name="Message"><add><value>2004</value></add></field>
+            <field name="IsSender">TRUE</field>
+            <field name="IsExternal">FALSE</field>
+          </doc>
+          <doc _table="MessageParticipant" _ID="1005" >
+            <field name="Text">Sender</field>
+            <field name="Message"><add><value>2005</value></add></field>
+            <field name="IsSender">TRUE</field>
+            <field name="IsExternal">TRUE</field>
+          </doc>
+          <doc _table="MessageParticipant" _ID="1006" >
+            <field name="Text">Sender</field>
+            <field name="Message"><add><value>2006</value></add></field>
+            <field name="IsSender">TRUE</field>
+            <field name="IsExternal">FALSE</field>
+          </doc>
+          <doc _table="Message" _ID="2001" >
+            <field name="Participants"><add><value>1001</value></add></field>
+            <field name="Size">1001</field>
+          </doc>
+          <doc _table="Message" _ID="2002" >
+            <field name="Participants"><add><value>1002</value></add></field>
+            <field name="Size">1002</field>
+          </doc>
+          <doc _table="Message" _ID="2003" >
+            <field name="Participants"><add><value>1003</value></add></field>
+            <field name="Size">1003</field>
+          </doc>
+          <doc _table="Message" _ID="2004" >
+            <field name="Participants"><add><value>1004</value></add></field>
+            <field name="Size">1004</field>
+          </doc>
+          <doc _table="Message" _ID="2005" >
+            <field name="Participants"><add><value>1005</value></add></field>
+            <field name="Size">1005</field>
+          </doc>
+          <doc _table="Message" _ID="2006" >
+            <field name="Participants"><add><value>1006</value></add></field>
+            <field name="Size">1006</field>
+          </doc>
+	    </docs>
+	</batch>
+    </XML>
+</POST>
+
+<POST path="Application/_shards/shard"/>
+
+    <enable-output/>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Message" q="*" f="_all" shards="shard"/>
+    <QUERY path="Application/MessageParticipant" q="*" f="_all" shards="shard"/>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Message" q="$Sender" f="_all" shards="shard"/>
+    <QUERY path="Application/Message" q="$SenderRecipient" f="_all" shards="shard"/>
+
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+<DISCONNECT/>
+</TEST>
