@@ -3217,18 +3217,18 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=IsFileTested.INCLUDE(FALSE)&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=IsFileTested.INCLUDE(false)&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="IsFileTested.INCLUDE(FALSE)" metric="COUNT(*)" query="*"/>
+        <aggregate group="IsFileTested.INCLUDE(false)" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>1</totalgroups>
         <groups>
             <group>
                 <metric>2</metric>
-                <field name="IsFileTested.INCLUDE(FALSE)">false</field>
+                <field name="IsFileTested.INCLUDE(false)">false</field>
             </group>
         </groups>
     </results>
@@ -3239,7 +3239,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"IsFileTested.INCLUDE(FALSE)"
+             "group":"IsFileTested.INCLUDE(false)"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -3249,7 +3249,7 @@
                 "group":{
                    "metric":"2",
                    "field":{
-                      "IsFileTested.INCLUDE(FALSE)":"false"
+                      "IsFileTested.INCLUDE(false)":"false"
                    }
                 }
              }
@@ -3258,18 +3258,18 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=IsFileTested.INCLUDE(TRUE)&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=IsFileTested.INCLUDE(true)&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="IsFileTested.INCLUDE(TRUE)" metric="COUNT(*)" query="*"/>
+        <aggregate group="IsFileTested.INCLUDE(true)" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>1</totalgroups>
         <groups>
             <group>
                 <metric>2</metric>
-                <field name="IsFileTested.INCLUDE(TRUE)">true</field>
+                <field name="IsFileTested.INCLUDE(true)">true</field>
             </group>
         </groups>
     </results>
@@ -3280,7 +3280,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"IsFileTested.INCLUDE(TRUE)"
+             "group":"IsFileTested.INCLUDE(true)"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -3290,7 +3290,7 @@
                 "group":{
                    "metric":"2",
                    "field":{
-                      "IsFileTested.INCLUDE(TRUE)":"true"
+                      "IsFileTested.INCLUDE(true)":"true"
                    }
                 }
              }
@@ -3490,11 +3490,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,IsFileTested.INCLUDE(FALSE)&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,IsFileTested.INCLUDE(false)&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,IsFileTested.INCLUDE(FALSE)"
+        <aggregate group="FileName,IsFileTested.INCLUDE(false)"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -3518,7 +3518,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="IsFileTested.INCLUDE(FALSE)">false</field>
+                        <field name="IsFileTested.INCLUDE(false)">false</field>
                     </group>
                 </groups>
             </group>
@@ -3536,7 +3536,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="IsFileTested.INCLUDE(FALSE)">false</field>
+                        <field name="IsFileTested.INCLUDE(false)">false</field>
                     </group>
                 </groups>
             </group>
@@ -3553,7 +3553,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,IsFileTested.INCLUDE(FALSE)"
+             "group":"FileName,IsFileTested.INCLUDE(false)"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -3594,7 +3594,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "IsFileTested.INCLUDE(FALSE)":"false"
+                               "IsFileTested.INCLUDE(false)":"false"
                             }
                          }
                       }
@@ -3628,7 +3628,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "IsFileTested.INCLUDE(FALSE)":"false"
+                               "IsFileTested.INCLUDE(false)":"false"
                             }
                          }
                       }
@@ -3648,11 +3648,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,IsFileTested.INCLUDE(TRUE)&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,IsFileTested.INCLUDE(true)&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,IsFileTested.INCLUDE(TRUE)"
+        <aggregate group="FileName,IsFileTested.INCLUDE(true)"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -3668,7 +3668,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="IsFileTested.INCLUDE(TRUE)">true</field>
+                        <field name="IsFileTested.INCLUDE(true)">true</field>
                     </group>
                 </groups>
             </group>
@@ -3690,7 +3690,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="IsFileTested.INCLUDE(TRUE)">true</field>
+                        <field name="IsFileTested.INCLUDE(true)">true</field>
                     </group>
                 </groups>
             </group>
@@ -3711,7 +3711,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,IsFileTested.INCLUDE(TRUE)"
+             "group":"FileName,IsFileTested.INCLUDE(true)"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -3736,7 +3736,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "IsFileTested.INCLUDE(TRUE)":"true"
+                               "IsFileTested.INCLUDE(true)":"true"
                             }
                          }
                       }
@@ -3778,7 +3778,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "IsFileTested.INCLUDE(TRUE)":"true"
+                               "IsFileTested.INCLUDE(true)":"true"
                             }
                          }
                       }
