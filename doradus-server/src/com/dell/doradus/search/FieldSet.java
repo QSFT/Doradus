@@ -18,7 +18,9 @@ package com.dell.doradus.search;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import com.dell.doradus.common.CommonDefs;
@@ -36,6 +38,7 @@ public class FieldSet {
 	public Query filter = null;
 	public TableDefinition tableDef;
 	public ArrayList<String> ScalarFields = new ArrayList<String>();
+	public Map<String, String> ScalarFieldAliases = new HashMap<String, String>();
 	private TreeMap<String, List<FieldSet>> LinkFields = new TreeMap<String, List<FieldSet>>();
 	
 	public FieldSet(TableDefinition tableDef) {
