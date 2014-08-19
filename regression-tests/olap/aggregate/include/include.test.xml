@@ -103,12 +103,12 @@
     <echo>~ BOOLEAN ~</echo>
     <echo>~~~~~~~~~~~</echo>
     <AGGREGATE path="Application/File" m="COUNT(*)" f="IsFileTested.INCLUDE(NULL)" q="*" shards="shard" />
-    <AGGREGATE path="Application/File" m="COUNT(*)" f="IsFileTested.INCLUDE(FALSE)" q="*" shards="shard" />
-    <AGGREGATE path="Application/File" m="COUNT(*)" f="IsFileTested.INCLUDE(TRUE)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="IsFileTested.INCLUDE(false)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="IsFileTested.INCLUDE(true)" q="*" shards="shard" />
     <echo>~~~~~~~~~~~</echo>
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,IsFileTested.INCLUDE(NULL)" q="*" shards="shard" />
-    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,IsFileTested.INCLUDE(FALSE)" q="*" shards="shard" />
-    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,IsFileTested.INCLUDE(TRUE)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,IsFileTested.INCLUDE(false)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,IsFileTested.INCLUDE(true)" q="*" shards="shard" />
 
     <echo>~~~~~~~~~~~~~</echo>
     <echo>~ TIMESTAMP ~</echo>
