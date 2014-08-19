@@ -16,8 +16,12 @@
 
 package com.dell.doradus.search;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.dell.doradus.common.CommonDefs;
@@ -26,6 +30,7 @@ import com.dell.doradus.common.FieldType;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ObjectID;
+import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.search.aggregate.AggregationGroupItem;
 import com.dell.doradus.search.aggregate.SortOrder;
 
@@ -35,6 +40,7 @@ public class SearchResult implements Comparable<SearchResult> {
 	public SortOrder order;
 	public TreeMap<String, String> scalars = new TreeMap<String, String>();
 	public TreeMap<String, List<SearchResultList>> links = new TreeMap<String, List<SearchResultList>>();
+	private List<BSTR> sortKey = null;
 	
     public SearchResult() { }
 
@@ -79,69 +85,103 @@ public class SearchResult implements Comparable<SearchResult> {
         }
         return docNode;
     }
-    
-	@Override public int compareTo(SearchResult o) {
-		if(order == null) {
-			return id().compareTo(o.id());
+
+	private void loadSortKey() {
+		// cache sort key so we won't reload it each time
+		if(sortKey != null) return;
+		
+		sortKey = new ArrayList<BSTR>(); 
+		if(order == null || order.items.size() == 0) {
+			sortKey.add(new BSTR(id()));
+			return;
 		}
-		else {
-			if(order.items.size() != 1) throw new IllegalArgumentException("Paths are not supported in the sort order");
-			AggregationGroupItem item = order.items.get(0);
+		Set<BSTR> sortValues = new HashSet<BSTR>();
+		loadSortKey(order.items, 0, sortValues);
+		sortKey.addAll(sortValues);
+		Collections.sort(sortKey);
+	}
+    
+	private void loadSortKey(List<AggregationGroupItem> items, int index, Set<BSTR> sortedSet) {
+		AggregationGroupItem item = items.get(index);
+		
+		if(index == items.size() - 1) {
 			if(item.fieldDef.isLinkField()) {
-				List<SearchResultList> list1 = links.get(item.fieldDef.getName());
-				List<SearchResultList> list2 = o.links.get(item.fieldDef.getName());
-				SearchResultList ch1 = list1 == null || list1.size() == 0 ? null : list1.get(0);
-				SearchResultList ch2 = list2 == null || list2.size() == 0 ? null : list2.get(0);
-				if(ch1.results.size() == 0 && ch2.results.size() == 0) return 0;
-				int d = 0;
-				if(ch1.results.size() == 0) d = -1;
-				else if(ch2.results.size() == 0) d = 1;
-				else d = ch1.results.get(0).compareTo(ch2.results.get(0));
-				if(!order.ascending) d = -d;
-				return d;
+				List<SearchResultList> list = links.get(item.fieldDef.getName());
+				SearchResultList ch = list == null || list.size() == 0 ? null : list.get(0);
+				if(ch != null) {
+					for(SearchResult sr: ch.results) sortedSet.add(new BSTR(sr.id()));
+				}
 			}
 			else {
-				String s1 = scalars.get(item.fieldDef.getName());
-				String s2 = o.scalars.get(item.fieldDef.getName());
+				String s = scalars.get(item.fieldDef.getName());
+				List<String> values = new ArrayList<String>();
+				if(item.fieldDef.isCollection()) {
+					values.addAll(Utils.split(s, CommonDefs.MV_SCALAR_SEP_CHAR));
+				} else values.add(s);
 				FieldType type = item.fieldDef.getType();
-				if(s1 == null && s2 == null) return 0;
-				int d = 0;
-				if(s1 == null) d = -1;
-				else if(s2 == null) d = 1;
-				else if(type == FieldType.TEXT || type == FieldType.BOOLEAN || type == FieldType.TIMESTAMP) {
-					d = s1.compareToIgnoreCase(s2);
-				}
-				else if(type == FieldType.INTEGER || type == FieldType.LONG) {
-					if(s1.contains(CommonDefs.MV_SCALAR_SEP_CHAR)) {
-						s1 = s1.substring(0, s1.indexOf(CommonDefs.MV_SCALAR_SEP_CHAR));
+				if(type == FieldType.INTEGER || type == FieldType.LONG) {
+					for(String str: values) {
+						if(str == null) sortedSet.add(new BSTR());
+						else {
+							long l = Long.parseLong(str);
+							sortedSet.add(new BSTR(l));
+						}
 					}
-					if(s2.contains(CommonDefs.MV_SCALAR_SEP_CHAR)) {
-						s2 = s2.substring(0, s2.indexOf(CommonDefs.MV_SCALAR_SEP_CHAR));
-					}
-					long l1 = Long.parseLong(s1);
-					long l2 = Long.parseLong(s2);
-					if(l1 < l2) d = -1; else if (l1 > l2) d = 1; else d = 0;
 				}
 				else if(type == FieldType.DOUBLE || type == FieldType.FLOAT) {
-					if(s1.contains(CommonDefs.MV_SCALAR_SEP_CHAR)) {
-						s1 = s1.substring(0, s1.indexOf(CommonDefs.MV_SCALAR_SEP_CHAR));
+					for(String str: values) {
+						if(str == null) sortedSet.add(new BSTR());
+						else {
+							double d = Double.parseDouble(str);
+							long l = Double.doubleToRawLongBits(d);
+							sortedSet.add(new BSTR(l));
+						}
 					}
-					if(s2.contains(CommonDefs.MV_SCALAR_SEP_CHAR)) {
-						s2 = s2.substring(0, s2.indexOf(CommonDefs.MV_SCALAR_SEP_CHAR));
-					}
-					double d1 = Double.parseDouble(s1);
-					double d2 = Double.parseDouble(s2);
-					if(d1 < d2) d = -1; else if (d1 > d2) d = 1; else d = 0;
 				}
-				if(!order.ascending) d = -d;
-				return d;
+				else {
+					for(String str: values) {
+						sortedSet.add(new BSTR(str == null ? "" : str.toLowerCase()));
+					}
+				}
 			}
+		} else {
+			Utils.require(item.fieldDef.isLinkField(), "in sort order " + item.fieldDef.getName() + " should be a link field");
+			List<SearchResultList> list = links.get(item.fieldDef.getName());
+			SearchResultList ch = list == null || list.size() == 0 ? null : list.get(0);
+			if(ch != null) {
+				for(SearchResult sr: ch.results) { sr.loadSortKey(items, index + 1, sortedSet); }
+			}
+		}
+	}
+    
+	@Override public int compareTo(SearchResult o) {
+		loadSortKey();
+		o.loadSortKey();
+		
+		int minK = Math.min(sortKey.size(), o.sortKey.size());
+		int c = 0;
+		
+		if(order == null || order.ascending) {
+			for(int i = 0; i < minK; i++) {
+				c = sortKey.get(i).compareTo(o.sortKey.get(i));
+				if(c != 0) return c;
+			}
+			c = Integer.compare(sortKey.size(), o.sortKey.size());
+			return c;
+		} else {
+			for(int i = minK - 1; i >= 0; i--) {
+				c = sortKey.get(i).compareTo(o.sortKey.get(i));
+				if(c != 0) return -c;
+			}
+			c = Integer.compare(sortKey.size(), o.sortKey.size());
+			return -c;
 		}
 	}
 
 	@Override public String toString() {
 		return toDoc().toXML(true);
 	}
+	
 }
 
 

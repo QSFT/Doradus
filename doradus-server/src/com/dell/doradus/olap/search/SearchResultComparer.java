@@ -27,7 +27,12 @@ import com.dell.doradus.search.util.HeapList;
 
 public class SearchResultComparer {
 	public static IntIterator sort(CubeSearcher searcher, Result result, SortOrder order, int size) {
+		//will sort later
 		if(size >= result.countSet()) return result.iterate();
+		//link paths will be sorted after all values are retrieved
+		if(order != null && order.items.size() > 1) return result.iterate();
+		//sort by multivalued values is not optimized as well 
+		if(order != null && order.items.size() == 1 && order.items.get(0).fieldDef.isCollection()) return result.iterate();
 		if(order == null) {
 			int[] res = new int[size];
 			int num = 0;
@@ -38,7 +43,7 @@ public class SearchResultComparer {
 			}
 			return new IntIterator(res, 0, res.length);
 		}
-		if(order.items.size() != 1) throw new IllegalArgumentException("Paths are not supported in the sort order");
+		//if(order.items.size() != 1) throw new IllegalArgumentException("Paths are not supported in the sort order");
 		AggregationGroupItem item = order.items.get(0);
 		
 		HeapList<DocAndField> heap = new HeapList<DocAndField>(size);

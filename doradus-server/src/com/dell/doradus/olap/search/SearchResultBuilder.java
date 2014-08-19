@@ -59,6 +59,9 @@ public class SearchResultBuilder {
 			num++;
 		}
 		Collections.sort(list.results);
+		if(list.results.size() > size) {
+			list.results = (ArrayList<SearchResult>)list.results.subList(0, size);
+		}
 		if(list.results.size() < list.documentsCount && list.results.size() > 0) {
 			list.continuation_token = list.results.get(list.results.size() - 1).id();
 		}
