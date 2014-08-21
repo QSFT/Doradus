@@ -883,7 +883,7 @@ final public class TableDefinition {
     // inverse is in this table but not explicitly defined, add it to the table's field
     // definitions. If a link's inverse is in another table, add it to the given
     // external link map. In the latter case, we also ensure that two different links are
-    // trying to declare the same link as their inverse.
+    // not trying to declare the same link as their inverse.
     private void validateInverseLinks(Map<String, Map<String, FieldDefinition>> externalLinkMap) {
         // Take a snapshot of field names so we can add fields as iterate.
         Set<String> fieldNames = new HashSet<>(m_fieldDefMap.keySet());

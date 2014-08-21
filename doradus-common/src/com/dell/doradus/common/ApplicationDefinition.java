@@ -426,7 +426,7 @@ final public class ApplicationDefinition {
     private void finalizeDefinition(Map<String, Map<String, FieldDefinition>> externalLinkMap) {
         // Verify all external link references.
         processExternalLinks(externalLinkMap);
-        validateXLinks();
+//        validateXLinks();
     }   // finalizeDefinition
 
     // Verify all external links found, if any, while parsing an application definition.
@@ -479,23 +479,23 @@ final public class ApplicationDefinition {
         }   // for table names
     }   // processExternalLinks
     
-    // Verify that at least one xlink in every pair uses "_ID" as the junction field. 
-    private void validateXLinks() {
-        for (TableDefinition tableDef : m_tableMap.values()) {
-            for (FieldDefinition fieldDef : tableDef.getFieldDefinitions()) {
-                if (fieldDef.isXLinkField()) {
-                    FieldDefinition inverseDef = fieldDef.getInverseLinkDef();
-                    assert inverseDef != null;
-                    assert inverseDef.isXLinkField();
-                    Utils.require(fieldDef.getXLinkJunction().equals("_ID") ||
-                                  inverseDef.getXLinkJunction().equals("_ID"),
-                                  String.format("At least one xlink in '%s.%s/%s.%s' must use '_ID' as the junction field",
-                                                tableDef.getTableName(), fieldDef.getName(),
-                                                fieldDef.getLinkExtent(), fieldDef.getLinkInverse()));
-                }
-            }
-        }
-    }   // validateXLinks
+    // Verify that at least one xlink in every pair uses "_ID" as the junction field.
+//    private void validateXLinks() {
+//        for (TableDefinition tableDef : m_tableMap.values()) {
+//            for (FieldDefinition fieldDef : tableDef.getFieldDefinitions()) {
+//                if (fieldDef.isXLinkField()) {
+//                    FieldDefinition inverseDef = fieldDef.getInverseLinkDef();
+//                    assert inverseDef != null;
+//                    assert inverseDef.isXLinkField();
+//                    Utils.require(fieldDef.getXLinkJunction().equals("_ID") ||
+//                                  inverseDef.getXLinkJunction().equals("_ID"),
+//                                  String.format("At least one xlink in '%s.%s/%s.%s' must use '_ID' as the junction field",
+//                                                tableDef.getTableName(), fieldDef.getName(),
+//                                                fieldDef.getLinkExtent(), fieldDef.getLinkInverse()));
+//                }
+//            }
+//        }
+//    }   // validateXLinks
     
     /**
      * Replaces of all occurences of aliases defined with this table, by their expressions.
