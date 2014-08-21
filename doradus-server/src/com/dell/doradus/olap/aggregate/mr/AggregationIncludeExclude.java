@@ -41,7 +41,7 @@ public class AggregationIncludeExclude {
 	}
 	
 	public boolean accept(MGName name, int level) {
-		String text = name.name == null ? null : name.name;
+		String text = name.name == null ? null : name.name.toLowerCase();
 		Matcher excl = m_exclude.get(level);
 		if(excl != null && excl.match(text)) return false;
 		Matcher incl = m_include.get(level);
@@ -63,7 +63,7 @@ public class AggregationIncludeExclude {
 			for(String value: values) {
 				if(value == null) m_values.add(null);
 				else if(value.indexOf('*') >= 0 || value.indexOf('?') >= 0) m_templates.add(value);
-				else m_values.add(value);
+				else m_values.add(value.toLowerCase());
 			}
 			
 			if(m_values.size() == 0) m_values = null;
