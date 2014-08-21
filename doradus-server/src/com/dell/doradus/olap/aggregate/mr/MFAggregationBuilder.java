@@ -37,7 +37,7 @@ import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.search.aggregate.AggregationGroup;
 
 public class MFAggregationBuilder {
-    private static Logger LOG = LoggerFactory.getLogger("MFggregationBuilder");
+    private static Logger LOG = LoggerFactory.getLogger("MFAggregationBuilder");
 	
 	public static AggregationResult aggregate(Olap olap, AggregationRequest request) {
 		AggregationCollector collector = null;
@@ -50,7 +50,6 @@ public class MFAggregationBuilder {
 		AggregationResult result = AggregationResultBuilder.build(request, collector);
 		return result;
 	}
-	
 	
 	private static AggregationCollector aggregate(Olap olap, String application, String shard, AggregationRequest request) {
 		// repeat if segment was merged
@@ -79,7 +78,7 @@ public class MFAggregationBuilder {
 		MFCollectorSet[] fieldCollectors = new MFCollectorSet[filters.length];
 		for(int i = 0; i < filters.length; i++) {
 			filters[i] = ResultBuilder.search(request.tableDef, request.parts[i].query, searcher);
-			fieldCollectors[i] = new MFCollectorSet(searcher, request.parts[i].groups); 
+			fieldCollectors[i] = new MFCollectorSet(searcher, request.parts[i].groups, filters.length == 1); 
 		}
 		
 		
@@ -109,23 +108,46 @@ public class MFAggregationBuilder {
 			sets[0].clear();
 		}
 		
-		for(int doc = 0; doc < filters[0].size(); doc++) {
-			boolean collected = false;
-			for(int i = 0; i < filters.length; i++) {
-				if(!filters[i].get(doc)) continue;
-				if(!collected) {
-					collected = true;
-					valueSet.reset();
-					counterSet.add(doc, valueSet);
+		boolean hasCommonPart = filters.length == 1 && fieldCollectors[0].commonPartCollector != null;
+		
+		if(hasCommonPart) {
+			BdLongSet commonSet = new BdLongSet(1024);
+			commonSet.enableClearBuffer();
+			
+			for(int doc = 0; doc < filters[0].size(); doc++) {
+				if(!filters[0].get(doc)) continue;
+				valueSet.reset();
+				counterSet.add(doc, valueSet);
+				// common part in groups
+				fieldCollectors[0].commonPartCollector.collect(doc, commonSet);
+				for(int d = 0; d < commonSet.size(); d++) {
+					long commonDoc = commonSet.get(d);
+					fieldCollectors[0].collect(commonDoc, sets);
+					builder.add(doc, sets, valueSet);
+					for(int i = 0; i < sets.length; i++) sets[i].clear();
 				}
-				fieldCollectors[i].collect(doc, sets);
-			}
-			if(collected) {
-				builder.add(doc, sets, valueSet);
-				for(int i = 0; i < sets.length; i++) sets[i].clear();
+				commonSet.clear();
 			}
 		}
-		
+		else {
+			for(int doc = 0; doc < filters[0].size(); doc++) {
+				boolean collected = false;
+				for(int i = 0; i < filters.length; i++) {
+					if(!filters[i].get(doc)) continue;
+					if(!collected) {
+						collected = true;
+						valueSet.reset();
+						counterSet.add(doc, valueSet);
+					}
+					
+					fieldCollectors[i].collect(doc, sets);
+				}
+				if(collected) {
+					builder.add(doc, sets, valueSet);
+					for(int i = 0; i < sets.length; i++) sets[i].clear();
+				}
+			}
+		}
 		AggregationCollector result = builder.createResult(request.parts[0].groups, fieldCollectors[0]);
 
 		return result;

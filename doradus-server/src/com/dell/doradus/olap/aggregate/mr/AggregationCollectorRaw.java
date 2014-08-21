@@ -11,6 +11,7 @@ import com.dell.doradus.olap.collections.BdLongSet;
 public class AggregationCollectorRaw {
 	private MetricCollectorSet m_mcs;
 	private int m_documentsCount;
+	private int m_lastAddedDoc = -1;
 	private Group m_group;
 
 	public AggregationCollectorRaw(MetricCollectorSet mcs) {
@@ -26,8 +27,11 @@ public class AggregationCollectorRaw {
 	
 	public void add(int doc, BdLongSet[] keys, MetricValueSet metric) {
 		if(doc >= 0) {
-			m_documentsCount++;
-			m_group.m_value.add(metric);
+			if(doc != m_lastAddedDoc) {
+				m_documentsCount++;
+				m_group.m_value.add(metric);
+				m_lastAddedDoc = doc;
+			}
 		}
 		m_group.add(keys, 0, metric);
 	}
