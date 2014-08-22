@@ -100,7 +100,7 @@ public class SearchQueryBuilder {
                     if (!builderContext.operationEmpty()) {
                         String op1 = builderContext.operationPeek();
                         if (op1.equals(":") || op1.equals("=") || op1.equals("~=") ||
-                            op1.equals("ANY") || op1.equals("ALL") || op1.equals("NONE") ) {
+                            op1.equals("ANY") || op1.equals("ALL") || op1.equals("NONE")) {
                                 DoOperation(builderContext.operationPop(), builderContext);
                                 break;
                         }
@@ -210,8 +210,9 @@ public class SearchQueryBuilder {
         }
 
         if (op.equals("NULL")) {
-            PerformAssign(builderContext, BinaryQuery.EQUALS);
+            PerformAssign(builderContext, "NULL");
             Query current = builderContext.queries.pop();
+            boolean none = isNonePresent(current);
             if (current instanceof LinkQuery) {
                 LinkQuery lq = (LinkQuery)current;
                 if (LinkQuery.ALL.equals(lq.quantifier) || LinkQuery.NONE.equals(lq.quantifier)) {
@@ -221,6 +222,11 @@ public class SearchQueryBuilder {
                             LinkQuery candidad  = (LinkQuery)q;
                             if (candidad.quantifier.equals(LinkQuery.ANY)) {
                                 lq.innerQuery=new NotQuery(candidad);
+                                if (none)   {
+                                    removeNone(current);
+                                    builderContext.queries.push(new NotQuery(current));
+                                }
+                                else
                                 builderContext.queries.push(current);
                                 return;
                             }else {
@@ -228,12 +234,15 @@ public class SearchQueryBuilder {
                             }
                         } else {
                             lq.innerQuery=new NotQuery(q);
-                            builderContext.queries.push(current);
-                            return;
+                            if (none) {
+                                builderContext.queries.push(new NotQuery(current));
+                                removeNone(current);
+                            }
+                            else
+                                builderContext.queries.push(current);return;
                         }
                     }
-                    throw new RuntimeException("Wrong usage of ALL");
-                    //builderContext.queries.push(new NotQuery(current));
+                    throw new RuntimeException("Wrong usage of ALL or ANY");
                 } else {
                     builderContext.queries.push(new NotQuery(current));
                 }
@@ -430,10 +439,77 @@ public class SearchQueryBuilder {
         throw new IllegalArgumentException("Internal error: unexpected usage of and");
     }
 
+    private static void removeNone(Query q) {
+        while (isNonePresent(q)) {
+            if (q instanceof  LinkQuery) {
+                ((LinkQuery)q).quantifier=LinkQuery.ANY;
+                q= ((LinkQuery)q).innerQuery;
+            }
+            if (q instanceof  TransitiveLinkQuery) {
+                ((TransitiveLinkQuery)q).quantifier=LinkQuery.ANY;
+                q= ((TransitiveLinkQuery)q).innerQuery;
+            }
+
+            if (q instanceof  MVSBinaryQuery) {
+                ((MVSBinaryQuery)q).quantifier=LinkQuery.ANY;
+                q= ((MVSBinaryQuery)q).innerQuery;
+            }
+
+            if (q instanceof LinkIdQuery) {
+                ((LinkIdQuery)q).quantifier=LinkQuery.ANY;
+                return;
+            }
+
+            if (q == null)
+                return;
+        }
+    }
+
+        private static boolean isNonePresent(Query q) {
+        if (q instanceof  LinkQuery) {
+            return LinkQuery.NONE.equals(((LinkQuery)q).quantifier);
+        }
+        if (q instanceof  TransitiveLinkQuery) {
+            return LinkQuery.NONE.equals(((TransitiveLinkQuery)q).quantifier);
+        }
+
+        if (q instanceof  MVSBinaryQuery) {
+            return LinkQuery.NONE.equals(((MVSBinaryQuery)q).quantifier);
+        }
+
+        if (q instanceof LinkIdQuery) {
+            return LinkQuery.NONE.equals(((LinkIdQuery)q).quantifier);
+        }
+        return false;
+    }
+
     private static void PerformAssign(BuilderContext builderContext, String operationType) {
         Query first = builderContext.queries.pop();
         Query second = builderContext.queries.pop();
-        LinkQueryAssign(builderContext, first, second, operationType);
+        if (operationType.equals(BinaryQuery.EQUALS) && first instanceof OrQuery && isNonePresent(second) ) {
+            OrQuery orQuery = new OrQuery() ;
+            OrQuery source = (OrQuery)first;
+            removeNone(second);
+            for (int i = 0; i < source.subqueries.size(); i++) {
+                Query query = source.subqueries.get(i);
+                LinkQueryAssign(builderContext, query, QueryUtils.CloneQuery(second), operationType);
+                orQuery.subqueries.add(builderContext.queries.pop());
+            }
+            builderContext.queries.push(new NotQuery(orQuery));
+        } else {
+            if (operationType.equals(BinaryQuery.EQUALS) && isNonePresent(second) )
+            {
+                removeNone(second);
+                LinkQueryAssign(builderContext, first, second, operationType);
+                builderContext.queries.push(new NotQuery(builderContext.queries.pop()));
+            } else {
+                if (operationType.equals("NULL"))   {
+                    LinkQueryAssign(builderContext, first, second, BinaryQuery.EQUALS);
+                } else {
+                    LinkQueryAssign(builderContext, first, second, operationType);
+                }
+            }
+        }
     }
 
     private static RangeQuery CreateRangeQuery(String op, BinaryQuery bq, String field) {
@@ -633,9 +709,9 @@ public class SearchQueryBuilder {
             }
 
             if (quantifier.equals("COUNT")) {
-                if (fieldType == QueryFieldType.Link || fieldType == QueryFieldType.Unknown ||
+                if (fieldType == QueryFieldType.Link || fieldType == QueryFieldType.Unknown ||  fieldType == QueryFieldType.Group ||
                         fieldType == QueryFieldType.Field || fieldType == QueryFieldType.MultiValueScalar ) {
-                    boolean isLink = fieldType == QueryFieldType.Link;
+                    boolean isLink = (fieldType == QueryFieldType.Link) || (fieldType == QueryFieldType.Group) ;
                     if (lq instanceof LinkQuery) {
                         LinkQuery llq = (LinkQuery) lq;
                         if (isLink)
