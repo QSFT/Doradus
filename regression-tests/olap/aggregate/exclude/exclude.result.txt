@@ -1616,15 +1616,11 @@
         <aggregate group="FolderName.EXCLUDE('folder')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
-        <totalgroups>4</totalgroups>
+        <totalgroups>3</totalgroups>
         <groups>
             <group>
                 <metric>5</metric>
                 <field name="FolderName.EXCLUDE('folder')">(null)</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FolderName.EXCLUDE('folder')">Folder</field>
             </group>
             <group>
                 <metric>1</metric>
@@ -1647,21 +1643,13 @@
           },
           "totalobjects":"8",
           "summary":"8",
-          "totalgroups":"4",
+          "totalgroups":"3",
           "groups":[
              {
                 "group":{
                    "metric":"5",
                    "field":{
                       "FolderName.EXCLUDE('folder')":"(null)"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FolderName.EXCLUDE('folder')":"Folder"
                    }
                 }
              },
@@ -2464,14 +2452,8 @@
                 </groups>
             </group>
             <group>
-                <summary>1</summary>
+                <metric>1</metric>
                 <field name="FileName">File_2</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FolderName.EXCLUDE('folder')">Folder</field>
-                    </group>
-                </groups>
             </group>
             <group>
                 <summary>1</summary>
@@ -2568,20 +2550,10 @@
              },
              {
                 "group":{
-                   "summary":"1",
+                   "metric":"1",
                    "field":{
                       "FileName":"File_2"
-                   },
-                   "groups":[
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FolderName.EXCLUDE('folder')":"Folder"
-                            }
-                         }
-                      }
-                   ]
+                   }
                 }
              },
              {
@@ -4000,7 +3972,7 @@
         <aggregate group="FoldersList.EXCLUDE('users 1')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
-        <totalgroups>16</totalgroups>
+        <totalgroups>15</totalgroups>
         <groups>
             <group>
                 <metric>3</metric>
@@ -4025,10 +3997,6 @@
             <group>
                 <metric>1</metric>
                 <field name="FoldersList.EXCLUDE('users 1')">PROGRAM FILES 7</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('users 1')">USERS 1</field>
             </group>
             <group>
                 <metric>1</metric>
@@ -4079,7 +4047,7 @@
           },
           "totalobjects":"8",
           "summary":"8",
-          "totalgroups":"16",
+          "totalgroups":"15",
           "groups":[
              {
                 "group":{
@@ -4126,14 +4094,6 @@
                    "metric":"1",
                    "field":{
                       "FoldersList.EXCLUDE('users 1')":"PROGRAM FILES 7"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('users 1')":"USERS 1"
                    }
                 }
              },
@@ -4214,279 +4174,58 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.EXCLUDE('*ERS')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.EXCLUDE('use*')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FoldersList.EXCLUDE('*ERS')" metric="COUNT(*)" query="*"/>
-        <totalobjects>8</totalobjects>
-        <summary>8</summary>
-        <totalgroups>16</totalgroups>
-        <groups>
-            <group>
-                <metric>3</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">(null)</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">PROGRAM FILES 1</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">PROGRAM FILES 3</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">PROGRAM FILES 4</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">PROGRAM FILES 6</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">PROGRAM FILES 7</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">USERS 1</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">USERS 3</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">USERS 4</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">USERS 6</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">USERS 7</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">WINDOWS 1</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">WINDOWS 3</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">WINDOWS 4</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">WINDOWS 6</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">WINDOWS 7</field>
-            </group>
-        </groups>
-    </results>
-*** Response: json
-    200 OK
-    {
-       "results":{
-          "aggregate":{
-             "metric":"COUNT(*)",
-             "query":"*",
-             "group":"FoldersList.EXCLUDE('*ERS')"
-          },
-          "totalobjects":"8",
-          "summary":"8",
-          "totalgroups":"16",
-          "groups":[
-             {
-                "group":{
-                   "metric":"3",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"(null)"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"PROGRAM FILES 1"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"PROGRAM FILES 3"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"PROGRAM FILES 4"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"PROGRAM FILES 6"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"PROGRAM FILES 7"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"USERS 1"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"USERS 3"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"USERS 4"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"USERS 6"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"USERS 7"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"WINDOWS 1"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"WINDOWS 3"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"WINDOWS 4"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"WINDOWS 6"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"WINDOWS 7"
-                   }
-                }
-             }
-          ]
-       }
-    }
-
-*** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.EXCLUDE('USE*')&shards=shard
-*** Response: xml
-    200 OK
-    <results>
-        <aggregate group="FoldersList.EXCLUDE('USE*')" metric="COUNT(*)" query="*"/>
+        <aggregate group="FoldersList.EXCLUDE('use*')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>11</totalgroups>
         <groups>
             <group>
                 <metric>3</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">(null)</field>
+                <field name="FoldersList.EXCLUDE('use*')">(null)</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 1</field>
+                <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 1</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 3</field>
+                <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 3</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 4</field>
+                <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 4</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 6</field>
+                <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 6</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 7</field>
+                <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 7</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 1</field>
+                <field name="FoldersList.EXCLUDE('use*')">WINDOWS 1</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 3</field>
+                <field name="FoldersList.EXCLUDE('use*')">WINDOWS 3</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 4</field>
+                <field name="FoldersList.EXCLUDE('use*')">WINDOWS 4</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 6</field>
+                <field name="FoldersList.EXCLUDE('use*')">WINDOWS 6</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 7</field>
+                <field name="FoldersList.EXCLUDE('use*')">WINDOWS 7</field>
             </group>
         </groups>
     </results>
@@ -4497,7 +4236,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FoldersList.EXCLUDE('USE*')"
+             "group":"FoldersList.EXCLUDE('use*')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -4507,7 +4246,7 @@
                 "group":{
                    "metric":"3",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"(null)"
+                      "FoldersList.EXCLUDE('use*')":"(null)"
                    }
                 }
              },
@@ -4515,7 +4254,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 1"
+                      "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 1"
                    }
                 }
              },
@@ -4523,7 +4262,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 3"
+                      "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 3"
                    }
                 }
              },
@@ -4531,7 +4270,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 4"
+                      "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 4"
                    }
                 }
              },
@@ -4539,7 +4278,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 6"
+                      "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 6"
                    }
                 }
              },
@@ -4547,7 +4286,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 7"
+                      "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 7"
                    }
                 }
              },
@@ -4555,7 +4294,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"WINDOWS 1"
+                      "FoldersList.EXCLUDE('use*')":"WINDOWS 1"
                    }
                 }
              },
@@ -4563,7 +4302,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"WINDOWS 3"
+                      "FoldersList.EXCLUDE('use*')":"WINDOWS 3"
                    }
                 }
              },
@@ -4571,7 +4310,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"WINDOWS 4"
+                      "FoldersList.EXCLUDE('use*')":"WINDOWS 4"
                    }
                 }
              },
@@ -4579,7 +4318,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"WINDOWS 6"
+                      "FoldersList.EXCLUDE('use*')":"WINDOWS 6"
                    }
                 }
              },
@@ -4587,7 +4326,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"WINDOWS 7"
+                      "FoldersList.EXCLUDE('use*')":"WINDOWS 7"
                    }
                 }
              }
@@ -4596,58 +4335,58 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.EXCLUDE('USERS ?')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.EXCLUDE('USerS ?')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FoldersList.EXCLUDE('USERS ?')" metric="COUNT(*)" query="*"/>
+        <aggregate group="FoldersList.EXCLUDE('USerS ?')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>11</totalgroups>
         <groups>
             <group>
                 <metric>3</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">(null)</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">(null)</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 1</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 1</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 3</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 3</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 4</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 4</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 6</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 6</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 7</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 7</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 1</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 1</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 3</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 3</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 4</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 4</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 6</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 6</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 7</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 7</field>
             </group>
         </groups>
     </results>
@@ -4658,7 +4397,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FoldersList.EXCLUDE('USERS ?')"
+             "group":"FoldersList.EXCLUDE('USerS ?')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -4668,7 +4407,7 @@
                 "group":{
                    "metric":"3",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"(null)"
+                      "FoldersList.EXCLUDE('USerS ?')":"(null)"
                    }
                 }
              },
@@ -4676,7 +4415,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 1"
+                      "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 1"
                    }
                 }
              },
@@ -4684,7 +4423,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 3"
+                      "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 3"
                    }
                 }
              },
@@ -4692,7 +4431,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 4"
+                      "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 4"
                    }
                 }
              },
@@ -4700,7 +4439,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 6"
+                      "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 6"
                    }
                 }
              },
@@ -4708,7 +4447,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 7"
+                      "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 7"
                    }
                 }
              },
@@ -4716,7 +4455,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 1"
+                      "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 1"
                    }
                 }
              },
@@ -4724,7 +4463,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 3"
+                      "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 3"
                    }
                 }
              },
@@ -4732,7 +4471,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 4"
+                      "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 4"
                    }
                 }
              },
@@ -4740,7 +4479,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 6"
+                      "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 6"
                    }
                 }
              },
@@ -4748,7 +4487,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 7"
+                      "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 7"
                    }
                 }
              }
@@ -5828,10 +5567,6 @@
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('users 1')">USERS 1</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
                         <field name="FoldersList.EXCLUDE('users 1')">WINDOWS 1</field>
                     </group>
                 </groups>
@@ -5965,14 +5700,6 @@
                             "metric":"1",
                             "field":{
                                "FoldersList.EXCLUDE('users 1')":"PROGRAM FILES 1"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('users 1')":"USERS 1"
                             }
                          }
                       },
@@ -6182,11 +5909,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.EXCLUDE('*USE')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.EXCLUDE('use*')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FoldersList.EXCLUDE('*USE')"
+        <aggregate group="FileName,FoldersList.EXCLUDE('use*')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -6198,15 +5925,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">PROGRAM FILES 1</field>
+                        <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 1</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">USERS 1</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">WINDOWS 1</field>
+                        <field name="FoldersList.EXCLUDE('use*')">WINDOWS 1</field>
                     </group>
                 </groups>
             </group>
@@ -6216,7 +5939,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">(null)</field>
+                        <field name="FoldersList.EXCLUDE('use*')">(null)</field>
                     </group>
                 </groups>
             </group>
@@ -6226,15 +5949,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">PROGRAM FILES 3</field>
+                        <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 3</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">USERS 3</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">WINDOWS 3</field>
+                        <field name="FoldersList.EXCLUDE('use*')">WINDOWS 3</field>
                     </group>
                 </groups>
             </group>
@@ -6244,15 +5963,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">PROGRAM FILES 4</field>
+                        <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 4</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">USERS 4</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">WINDOWS 4</field>
+                        <field name="FoldersList.EXCLUDE('use*')">WINDOWS 4</field>
                     </group>
                 </groups>
             </group>
@@ -6262,7 +5977,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">(null)</field>
+                        <field name="FoldersList.EXCLUDE('use*')">(null)</field>
                     </group>
                 </groups>
             </group>
@@ -6272,15 +5987,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">PROGRAM FILES 6</field>
+                        <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 6</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">USERS 6</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">WINDOWS 6</field>
+                        <field name="FoldersList.EXCLUDE('use*')">WINDOWS 6</field>
                     </group>
                 </groups>
             </group>
@@ -6290,15 +6001,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">PROGRAM FILES 7</field>
+                        <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 7</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">USERS 7</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">WINDOWS 7</field>
+                        <field name="FoldersList.EXCLUDE('use*')">WINDOWS 7</field>
                     </group>
                 </groups>
             </group>
@@ -6308,7 +6015,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">(null)</field>
+                        <field name="FoldersList.EXCLUDE('use*')">(null)</field>
                     </group>
                 </groups>
             </group>
@@ -6321,7 +6028,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FoldersList.EXCLUDE('*USE')"
+             "group":"FileName,FoldersList.EXCLUDE('use*')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -6338,7 +6045,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"PROGRAM FILES 1"
+                               "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 1"
                             }
                          }
                       },
@@ -6346,15 +6053,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"USERS 1"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('*USE')":"WINDOWS 1"
+                               "FoldersList.EXCLUDE('use*')":"WINDOWS 1"
                             }
                          }
                       }
@@ -6372,7 +6071,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"(null)"
+                               "FoldersList.EXCLUDE('use*')":"(null)"
                             }
                          }
                       }
@@ -6390,7 +6089,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"PROGRAM FILES 3"
+                               "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 3"
                             }
                          }
                       },
@@ -6398,15 +6097,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"USERS 3"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('*USE')":"WINDOWS 3"
+                               "FoldersList.EXCLUDE('use*')":"WINDOWS 3"
                             }
                          }
                       }
@@ -6424,7 +6115,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"PROGRAM FILES 4"
+                               "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 4"
                             }
                          }
                       },
@@ -6432,15 +6123,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"USERS 4"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('*USE')":"WINDOWS 4"
+                               "FoldersList.EXCLUDE('use*')":"WINDOWS 4"
                             }
                          }
                       }
@@ -6458,7 +6141,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"(null)"
+                               "FoldersList.EXCLUDE('use*')":"(null)"
                             }
                          }
                       }
@@ -6476,7 +6159,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"PROGRAM FILES 6"
+                               "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 6"
                             }
                          }
                       },
@@ -6484,15 +6167,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"USERS 6"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('*USE')":"WINDOWS 6"
+                               "FoldersList.EXCLUDE('use*')":"WINDOWS 6"
                             }
                          }
                       }
@@ -6510,7 +6185,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"PROGRAM FILES 7"
+                               "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 7"
                             }
                          }
                       },
@@ -6518,15 +6193,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"USERS 7"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('*USE')":"WINDOWS 7"
+                               "FoldersList.EXCLUDE('use*')":"WINDOWS 7"
                             }
                          }
                       }
@@ -6544,7 +6211,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"(null)"
+                               "FoldersList.EXCLUDE('use*')":"(null)"
                             }
                          }
                       }
@@ -6556,11 +6223,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.EXCLUDE('USE*')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.EXCLUDE('USerS ?')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FoldersList.EXCLUDE('USE*')"
+        <aggregate group="FileName,FoldersList.EXCLUDE('USerS ?')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -6572,11 +6239,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 1</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 1</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 1</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 1</field>
                     </group>
                 </groups>
             </group>
@@ -6586,7 +6253,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">(null)</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">(null)</field>
                     </group>
                 </groups>
             </group>
@@ -6596,11 +6263,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 3</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 3</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 3</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 3</field>
                     </group>
                 </groups>
             </group>
@@ -6610,11 +6277,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 4</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 4</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 4</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 4</field>
                     </group>
                 </groups>
             </group>
@@ -6624,7 +6291,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">(null)</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">(null)</field>
                     </group>
                 </groups>
             </group>
@@ -6634,11 +6301,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 6</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 6</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 6</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 6</field>
                     </group>
                 </groups>
             </group>
@@ -6648,11 +6315,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 7</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 7</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 7</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 7</field>
                     </group>
                 </groups>
             </group>
@@ -6662,7 +6329,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">(null)</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">(null)</field>
                     </group>
                 </groups>
             </group>
@@ -6675,7 +6342,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FoldersList.EXCLUDE('USE*')"
+             "group":"FileName,FoldersList.EXCLUDE('USerS ?')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -6692,7 +6359,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 1"
+                               "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 1"
                             }
                          }
                       },
@@ -6700,7 +6367,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"WINDOWS 1"
+                               "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 1"
                             }
                          }
                       }
@@ -6718,7 +6385,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"(null)"
+                               "FoldersList.EXCLUDE('USerS ?')":"(null)"
                             }
                          }
                       }
@@ -6736,7 +6403,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 3"
+                               "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 3"
                             }
                          }
                       },
@@ -6744,7 +6411,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"WINDOWS 3"
+                               "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 3"
                             }
                          }
                       }
@@ -6762,7 +6429,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 4"
+                               "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 4"
                             }
                          }
                       },
@@ -6770,7 +6437,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"WINDOWS 4"
+                               "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 4"
                             }
                          }
                       }
@@ -6788,7 +6455,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"(null)"
+                               "FoldersList.EXCLUDE('USerS ?')":"(null)"
                             }
                          }
                       }
@@ -6806,7 +6473,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 6"
+                               "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 6"
                             }
                          }
                       },
@@ -6814,7 +6481,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"WINDOWS 6"
+                               "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 6"
                             }
                          }
                       }
@@ -6832,7 +6499,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 7"
+                               "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 7"
                             }
                          }
                       },
@@ -6840,7 +6507,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"WINDOWS 7"
+                               "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 7"
                             }
                          }
                       }
@@ -6858,321 +6525,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"(null)"
-                            }
-                         }
-                      }
-                   ]
-                }
-             }
-          ]
-       }
-    }
-
-*** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.EXCLUDE('USERS ?')&shards=shard
-*** Response: xml
-    200 OK
-    <results>
-        <aggregate group="FileName,FoldersList.EXCLUDE('USERS ?')"
-            metric="COUNT(*)" query="*"/>
-        <totalobjects>8</totalobjects>
-        <summary>8</summary>
-        <totalgroups>8</totalgroups>
-        <groups>
-            <group>
-                <summary>1</summary>
-                <field name="FileName">File_1</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 1</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 1</field>
-                    </group>
-                </groups>
-            </group>
-            <group>
-                <summary>1</summary>
-                <field name="FileName">File_2</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">(null)</field>
-                    </group>
-                </groups>
-            </group>
-            <group>
-                <summary>1</summary>
-                <field name="FileName">File_3</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 3</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 3</field>
-                    </group>
-                </groups>
-            </group>
-            <group>
-                <summary>1</summary>
-                <field name="FileName">File_4</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 4</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 4</field>
-                    </group>
-                </groups>
-            </group>
-            <group>
-                <summary>1</summary>
-                <field name="FileName">File_5</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">(null)</field>
-                    </group>
-                </groups>
-            </group>
-            <group>
-                <summary>1</summary>
-                <field name="FileName">File_6</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 6</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 6</field>
-                    </group>
-                </groups>
-            </group>
-            <group>
-                <summary>1</summary>
-                <field name="FileName">File_7</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 7</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 7</field>
-                    </group>
-                </groups>
-            </group>
-            <group>
-                <summary>1</summary>
-                <field name="FileName">File_8</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">(null)</field>
-                    </group>
-                </groups>
-            </group>
-        </groups>
-    </results>
-*** Response: json
-    200 OK
-    {
-       "results":{
-          "aggregate":{
-             "metric":"COUNT(*)",
-             "query":"*",
-             "group":"FileName,FoldersList.EXCLUDE('USERS ?')"
-          },
-          "totalobjects":"8",
-          "summary":"8",
-          "totalgroups":"8",
-          "groups":[
-             {
-                "group":{
-                   "summary":"1",
-                   "field":{
-                      "FileName":"File_1"
-                   },
-                   "groups":[
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 1"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 1"
-                            }
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "group":{
-                   "summary":"1",
-                   "field":{
-                      "FileName":"File_2"
-                   },
-                   "groups":[
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"(null)"
-                            }
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "group":{
-                   "summary":"1",
-                   "field":{
-                      "FileName":"File_3"
-                   },
-                   "groups":[
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 3"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 3"
-                            }
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "group":{
-                   "summary":"1",
-                   "field":{
-                      "FileName":"File_4"
-                   },
-                   "groups":[
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 4"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 4"
-                            }
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "group":{
-                   "summary":"1",
-                   "field":{
-                      "FileName":"File_5"
-                   },
-                   "groups":[
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"(null)"
-                            }
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "group":{
-                   "summary":"1",
-                   "field":{
-                      "FileName":"File_6"
-                   },
-                   "groups":[
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 6"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 6"
-                            }
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "group":{
-                   "summary":"1",
-                   "field":{
-                      "FileName":"File_7"
-                   },
-                   "groups":[
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 7"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 7"
-                            }
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "group":{
-                   "summary":"1",
-                   "field":{
-                      "FileName":"File_8"
-                   },
-                   "groups":[
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"(null)"
+                               "FoldersList.EXCLUDE('USerS ?')":"(null)"
                             }
                          }
                       }
@@ -9235,6 +8588,112 @@
        }
     }
 
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=IsFileTested.EXCLUDE(FALSE)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="IsFileTested.EXCLUDE(FALSE)" metric="COUNT(*)" query="*"/>
+        <totalobjects>8</totalobjects>
+        <summary>8</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>4</metric>
+                <field name="IsFileTested.EXCLUDE(FALSE)">(null)</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="IsFileTested.EXCLUDE(FALSE)">true</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"IsFileTested.EXCLUDE(FALSE)"
+          },
+          "totalobjects":"8",
+          "summary":"8",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"4",
+                   "field":{
+                      "IsFileTested.EXCLUDE(FALSE)":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "IsFileTested.EXCLUDE(FALSE)":"true"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=IsFileTested.EXCLUDE(TRUE)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="IsFileTested.EXCLUDE(TRUE)" metric="COUNT(*)" query="*"/>
+        <totalobjects>8</totalobjects>
+        <summary>8</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>4</metric>
+                <field name="IsFileTested.EXCLUDE(TRUE)">(null)</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="IsFileTested.EXCLUDE(TRUE)">false</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"IsFileTested.EXCLUDE(TRUE)"
+          },
+          "totalobjects":"8",
+          "summary":"8",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"4",
+                   "field":{
+                      "IsFileTested.EXCLUDE(TRUE)":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "IsFileTested.EXCLUDE(TRUE)":"false"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
 ~~~~~~~~~~~
 *** Request
     GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,IsFileTested.EXCLUDE(NULL)&shards=shard
@@ -9860,6 +9319,450 @@
                             "metric":"1",
                             "field":{
                                "IsFileTested.EXCLUDE(true)":"(null)"
+                            }
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,IsFileTested.EXCLUDE(FALSE)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="FileName,IsFileTested.EXCLUDE(FALSE)"
+            metric="COUNT(*)" query="*"/>
+        <totalobjects>8</totalobjects>
+        <summary>8</summary>
+        <totalgroups>8</totalgroups>
+        <groups>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_1</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(FALSE)">(null)</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_2</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(FALSE)">true</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_3</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(FALSE)">(null)</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FileName">File_4</field>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_5</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(FALSE)">(null)</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_6</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(FALSE)">true</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FileName">File_7</field>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_8</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(FALSE)">(null)</field>
+                    </group>
+                </groups>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"FileName,IsFileTested.EXCLUDE(FALSE)"
+          },
+          "totalobjects":"8",
+          "summary":"8",
+          "totalgroups":"8",
+          "groups":[
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_1"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(FALSE)":"(null)"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_2"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(FALSE)":"true"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_3"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(FALSE)":"(null)"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_4"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_5"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(FALSE)":"(null)"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_6"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(FALSE)":"true"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_7"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_8"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(FALSE)":"(null)"
+                            }
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,IsFileTested.EXCLUDE(TRUE)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="FileName,IsFileTested.EXCLUDE(TRUE)"
+            metric="COUNT(*)" query="*"/>
+        <totalobjects>8</totalobjects>
+        <summary>8</summary>
+        <totalgroups>8</totalgroups>
+        <groups>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_1</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(TRUE)">(null)</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FileName">File_2</field>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_3</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(TRUE)">(null)</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_4</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(TRUE)">false</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_5</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(TRUE)">(null)</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FileName">File_6</field>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_7</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(TRUE)">false</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_8</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(TRUE)">(null)</field>
+                    </group>
+                </groups>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"FileName,IsFileTested.EXCLUDE(TRUE)"
+          },
+          "totalobjects":"8",
+          "summary":"8",
+          "totalgroups":"8",
+          "groups":[
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_1"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(TRUE)":"(null)"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_2"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_3"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(TRUE)":"(null)"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_4"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(TRUE)":"false"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_5"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(TRUE)":"(null)"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_6"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_7"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(TRUE)":"false"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_8"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(TRUE)":"(null)"
                             }
                          }
                       }
@@ -12201,15 +12104,11 @@
         <aggregate group="FolderName.EXCLUDE('folder')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
-        <totalgroups>4</totalgroups>
+        <totalgroups>3</totalgroups>
         <groups>
             <group>
                 <metric>5</metric>
                 <field name="FolderName.EXCLUDE('folder')">(null)</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FolderName.EXCLUDE('folder')">Folder</field>
             </group>
             <group>
                 <metric>1</metric>
@@ -12232,21 +12131,13 @@
           },
           "totalobjects":"8",
           "summary":"8",
-          "totalgroups":"4",
+          "totalgroups":"3",
           "groups":[
              {
                 "group":{
                    "metric":"5",
                    "field":{
                       "FolderName.EXCLUDE('folder')":"(null)"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FolderName.EXCLUDE('folder')":"Folder"
                    }
                 }
              },
@@ -13049,14 +12940,8 @@
                 </groups>
             </group>
             <group>
-                <summary>1</summary>
+                <metric>1</metric>
                 <field name="FileName">File_2</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FolderName.EXCLUDE('folder')">Folder</field>
-                    </group>
-                </groups>
             </group>
             <group>
                 <summary>1</summary>
@@ -13153,20 +13038,10 @@
              },
              {
                 "group":{
-                   "summary":"1",
+                   "metric":"1",
                    "field":{
                       "FileName":"File_2"
-                   },
-                   "groups":[
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FolderName.EXCLUDE('folder')":"Folder"
-                            }
-                         }
-                      }
-                   ]
+                   }
                 }
              },
              {
@@ -14585,7 +14460,7 @@
         <aggregate group="FoldersList.EXCLUDE('users 1')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
-        <totalgroups>16</totalgroups>
+        <totalgroups>15</totalgroups>
         <groups>
             <group>
                 <metric>3</metric>
@@ -14610,10 +14485,6 @@
             <group>
                 <metric>1</metric>
                 <field name="FoldersList.EXCLUDE('users 1')">PROGRAM FILES 7</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('users 1')">USERS 1</field>
             </group>
             <group>
                 <metric>1</metric>
@@ -14664,7 +14535,7 @@
           },
           "totalobjects":"8",
           "summary":"8",
-          "totalgroups":"16",
+          "totalgroups":"15",
           "groups":[
              {
                 "group":{
@@ -14711,14 +14582,6 @@
                    "metric":"1",
                    "field":{
                       "FoldersList.EXCLUDE('users 1')":"PROGRAM FILES 7"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('users 1')":"USERS 1"
                    }
                 }
              },
@@ -14799,279 +14662,58 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.EXCLUDE('*ERS')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.EXCLUDE('use*')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FoldersList.EXCLUDE('*ERS')" metric="COUNT(*)" query="*"/>
-        <totalobjects>8</totalobjects>
-        <summary>8</summary>
-        <totalgroups>16</totalgroups>
-        <groups>
-            <group>
-                <metric>3</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">(null)</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">PROGRAM FILES 1</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">PROGRAM FILES 3</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">PROGRAM FILES 4</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">PROGRAM FILES 6</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">PROGRAM FILES 7</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">USERS 1</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">USERS 3</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">USERS 4</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">USERS 6</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">USERS 7</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">WINDOWS 1</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">WINDOWS 3</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">WINDOWS 4</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">WINDOWS 6</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('*ERS')">WINDOWS 7</field>
-            </group>
-        </groups>
-    </results>
-*** Response: json
-    200 OK
-    {
-       "results":{
-          "aggregate":{
-             "metric":"COUNT(*)",
-             "query":"*",
-             "group":"FoldersList.EXCLUDE('*ERS')"
-          },
-          "totalobjects":"8",
-          "summary":"8",
-          "totalgroups":"16",
-          "groups":[
-             {
-                "group":{
-                   "metric":"3",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"(null)"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"PROGRAM FILES 1"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"PROGRAM FILES 3"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"PROGRAM FILES 4"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"PROGRAM FILES 6"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"PROGRAM FILES 7"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"USERS 1"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"USERS 3"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"USERS 4"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"USERS 6"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"USERS 7"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"WINDOWS 1"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"WINDOWS 3"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"WINDOWS 4"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"WINDOWS 6"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.EXCLUDE('*ERS')":"WINDOWS 7"
-                   }
-                }
-             }
-          ]
-       }
-    }
-
-*** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.EXCLUDE('USE*')&shards=shard
-*** Response: xml
-    200 OK
-    <results>
-        <aggregate group="FoldersList.EXCLUDE('USE*')" metric="COUNT(*)" query="*"/>
+        <aggregate group="FoldersList.EXCLUDE('use*')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>11</totalgroups>
         <groups>
             <group>
                 <metric>3</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">(null)</field>
+                <field name="FoldersList.EXCLUDE('use*')">(null)</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 1</field>
+                <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 1</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 3</field>
+                <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 3</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 4</field>
+                <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 4</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 6</field>
+                <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 6</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 7</field>
+                <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 7</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 1</field>
+                <field name="FoldersList.EXCLUDE('use*')">WINDOWS 1</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 3</field>
+                <field name="FoldersList.EXCLUDE('use*')">WINDOWS 3</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 4</field>
+                <field name="FoldersList.EXCLUDE('use*')">WINDOWS 4</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 6</field>
+                <field name="FoldersList.EXCLUDE('use*')">WINDOWS 6</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 7</field>
+                <field name="FoldersList.EXCLUDE('use*')">WINDOWS 7</field>
             </group>
         </groups>
     </results>
@@ -15082,7 +14724,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FoldersList.EXCLUDE('USE*')"
+             "group":"FoldersList.EXCLUDE('use*')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -15092,7 +14734,7 @@
                 "group":{
                    "metric":"3",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"(null)"
+                      "FoldersList.EXCLUDE('use*')":"(null)"
                    }
                 }
              },
@@ -15100,7 +14742,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 1"
+                      "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 1"
                    }
                 }
              },
@@ -15108,7 +14750,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 3"
+                      "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 3"
                    }
                 }
              },
@@ -15116,7 +14758,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 4"
+                      "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 4"
                    }
                 }
              },
@@ -15124,7 +14766,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 6"
+                      "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 6"
                    }
                 }
              },
@@ -15132,7 +14774,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 7"
+                      "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 7"
                    }
                 }
              },
@@ -15140,7 +14782,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"WINDOWS 1"
+                      "FoldersList.EXCLUDE('use*')":"WINDOWS 1"
                    }
                 }
              },
@@ -15148,7 +14790,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"WINDOWS 3"
+                      "FoldersList.EXCLUDE('use*')":"WINDOWS 3"
                    }
                 }
              },
@@ -15156,7 +14798,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"WINDOWS 4"
+                      "FoldersList.EXCLUDE('use*')":"WINDOWS 4"
                    }
                 }
              },
@@ -15164,7 +14806,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"WINDOWS 6"
+                      "FoldersList.EXCLUDE('use*')":"WINDOWS 6"
                    }
                 }
              },
@@ -15172,7 +14814,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USE*')":"WINDOWS 7"
+                      "FoldersList.EXCLUDE('use*')":"WINDOWS 7"
                    }
                 }
              }
@@ -15181,58 +14823,58 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.EXCLUDE('USERS ?')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.EXCLUDE('USerS ?')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FoldersList.EXCLUDE('USERS ?')" metric="COUNT(*)" query="*"/>
+        <aggregate group="FoldersList.EXCLUDE('USerS ?')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>11</totalgroups>
         <groups>
             <group>
                 <metric>3</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">(null)</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">(null)</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 1</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 1</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 3</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 3</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 4</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 4</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 6</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 6</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 7</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 7</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 1</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 1</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 3</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 3</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 4</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 4</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 6</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 6</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 7</field>
+                <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 7</field>
             </group>
         </groups>
     </results>
@@ -15243,7 +14885,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FoldersList.EXCLUDE('USERS ?')"
+             "group":"FoldersList.EXCLUDE('USerS ?')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -15253,7 +14895,7 @@
                 "group":{
                    "metric":"3",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"(null)"
+                      "FoldersList.EXCLUDE('USerS ?')":"(null)"
                    }
                 }
              },
@@ -15261,7 +14903,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 1"
+                      "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 1"
                    }
                 }
              },
@@ -15269,7 +14911,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 3"
+                      "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 3"
                    }
                 }
              },
@@ -15277,7 +14919,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 4"
+                      "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 4"
                    }
                 }
              },
@@ -15285,7 +14927,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 6"
+                      "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 6"
                    }
                 }
              },
@@ -15293,7 +14935,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 7"
+                      "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 7"
                    }
                 }
              },
@@ -15301,7 +14943,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 1"
+                      "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 1"
                    }
                 }
              },
@@ -15309,7 +14951,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 3"
+                      "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 3"
                    }
                 }
              },
@@ -15317,7 +14959,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 4"
+                      "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 4"
                    }
                 }
              },
@@ -15325,7 +14967,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 6"
+                      "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 6"
                    }
                 }
              },
@@ -15333,7 +14975,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 7"
+                      "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 7"
                    }
                 }
              }
@@ -16413,10 +16055,6 @@
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('users 1')">USERS 1</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
                         <field name="FoldersList.EXCLUDE('users 1')">WINDOWS 1</field>
                     </group>
                 </groups>
@@ -16550,14 +16188,6 @@
                             "metric":"1",
                             "field":{
                                "FoldersList.EXCLUDE('users 1')":"PROGRAM FILES 1"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('users 1')":"USERS 1"
                             }
                          }
                       },
@@ -16767,11 +16397,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.EXCLUDE('*USE')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.EXCLUDE('use*')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FoldersList.EXCLUDE('*USE')"
+        <aggregate group="FileName,FoldersList.EXCLUDE('use*')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -16783,15 +16413,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">PROGRAM FILES 1</field>
+                        <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 1</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">USERS 1</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">WINDOWS 1</field>
+                        <field name="FoldersList.EXCLUDE('use*')">WINDOWS 1</field>
                     </group>
                 </groups>
             </group>
@@ -16801,7 +16427,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">(null)</field>
+                        <field name="FoldersList.EXCLUDE('use*')">(null)</field>
                     </group>
                 </groups>
             </group>
@@ -16811,15 +16437,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">PROGRAM FILES 3</field>
+                        <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 3</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">USERS 3</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">WINDOWS 3</field>
+                        <field name="FoldersList.EXCLUDE('use*')">WINDOWS 3</field>
                     </group>
                 </groups>
             </group>
@@ -16829,15 +16451,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">PROGRAM FILES 4</field>
+                        <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 4</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">USERS 4</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">WINDOWS 4</field>
+                        <field name="FoldersList.EXCLUDE('use*')">WINDOWS 4</field>
                     </group>
                 </groups>
             </group>
@@ -16847,7 +16465,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">(null)</field>
+                        <field name="FoldersList.EXCLUDE('use*')">(null)</field>
                     </group>
                 </groups>
             </group>
@@ -16857,15 +16475,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">PROGRAM FILES 6</field>
+                        <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 6</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">USERS 6</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">WINDOWS 6</field>
+                        <field name="FoldersList.EXCLUDE('use*')">WINDOWS 6</field>
                     </group>
                 </groups>
             </group>
@@ -16875,15 +16489,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">PROGRAM FILES 7</field>
+                        <field name="FoldersList.EXCLUDE('use*')">PROGRAM FILES 7</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">USERS 7</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">WINDOWS 7</field>
+                        <field name="FoldersList.EXCLUDE('use*')">WINDOWS 7</field>
                     </group>
                 </groups>
             </group>
@@ -16893,7 +16503,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('*USE')">(null)</field>
+                        <field name="FoldersList.EXCLUDE('use*')">(null)</field>
                     </group>
                 </groups>
             </group>
@@ -16906,7 +16516,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FoldersList.EXCLUDE('*USE')"
+             "group":"FileName,FoldersList.EXCLUDE('use*')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -16923,7 +16533,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"PROGRAM FILES 1"
+                               "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 1"
                             }
                          }
                       },
@@ -16931,15 +16541,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"USERS 1"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('*USE')":"WINDOWS 1"
+                               "FoldersList.EXCLUDE('use*')":"WINDOWS 1"
                             }
                          }
                       }
@@ -16957,7 +16559,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"(null)"
+                               "FoldersList.EXCLUDE('use*')":"(null)"
                             }
                          }
                       }
@@ -16975,7 +16577,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"PROGRAM FILES 3"
+                               "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 3"
                             }
                          }
                       },
@@ -16983,15 +16585,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"USERS 3"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('*USE')":"WINDOWS 3"
+                               "FoldersList.EXCLUDE('use*')":"WINDOWS 3"
                             }
                          }
                       }
@@ -17009,7 +16603,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"PROGRAM FILES 4"
+                               "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 4"
                             }
                          }
                       },
@@ -17017,15 +16611,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"USERS 4"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('*USE')":"WINDOWS 4"
+                               "FoldersList.EXCLUDE('use*')":"WINDOWS 4"
                             }
                          }
                       }
@@ -17043,7 +16629,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"(null)"
+                               "FoldersList.EXCLUDE('use*')":"(null)"
                             }
                          }
                       }
@@ -17061,7 +16647,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"PROGRAM FILES 6"
+                               "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 6"
                             }
                          }
                       },
@@ -17069,15 +16655,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"USERS 6"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('*USE')":"WINDOWS 6"
+                               "FoldersList.EXCLUDE('use*')":"WINDOWS 6"
                             }
                          }
                       }
@@ -17095,7 +16673,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"PROGRAM FILES 7"
+                               "FoldersList.EXCLUDE('use*')":"PROGRAM FILES 7"
                             }
                          }
                       },
@@ -17103,15 +16681,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"USERS 7"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('*USE')":"WINDOWS 7"
+                               "FoldersList.EXCLUDE('use*')":"WINDOWS 7"
                             }
                          }
                       }
@@ -17129,7 +16699,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('*USE')":"(null)"
+                               "FoldersList.EXCLUDE('use*')":"(null)"
                             }
                          }
                       }
@@ -17141,11 +16711,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.EXCLUDE('USE*')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.EXCLUDE('USerS ?')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FoldersList.EXCLUDE('USE*')"
+        <aggregate group="FileName,FoldersList.EXCLUDE('USerS ?')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -17157,11 +16727,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 1</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 1</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 1</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 1</field>
                     </group>
                 </groups>
             </group>
@@ -17171,7 +16741,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">(null)</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">(null)</field>
                     </group>
                 </groups>
             </group>
@@ -17181,11 +16751,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 3</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 3</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 3</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 3</field>
                     </group>
                 </groups>
             </group>
@@ -17195,11 +16765,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 4</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 4</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 4</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 4</field>
                     </group>
                 </groups>
             </group>
@@ -17209,7 +16779,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">(null)</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">(null)</field>
                     </group>
                 </groups>
             </group>
@@ -17219,11 +16789,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 6</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 6</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 6</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 6</field>
                     </group>
                 </groups>
             </group>
@@ -17233,11 +16803,11 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">PROGRAM FILES 7</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">PROGRAM FILES 7</field>
                     </group>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">WINDOWS 7</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">WINDOWS 7</field>
                     </group>
                 </groups>
             </group>
@@ -17247,7 +16817,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USE*')">(null)</field>
+                        <field name="FoldersList.EXCLUDE('USerS ?')">(null)</field>
                     </group>
                 </groups>
             </group>
@@ -17260,7 +16830,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FoldersList.EXCLUDE('USE*')"
+             "group":"FileName,FoldersList.EXCLUDE('USerS ?')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -17277,7 +16847,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 1"
+                               "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 1"
                             }
                          }
                       },
@@ -17285,7 +16855,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"WINDOWS 1"
+                               "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 1"
                             }
                          }
                       }
@@ -17303,7 +16873,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"(null)"
+                               "FoldersList.EXCLUDE('USerS ?')":"(null)"
                             }
                          }
                       }
@@ -17321,7 +16891,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 3"
+                               "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 3"
                             }
                          }
                       },
@@ -17329,7 +16899,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"WINDOWS 3"
+                               "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 3"
                             }
                          }
                       }
@@ -17347,7 +16917,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 4"
+                               "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 4"
                             }
                          }
                       },
@@ -17355,7 +16925,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"WINDOWS 4"
+                               "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 4"
                             }
                          }
                       }
@@ -17373,7 +16943,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"(null)"
+                               "FoldersList.EXCLUDE('USerS ?')":"(null)"
                             }
                          }
                       }
@@ -17391,7 +16961,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 6"
+                               "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 6"
                             }
                          }
                       },
@@ -17399,7 +16969,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"WINDOWS 6"
+                               "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 6"
                             }
                          }
                       }
@@ -17417,7 +16987,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"PROGRAM FILES 7"
+                               "FoldersList.EXCLUDE('USerS ?')":"PROGRAM FILES 7"
                             }
                          }
                       },
@@ -17425,7 +16995,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"WINDOWS 7"
+                               "FoldersList.EXCLUDE('USerS ?')":"WINDOWS 7"
                             }
                          }
                       }
@@ -17443,321 +17013,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.EXCLUDE('USE*')":"(null)"
-                            }
-                         }
-                      }
-                   ]
-                }
-             }
-          ]
-       }
-    }
-
-*** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.EXCLUDE('USERS ?')&shards=shard
-*** Response: xml
-    200 OK
-    <results>
-        <aggregate group="FileName,FoldersList.EXCLUDE('USERS ?')"
-            metric="COUNT(*)" query="*"/>
-        <totalobjects>8</totalobjects>
-        <summary>8</summary>
-        <totalgroups>8</totalgroups>
-        <groups>
-            <group>
-                <summary>1</summary>
-                <field name="FileName">File_1</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 1</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 1</field>
-                    </group>
-                </groups>
-            </group>
-            <group>
-                <summary>1</summary>
-                <field name="FileName">File_2</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">(null)</field>
-                    </group>
-                </groups>
-            </group>
-            <group>
-                <summary>1</summary>
-                <field name="FileName">File_3</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 3</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 3</field>
-                    </group>
-                </groups>
-            </group>
-            <group>
-                <summary>1</summary>
-                <field name="FileName">File_4</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 4</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 4</field>
-                    </group>
-                </groups>
-            </group>
-            <group>
-                <summary>1</summary>
-                <field name="FileName">File_5</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">(null)</field>
-                    </group>
-                </groups>
-            </group>
-            <group>
-                <summary>1</summary>
-                <field name="FileName">File_6</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 6</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 6</field>
-                    </group>
-                </groups>
-            </group>
-            <group>
-                <summary>1</summary>
-                <field name="FileName">File_7</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">PROGRAM FILES 7</field>
-                    </group>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">WINDOWS 7</field>
-                    </group>
-                </groups>
-            </group>
-            <group>
-                <summary>1</summary>
-                <field name="FileName">File_8</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FoldersList.EXCLUDE('USERS ?')">(null)</field>
-                    </group>
-                </groups>
-            </group>
-        </groups>
-    </results>
-*** Response: json
-    200 OK
-    {
-       "results":{
-          "aggregate":{
-             "metric":"COUNT(*)",
-             "query":"*",
-             "group":"FileName,FoldersList.EXCLUDE('USERS ?')"
-          },
-          "totalobjects":"8",
-          "summary":"8",
-          "totalgroups":"8",
-          "groups":[
-             {
-                "group":{
-                   "summary":"1",
-                   "field":{
-                      "FileName":"File_1"
-                   },
-                   "groups":[
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 1"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 1"
-                            }
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "group":{
-                   "summary":"1",
-                   "field":{
-                      "FileName":"File_2"
-                   },
-                   "groups":[
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"(null)"
-                            }
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "group":{
-                   "summary":"1",
-                   "field":{
-                      "FileName":"File_3"
-                   },
-                   "groups":[
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 3"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 3"
-                            }
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "group":{
-                   "summary":"1",
-                   "field":{
-                      "FileName":"File_4"
-                   },
-                   "groups":[
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 4"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 4"
-                            }
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "group":{
-                   "summary":"1",
-                   "field":{
-                      "FileName":"File_5"
-                   },
-                   "groups":[
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"(null)"
-                            }
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "group":{
-                   "summary":"1",
-                   "field":{
-                      "FileName":"File_6"
-                   },
-                   "groups":[
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 6"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 6"
-                            }
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "group":{
-                   "summary":"1",
-                   "field":{
-                      "FileName":"File_7"
-                   },
-                   "groups":[
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"PROGRAM FILES 7"
-                            }
-                         }
-                      },
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"WINDOWS 7"
-                            }
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "group":{
-                   "summary":"1",
-                   "field":{
-                      "FileName":"File_8"
-                   },
-                   "groups":[
-                      {
-                         "group":{
-                            "metric":"1",
-                            "field":{
-                               "FoldersList.EXCLUDE('USERS ?')":"(null)"
+                               "FoldersList.EXCLUDE('USerS ?')":"(null)"
                             }
                          }
                       }
@@ -19820,6 +19076,112 @@
        }
     }
 
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=IsFileTested.EXCLUDE(FALSE)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="IsFileTested.EXCLUDE(FALSE)" metric="COUNT(*)" query="*"/>
+        <totalobjects>8</totalobjects>
+        <summary>8</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>4</metric>
+                <field name="IsFileTested.EXCLUDE(FALSE)">(null)</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="IsFileTested.EXCLUDE(FALSE)">true</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"IsFileTested.EXCLUDE(FALSE)"
+          },
+          "totalobjects":"8",
+          "summary":"8",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"4",
+                   "field":{
+                      "IsFileTested.EXCLUDE(FALSE)":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "IsFileTested.EXCLUDE(FALSE)":"true"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=IsFileTested.EXCLUDE(TRUE)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="IsFileTested.EXCLUDE(TRUE)" metric="COUNT(*)" query="*"/>
+        <totalobjects>8</totalobjects>
+        <summary>8</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>4</metric>
+                <field name="IsFileTested.EXCLUDE(TRUE)">(null)</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="IsFileTested.EXCLUDE(TRUE)">false</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"IsFileTested.EXCLUDE(TRUE)"
+          },
+          "totalobjects":"8",
+          "summary":"8",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"4",
+                   "field":{
+                      "IsFileTested.EXCLUDE(TRUE)":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "IsFileTested.EXCLUDE(TRUE)":"false"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
 ~~~~~~~~~~~
 *** Request
     GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,IsFileTested.EXCLUDE(NULL)&shards=shard
@@ -20445,6 +19807,450 @@
                             "metric":"1",
                             "field":{
                                "IsFileTested.EXCLUDE(true)":"(null)"
+                            }
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,IsFileTested.EXCLUDE(FALSE)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="FileName,IsFileTested.EXCLUDE(FALSE)"
+            metric="COUNT(*)" query="*"/>
+        <totalobjects>8</totalobjects>
+        <summary>8</summary>
+        <totalgroups>8</totalgroups>
+        <groups>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_1</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(FALSE)">(null)</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_2</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(FALSE)">true</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_3</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(FALSE)">(null)</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FileName">File_4</field>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_5</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(FALSE)">(null)</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_6</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(FALSE)">true</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FileName">File_7</field>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_8</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(FALSE)">(null)</field>
+                    </group>
+                </groups>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"FileName,IsFileTested.EXCLUDE(FALSE)"
+          },
+          "totalobjects":"8",
+          "summary":"8",
+          "totalgroups":"8",
+          "groups":[
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_1"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(FALSE)":"(null)"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_2"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(FALSE)":"true"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_3"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(FALSE)":"(null)"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_4"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_5"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(FALSE)":"(null)"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_6"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(FALSE)":"true"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_7"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_8"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(FALSE)":"(null)"
+                            }
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,IsFileTested.EXCLUDE(TRUE)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="FileName,IsFileTested.EXCLUDE(TRUE)"
+            metric="COUNT(*)" query="*"/>
+        <totalobjects>8</totalobjects>
+        <summary>8</summary>
+        <totalgroups>8</totalgroups>
+        <groups>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_1</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(TRUE)">(null)</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FileName">File_2</field>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_3</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(TRUE)">(null)</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_4</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(TRUE)">false</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_5</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(TRUE)">(null)</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FileName">File_6</field>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_7</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(TRUE)">false</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_8</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="IsFileTested.EXCLUDE(TRUE)">(null)</field>
+                    </group>
+                </groups>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"FileName,IsFileTested.EXCLUDE(TRUE)"
+          },
+          "totalobjects":"8",
+          "summary":"8",
+          "totalgroups":"8",
+          "groups":[
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_1"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(TRUE)":"(null)"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_2"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_3"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(TRUE)":"(null)"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_4"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(TRUE)":"false"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_5"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(TRUE)":"(null)"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_6"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_7"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(TRUE)":"false"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_8"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "IsFileTested.EXCLUDE(TRUE)":"(null)"
                             }
                          }
                       }

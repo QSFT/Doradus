@@ -79,17 +79,15 @@
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE('USERS 1')" q="*" shards="shard" />
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE('?SERS 1')" q="*" shards="shard" />
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE('users 1')" q="*" shards="shard" />
-    <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE('*ERS')" q="*" shards="shard" />
-    <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE('USE*')" q="*" shards="shard" />
-    <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE('USERS ?')" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE('use*')" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE('USerS ?')" q="*" shards="shard" />
     <echo>~~~~~~~~~~~</echo>
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE(NULL)" q="*" shards="shard" />
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE('USERS 1')" q="*" shards="shard" />
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE('?SERS 1')" q="*" shards="shard" />
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE('users 1')" q="*" shards="shard" />
-    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE('*USE')" q="*" shards="shard" />
-    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE('USE*')" q="*" shards="shard" />
-    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE('USERS ?')" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE('use*')" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE('USerS ?')" q="*" shards="shard" />
 
     <echo>~~~~~~~~~~~</echo>
     <echo>~ INTEGER ~</echo>
@@ -124,10 +122,14 @@
     <AGGREGATE path="Application/File" m="COUNT(*)" f="IsFileTested.EXCLUDE(NULL)" q="*" shards="shard" />
     <AGGREGATE path="Application/File" m="COUNT(*)" f="IsFileTested.EXCLUDE(false)" q="*" shards="shard" />
     <AGGREGATE path="Application/File" m="COUNT(*)" f="IsFileTested.EXCLUDE(true)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="IsFileTested.EXCLUDE(FALSE)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="IsFileTested.EXCLUDE(TRUE)" q="*" shards="shard" />
     <echo>~~~~~~~~~~~</echo>
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,IsFileTested.EXCLUDE(NULL)" q="*" shards="shard" />
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,IsFileTested.EXCLUDE(false)" q="*" shards="shard" />
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,IsFileTested.EXCLUDE(true)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,IsFileTested.EXCLUDE(FALSE)" q="*" shards="shard" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,IsFileTested.EXCLUDE(TRUE)" q="*" shards="shard" />
 
     <echo>~~~~~~~~~~~~~</echo>
     <echo>~ TIMESTAMP ~</echo>

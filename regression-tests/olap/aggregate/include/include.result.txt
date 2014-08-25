@@ -1236,18 +1236,18 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('?older')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('?oldER')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FolderName.INCLUDE('?older')" metric="COUNT(*)" query="*"/>
+        <aggregate group="FolderName.INCLUDE('?oldER')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>1</totalgroups>
         <groups>
             <group>
                 <metric>1</metric>
-                <field name="FolderName.INCLUDE('?older')">Folder</field>
+                <field name="FolderName.INCLUDE('?oldER')">Folder</field>
             </group>
         </groups>
     </results>
@@ -1258,7 +1258,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FolderName.INCLUDE('?older')"
+             "group":"FolderName.INCLUDE('?oldER')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -1268,7 +1268,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FolderName.INCLUDE('?older')":"Folder"
+                      "FolderName.INCLUDE('?oldER')":"Folder"
                    }
                 }
              }
@@ -1277,43 +1277,18 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('folder')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('foLDEr')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FolderName.INCLUDE('folder')" metric="COUNT(*)" query="*"/>
-        <totalobjects>8</totalobjects>
-        <value>8</value>
-        <totalgroups>0</totalgroups>
-    </results>
-*** Response: json
-    200 OK
-    {
-       "results":{
-          "aggregate":{
-             "metric":"COUNT(*)",
-             "query":"*",
-             "group":"FolderName.INCLUDE('folder')"
-          },
-          "totalobjects":"8",
-          "value":"8",
-          "totalgroups":"0"
-       }
-    }
-
-*** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('*der')&shards=shard
-*** Response: xml
-    200 OK
-    <results>
-        <aggregate group="FolderName.INCLUDE('*der')" metric="COUNT(*)" query="*"/>
+        <aggregate group="FolderName.INCLUDE('foLDEr')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>1</totalgroups>
         <groups>
             <group>
                 <metric>1</metric>
-                <field name="FolderName.INCLUDE('*der')">Folder</field>
+                <field name="FolderName.INCLUDE('foLDEr')">Folder</field>
             </group>
         </groups>
     </results>
@@ -1324,7 +1299,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FolderName.INCLUDE('*der')"
+             "group":"FolderName.INCLUDE('foLDEr')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -1334,7 +1309,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FolderName.INCLUDE('*der')":"Folder"
+                      "FolderName.INCLUDE('foLDEr')":"Folder"
                    }
                 }
              }
@@ -1343,26 +1318,67 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('Fol*')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('*dEr')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FolderName.INCLUDE('Fol*')" metric="COUNT(*)" query="*"/>
+        <aggregate group="FolderName.INCLUDE('*dEr')" metric="COUNT(*)" query="*"/>
+        <totalobjects>8</totalobjects>
+        <summary>8</summary>
+        <totalgroups>1</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="FolderName.INCLUDE('*dEr')">Folder</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"FolderName.INCLUDE('*dEr')"
+          },
+          "totalobjects":"8",
+          "summary":"8",
+          "totalgroups":"1",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FolderName.INCLUDE('*dEr')":"Folder"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('foL*')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="FolderName.INCLUDE('foL*')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>3</totalgroups>
         <groups>
             <group>
                 <metric>1</metric>
-                <field name="FolderName.INCLUDE('Fol*')">Folder</field>
+                <field name="FolderName.INCLUDE('foL*')">Folder</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FolderName.INCLUDE('Fol*')">Folder 3</field>
+                <field name="FolderName.INCLUDE('foL*')">Folder 3</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FolderName.INCLUDE('Fol*')">Folder 5</field>
+                <field name="FolderName.INCLUDE('foL*')">Folder 5</field>
             </group>
         </groups>
     </results>
@@ -1373,7 +1389,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FolderName.INCLUDE('Fol*')"
+             "group":"FolderName.INCLUDE('foL*')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -1383,7 +1399,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FolderName.INCLUDE('Fol*')":"Folder"
+                      "FolderName.INCLUDE('foL*')":"Folder"
                    }
                 }
              },
@@ -1391,7 +1407,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FolderName.INCLUDE('Fol*')":"Folder 3"
+                      "FolderName.INCLUDE('foL*')":"Folder 3"
                    }
                 }
              },
@@ -1399,7 +1415,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FolderName.INCLUDE('Fol*')":"Folder 5"
+                      "FolderName.INCLUDE('foL*')":"Folder 5"
                    }
                 }
              }
@@ -1408,22 +1424,22 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('Folder ?')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('folDEr ?')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FolderName.INCLUDE('Folder ?')" metric="COUNT(*)" query="*"/>
+        <aggregate group="FolderName.INCLUDE('folDEr ?')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>2</totalgroups>
         <groups>
             <group>
                 <metric>1</metric>
-                <field name="FolderName.INCLUDE('Folder ?')">Folder 3</field>
+                <field name="FolderName.INCLUDE('folDEr ?')">Folder 3</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FolderName.INCLUDE('Folder ?')">Folder 5</field>
+                <field name="FolderName.INCLUDE('folDEr ?')">Folder 5</field>
             </group>
         </groups>
     </results>
@@ -1434,7 +1450,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FolderName.INCLUDE('Folder ?')"
+             "group":"FolderName.INCLUDE('folDEr ?')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -1444,7 +1460,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FolderName.INCLUDE('Folder ?')":"Folder 3"
+                      "FolderName.INCLUDE('folDEr ?')":"Folder 3"
                    }
                 }
              },
@@ -1452,7 +1468,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FolderName.INCLUDE('Folder ?')":"Folder 5"
+                      "FolderName.INCLUDE('folDEr ?')":"Folder 5"
                    }
                 }
              }
@@ -1810,11 +1826,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('?older')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('?oldER')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FolderName.INCLUDE('?older')"
+        <aggregate group="FileName,FolderName.INCLUDE('?oldER')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -1830,7 +1846,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FolderName.INCLUDE('?older')">Folder</field>
+                        <field name="FolderName.INCLUDE('?oldER')">Folder</field>
                     </group>
                 </groups>
             </group>
@@ -1867,7 +1883,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FolderName.INCLUDE('?older')"
+             "group":"FileName,FolderName.INCLUDE('?oldER')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -1892,7 +1908,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FolderName.INCLUDE('?older')":"Folder"
+                               "FolderName.INCLUDE('?oldER')":"Folder"
                             }
                          }
                       }
@@ -1952,137 +1968,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('folder')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('foLDEr')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FolderName.INCLUDE('folder')"
-            metric="COUNT(*)" query="*"/>
-        <totalobjects>8</totalobjects>
-        <summary>8</summary>
-        <totalgroups>8</totalgroups>
-        <groups>
-            <group>
-                <metric>1</metric>
-                <field name="FileName">File_1</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FileName">File_2</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FileName">File_3</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FileName">File_4</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FileName">File_5</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FileName">File_6</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FileName">File_7</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FileName">File_8</field>
-            </group>
-        </groups>
-    </results>
-*** Response: json
-    200 OK
-    {
-       "results":{
-          "aggregate":{
-             "metric":"COUNT(*)",
-             "query":"*",
-             "group":"FileName,FolderName.INCLUDE('folder')"
-          },
-          "totalobjects":"8",
-          "summary":"8",
-          "totalgroups":"8",
-          "groups":[
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FileName":"File_1"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FileName":"File_2"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FileName":"File_3"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FileName":"File_4"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FileName":"File_5"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FileName":"File_6"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FileName":"File_7"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FileName":"File_8"
-                   }
-                }
-             }
-          ]
-       }
-    }
-
-*** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('*der')&shards=shard
-*** Response: xml
-    200 OK
-    <results>
-        <aggregate group="FileName,FolderName.INCLUDE('*der')"
+        <aggregate group="FileName,FolderName.INCLUDE('foLDEr')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -2098,7 +1988,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FolderName.INCLUDE('*der')">Folder</field>
+                        <field name="FolderName.INCLUDE('foLDEr')">Folder</field>
                     </group>
                 </groups>
             </group>
@@ -2135,7 +2025,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FolderName.INCLUDE('*der')"
+             "group":"FileName,FolderName.INCLUDE('foLDEr')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -2160,7 +2050,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FolderName.INCLUDE('*der')":"Folder"
+                               "FolderName.INCLUDE('foLDEr')":"Folder"
                             }
                          }
                       }
@@ -2220,11 +2110,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('Fol*')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('*dEr')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FolderName.INCLUDE('Fol*')"
+        <aggregate group="FileName,FolderName.INCLUDE('*dEr')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -2240,33 +2130,21 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FolderName.INCLUDE('Fol*')">Folder</field>
+                        <field name="FolderName.INCLUDE('*dEr')">Folder</field>
                     </group>
                 </groups>
             </group>
             <group>
-                <summary>1</summary>
+                <metric>1</metric>
                 <field name="FileName">File_3</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FolderName.INCLUDE('Fol*')">Folder 3</field>
-                    </group>
-                </groups>
             </group>
             <group>
                 <metric>1</metric>
                 <field name="FileName">File_4</field>
             </group>
             <group>
-                <summary>1</summary>
+                <metric>1</metric>
                 <field name="FileName">File_5</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FolderName.INCLUDE('Fol*')">Folder 5</field>
-                    </group>
-                </groups>
             </group>
             <group>
                 <metric>1</metric>
@@ -2289,7 +2167,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FolderName.INCLUDE('Fol*')"
+             "group":"FileName,FolderName.INCLUDE('*dEr')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -2314,7 +2192,161 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FolderName.INCLUDE('Fol*')":"Folder"
+                               "FolderName.INCLUDE('*dEr')":"Folder"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_3"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_4"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_5"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_6"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_7"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_8"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('foL*')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="FileName,FolderName.INCLUDE('foL*')"
+            metric="COUNT(*)" query="*"/>
+        <totalobjects>8</totalobjects>
+        <summary>8</summary>
+        <totalgroups>8</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="FileName">File_1</field>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_2</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="FolderName.INCLUDE('foL*')">Folder</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_3</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="FolderName.INCLUDE('foL*')">Folder 3</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FileName">File_4</field>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_5</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="FolderName.INCLUDE('foL*')">Folder 5</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FileName">File_6</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FileName">File_7</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FileName">File_8</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"FileName,FolderName.INCLUDE('foL*')"
+          },
+          "totalobjects":"8",
+          "summary":"8",
+          "totalgroups":"8",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_1"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_2"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "FolderName.INCLUDE('foL*')":"Folder"
                             }
                          }
                       }
@@ -2332,7 +2364,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FolderName.INCLUDE('Fol*')":"Folder 3"
+                               "FolderName.INCLUDE('foL*')":"Folder 3"
                             }
                          }
                       }
@@ -2358,7 +2390,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FolderName.INCLUDE('Fol*')":"Folder 5"
+                               "FolderName.INCLUDE('foL*')":"Folder 5"
                             }
                          }
                       }
@@ -2394,11 +2426,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('Folder ?')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('FoLDEr ?')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FolderName.INCLUDE('Folder ?')"
+        <aggregate group="FileName,FolderName.INCLUDE('FoLDEr ?')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -2418,7 +2450,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FolderName.INCLUDE('Folder ?')">Folder 3</field>
+                        <field name="FolderName.INCLUDE('FoLDEr ?')">Folder 3</field>
                     </group>
                 </groups>
             </group>
@@ -2432,7 +2464,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FolderName.INCLUDE('Folder ?')">Folder 5</field>
+                        <field name="FolderName.INCLUDE('FoLDEr ?')">Folder 5</field>
                     </group>
                 </groups>
             </group>
@@ -2457,7 +2489,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FolderName.INCLUDE('Folder ?')"
+             "group":"FileName,FolderName.INCLUDE('FoLDEr ?')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -2490,7 +2522,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FolderName.INCLUDE('Folder ?')":"Folder 3"
+                               "FolderName.INCLUDE('FoLDEr ?')":"Folder 3"
                             }
                          }
                       }
@@ -2516,7 +2548,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FolderName.INCLUDE('Folder ?')":"Folder 5"
+                               "FolderName.INCLUDE('FoLDEr ?')":"Folder 5"
                             }
                          }
                       }
@@ -2637,18 +2669,18 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.INCLUDE('?SERS 1')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.INCLUDE('?SeRS 1')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FoldersList.INCLUDE('?SERS 1')" metric="COUNT(*)" query="*"/>
+        <aggregate group="FoldersList.INCLUDE('?SeRS 1')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>1</totalgroups>
         <groups>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('?SERS 1')">USERS 1</field>
+                <field name="FoldersList.INCLUDE('?SeRS 1')">USERS 1</field>
             </group>
         </groups>
     </results>
@@ -2659,7 +2691,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FoldersList.INCLUDE('?SERS 1')"
+             "group":"FoldersList.INCLUDE('?SeRS 1')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -2669,7 +2701,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('?SERS 1')":"USERS 1"
+                      "FoldersList.INCLUDE('?SeRS 1')":"USERS 1"
                    }
                 }
              }
@@ -2684,8 +2716,14 @@
     <results>
         <aggregate group="FoldersList.INCLUDE('users 1')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
-        <value>8</value>
-        <totalgroups>0</totalgroups>
+        <summary>8</summary>
+        <totalgroups>1</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="FoldersList.INCLUDE('users 1')">USERS 1</field>
+            </group>
+        </groups>
     </results>
 *** Response: json
     200 OK
@@ -2697,93 +2735,14 @@
              "group":"FoldersList.INCLUDE('users 1')"
           },
           "totalobjects":"8",
-          "value":"8",
-          "totalgroups":"0"
-       }
-    }
-
-*** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.INCLUDE('*ERS ?')&shards=shard
-*** Response: xml
-    200 OK
-    <results>
-        <aggregate group="FoldersList.INCLUDE('*ERS ?')" metric="COUNT(*)" query="*"/>
-        <totalobjects>8</totalobjects>
-        <summary>8</summary>
-        <totalgroups>5</totalgroups>
-        <groups>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.INCLUDE('*ERS ?')">USERS 1</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.INCLUDE('*ERS ?')">USERS 3</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.INCLUDE('*ERS ?')">USERS 4</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.INCLUDE('*ERS ?')">USERS 6</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.INCLUDE('*ERS ?')">USERS 7</field>
-            </group>
-        </groups>
-    </results>
-*** Response: json
-    200 OK
-    {
-       "results":{
-          "aggregate":{
-             "metric":"COUNT(*)",
-             "query":"*",
-             "group":"FoldersList.INCLUDE('*ERS ?')"
-          },
-          "totalobjects":"8",
           "summary":"8",
-          "totalgroups":"5",
+          "totalgroups":"1",
           "groups":[
              {
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('*ERS ?')":"USERS 1"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.INCLUDE('*ERS ?')":"USERS 3"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.INCLUDE('*ERS ?')":"USERS 4"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.INCLUDE('*ERS ?')":"USERS 6"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.INCLUDE('*ERS ?')":"USERS 7"
+                      "FoldersList.INCLUDE('users 1')":"USERS 1"
                    }
                 }
              }
@@ -2792,34 +2751,34 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.INCLUDE('USE*')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.INCLUDE('*ErS ?')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FoldersList.INCLUDE('USE*')" metric="COUNT(*)" query="*"/>
+        <aggregate group="FoldersList.INCLUDE('*ErS ?')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>5</totalgroups>
         <groups>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USE*')">USERS 1</field>
+                <field name="FoldersList.INCLUDE('*ErS ?')">USERS 1</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USE*')">USERS 3</field>
+                <field name="FoldersList.INCLUDE('*ErS ?')">USERS 3</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USE*')">USERS 4</field>
+                <field name="FoldersList.INCLUDE('*ErS ?')">USERS 4</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USE*')">USERS 6</field>
+                <field name="FoldersList.INCLUDE('*ErS ?')">USERS 6</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USE*')">USERS 7</field>
+                <field name="FoldersList.INCLUDE('*ErS ?')">USERS 7</field>
             </group>
         </groups>
     </results>
@@ -2830,7 +2789,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FoldersList.INCLUDE('USE*')"
+             "group":"FoldersList.INCLUDE('*ErS ?')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -2840,7 +2799,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USE*')":"USERS 1"
+                      "FoldersList.INCLUDE('*ErS ?')":"USERS 1"
                    }
                 }
              },
@@ -2848,7 +2807,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USE*')":"USERS 3"
+                      "FoldersList.INCLUDE('*ErS ?')":"USERS 3"
                    }
                 }
              },
@@ -2856,7 +2815,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USE*')":"USERS 4"
+                      "FoldersList.INCLUDE('*ErS ?')":"USERS 4"
                    }
                 }
              },
@@ -2864,7 +2823,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USE*')":"USERS 6"
+                      "FoldersList.INCLUDE('*ErS ?')":"USERS 6"
                    }
                 }
              },
@@ -2872,7 +2831,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USE*')":"USERS 7"
+                      "FoldersList.INCLUDE('*ErS ?')":"USERS 7"
                    }
                 }
              }
@@ -2881,34 +2840,34 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.INCLUDE('USERS ?')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.INCLUDE('uSE*')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FoldersList.INCLUDE('USERS ?')" metric="COUNT(*)" query="*"/>
+        <aggregate group="FoldersList.INCLUDE('uSE*')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>5</totalgroups>
         <groups>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USERS ?')">USERS 1</field>
+                <field name="FoldersList.INCLUDE('uSE*')">USERS 1</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USERS ?')">USERS 3</field>
+                <field name="FoldersList.INCLUDE('uSE*')">USERS 3</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USERS ?')">USERS 4</field>
+                <field name="FoldersList.INCLUDE('uSE*')">USERS 4</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USERS ?')">USERS 6</field>
+                <field name="FoldersList.INCLUDE('uSE*')">USERS 6</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USERS ?')">USERS 7</field>
+                <field name="FoldersList.INCLUDE('uSE*')">USERS 7</field>
             </group>
         </groups>
     </results>
@@ -2919,7 +2878,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FoldersList.INCLUDE('USERS ?')"
+             "group":"FoldersList.INCLUDE('uSE*')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -2929,7 +2888,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USERS ?')":"USERS 1"
+                      "FoldersList.INCLUDE('uSE*')":"USERS 1"
                    }
                 }
              },
@@ -2937,7 +2896,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USERS ?')":"USERS 3"
+                      "FoldersList.INCLUDE('uSE*')":"USERS 3"
                    }
                 }
              },
@@ -2945,7 +2904,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USERS ?')":"USERS 4"
+                      "FoldersList.INCLUDE('uSE*')":"USERS 4"
                    }
                 }
              },
@@ -2953,7 +2912,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USERS ?')":"USERS 6"
+                      "FoldersList.INCLUDE('uSE*')":"USERS 6"
                    }
                 }
              },
@@ -2961,7 +2920,96 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USERS ?')":"USERS 7"
+                      "FoldersList.INCLUDE('uSE*')":"USERS 7"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.INCLUDE('uSeRs ?')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="FoldersList.INCLUDE('uSeRs ?')" metric="COUNT(*)" query="*"/>
+        <totalobjects>8</totalobjects>
+        <summary>8</summary>
+        <totalgroups>5</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 1</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 3</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 4</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 6</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 7</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"FoldersList.INCLUDE('uSeRs ?')"
+          },
+          "totalobjects":"8",
+          "summary":"8",
+          "totalgroups":"5",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FoldersList.INCLUDE('uSeRs ?')":"USERS 1"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FoldersList.INCLUDE('uSeRs ?')":"USERS 3"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FoldersList.INCLUDE('uSeRs ?')":"USERS 4"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FoldersList.INCLUDE('uSeRs ?')":"USERS 6"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FoldersList.INCLUDE('uSeRs ?')":"USERS 7"
                    }
                 }
              }
@@ -3287,11 +3335,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.INCLUDE('?SERS 1')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.INCLUDE('?SeRS 1')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FoldersList.INCLUDE('?SERS 1')"
+        <aggregate group="FileName,FoldersList.INCLUDE('?SeRS 1')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -3303,7 +3351,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('?SERS 1')">USERS 1</field>
+                        <field name="FoldersList.INCLUDE('?SeRS 1')">USERS 1</field>
                     </group>
                 </groups>
             </group>
@@ -3344,7 +3392,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FoldersList.INCLUDE('?SERS 1')"
+             "group":"FileName,FoldersList.INCLUDE('?SeRS 1')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -3361,7 +3409,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('?SERS 1')":"USERS 1"
+                               "FoldersList.INCLUDE('?SeRS 1')":"USERS 1"
                             }
                          }
                       }
@@ -3440,8 +3488,14 @@
         <totalgroups>8</totalgroups>
         <groups>
             <group>
-                <metric>1</metric>
+                <summary>1</summary>
                 <field name="FileName">File_1</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="FoldersList.INCLUDE('users 1')">USERS 1</field>
+                    </group>
+                </groups>
             </group>
             <group>
                 <metric>1</metric>
@@ -3488,10 +3542,20 @@
           "groups":[
              {
                 "group":{
-                   "metric":"1",
+                   "summary":"1",
                    "field":{
                       "FileName":"File_1"
-                   }
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "FoldersList.INCLUDE('users 1')":"USERS 1"
+                            }
+                         }
+                      }
+                   ]
                 }
              },
              {
@@ -3555,11 +3619,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.INCLUDE('*ERS ?')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.INCLUDE('*ErS ?')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FoldersList.INCLUDE('*ERS ?')"
+        <aggregate group="FileName,FoldersList.INCLUDE('*ErS ?')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -3571,7 +3635,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('*ERS ?')">USERS 1</field>
+                        <field name="FoldersList.INCLUDE('*ErS ?')">USERS 1</field>
                     </group>
                 </groups>
             </group>
@@ -3585,7 +3649,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('*ERS ?')">USERS 3</field>
+                        <field name="FoldersList.INCLUDE('*ErS ?')">USERS 3</field>
                     </group>
                 </groups>
             </group>
@@ -3595,7 +3659,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('*ERS ?')">USERS 4</field>
+                        <field name="FoldersList.INCLUDE('*ErS ?')">USERS 4</field>
                     </group>
                 </groups>
             </group>
@@ -3609,7 +3673,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('*ERS ?')">USERS 6</field>
+                        <field name="FoldersList.INCLUDE('*ErS ?')">USERS 6</field>
                     </group>
                 </groups>
             </group>
@@ -3619,7 +3683,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('*ERS ?')">USERS 7</field>
+                        <field name="FoldersList.INCLUDE('*ErS ?')">USERS 7</field>
                     </group>
                 </groups>
             </group>
@@ -3636,7 +3700,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FoldersList.INCLUDE('*ERS ?')"
+             "group":"FileName,FoldersList.INCLUDE('*ErS ?')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -3653,7 +3717,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('*ERS ?')":"USERS 1"
+                               "FoldersList.INCLUDE('*ErS ?')":"USERS 1"
                             }
                          }
                       }
@@ -3679,7 +3743,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('*ERS ?')":"USERS 3"
+                               "FoldersList.INCLUDE('*ErS ?')":"USERS 3"
                             }
                          }
                       }
@@ -3697,7 +3761,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('*ERS ?')":"USERS 4"
+                               "FoldersList.INCLUDE('*ErS ?')":"USERS 4"
                             }
                          }
                       }
@@ -3723,7 +3787,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('*ERS ?')":"USERS 6"
+                               "FoldersList.INCLUDE('*ErS ?')":"USERS 6"
                             }
                          }
                       }
@@ -3741,7 +3805,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('*ERS ?')":"USERS 7"
+                               "FoldersList.INCLUDE('*ErS ?')":"USERS 7"
                             }
                          }
                       }
@@ -3761,11 +3825,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.INCLUDE('USE*')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.INCLUDE('uSE*')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FoldersList.INCLUDE('USE*')"
+        <aggregate group="FileName,FoldersList.INCLUDE('uSE*')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -3777,7 +3841,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USE*')">USERS 1</field>
+                        <field name="FoldersList.INCLUDE('uSE*')">USERS 1</field>
                     </group>
                 </groups>
             </group>
@@ -3791,7 +3855,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USE*')">USERS 3</field>
+                        <field name="FoldersList.INCLUDE('uSE*')">USERS 3</field>
                     </group>
                 </groups>
             </group>
@@ -3801,7 +3865,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USE*')">USERS 4</field>
+                        <field name="FoldersList.INCLUDE('uSE*')">USERS 4</field>
                     </group>
                 </groups>
             </group>
@@ -3815,7 +3879,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USE*')">USERS 6</field>
+                        <field name="FoldersList.INCLUDE('uSE*')">USERS 6</field>
                     </group>
                 </groups>
             </group>
@@ -3825,7 +3889,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USE*')">USERS 7</field>
+                        <field name="FoldersList.INCLUDE('uSE*')">USERS 7</field>
                     </group>
                 </groups>
             </group>
@@ -3842,7 +3906,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FoldersList.INCLUDE('USE*')"
+             "group":"FileName,FoldersList.INCLUDE('uSE*')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -3859,7 +3923,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USE*')":"USERS 1"
+                               "FoldersList.INCLUDE('uSE*')":"USERS 1"
                             }
                          }
                       }
@@ -3885,7 +3949,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USE*')":"USERS 3"
+                               "FoldersList.INCLUDE('uSE*')":"USERS 3"
                             }
                          }
                       }
@@ -3903,7 +3967,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USE*')":"USERS 4"
+                               "FoldersList.INCLUDE('uSE*')":"USERS 4"
                             }
                          }
                       }
@@ -3929,7 +3993,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USE*')":"USERS 6"
+                               "FoldersList.INCLUDE('uSE*')":"USERS 6"
                             }
                          }
                       }
@@ -3947,7 +4011,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USE*')":"USERS 7"
+                               "FoldersList.INCLUDE('uSE*')":"USERS 7"
                             }
                          }
                       }
@@ -3967,11 +4031,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.INCLUDE('USERS ?')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.INCLUDE('uSeRs ?')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FoldersList.INCLUDE('USERS ?')"
+        <aggregate group="FileName,FoldersList.INCLUDE('uSeRs ?')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -3983,7 +4047,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USERS ?')">USERS 1</field>
+                        <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 1</field>
                     </group>
                 </groups>
             </group>
@@ -3997,7 +4061,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USERS ?')">USERS 3</field>
+                        <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 3</field>
                     </group>
                 </groups>
             </group>
@@ -4007,7 +4071,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USERS ?')">USERS 4</field>
+                        <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 4</field>
                     </group>
                 </groups>
             </group>
@@ -4021,7 +4085,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USERS ?')">USERS 6</field>
+                        <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 6</field>
                     </group>
                 </groups>
             </group>
@@ -4031,7 +4095,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USERS ?')">USERS 7</field>
+                        <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 7</field>
                     </group>
                 </groups>
             </group>
@@ -4048,7 +4112,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FoldersList.INCLUDE('USERS ?')"
+             "group":"FileName,FoldersList.INCLUDE('uSeRs ?')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -4065,7 +4129,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USERS ?')":"USERS 1"
+                               "FoldersList.INCLUDE('uSeRs ?')":"USERS 1"
                             }
                          }
                       }
@@ -4091,7 +4155,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USERS ?')":"USERS 3"
+                               "FoldersList.INCLUDE('uSeRs ?')":"USERS 3"
                             }
                          }
                       }
@@ -4109,7 +4173,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USERS ?')":"USERS 4"
+                               "FoldersList.INCLUDE('uSeRs ?')":"USERS 4"
                             }
                          }
                       }
@@ -4135,7 +4199,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USERS ?')":"USERS 6"
+                               "FoldersList.INCLUDE('uSeRs ?')":"USERS 6"
                             }
                          }
                       }
@@ -4153,7 +4217,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USERS ?')":"USERS 7"
+                               "FoldersList.INCLUDE('uSeRs ?')":"USERS 7"
                             }
                          }
                       }
@@ -7606,18 +7670,18 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('?older')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('?oldER')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FolderName.INCLUDE('?older')" metric="COUNT(*)" query="*"/>
+        <aggregate group="FolderName.INCLUDE('?oldER')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>1</totalgroups>
         <groups>
             <group>
                 <metric>1</metric>
-                <field name="FolderName.INCLUDE('?older')">Folder</field>
+                <field name="FolderName.INCLUDE('?oldER')">Folder</field>
             </group>
         </groups>
     </results>
@@ -7628,7 +7692,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FolderName.INCLUDE('?older')"
+             "group":"FolderName.INCLUDE('?oldER')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -7638,7 +7702,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FolderName.INCLUDE('?older')":"Folder"
+                      "FolderName.INCLUDE('?oldER')":"Folder"
                    }
                 }
              }
@@ -7647,43 +7711,18 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('folder')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('foLDEr')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FolderName.INCLUDE('folder')" metric="COUNT(*)" query="*"/>
-        <totalobjects>8</totalobjects>
-        <value>8</value>
-        <totalgroups>0</totalgroups>
-    </results>
-*** Response: json
-    200 OK
-    {
-       "results":{
-          "aggregate":{
-             "metric":"COUNT(*)",
-             "query":"*",
-             "group":"FolderName.INCLUDE('folder')"
-          },
-          "totalobjects":"8",
-          "value":"8",
-          "totalgroups":"0"
-       }
-    }
-
-*** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('*der')&shards=shard
-*** Response: xml
-    200 OK
-    <results>
-        <aggregate group="FolderName.INCLUDE('*der')" metric="COUNT(*)" query="*"/>
+        <aggregate group="FolderName.INCLUDE('foLDEr')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>1</totalgroups>
         <groups>
             <group>
                 <metric>1</metric>
-                <field name="FolderName.INCLUDE('*der')">Folder</field>
+                <field name="FolderName.INCLUDE('foLDEr')">Folder</field>
             </group>
         </groups>
     </results>
@@ -7694,7 +7733,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FolderName.INCLUDE('*der')"
+             "group":"FolderName.INCLUDE('foLDEr')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -7704,7 +7743,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FolderName.INCLUDE('*der')":"Folder"
+                      "FolderName.INCLUDE('foLDEr')":"Folder"
                    }
                 }
              }
@@ -7713,26 +7752,67 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('Fol*')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('*dEr')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FolderName.INCLUDE('Fol*')" metric="COUNT(*)" query="*"/>
+        <aggregate group="FolderName.INCLUDE('*dEr')" metric="COUNT(*)" query="*"/>
+        <totalobjects>8</totalobjects>
+        <summary>8</summary>
+        <totalgroups>1</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="FolderName.INCLUDE('*dEr')">Folder</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"FolderName.INCLUDE('*dEr')"
+          },
+          "totalobjects":"8",
+          "summary":"8",
+          "totalgroups":"1",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FolderName.INCLUDE('*dEr')":"Folder"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('foL*')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="FolderName.INCLUDE('foL*')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>3</totalgroups>
         <groups>
             <group>
                 <metric>1</metric>
-                <field name="FolderName.INCLUDE('Fol*')">Folder</field>
+                <field name="FolderName.INCLUDE('foL*')">Folder</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FolderName.INCLUDE('Fol*')">Folder 3</field>
+                <field name="FolderName.INCLUDE('foL*')">Folder 3</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FolderName.INCLUDE('Fol*')">Folder 5</field>
+                <field name="FolderName.INCLUDE('foL*')">Folder 5</field>
             </group>
         </groups>
     </results>
@@ -7743,7 +7823,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FolderName.INCLUDE('Fol*')"
+             "group":"FolderName.INCLUDE('foL*')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -7753,7 +7833,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FolderName.INCLUDE('Fol*')":"Folder"
+                      "FolderName.INCLUDE('foL*')":"Folder"
                    }
                 }
              },
@@ -7761,7 +7841,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FolderName.INCLUDE('Fol*')":"Folder 3"
+                      "FolderName.INCLUDE('foL*')":"Folder 3"
                    }
                 }
              },
@@ -7769,7 +7849,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FolderName.INCLUDE('Fol*')":"Folder 5"
+                      "FolderName.INCLUDE('foL*')":"Folder 5"
                    }
                 }
              }
@@ -7778,22 +7858,22 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('Folder ?')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FolderName.INCLUDE('folDEr ?')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FolderName.INCLUDE('Folder ?')" metric="COUNT(*)" query="*"/>
+        <aggregate group="FolderName.INCLUDE('folDEr ?')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>2</totalgroups>
         <groups>
             <group>
                 <metric>1</metric>
-                <field name="FolderName.INCLUDE('Folder ?')">Folder 3</field>
+                <field name="FolderName.INCLUDE('folDEr ?')">Folder 3</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FolderName.INCLUDE('Folder ?')">Folder 5</field>
+                <field name="FolderName.INCLUDE('folDEr ?')">Folder 5</field>
             </group>
         </groups>
     </results>
@@ -7804,7 +7884,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FolderName.INCLUDE('Folder ?')"
+             "group":"FolderName.INCLUDE('folDEr ?')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -7814,7 +7894,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FolderName.INCLUDE('Folder ?')":"Folder 3"
+                      "FolderName.INCLUDE('folDEr ?')":"Folder 3"
                    }
                 }
              },
@@ -7822,7 +7902,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FolderName.INCLUDE('Folder ?')":"Folder 5"
+                      "FolderName.INCLUDE('folDEr ?')":"Folder 5"
                    }
                 }
              }
@@ -8180,11 +8260,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('?older')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('?oldER')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FolderName.INCLUDE('?older')"
+        <aggregate group="FileName,FolderName.INCLUDE('?oldER')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -8200,7 +8280,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FolderName.INCLUDE('?older')">Folder</field>
+                        <field name="FolderName.INCLUDE('?oldER')">Folder</field>
                     </group>
                 </groups>
             </group>
@@ -8237,7 +8317,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FolderName.INCLUDE('?older')"
+             "group":"FileName,FolderName.INCLUDE('?oldER')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -8262,7 +8342,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FolderName.INCLUDE('?older')":"Folder"
+                               "FolderName.INCLUDE('?oldER')":"Folder"
                             }
                          }
                       }
@@ -8322,137 +8402,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('folder')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('foLDEr')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FolderName.INCLUDE('folder')"
-            metric="COUNT(*)" query="*"/>
-        <totalobjects>8</totalobjects>
-        <summary>8</summary>
-        <totalgroups>8</totalgroups>
-        <groups>
-            <group>
-                <metric>1</metric>
-                <field name="FileName">File_1</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FileName">File_2</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FileName">File_3</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FileName">File_4</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FileName">File_5</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FileName">File_6</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FileName">File_7</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FileName">File_8</field>
-            </group>
-        </groups>
-    </results>
-*** Response: json
-    200 OK
-    {
-       "results":{
-          "aggregate":{
-             "metric":"COUNT(*)",
-             "query":"*",
-             "group":"FileName,FolderName.INCLUDE('folder')"
-          },
-          "totalobjects":"8",
-          "summary":"8",
-          "totalgroups":"8",
-          "groups":[
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FileName":"File_1"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FileName":"File_2"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FileName":"File_3"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FileName":"File_4"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FileName":"File_5"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FileName":"File_6"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FileName":"File_7"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FileName":"File_8"
-                   }
-                }
-             }
-          ]
-       }
-    }
-
-*** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('*der')&shards=shard
-*** Response: xml
-    200 OK
-    <results>
-        <aggregate group="FileName,FolderName.INCLUDE('*der')"
+        <aggregate group="FileName,FolderName.INCLUDE('foLDEr')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -8468,7 +8422,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FolderName.INCLUDE('*der')">Folder</field>
+                        <field name="FolderName.INCLUDE('foLDEr')">Folder</field>
                     </group>
                 </groups>
             </group>
@@ -8505,7 +8459,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FolderName.INCLUDE('*der')"
+             "group":"FileName,FolderName.INCLUDE('foLDEr')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -8530,7 +8484,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FolderName.INCLUDE('*der')":"Folder"
+                               "FolderName.INCLUDE('foLDEr')":"Folder"
                             }
                          }
                       }
@@ -8590,11 +8544,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('Fol*')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('*dEr')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FolderName.INCLUDE('Fol*')"
+        <aggregate group="FileName,FolderName.INCLUDE('*dEr')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -8610,33 +8564,21 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FolderName.INCLUDE('Fol*')">Folder</field>
+                        <field name="FolderName.INCLUDE('*dEr')">Folder</field>
                     </group>
                 </groups>
             </group>
             <group>
-                <summary>1</summary>
+                <metric>1</metric>
                 <field name="FileName">File_3</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FolderName.INCLUDE('Fol*')">Folder 3</field>
-                    </group>
-                </groups>
             </group>
             <group>
                 <metric>1</metric>
                 <field name="FileName">File_4</field>
             </group>
             <group>
-                <summary>1</summary>
+                <metric>1</metric>
                 <field name="FileName">File_5</field>
-                <groups>
-                    <group>
-                        <metric>1</metric>
-                        <field name="FolderName.INCLUDE('Fol*')">Folder 5</field>
-                    </group>
-                </groups>
             </group>
             <group>
                 <metric>1</metric>
@@ -8659,7 +8601,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FolderName.INCLUDE('Fol*')"
+             "group":"FileName,FolderName.INCLUDE('*dEr')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -8684,7 +8626,161 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FolderName.INCLUDE('Fol*')":"Folder"
+                               "FolderName.INCLUDE('*dEr')":"Folder"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_3"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_4"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_5"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_6"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_7"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_8"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('foL*')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="FileName,FolderName.INCLUDE('foL*')"
+            metric="COUNT(*)" query="*"/>
+        <totalobjects>8</totalobjects>
+        <summary>8</summary>
+        <totalgroups>8</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="FileName">File_1</field>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_2</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="FolderName.INCLUDE('foL*')">Folder</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_3</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="FolderName.INCLUDE('foL*')">Folder 3</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FileName">File_4</field>
+            </group>
+            <group>
+                <summary>1</summary>
+                <field name="FileName">File_5</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="FolderName.INCLUDE('foL*')">Folder 5</field>
+                    </group>
+                </groups>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FileName">File_6</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FileName">File_7</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FileName">File_8</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"FileName,FolderName.INCLUDE('foL*')"
+          },
+          "totalobjects":"8",
+          "summary":"8",
+          "totalgroups":"8",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FileName":"File_1"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "summary":"1",
+                   "field":{
+                      "FileName":"File_2"
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "FolderName.INCLUDE('foL*')":"Folder"
                             }
                          }
                       }
@@ -8702,7 +8798,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FolderName.INCLUDE('Fol*')":"Folder 3"
+                               "FolderName.INCLUDE('foL*')":"Folder 3"
                             }
                          }
                       }
@@ -8728,7 +8824,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FolderName.INCLUDE('Fol*')":"Folder 5"
+                               "FolderName.INCLUDE('foL*')":"Folder 5"
                             }
                          }
                       }
@@ -8764,11 +8860,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('Folder ?')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FolderName.INCLUDE('FoLDEr ?')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FolderName.INCLUDE('Folder ?')"
+        <aggregate group="FileName,FolderName.INCLUDE('FoLDEr ?')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -8788,7 +8884,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FolderName.INCLUDE('Folder ?')">Folder 3</field>
+                        <field name="FolderName.INCLUDE('FoLDEr ?')">Folder 3</field>
                     </group>
                 </groups>
             </group>
@@ -8802,7 +8898,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FolderName.INCLUDE('Folder ?')">Folder 5</field>
+                        <field name="FolderName.INCLUDE('FoLDEr ?')">Folder 5</field>
                     </group>
                 </groups>
             </group>
@@ -8827,7 +8923,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FolderName.INCLUDE('Folder ?')"
+             "group":"FileName,FolderName.INCLUDE('FoLDEr ?')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -8860,7 +8956,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FolderName.INCLUDE('Folder ?')":"Folder 3"
+                               "FolderName.INCLUDE('FoLDEr ?')":"Folder 3"
                             }
                          }
                       }
@@ -8886,7 +8982,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FolderName.INCLUDE('Folder ?')":"Folder 5"
+                               "FolderName.INCLUDE('FoLDEr ?')":"Folder 5"
                             }
                          }
                       }
@@ -9007,18 +9103,18 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.INCLUDE('?SERS 1')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.INCLUDE('?SeRS 1')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FoldersList.INCLUDE('?SERS 1')" metric="COUNT(*)" query="*"/>
+        <aggregate group="FoldersList.INCLUDE('?SeRS 1')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>1</totalgroups>
         <groups>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('?SERS 1')">USERS 1</field>
+                <field name="FoldersList.INCLUDE('?SeRS 1')">USERS 1</field>
             </group>
         </groups>
     </results>
@@ -9029,7 +9125,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FoldersList.INCLUDE('?SERS 1')"
+             "group":"FoldersList.INCLUDE('?SeRS 1')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -9039,7 +9135,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('?SERS 1')":"USERS 1"
+                      "FoldersList.INCLUDE('?SeRS 1')":"USERS 1"
                    }
                 }
              }
@@ -9054,8 +9150,14 @@
     <results>
         <aggregate group="FoldersList.INCLUDE('users 1')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
-        <value>8</value>
-        <totalgroups>0</totalgroups>
+        <summary>8</summary>
+        <totalgroups>1</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="FoldersList.INCLUDE('users 1')">USERS 1</field>
+            </group>
+        </groups>
     </results>
 *** Response: json
     200 OK
@@ -9067,93 +9169,14 @@
              "group":"FoldersList.INCLUDE('users 1')"
           },
           "totalobjects":"8",
-          "value":"8",
-          "totalgroups":"0"
-       }
-    }
-
-*** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.INCLUDE('*ERS ?')&shards=shard
-*** Response: xml
-    200 OK
-    <results>
-        <aggregate group="FoldersList.INCLUDE('*ERS ?')" metric="COUNT(*)" query="*"/>
-        <totalobjects>8</totalobjects>
-        <summary>8</summary>
-        <totalgroups>5</totalgroups>
-        <groups>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.INCLUDE('*ERS ?')">USERS 1</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.INCLUDE('*ERS ?')">USERS 3</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.INCLUDE('*ERS ?')">USERS 4</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.INCLUDE('*ERS ?')">USERS 6</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="FoldersList.INCLUDE('*ERS ?')">USERS 7</field>
-            </group>
-        </groups>
-    </results>
-*** Response: json
-    200 OK
-    {
-       "results":{
-          "aggregate":{
-             "metric":"COUNT(*)",
-             "query":"*",
-             "group":"FoldersList.INCLUDE('*ERS ?')"
-          },
-          "totalobjects":"8",
           "summary":"8",
-          "totalgroups":"5",
+          "totalgroups":"1",
           "groups":[
              {
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('*ERS ?')":"USERS 1"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.INCLUDE('*ERS ?')":"USERS 3"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.INCLUDE('*ERS ?')":"USERS 4"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.INCLUDE('*ERS ?')":"USERS 6"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "FoldersList.INCLUDE('*ERS ?')":"USERS 7"
+                      "FoldersList.INCLUDE('users 1')":"USERS 1"
                    }
                 }
              }
@@ -9162,34 +9185,34 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.INCLUDE('USE*')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.INCLUDE('*ErS ?')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FoldersList.INCLUDE('USE*')" metric="COUNT(*)" query="*"/>
+        <aggregate group="FoldersList.INCLUDE('*ErS ?')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>5</totalgroups>
         <groups>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USE*')">USERS 1</field>
+                <field name="FoldersList.INCLUDE('*ErS ?')">USERS 1</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USE*')">USERS 3</field>
+                <field name="FoldersList.INCLUDE('*ErS ?')">USERS 3</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USE*')">USERS 4</field>
+                <field name="FoldersList.INCLUDE('*ErS ?')">USERS 4</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USE*')">USERS 6</field>
+                <field name="FoldersList.INCLUDE('*ErS ?')">USERS 6</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USE*')">USERS 7</field>
+                <field name="FoldersList.INCLUDE('*ErS ?')">USERS 7</field>
             </group>
         </groups>
     </results>
@@ -9200,7 +9223,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FoldersList.INCLUDE('USE*')"
+             "group":"FoldersList.INCLUDE('*ErS ?')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -9210,7 +9233,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USE*')":"USERS 1"
+                      "FoldersList.INCLUDE('*ErS ?')":"USERS 1"
                    }
                 }
              },
@@ -9218,7 +9241,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USE*')":"USERS 3"
+                      "FoldersList.INCLUDE('*ErS ?')":"USERS 3"
                    }
                 }
              },
@@ -9226,7 +9249,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USE*')":"USERS 4"
+                      "FoldersList.INCLUDE('*ErS ?')":"USERS 4"
                    }
                 }
              },
@@ -9234,7 +9257,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USE*')":"USERS 6"
+                      "FoldersList.INCLUDE('*ErS ?')":"USERS 6"
                    }
                 }
              },
@@ -9242,7 +9265,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USE*')":"USERS 7"
+                      "FoldersList.INCLUDE('*ErS ?')":"USERS 7"
                    }
                 }
              }
@@ -9251,34 +9274,34 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.INCLUDE('USERS ?')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.INCLUDE('uSE*')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FoldersList.INCLUDE('USERS ?')" metric="COUNT(*)" query="*"/>
+        <aggregate group="FoldersList.INCLUDE('uSE*')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
         <totalgroups>5</totalgroups>
         <groups>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USERS ?')">USERS 1</field>
+                <field name="FoldersList.INCLUDE('uSE*')">USERS 1</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USERS ?')">USERS 3</field>
+                <field name="FoldersList.INCLUDE('uSE*')">USERS 3</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USERS ?')">USERS 4</field>
+                <field name="FoldersList.INCLUDE('uSE*')">USERS 4</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USERS ?')">USERS 6</field>
+                <field name="FoldersList.INCLUDE('uSE*')">USERS 6</field>
             </group>
             <group>
                 <metric>1</metric>
-                <field name="FoldersList.INCLUDE('USERS ?')">USERS 7</field>
+                <field name="FoldersList.INCLUDE('uSE*')">USERS 7</field>
             </group>
         </groups>
     </results>
@@ -9289,7 +9312,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FoldersList.INCLUDE('USERS ?')"
+             "group":"FoldersList.INCLUDE('uSE*')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -9299,7 +9322,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USERS ?')":"USERS 1"
+                      "FoldersList.INCLUDE('uSE*')":"USERS 1"
                    }
                 }
              },
@@ -9307,7 +9330,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USERS ?')":"USERS 3"
+                      "FoldersList.INCLUDE('uSE*')":"USERS 3"
                    }
                 }
              },
@@ -9315,7 +9338,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USERS ?')":"USERS 4"
+                      "FoldersList.INCLUDE('uSE*')":"USERS 4"
                    }
                 }
              },
@@ -9323,7 +9346,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USERS ?')":"USERS 6"
+                      "FoldersList.INCLUDE('uSE*')":"USERS 6"
                    }
                 }
              },
@@ -9331,7 +9354,96 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "FoldersList.INCLUDE('USERS ?')":"USERS 7"
+                      "FoldersList.INCLUDE('uSE*')":"USERS 7"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FoldersList.INCLUDE('uSeRs ?')&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="FoldersList.INCLUDE('uSeRs ?')" metric="COUNT(*)" query="*"/>
+        <totalobjects>8</totalobjects>
+        <summary>8</summary>
+        <totalgroups>5</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 1</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 3</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 4</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 6</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 7</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"FoldersList.INCLUDE('uSeRs ?')"
+          },
+          "totalobjects":"8",
+          "summary":"8",
+          "totalgroups":"5",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FoldersList.INCLUDE('uSeRs ?')":"USERS 1"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FoldersList.INCLUDE('uSeRs ?')":"USERS 3"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FoldersList.INCLUDE('uSeRs ?')":"USERS 4"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FoldersList.INCLUDE('uSeRs ?')":"USERS 6"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "FoldersList.INCLUDE('uSeRs ?')":"USERS 7"
                    }
                 }
              }
@@ -9657,11 +9769,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.INCLUDE('?SERS 1')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.INCLUDE('?SeRS 1')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FoldersList.INCLUDE('?SERS 1')"
+        <aggregate group="FileName,FoldersList.INCLUDE('?SeRS 1')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -9673,7 +9785,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('?SERS 1')">USERS 1</field>
+                        <field name="FoldersList.INCLUDE('?SeRS 1')">USERS 1</field>
                     </group>
                 </groups>
             </group>
@@ -9714,7 +9826,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FoldersList.INCLUDE('?SERS 1')"
+             "group":"FileName,FoldersList.INCLUDE('?SeRS 1')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -9731,7 +9843,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('?SERS 1')":"USERS 1"
+                               "FoldersList.INCLUDE('?SeRS 1')":"USERS 1"
                             }
                          }
                       }
@@ -9810,8 +9922,14 @@
         <totalgroups>8</totalgroups>
         <groups>
             <group>
-                <metric>1</metric>
+                <summary>1</summary>
                 <field name="FileName">File_1</field>
+                <groups>
+                    <group>
+                        <metric>1</metric>
+                        <field name="FoldersList.INCLUDE('users 1')">USERS 1</field>
+                    </group>
+                </groups>
             </group>
             <group>
                 <metric>1</metric>
@@ -9858,10 +9976,20 @@
           "groups":[
              {
                 "group":{
-                   "metric":"1",
+                   "summary":"1",
                    "field":{
                       "FileName":"File_1"
-                   }
+                   },
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"1",
+                            "field":{
+                               "FoldersList.INCLUDE('users 1')":"USERS 1"
+                            }
+                         }
+                      }
+                   ]
                 }
              },
              {
@@ -9925,11 +10053,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.INCLUDE('*ERS ?')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.INCLUDE('*ErS ?')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FoldersList.INCLUDE('*ERS ?')"
+        <aggregate group="FileName,FoldersList.INCLUDE('*ErS ?')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -9941,7 +10069,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('*ERS ?')">USERS 1</field>
+                        <field name="FoldersList.INCLUDE('*ErS ?')">USERS 1</field>
                     </group>
                 </groups>
             </group>
@@ -9955,7 +10083,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('*ERS ?')">USERS 3</field>
+                        <field name="FoldersList.INCLUDE('*ErS ?')">USERS 3</field>
                     </group>
                 </groups>
             </group>
@@ -9965,7 +10093,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('*ERS ?')">USERS 4</field>
+                        <field name="FoldersList.INCLUDE('*ErS ?')">USERS 4</field>
                     </group>
                 </groups>
             </group>
@@ -9979,7 +10107,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('*ERS ?')">USERS 6</field>
+                        <field name="FoldersList.INCLUDE('*ErS ?')">USERS 6</field>
                     </group>
                 </groups>
             </group>
@@ -9989,7 +10117,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('*ERS ?')">USERS 7</field>
+                        <field name="FoldersList.INCLUDE('*ErS ?')">USERS 7</field>
                     </group>
                 </groups>
             </group>
@@ -10006,7 +10134,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FoldersList.INCLUDE('*ERS ?')"
+             "group":"FileName,FoldersList.INCLUDE('*ErS ?')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -10023,7 +10151,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('*ERS ?')":"USERS 1"
+                               "FoldersList.INCLUDE('*ErS ?')":"USERS 1"
                             }
                          }
                       }
@@ -10049,7 +10177,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('*ERS ?')":"USERS 3"
+                               "FoldersList.INCLUDE('*ErS ?')":"USERS 3"
                             }
                          }
                       }
@@ -10067,7 +10195,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('*ERS ?')":"USERS 4"
+                               "FoldersList.INCLUDE('*ErS ?')":"USERS 4"
                             }
                          }
                       }
@@ -10093,7 +10221,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('*ERS ?')":"USERS 6"
+                               "FoldersList.INCLUDE('*ErS ?')":"USERS 6"
                             }
                          }
                       }
@@ -10111,7 +10239,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('*ERS ?')":"USERS 7"
+                               "FoldersList.INCLUDE('*ErS ?')":"USERS 7"
                             }
                          }
                       }
@@ -10131,11 +10259,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.INCLUDE('USE*')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.INCLUDE('uSE*')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FoldersList.INCLUDE('USE*')"
+        <aggregate group="FileName,FoldersList.INCLUDE('uSE*')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -10147,7 +10275,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USE*')">USERS 1</field>
+                        <field name="FoldersList.INCLUDE('uSE*')">USERS 1</field>
                     </group>
                 </groups>
             </group>
@@ -10161,7 +10289,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USE*')">USERS 3</field>
+                        <field name="FoldersList.INCLUDE('uSE*')">USERS 3</field>
                     </group>
                 </groups>
             </group>
@@ -10171,7 +10299,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USE*')">USERS 4</field>
+                        <field name="FoldersList.INCLUDE('uSE*')">USERS 4</field>
                     </group>
                 </groups>
             </group>
@@ -10185,7 +10313,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USE*')">USERS 6</field>
+                        <field name="FoldersList.INCLUDE('uSE*')">USERS 6</field>
                     </group>
                 </groups>
             </group>
@@ -10195,7 +10323,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USE*')">USERS 7</field>
+                        <field name="FoldersList.INCLUDE('uSE*')">USERS 7</field>
                     </group>
                 </groups>
             </group>
@@ -10212,7 +10340,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FoldersList.INCLUDE('USE*')"
+             "group":"FileName,FoldersList.INCLUDE('uSE*')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -10229,7 +10357,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USE*')":"USERS 1"
+                               "FoldersList.INCLUDE('uSE*')":"USERS 1"
                             }
                          }
                       }
@@ -10255,7 +10383,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USE*')":"USERS 3"
+                               "FoldersList.INCLUDE('uSE*')":"USERS 3"
                             }
                          }
                       }
@@ -10273,7 +10401,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USE*')":"USERS 4"
+                               "FoldersList.INCLUDE('uSE*')":"USERS 4"
                             }
                          }
                       }
@@ -10299,7 +10427,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USE*')":"USERS 6"
+                               "FoldersList.INCLUDE('uSE*')":"USERS 6"
                             }
                          }
                       }
@@ -10317,7 +10445,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USE*')":"USERS 7"
+                               "FoldersList.INCLUDE('uSE*')":"USERS 7"
                             }
                          }
                       }
@@ -10337,11 +10465,11 @@
     }
 
 *** Request
-    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.INCLUDE('USERS ?')&shards=shard
+    GET /Application/File/_aggregate?m=COUNT(*)&q=*&f=FileName,FoldersList.INCLUDE('uSeRs ?')&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <aggregate group="FileName,FoldersList.INCLUDE('USERS ?')"
+        <aggregate group="FileName,FoldersList.INCLUDE('uSeRs ?')"
             metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
         <summary>8</summary>
@@ -10353,7 +10481,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USERS ?')">USERS 1</field>
+                        <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 1</field>
                     </group>
                 </groups>
             </group>
@@ -10367,7 +10495,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USERS ?')">USERS 3</field>
+                        <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 3</field>
                     </group>
                 </groups>
             </group>
@@ -10377,7 +10505,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USERS ?')">USERS 4</field>
+                        <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 4</field>
                     </group>
                 </groups>
             </group>
@@ -10391,7 +10519,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USERS ?')">USERS 6</field>
+                        <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 6</field>
                     </group>
                 </groups>
             </group>
@@ -10401,7 +10529,7 @@
                 <groups>
                     <group>
                         <metric>1</metric>
-                        <field name="FoldersList.INCLUDE('USERS ?')">USERS 7</field>
+                        <field name="FoldersList.INCLUDE('uSeRs ?')">USERS 7</field>
                     </group>
                 </groups>
             </group>
@@ -10418,7 +10546,7 @@
           "aggregate":{
              "metric":"COUNT(*)",
              "query":"*",
-             "group":"FileName,FoldersList.INCLUDE('USERS ?')"
+             "group":"FileName,FoldersList.INCLUDE('uSeRs ?')"
           },
           "totalobjects":"8",
           "summary":"8",
@@ -10435,7 +10563,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USERS ?')":"USERS 1"
+                               "FoldersList.INCLUDE('uSeRs ?')":"USERS 1"
                             }
                          }
                       }
@@ -10461,7 +10589,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USERS ?')":"USERS 3"
+                               "FoldersList.INCLUDE('uSeRs ?')":"USERS 3"
                             }
                          }
                       }
@@ -10479,7 +10607,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USERS ?')":"USERS 4"
+                               "FoldersList.INCLUDE('uSeRs ?')":"USERS 4"
                             }
                          }
                       }
@@ -10505,7 +10633,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USERS ?')":"USERS 6"
+                               "FoldersList.INCLUDE('uSeRs ?')":"USERS 6"
                             }
                          }
                       }
@@ -10523,7 +10651,7 @@
                          "group":{
                             "metric":"1",
                             "field":{
-                               "FoldersList.INCLUDE('USERS ?')":"USERS 7"
+                               "FoldersList.INCLUDE('uSeRs ?')":"USERS 7"
                             }
                          }
                       }
