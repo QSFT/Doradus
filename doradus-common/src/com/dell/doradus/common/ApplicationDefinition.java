@@ -511,7 +511,7 @@ final public class ApplicationDefinition {
 		
 		PriorityQueue<AliasDefinition> aliasQueue = new PriorityQueue<AliasDefinition>(11, new Comparator<AliasDefinition>() {
 			public int compare(AliasDefinition alias1, AliasDefinition alias2) {
-				return (alias1.getName().startsWith(alias2.getName()) ? -1 : 1);
+				return alias2.getName().length() - alias1.getName().length();
 			}
 		});
 		
