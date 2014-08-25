@@ -28,6 +28,11 @@ public class AggregationGroupItem {
    public String name;
    public Query query;
    public FieldDefinition fieldDef;
+   // transitive support
+   // defines whether the link is transitive
+   public boolean isTransitive;
+   //defines the depth. 0 means unlimited depth
+   public int transitiveDepth;
 
     //Nested links description if this item represents group
     public List<LinkInfo> nestedLinks;
