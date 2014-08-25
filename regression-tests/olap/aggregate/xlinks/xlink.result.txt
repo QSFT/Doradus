@@ -5,6 +5,66 @@
 ~~~~~~~~~~~~~~~~~~~~~~
 ~ Create application ~
 ~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Now xlinks can be created with their own inverse (self-reflexive) ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /_applications
+    <application name="Application1">
+        <key>ApplicationKey1</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+        </options>
+        <tables>
+            <table name="Table">
+                <fields>
+                    <field name="ThreadID" type="Text"/>
+                    <field inverse="InReplyTo" junction="_ID"
+                        name="InReplyTo" table="Table" type="XLINK"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: 
+    200 OK
+
+*** Request
+    DELETE /_applications/Application1/ApplicationKey1
+*** Response: 
+    200 OK
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Now xlinks can be created without using '_ID' as the junction field ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /_applications
+    <application name="Application2">
+        <key>ApplicationKey2</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+        </options>
+        <tables>
+            <table name="Table">
+                <fields>
+                    <field name="ThreadID" type="Text"/>
+                    <field inverse="InReplyTo" junction="ThreadID"
+                        name="InReplyTo" table="Table" type="XLINK"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: 
+    200 OK
+
+*** Request
+    DELETE /_applications/Application2/ApplicationKey2
+*** Response: 
+    200 OK
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 *** Request
     POST /Application/_shards/shard1
 *** Response: 
@@ -367,6 +427,82 @@
 ~~~~~~~~~~~~~~~~~~~~~~
 ~ Create application ~
 ~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Now xlinks can be created with their own inverse (self-reflexive) ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /_applications
+    {
+       "Application1":{
+          "key":"ApplicationKey1",
+          "options":{
+             "StorageService":"OLAPService"
+          },
+          "tables":{
+             "Table":{
+                "fields":{
+                   "ThreadID":{
+                      "type":"Text"
+                   },
+                   "InReplyTo":{
+                      "inverse":"InReplyTo",
+                      "junction":"_ID",
+                      "table":"Table",
+                      "type":"XLINK"
+                   }
+                }
+             }
+          }
+       }
+    }
+*** Response: 
+    200 OK
+
+*** Request
+    DELETE /_applications/Application1/ApplicationKey1
+*** Response: 
+    200 OK
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Now xlinks can be created without using '_ID' as the junction field ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /_applications
+    {
+       "Application2":{
+          "key":"ApplicationKey2",
+          "options":{
+             "StorageService":"OLAPService"
+          },
+          "tables":{
+             "Table":{
+                "fields":{
+                   "ThreadID":{
+                      "type":"Text"
+                   },
+                   "InReplyTo":{
+                      "inverse":"InReplyTo",
+                      "junction":"ThreadID",
+                      "table":"Table",
+                      "type":"XLINK"
+                   }
+                }
+             }
+          }
+       }
+    }
+*** Response: 
+    200 OK
+
+*** Request
+    DELETE /_applications/Application2/ApplicationKey2
+*** Response: 
+    200 OK
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 *** Request
     POST /Application/_shards/shard1
 *** Response: 

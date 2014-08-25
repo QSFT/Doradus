@@ -19,6 +19,44 @@
 </application>
 </DEFINE>
 
+<!-- Now xlinks can be their own inverse (self-reflexive)-->
+<DEFINE name="schema1.xml">
+      <application name="Application1">
+          <key>ApplicationKey1</key>
+          <options>
+              <option name="StorageService">OLAPService</option>
+          </options>
+          <tables>
+              <table name="Table">
+                  <fields>
+                      <field name="ThreadID" type="Text"/>
+                      <field inverse="InReplyTo" junction="_ID"
+                          name="InReplyTo" table="Table" type="XLINK"/>
+                  </fields>
+              </table>
+          </tables>
+      </application>
+</DEFINE>
+
+<!-- Now xlinks can do not use '_ID' as the junction field-->
+<DEFINE name="schema2.xml">
+      <application name="Application2">
+          <key>ApplicationKey2</key>
+          <options>
+              <option name="StorageService">OLAPService</option>
+          </options>
+          <tables>
+              <table name="Table">
+                  <fields>
+                      <field name="ThreadID" type="Text"/>
+                      <field inverse="InReplyTo" junction="ThreadID"
+                          name="InReplyTo" table="Table" type="XLINK"/>
+                  </fields>
+              </table>
+          </tables>
+      </application>
+</DEFINE>
+
 <DEFINE name="data1.xml">
 <batch>
   <docs>
@@ -87,6 +125,8 @@
 </DEFINE>
 
 <JSON-FROM-XML name ="schema.json" value="${schema.xml}"/>
+<JSON-FROM-XML name ="schema1.json" value="${schema1.xml}"/>
+<JSON-FROM-XML name ="schema2.json" value="${schema2.xml}"/>
 <JSON-FROM-XML name ="data1.json" value="${data1.xml}"/>
 <JSON-FROM-XML name ="data2.json" value="${data2.xml}"/>
 <JSON-FROM-XML name ="data3.json" value="${data3.xml}"/>

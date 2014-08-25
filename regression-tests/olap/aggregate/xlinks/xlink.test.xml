@@ -20,6 +20,20 @@ Doradus OLAP Database -v2.1
         <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
         <echo>~ Create application ~</echo>
         <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+	<echo>~ Now xlinks can be created with their own inverse (self-reflexive) ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <POST path="_applications" xml="${schema1.xml}"/>
+	<DELETE path="_applications/Application1/ApplicationKey1"/>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+	<echo>~ Now xlinks can be created without using '_ID' as the junction field ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <POST path="_applications" xml="${schema2.xml}"/>
+	<DELETE path="_applications/Application2/ApplicationKey2"/>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
         <disable-output/>
         <POST path="_applications" xml="${schema.xml}"/>
         <POST path="Application/shard1" xml="${data1.xml}"/>
@@ -38,6 +52,20 @@ Doradus OLAP Database -v2.1
         <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
         <echo>~ Create application ~</echo>
         <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+	<echo>~ Now xlinks can be created with their own inverse (self-reflexive) ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <POST path="_applications" json="${schema1.json}"/>
+	<DELETE path="_applications/Application1/ApplicationKey1"/>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+	<echo>~ Now xlinks can be created without using '_ID' as the junction field ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <POST path="_applications" json="${schema2.json}"/>
+	<DELETE path="_applications/Application2/ApplicationKey2"/>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
         <disable-output/>
         <POST path="_applications" json="${schema.json}"/>
         <POST path="Application/shard1" json="${data1.json}"/>
