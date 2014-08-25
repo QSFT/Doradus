@@ -798,8 +798,12 @@ public class DBConn {
     	ColumnPath colPath = new ColumnPath();
     	colPath.setColumn_family(colPar.getColumn_family());
     	colPath.setColumn(colName);
-    	Column col = getColumn(ByteBuffer.wrap(rowKey), colPath).getColumn();
-        return col == null ? null : new CassandraColumn(col.getName(), col.getValue());
+    	ColumnOrSuperColumn cosc = getColumn(ByteBuffer.wrap(rowKey), colPath);
+    	if (cosc == null) {
+    	    return null;
+    	}
+    	Column col = cosc.getColumn();
+        return new CassandraColumn(col.getName(), col.getValue());
     }   // fetchColumn
 
     // Fetch all columns of the rows with the given keys from the given ColumnFamily.
