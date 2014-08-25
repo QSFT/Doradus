@@ -95,7 +95,8 @@ public class NumSearcherMV {
 	}
 	public long sv_get(int doc) {
 		if(sv_isNull(doc)) throw new RuntimeException("sv_get: no value");
-		return m_values.get(doc);
+		else if(m_bSingleValued) return m_values.get(doc);
+		else return m_values.get(m_positions[doc + 1] - 1); 
 	}
 	
 	public boolean isNull(int doc) { return size(doc) == 0; }
