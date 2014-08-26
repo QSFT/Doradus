@@ -7,25 +7,26 @@
         <option name="StorageService">OLAPService</option>
     </options>
     <tables>
-        <table name="Message">
+        <table name="MV">
             <fields>
-                <field name="Size" type="LONG"/>
-                <field name="Participants" type="LINK" table="MessageParticipant" inverse="Message"/>
-                <field name="Status" type="TEXT"/>
+                <field name="Long" type="LONG" collection="true" />
+                <field name="Integer" type="INTEGER" collection="true" />
+                <field name="Text" type="TEXT" collection="true" />
+                <field name="Float" type="FLOAT" collection="true" />
+                <field name="Double" type="DOUBLE" collection="true" />
+                <field name="Boolean" type="BOOLEAN" collection="true" />
+                <field name="Timestamp" type="TIMESTAMP" collection="true" />
             </fields>
         </table>
-        <table name="MessageParticipant">
+        <table name="SV">
             <fields>
+                <field name="Long" type="LONG"/>
+                <field name="Integer" type="INTEGER"/>
                 <field name="Text" type="TEXT"/>
-                <field name="Message" type="LINK" table="Message" inverse="Participants"/>
-                <field name="Department" type="LINK" table="Department" inverse="Support"/>
-            </fields>
-        </table>
-        <table name="Department">
-            <fields>
-                <field name="Support" type="LINK" table="MessageParticipant" inverse="Department"/>
-                <field name="DEP" type="TEXT"/>
-                <field name="MV" type="TEXT" collection="true"/>
+                <field name="Float" type="FLOAT"/>
+                <field name="Double" type="DOUBLE"/>
+                <field name="Boolean" type="BOOLEAN"/>
+                <field name="Timestamp" type="TIMESTAMP"/>
             </fields>
         </table>
     </tables>
@@ -35,69 +36,40 @@
 <DEFINE name="data.xml">
       <batch>
         <docs>
-          <doc _table="MessageParticipant" _ID="1001" >
-            <field name="Text">Support</field>
-            <field name="Message"><add><value>2001</value></add></field>
-            <field name="Department"><add><value>3001</value><value>3004</value></add></field>
-          </doc>
-          <doc _table="MessageParticipant" _ID="1002" >
-            <field name="Text">Support</field>
-            <field name="Message"><add><value>2002</value></add></field>
-            <field name="Department"><add><value>3002</value></add></field>
-          </doc>
-          <doc _table="MessageParticipant" _ID="1003" >
-            <field name="Text">Logistic</field>
-            <field name="Message"><add><value>2003</value></add></field>
-            <field name="Department"><add><value>3003</value></add></field>
-          </doc>
-          <doc _table="MessageParticipant" _ID="1004" >
-            <field name="Text">Logistic</field>
-            <field name="Message"><add><value>2004</value></add></field>
-            <field name="Department"><add><value>3004</value><value>3001</value></add></field>
-          </doc>
-          <doc _table="MessageParticipant" _ID="1005" >
-            <field name="Text">Support</field>
-            <field name="Message"><add><value>2005</value></add></field>
-            <field name="Department"><add><value>3001</value></add></field>
-          </doc>
-          <doc _table="MessageParticipant" _ID="1006" >
-            <field name="Text">Support</field>
-            <field name="Message"><add><value>2006</value></add></field>
-            <field name="Department"><add><value>3002</value></add></field>
-          </doc>
-          <doc _table="Message" _ID="2001" >
-            <field name="Status">Work in Support</field>
-            <field name="Participants"><add><value>1001</value></add></field>
-            <field name="Size">1001</field>
-          </doc>
-          <doc _table="Message" _ID="2002" >
-            <field name="Status">Work in Support</field>
-            <field name="Participants"><add><value>1002</value></add></field>
-            <field name="Size">1002</field>
-          </doc>
-          <doc _table="Message" _ID="2003" >
-            <field name="Status">Work in Logistic</field>
-            <field name="Participants"><add><value>1003</value></add></field>
-            <field name="Size">1003</field>
-          </doc>
-          <doc _table="Message" _ID="2004" >
-            <field name="Status">Work in Logistic</field>
-            <field name="Participants"><add><value>1004</value></add></field>
-            <field name="Size">1004</field>
-          </doc>
-          <doc _table="Message" _ID="2005" >
-            <field name="Status">Work in Support</field>
-            <field name="Participants"><add><value>1005</value></add></field>
-            <field name="Size">1005</field>
-          </doc>
-          <doc _table="Message" _ID="2006" >
-            <field name="Status">Work in Support</field>
-            <field name="Participants"><add><value>1006</value></add></field>
-            <field name="Size">1006</field>
-          </doc>
-          <doc _table="Department" _ID="3001" >
-            <field name="DEP">Support Delivery</field>
-            <field name="MV">
+          <doc _table="MV" _ID="1001" >
+            <field name="Long">
+		<add>
+		    <value>100</value>
+		    <value>60444</value>
+		    <value>1</value>
+		    <value>-45</value>
+		</add>
+	    </field>
+            <field name="Integer">
+		<add>
+		    <value>100</value>
+		    <value>60444</value>
+		    <value>1</value>
+		    <value>-45</value>
+		</add>
+	    </field>
+            <field name="Float">
+		<add>
+		    <value>0.001</value>
+		    <value>-3E2</value>
+		    <value>8E-3</value>
+		    <value>5E8</value>
+		</add>
+	    </field>
+            <field name="Double">
+		<add>
+		    <value>-0.001</value>
+		    <value>3E2</value>
+		    <value>8E-13</value>
+		    <value>5E28</value>
+		</add>
+	    </field>
+            <field name="Text">
 		<add>
 		    <value>One</value>
 		    <value>Three</value>
@@ -105,33 +77,109 @@
 		    <value>Abs</value>
 		</add>
 	    </field>
-            <field name="Support"><add><value>1001</value></add></field>
-          </doc>
-          <doc _table="Department" _ID="3002" >
-            <field name="DEP">Support Weapon</field>
-            <field name="Support"><add><value>1002</value></add></field>
-            <field name="MV">
+            <field name="Boolean">
 		<add>
-		    <value>Two</value>
-		    <value>Gold</value>
-		    <value>testus</value>
+		    <value>true</value>
+		    <value>false</value>
+		    <value>false</value>
+		    <value>true</value>
+		</add>
+	    </field>
+            <field name="Timestamp">
+		<add>
+		    <value>2014</value>
+		    <value>2001</value>
+		    <value>1984</value>
+		    <value>1994</value>
 		</add>
 	    </field>
           </doc>
-          <doc _table="Department" _ID="3003" >
-            <field name="DEP">Logistic Delivery</field>
-            <field name="Support"><add><value>1003</value></add></field>
-            <field name="MV">
+          <doc _table="MV" _ID="1002" >
+            <field name="Long">
 		<add>
-		    <value>Three</value>
-		    <value>Bronze</value>
+		    <value>100</value>
+		    <value>100</value>
+		    <value>60444</value>
+		</add>
+	    </field>
+            <field name="Integer">
+		<add>
+		    <value>100</value>
+		    <value>100</value>
+		    <value>60444</value>
+		</add>
+	    </field>
+            <field name="Float">
+		<add>
+		    <value>0.001</value>
+		    <value>0.001</value>
+		    <value>3E2</value>
+		</add>
+	    </field>
+            <field name="Double">
+		<add>
+		    <value>-0.001</value>
+		    <value>-0.001</value>
+		    <value>-3E2</value>
+		</add>
+	    </field>
+            <field name="Text">
+		<add>
+		    <value>One</value>
+		    <value>One</value>
+		    <value>Abs</value>
+		</add>
+	    </field>
+            <field name="Boolean">
+		<add>
+		    <value>false</value>
+		    <value>false</value>
+		    <value>true</value>
+		</add>
+	    </field>
+            <field name="Timestamp">
+		<add>
+		    <value>2014</value>
+		    <value>2014</value>
+		    <value>1994</value>
 		</add>
 	    </field>
           </doc>
-          <doc _table="Department" _ID="3004" >
-            <field name="DEP">Logistic Weapon</field>
-            <field name="Support"><add><value>1004</value></add></field>
-            <field name="MV"></field>
+          <doc _table="MV" _ID="1003" >
+            <field name="Long"></field>
+            <field name="Integer"></field>
+            <field name="Float"></field>
+            <field name="Double"></field>
+            <field name="Text"></field>
+            <field name="Boolean"></field>
+            <field name="Timestamp"></field>
+          </doc>
+          <doc _table="SV" _ID="1001" >
+            <field name="Long">19999</field>
+            <field name="Integer">2000000</field>
+            <field name="Float">3E-3</field>
+            <field name="Double">5E13</field>
+            <field name="Text">OPUS</field>
+            <field name="Boolean">TRUE</field>
+            <field name="Timestamp">2009</field>
+          </doc>
+          <doc _table="SV" _ID="1002" >
+            <field name="Long">-900000</field>
+            <field name="Integer">-1230000</field>
+            <field name="Float">-1E-3</field>
+            <field name="Double">-15E8</field>
+            <field name="Text">LIST</field>
+            <field name="Boolean">FALSE</field>
+            <field name="Timestamp">2014</field>
+          </doc>
+          <doc _table="SV" _ID="1003" >
+            <field name="Long"></field>
+            <field name="Integer"></field>
+            <field name="Float"></field>
+            <field name="Double"></field>
+            <field name="Text"></field>
+            <field name="Boolean"></field>
+            <field name="Timestamp"></field>
           </doc>
         </docs>
       </batch>

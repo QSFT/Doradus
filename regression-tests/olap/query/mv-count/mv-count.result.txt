@@ -14,628 +14,91 @@
 ~ Table of Content ~
 ~~~~~~~~~~~~~~~~~~~~
 *** Request
-    GET /Application/Message/_query?q=*&f=_all&shards=shard
+    GET /Application/MV/_query?q=*&f=_all&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>6</totalobjects>
+        <totalobjects>3</totalobjects>
         <docs>
             <doc>
-                <field name="Size">1001</field>
-                <field name="Status">Work in Support</field>
-                <field name="_ID">2001</field>
-                <field name="_shard">shard</field>
-                <field name="Participants">
-                    <doc>
-                        <field name="Text">Support</field>
-                        <field name="_ID">1001</field>
-                    </doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
                 </field>
-            </doc>
-            <doc>
-                <field name="Size">1002</field>
-                <field name="Status">Work in Support</field>
-                <field name="_ID">2002</field>
-                <field name="_shard">shard</field>
-                <field name="Participants">
-                    <doc>
-                        <field name="Text">Support</field>
-                        <field name="_ID">1002</field>
-                    </doc>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>300.0</value>
+                    <value>5.0E28</value>
+                    <value>8.0E-13</value>
                 </field>
-            </doc>
-            <doc>
-                <field name="Size">1003</field>
-                <field name="Status">Work in Logistic</field>
-                <field name="_ID">2003</field>
-                <field name="_shard">shard</field>
-                <field name="Participants">
-                    <doc>
-                        <field name="Text">Logistic</field>
-                        <field name="_ID">1003</field>
-                    </doc>
+                <field name="Float">
+                    <value>-300.0</value>
+                    <value>0.0010000000474974513</value>
+                    <value>0.00800000037997961</value>
+                    <value>5.0E8</value>
                 </field>
-            </doc>
-            <doc>
-                <field name="Size">1004</field>
-                <field name="Status">Work in Logistic</field>
-                <field name="_ID">2004</field>
-                <field name="_shard">shard</field>
-                <field name="Participants">
-                    <doc>
-                        <field name="Text">Logistic</field>
-                        <field name="_ID">1004</field>
-                    </doc>
+                <field name="Integer">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
                 </field>
-            </doc>
-            <doc>
-                <field name="Size">1005</field>
-                <field name="Status">Work in Support</field>
-                <field name="_ID">2005</field>
-                <field name="_shard">shard</field>
-                <field name="Participants">
-                    <doc>
-                        <field name="Text">Support</field>
-                        <field name="_ID">1005</field>
-                    </doc>
+                <field name="Long">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
                 </field>
-            </doc>
-            <doc>
-                <field name="Size">1006</field>
-                <field name="Status">Work in Support</field>
-                <field name="_ID">2006</field>
-                <field name="_shard">shard</field>
-                <field name="Participants">
-                    <doc>
-                        <field name="Text">Support</field>
-                        <field name="_ID">1006</field>
-                    </doc>
-                </field>
-            </doc>
-        </docs>
-    </results>
-*** Response: json
-    200 OK
-    {
-       "results":{
-          "totalobjects":"6",
-          "docs":[
-             {
-                "doc":{
-                   "Size":"1001",
-                   "Status":"Work in Support",
-                   "_ID":"2001",
-                   "_shard":"shard",
-                   "Participants":[
-                      {
-                         "doc":{
-                            "Text":"Support",
-                            "_ID":"1001"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Size":"1002",
-                   "Status":"Work in Support",
-                   "_ID":"2002",
-                   "_shard":"shard",
-                   "Participants":[
-                      {
-                         "doc":{
-                            "Text":"Support",
-                            "_ID":"1002"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Size":"1003",
-                   "Status":"Work in Logistic",
-                   "_ID":"2003",
-                   "_shard":"shard",
-                   "Participants":[
-                      {
-                         "doc":{
-                            "Text":"Logistic",
-                            "_ID":"1003"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Size":"1004",
-                   "Status":"Work in Logistic",
-                   "_ID":"2004",
-                   "_shard":"shard",
-                   "Participants":[
-                      {
-                         "doc":{
-                            "Text":"Logistic",
-                            "_ID":"1004"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Size":"1005",
-                   "Status":"Work in Support",
-                   "_ID":"2005",
-                   "_shard":"shard",
-                   "Participants":[
-                      {
-                         "doc":{
-                            "Text":"Support",
-                            "_ID":"1005"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Size":"1006",
-                   "Status":"Work in Support",
-                   "_ID":"2006",
-                   "_shard":"shard",
-                   "Participants":[
-                      {
-                         "doc":{
-                            "Text":"Support",
-                            "_ID":"1006"
-                         }
-                      }
-                   ]
-                }
-             }
-          ]
-       }
-    }
-
-*** Request
-    GET /Application/MessageParticipant/_query?q=*&f=_all&shards=shard
-*** Response: xml
-    200 OK
-    <results>
-        <totalobjects>6</totalobjects>
-        <docs>
-            <doc>
-                <field name="Text">Support</field>
-                <field name="_ID">1001</field>
-                <field name="_shard">shard</field>
-                <field name="Department">
-                    <doc>
-                        <field name="DEP">Support Delivery</field>
-                        <field name="MV">
-                            <value>Abs</value>
-                            <value>One</value>
-                            <value>Silver</value>
-                            <value>Three</value>
-                        </field>
-                        <field name="_ID">3001</field>
-                    </doc>
-                    <doc>
-                        <field name="DEP">Logistic Weapon</field>
-                        <field name="_ID">3004</field>
-                    </doc>
-                </field>
-                <field name="Message">
-                    <doc>
-                        <field name="Size">1001</field>
-                        <field name="Status">Work in Support</field>
-                        <field name="_ID">2001</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="Text">Support</field>
-                <field name="_ID">1002</field>
-                <field name="_shard">shard</field>
-                <field name="Department">
-                    <doc>
-                        <field name="DEP">Support Weapon</field>
-                        <field name="MV">
-                            <value>Gold</value>
-                            <value>Two</value>
-                            <value>testus</value>
-                        </field>
-                        <field name="_ID">3002</field>
-                    </doc>
-                </field>
-                <field name="Message">
-                    <doc>
-                        <field name="Size">1002</field>
-                        <field name="Status">Work in Support</field>
-                        <field name="_ID">2002</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="Text">Logistic</field>
-                <field name="_ID">1003</field>
-                <field name="_shard">shard</field>
-                <field name="Department">
-                    <doc>
-                        <field name="DEP">Logistic Delivery</field>
-                        <field name="MV">
-                            <value>Bronze</value>
-                            <value>Three</value>
-                        </field>
-                        <field name="_ID">3003</field>
-                    </doc>
-                </field>
-                <field name="Message">
-                    <doc>
-                        <field name="Size">1003</field>
-                        <field name="Status">Work in Logistic</field>
-                        <field name="_ID">2003</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="Text">Logistic</field>
-                <field name="_ID">1004</field>
-                <field name="_shard">shard</field>
-                <field name="Department">
-                    <doc>
-                        <field name="DEP">Support Delivery</field>
-                        <field name="MV">
-                            <value>Abs</value>
-                            <value>One</value>
-                            <value>Silver</value>
-                            <value>Three</value>
-                        </field>
-                        <field name="_ID">3001</field>
-                    </doc>
-                    <doc>
-                        <field name="DEP">Logistic Weapon</field>
-                        <field name="_ID">3004</field>
-                    </doc>
-                </field>
-                <field name="Message">
-                    <doc>
-                        <field name="Size">1004</field>
-                        <field name="Status">Work in Logistic</field>
-                        <field name="_ID">2004</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="Text">Support</field>
-                <field name="_ID">1005</field>
-                <field name="_shard">shard</field>
-                <field name="Department">
-                    <doc>
-                        <field name="DEP">Support Delivery</field>
-                        <field name="MV">
-                            <value>Abs</value>
-                            <value>One</value>
-                            <value>Silver</value>
-                            <value>Three</value>
-                        </field>
-                        <field name="_ID">3001</field>
-                    </doc>
-                </field>
-                <field name="Message">
-                    <doc>
-                        <field name="Size">1005</field>
-                        <field name="Status">Work in Support</field>
-                        <field name="_ID">2005</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="Text">Support</field>
-                <field name="_ID">1006</field>
-                <field name="_shard">shard</field>
-                <field name="Department">
-                    <doc>
-                        <field name="DEP">Support Weapon</field>
-                        <field name="MV">
-                            <value>Gold</value>
-                            <value>Two</value>
-                            <value>testus</value>
-                        </field>
-                        <field name="_ID">3002</field>
-                    </doc>
-                </field>
-                <field name="Message">
-                    <doc>
-                        <field name="Size">1006</field>
-                        <field name="Status">Work in Support</field>
-                        <field name="_ID">2006</field>
-                    </doc>
-                </field>
-            </doc>
-        </docs>
-    </results>
-*** Response: json
-    200 OK
-    {
-       "results":{
-          "totalobjects":"6",
-          "docs":[
-             {
-                "doc":{
-                   "Text":"Support",
-                   "_ID":"1001",
-                   "_shard":"shard",
-                   "Department":[
-                      {
-                         "doc":{
-                            "DEP":"Support Delivery",
-                            "MV":[
-                               "Abs",
-                               "One",
-                               "Silver",
-                               "Three"
-                            ],
-                            "_ID":"3001"
-                         }
-                      },
-                      {
-                         "doc":{
-                            "DEP":"Logistic Weapon",
-                            "_ID":"3004"
-                         }
-                      }
-                   ],
-                   "Message":[
-                      {
-                         "doc":{
-                            "Size":"1001",
-                            "Status":"Work in Support",
-                            "_ID":"2001"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Text":"Support",
-                   "_ID":"1002",
-                   "_shard":"shard",
-                   "Department":[
-                      {
-                         "doc":{
-                            "DEP":"Support Weapon",
-                            "MV":[
-                               "Gold",
-                               "Two",
-                               "testus"
-                            ],
-                            "_ID":"3002"
-                         }
-                      }
-                   ],
-                   "Message":[
-                      {
-                         "doc":{
-                            "Size":"1002",
-                            "Status":"Work in Support",
-                            "_ID":"2002"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Text":"Logistic",
-                   "_ID":"1003",
-                   "_shard":"shard",
-                   "Department":[
-                      {
-                         "doc":{
-                            "DEP":"Logistic Delivery",
-                            "MV":[
-                               "Bronze",
-                               "Three"
-                            ],
-                            "_ID":"3003"
-                         }
-                      }
-                   ],
-                   "Message":[
-                      {
-                         "doc":{
-                            "Size":"1003",
-                            "Status":"Work in Logistic",
-                            "_ID":"2003"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Text":"Logistic",
-                   "_ID":"1004",
-                   "_shard":"shard",
-                   "Department":[
-                      {
-                         "doc":{
-                            "DEP":"Support Delivery",
-                            "MV":[
-                               "Abs",
-                               "One",
-                               "Silver",
-                               "Three"
-                            ],
-                            "_ID":"3001"
-                         }
-                      },
-                      {
-                         "doc":{
-                            "DEP":"Logistic Weapon",
-                            "_ID":"3004"
-                         }
-                      }
-                   ],
-                   "Message":[
-                      {
-                         "doc":{
-                            "Size":"1004",
-                            "Status":"Work in Logistic",
-                            "_ID":"2004"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Text":"Support",
-                   "_ID":"1005",
-                   "_shard":"shard",
-                   "Department":[
-                      {
-                         "doc":{
-                            "DEP":"Support Delivery",
-                            "MV":[
-                               "Abs",
-                               "One",
-                               "Silver",
-                               "Three"
-                            ],
-                            "_ID":"3001"
-                         }
-                      }
-                   ],
-                   "Message":[
-                      {
-                         "doc":{
-                            "Size":"1005",
-                            "Status":"Work in Support",
-                            "_ID":"2005"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Text":"Support",
-                   "_ID":"1006",
-                   "_shard":"shard",
-                   "Department":[
-                      {
-                         "doc":{
-                            "DEP":"Support Weapon",
-                            "MV":[
-                               "Gold",
-                               "Two",
-                               "testus"
-                            ],
-                            "_ID":"3002"
-                         }
-                      }
-                   ],
-                   "Message":[
-                      {
-                         "doc":{
-                            "Size":"1006",
-                            "Status":"Work in Support",
-                            "_ID":"2006"
-                         }
-                      }
-                   ]
-                }
-             }
-          ]
-       }
-    }
-
-*** Request
-    GET /Application/Department/_query?q=*&f=_all&shards=shard
-*** Response: xml
-    200 OK
-    <results>
-        <totalobjects>4</totalobjects>
-        <docs>
-            <doc>
-                <field name="DEP">Support Delivery</field>
-                <field name="MV">
+                <field name="Text">
                     <value>Abs</value>
                     <value>One</value>
                     <value>Silver</value>
                     <value>Three</value>
                 </field>
-                <field name="_ID">3001</field>
-                <field name="_shard">shard</field>
-                <field name="Support">
-                    <doc>
-                        <field name="Text">Support</field>
-                        <field name="_ID">1001</field>
-                    </doc>
-                    <doc>
-                        <field name="Text">Logistic</field>
-                        <field name="_ID">1004</field>
-                    </doc>
-                    <doc>
-                        <field name="Text">Support</field>
-                        <field name="_ID">1005</field>
-                    </doc>
+                <field name="Timestamp">
+                    <value>1984-01-01 00:00:00</value>
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
                 </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
             </doc>
             <doc>
-                <field name="DEP">Support Weapon</field>
-                <field name="MV">
-                    <value>Gold</value>
-                    <value>Two</value>
-                    <value>testus</value>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
                 </field>
-                <field name="_ID">3002</field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
                 <field name="_shard">shard</field>
-                <field name="Support">
-                    <doc>
-                        <field name="Text">Support</field>
-                        <field name="_ID">1002</field>
-                    </doc>
-                    <doc>
-                        <field name="Text">Support</field>
-                        <field name="_ID">1006</field>
-                    </doc>
-                </field>
             </doc>
             <doc>
-                <field name="DEP">Logistic Delivery</field>
-                <field name="MV">
-                    <value>Bronze</value>
-                    <value>Three</value>
-                </field>
-                <field name="_ID">3003</field>
+                <field name="_ID">1003</field>
                 <field name="_shard">shard</field>
-                <field name="Support">
-                    <doc>
-                        <field name="Text">Logistic</field>
-                        <field name="_ID">1003</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="DEP">Logistic Weapon</field>
-                <field name="_ID">3004</field>
-                <field name="_shard">shard</field>
-                <field name="Support">
-                    <doc>
-                        <field name="Text">Support</field>
-                        <field name="_ID">1001</field>
-                    </doc>
-                    <doc>
-                        <field name="Text">Logistic</field>
-                        <field name="_ID">1004</field>
-                    </doc>
-                </field>
             </doc>
         </docs>
     </results>
@@ -643,105 +106,169 @@
     200 OK
     {
        "results":{
-          "totalobjects":"4",
+          "totalobjects":"3",
           "docs":[
              {
                 "doc":{
-                   "DEP":"Support Delivery",
-                   "MV":[
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "300.0",
+                      "5.0E28",
+                      "8.0E-13"
+                   ],
+                   "Float":[
+                      "-300.0",
+                      "0.0010000000474974513",
+                      "0.00800000037997961",
+                      "5.0E8"
+                   ],
+                   "Integer":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
                       "Abs",
                       "One",
                       "Silver",
                       "Three"
                    ],
-                   "_ID":"3001",
-                   "_shard":"shard",
-                   "Support":[
-                      {
-                         "doc":{
-                            "Text":"Support",
-                            "_ID":"1001"
-                         }
-                      },
-                      {
-                         "doc":{
-                            "Text":"Logistic",
-                            "_ID":"1004"
-                         }
-                      },
-                      {
-                         "doc":{
-                            "Text":"Support",
-                            "_ID":"1005"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "DEP":"Support Weapon",
-                   "MV":[
-                      "Gold",
-                      "Two",
-                      "testus"
+                   "Timestamp":[
+                      "1984-01-01 00:00:00",
+                      "1994-01-01 00:00:00",
+                      "2001-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
                    ],
-                   "_ID":"3002",
-                   "_shard":"shard",
-                   "Support":[
-                      {
-                         "doc":{
-                            "Text":"Support",
-                            "_ID":"1002"
-                         }
-                      },
-                      {
-                         "doc":{
-                            "Text":"Support",
-                            "_ID":"1006"
-                         }
-                      }
-                   ]
+                   "_ID":"1001",
+                   "_shard":"shard"
                 }
              },
              {
                 "doc":{
-                   "DEP":"Logistic Delivery",
-                   "MV":[
-                      "Bronze",
-                      "Three"
+                   "Boolean":[
+                      "False",
+                      "True"
                    ],
-                   "_ID":"3003",
-                   "_shard":"shard",
-                   "Support":[
-                      {
-                         "doc":{
-                            "Text":"Logistic",
-                            "_ID":"1003"
-                         }
-                      }
-                   ]
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
                 }
              },
              {
                 "doc":{
-                   "DEP":"Logistic Weapon",
-                   "_ID":"3004",
-                   "_shard":"shard",
-                   "Support":[
-                      {
-                         "doc":{
-                            "Text":"Support",
-                            "_ID":"1001"
-                         }
-                      },
-                      {
-                         "doc":{
-                            "Text":"Logistic",
-                            "_ID":"1004"
-                         }
-                      }
-                   ]
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>3</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">True</field>
+                <field name="Double">5.0E13</field>
+                <field name="Float">0.003000000026077032</field>
+                <field name="Integer">2000000</field>
+                <field name="Long">19999</field>
+                <field name="Text">OPUS</field>
+                <field name="Timestamp">2009-01-01 00:00:00</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">False</field>
+                <field name="Double">-1.5E9</field>
+                <field name="Float">-0.0010000000474974513</field>
+                <field name="Integer">-1230000</field>
+                <field name="Long">-900000</field>
+                <field name="Text">LIST</field>
+                <field name="Timestamp">2014-01-01 00:00:00</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"3",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":"True",
+                   "Double":"5.0E13",
+                   "Float":"0.003000000026077032",
+                   "Integer":"2000000",
+                   "Long":"19999",
+                   "Text":"OPUS",
+                   "Timestamp":"2009-01-01 00:00:00",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":"False",
+                   "Double":"-1.5E9",
+                   "Float":"-0.0010000000474974513",
+                   "Integer":"-1230000",
+                   "Long":"-900000",
+                   "Text":"LIST",
+                   "Timestamp":"2014-01-01 00:00:00",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
                 }
              }
           ]
@@ -751,46 +278,18 @@
 ~~~~~~~~~~~~~~~~~~~~~~~
 ~ Test for SV - COUNT ~
 ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+~ LONG ~
+~~~~~~~~
 *** Request
-    GET /Application/Department/_query?q=COUNT(DEP)>0&shards=shard
+    GET /Application/SV/_query?q=COUNT(Long)<1&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>4</totalobjects>
+        <totalobjects>1</totalobjects>
         <docs>
             <doc>
-                <field name="DEP">Support Delivery</field>
-                <field name="MV">
-                    <value>Abs</value>
-                    <value>One</value>
-                    <value>Silver</value>
-                    <value>Three</value>
-                </field>
-                <field name="_ID">3001</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="DEP">Support Weapon</field>
-                <field name="MV">
-                    <value>Gold</value>
-                    <value>Two</value>
-                    <value>testus</value>
-                </field>
-                <field name="_ID">3002</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="DEP">Logistic Delivery</field>
-                <field name="MV">
-                    <value>Bronze</value>
-                    <value>Three</value>
-                </field>
-                <field name="_ID">3003</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="DEP">Logistic Weapon</field>
-                <field name="_ID">3004</field>
+                <field name="_ID">1003</field>
                 <field name="_shard">shard</field>
             </doc>
         </docs>
@@ -799,48 +298,11 @@
     200 OK
     {
        "results":{
-          "totalobjects":"4",
+          "totalobjects":"1",
           "docs":[
              {
                 "doc":{
-                   "DEP":"Support Delivery",
-                   "MV":[
-                      "Abs",
-                      "One",
-                      "Silver",
-                      "Three"
-                   ],
-                   "_ID":"3001",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "DEP":"Support Weapon",
-                   "MV":[
-                      "Gold",
-                      "Two",
-                      "testus"
-                   ],
-                   "_ID":"3002",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "DEP":"Logistic Delivery",
-                   "MV":[
-                      "Bronze",
-                      "Three"
-                   ],
-                   "_ID":"3003",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "DEP":"Logistic Weapon",
-                   "_ID":"3004",
+                   "_ID":"1003",
                    "_shard":"shard"
                 }
              }
@@ -849,7 +311,770 @@
     }
 
 *** Request
-    GET /Application/Department/_query?q=COUNT(DEP)<1&shards=shard
+    GET /Application/SV/_query?q=COUNT(Long)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">True</field>
+                <field name="Double">5.0E13</field>
+                <field name="Float">0.003000000026077032</field>
+                <field name="Integer">2000000</field>
+                <field name="Long">19999</field>
+                <field name="Text">OPUS</field>
+                <field name="Timestamp">2009-01-01 00:00:00</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">False</field>
+                <field name="Double">-1.5E9</field>
+                <field name="Float">-0.0010000000474974513</field>
+                <field name="Integer">-1230000</field>
+                <field name="Long">-900000</field>
+                <field name="Text">LIST</field>
+                <field name="Timestamp">2014-01-01 00:00:00</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":"True",
+                   "Double":"5.0E13",
+                   "Float":"0.003000000026077032",
+                   "Integer":"2000000",
+                   "Long":"19999",
+                   "Text":"OPUS",
+                   "Timestamp":"2009-01-01 00:00:00",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":"False",
+                   "Double":"-1.5E9",
+                   "Float":"-0.0010000000474974513",
+                   "Integer":"-1230000",
+                   "Long":"-900000",
+                   "Text":"LIST",
+                   "Timestamp":"2014-01-01 00:00:00",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Long)>2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~~~
+~ INTEGER ~
+~~~~~~~~~~~
+*** Request
+    GET /Application/SV/_query?q=COUNT(Integer)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Integer)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">True</field>
+                <field name="Double">5.0E13</field>
+                <field name="Float">0.003000000026077032</field>
+                <field name="Integer">2000000</field>
+                <field name="Long">19999</field>
+                <field name="Text">OPUS</field>
+                <field name="Timestamp">2009-01-01 00:00:00</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">False</field>
+                <field name="Double">-1.5E9</field>
+                <field name="Float">-0.0010000000474974513</field>
+                <field name="Integer">-1230000</field>
+                <field name="Long">-900000</field>
+                <field name="Text">LIST</field>
+                <field name="Timestamp">2014-01-01 00:00:00</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":"True",
+                   "Double":"5.0E13",
+                   "Float":"0.003000000026077032",
+                   "Integer":"2000000",
+                   "Long":"19999",
+                   "Text":"OPUS",
+                   "Timestamp":"2009-01-01 00:00:00",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":"False",
+                   "Double":"-1.5E9",
+                   "Float":"-0.0010000000474974513",
+                   "Integer":"-1230000",
+                   "Long":"-900000",
+                   "Text":"LIST",
+                   "Timestamp":"2014-01-01 00:00:00",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Integer)>2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~
+~ FLOAT ~
+~~~~~~~~~
+*** Request
+    GET /Application/SV/_query?q=COUNT(Float)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Float)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">True</field>
+                <field name="Double">5.0E13</field>
+                <field name="Float">0.003000000026077032</field>
+                <field name="Integer">2000000</field>
+                <field name="Long">19999</field>
+                <field name="Text">OPUS</field>
+                <field name="Timestamp">2009-01-01 00:00:00</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">False</field>
+                <field name="Double">-1.5E9</field>
+                <field name="Float">-0.0010000000474974513</field>
+                <field name="Integer">-1230000</field>
+                <field name="Long">-900000</field>
+                <field name="Text">LIST</field>
+                <field name="Timestamp">2014-01-01 00:00:00</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":"True",
+                   "Double":"5.0E13",
+                   "Float":"0.003000000026077032",
+                   "Integer":"2000000",
+                   "Long":"19999",
+                   "Text":"OPUS",
+                   "Timestamp":"2009-01-01 00:00:00",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":"False",
+                   "Double":"-1.5E9",
+                   "Float":"-0.0010000000474974513",
+                   "Integer":"-1230000",
+                   "Long":"-900000",
+                   "Text":"LIST",
+                   "Timestamp":"2014-01-01 00:00:00",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Float)>2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~~
+~ DOUBLE ~
+~~~~~~~~~~
+*** Request
+    GET /Application/SV/_query?q=COUNT(Double)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Double)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">True</field>
+                <field name="Double">5.0E13</field>
+                <field name="Float">0.003000000026077032</field>
+                <field name="Integer">2000000</field>
+                <field name="Long">19999</field>
+                <field name="Text">OPUS</field>
+                <field name="Timestamp">2009-01-01 00:00:00</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">False</field>
+                <field name="Double">-1.5E9</field>
+                <field name="Float">-0.0010000000474974513</field>
+                <field name="Integer">-1230000</field>
+                <field name="Long">-900000</field>
+                <field name="Text">LIST</field>
+                <field name="Timestamp">2014-01-01 00:00:00</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":"True",
+                   "Double":"5.0E13",
+                   "Float":"0.003000000026077032",
+                   "Integer":"2000000",
+                   "Long":"19999",
+                   "Text":"OPUS",
+                   "Timestamp":"2009-01-01 00:00:00",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":"False",
+                   "Double":"-1.5E9",
+                   "Float":"-0.0010000000474974513",
+                   "Integer":"-1230000",
+                   "Long":"-900000",
+                   "Text":"LIST",
+                   "Timestamp":"2014-01-01 00:00:00",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Double)>2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~
+~ TEXT ~
+~~~~~~~~
+*** Request
+    GET /Application/SV/_query?q=COUNT(Text)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Text)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">True</field>
+                <field name="Double">5.0E13</field>
+                <field name="Float">0.003000000026077032</field>
+                <field name="Integer">2000000</field>
+                <field name="Long">19999</field>
+                <field name="Text">OPUS</field>
+                <field name="Timestamp">2009-01-01 00:00:00</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">False</field>
+                <field name="Double">-1.5E9</field>
+                <field name="Float">-0.0010000000474974513</field>
+                <field name="Integer">-1230000</field>
+                <field name="Long">-900000</field>
+                <field name="Text">LIST</field>
+                <field name="Timestamp">2014-01-01 00:00:00</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":"True",
+                   "Double":"5.0E13",
+                   "Float":"0.003000000026077032",
+                   "Integer":"2000000",
+                   "Long":"19999",
+                   "Text":"OPUS",
+                   "Timestamp":"2009-01-01 00:00:00",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":"False",
+                   "Double":"-1.5E9",
+                   "Float":"-0.0010000000474974513",
+                   "Integer":"-1230000",
+                   "Long":"-900000",
+                   "Text":"LIST",
+                   "Timestamp":"2014-01-01 00:00:00",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Text)>2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~~~
+~ BOOLEAN ~
+~~~~~~~~~~~
+*** Request
+    GET /Application/SV/_query?q=COUNT(Boolean)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Boolean)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">True</field>
+                <field name="Double">5.0E13</field>
+                <field name="Float">0.003000000026077032</field>
+                <field name="Integer">2000000</field>
+                <field name="Long">19999</field>
+                <field name="Text">OPUS</field>
+                <field name="Timestamp">2009-01-01 00:00:00</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">False</field>
+                <field name="Double">-1.5E9</field>
+                <field name="Float">-0.0010000000474974513</field>
+                <field name="Integer">-1230000</field>
+                <field name="Long">-900000</field>
+                <field name="Text">LIST</field>
+                <field name="Timestamp">2014-01-01 00:00:00</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":"True",
+                   "Double":"5.0E13",
+                   "Float":"0.003000000026077032",
+                   "Integer":"2000000",
+                   "Long":"19999",
+                   "Text":"OPUS",
+                   "Timestamp":"2009-01-01 00:00:00",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":"False",
+                   "Double":"-1.5E9",
+                   "Float":"-0.0010000000474974513",
+                   "Integer":"-1230000",
+                   "Long":"-900000",
+                   "Text":"LIST",
+                   "Timestamp":"2014-01-01 00:00:00",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Boolean)>2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~~~~~
+~ TIMESTAMP ~
+~~~~~~~~~~~~~
+*** Request
+    GET /Application/SV/_query?q=COUNT(Timestamp)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Timestamp)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">True</field>
+                <field name="Double">5.0E13</field>
+                <field name="Float">0.003000000026077032</field>
+                <field name="Integer">2000000</field>
+                <field name="Long">19999</field>
+                <field name="Text">OPUS</field>
+                <field name="Timestamp">2009-01-01 00:00:00</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">False</field>
+                <field name="Double">-1.5E9</field>
+                <field name="Float">-0.0010000000474974513</field>
+                <field name="Integer">-1230000</field>
+                <field name="Long">-900000</field>
+                <field name="Text">LIST</field>
+                <field name="Timestamp">2014-01-01 00:00:00</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":"True",
+                   "Double":"5.0E13",
+                   "Float":"0.003000000026077032",
+                   "Integer":"2000000",
+                   "Long":"19999",
+                   "Text":"OPUS",
+                   "Timestamp":"2009-01-01 00:00:00",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":"False",
+                   "Double":"-1.5E9",
+                   "Float":"-0.0010000000474974513",
+                   "Integer":"-1230000",
+                   "Long":"-900000",
+                   "Text":"LIST",
+                   "Timestamp":"2014-01-01 00:00:00",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Timestamp)>2&shards=shard
 *** Response: xml
     200 OK
     <results>
@@ -868,16 +1093,18 @@
 ~~~~~~~~~~~~~~~~~~~~~~~
 ~ Test for MV - COUNT ~
 ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+~ LONG ~
+~~~~~~~~
 *** Request
-    GET /Application/Department/_query?q=COUNT(MV)<1&shards=shard
+    GET /Application/MV/_query?q=COUNT(Long)<1&shards=shard
 *** Response: xml
     200 OK
     <results>
         <totalobjects>1</totalobjects>
         <docs>
             <doc>
-                <field name="DEP">Logistic Weapon</field>
-                <field name="_ID">3004</field>
+                <field name="_ID">1003</field>
                 <field name="_shard">shard</field>
             </doc>
         </docs>
@@ -890,8 +1117,7 @@
           "docs":[
              {
                 "doc":{
-                   "DEP":"Logistic Weapon",
-                   "_ID":"3004",
+                   "_ID":"1003",
                    "_shard":"shard"
                 }
              }
@@ -900,70 +1126,86 @@
     }
 
 *** Request
-    GET /Application/Department/_query?q=COUNT(MV)>0 AND COUNT(MV)<3&shards=shard
-*** Response: xml
-    200 OK
-    <results>
-        <totalobjects>1</totalobjects>
-        <docs>
-            <doc>
-                <field name="DEP">Logistic Delivery</field>
-                <field name="MV">
-                    <value>Bronze</value>
-                    <value>Three</value>
-                </field>
-                <field name="_ID">3003</field>
-                <field name="_shard">shard</field>
-            </doc>
-        </docs>
-    </results>
-*** Response: json
-    200 OK
-    {
-       "results":{
-          "totalobjects":"1",
-          "docs":[
-             {
-                "doc":{
-                   "DEP":"Logistic Delivery",
-                   "MV":[
-                      "Bronze",
-                      "Three"
-                   ],
-                   "_ID":"3003",
-                   "_shard":"shard"
-                }
-             }
-          ]
-       }
-    }
-
-*** Request
-    GET /Application/Department/_query?q=COUNT(MV)>2&shards=shard
+    GET /Application/MV/_query?q=COUNT(Long)>0&shards=shard
 *** Response: xml
     200 OK
     <results>
         <totalobjects>2</totalobjects>
         <docs>
             <doc>
-                <field name="DEP">Support Delivery</field>
-                <field name="MV">
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>300.0</value>
+                    <value>5.0E28</value>
+                    <value>8.0E-13</value>
+                </field>
+                <field name="Float">
+                    <value>-300.0</value>
+                    <value>0.0010000000474974513</value>
+                    <value>0.00800000037997961</value>
+                    <value>5.0E8</value>
+                </field>
+                <field name="Integer">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
                     <value>Abs</value>
                     <value>One</value>
                     <value>Silver</value>
                     <value>Three</value>
                 </field>
-                <field name="_ID">3001</field>
+                <field name="Timestamp">
+                    <value>1984-01-01 00:00:00</value>
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1001</field>
                 <field name="_shard">shard</field>
             </doc>
             <doc>
-                <field name="DEP">Support Weapon</field>
-                <field name="MV">
-                    <value>Gold</value>
-                    <value>Two</value>
-                    <value>testus</value>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
                 </field>
-                <field name="_ID">3002</field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
                 <field name="_shard">shard</field>
             </doc>
         </docs>
@@ -976,26 +1218,81 @@
           "docs":[
              {
                 "doc":{
-                   "DEP":"Support Delivery",
-                   "MV":[
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "300.0",
+                      "5.0E28",
+                      "8.0E-13"
+                   ],
+                   "Float":[
+                      "-300.0",
+                      "0.0010000000474974513",
+                      "0.00800000037997961",
+                      "5.0E8"
+                   ],
+                   "Integer":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
                       "Abs",
                       "One",
                       "Silver",
                       "Three"
                    ],
-                   "_ID":"3001",
+                   "Timestamp":[
+                      "1984-01-01 00:00:00",
+                      "1994-01-01 00:00:00",
+                      "2001-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1001",
                    "_shard":"shard"
                 }
              },
              {
                 "doc":{
-                   "DEP":"Support Weapon",
-                   "MV":[
-                      "Gold",
-                      "Two",
-                      "testus"
+                   "Boolean":[
+                      "False",
+                      "True"
                    ],
-                   "_ID":"3002",
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
                    "_shard":"shard"
                 }
              }
@@ -1004,34 +1301,42 @@
     }
 
 *** Request
-    GET /Application/Department/_query?q=COUNT(MV)<4&shards=shard
+    GET /Application/MV/_query?q=COUNT(Long)>1 AND COUNT(Long)<4&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>3</totalobjects>
+        <totalobjects>1</totalobjects>
         <docs>
             <doc>
-                <field name="DEP">Support Weapon</field>
-                <field name="MV">
-                    <value>Gold</value>
-                    <value>Two</value>
-                    <value>testus</value>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
                 </field>
-                <field name="_ID">3002</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="DEP">Logistic Delivery</field>
-                <field name="MV">
-                    <value>Bronze</value>
-                    <value>Three</value>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
                 </field>
-                <field name="_ID">3003</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="DEP">Logistic Weapon</field>
-                <field name="_ID">3004</field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
                 <field name="_shard">shard</field>
             </doc>
         </docs>
@@ -1040,39 +1345,2021 @@
     200 OK
     {
        "results":{
-          "totalobjects":"3",
+          "totalobjects":"1",
           "docs":[
              {
                 "doc":{
-                   "DEP":"Support Weapon",
-                   "MV":[
-                      "Gold",
-                      "Two",
-                      "testus"
+                   "Boolean":[
+                      "False",
+                      "True"
                    ],
-                   "_ID":"3002",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "DEP":"Logistic Delivery",
-                   "MV":[
-                      "Bronze",
-                      "Three"
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
                    ],
-                   "_ID":"3003",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "DEP":"Logistic Weapon",
-                   "_ID":"3004",
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
                    "_shard":"shard"
                 }
              }
           ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Long)>10&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~~~
+~ INTEGER ~
+~~~~~~~~~~~
+*** Request
+    GET /Application/MV/_query?q=COUNT(Integer)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Integer)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>300.0</value>
+                    <value>5.0E28</value>
+                    <value>8.0E-13</value>
+                </field>
+                <field name="Float">
+                    <value>-300.0</value>
+                    <value>0.0010000000474974513</value>
+                    <value>0.00800000037997961</value>
+                    <value>5.0E8</value>
+                </field>
+                <field name="Integer">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                    <value>Silver</value>
+                    <value>Three</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1984-01-01 00:00:00</value>
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "300.0",
+                      "5.0E28",
+                      "8.0E-13"
+                   ],
+                   "Float":[
+                      "-300.0",
+                      "0.0010000000474974513",
+                      "0.00800000037997961",
+                      "5.0E8"
+                   ],
+                   "Integer":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One",
+                      "Silver",
+                      "Three"
+                   ],
+                   "Timestamp":[
+                      "1984-01-01 00:00:00",
+                      "1994-01-01 00:00:00",
+                      "2001-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Integer)>1 AND COUNT(Integer)<4&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Integer)>10&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~
+~ FLOAT ~
+~~~~~~~~~
+*** Request
+    GET /Application/MV/_query?q=COUNT(Float)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Float)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>300.0</value>
+                    <value>5.0E28</value>
+                    <value>8.0E-13</value>
+                </field>
+                <field name="Float">
+                    <value>-300.0</value>
+                    <value>0.0010000000474974513</value>
+                    <value>0.00800000037997961</value>
+                    <value>5.0E8</value>
+                </field>
+                <field name="Integer">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                    <value>Silver</value>
+                    <value>Three</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1984-01-01 00:00:00</value>
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "300.0",
+                      "5.0E28",
+                      "8.0E-13"
+                   ],
+                   "Float":[
+                      "-300.0",
+                      "0.0010000000474974513",
+                      "0.00800000037997961",
+                      "5.0E8"
+                   ],
+                   "Integer":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One",
+                      "Silver",
+                      "Three"
+                   ],
+                   "Timestamp":[
+                      "1984-01-01 00:00:00",
+                      "1994-01-01 00:00:00",
+                      "2001-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Float)>1 AND COUNT(Float)<4&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Float)>10&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~~
+~ DOUBLE ~
+~~~~~~~~~~
+*** Request
+    GET /Application/MV/_query?q=COUNT(Double)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Double)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>300.0</value>
+                    <value>5.0E28</value>
+                    <value>8.0E-13</value>
+                </field>
+                <field name="Float">
+                    <value>-300.0</value>
+                    <value>0.0010000000474974513</value>
+                    <value>0.00800000037997961</value>
+                    <value>5.0E8</value>
+                </field>
+                <field name="Integer">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                    <value>Silver</value>
+                    <value>Three</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1984-01-01 00:00:00</value>
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "300.0",
+                      "5.0E28",
+                      "8.0E-13"
+                   ],
+                   "Float":[
+                      "-300.0",
+                      "0.0010000000474974513",
+                      "0.00800000037997961",
+                      "5.0E8"
+                   ],
+                   "Integer":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One",
+                      "Silver",
+                      "Three"
+                   ],
+                   "Timestamp":[
+                      "1984-01-01 00:00:00",
+                      "1994-01-01 00:00:00",
+                      "2001-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Double)>1 AND COUNT(Double)<4&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Double)>10&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~
+~ TEXT ~
+~~~~~~~~
+*** Request
+    GET /Application/MV/_query?q=COUNT(Text)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Text)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>300.0</value>
+                    <value>5.0E28</value>
+                    <value>8.0E-13</value>
+                </field>
+                <field name="Float">
+                    <value>-300.0</value>
+                    <value>0.0010000000474974513</value>
+                    <value>0.00800000037997961</value>
+                    <value>5.0E8</value>
+                </field>
+                <field name="Integer">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                    <value>Silver</value>
+                    <value>Three</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1984-01-01 00:00:00</value>
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "300.0",
+                      "5.0E28",
+                      "8.0E-13"
+                   ],
+                   "Float":[
+                      "-300.0",
+                      "0.0010000000474974513",
+                      "0.00800000037997961",
+                      "5.0E8"
+                   ],
+                   "Integer":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One",
+                      "Silver",
+                      "Three"
+                   ],
+                   "Timestamp":[
+                      "1984-01-01 00:00:00",
+                      "1994-01-01 00:00:00",
+                      "2001-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Text)>1 AND COUNT(Text)<4&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Text)>10&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~~~
+~ BOOLEAN ~
+~~~~~~~~~~~
+*** Request
+    GET /Application/MV/_query?q=COUNT(Boolean)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Boolean)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>300.0</value>
+                    <value>5.0E28</value>
+                    <value>8.0E-13</value>
+                </field>
+                <field name="Float">
+                    <value>-300.0</value>
+                    <value>0.0010000000474974513</value>
+                    <value>0.00800000037997961</value>
+                    <value>5.0E8</value>
+                </field>
+                <field name="Integer">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                    <value>Silver</value>
+                    <value>Three</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1984-01-01 00:00:00</value>
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "300.0",
+                      "5.0E28",
+                      "8.0E-13"
+                   ],
+                   "Float":[
+                      "-300.0",
+                      "0.0010000000474974513",
+                      "0.00800000037997961",
+                      "5.0E8"
+                   ],
+                   "Integer":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One",
+                      "Silver",
+                      "Three"
+                   ],
+                   "Timestamp":[
+                      "1984-01-01 00:00:00",
+                      "1994-01-01 00:00:00",
+                      "2001-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Boolean)>2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Boolean)>1 AND COUNT(Boolean)<4&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>300.0</value>
+                    <value>5.0E28</value>
+                    <value>8.0E-13</value>
+                </field>
+                <field name="Float">
+                    <value>-300.0</value>
+                    <value>0.0010000000474974513</value>
+                    <value>0.00800000037997961</value>
+                    <value>5.0E8</value>
+                </field>
+                <field name="Integer">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                    <value>Silver</value>
+                    <value>Three</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1984-01-01 00:00:00</value>
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "300.0",
+                      "5.0E28",
+                      "8.0E-13"
+                   ],
+                   "Float":[
+                      "-300.0",
+                      "0.0010000000474974513",
+                      "0.00800000037997961",
+                      "5.0E8"
+                   ],
+                   "Integer":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One",
+                      "Silver",
+                      "Three"
+                   ],
+                   "Timestamp":[
+                      "1984-01-01 00:00:00",
+                      "1994-01-01 00:00:00",
+                      "2001-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Boolean)>10&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~~~~~
+~ TIMESTAMP ~
+~~~~~~~~~~~~~
+*** Request
+    GET /Application/MV/_query?q=COUNT(Timestamp)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Timestamp)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>300.0</value>
+                    <value>5.0E28</value>
+                    <value>8.0E-13</value>
+                </field>
+                <field name="Float">
+                    <value>-300.0</value>
+                    <value>0.0010000000474974513</value>
+                    <value>0.00800000037997961</value>
+                    <value>5.0E8</value>
+                </field>
+                <field name="Integer">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                    <value>Silver</value>
+                    <value>Three</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1984-01-01 00:00:00</value>
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "300.0",
+                      "5.0E28",
+                      "8.0E-13"
+                   ],
+                   "Float":[
+                      "-300.0",
+                      "0.0010000000474974513",
+                      "0.00800000037997961",
+                      "5.0E8"
+                   ],
+                   "Integer":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One",
+                      "Silver",
+                      "Three"
+                   ],
+                   "Timestamp":[
+                      "1984-01-01 00:00:00",
+                      "1994-01-01 00:00:00",
+                      "2001-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Timestamp)>1 AND COUNT(Timestamp)<4&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Timestamp)>10&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
        }
     }
 
@@ -1097,850 +3384,405 @@
 ~ Table of Content ~
 ~~~~~~~~~~~~~~~~~~~~
 *** Request
-    GET /Application/Message/_query?q=*&f=_all&shards=shard
+    GET /Application/MV/_query?q=*&f=_all&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>6</totalobjects>
-        <docs>
-            <doc>
-                <field name="Size">1001</field>
-                <field name="Status">Work in Support</field>
-                <field name="_ID">2001</field>
-                <field name="_shard">shard</field>
-                <field name="Participants">
-                    <doc>
-                        <field name="Text">Support</field>
-                        <field name="_ID">1001</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="Size">1002</field>
-                <field name="Status">Work in Support</field>
-                <field name="_ID">2002</field>
-                <field name="_shard">shard</field>
-                <field name="Participants">
-                    <doc>
-                        <field name="Text">Support</field>
-                        <field name="_ID">1002</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="Size">1003</field>
-                <field name="Status">Work in Logistic</field>
-                <field name="_ID">2003</field>
-                <field name="_shard">shard</field>
-                <field name="Participants">
-                    <doc>
-                        <field name="Text">Logistic</field>
-                        <field name="_ID">1003</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="Size">1004</field>
-                <field name="Status">Work in Logistic</field>
-                <field name="_ID">2004</field>
-                <field name="_shard">shard</field>
-                <field name="Participants">
-                    <doc>
-                        <field name="Text">Logistic</field>
-                        <field name="_ID">1004</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="Size">1005</field>
-                <field name="Status">Work in Support</field>
-                <field name="_ID">2005</field>
-                <field name="_shard">shard</field>
-                <field name="Participants">
-                    <doc>
-                        <field name="Text">Support</field>
-                        <field name="_ID">1005</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="Size">1006</field>
-                <field name="Status">Work in Support</field>
-                <field name="_ID">2006</field>
-                <field name="_shard">shard</field>
-                <field name="Participants">
-                    <doc>
-                        <field name="Text">Support</field>
-                        <field name="_ID">1006</field>
-                    </doc>
-                </field>
-            </doc>
-        </docs>
+        <totalobjects>0</totalobjects>
+        <docs/>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"6",
-          "docs":[
-             {
-                "doc":{
-                   "Size":"1001",
-                   "Status":"Work in Support",
-                   "_ID":"2001",
-                   "_shard":"shard",
-                   "Participants":[
-                      {
-                         "doc":{
-                            "Text":"Support",
-                            "_ID":"1001"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Size":"1002",
-                   "Status":"Work in Support",
-                   "_ID":"2002",
-                   "_shard":"shard",
-                   "Participants":[
-                      {
-                         "doc":{
-                            "Text":"Support",
-                            "_ID":"1002"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Size":"1003",
-                   "Status":"Work in Logistic",
-                   "_ID":"2003",
-                   "_shard":"shard",
-                   "Participants":[
-                      {
-                         "doc":{
-                            "Text":"Logistic",
-                            "_ID":"1003"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Size":"1004",
-                   "Status":"Work in Logistic",
-                   "_ID":"2004",
-                   "_shard":"shard",
-                   "Participants":[
-                      {
-                         "doc":{
-                            "Text":"Logistic",
-                            "_ID":"1004"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Size":"1005",
-                   "Status":"Work in Support",
-                   "_ID":"2005",
-                   "_shard":"shard",
-                   "Participants":[
-                      {
-                         "doc":{
-                            "Text":"Support",
-                            "_ID":"1005"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Size":"1006",
-                   "Status":"Work in Support",
-                   "_ID":"2006",
-                   "_shard":"shard",
-                   "Participants":[
-                      {
-                         "doc":{
-                            "Text":"Support",
-                            "_ID":"1006"
-                         }
-                      }
-                   ]
-                }
-             }
-          ]
+          "totalobjects":"0",
+          "docs":[]
        }
     }
 
 *** Request
-    GET /Application/MessageParticipant/_query?q=*&f=_all&shards=shard
+    GET /Application/SV/_query?q=*&f=_all&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>6</totalobjects>
-        <docs>
-            <doc>
-                <field name="Text">Support</field>
-                <field name="_ID">1001</field>
-                <field name="_shard">shard</field>
-                <field name="Department">
-                    <doc>
-                        <field name="DEP">Support Delivery</field>
-                        <field name="MV">
-                            <value>Abs</value>
-                            <value>One</value>
-                            <value>Silver</value>
-                            <value>Three</value>
-                        </field>
-                        <field name="_ID">3001</field>
-                    </doc>
-                    <doc>
-                        <field name="DEP">Logistic Weapon</field>
-                        <field name="MV"/>
-                        <field name="_ID">3004</field>
-                    </doc>
-                </field>
-                <field name="Message">
-                    <doc>
-                        <field name="Size">1001</field>
-                        <field name="Status">Work in Support</field>
-                        <field name="_ID">2001</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="Text">Support</field>
-                <field name="_ID">1002</field>
-                <field name="_shard">shard</field>
-                <field name="Department">
-                    <doc>
-                        <field name="DEP">Support Weapon</field>
-                        <field name="MV">
-                            <value>Gold</value>
-                            <value>Two</value>
-                            <value>testus</value>
-                        </field>
-                        <field name="_ID">3002</field>
-                    </doc>
-                </field>
-                <field name="Message">
-                    <doc>
-                        <field name="Size">1002</field>
-                        <field name="Status">Work in Support</field>
-                        <field name="_ID">2002</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="Text">Logistic</field>
-                <field name="_ID">1003</field>
-                <field name="_shard">shard</field>
-                <field name="Department">
-                    <doc>
-                        <field name="DEP">Logistic Delivery</field>
-                        <field name="MV">
-                            <value>Bronze</value>
-                            <value>Three</value>
-                        </field>
-                        <field name="_ID">3003</field>
-                    </doc>
-                </field>
-                <field name="Message">
-                    <doc>
-                        <field name="Size">1003</field>
-                        <field name="Status">Work in Logistic</field>
-                        <field name="_ID">2003</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="Text">Logistic</field>
-                <field name="_ID">1004</field>
-                <field name="_shard">shard</field>
-                <field name="Department">
-                    <doc>
-                        <field name="DEP">Support Delivery</field>
-                        <field name="MV">
-                            <value>Abs</value>
-                            <value>One</value>
-                            <value>Silver</value>
-                            <value>Three</value>
-                        </field>
-                        <field name="_ID">3001</field>
-                    </doc>
-                    <doc>
-                        <field name="DEP">Logistic Weapon</field>
-                        <field name="MV"/>
-                        <field name="_ID">3004</field>
-                    </doc>
-                </field>
-                <field name="Message">
-                    <doc>
-                        <field name="Size">1004</field>
-                        <field name="Status">Work in Logistic</field>
-                        <field name="_ID">2004</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="Text">Support</field>
-                <field name="_ID">1005</field>
-                <field name="_shard">shard</field>
-                <field name="Department">
-                    <doc>
-                        <field name="DEP">Support Delivery</field>
-                        <field name="MV">
-                            <value>Abs</value>
-                            <value>One</value>
-                            <value>Silver</value>
-                            <value>Three</value>
-                        </field>
-                        <field name="_ID">3001</field>
-                    </doc>
-                </field>
-                <field name="Message">
-                    <doc>
-                        <field name="Size">1005</field>
-                        <field name="Status">Work in Support</field>
-                        <field name="_ID">2005</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="Text">Support</field>
-                <field name="_ID">1006</field>
-                <field name="_shard">shard</field>
-                <field name="Department">
-                    <doc>
-                        <field name="DEP">Support Weapon</field>
-                        <field name="MV">
-                            <value>Gold</value>
-                            <value>Two</value>
-                            <value>testus</value>
-                        </field>
-                        <field name="_ID">3002</field>
-                    </doc>
-                </field>
-                <field name="Message">
-                    <doc>
-                        <field name="Size">1006</field>
-                        <field name="Status">Work in Support</field>
-                        <field name="_ID">2006</field>
-                    </doc>
-                </field>
-            </doc>
-        </docs>
+        <totalobjects>0</totalobjects>
+        <docs/>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"6",
-          "docs":[
-             {
-                "doc":{
-                   "Text":"Support",
-                   "_ID":"1001",
-                   "_shard":"shard",
-                   "Department":[
-                      {
-                         "doc":{
-                            "DEP":"Support Delivery",
-                            "MV":[
-                               "Abs",
-                               "One",
-                               "Silver",
-                               "Three"
-                            ],
-                            "_ID":"3001"
-                         }
-                      },
-                      {
-                         "doc":{
-                            "DEP":"Logistic Weapon",
-                            "MV":[],
-                            "_ID":"3004"
-                         }
-                      }
-                   ],
-                   "Message":[
-                      {
-                         "doc":{
-                            "Size":"1001",
-                            "Status":"Work in Support",
-                            "_ID":"2001"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Text":"Support",
-                   "_ID":"1002",
-                   "_shard":"shard",
-                   "Department":[
-                      {
-                         "doc":{
-                            "DEP":"Support Weapon",
-                            "MV":[
-                               "Gold",
-                               "Two",
-                               "testus"
-                            ],
-                            "_ID":"3002"
-                         }
-                      }
-                   ],
-                   "Message":[
-                      {
-                         "doc":{
-                            "Size":"1002",
-                            "Status":"Work in Support",
-                            "_ID":"2002"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Text":"Logistic",
-                   "_ID":"1003",
-                   "_shard":"shard",
-                   "Department":[
-                      {
-                         "doc":{
-                            "DEP":"Logistic Delivery",
-                            "MV":[
-                               "Bronze",
-                               "Three"
-                            ],
-                            "_ID":"3003"
-                         }
-                      }
-                   ],
-                   "Message":[
-                      {
-                         "doc":{
-                            "Size":"1003",
-                            "Status":"Work in Logistic",
-                            "_ID":"2003"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Text":"Logistic",
-                   "_ID":"1004",
-                   "_shard":"shard",
-                   "Department":[
-                      {
-                         "doc":{
-                            "DEP":"Support Delivery",
-                            "MV":[
-                               "Abs",
-                               "One",
-                               "Silver",
-                               "Three"
-                            ],
-                            "_ID":"3001"
-                         }
-                      },
-                      {
-                         "doc":{
-                            "DEP":"Logistic Weapon",
-                            "MV":[],
-                            "_ID":"3004"
-                         }
-                      }
-                   ],
-                   "Message":[
-                      {
-                         "doc":{
-                            "Size":"1004",
-                            "Status":"Work in Logistic",
-                            "_ID":"2004"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Text":"Support",
-                   "_ID":"1005",
-                   "_shard":"shard",
-                   "Department":[
-                      {
-                         "doc":{
-                            "DEP":"Support Delivery",
-                            "MV":[
-                               "Abs",
-                               "One",
-                               "Silver",
-                               "Three"
-                            ],
-                            "_ID":"3001"
-                         }
-                      }
-                   ],
-                   "Message":[
-                      {
-                         "doc":{
-                            "Size":"1005",
-                            "Status":"Work in Support",
-                            "_ID":"2005"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "Text":"Support",
-                   "_ID":"1006",
-                   "_shard":"shard",
-                   "Department":[
-                      {
-                         "doc":{
-                            "DEP":"Support Weapon",
-                            "MV":[
-                               "Gold",
-                               "Two",
-                               "testus"
-                            ],
-                            "_ID":"3002"
-                         }
-                      }
-                   ],
-                   "Message":[
-                      {
-                         "doc":{
-                            "Size":"1006",
-                            "Status":"Work in Support",
-                            "_ID":"2006"
-                         }
-                      }
-                   ]
-                }
-             }
-          ]
-       }
-    }
-
-*** Request
-    GET /Application/Department/_query?q=*&f=_all&shards=shard
-*** Response: xml
-    200 OK
-    <results>
-        <totalobjects>4</totalobjects>
-        <docs>
-            <doc>
-                <field name="DEP">Support Delivery</field>
-                <field name="MV">
-                    <value>Abs</value>
-                    <value>One</value>
-                    <value>Silver</value>
-                    <value>Three</value>
-                </field>
-                <field name="_ID">3001</field>
-                <field name="_shard">shard</field>
-                <field name="Support">
-                    <doc>
-                        <field name="Text">Support</field>
-                        <field name="_ID">1001</field>
-                    </doc>
-                    <doc>
-                        <field name="Text">Logistic</field>
-                        <field name="_ID">1004</field>
-                    </doc>
-                    <doc>
-                        <field name="Text">Support</field>
-                        <field name="_ID">1005</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="DEP">Support Weapon</field>
-                <field name="MV">
-                    <value>Gold</value>
-                    <value>Two</value>
-                    <value>testus</value>
-                </field>
-                <field name="_ID">3002</field>
-                <field name="_shard">shard</field>
-                <field name="Support">
-                    <doc>
-                        <field name="Text">Support</field>
-                        <field name="_ID">1002</field>
-                    </doc>
-                    <doc>
-                        <field name="Text">Support</field>
-                        <field name="_ID">1006</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="DEP">Logistic Delivery</field>
-                <field name="MV">
-                    <value>Bronze</value>
-                    <value>Three</value>
-                </field>
-                <field name="_ID">3003</field>
-                <field name="_shard">shard</field>
-                <field name="Support">
-                    <doc>
-                        <field name="Text">Logistic</field>
-                        <field name="_ID">1003</field>
-                    </doc>
-                </field>
-            </doc>
-            <doc>
-                <field name="DEP">Logistic Weapon</field>
-                <field name="MV"/>
-                <field name="_ID">3004</field>
-                <field name="_shard">shard</field>
-                <field name="Support">
-                    <doc>
-                        <field name="Text">Support</field>
-                        <field name="_ID">1001</field>
-                    </doc>
-                    <doc>
-                        <field name="Text">Logistic</field>
-                        <field name="_ID">1004</field>
-                    </doc>
-                </field>
-            </doc>
-        </docs>
-    </results>
-*** Response: json
-    200 OK
-    {
-       "results":{
-          "totalobjects":"4",
-          "docs":[
-             {
-                "doc":{
-                   "DEP":"Support Delivery",
-                   "MV":[
-                      "Abs",
-                      "One",
-                      "Silver",
-                      "Three"
-                   ],
-                   "_ID":"3001",
-                   "_shard":"shard",
-                   "Support":[
-                      {
-                         "doc":{
-                            "Text":"Support",
-                            "_ID":"1001"
-                         }
-                      },
-                      {
-                         "doc":{
-                            "Text":"Logistic",
-                            "_ID":"1004"
-                         }
-                      },
-                      {
-                         "doc":{
-                            "Text":"Support",
-                            "_ID":"1005"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "DEP":"Support Weapon",
-                   "MV":[
-                      "Gold",
-                      "Two",
-                      "testus"
-                   ],
-                   "_ID":"3002",
-                   "_shard":"shard",
-                   "Support":[
-                      {
-                         "doc":{
-                            "Text":"Support",
-                            "_ID":"1002"
-                         }
-                      },
-                      {
-                         "doc":{
-                            "Text":"Support",
-                            "_ID":"1006"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "DEP":"Logistic Delivery",
-                   "MV":[
-                      "Bronze",
-                      "Three"
-                   ],
-                   "_ID":"3003",
-                   "_shard":"shard",
-                   "Support":[
-                      {
-                         "doc":{
-                            "Text":"Logistic",
-                            "_ID":"1003"
-                         }
-                      }
-                   ]
-                }
-             },
-             {
-                "doc":{
-                   "DEP":"Logistic Weapon",
-                   "MV":[],
-                   "_ID":"3004",
-                   "_shard":"shard",
-                   "Support":[
-                      {
-                         "doc":{
-                            "Text":"Support",
-                            "_ID":"1001"
-                         }
-                      },
-                      {
-                         "doc":{
-                            "Text":"Logistic",
-                            "_ID":"1004"
-                         }
-                      }
-                   ]
-                }
-             }
-          ]
+          "totalobjects":"0",
+          "docs":[]
        }
     }
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 ~ Test for SV - COUNT ~
 ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+~ LONG ~
+~~~~~~~~
 *** Request
-    GET /Application/Department/_query?q=COUNT(DEP)>0&shards=shard
+    GET /Application/SV/_query?q=COUNT(Long)<1&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>4</totalobjects>
-        <docs>
-            <doc>
-                <field name="DEP">Support Delivery</field>
-                <field name="MV">
-                    <value>Abs</value>
-                    <value>One</value>
-                    <value>Silver</value>
-                    <value>Three</value>
-                </field>
-                <field name="_ID">3001</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="DEP">Support Weapon</field>
-                <field name="MV">
-                    <value>Gold</value>
-                    <value>Two</value>
-                    <value>testus</value>
-                </field>
-                <field name="_ID">3002</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="DEP">Logistic Delivery</field>
-                <field name="MV">
-                    <value>Bronze</value>
-                    <value>Three</value>
-                </field>
-                <field name="_ID">3003</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="DEP">Logistic Weapon</field>
-                <field name="MV"/>
-                <field name="_ID">3004</field>
-                <field name="_shard">shard</field>
-            </doc>
-        </docs>
+        <totalobjects>0</totalobjects>
+        <docs/>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"4",
-          "docs":[
-             {
-                "doc":{
-                   "DEP":"Support Delivery",
-                   "MV":[
-                      "Abs",
-                      "One",
-                      "Silver",
-                      "Three"
-                   ],
-                   "_ID":"3001",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "DEP":"Support Weapon",
-                   "MV":[
-                      "Gold",
-                      "Two",
-                      "testus"
-                   ],
-                   "_ID":"3002",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "DEP":"Logistic Delivery",
-                   "MV":[
-                      "Bronze",
-                      "Three"
-                   ],
-                   "_ID":"3003",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "DEP":"Logistic Weapon",
-                   "MV":[],
-                   "_ID":"3004",
-                   "_shard":"shard"
-                }
-             }
-          ]
+          "totalobjects":"0",
+          "docs":[]
        }
     }
 
 *** Request
-    GET /Application/Department/_query?q=COUNT(DEP)<1&shards=shard
+    GET /Application/SV/_query?q=COUNT(Long)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Long)>2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~~~
+~ INTEGER ~
+~~~~~~~~~~~
+*** Request
+    GET /Application/SV/_query?q=COUNT(Integer)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Integer)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Integer)>2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~
+~ FLOAT ~
+~~~~~~~~~
+*** Request
+    GET /Application/SV/_query?q=COUNT(Float)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Float)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Float)>2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~~
+~ DOUBLE ~
+~~~~~~~~~~
+*** Request
+    GET /Application/SV/_query?q=COUNT(Double)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Double)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Double)>2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~
+~ TEXT ~
+~~~~~~~~
+*** Request
+    GET /Application/SV/_query?q=COUNT(Text)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Text)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Text)>2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~~~
+~ BOOLEAN ~
+~~~~~~~~~~~
+*** Request
+    GET /Application/SV/_query?q=COUNT(Boolean)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Boolean)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Boolean)>2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~~~~~
+~ TIMESTAMP ~
+~~~~~~~~~~~~~
+*** Request
+    GET /Application/SV/_query?q=COUNT(Timestamp)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Timestamp)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/SV/_query?q=COUNT(Timestamp)>2&shards=shard
 *** Response: xml
     200 OK
     <results>
@@ -1959,8 +3801,11 @@
 ~~~~~~~~~~~~~~~~~~~~~~~
 ~ Test for MV - COUNT ~
 ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+~ LONG ~
+~~~~~~~~
 *** Request
-    GET /Application/Department/_query?q=COUNT(MV)<1&shards=shard
+    GET /Application/MV/_query?q=COUNT(Long)<1&shards=shard
 *** Response: xml
     200 OK
     <results>
@@ -1977,195 +3822,496 @@
     }
 
 *** Request
-    GET /Application/Department/_query?q=COUNT(MV)>0 AND COUNT(MV)<3&shards=shard
+    GET /Application/MV/_query?q=COUNT(Long)>0&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>2</totalobjects>
-        <docs>
-            <doc>
-                <field name="DEP">Logistic Delivery</field>
-                <field name="MV">
-                    <value>Bronze</value>
-                    <value>Three</value>
-                </field>
-                <field name="_ID">3003</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="DEP">Logistic Weapon</field>
-                <field name="MV"/>
-                <field name="_ID">3004</field>
-                <field name="_shard">shard</field>
-            </doc>
-        </docs>
+        <totalobjects>0</totalobjects>
+        <docs/>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"2",
-          "docs":[
-             {
-                "doc":{
-                   "DEP":"Logistic Delivery",
-                   "MV":[
-                      "Bronze",
-                      "Three"
-                   ],
-                   "_ID":"3003",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "DEP":"Logistic Weapon",
-                   "MV":[],
-                   "_ID":"3004",
-                   "_shard":"shard"
-                }
-             }
-          ]
+          "totalobjects":"0",
+          "docs":[]
        }
     }
 
 *** Request
-    GET /Application/Department/_query?q=COUNT(MV)>2&shards=shard
+    GET /Application/MV/_query?q=COUNT(Long)>1 AND COUNT(Long)<4&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>2</totalobjects>
-        <docs>
-            <doc>
-                <field name="DEP">Support Delivery</field>
-                <field name="MV">
-                    <value>Abs</value>
-                    <value>One</value>
-                    <value>Silver</value>
-                    <value>Three</value>
-                </field>
-                <field name="_ID">3001</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="DEP">Support Weapon</field>
-                <field name="MV">
-                    <value>Gold</value>
-                    <value>Two</value>
-                    <value>testus</value>
-                </field>
-                <field name="_ID">3002</field>
-                <field name="_shard">shard</field>
-            </doc>
-        </docs>
+        <totalobjects>0</totalobjects>
+        <docs/>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"2",
-          "docs":[
-             {
-                "doc":{
-                   "DEP":"Support Delivery",
-                   "MV":[
-                      "Abs",
-                      "One",
-                      "Silver",
-                      "Three"
-                   ],
-                   "_ID":"3001",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "DEP":"Support Weapon",
-                   "MV":[
-                      "Gold",
-                      "Two",
-                      "testus"
-                   ],
-                   "_ID":"3002",
-                   "_shard":"shard"
-                }
-             }
-          ]
+          "totalobjects":"0",
+          "docs":[]
        }
     }
 
 *** Request
-    GET /Application/Department/_query?q=COUNT(MV)<4&shards=shard
+    GET /Application/MV/_query?q=COUNT(Long)>10&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>3</totalobjects>
-        <docs>
-            <doc>
-                <field name="DEP">Support Weapon</field>
-                <field name="MV">
-                    <value>Gold</value>
-                    <value>Two</value>
-                    <value>testus</value>
-                </field>
-                <field name="_ID">3002</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="DEP">Logistic Delivery</field>
-                <field name="MV">
-                    <value>Bronze</value>
-                    <value>Three</value>
-                </field>
-                <field name="_ID">3003</field>
-                <field name="_shard">shard</field>
-            </doc>
-            <doc>
-                <field name="DEP">Logistic Weapon</field>
-                <field name="MV"/>
-                <field name="_ID">3004</field>
-                <field name="_shard">shard</field>
-            </doc>
-        </docs>
+        <totalobjects>0</totalobjects>
+        <docs/>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"3",
-          "docs":[
-             {
-                "doc":{
-                   "DEP":"Support Weapon",
-                   "MV":[
-                      "Gold",
-                      "Two",
-                      "testus"
-                   ],
-                   "_ID":"3002",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "DEP":"Logistic Delivery",
-                   "MV":[
-                      "Bronze",
-                      "Three"
-                   ],
-                   "_ID":"3003",
-                   "_shard":"shard"
-                }
-             },
-             {
-                "doc":{
-                   "DEP":"Logistic Weapon",
-                   "MV":[],
-                   "_ID":"3004",
-                   "_shard":"shard"
-                }
-             }
-          ]
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~~~
+~ INTEGER ~
+~~~~~~~~~~~
+*** Request
+    GET /Application/MV/_query?q=COUNT(Integer)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Integer)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Integer)>1 AND COUNT(Integer)<4&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Integer)>10&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~
+~ FLOAT ~
+~~~~~~~~~
+*** Request
+    GET /Application/MV/_query?q=COUNT(Float)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Float)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Float)>1 AND COUNT(Float)<4&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Float)>10&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~~
+~ DOUBLE ~
+~~~~~~~~~~
+*** Request
+    GET /Application/MV/_query?q=COUNT(Double)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Double)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Double)>1 AND COUNT(Double)<4&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Double)>10&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~
+~ TEXT ~
+~~~~~~~~
+*** Request
+    GET /Application/MV/_query?q=COUNT(Text)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Text)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Text)>1 AND COUNT(Text)<4&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Text)>10&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~~~
+~ BOOLEAN ~
+~~~~~~~~~~~
+*** Request
+    GET /Application/MV/_query?q=COUNT(Boolean)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Boolean)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Boolean)>2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Boolean)>1 AND COUNT(Boolean)<4&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Boolean)>10&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+~~~~~~~~~~~~~
+~ TIMESTAMP ~
+~~~~~~~~~~~~~
+*** Request
+    GET /Application/MV/_query?q=COUNT(Timestamp)<1&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Timestamp)>0&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Timestamp)>1 AND COUNT(Timestamp)<4&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/MV/_query?q=COUNT(Timestamp)>10&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
        }
     }
 

@@ -39,23 +39,122 @@
     <echo>~~~~~~~~~~~~~~~~~~~~</echo>
     <echo>~ Table of Content ~</echo>
     <echo>~~~~~~~~~~~~~~~~~~~~</echo>
-    <QUERY path="Application/Message" q="*" f="_all" shards="shard"/>
-    <QUERY path="Application/MessageParticipant" q="*" f="_all" shards="shard"/>
-    <QUERY path="Application/Department" q="*" f="_all" shards="shard"/>
+    <QUERY path="Application/MV" q="*" f="_all" shards="shard"/>
+    <QUERY path="Application/SV" q="*" f="_all" shards="shard"/>
         
     <echo>~~~~~~~~~~~~~~~~~~~~~~~</echo>
     <echo>~ Test for SV - COUNT ~</echo>
     <echo>~~~~~~~~~~~~~~~~~~~~~~~</echo>
-    <QUERY path="Application/Department" q="COUNT(DEP)&gt;0" shards="shard"/>
-    <QUERY path="Application/Department" q="COUNT(DEP)&lt;1" shards="shard"/>
+
+    <echo>~~~~~~~~</echo>
+    <echo>~ LONG ~</echo>
+    <echo>~~~~~~~~</echo>
+    <QUERY path="Application/SV" q="COUNT(Long)&lt;1" shards="shard"/>
+    <QUERY path="Application/SV" q="COUNT(Long)&gt;0" shards="shard"/>
+    <QUERY path="Application/SV" q="COUNT(Long)&gt;2" shards="shard"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ INTEGER ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <QUERY path="Application/SV" q="COUNT(Integer)&lt;1" shards="shard"/>
+    <QUERY path="Application/SV" q="COUNT(Integer)&gt;0" shards="shard"/>
+    <QUERY path="Application/SV" q="COUNT(Integer)&gt;2" shards="shard"/>
+
+    <echo>~~~~~~~~~</echo>
+    <echo>~ FLOAT ~</echo>
+    <echo>~~~~~~~~~</echo>
+    <QUERY path="Application/SV" q="COUNT(Float)&lt;1" shards="shard"/>
+    <QUERY path="Application/SV" q="COUNT(Float)&gt;0" shards="shard"/>
+    <QUERY path="Application/SV" q="COUNT(Float)&gt;2" shards="shard"/>
+
+    <echo>~~~~~~~~~~</echo>
+    <echo>~ DOUBLE ~</echo>
+    <echo>~~~~~~~~~~</echo>
+    <QUERY path="Application/SV" q="COUNT(Double)&lt;1" shards="shard"/>
+    <QUERY path="Application/SV" q="COUNT(Double)&gt;0" shards="shard"/>
+    <QUERY path="Application/SV" q="COUNT(Double)&gt;2" shards="shard"/>
+
+    <echo>~~~~~~~~</echo>
+    <echo>~ TEXT ~</echo>
+    <echo>~~~~~~~~</echo>
+    <QUERY path="Application/SV" q="COUNT(Text)&lt;1" shards="shard"/>
+    <QUERY path="Application/SV" q="COUNT(Text)&gt;0" shards="shard"/>
+    <QUERY path="Application/SV" q="COUNT(Text)&gt;2" shards="shard"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ BOOLEAN ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <QUERY path="Application/SV" q="COUNT(Boolean)&lt;1" shards="shard"/>
+    <QUERY path="Application/SV" q="COUNT(Boolean)&gt;0" shards="shard"/>
+    <QUERY path="Application/SV" q="COUNT(Boolean)&gt;2" shards="shard"/>
+
+    <echo>~~~~~~~~~~~~~</echo>
+    <echo>~ TIMESTAMP ~</echo>
+    <echo>~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/SV" q="COUNT(Timestamp)&lt;1" shards="shard"/>
+    <QUERY path="Application/SV" q="COUNT(Timestamp)&gt;0" shards="shard"/>
+    <QUERY path="Application/SV" q="COUNT(Timestamp)&gt;2" shards="shard"/>
 
     <echo>~~~~~~~~~~~~~~~~~~~~~~~</echo>
     <echo>~ Test for MV - COUNT ~</echo>
     <echo>~~~~~~~~~~~~~~~~~~~~~~~</echo>
-    <QUERY path="Application/Department" q="COUNT(MV)&lt;1" shards="shard"/>
-    <QUERY path="Application/Department" q="COUNT(MV)&gt;0 AND COUNT(MV)&lt;3" shards="shard"/>
-    <QUERY path="Application/Department" q="COUNT(MV)>2" shards="shard"/>
-    <QUERY path="Application/Department" q="COUNT(MV)&lt;4" shards="shard"/>
+
+    <echo>~~~~~~~~</echo>
+    <echo>~ LONG ~</echo>
+    <echo>~~~~~~~~</echo>
+    <QUERY path="Application/MV" q="COUNT(Long)&lt;1" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Long)&gt;0" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Long)&gt;1 AND COUNT(Long)&lt;4" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Long)&gt;10" shards="shard"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ INTEGER ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <QUERY path="Application/MV" q="COUNT(Integer)&lt;1" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Integer)&gt;0" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Integer)&gt;1 AND COUNT(Integer)&lt;4" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Integer)&gt;10" shards="shard"/>
+
+    <echo>~~~~~~~~~</echo>
+    <echo>~ FLOAT ~</echo>
+    <echo>~~~~~~~~~</echo>
+    <QUERY path="Application/MV" q="COUNT(Float)&lt;1" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Float)&gt;0" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Float)&gt;1 AND COUNT(Float)&lt;4" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Float)&gt;10" shards="shard"/>
+
+    <echo>~~~~~~~~~~</echo>
+    <echo>~ DOUBLE ~</echo>
+    <echo>~~~~~~~~~~</echo>
+    <QUERY path="Application/MV" q="COUNT(Double)&lt;1" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Double)&gt;0" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Double)&gt;1 AND COUNT(Double)&lt;4" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Double)&gt;10" shards="shard"/>
+
+    <echo>~~~~~~~~</echo>
+    <echo>~ TEXT ~</echo>
+    <echo>~~~~~~~~</echo>
+    <QUERY path="Application/MV" q="COUNT(Text)&lt;1" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Text)&gt;0" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Text)&gt;1 AND COUNT(Text)&lt;4" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Text)&gt;10" shards="shard"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ BOOLEAN ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <QUERY path="Application/MV" q="COUNT(Boolean)&lt;1" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Boolean)&gt;0" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Boolean)&gt;2" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Boolean)&gt;1 AND COUNT(Boolean)&lt;4" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Boolean)&gt;10" shards="shard"/>
+
+    <echo>~~~~~~~~~~~~~</echo>
+    <echo>~ TIMESTAMP ~</echo>
+    <echo>~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/MV" q="COUNT(Timestamp)&lt;1" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Timestamp)&gt;0" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Timestamp)&gt;1 AND COUNT(Timestamp)&lt;4" shards="shard"/>
+    <QUERY path="Application/MV" q="COUNT(Timestamp)&gt;10" shards="shard"/>
 
     <DELETE path="_applications/Application/ApplicationKey"/>
 </FOR>
