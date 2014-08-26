@@ -38,9 +38,9 @@ public class IxNum implements Comparable<IxNum> {
     }
 
     public void next() {
-    	do {
-    		doNext();
-    	} while(doc != Integer.MAX_VALUE && num < 0);
+    	//do {
+    	doNext();
+    	//} while(doc != Integer.MAX_VALUE && num < 0);
     }
     
     private void doNext() {
