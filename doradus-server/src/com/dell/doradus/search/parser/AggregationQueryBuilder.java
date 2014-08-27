@@ -227,7 +227,7 @@ public class AggregationQueryBuilder {
                         throw new IllegalArgumentException("Unknown system field " + ai.name);
                     }
                 }
-                if (tableDef.isLinkField(ai.name) || fd.isXLinkField()) {
+                if (tableDef.isLinkField(ai.name) || (fd != null && fd.isXLinkField())) {
                     ai.isLink = true;
                     if (fieldDetected)
                         throw new IllegalArgumentException("Error: Not a link " + QueryUtils.FullLinkName(metric.items));
@@ -486,7 +486,7 @@ public class AggregationQueryBuilder {
                         throw new IllegalArgumentException("Unknown system field " + ai.name);
                     }
                 }
-                if (tableDef.isLinkField(ai.name) || fd.isXLinkField()) {
+                if (tableDef.isLinkField(ai.name) || (fd != null && fd.isXLinkField())) {
                     ai.isLink = true;
                     if (fieldDetected)
                         throw new IllegalArgumentException("Error: Not a link " + QueryUtils.FullLinkName(metric.items));
@@ -593,7 +593,7 @@ public class AggregationQueryBuilder {
                         throw new IllegalArgumentException("Unknown field " + ai.name);
                     }
                 }
-                if (tableDef.isLinkField(ai.name)) {
+                if (tableDef.isLinkField(ai.name) || (fd !=null && fd.isXLinkField())) {
                     ai.isLink = true;
                     if (fieldDetected)
                         throw new IllegalArgumentException("Error: Not a link " + QueryUtils.FullLinkName(result.items));
@@ -894,7 +894,7 @@ public class AggregationQueryBuilder {
                             }
 
                             //TODO Check all nestedfields - they mustbe all links or not
-                            if (tableDef.isLinkField(nestedFieldDef.getName())) {
+                            if (tableDef.isLinkField(nestedFieldDef.getName()) || nestedFieldDef.isXLinkField()) {
                                 TableDefinition td = tableDef.getLinkExtentTableDef(nestedFieldDef);
                                 if (td == null) {
                                     throw new IllegalArgumentException(" Cannot get table definition for " + QueryUtils.FullLinkName(aggregationGroup.items));

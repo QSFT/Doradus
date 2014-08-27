@@ -205,7 +205,7 @@ public class QueryUtils {
                     throw new IllegalArgumentException(" Undefined Link " + path.get(i));
                 }
             }
-            if (tableDef.isLinkField(path.get(i))) {
+            if (tableDef.isLinkField(path.get(i)) || (fd != null && fd.isXLinkField())) {
                 tableDef = tableDef.getLinkExtentTableDef(fd);
                 if (tableDef == null) {
                     throw new IllegalArgumentException(" Cannot get table definition for link " + path.get(i));
@@ -375,10 +375,11 @@ public class QueryUtils {
 
         for (int i = 0; i < depth - 1; i++) {
             String name = path.get(i);
-            if (tableDef.isLinkField(name)) {
-                FieldDefinition fd = tableDef.getFieldDef(name);
-                if (fd == null)
-                    throw new IllegalArgumentException("Error: " + name + " is not a link");
+            FieldDefinition fd = tableDef.getFieldDef(name);
+            if (fd == null)
+                throw new IllegalArgumentException("Error: " + name + " is not a link");
+            if (tableDef.isLinkField(name) || ( fd.isXLinkField())) {
+
                 tableDef = tableDef.getLinkExtentTableDef(fd);
                 if (tableDef == null)
                     throw new IllegalArgumentException("Error: table definition is not found for link " + name);
@@ -389,7 +390,8 @@ public class QueryUtils {
         }
         //
         String lname = path.get(depth);
-        boolean lasttIsLink = tableDef.isLinkField(lname);
+        FieldDefinition fd =tableDef.getFieldDef(lname);
+        boolean lasttIsLink = tableDef.isLinkField(lname) || (fd != null && fd.isXLinkField());
         if (lastLink) {
             if (!lasttIsLink)
                 throw new IllegalArgumentException("Error: " + lname + " is not a link");
@@ -440,7 +442,7 @@ public class QueryUtils {
             if (fd != null && fd.isGroupField()) {
                 ArrayList<String> nested = GetNestedFields(fd);
                 fd = tableDef.getFieldDef(nested.get(0));
-                if (tableDef.isLinkField(nested.get(0)))
+                if (tableDef.isLinkField(nested.get(0)) || (fd != null && fd.isXLinkField()))
                     tableDef = tableDef.getLinkExtentTableDef(fd);
             }
 
@@ -463,7 +465,7 @@ public class QueryUtils {
                 return null;
 
             fd = tableDef.getFieldDef(path.get(i));
-            if (tableDef.isLinkField(path.get(i))) {
+            if (tableDef.isLinkField(path.get(i)) || (fd != null && fd.isXLinkField())) {
                 if (fd == null)
                     return null;
                 tableDef = tableDef.getLinkExtentTableDef(fd);
@@ -472,7 +474,7 @@ public class QueryUtils {
                     if (fd.isGroupField()) {
                         ArrayList<String> nested = GetNestedFields(fd);
                         fd = tableDef.getFieldDef(nested.get(0));
-                        if (tableDef.isLinkField(nested.get(0)))
+                        if (tableDef.isLinkField(nested.get(0)) || (fd != null && fd.isXLinkField()))
                             tableDef = tableDef.getLinkExtentTableDef(fd);
                         else
                             return tableDef;

@@ -246,7 +246,8 @@ class LinkCheckVisitor implements QueryTreeVisitor {
                                 return li;
                             }
                         } else {
-                            if (tableDefinition.isLinkField(bq.field)) {
+                            FieldDefinition fd = tableDefinition.getFieldDef(bq.field);
+                            if (tableDefinition.isLinkField(bq.field) || (fd != null && fd.isXLinkField())) {
                                 LinkIdQuery li = new LinkIdQuery(LinkQuery.ANY, bq.field, bq.value);
                                 return li;
                             }
