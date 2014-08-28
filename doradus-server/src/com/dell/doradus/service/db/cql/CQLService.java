@@ -342,7 +342,7 @@ public class CQLService extends DBService {
     }   // initializeCQLSession
 
     private void startCreateSessionThread() {
-        new Thread(new Runnable() {
+        Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (!getState().isRunning()) {
@@ -366,7 +366,11 @@ public class CQLService extends DBService {
                     }
                 }
             }
-        }).start();
+        });
+        t.start();
+        // wait 1 second: if connection to Cassandra is OK,
+        // it becomes available right after DoradusServer.start or startEmbedded call.
+        try { t.join(1000); } catch (InterruptedException e) {}
     }   // startNewSessionThread
     
     // Build Cluster object from ServerConfig settings.
