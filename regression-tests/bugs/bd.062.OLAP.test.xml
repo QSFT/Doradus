@@ -1,6 +1,6 @@
 <TEST>
 <CONNECT/>
-<DEFINE name="response.format" value="xml|json"/>
+<DEFINE name="response.format" value="xml"/>
 <disable-output/>
 <DELETE path="_applications/Application/ApplicationKey"/>
 <POST path="_applications">
@@ -17,8 +17,10 @@
                 <field name="Participants" type="LINK" table="MessageParticipant" inverse="Message"/>
             </fields>
             <aliases>
-              <alias name="$Sender" expression="Participants.WHERE(IsSender=true)"/>
-              <alias name="$SenderRecipient" expression="Participants.WHERE(IsSender=false AND IsExternal=false)"/>
+              <alias name="$EmailMessageSender" expression="Participants.WHERE(IsSender='true')"/>
+              <alias name="$EmailMessageSenderIn" expression="Participants.WHERE(IsSender='false')"/>
+              <alias name="$EmailMessageSenderInTo" expression="Participants.WHERE(Text='Recipient')"/>
+              <alias name="$EmailMessageSenderInToCC" expression="Participants.WHERE(Text='Sender')"/>
             </aliases>
         </table>
         <table name="MessageParticipant">
@@ -112,8 +114,10 @@
     <QUERY path="Application/MessageParticipant" q="*" f="_all" shards="shard"/>
 
     <echo>~~~~~~~~~~~~~~~~~~~~</echo>
-    <QUERY path="Application/Message" q="$Sender" f="_all" shards="shard"/>
-    <QUERY path="Application/Message" q="$SenderRecipient" f="_all" shards="shard"/>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+
+    <QUERY path="Application/Message" q="*" f="$EmailMessageSender,$EmailMessageSenderIn,$EmailMessageSenderInTo,$EmailMessageSenderInToCC" shards="shard"/>
 
 <DELETE path="_applications/Application/ApplicationKey"/>
 
