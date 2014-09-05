@@ -1,0 +1,171 @@
+<TEST>
+
+<DEFINE name="schema.xml">
+<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+        <option name="StorageService">OLAPService</option>
+    </options>
+    <tables>
+	<table name="Messages">
+	  <fields>
+            <field type="LINK" collection="true" name="Mailboxm" inverse="Message" table="Mailboxes"/>
+	    <field name="Title" type="Text"/>
+	  </fields>
+	</table>
+	<table name="Mailboxes">
+	  <fields>
+            <field type="LINK" collection="true" name="Person" inverse="Mailboxp" table="Persons"/>
+            <field type="LINK" collection="true" name="Message" inverse="Mailboxm" table="Messages"/>
+	    <field name="Title" type="Text"/>
+	  </fields>
+	</table>
+	<table name="Persons">
+	  <fields>
+	    <field name="ThreadID" type="Text"/>
+	    <field name="InReplyTo" type="XLINK" table="Persons" inverse="Responses" junction="ThreadID"/>
+	    <field name="Responses" type="XLINK" table="Persons" inverse="InReplyTo" junction="_ID"/>
+            <field type="LINK" collection="true" name="Mailboxp" inverse="Person" table="Mailboxes"/>
+	    <field name="Body" type="Text"/>
+	  </fields>
+	</table>
+    </tables>
+</application>
+</DEFINE>
+
+<DEFINE name="data1.xml">
+<batch>
+  <docs>
+    <doc _table="Messages" _ID="1001" >
+	<field name="Title"></field>
+	<field name="Mailboxm">
+	    <add>
+		<value>2001</value>
+	    </add>
+	</field>
+    </doc>
+    <doc _table="Messages" _ID="1002" >
+	<field name="Title"></field>
+	<field name="Mailboxm">
+	    <add>
+		<value>2001</value>
+	    </add>
+	</field>
+    </doc>
+    <doc _table="Messages" _ID="1003" >
+	<field name="Title"></field>
+	<field name="Mailboxm">
+	    <add>
+		<value>2001</value>
+	    </add>
+	</field>
+    </doc>
+    <doc _table="Messages" _ID="1004" >
+	<field name="Title"></field>
+	<field name="Mailboxm">
+	    <add>
+		<value>2002</value>
+	    </add>
+	</field>
+    </doc>
+    <doc _table="Mailboxes" _ID="2001" >
+	<field name="Title"></field>
+	<field name="Mailboxm">
+	    <add>
+		<value>1001</value>
+		<value>1002</value>
+		<value>1003</value>
+	    </add>
+	</field>
+	<field name="Message">
+	    <add>
+		<value></value>
+	    </add>
+	</field>
+    </doc>
+    <doc _table="Mailboxes" _ID="2002" >
+	<field name="Title"></field>
+	<field name="Mailboxm">
+	    <add>
+		<value>1002</value>
+	    </add>
+	</field>
+	<field name="Message">
+	    <add>
+		<value>1004</value>
+	    </add>
+	</field>
+    </doc>
+    <doc _table="Mailboxes" _ID="2003" >
+	<field name="Title"></field>
+	<field name="Mailboxm">
+	    <add>
+		<value>1002</value>
+	    </add>
+	</field>
+	<field name="Message">
+	    <add>
+		<value></value>
+	    </add>
+	</field>
+    </doc>
+    <doc _table="Persons" _ID="1001" >
+	<field name="Body">Root 1</field>
+	<field name="Mailboxp">
+	    <add>
+		<value>2001</value>
+	    </add>
+	</field>
+    </doc>
+    <doc _table="Persons" _ID="1002" >
+	<field name="Body">Root 2</field>
+	<field name="Mailboxp">
+	    <add>
+		<value>2002</value>
+	    </add>
+	</field>
+    </doc>
+  </docs>
+</batch>
+</DEFINE>
+
+<DEFINE name="data2.xml">
+<batch>
+  <docs>
+    <doc _table="Persons" _ID="2001" >
+	<field name="Body">SUB1 Root 1</field>
+	<field name="ThreadID">1001</field>
+    </doc>
+    <doc _table="Persons" _ID="2002" >
+	<field name="Body">SUB1 Root 2</field>
+	<field name="ThreadID">1002</field>
+    </doc>
+  </docs>
+</batch>
+</DEFINE>
+
+<DEFINE name="data3.xml">
+<batch>
+  <docs>
+    <doc _table="Persons" _ID="3001" >
+	<field name="Body">SUB SUB Root 1</field>
+	<field name="ThreadID">2001</field>
+    </doc>
+    <doc _table="Persons" _ID="3002" >
+	<field name="Body">SUB SUB Root 2</field>
+	<field name="ThreadID">2002</field>
+    </doc>
+    <doc _table="Persons" _ID="3003" >
+	<field name="Body">SUB SUB Root 2</field>
+	<field name="ThreadID">2002</field>
+    </doc>
+  </docs>
+</batch>
+</DEFINE>
+
+<JSON-FROM-XML name ="schema.json" value="${schema.xml}"/>
+<JSON-FROM-XML name ="data1.json" value="${data1.xml}"/>
+<JSON-FROM-XML name ="data2.json" value="${data2.xml}"/>
+<JSON-FROM-XML name ="data3.json" value="${data3.xml}"/>
+
+</TEST>
