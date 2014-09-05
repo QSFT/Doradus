@@ -16,11 +16,10 @@
 
 package com.dell.doradus.search.builder;
 
-import com.dell.doradus.common.Utils;
 import com.dell.doradus.search.FilteredIterable;
 import com.dell.doradus.search.filter.Filter;
+import com.dell.doradus.search.filter.FilterLinkExists;
 import com.dell.doradus.search.query.IdQuery;
-import com.dell.doradus.search.query.LinkCountQuery;
 import com.dell.doradus.search.query.LinkIdQuery;
 import com.dell.doradus.search.query.LinkQuery;
 import com.dell.doradus.search.query.Query;
@@ -30,18 +29,16 @@ public class BuilderLinkId extends SearchBuilder {
 	@Override public FilteredIterable search(Query query) {
 		LinkIdQuery qu = (LinkIdQuery)query;
 		//IS NULL
-		if(qu.id == null) return null;
+		if(qu.id.equals("*")) return null;
 		LinkQuery linkQuery = new LinkQuery(qu.quantifier, qu.link, new IdQuery(qu.id));
 		return m_searcher.search(m_params, m_table, linkQuery, m_shards);
 	}
 	
 	@Override public Filter filter(Query query) {
 		LinkIdQuery qu = (LinkIdQuery)query;
-		if(qu.id == null) {
-			LinkCountQuery lc = new LinkCountQuery(qu.link, 0);
-			return m_searcher.filter(m_params, m_table, lc);
+		if(qu.id.equals("*")) {
+			return new FilterLinkExists(qu.link);
 		}
-		Utils.require(qu.id != null, "IS NULL query is not supported");
 		LinkQuery linkQuery = new LinkQuery(qu.quantifier, qu.link, new IdQuery(qu.id));
 		return m_searcher.filter(m_params, m_table, linkQuery);
 	}
