@@ -35,37 +35,37 @@
 <DEFINE name="data1.xml">
       <batch>
         <docs>
-          <doc _table="MessageParticipant" _ID="1001" >
+          <doc _ID="1001" >
             <field name="Text">Support</field>
             <field name="Message"><add><value>2001</value></add></field>
             <field name="Department"><add><value>3001</value></add></field>
           </doc>
-          <doc _table="MessageParticipant" _ID="1002" >
+          <doc _ID="1002" >
             <field name="Text">Support</field>
             <field name="Message"><add><value>2002</value></add></field>
             <field name="Department"><add><value>3002</value></add></field>
           </doc>
-          <doc _table="MessageParticipant" _ID="1003" >
+          <doc _ID="1003" >
             <field name="Text">Logistic</field>
             <field name="Message"><add><value>2003</value></add></field>
             <field name="Department"><add><value>3003</value></add></field>
           </doc>
-          <doc _table="MessageParticipant" _ID="1004" >
+          <doc _ID="1004" >
             <field name="Text">Logistic</field>
             <field name="Message"><add><value>2004</value></add></field>
             <field name="Department"><add><value>3004</value></add></field>
           </doc>
-          <doc _table="MessageParticipant" _ID="1005" >
+          <doc _ID="1005" >
             <field name="Text">Support</field>
             <field name="Message"><add><value>2005</value></add></field>
             <field name="Department"><add><value>3001</value></add></field>
           </doc>
-          <doc _table="MessageParticipant" _ID="1006" >
+          <doc _ID="1006" >
             <field name="Text">Support</field>
             <field name="Message"><add><value>2006</value></add></field>
             <field name="Department"><add><value>3002</value></add></field>
           </doc>
-          <doc _table="MessageParticipant" _ID="1007" >
+          <doc _ID="1007" >
             <field name="Text">Support</field>
             <field name="Message"><add><value>2007</value></add></field>
             <field name="Department"><add><value>3005</value></add></field>
@@ -76,37 +76,37 @@
 <DEFINE name="data2.xml">
       <batch>
         <docs>
-          <doc _table="Message" _ID="2001" >
+          <doc _ID="2001" >
             <field name="Status">Work in Support</field>
             <field name="Participants"><add><value>1001</value></add></field>
             <field name="Size">1001</field>
           </doc>
-          <doc _table="Message" _ID="2002" >
+          <doc _ID="2002" >
             <field name="Status">Work in Support</field>
             <field name="Participants"><add><value>1002</value></add></field>
             <field name="Size">1002</field>
           </doc>
-          <doc _table="Message" _ID="2003" >
+          <doc _ID="2003" >
             <field name="Status">Work in Logistic</field>
             <field name="Participants"><add><value>1003</value></add></field>
             <field name="Size">1003</field>
           </doc>
-          <doc _table="Message" _ID="2004" >
+          <doc _ID="2004" >
             <field name="Status">Work in Logistic</field>
             <field name="Participants"><add><value>1004</value></add></field>
             <field name="Size">1004</field>
           </doc>
-          <doc _table="Message" _ID="2005" >
+          <doc _ID="2005" >
             <field name="Status">Work in Support</field>
             <field name="Participants"><add><value>1005</value></add></field>
             <field name="Size">1005</field>
           </doc>
-          <doc _table="Message" _ID="2006" >
+          <doc _ID="2006" >
             <field name="Status">Work in Support</field>
             <field name="Participants"><add><value>1006</value></add></field>
             <field name="Size">1006</field>
           </doc>
-          <doc _table="Message" _ID="2007" >
+          <doc _ID="2007" >
             <field name="Status">Work in Support</field>
             <field name="Participants"><add><value>1007</value></add></field>
             <field name="Size">1007</field>
@@ -117,22 +117,22 @@
 <DEFINE name="data3.xml">
       <batch>
         <docs>
-          <doc _table="Department" _ID="3001" >
+          <doc _ID="3001" >
             <field name="DEP">Support Delivery</field>
             <field name="Support"><add><value>1001</value></add></field>
           </doc>
-          <doc _table="Department" _ID="3002" >
+          <doc _ID="3002" >
             <field name="DEP">Support Weapon</field>
             <field name="Support"><add><value>1002</value></add></field>
           </doc>
-          <doc _table="Department" _ID="3003" >
+          <doc _ID="3003" >
             <field name="Support"><add><value>1003</value></add></field>
           </doc>
-          <doc _table="Department" _ID="3004" >
+          <doc _ID="3004" >
             <field name="DEP">Logistic Weapon</field>
             <field name="Support"><add><value>1004</value></add></field>
           </doc>
-          <doc _table="Department" _ID="3005" >
+          <doc _ID="3005" >
             <field name="Support"><add><value>1007</value></add></field>
           </doc>
         </docs>
