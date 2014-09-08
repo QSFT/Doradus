@@ -34,8 +34,10 @@ import java.util.*;
 
 public class AggregationQueryBuilder {
 
+    static HashSet<String> availableTimeZones;
+
     public static AggregationMetric BuildStatisticMetric(String string, TableDefinition definition) {
-    	string = definition.replaceAliaces(string);
+        string = definition.replaceAliaces(string);
         Parser parser = Parser.GetStatisticMetricParser();
         ParseResult res1 = parser.Parse(string);
         if (res1.error == null) {
@@ -69,7 +71,7 @@ public class AggregationQueryBuilder {
     }
 
     public static ArrayList<AggregationMetric> BuildAggregationMetrics(String string, TableDefinition definition) {
-    	string = definition.replaceAliaces(string);
+        string = definition.replaceAliaces(string);
         Parser parser = Parser.GetAggregationMetricParser();
         ParseResult res1 = parser.Parse(string);
         if (res1.error == null) {
@@ -92,7 +94,7 @@ public class AggregationQueryBuilder {
     }
 
     public static SortOrder BuildSortOrder(String string, TableDefinition definition) {
-    	string = definition.replaceAliaces(string);
+        string = definition.replaceAliaces(string);
         Parser parser = Parser.GetSortOrderParser();
         ParseResult res1 = parser.Parse(string);
         if (res1.error == null) {
@@ -104,7 +106,7 @@ public class AggregationQueryBuilder {
     }
 
     public static List<AggregationGroup> Build(String string, TableDefinition definition) {
-    	string = definition.replaceAliaces(string);
+        string = definition.replaceAliaces(string);
         Parser parser = Parser.GetAggregationQueryParser();
         ParseResult res1 = parser.Parse(string);
         if (res1.error == null) {
@@ -117,7 +119,7 @@ public class AggregationQueryBuilder {
     }
 
     public static ArrayList<ArrayList<AggregationGroup>> BuildAggregation(String string, TableDefinition definition) {
-    	string = definition.replaceAliaces(string);
+        string = definition.replaceAliaces(string);
         Parser parser = Parser.GetAggregationQueryParser();
         ParseResult res1 = parser.Parse(string);
         if (res1.error == null) {
@@ -165,7 +167,6 @@ public class AggregationQueryBuilder {
             result = null;
         return result;
     }
-
 
     private static ArrayList<AggregationMetric> BuildMetrics(Context context, TableDefinition definition) {
         if (context == null)
@@ -291,7 +292,6 @@ public class AggregationQueryBuilder {
         }
     }
 
-
     //////////////////////////////////////// old metrics
     private static void pushOp(String operation, Stack<MetricExpression> expressions, Stack<String> operations) {
         if (operation.equals("(")) {
@@ -304,7 +304,7 @@ public class AggregationQueryBuilder {
                 String op = operations.pop();
                 if (op.equals("("))
                     return;
-                doOperation(op, expressions,operations);
+                doOperation(op, expressions, operations);
             }
         }
 
@@ -317,9 +317,8 @@ public class AggregationQueryBuilder {
                 if (!op1.equals("(")) {
                     if (op1.equals("+") || op1.equals("-")) {
                         operations.push(operation);
-                    }
-                    else {
-                        doOperation(operations.pop(), expressions,operations);
+                    } else {
+                        doOperation(operations.pop(), expressions, operations);
                         operations.push(operation);
                     }
                 } else {
@@ -328,20 +327,20 @@ public class AggregationQueryBuilder {
 
             }
         }
-        if (operation.equals("+") || operation.equals("-") ) {
+        if (operation.equals("+") || operation.equals("-")) {
             if (operations.isEmpty())
                 operations.push(operation);
             else {
                 String op1 = operations.peek();
                 if (!op1.equals("(")) {
-                    doOperation(operations.pop(), expressions,operations);
+                    doOperation(operations.pop(), expressions, operations);
                 }
                 operations.push(operation);
-                }
+            }
         }
     }
 
-    private static Item DropItem(ArrayList<Item> grammarItems ) {
+    private static Item DropItem(ArrayList<Item> grammarItems) {
         return grammarItems.remove(grammarItems.size() - 1);
     }
 
@@ -357,7 +356,7 @@ public class AggregationQueryBuilder {
         TableDefinition tableDef = definition;
         boolean fieldDetected = false;
         int ptr = 0;
-        int endMetricPtr =0;
+        int endMetricPtr = 0;
 
         ArrayList<MetricExpression> resultList = new ArrayList<MetricExpression>();
         Stack<MetricExpression> expressions = new Stack<MetricExpression>();
@@ -367,13 +366,13 @@ public class AggregationQueryBuilder {
             Item item = items.get(i);
 
             if (item.item.getType().equals("op")) {
-               pushOp(item.item.getValue(), expressions, operations);
-               continue ;
+                pushOp(item.item.getValue(), expressions, operations);
+                continue;
             }
 
             if (item.item.getType().equals("datediff")) {
                 operations.push(item.item.getValue());
-                continue ;
+                continue;
             }
 
             if (item.item.getType().equals("semantic") && item.item.getValue().equals("datediff_calc")) {
@@ -384,37 +383,47 @@ public class AggregationQueryBuilder {
                 try {
                     c1 = Utils.parseDate(unit1);
                 } catch (Exception e) {
-                    throw new IllegalArgumentException("Bad date time format:" + unit1 );
+                    throw new IllegalArgumentException("Bad date time format:" + unit1);
                 }
                 try {
                     c2 = Utils.parseDate(unit2);
                 } catch (Exception e) {
-                    throw new IllegalArgumentException("Bad date time format:" + unit2 );
+                    throw new IllegalArgumentException("Bad date time format:" + unit2);
                 }
 
                 LongIntegerExpression le = new LongIntegerExpression();
                 le.value = TimeUtils.getTimeDifference(unit, c1, c2);
                 expressions.push(le);
                 metric = null;
-                continue ;
+                continue;
             }
 
 
             if (item.item.getType().equals("InputPointer")) {
                 endMetricPtr = item.item.getPtr();
-                continue ;
+                continue;
             }
 
             if (item.item.getType().equals("number")) {
                 NumberExpression ne = new NumberExpression();
                 try {
-                ne.value = Double.parseDouble(item.item.getValue());
+                    ne.value = Double.parseDouble(item.item.getValue());
                 } catch (Exception e) {
-                    throw new IllegalArgumentException("Cannot convert '" + item.item.getValue() + "' to double" );
+                    throw new IllegalArgumentException("Cannot convert '" + item.item.getValue() + "' to double");
                 }
                 expressions.push(ne);
                 metric = null;
-                continue ;
+                continue;
+            }
+
+            if (item.item.getType().equals(SemanticNames.TRANSITIVE_VALUE)) {
+                metric.items.get(metric.items.size() - 1).transitiveDepth = Integer.parseInt(item.item.getValue());
+                continue;
+            }
+            if (item.item.getType().equals(SemanticNames.TRANSITIVE)) {
+                metric.items.get(metric.items.size() - 1).isTransitive = true;
+                ;
+                continue;
             }
 
             if (item.item.getType().equals(SemanticNames.AGGREGATION_METRIC_FUNCTION_NAME)) {
@@ -524,7 +533,7 @@ public class AggregationQueryBuilder {
         if (!expressions.isEmpty())
             throw new IllegalArgumentException("Bad expression");
 
-           resultList.add(me);
+        resultList.add(me);
         return resultList;
     }
 
@@ -545,7 +554,6 @@ public class AggregationQueryBuilder {
             }
         }
     }
-
 
     private static SortOrder BuildSort(Context context, TableDefinition definition) {
         if (context == null)
@@ -593,7 +601,7 @@ public class AggregationQueryBuilder {
                         throw new IllegalArgumentException("Unknown field " + ai.name);
                     }
                 }
-                if (tableDef.isLinkField(ai.name) || (fd !=null && fd.isXLinkField())) {
+                if (tableDef.isLinkField(ai.name) || (fd != null && fd.isXLinkField())) {
                     ai.isLink = true;
                     if (fieldDetected)
                         throw new IllegalArgumentException("Error: Not a link " + QueryUtils.FullLinkName(result.items));
@@ -617,7 +625,6 @@ public class AggregationQueryBuilder {
 
         return result;
     }
-
 
     private static ArrayList<ArrayList<AggregationGroup>> BuildAg(Context context, TableDefinition definition) {
         if (context == null)
@@ -648,7 +655,6 @@ public class AggregationQueryBuilder {
 
         return processItems(context, definition, extractTokens(context)); //new ArrayList<AggregationGroup>();
     }
-
 
     private static ArrayList<AggregationGroup> processItems(Context context, TableDefinition definition, ArrayList<Item> items) {
         AggregationGroup aggregationGroup = new AggregationGroup(definition);
@@ -800,12 +806,12 @@ public class AggregationQueryBuilder {
                     continue;
 
                 if (type.equals(SemanticNames.EXCLUDELIST)) {
-                    includeList=false;
+                    includeList = false;
                     continue;
                 }
 
                 if (type.equals(SemanticNames.INCLUDELIST)) {
-                    includeList=true;
+                    includeList = true;
                     continue;
                 }
                 if (type.equals(SemanticNames.EXCLUDE)) {
@@ -849,7 +855,7 @@ public class AggregationQueryBuilder {
                 }
 
                 if (type.equals(SemanticNames.ALIAS)) {
-                    aggregationGroup.name =item.item.getValue();
+                    aggregationGroup.name = item.item.getValue();
                     continue;
                 }
 
@@ -858,12 +864,22 @@ public class AggregationQueryBuilder {
                 }
 
                 if (type.equals(SemanticNames.TOPBOTTOM)) {
-                    if (item.item.getValue().equals("TOP") )
+                    if (item.item.getValue().equals("TOP"))
                         aggregationGroup.selection = AggregationGroup.Selection.Top;
                     else
                         aggregationGroup.selection = AggregationGroup.Selection.Bottom;
 
                     SetFilter(aggregationGroup, tableDef, item);
+                    continue;
+                }
+
+                if (type.equals(SemanticNames.TRANSITIVE_VALUE)) {
+                    aggregationGroup.items.get(aggregationGroup.items.size() - 1).transitiveDepth = Integer.parseInt(item.item.getValue());
+                    continue;
+                }
+                if (item.item.getType().equals(SemanticNames.TRANSITIVE)) {
+                    aggregationGroup.items.get(aggregationGroup.items.size() - 1).isTransitive = true;
+                    ;
                     continue;
                 }
 
@@ -959,7 +975,7 @@ public class AggregationQueryBuilder {
                     }
                 }
 
-                //Check values order 
+                //Check values order
                 if (group.batch.size() > 1) {
                     Object first = group.batch.get(0);
                     for (int j = 1; j < group.batch.size(); j++) {
@@ -1119,11 +1135,11 @@ public class AggregationQueryBuilder {
                 Item prev = null;
                 if (items.size() == 0) {
                     prev = new Item();
-                    prev.item= grammarItem;
+                    prev.item = grammarItem;
                     prev.item.setType("global");
                     items.add(prev);
                 } else
-                 prev = items.get(items.size() - 1);
+                    prev = items.get(items.size() - 1);
 
                 if (prev.queryItems == null)
                     prev.queryItems = new ArrayList<ArrayList<GrammarItem>>();
@@ -1157,12 +1173,12 @@ public class AggregationQueryBuilder {
                         type.equals(SemanticNames.TRUNCATE) ||
                         type.equals("endGroup") ||
                         type.equals(SemanticNames.BATCH) ||
-                        type.equals(SemanticNames.STOPVALUE)   ||
-                        type.equals(SemanticNames.ALIAS)   ||
+                        type.equals(SemanticNames.STOPVALUE) ||
+                        type.equals(SemanticNames.ALIAS) ||
                         type.equals(SemanticNames.EXCLUDEVALUE) ||
                         type.equals(SemanticNames.EXCLUDELIST) ||
-                        type.equals(SemanticNames.INCLUDELIST)
-
+                        type.equals(SemanticNames.INCLUDELIST) ||
+                        type.equals(SemanticNames.TRANSITIVE) || type.equals(SemanticNames.TRANSITIVE_VALUE)
                         ) {
                     Item item = new Item();
                     item.item = grammarItem;
@@ -1182,7 +1198,6 @@ public class AggregationQueryBuilder {
         return result;
     }
 
-
     private static ArrayList<Item> extractTokens(Context context) {
 
         ArrayList<Item> items = new ArrayList<Item>();
@@ -1197,7 +1212,7 @@ public class AggregationQueryBuilder {
             }
 
             if (grammarItem.getType().equals("op") || grammarItem.getType().equals("number"))
-                continue ;
+                continue;
 
             if (grammarItem.getType().equals("semantic") && grammarItem.getValue().equals("endMetric"))
                 continue;
@@ -1225,7 +1240,7 @@ public class AggregationQueryBuilder {
             } else {
                 String type = grammarItem.getType();
 
-                if (    type.equals(SemanticNames.LEXEM) ||
+                if (type.equals(SemanticNames.LEXEM) ||
                         type.equals(SemanticNames.TRUNCATE_VALUE) ||
                         type.equals(SemanticNames.TRUNCATE_SUBFIELD_VALUE) ||
                         type.equals(SemanticNames.BATCH_VALUE) ||
@@ -1240,9 +1255,9 @@ public class AggregationQueryBuilder {
                         type.equals(SemanticNames.ALIAS) ||
                         type.equals(SemanticNames.ASC) ||
                         type.equals(SemanticNames.DESC) ||
-                        type.equals("IncludeList")   ||
+                        type.equals("IncludeList") ||
                         type.equals("ExcludeList")
-                ) {
+                        ) {
                     Item item = new Item();
                     item.item = grammarItem;
                     items.add(item);
@@ -1265,7 +1280,6 @@ public class AggregationQueryBuilder {
         grammarItems.add(item);
     }
 
-
     private static ArrayList<Item> extractMetricTokens(Context context) {
 
         Calendar calendar = Calendar.getInstance();
@@ -1276,7 +1290,7 @@ public class AggregationQueryBuilder {
             GrammarItem grammarItem = context.items.get(i);
             String itemType = grammarItem.getType();
 
-            if (grammarItem.getType().equals("op") || grammarItem.getType().equals("number") || grammarItem.getType().equals("InputPointer") )  {
+            if (grammarItem.getType().equals("op") || grammarItem.getType().equals("number") || grammarItem.getType().equals("InputPointer")) {
                 Item item = new Item();
                 item.item = grammarItem;
                 items.add(item);
@@ -1359,6 +1373,17 @@ public class AggregationQueryBuilder {
                 continue;
             }
 
+            if (itemType.equals("transitiveValue")) {
+                AddLinkItem(items, grammarItem);
+                continue;
+            }
+
+            if (itemType.equals("transitive")) {
+                AddLinkItem(items, grammarItem);
+                continue;
+            }
+
+
             if (itemType.equals(SemanticNames.Now)) {
                 AddLinkItem(items, grammarItem);
                 continue;
@@ -1382,6 +1407,7 @@ public class AggregationQueryBuilder {
                 items.add(item);
                 continue;
             }
+
             if (grammarItem.getType().equals("semantic") && grammarItem.getValue().equals("stopWordAny")) {
                 grammarItem.setType(SemanticNames.STOPVALUEANY);
             }
@@ -1405,7 +1431,7 @@ public class AggregationQueryBuilder {
             } else {
                 String type = grammarItem.getType();
 
-                if (    type.equals(SemanticNames.LEXEM) ||
+                if (type.equals(SemanticNames.LEXEM) ||
                         type.equals(SemanticNames.TRUNCATE_VALUE) ||
                         type.equals(SemanticNames.TRUNCATE_SUBFIELD_VALUE) ||
                         type.equals(SemanticNames.BATCH_VALUE) ||
@@ -1420,7 +1446,7 @@ public class AggregationQueryBuilder {
                         type.equals(SemanticNames.ALIAS) ||
                         type.equals(SemanticNames.ASC) ||
                         type.equals(SemanticNames.DESC) ||
-                        type.equals("IncludeList")   ||
+                        type.equals("IncludeList") ||
                         type.equals("ExcludeList")
                         ) {
                     Item item = new Item();
@@ -1437,8 +1463,6 @@ public class AggregationQueryBuilder {
         }
         return items;
     }
-
-
 
     public static List<LinkInfo> GetNestedFieldsInfo(FieldDefinition groupFieldDef) {
         ArrayList<LinkInfo> result = new ArrayList<LinkInfo>();
@@ -1530,8 +1554,6 @@ public class AggregationQueryBuilder {
                 throw new IllegalArgumentException("Unknown type: " + type);
         }
     }
-
-    static HashSet<String> availableTimeZones;
 
     static boolean isCorrectTimeZone(String name) {
         String[] timeZoneIds = TimeZone.getAvailableIDs();
