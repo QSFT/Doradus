@@ -85,6 +85,8 @@ public class SemanticNames {
     public static final String Years = "YEARS";
     public static final String Second = "SECOND";
 
-
     public static final String AGGREGATION_METRIC_FUNCTION_NAME = "AggregationMetricFunctionName";
+    public static final String TRANSITIVE_VALUE = "transitiveValue";
+    public static final String TRANSITIVE = "transitive";
+
 }

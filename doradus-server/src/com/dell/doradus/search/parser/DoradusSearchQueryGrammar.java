@@ -768,10 +768,13 @@ public class DoradusSearchQueryGrammar {
         GrammarRule SubfieldContinue = new SwitchRule(SwitchRule.First, "SubfieldContinue",
                 Grammar.Rule(DOT, TimestampSubfield, Grammar.SetType(SemanticNames.TRUNCATE_SUBFIELD_VALUE)),
                 Grammar.Rule(DOT, Subfield),
+                Grammar.Rule(TRANSITIVE, Grammar.SetType("transitive"), LEFTPAREN, Grammar.DropLexem, NUMBER, Grammar.SetType("transitiveValue"), RIGHTPAREN, Grammar.DropLexem, DOT, Subfield),
+                Grammar.Rule(TRANSITIVE, Grammar.SetType("transitive"), DOT, Subfield),
+                Grammar.Rule(TRANSITIVE, Grammar.SetType("transitive") ),
                 Grammar.emptyRule
         );
 
-        Subfield.body = Grammar.asRule(WORD, SubfieldContinue);
+        Subfield.body = Grammar.asRule(WORD, Grammar.debugGrammarRule, SubfieldContinue);
 
         SwitchRule OptionalWhereClause = new SwitchRule("OptionalWhereClause");
         OptionalWhereClause.setMode(SwitchRule.First);
@@ -784,15 +787,20 @@ public class DoradusSearchQueryGrammar {
 
         OptionalWhereClause.body = obody;
 
+        GrammarRule OptionalTransitiveClause = new SwitchRule(SwitchRule.First, "OptionalTransitiveClause",
+                Grammar.Rule(TRANSITIVE, Grammar.SetType("transitive"), LEFTPAREN, Grammar.DropLexem, NUMBER, Grammar.SetType("transitiveValue"), RIGHTPAREN),
+                Grammar.Rule(TRANSITIVE, Grammar.SetType("transitive") ),
+                Grammar.emptyRule
+        );
+
         GrammarRule AggregationFieldName = Grammar.Rule("AggregationFieldName",
-                WORD, Grammar.NotLexem("AS"), OptionalWhereClause
+                WORD, OptionalTransitiveClause, Grammar.NotLexem("AS"), OptionalWhereClause
         );
 
         GrammarRule AggregationFieldCaseFunctionName = new SwitchRule(SwitchRule.First, "AggregationFieldCaseFunctionName",
                 Grammar.Rule(LOWER, Grammar.SetType("LOWER")),
                 Grammar.Rule(UPPER, Grammar.SetType("UPPER"))
         );
-
 
         SwitchRule AggregationFieldSubfieldPathWhere = new SwitchRule("AggregationFieldSubfieldPathWhere");
 
@@ -1120,17 +1128,6 @@ public class DoradusSearchQueryGrammar {
                 Grammar.emptyRule
         );
 
-        //SwitchRule AggregationMetricContinue = new SwitchRule("AggregationMetricContinue");
-
-        //GrammarRule AggregationMetricList = Grammar.Rule("AggregationMetricList",
-        //        AggregationFieldPath
-        //);
-
-        //AggregationMetricContinue.body = Grammar.asRule(
-        //        Grammar.Rule(DOT, Grammar.MustMatchAction, AggregationFieldPath),
-        //        Grammar.emptyRule
-        //);
-
         SwitchRule StatisticMetricFunctionName = new SwitchRule("StatisticMetricFunctionName",
                 SUM,
                 AVERAGE,
@@ -1148,7 +1145,8 @@ public class DoradusSearchQueryGrammar {
 
         AggregationFieldSubfieldPathWhere.body = Grammar.asRule(
                 Grammar.Rule(WHERE , OptWhiteSpaces, LEFTPAREN, OptWhiteSpaces,
-                        Query, OptWhiteSpaces, RIGHTPAREN, Grammar.Semantic("EOF"), Grammar.Semantic("ENDWHERE"),  DOT, Grammar.SetType("DOT") , AggregationFieldSubfieldPathWhere  ),
+                        Query, OptWhiteSpaces, RIGHTPAREN, Grammar.Semantic("EOF"), Grammar.Semantic("ENDWHERE"),
+                        DOT, Grammar.SetType("DOT") , AggregationFieldSubfieldPathWhere  ),
                 AggregationFieldPath
         );
 
@@ -1211,8 +1209,7 @@ public class DoradusSearchQueryGrammar {
                 AggregationMetricFunctionQuery,
                 Grammar.Rule(OptWhiteSpaces, FloatPointNumber, Grammar.SetType("number")),
                 Grammar.Rule(OptWhiteSpaces, DOUBLENUMBER, Grammar.SetType("number")),
-                Grammar.Rule(OptWhiteSpaces, Subfield)
-                //Grammar.Rule(OptWhiteSpaces, AggregationFieldPath, aaaaa,  Grammar.SetType("number") )
+                Grammar.Rule(OptWhiteSpaces, Subfield) //here goes only fieldPath
         );
 
         GrammarRule ArithmeticOperation = new SwitchRule(SwitchRule.First, "ArithmeticOperation",
