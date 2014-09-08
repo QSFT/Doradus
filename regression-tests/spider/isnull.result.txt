@@ -624,8 +624,8 @@
     200 OK
     <results>
         <aggregate metric="COUNT(*)" query="Files IS NULL"/>
-        <totalobjects>4</totalobjects>
-        <value>4</value>
+        <totalobjects>1</totalobjects>
+        <value>1</value>
     </results>
 *** Response: json
     200 OK
@@ -635,8 +635,8 @@
              "metric":"COUNT(*)",
              "query":"Files IS NULL"
           },
-          "totalobjects":"4",
-          "value":"4"
+          "totalobjects":"1",
+          "value":"1"
        }
     }
 
@@ -646,8 +646,8 @@
     200 OK
     <results>
         <aggregate metric="COUNT(*)" query="NOT Files IS NULL"/>
-        <totalobjects>0</totalobjects>
-        <value>0</value>
+        <totalobjects>3</totalobjects>
+        <value>3</value>
     </results>
 *** Response: json
     200 OK
@@ -657,8 +657,8 @@
              "metric":"COUNT(*)",
              "query":"NOT Files IS NULL"
           },
-          "totalobjects":"0",
-          "value":"0"
+          "totalobjects":"3",
+          "value":"3"
        }
     }
 
@@ -906,8 +906,8 @@
     200 OK
     <results>
         <aggregate metric="COUNT(*)" query="Float IS NULL"/>
-        <totalobjects>8</totalobjects>
-        <value>8</value>
+        <totalobjects>3</totalobjects>
+        <value>3</value>
     </results>
 *** Response: json
     200 OK
@@ -917,8 +917,8 @@
              "metric":"COUNT(*)",
              "query":"Float IS NULL"
           },
-          "totalobjects":"8",
-          "value":"8"
+          "totalobjects":"3",
+          "value":"3"
        }
     }
 
@@ -928,8 +928,8 @@
     200 OK
     <results>
         <aggregate metric="COUNT(*)" query="NOT Float IS NULL"/>
-        <totalobjects>0</totalobjects>
-        <value>0</value>
+        <totalobjects>5</totalobjects>
+        <value>5</value>
     </results>
 *** Response: json
     200 OK
@@ -939,8 +939,8 @@
              "metric":"COUNT(*)",
              "query":"NOT Float IS NULL"
           },
-          "totalobjects":"0",
-          "value":"0"
+          "totalobjects":"5",
+          "value":"5"
        }
     }
 
@@ -953,8 +953,8 @@
     200 OK
     <results>
         <aggregate metric="COUNT(*)" query="Double IS NULL"/>
-        <totalobjects>8</totalobjects>
-        <value>8</value>
+        <totalobjects>3</totalobjects>
+        <value>3</value>
     </results>
 *** Response: json
     200 OK
@@ -964,8 +964,8 @@
              "metric":"COUNT(*)",
              "query":"Double IS NULL"
           },
-          "totalobjects":"8",
-          "value":"8"
+          "totalobjects":"3",
+          "value":"3"
        }
     }
 
@@ -975,8 +975,8 @@
     200 OK
     <results>
         <aggregate metric="COUNT(*)" query="NOT Double IS NULL"/>
-        <totalobjects>0</totalobjects>
-        <value>0</value>
+        <totalobjects>5</totalobjects>
+        <value>5</value>
     </results>
 *** Response: json
     200 OK
@@ -986,8 +986,8 @@
              "metric":"COUNT(*)",
              "query":"NOT Double IS NULL"
           },
-          "totalobjects":"0",
-          "value":"0"
+          "totalobjects":"5",
+          "value":"5"
        }
     }
 
@@ -1622,8 +1622,8 @@
     200 OK
     <results>
         <aggregate metric="COUNT(*)" query="Files IS NULL"/>
-        <totalobjects>4</totalobjects>
-        <value>4</value>
+        <totalobjects>1</totalobjects>
+        <value>1</value>
     </results>
 *** Response: json
     200 OK
@@ -1633,8 +1633,8 @@
              "metric":"COUNT(*)",
              "query":"Files IS NULL"
           },
-          "totalobjects":"4",
-          "value":"4"
+          "totalobjects":"1",
+          "value":"1"
        }
     }
 
@@ -1644,8 +1644,8 @@
     200 OK
     <results>
         <aggregate metric="COUNT(*)" query="NOT Files IS NULL"/>
-        <totalobjects>0</totalobjects>
-        <value>0</value>
+        <totalobjects>3</totalobjects>
+        <value>3</value>
     </results>
 *** Response: json
     200 OK
@@ -1655,8 +1655,8 @@
              "metric":"COUNT(*)",
              "query":"NOT Files IS NULL"
           },
-          "totalobjects":"0",
-          "value":"0"
+          "totalobjects":"3",
+          "value":"3"
        }
     }
 
@@ -1904,8 +1904,8 @@
     200 OK
     <results>
         <aggregate metric="COUNT(*)" query="Float IS NULL"/>
-        <totalobjects>8</totalobjects>
-        <value>8</value>
+        <totalobjects>3</totalobjects>
+        <value>3</value>
     </results>
 *** Response: json
     200 OK
@@ -1915,8 +1915,8 @@
              "metric":"COUNT(*)",
              "query":"Float IS NULL"
           },
-          "totalobjects":"8",
-          "value":"8"
+          "totalobjects":"3",
+          "value":"3"
        }
     }
 
@@ -1926,8 +1926,8 @@
     200 OK
     <results>
         <aggregate metric="COUNT(*)" query="NOT Float IS NULL"/>
-        <totalobjects>0</totalobjects>
-        <value>0</value>
+        <totalobjects>5</totalobjects>
+        <value>5</value>
     </results>
 *** Response: json
     200 OK
@@ -1937,8 +1937,8 @@
              "metric":"COUNT(*)",
              "query":"NOT Float IS NULL"
           },
-          "totalobjects":"0",
-          "value":"0"
+          "totalobjects":"5",
+          "value":"5"
        }
     }
 
@@ -1951,8 +1951,8 @@
     200 OK
     <results>
         <aggregate metric="COUNT(*)" query="Double IS NULL"/>
-        <totalobjects>8</totalobjects>
-        <value>8</value>
+        <totalobjects>3</totalobjects>
+        <value>3</value>
     </results>
 *** Response: json
     200 OK
@@ -1962,8 +1962,8 @@
              "metric":"COUNT(*)",
              "query":"Double IS NULL"
           },
-          "totalobjects":"8",
-          "value":"8"
+          "totalobjects":"3",
+          "value":"3"
        }
     }
 
@@ -1973,8 +1973,8 @@
     200 OK
     <results>
         <aggregate metric="COUNT(*)" query="NOT Double IS NULL"/>
-        <totalobjects>0</totalobjects>
-        <value>0</value>
+        <totalobjects>5</totalobjects>
+        <value>5</value>
     </results>
 *** Response: json
     200 OK
@@ -1984,8 +1984,8 @@
              "metric":"COUNT(*)",
              "query":"NOT Double IS NULL"
           },
-          "totalobjects":"0",
-          "value":"0"
+          "totalobjects":"5",
+          "value":"5"
        }
     }
 
