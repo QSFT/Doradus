@@ -81,6 +81,18 @@
     <QUERY path="Application/File" q="FileCreateDate IS NULL"/>
     <QUERY path="Application/File" q="NOT FileCreateDate IS NULL"/>
 
+    <echo>~~~~~~~~~</echo>
+    <echo>~ Float ~</echo>
+    <echo>~~~~~~~~~</echo>
+    <QUERY path="Application/File" q="Float IS NULL"/>
+    <QUERY path="Application/File" q="NOT Float IS NULL"/>
+
+    <echo>~~~~~~~~~~</echo>
+    <echo>~ Double ~</echo>
+    <echo>~~~~~~~~~~</echo>
+    <QUERY path="Application/File" q="Double IS NULL"/>
+    <QUERY path="Application/File" q="NOT Double IS NULL"/>
+
     <DELETE path="_applications/Application/ApplicationKey"/>
 </FOR>
 
