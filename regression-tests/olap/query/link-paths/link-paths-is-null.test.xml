@@ -1,0 +1,59 @@
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<IMPORT>link-paths-is-null.defs.xml</IMPORT>
+<DEFINE name="response.format" value="xml|json"/>
+<enable-output/>
+
+<FOR index="i" from="1" to="2">
+    <IF.EQ arg1="${i}" arg2="1">
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo>~ XML format ~</echo>
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" xml="${schema.xml}"/>
+        <POST path="Application/shard" xml="${data.xml}"/>
+        <POST path="Application/_shards/shard" />
+        <enable-output/>
+    </IF.EQ>
+    <IF.EQ arg1="${i}" arg2="2">
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo>~ JSON format ~</echo>
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" json="${schema.json}"/>
+        <POST path="Application/shard" json="${data.json}"/>
+        <POST path="Application/_shards/shard" />
+        <enable-output/>
+    </IF.EQ>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Message" q="*" f="_all" shards="shard"/>
+    <QUERY path="Application/MessageParticipant" q="*" f="_all" shards="shard" />
+    <QUERY path="Application/Department" q="*" f="_all" shards="shard"/>
+        
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test for Link Paths - IS NULL ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Message" q="Participants.Department.DEP IS NULL" f="Participants.Department.DEP" shards="shard"/>
+    <QUERY path="Application/Message" q="ALL(Participants.Department).DEP IS NULL" f="Participants.Department.DEP" shards="shard"/>
+
+    <QUERY path="Application/Message" q="NOT Participants.Department.DEP IS NULL" f="Participants.Department.DEP" shards="shard"/>
+    <QUERY path="Application/Message" q="NONE(Participants.Department).DEP IS NULL" f="Participants.Department.DEP" shards="shard"/>
+
+    <DELETE path="_applications/Application/ApplicationKey"/>
+</FOR>
+
+<DISCONNECT />
+</TEST>
