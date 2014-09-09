@@ -76,6 +76,17 @@ public class FieldSearcher {
 		else if(m_bSingleValued) return m_docterms[doc];
 		else return m_positions[doc] == m_positions[doc + 1] ? -1 : m_docterms[m_positions[doc]];  
 	}
+
+	public int fieldsCount(int doc) {
+		if(m_docterms == null) return 0;
+		else if(m_bSingleValued) return m_docterms[doc] < 0 ? 0 : 1;
+		else return m_positions[doc + 1] - m_positions[doc];
+	}
+
+	public int getField(int doc, int index) {
+		if(m_bSingleValued) return m_docterms[doc];
+		else return m_docterms[m_positions[doc] + index];
+	}
 	
 	public void fields(int doc, IntIterator iter) {
 		if(m_docterms == null) {
