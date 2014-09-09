@@ -63,7 +63,8 @@ public abstract class MFCollector {
 			Result filter = null;
 			if(last.query != null) filter = ResultBuilder.search(last.tableDef, last.query, searcher);
 			collector = new IdField(searcher, fieldDef.getInverseTableDef());
-			collector = new LinkField(searcher, fieldDef, filter, collector);
+			if(last.isTransitive) collector = new TransitiveLinkField(searcher, fieldDef, last.transitiveDepth, filter, collector);
+			else collector = new LinkField(searcher, fieldDef, filter, collector);
 		} else if(last.fieldDef.isXLinkDirect()) {
 				collector = new DirectXLinkCollector(searcher, last.fieldDef, (XGroups)last.xlinkContext);
 		} else if(fieldDef.isXLinkInverse()) {
@@ -81,7 +82,8 @@ public abstract class MFCollector {
 			} else if(item.fieldDef.isXLinkInverse()) {
 				collector = new InverseXLinkCollector(searcher, item.fieldDef, (XGroups)item.xlinkContext);
 			} else if(item.fieldDef.isLinkField()) {
-				collector = new LinkField(searcher, item.fieldDef, filter, collector);
+				if(item.isTransitive) collector = new TransitiveLinkField(searcher, item.fieldDef, item.transitiveDepth, filter, collector);
+				else collector = new LinkField(searcher, item.fieldDef, filter, collector);
 			} else throw new IllegalArgumentException("Invalid field in aggregation group: " + item.name);
 		}
 		
@@ -459,6 +461,63 @@ public abstract class MFCollector {
 		@Override public MGName getField(long value) { return m_collector.getField(value); }
 		@Override public boolean requiresOrdering() { return m_collector.requiresOrdering(); }
 	}
+
+	
+	public static class TransitiveLinkField extends MFCollector
+	{
+		private Result m_filter;
+		private FieldSearcher m_fieldSearcher;
+		private MFCollector m_collector;
+		private IntIterator m_iter = new IntIterator();
+		private BdLongSet m_set;
+		private int m_depth;
+		
+		
+		public TransitiveLinkField(CubeSearcher searcher, FieldDefinition fieldDef, int depth, Result filter, MFCollector inner) {
+			super(searcher);
+			m_filter = filter;
+			m_fieldSearcher = searcher.getFieldSearcher(fieldDef.getTableName(), fieldDef.getName());
+			m_collector = inner;
+			
+			m_set = new BdLongSet(1024);
+			m_set.enableClearBuffer();
+			m_depth = Math.min(depth, 1024);
+			if(m_depth == 0) m_depth = 1024;
+		}
+		
+		@Override public void collect(long doc, BdLongSet values) {
+			m_set.clear();
+			m_set.add(doc);
+			int last_size = 0;
+			
+			for(int depth = 0; depth < m_depth; depth++) {
+				int current_size = m_set.size(); 
+				if(current_size == last_size) break;
+				for(int i = last_size; i < current_size; i++) {
+					doc = m_set.get(i);
+					m_fieldSearcher.fields((int)doc, m_iter);
+					for(int j = 0; j < m_iter.count(); j++) {
+						int d = m_iter.get(j);
+						if(m_filter != null && !m_filter.get(d)) continue;
+						m_set.add(d);
+					}
+				}
+				last_size = current_size;
+			}
+			
+			for(int i = 1; i < m_set.size(); i++) {
+				long d = m_set.get(i);
+				m_collector.collect(d, values);
+			}
+			
+			m_set.clear();
+		}
+		
+		@Override public void collectEmptyGroups(BdLongSet values) { m_collector.collectEmptyGroups(values); }
+		@Override public MGName getField(long value) { return m_collector.getField(value); }
+		@Override public boolean requiresOrdering() { return m_collector.requiresOrdering(); }
+	}
+
 	
 	public static class FilteredCollector extends MFCollector
 	{

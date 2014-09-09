@@ -72,7 +72,7 @@ public abstract class MetricCounter {
 			}
 		}
 	}
-	
+
 	public static class Num extends MetricCounter {
 		private NumSearcherMV m_ns;
 		

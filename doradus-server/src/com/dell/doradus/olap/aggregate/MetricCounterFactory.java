@@ -104,15 +104,18 @@ public class MetricCounterFactory {
 				return new InverseXLinkMetricCounter(searcher, item.fieldDef, (XMetrics)item.xlinkContext);
 			} else {
 				if("MIN".equals(metric.function) || "MAX".equals(metric.function) || "DISTINCT".equals(metric.function)) {
-					return new MetricCounter.FieldValue(filter, item.fieldDef, searcher);
+					if(item.isTransitive) return new MetricCounterTransitive.TransitiveLinkValue(filter, item.fieldDef, item.transitiveDepth, searcher);
+					else return new MetricCounter.FieldValue(filter, item.fieldDef, searcher);
 				}
+				if(item.isTransitive) return new MetricCounterTransitive.TransitiveLinkCount(filter, item.fieldDef, item.transitiveDepth, searcher);
 				else return new MetricCounter.FieldCount(filter, item.fieldDef, searcher);
 			}
 		}
 		else {
 			MetricCounter inner = create(searcher, metric, index + 1);
 			if(item.fieldDef.isLinkField()) {
-				return new MetricCounter.Link(filter, item.fieldDef, searcher, inner);
+				if(item.isTransitive) return new MetricCounterTransitive.TransitiveLink(filter, item.fieldDef, item.transitiveDepth, searcher, inner);
+				else return new MetricCounter.Link(filter, item.fieldDef, searcher, inner);
 			}else if(item.fieldDef.isXLinkDirect()) {
 				return new DirectXLinkMetricCounter(searcher, item.fieldDef, (XMetrics)item.xlinkContext);
 			}else if(item.fieldDef.isXLinkInverse()) {
