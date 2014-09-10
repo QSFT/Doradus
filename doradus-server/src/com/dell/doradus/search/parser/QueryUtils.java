@@ -73,7 +73,8 @@ public class QueryUtils {
             return lq.quantifier;
         }
 
-        throw new IllegalArgumentException("Internal error: not a link type:" + q.getClass().getSimpleName());
+        //throw new IllegalArgumentException("Internal error: not a link type:" + q.getClass().getSimpleName());
+        return null;
     }
 
     protected static void SetLinkQuantifier(Query q, String val) {

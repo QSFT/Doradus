@@ -570,6 +570,9 @@ public class SearchQueryBuilder {
                                     } else {
                                         QueryUtils.SetInnerQuery(pat, new FieldCountQuery(QueryUtils.GetLinkQueryLink(last), countValue));
                                     }
+                                    String quantifier = QueryUtils.GetLinkQuantifier(second);
+                                    if (quantifier != null && quantifier.equals("COUNT"))
+                                        SetLinkQueryQuantifier(second, LinkQuery.ANY);
 
                                     builderContext.queries.push(second);
                                     return false;
@@ -582,6 +585,9 @@ public class SearchQueryBuilder {
                                     } else {
                                         QueryUtils.SetInnerQuery(pat, new FieldCountRangeQuery(lastname, rq));
                                     }
+                                    String quantifier = QueryUtils.GetLinkQuantifier(second);
+                                    if (quantifier != null && quantifier.equals("COUNT"))
+                                        SetLinkQueryQuantifier(second, LinkQuery.ANY);
 
                                     builderContext.queries.push(second);
                                     return false;
