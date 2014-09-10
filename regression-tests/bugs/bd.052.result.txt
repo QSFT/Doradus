@@ -168,7 +168,7 @@
                 <field name="FolderName">Folder_C</field>
                 <field name="_ID">1003</field>
             </doc>
-        <docs/>
+        </docs>
     </results>
 
 *** Request
