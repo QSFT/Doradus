@@ -385,7 +385,7 @@
     <results>
         <aggregate group="Location.EXCLUDE(NULL)" metric="COUNT(*)" query="*"/>
         <totalobjects>4</totalobjects>
-        <summary>4</summary>
+        <summary>3</summary>
         <groups>
             <group>
                 <metric>1</metric>
@@ -457,7 +457,7 @@
     <results>
         <aggregate group="Location.INCLUDE(NULL)" metric="COUNT(*)" query="*"/>
         <totalobjects>4</totalobjects>
-        <summary>4</summary>
+        <summary>1</summary>
         <groups>
             <group>
                 <metric>1</metric>
@@ -473,7 +473,7 @@
     <results>
         <aggregate group="Location.INCLUDE(2005)" metric="COUNT(*)" query="*"/>
         <totalobjects>4</totalobjects>
-        <summary>4</summary>
+        <summary>1</summary>
         <groups>
             <group>
                 <metric>1</metric>
