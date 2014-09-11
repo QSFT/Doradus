@@ -4,19 +4,24 @@ import java.util.Collection;
 
 public class ValueExcludeInclude {
 
-    private Collection<String> m_excludes;
-    private Collection<String> m_includes;
+    private Matcher m_exclude;
+    private Matcher m_include;
 	
 	public ValueExcludeInclude(Collection<String> excludes, Collection<String> includes) {
-        m_excludes = excludes;
-        m_includes = includes;
+		if (excludes != null) {
+			m_exclude = new Matcher(excludes);
+		}
+        if (includes != null) {
+        	m_include = new Matcher(includes);
+        }
 	}
 	
 	public boolean accept(String value) {
-		if (m_excludes != null && m_excludes.contains(value)) {
+		value = value == null ? null : value.toLowerCase();
+		if (m_exclude != null && m_exclude.match(value)) {
 			return false;
 		}
-		if (m_includes != null && (!m_includes.contains(value))) {
+		if (m_include != null && (!m_include.match(value))) {
 			return false;
 		}
 		return true;

@@ -23,6 +23,7 @@ import java.util.Set;
 
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.search.aggregate.AggregationGroup;
+import com.dell.doradus.search.aggregate.Matcher;
 
 public class AggregationIncludeExclude {
 	private List<Matcher> m_exclude = new ArrayList<Matcher>();
@@ -51,34 +52,4 @@ public class AggregationIncludeExclude {
 		return true;
 	}
 	
-	public static class Matcher {
-		private Set<String> m_values;
-		private List<String> m_templates;
-		
-		public Matcher(List<String> values) {
-			if(values == null) return;
-			m_values = new HashSet<String>();
-			m_templates = new ArrayList<String>();
-			
-			for(String value: values) {
-				if(value == null) m_values.add(null);
-				else if(value.indexOf('*') >= 0 || value.indexOf('?') >= 0) m_templates.add(value);
-				else m_values.add(value.toLowerCase());
-			}
-			
-			if(m_values.size() == 0) m_values = null;
-			if(m_templates.size() == 0) m_templates = null;
-		}
-		
-		public boolean match(String value)
-		{
-			if(value == null) return m_values != null && m_values.contains(null);
-			if(m_values != null && m_values.contains(value)) return true;
-			if(m_templates == null) return false;
-			for(String template: m_templates) {
-				if(Utils.matchesPattern(value, template)) return true;
-			}
-			return false;
-		}
-	}
 }
