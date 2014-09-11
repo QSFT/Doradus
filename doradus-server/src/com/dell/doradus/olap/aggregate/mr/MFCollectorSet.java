@@ -89,6 +89,8 @@ public class MFCollectorSet {
 			list.add(item);
 		}
 		
+		if(list.size() == 0) return null;
+		
 		AggregationGroup group = new AggregationGroup(groups.get(0).tableDef);
 		group.items = list;
 		LOG.info("Found common path for groups: " + group.items.get(0).name + "..., total " + group.items.size());
