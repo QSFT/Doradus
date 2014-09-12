@@ -48,6 +48,7 @@
     <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
     <echo>~ Test for Quantifies with IS NULL ~</echo>
     <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Message" q="ALL(InternalRecipients.Person).Manager IS NULL" />
     <QUERY path="Application/Message" q="ALL(InternalRecipients).ALL(Person).Manager IS NULL" />
 
     <DELETE path="_applications/Application/ApplicationKey"/>

@@ -49,6 +49,7 @@
     <echo>~ Test for Link Paths - COUNT ~</echo>
     <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
     <QUERY path="Application/Message" q="COUNT(Participants.Department)&lt;0" />
+    <QUERY path="Application/Message" q="COUNT(Participants.Department.DEP)>0" />
     <QUERY path="Application/Message" q="COUNT(Participants.Department.DEP)>1" />
     <QUERY path="Application/Message" q="COUNT(Participants.Department)>1" />
     <QUERY path="Application/Message" q="COUNT(Participants.Department)&lt;4" />
