@@ -61,18 +61,37 @@
     <echo>~~~~~~~~~~~</echo>
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FolderName.EXCLUDE(NULL)" q="*" />
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FolderName.EXCLUDE('Folder')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FolderName.EXCLUDE('?older')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FolderName.EXCLUDE('folder')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FolderName.EXCLUDE('*der')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FolderName.EXCLUDE('Fol*')" q="*" />
     <echo>~~~~~~~~~~~</echo>
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FolderName.EXCLUDE(NULL)" q="*" />
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FolderName.EXCLUDE('Folder')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FolderName.EXCLUDE('?older')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FolderName.EXCLUDE('folder')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FolderName.EXCLUDE('*der')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FolderName.EXCLUDE('Fol*')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FolderName.EXCLUDE('Folder ?')" q="*" />
 
     <echo>~~~~~~~~~~~</echo>
     <echo>~ TEXT MV ~</echo>
     <echo>~~~~~~~~~~~</echo>
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE(NULL)" q="*" />
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE('USERS 1')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE('?SERS 1')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE('users 1')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE('*ERS')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE('USE*')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FoldersList.EXCLUDE('USERS ?')" q="*" />
     <echo>~~~~~~~~~~~</echo>
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE(NULL)" q="*" />
     <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE('USERS 1')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE('?SERS 1')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE('users 1')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE('*USE')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE('USE*')" q="*" />
+    <AGGREGATE path="Application/File" m="COUNT(*)" f="FileName,FoldersList.EXCLUDE('USERS ?')" q="*" />
 
     <echo>~~~~~~~~~~~</echo>
     <echo>~ INTEGER ~</echo>
