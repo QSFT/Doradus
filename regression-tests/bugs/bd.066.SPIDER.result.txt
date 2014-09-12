@@ -834,7 +834,7 @@
     <results>
         <aggregate group="FolderName.EXCLUDE('?older')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
-        <summary>8</summary>
+        <summary>7</summary>
         <groups>
             <group>
                 <metric>5</metric>
@@ -860,7 +860,7 @@
              "group":"FolderName.EXCLUDE('?older')"
           },
           "totalobjects":"8",
-          "summary":"8",
+          "summary":"7",
           "groups":[
              {
                 "group":{
@@ -897,7 +897,7 @@
     <results>
         <aggregate group="FolderName.INCLUDE('?older')" metric="COUNT(*)" query="*"/>
         <totalobjects>8</totalobjects>
-        <summary>8</summary>
+        <summary>1</summary>
         <groups>
             <group>
                 <metric>1</metric>
@@ -915,7 +915,7 @@
              "group":"FolderName.INCLUDE('?older')"
           },
           "totalobjects":"8",
-          "summary":"8",
+          "summary":"1",
           "groups":[
              {
                 "group":{
