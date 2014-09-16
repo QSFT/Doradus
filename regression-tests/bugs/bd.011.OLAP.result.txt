@@ -20,25 +20,7 @@
                         <groups>
                             <group>
                                 <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Mother</field>
-                            </group>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Orion</field>
-                            </group>
-                        </groups>
-                    </group>
-                    <group>
-                        <summary>1</summary>
-                        <field name="Folder.File.WHERE(FileName>'G').FileName">KFile_7</field>
-                        <groups>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Mother</field>
-                            </group>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Orion</field>
+                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">(null)</field>
                             </group>
                         </groups>
                     </group>
@@ -48,20 +30,6 @@
                 <summary>1</summary>
                 <field name="Folder.FolderName">Folder_A_2</field>
                 <groups>
-                    <group>
-                        <summary>1</summary>
-                        <field name="Folder.File.WHERE(FileName>'G').FileName">GFile_1</field>
-                        <groups>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Mother</field>
-                            </group>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Orion</field>
-                            </group>
-                        </groups>
-                    </group>
                     <group>
                         <summary>1</summary>
                         <field name="Folder.File.WHERE(FileName>'G').FileName">KFile_7</field>
@@ -90,14 +58,6 @@
                                 <metric>1</metric>
                                 <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Ghost</field>
                             </group>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Quality</field>
-                            </group>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Stop</field>
-                            </group>
                         </groups>
                     </group>
                 </groups>
@@ -110,10 +70,6 @@
                         <summary>1</summary>
                         <field name="Folder.File.WHERE(FileName>'G').FileName">(null)</field>
                         <groups>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Ghost</field>
-                            </group>
                             <group>
                                 <metric>1</metric>
                                 <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Quality</field>
@@ -142,58 +98,6 @@
                                 <metric>1</metric>
                                 <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Key</field>
                             </group>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Up</field>
-                            </group>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Window</field>
-                            </group>
-                        </groups>
-                    </group>
-                    <group>
-                        <summary>1</summary>
-                        <field name="Folder.File.WHERE(FileName>'G').FileName">SFile_11</field>
-                        <groups>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Ice</field>
-                            </group>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Key</field>
-                            </group>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Up</field>
-                            </group>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Window</field>
-                            </group>
-                        </groups>
-                    </group>
-                    <group>
-                        <summary>1</summary>
-                        <field name="Folder.File.WHERE(FileName>'G').FileName">UFile_12</field>
-                        <groups>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Ice</field>
-                            </group>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Key</field>
-                            </group>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Up</field>
-                            </group>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Window</field>
-                            </group>
                         </groups>
                     </group>
                 </groups>
@@ -204,38 +108,8 @@
                 <groups>
                     <group>
                         <summary>1</summary>
-                        <field name="Folder.File.WHERE(FileName>'G').FileName">IFile_6</field>
-                        <groups>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Ice</field>
-                            </group>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Key</field>
-                            </group>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Up</field>
-                            </group>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Window</field>
-                            </group>
-                        </groups>
-                    </group>
-                    <group>
-                        <summary>1</summary>
                         <field name="Folder.File.WHERE(FileName>'G').FileName">SFile_11</field>
                         <groups>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Ice</field>
-                            </group>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Key</field>
-                            </group>
                             <group>
                                 <metric>1</metric>
                                 <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Up</field>
@@ -250,14 +124,6 @@
                         <summary>1</summary>
                         <field name="Folder.File.WHERE(FileName>'G').FileName">UFile_12</field>
                         <groups>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Ice</field>
-                            </group>
-                            <group>
-                                <metric>1</metric>
-                                <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Key</field>
-                            </group>
                             <group>
                                 <metric>1</metric>
                                 <field name="Folder.File.WHERE(FoldersList>'G').FoldersList">Up</field>
@@ -303,41 +169,7 @@
                                   "group":{
                                      "metric":"1",
                                      "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Mother"
-                                     }
-                                  }
-                               },
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Orion"
-                                     }
-                                  }
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "group":{
-                            "summary":"1",
-                            "field":{
-                               "Folder.File.WHERE(FileName>'G').FileName":"KFile_7"
-                            },
-                            "groups":[
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Mother"
-                                     }
-                                  }
-                               },
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Orion"
+                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"(null)"
                                      }
                                   }
                                }
@@ -354,32 +186,6 @@
                       "Folder.FolderName":"Folder_A_2"
                    },
                    "groups":[
-                      {
-                         "group":{
-                            "summary":"1",
-                            "field":{
-                               "Folder.File.WHERE(FileName>'G').FileName":"GFile_1"
-                            },
-                            "groups":[
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Mother"
-                                     }
-                                  }
-                               },
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Orion"
-                                     }
-                                  }
-                               }
-                            ]
-                         }
-                      },
                       {
                          "group":{
                             "summary":"1",
@@ -430,22 +236,6 @@
                                         "Folder.File.WHERE(FoldersList>'G').FoldersList":"Ghost"
                                      }
                                   }
-                               },
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Quality"
-                                     }
-                                  }
-                               },
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Stop"
-                                     }
-                                  }
                                }
                             ]
                          }
@@ -467,14 +257,6 @@
                                "Folder.File.WHERE(FileName>'G').FileName":"(null)"
                             },
                             "groups":[
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Ghost"
-                                     }
-                                  }
-                               },
                                {
                                   "group":{
                                      "metric":"1",
@@ -526,106 +308,6 @@
                                         "Folder.File.WHERE(FoldersList>'G').FoldersList":"Key"
                                      }
                                   }
-                               },
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Up"
-                                     }
-                                  }
-                               },
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Window"
-                                     }
-                                  }
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "group":{
-                            "summary":"1",
-                            "field":{
-                               "Folder.File.WHERE(FileName>'G').FileName":"SFile_11"
-                            },
-                            "groups":[
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Ice"
-                                     }
-                                  }
-                               },
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Key"
-                                     }
-                                  }
-                               },
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Up"
-                                     }
-                                  }
-                               },
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Window"
-                                     }
-                                  }
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "group":{
-                            "summary":"1",
-                            "field":{
-                               "Folder.File.WHERE(FileName>'G').FileName":"UFile_12"
-                            },
-                            "groups":[
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Ice"
-                                     }
-                                  }
-                               },
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Key"
-                                     }
-                                  }
-                               },
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Up"
-                                     }
-                                  }
-                               },
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Window"
-                                     }
-                                  }
                                }
                             ]
                          }
@@ -644,67 +326,9 @@
                          "group":{
                             "summary":"1",
                             "field":{
-                               "Folder.File.WHERE(FileName>'G').FileName":"IFile_6"
-                            },
-                            "groups":[
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Ice"
-                                     }
-                                  }
-                               },
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Key"
-                                     }
-                                  }
-                               },
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Up"
-                                     }
-                                  }
-                               },
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Window"
-                                     }
-                                  }
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "group":{
-                            "summary":"1",
-                            "field":{
                                "Folder.File.WHERE(FileName>'G').FileName":"SFile_11"
                             },
                             "groups":[
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Ice"
-                                     }
-                                  }
-                               },
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Key"
-                                     }
-                                  }
-                               },
                                {
                                   "group":{
                                      "metric":"1",
@@ -731,22 +355,6 @@
                                "Folder.File.WHERE(FileName>'G').FileName":"UFile_12"
                             },
                             "groups":[
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Ice"
-                                     }
-                                  }
-                               },
-                               {
-                                  "group":{
-                                     "metric":"1",
-                                     "field":{
-                                        "Folder.File.WHERE(FoldersList>'G').FoldersList":"Key"
-                                     }
-                                  }
-                               },
                                {
                                   "group":{
                                      "metric":"1",
