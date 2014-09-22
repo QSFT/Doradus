@@ -32,7 +32,9 @@ public class CassandraIO implements IO {
 
 	@Override
 	public byte[] getValue(String app, String key, String column) {
-		return DBService.instance().getColumn(app, key, column).getRawValue();
+		DColumn col = DBService.instance().getColumn(app, key, column);
+		if(col == null) return null;
+		return col.getRawValue();
 	}
 
 	@Override
