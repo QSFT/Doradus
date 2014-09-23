@@ -36,9 +36,11 @@
                         <field name="_ID">2001</field>
                     </doc>
                     <doc>
+                        <field name="Double">1790.0</field>
                         <field name="FileCreateDate">2013-11-04 04:44:40</field>
                         <field name="FileName">File_4</field>
                         <field name="FileSize">2000004</field>
+                        <field name="Float">3390.0</field>
                         <field name="FoldersList">
                             <value>PROGRAM FILES 4</value>
                             <value>USERS 4</value>
@@ -55,17 +57,21 @@
                 <field name="_shard">shard</field>
                 <field name="Files">
                     <doc>
+                        <field name="Double">0.022</field>
                         <field name="FileCreateDate">2013-11-02 02:22:20</field>
                         <field name="FileName">File_2</field>
                         <field name="FileSize">2000002</field>
+                        <field name="Float">0.017999999225139618</field>
                         <field name="FolderName">Folder</field>
                         <field name="IsFileTested">True</field>
                         <field name="_ID">2002</field>
                     </doc>
                     <doc>
+                        <field name="Double">-1.0E9</field>
                         <field name="FileCreateDate">2013-11-06 06:46:16</field>
                         <field name="FileName">File_6</field>
                         <field name="FileSize">2000006</field>
+                        <field name="Float">-3000000.0</field>
                         <field name="FoldersList">
                             <value>PROGRAM FILES 6</value>
                             <value>USERS 6</value>
@@ -82,9 +88,11 @@
                 <field name="_shard">shard</field>
                 <field name="Files">
                     <doc>
+                        <field name="Double">-0.023</field>
                         <field name="FileCreateDate">2013-11-03 03:33:30</field>
                         <field name="FileName">File_3</field>
                         <field name="FileSize">2000003</field>
+                        <field name="Float">-0.017999999225139618</field>
                         <field name="FolderName">Folder 3</field>
                         <field name="FoldersList">
                             <value>PROGRAM FILES 3</value>
@@ -94,9 +102,11 @@
                         <field name="_ID">2003</field>
                     </doc>
                     <doc>
+                        <field name="Double">-1790.0</field>
                         <field name="FileCreateDate">2013-11-05 05:55:50</field>
                         <field name="FileName">File_5</field>
                         <field name="FileSize">2000005</field>
+                        <field name="Float">-3390.0</field>
                         <field name="FolderName">Folder 5</field>
                         <field name="_ID">2005</field>
                     </doc>
@@ -136,9 +146,11 @@
                       },
                       {
                          "doc":{
+                            "Double":"1790.0",
                             "FileCreateDate":"2013-11-04 04:44:40",
                             "FileName":"File_4",
                             "FileSize":"2000004",
+                            "Float":"3390.0",
                             "FoldersList":[
                                "PROGRAM FILES 4",
                                "USERS 4",
@@ -159,9 +171,11 @@
                    "Files":[
                       {
                          "doc":{
+                            "Double":"0.022",
                             "FileCreateDate":"2013-11-02 02:22:20",
                             "FileName":"File_2",
                             "FileSize":"2000002",
+                            "Float":"0.017999999225139618",
                             "FolderName":"Folder",
                             "IsFileTested":"True",
                             "_ID":"2002"
@@ -169,9 +183,11 @@
                       },
                       {
                          "doc":{
+                            "Double":"-1.0E9",
                             "FileCreateDate":"2013-11-06 06:46:16",
                             "FileName":"File_6",
                             "FileSize":"2000006",
+                            "Float":"-3000000.0",
                             "FoldersList":[
                                "PROGRAM FILES 6",
                                "USERS 6",
@@ -192,9 +208,11 @@
                    "Files":[
                       {
                          "doc":{
+                            "Double":"-0.023",
                             "FileCreateDate":"2013-11-03 03:33:30",
                             "FileName":"File_3",
                             "FileSize":"2000003",
+                            "Float":"-0.017999999225139618",
                             "FolderName":"Folder 3",
                             "FoldersList":[
                                "PROGRAM FILES 3",
@@ -206,9 +224,11 @@
                       },
                       {
                          "doc":{
+                            "Double":"-1790.0",
                             "FileCreateDate":"2013-11-05 05:55:50",
                             "FileName":"File_5",
                             "FileSize":"2000005",
+                            "Float":"-3390.0",
                             "FolderName":"Folder 5",
                             "_ID":"2005"
                          }
@@ -253,9 +273,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">0.022</field>
                 <field name="FileCreateDate">2013-11-02 02:22:20</field>
                 <field name="FileName">File_2</field>
                 <field name="FileSize">2000002</field>
+                <field name="Float">0.017999999225139618</field>
                 <field name="FolderName">Folder</field>
                 <field name="IsFileTested">True</field>
                 <field name="_ID">2002</field>
@@ -268,9 +290,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">-0.023</field>
                 <field name="FileCreateDate">2013-11-03 03:33:30</field>
                 <field name="FileName">File_3</field>
                 <field name="FileSize">2000003</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="FolderName">Folder 3</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 3</value>
@@ -287,9 +311,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">1790.0</field>
                 <field name="FileCreateDate">2013-11-04 04:44:40</field>
                 <field name="FileName">File_4</field>
                 <field name="FileSize">2000004</field>
+                <field name="Float">3390.0</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 4</value>
                     <value>USERS 4</value>
@@ -306,9 +332,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">-1790.0</field>
                 <field name="FileCreateDate">2013-11-05 05:55:50</field>
                 <field name="FileName">File_5</field>
                 <field name="FileSize">2000005</field>
+                <field name="Float">-3390.0</field>
                 <field name="FolderName">Folder 5</field>
                 <field name="_ID">2005</field>
                 <field name="_shard">shard</field>
@@ -320,9 +348,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">-1.0E9</field>
                 <field name="FileCreateDate">2013-11-06 06:46:16</field>
                 <field name="FileName">File_6</field>
                 <field name="FileSize">2000006</field>
+                <field name="Float">-3000000.0</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 6</value>
                     <value>USERS 6</value>
@@ -339,8 +369,10 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">1.0E9</field>
                 <field name="FileName">File_7</field>
                 <field name="FileSize">2000007</field>
+                <field name="Float">3000000.0</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 7</value>
                     <value>USERS 7</value>
@@ -389,9 +421,11 @@
              },
              {
                 "doc":{
+                   "Double":"0.022",
                    "FileCreateDate":"2013-11-02 02:22:20",
                    "FileName":"File_2",
                    "FileSize":"2000002",
+                   "Float":"0.017999999225139618",
                    "FolderName":"Folder",
                    "IsFileTested":"True",
                    "_ID":"2002",
@@ -408,9 +442,11 @@
              },
              {
                 "doc":{
+                   "Double":"-0.023",
                    "FileCreateDate":"2013-11-03 03:33:30",
                    "FileName":"File_3",
                    "FileSize":"2000003",
+                   "Float":"-0.017999999225139618",
                    "FolderName":"Folder 3",
                    "FoldersList":[
                       "PROGRAM FILES 3",
@@ -431,9 +467,11 @@
              },
              {
                 "doc":{
+                   "Double":"1790.0",
                    "FileCreateDate":"2013-11-04 04:44:40",
                    "FileName":"File_4",
                    "FileSize":"2000004",
+                   "Float":"3390.0",
                    "FoldersList":[
                       "PROGRAM FILES 4",
                       "USERS 4",
@@ -454,9 +492,11 @@
              },
              {
                 "doc":{
+                   "Double":"-1790.0",
                    "FileCreateDate":"2013-11-05 05:55:50",
                    "FileName":"File_5",
                    "FileSize":"2000005",
+                   "Float":"-3390.0",
                    "FolderName":"Folder 5",
                    "_ID":"2005",
                    "_shard":"shard",
@@ -472,9 +512,11 @@
              },
              {
                 "doc":{
+                   "Double":"-1.0E9",
                    "FileCreateDate":"2013-11-06 06:46:16",
                    "FileName":"File_6",
                    "FileSize":"2000006",
+                   "Float":"-3000000.0",
                    "FoldersList":[
                       "PROGRAM FILES 6",
                       "USERS 6",
@@ -495,8 +537,10 @@
              },
              {
                 "doc":{
+                   "Double":"1.0E9",
                    "FileName":"File_7",
                    "FileSize":"2000007",
+                   "Float":"3000000.0",
                    "FoldersList":[
                       "PROGRAM FILES 7",
                       "USERS 7",
@@ -586,9 +630,11 @@
         <totalobjects>1</totalobjects>
         <docs>
             <doc>
+                <field name="Double">1790.0</field>
                 <field name="FileCreateDate">2013-11-04 04:44:40</field>
                 <field name="FileName">File_4</field>
                 <field name="FileSize">2000004</field>
+                <field name="Float">3390.0</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 4</value>
                     <value>USERS 4</value>
@@ -608,9 +654,11 @@
           "docs":[
              {
                 "doc":{
+                   "Double":"1790.0",
                    "FileCreateDate":"2013-11-04 04:44:40",
                    "FileName":"File_4",
                    "FileSize":"2000004",
+                   "Float":"3390.0",
                    "FoldersList":[
                       "PROGRAM FILES 4",
                       "USERS 4",
@@ -653,18 +701,22 @@
         <totalobjects>2</totalobjects>
         <docs>
             <doc>
+                <field name="Double">0.022</field>
                 <field name="FileCreateDate">2013-11-02 02:22:20</field>
                 <field name="FileName">File_2</field>
                 <field name="FileSize">2000002</field>
+                <field name="Float">0.017999999225139618</field>
                 <field name="FolderName">Folder</field>
                 <field name="IsFileTested">True</field>
                 <field name="_ID">2002</field>
                 <field name="_shard">shard</field>
             </doc>
             <doc>
+                <field name="Double">-1.0E9</field>
                 <field name="FileCreateDate">2013-11-06 06:46:16</field>
                 <field name="FileName">File_6</field>
                 <field name="FileSize">2000006</field>
+                <field name="Float">-3000000.0</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 6</value>
                     <value>USERS 6</value>
@@ -684,9 +736,11 @@
           "docs":[
              {
                 "doc":{
+                   "Double":"0.022",
                    "FileCreateDate":"2013-11-02 02:22:20",
                    "FileName":"File_2",
                    "FileSize":"2000002",
+                   "Float":"0.017999999225139618",
                    "FolderName":"Folder",
                    "IsFileTested":"True",
                    "_ID":"2002",
@@ -695,9 +749,11 @@
              },
              {
                 "doc":{
+                   "Double":"-1.0E9",
                    "FileCreateDate":"2013-11-06 06:46:16",
                    "FileName":"File_6",
                    "FileSize":"2000006",
+                   "Float":"-3000000.0",
                    "FoldersList":[
                       "PROGRAM FILES 6",
                       "USERS 6",
@@ -720,9 +776,11 @@
         <totalobjects>2</totalobjects>
         <docs>
             <doc>
+                <field name="Double">1790.0</field>
                 <field name="FileCreateDate">2013-11-04 04:44:40</field>
                 <field name="FileName">File_4</field>
                 <field name="FileSize">2000004</field>
+                <field name="Float">3390.0</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 4</value>
                     <value>USERS 4</value>
@@ -733,8 +791,10 @@
                 <field name="_shard">shard</field>
             </doc>
             <doc>
+                <field name="Double">1.0E9</field>
                 <field name="FileName">File_7</field>
                 <field name="FileSize">2000007</field>
+                <field name="Float">3000000.0</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 7</value>
                     <value>USERS 7</value>
@@ -754,9 +814,11 @@
           "docs":[
              {
                 "doc":{
+                   "Double":"1790.0",
                    "FileCreateDate":"2013-11-04 04:44:40",
                    "FileName":"File_4",
                    "FileSize":"2000004",
+                   "Float":"3390.0",
                    "FoldersList":[
                       "PROGRAM FILES 4",
                       "USERS 4",
@@ -769,8 +831,10 @@
              },
              {
                 "doc":{
+                   "Double":"1.0E9",
                    "FileName":"File_7",
                    "FileSize":"2000007",
+                   "Float":"3000000.0",
                    "FoldersList":[
                       "PROGRAM FILES 7",
                       "USERS 7",
@@ -959,6 +1023,196 @@
                 "doc":{
                    "FolderName":"Folder_B",
                    "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~
+~ Float ~
+~~~~~~~~~
+*** Request
+    GET /Application/File/_query?q=Float=-1.8E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Double">-0.023</field>
+                <field name="FileCreateDate">2013-11-03 03:33:30</field>
+                <field name="FileName">File_3</field>
+                <field name="FileSize">2000003</field>
+                <field name="Float">-0.017999999225139618</field>
+                <field name="FolderName">Folder 3</field>
+                <field name="FoldersList">
+                    <value>PROGRAM FILES 3</value>
+                    <value>USERS 3</value>
+                    <value>WINDOWS 3</value>
+                </field>
+                <field name="_ID">2003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Double":"-0.023",
+                   "FileCreateDate":"2013-11-03 03:33:30",
+                   "FileName":"File_3",
+                   "FileSize":"2000003",
+                   "Float":"-0.017999999225139618",
+                   "FolderName":"Folder 3",
+                   "FoldersList":[
+                      "PROGRAM FILES 3",
+                      "USERS 3",
+                      "WINDOWS 3"
+                   ],
+                   "_ID":"2003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/File/_query?q=Float=-3.39E+3&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Double">-1790.0</field>
+                <field name="FileCreateDate">2013-11-05 05:55:50</field>
+                <field name="FileName">File_5</field>
+                <field name="FileSize">2000005</field>
+                <field name="Float">-3390.0</field>
+                <field name="FolderName">Folder 5</field>
+                <field name="_ID">2005</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Double":"-1790.0",
+                   "FileCreateDate":"2013-11-05 05:55:50",
+                   "FileName":"File_5",
+                   "FileSize":"2000005",
+                   "Float":"-3390.0",
+                   "FolderName":"Folder 5",
+                   "_ID":"2005",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~
+~ Double ~
+~~~~~~~~~~
+*** Request
+    GET /Application/File/_query?q=Double=-2.3E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Double">-0.023</field>
+                <field name="FileCreateDate">2013-11-03 03:33:30</field>
+                <field name="FileName">File_3</field>
+                <field name="FileSize">2000003</field>
+                <field name="Float">-0.017999999225139618</field>
+                <field name="FolderName">Folder 3</field>
+                <field name="FoldersList">
+                    <value>PROGRAM FILES 3</value>
+                    <value>USERS 3</value>
+                    <value>WINDOWS 3</value>
+                </field>
+                <field name="_ID">2003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Double":"-0.023",
+                   "FileCreateDate":"2013-11-03 03:33:30",
+                   "FileName":"File_3",
+                   "FileSize":"2000003",
+                   "Float":"-0.017999999225139618",
+                   "FolderName":"Folder 3",
+                   "FoldersList":[
+                      "PROGRAM FILES 3",
+                      "USERS 3",
+                      "WINDOWS 3"
+                   ],
+                   "_ID":"2003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/File/_query?q=Double=-1.79E+3&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Double">-1790.0</field>
+                <field name="FileCreateDate">2013-11-05 05:55:50</field>
+                <field name="FileName">File_5</field>
+                <field name="FileSize">2000005</field>
+                <field name="Float">-3390.0</field>
+                <field name="FolderName">Folder 5</field>
+                <field name="_ID">2005</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Double":"-1790.0",
+                   "FileCreateDate":"2013-11-05 05:55:50",
+                   "FileName":"File_5",
+                   "FileSize":"2000005",
+                   "Float":"-3390.0",
+                   "FolderName":"Folder 5",
+                   "_ID":"2005",
                    "_shard":"shard"
                 }
              }
@@ -1009,9 +1263,11 @@
                         <field name="_ID">2001</field>
                     </doc>
                     <doc>
+                        <field name="Double">1790.0</field>
                         <field name="FileCreateDate">2013-11-04 04:44:40</field>
                         <field name="FileName">File_4</field>
                         <field name="FileSize">2000004</field>
+                        <field name="Float">3390.0</field>
                         <field name="FoldersList">
                             <value>PROGRAM FILES 4</value>
                             <value>USERS 4</value>
@@ -1028,17 +1284,21 @@
                 <field name="_shard">shard</field>
                 <field name="Files">
                     <doc>
+                        <field name="Double">0.022</field>
                         <field name="FileCreateDate">2013-11-02 02:22:20</field>
                         <field name="FileName">File_2</field>
                         <field name="FileSize">2000002</field>
+                        <field name="Float">0.017999999225139618</field>
                         <field name="FolderName">Folder</field>
                         <field name="IsFileTested">True</field>
                         <field name="_ID">2002</field>
                     </doc>
                     <doc>
+                        <field name="Double">-1.0E9</field>
                         <field name="FileCreateDate">2013-11-06 06:46:16</field>
                         <field name="FileName">File_6</field>
                         <field name="FileSize">2000006</field>
+                        <field name="Float">-3000000.0</field>
                         <field name="FoldersList">
                             <value>PROGRAM FILES 6</value>
                             <value>USERS 6</value>
@@ -1055,9 +1315,11 @@
                 <field name="_shard">shard</field>
                 <field name="Files">
                     <doc>
+                        <field name="Double">-0.023</field>
                         <field name="FileCreateDate">2013-11-03 03:33:30</field>
                         <field name="FileName">File_3</field>
                         <field name="FileSize">2000003</field>
+                        <field name="Float">-0.017999999225139618</field>
                         <field name="FolderName">Folder 3</field>
                         <field name="FoldersList">
                             <value>PROGRAM FILES 3</value>
@@ -1067,9 +1329,11 @@
                         <field name="_ID">2003</field>
                     </doc>
                     <doc>
+                        <field name="Double">-1790.0</field>
                         <field name="FileCreateDate">2013-11-05 05:55:50</field>
                         <field name="FileName">File_5</field>
                         <field name="FileSize">2000005</field>
+                        <field name="Float">-3390.0</field>
                         <field name="FolderName">Folder 5</field>
                         <field name="_ID">2005</field>
                     </doc>
@@ -1109,9 +1373,11 @@
                       },
                       {
                          "doc":{
+                            "Double":"1790.0",
                             "FileCreateDate":"2013-11-04 04:44:40",
                             "FileName":"File_4",
                             "FileSize":"2000004",
+                            "Float":"3390.0",
                             "FoldersList":[
                                "PROGRAM FILES 4",
                                "USERS 4",
@@ -1132,9 +1398,11 @@
                    "Files":[
                       {
                          "doc":{
+                            "Double":"0.022",
                             "FileCreateDate":"2013-11-02 02:22:20",
                             "FileName":"File_2",
                             "FileSize":"2000002",
+                            "Float":"0.017999999225139618",
                             "FolderName":"Folder",
                             "IsFileTested":"True",
                             "_ID":"2002"
@@ -1142,9 +1410,11 @@
                       },
                       {
                          "doc":{
+                            "Double":"-1.0E9",
                             "FileCreateDate":"2013-11-06 06:46:16",
                             "FileName":"File_6",
                             "FileSize":"2000006",
+                            "Float":"-3000000.0",
                             "FoldersList":[
                                "PROGRAM FILES 6",
                                "USERS 6",
@@ -1165,9 +1435,11 @@
                    "Files":[
                       {
                          "doc":{
+                            "Double":"-0.023",
                             "FileCreateDate":"2013-11-03 03:33:30",
                             "FileName":"File_3",
                             "FileSize":"2000003",
+                            "Float":"-0.017999999225139618",
                             "FolderName":"Folder 3",
                             "FoldersList":[
                                "PROGRAM FILES 3",
@@ -1179,9 +1451,11 @@
                       },
                       {
                          "doc":{
+                            "Double":"-1790.0",
                             "FileCreateDate":"2013-11-05 05:55:50",
                             "FileName":"File_5",
                             "FileSize":"2000005",
+                            "Float":"-3390.0",
                             "FolderName":"Folder 5",
                             "_ID":"2005"
                          }
@@ -1226,9 +1500,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">0.022</field>
                 <field name="FileCreateDate">2013-11-02 02:22:20</field>
                 <field name="FileName">File_2</field>
                 <field name="FileSize">2000002</field>
+                <field name="Float">0.017999999225139618</field>
                 <field name="FolderName">Folder</field>
                 <field name="IsFileTested">True</field>
                 <field name="_ID">2002</field>
@@ -1241,9 +1517,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">-0.023</field>
                 <field name="FileCreateDate">2013-11-03 03:33:30</field>
                 <field name="FileName">File_3</field>
                 <field name="FileSize">2000003</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="FolderName">Folder 3</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 3</value>
@@ -1260,9 +1538,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">1790.0</field>
                 <field name="FileCreateDate">2013-11-04 04:44:40</field>
                 <field name="FileName">File_4</field>
                 <field name="FileSize">2000004</field>
+                <field name="Float">3390.0</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 4</value>
                     <value>USERS 4</value>
@@ -1279,9 +1559,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">-1790.0</field>
                 <field name="FileCreateDate">2013-11-05 05:55:50</field>
                 <field name="FileName">File_5</field>
                 <field name="FileSize">2000005</field>
+                <field name="Float">-3390.0</field>
                 <field name="FolderName">Folder 5</field>
                 <field name="_ID">2005</field>
                 <field name="_shard">shard</field>
@@ -1293,9 +1575,11 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">-1.0E9</field>
                 <field name="FileCreateDate">2013-11-06 06:46:16</field>
                 <field name="FileName">File_6</field>
                 <field name="FileSize">2000006</field>
+                <field name="Float">-3000000.0</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 6</value>
                     <value>USERS 6</value>
@@ -1312,8 +1596,10 @@
                 </field>
             </doc>
             <doc>
+                <field name="Double">1.0E9</field>
                 <field name="FileName">File_7</field>
                 <field name="FileSize">2000007</field>
+                <field name="Float">3000000.0</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 7</value>
                     <value>USERS 7</value>
@@ -1362,9 +1648,11 @@
              },
              {
                 "doc":{
+                   "Double":"0.022",
                    "FileCreateDate":"2013-11-02 02:22:20",
                    "FileName":"File_2",
                    "FileSize":"2000002",
+                   "Float":"0.017999999225139618",
                    "FolderName":"Folder",
                    "IsFileTested":"True",
                    "_ID":"2002",
@@ -1381,9 +1669,11 @@
              },
              {
                 "doc":{
+                   "Double":"-0.023",
                    "FileCreateDate":"2013-11-03 03:33:30",
                    "FileName":"File_3",
                    "FileSize":"2000003",
+                   "Float":"-0.017999999225139618",
                    "FolderName":"Folder 3",
                    "FoldersList":[
                       "PROGRAM FILES 3",
@@ -1404,9 +1694,11 @@
              },
              {
                 "doc":{
+                   "Double":"1790.0",
                    "FileCreateDate":"2013-11-04 04:44:40",
                    "FileName":"File_4",
                    "FileSize":"2000004",
+                   "Float":"3390.0",
                    "FoldersList":[
                       "PROGRAM FILES 4",
                       "USERS 4",
@@ -1427,9 +1719,11 @@
              },
              {
                 "doc":{
+                   "Double":"-1790.0",
                    "FileCreateDate":"2013-11-05 05:55:50",
                    "FileName":"File_5",
                    "FileSize":"2000005",
+                   "Float":"-3390.0",
                    "FolderName":"Folder 5",
                    "_ID":"2005",
                    "_shard":"shard",
@@ -1445,9 +1739,11 @@
              },
              {
                 "doc":{
+                   "Double":"-1.0E9",
                    "FileCreateDate":"2013-11-06 06:46:16",
                    "FileName":"File_6",
                    "FileSize":"2000006",
+                   "Float":"-3000000.0",
                    "FoldersList":[
                       "PROGRAM FILES 6",
                       "USERS 6",
@@ -1468,8 +1764,10 @@
              },
              {
                 "doc":{
+                   "Double":"1.0E9",
                    "FileName":"File_7",
                    "FileSize":"2000007",
+                   "Float":"3000000.0",
                    "FoldersList":[
                       "PROGRAM FILES 7",
                       "USERS 7",
@@ -1559,9 +1857,11 @@
         <totalobjects>1</totalobjects>
         <docs>
             <doc>
+                <field name="Double">1790.0</field>
                 <field name="FileCreateDate">2013-11-04 04:44:40</field>
                 <field name="FileName">File_4</field>
                 <field name="FileSize">2000004</field>
+                <field name="Float">3390.0</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 4</value>
                     <value>USERS 4</value>
@@ -1581,9 +1881,11 @@
           "docs":[
              {
                 "doc":{
+                   "Double":"1790.0",
                    "FileCreateDate":"2013-11-04 04:44:40",
                    "FileName":"File_4",
                    "FileSize":"2000004",
+                   "Float":"3390.0",
                    "FoldersList":[
                       "PROGRAM FILES 4",
                       "USERS 4",
@@ -1626,18 +1928,22 @@
         <totalobjects>2</totalobjects>
         <docs>
             <doc>
+                <field name="Double">0.022</field>
                 <field name="FileCreateDate">2013-11-02 02:22:20</field>
                 <field name="FileName">File_2</field>
                 <field name="FileSize">2000002</field>
+                <field name="Float">0.017999999225139618</field>
                 <field name="FolderName">Folder</field>
                 <field name="IsFileTested">True</field>
                 <field name="_ID">2002</field>
                 <field name="_shard">shard</field>
             </doc>
             <doc>
+                <field name="Double">-1.0E9</field>
                 <field name="FileCreateDate">2013-11-06 06:46:16</field>
                 <field name="FileName">File_6</field>
                 <field name="FileSize">2000006</field>
+                <field name="Float">-3000000.0</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 6</value>
                     <value>USERS 6</value>
@@ -1657,9 +1963,11 @@
           "docs":[
              {
                 "doc":{
+                   "Double":"0.022",
                    "FileCreateDate":"2013-11-02 02:22:20",
                    "FileName":"File_2",
                    "FileSize":"2000002",
+                   "Float":"0.017999999225139618",
                    "FolderName":"Folder",
                    "IsFileTested":"True",
                    "_ID":"2002",
@@ -1668,9 +1976,11 @@
              },
              {
                 "doc":{
+                   "Double":"-1.0E9",
                    "FileCreateDate":"2013-11-06 06:46:16",
                    "FileName":"File_6",
                    "FileSize":"2000006",
+                   "Float":"-3000000.0",
                    "FoldersList":[
                       "PROGRAM FILES 6",
                       "USERS 6",
@@ -1693,9 +2003,11 @@
         <totalobjects>2</totalobjects>
         <docs>
             <doc>
+                <field name="Double">1790.0</field>
                 <field name="FileCreateDate">2013-11-04 04:44:40</field>
                 <field name="FileName">File_4</field>
                 <field name="FileSize">2000004</field>
+                <field name="Float">3390.0</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 4</value>
                     <value>USERS 4</value>
@@ -1706,8 +2018,10 @@
                 <field name="_shard">shard</field>
             </doc>
             <doc>
+                <field name="Double">1.0E9</field>
                 <field name="FileName">File_7</field>
                 <field name="FileSize">2000007</field>
+                <field name="Float">3000000.0</field>
                 <field name="FoldersList">
                     <value>PROGRAM FILES 7</value>
                     <value>USERS 7</value>
@@ -1727,9 +2041,11 @@
           "docs":[
              {
                 "doc":{
+                   "Double":"1790.0",
                    "FileCreateDate":"2013-11-04 04:44:40",
                    "FileName":"File_4",
                    "FileSize":"2000004",
+                   "Float":"3390.0",
                    "FoldersList":[
                       "PROGRAM FILES 4",
                       "USERS 4",
@@ -1742,8 +2058,10 @@
              },
              {
                 "doc":{
+                   "Double":"1.0E9",
                    "FileName":"File_7",
                    "FileSize":"2000007",
+                   "Float":"3000000.0",
                    "FoldersList":[
                       "PROGRAM FILES 7",
                       "USERS 7",
@@ -1932,6 +2250,196 @@
                 "doc":{
                    "FolderName":"Folder_B",
                    "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~
+~ Float ~
+~~~~~~~~~
+*** Request
+    GET /Application/File/_query?q=Float=-1.8E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Double">-0.023</field>
+                <field name="FileCreateDate">2013-11-03 03:33:30</field>
+                <field name="FileName">File_3</field>
+                <field name="FileSize">2000003</field>
+                <field name="Float">-0.017999999225139618</field>
+                <field name="FolderName">Folder 3</field>
+                <field name="FoldersList">
+                    <value>PROGRAM FILES 3</value>
+                    <value>USERS 3</value>
+                    <value>WINDOWS 3</value>
+                </field>
+                <field name="_ID">2003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Double":"-0.023",
+                   "FileCreateDate":"2013-11-03 03:33:30",
+                   "FileName":"File_3",
+                   "FileSize":"2000003",
+                   "Float":"-0.017999999225139618",
+                   "FolderName":"Folder 3",
+                   "FoldersList":[
+                      "PROGRAM FILES 3",
+                      "USERS 3",
+                      "WINDOWS 3"
+                   ],
+                   "_ID":"2003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/File/_query?q=Float=-3.39E+3&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Double">-1790.0</field>
+                <field name="FileCreateDate">2013-11-05 05:55:50</field>
+                <field name="FileName">File_5</field>
+                <field name="FileSize">2000005</field>
+                <field name="Float">-3390.0</field>
+                <field name="FolderName">Folder 5</field>
+                <field name="_ID">2005</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Double":"-1790.0",
+                   "FileCreateDate":"2013-11-05 05:55:50",
+                   "FileName":"File_5",
+                   "FileSize":"2000005",
+                   "Float":"-3390.0",
+                   "FolderName":"Folder 5",
+                   "_ID":"2005",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~
+~ Double ~
+~~~~~~~~~~
+*** Request
+    GET /Application/File/_query?q=Double=-2.3E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Double">-0.023</field>
+                <field name="FileCreateDate">2013-11-03 03:33:30</field>
+                <field name="FileName">File_3</field>
+                <field name="FileSize">2000003</field>
+                <field name="Float">-0.017999999225139618</field>
+                <field name="FolderName">Folder 3</field>
+                <field name="FoldersList">
+                    <value>PROGRAM FILES 3</value>
+                    <value>USERS 3</value>
+                    <value>WINDOWS 3</value>
+                </field>
+                <field name="_ID">2003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Double":"-0.023",
+                   "FileCreateDate":"2013-11-03 03:33:30",
+                   "FileName":"File_3",
+                   "FileSize":"2000003",
+                   "Float":"-0.017999999225139618",
+                   "FolderName":"Folder 3",
+                   "FoldersList":[
+                      "PROGRAM FILES 3",
+                      "USERS 3",
+                      "WINDOWS 3"
+                   ],
+                   "_ID":"2003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/File/_query?q=Double=-1.79E+3&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Double">-1790.0</field>
+                <field name="FileCreateDate">2013-11-05 05:55:50</field>
+                <field name="FileName">File_5</field>
+                <field name="FileSize">2000005</field>
+                <field name="Float">-3390.0</field>
+                <field name="FolderName">Folder 5</field>
+                <field name="_ID">2005</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Double":"-1790.0",
+                   "FileCreateDate":"2013-11-05 05:55:50",
+                   "FileName":"File_5",
+                   "FileSize":"2000005",
+                   "Float":"-3390.0",
+                   "FolderName":"Folder 5",
+                   "_ID":"2005",
                    "_shard":"shard"
                 }
              }

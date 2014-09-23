@@ -22,6 +22,8 @@
                 <field type="TEXT" name="FoldersList" collection="true"/>
                 <field type="TEXT" name="FolderName" collection="false"/>
                 <field type="TIMESTAMP" name="FileCreateDate"/>
+                <field type="FLOAT" name="Float"/>
+                <field type="DOUBLE" name="Double"/>
             </fields>
         </table>
     </tables>
@@ -88,6 +90,8 @@
             <field name="FileSize">2000002</field>
             <field name="IsFileTested">TRUE</field>
             <field name="FileCreateDate">2013-11-02 02:22:20</field>
+            <field name="Float">1.8E-2</field>
+            <field name="Double">2.2E-2</field>
           </doc>
           <doc _table="File" _ID="2003" >
             <field name="ParentFolder">
@@ -106,6 +110,8 @@
                 </add>
             </field>
             <field name="FileCreateDate">2013-11-03 03:33:30</field>
+            <field name="Float">-1.8E-2</field>
+            <field name="Double">-2.3E-2</field>
           </doc>
           <doc _table="File" _ID="2004" >
             <field name="ParentFolder">
@@ -124,6 +130,8 @@
                 </add>
             </field>
             <field name="FileCreateDate">2013-11-04 04:44:40</field>
+            <field name="Float">3.39E+3</field>
+            <field name="Double">1.79E+3</field>
           </doc>
           <doc _table="File" _ID="2005" >
             <field name="ParentFolder">
@@ -135,6 +143,8 @@
             <field name="FolderName">Folder 5</field>
             <field name="FileSize">2000005</field>
             <field name="FileCreateDate">2013-11-05 05:55:50</field>
+            <field name="Float">-3.39E+3</field>
+            <field name="Double">-1.79E+3</field>
           </doc>
           <doc _table="File" _ID="2006" >
             <field name="ParentFolder">
@@ -153,6 +163,8 @@
                 </add>
             </field>
             <field name="FileCreateDate">2013-11-06 06:46:16</field>
+            <field name="Float">-3000000</field>
+            <field name="Double">-1000000000</field>
           </doc>
           <doc _table="File" _ID="2007" >
             <field name="FileName">File_7</field>
@@ -165,6 +177,8 @@
                     <value>USERS 7</value>
                 </add>
             </field>
+            <field name="Float">3000000</field>
+            <field name="Double">1000000000</field>
           </doc>
           <doc _table="File" _ID="2008" >
             <field name="FileName">File_8</field>

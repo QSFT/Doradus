@@ -85,6 +85,18 @@ Doradus Data Model and Query Language -v2.1
     <echo>~~~~~~~~~~~~~</echo>
     <QUERY path="Application/Folder" q="Files.FileCreateDate='2013-11-02 02:22:20'" shards="shard"/>
 
+    <echo>~~~~~~~~~</echo>
+    <echo>~ Float ~</echo>
+    <echo>~~~~~~~~~</echo>
+    <QUERY path="Application/File" q="Float=-1.8E-2" shards="shard"/>
+    <QUERY path="Application/File" q="Float=-3.39E+3" shards="shard"/>
+
+    <echo>~~~~~~~~~~</echo>
+    <echo>~ Double ~</echo>
+    <echo>~~~~~~~~~~</echo>
+    <QUERY path="Application/File" q="Double=-2.3E-2" shards="shard"/>
+    <QUERY path="Application/File" q="Double=-1.79E+3" shards="shard"/>
+
     <DELETE path="_applications/Application/ApplicationKey"/>
 </FOR>
 
