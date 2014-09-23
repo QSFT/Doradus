@@ -25,6 +25,8 @@
                 <field name="CloseDate">2014-01-01 00:00:01</field>
                 <field name="Country">Russia</field>
                 <field name="CreateDate">2011-04-05 12:32:08</field>
+                <field name="Double">0.00223</field>
+                <field name="Float">0.001180000021122396</field>
                 <field name="MV">
                     <value>One, Two</value>
                 </field>
@@ -37,6 +39,8 @@
                 <field name="CloseDate">2014-01-01 00:00:01</field>
                 <field name="Country">USA</field>
                 <field name="CreateDate">2011-04-05 22:12:14</field>
+                <field name="Double">-0.00223</field>
+                <field name="Float">-0.001180000021122396</field>
                 <field name="MV">
                     <value>Three, Four</value>
                 </field>
@@ -49,6 +53,8 @@
                 <field name="CloseDate">2014-01-01 00:00:01</field>
                 <field name="Country">USA</field>
                 <field name="CreateDate">2011-04-15 10:20:01</field>
+                <field name="Double">1790.0</field>
+                <field name="Float">3390.0</field>
                 <field name="MV">
                     <value>Five, Six</value>
                 </field>
@@ -61,6 +67,8 @@
                 <field name="CloseDate">2014-01-01 00:00:01</field>
                 <field name="Country">Russia</field>
                 <field name="CreateDate">2011-06-22 09:05:20</field>
+                <field name="Double">-1790.0</field>
+                <field name="Float">-3390.0</field>
                 <field name="MV">
                     <value>Seven, Eight</value>
                 </field>
@@ -73,6 +81,8 @@
                 <field name="CloseDate">2014-01-01 00:00:01</field>
                 <field name="Country">Russia</field>
                 <field name="CreateDate">2012-12-30 15:29:04</field>
+                <field name="Double">-1.0E7</field>
+                <field name="Float">-3000000.0</field>
                 <field name="MV">
                     <value>Nine, Ten</value>
                 </field>
@@ -178,6 +188,8 @@
                    "CloseDate":"2014-01-01 00:00:01",
                    "Country":"Russia",
                    "CreateDate":"2011-04-05 12:32:08",
+                   "Double":"0.00223",
+                   "Float":"0.001180000021122396",
                    "MV":[
                       "One, Two"
                    ],
@@ -192,6 +204,8 @@
                    "CloseDate":"2014-01-01 00:00:01",
                    "Country":"USA",
                    "CreateDate":"2011-04-05 22:12:14",
+                   "Double":"-0.00223",
+                   "Float":"-0.001180000021122396",
                    "MV":[
                       "Three, Four"
                    ],
@@ -206,6 +220,8 @@
                    "CloseDate":"2014-01-01 00:00:01",
                    "Country":"USA",
                    "CreateDate":"2011-04-15 10:20:01",
+                   "Double":"1790.0",
+                   "Float":"3390.0",
                    "MV":[
                       "Five, Six"
                    ],
@@ -220,6 +236,8 @@
                    "CloseDate":"2014-01-01 00:00:01",
                    "Country":"Russia",
                    "CreateDate":"2011-06-22 09:05:20",
+                   "Double":"-1790.0",
+                   "Float":"-3390.0",
                    "MV":[
                       "Seven, Eight"
                    ],
@@ -234,6 +252,8 @@
                    "CloseDate":"2014-01-01 00:00:01",
                    "Country":"Russia",
                    "CreateDate":"2012-12-30 15:29:04",
+                   "Double":"-1.0E7",
+                   "Float":"-3000000.0",
                    "MV":[
                       "Nine, Ten"
                    ],
@@ -963,6 +983,887 @@
                    "field":{
                       "Country":"USA"
                    }
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~
+~ FLOAT ~
+~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=MAX(Float)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="MAX(Float)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>3390</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>0.00118</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>3390</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MAX(Float)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"3390",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"0.00118",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"3390",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(Float)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="MIN(Float)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>-3000000</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>-3000000</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>-0.00118</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(Float)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"-3000000",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"-3000000",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"-0.00118",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(Float)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="COUNT(Float)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>12</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>6</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>6</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(Float)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"12",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"6",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"6",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=SUM(Float)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="SUM(Float)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>-3000000</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>-3003389.99882</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>3389.99882</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"SUM(Float)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"-3000000",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"-3003389.99882",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"3389.99882",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=AVERAGE(Float)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="AVERAGE(Float)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>-600000</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>-1001130</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>1695</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"AVERAGE(Float)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"-600000",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"-1001130",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1695",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=(MAX(Float)+MIN(Float))/3&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="(MAX(Float)+MIN(Float))/3" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>-998870</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>-1000000</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>1130</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"(MAX(Float)+MIN(Float))/3",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"-998870",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"-1000000",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1130",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(Float)*1.5*(-2)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="COUNT(Float)*1.5*(-2)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>-36</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>-18</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>-18</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(Float)*1.5*(-2)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"-36",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"-18",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"-18",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=SUM(Float)-AVERAGE(Float)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="SUM(Float)-AVERAGE(Float)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>-2400000</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>-2002260</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>1695</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"SUM(Float)-AVERAGE(Float)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"-2400000",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"-2002260",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1695",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=(MAX(Float)+MIN(Float))/3,COUNT(Float)*1.5*(-2),SUM(Float)-AVERAGE(Float)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country"
+            metric="(MAX(Float)+MIN(Float))/3,COUNT(Float)*1.5*(-2),SUM(Float)-AVERAGE(Float)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <groupsets>
+            <groupset group="Country" metric="(MAX(Float)+MIN(Float))/3">
+                <summary>-998870</summary>
+                <totalgroups>2</totalgroups>
+                <groups>
+                    <group>
+                        <metric>-1000000</metric>
+                        <field name="Country">Russia</field>
+                    </group>
+                    <group>
+                        <metric>1130</metric>
+                        <field name="Country">USA</field>
+                    </group>
+                </groups>
+            </groupset>
+            <groupset group="Country" metric="COUNT(Float)*1.5*(-2)">
+                <summary>-36</summary>
+                <totalgroups>2</totalgroups>
+                <groups>
+                    <group>
+                        <metric>-18</metric>
+                        <field name="Country">Russia</field>
+                    </group>
+                    <group>
+                        <metric>-18</metric>
+                        <field name="Country">USA</field>
+                    </group>
+                </groups>
+            </groupset>
+            <groupset group="Country" metric="SUM(Float)-AVERAGE(Float)">
+                <summary>-2400000</summary>
+                <totalgroups>2</totalgroups>
+                <groups>
+                    <group>
+                        <metric>-2002260</metric>
+                        <field name="Country">Russia</field>
+                    </group>
+                    <group>
+                        <metric>1695</metric>
+                        <field name="Country">USA</field>
+                    </group>
+                </groups>
+            </groupset>
+        </groupsets>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"(MAX(Float)+MIN(Float))/3,COUNT(Float)*1.5*(-2),SUM(Float)-AVERAGE(Float)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "groupsets":[
+             {
+                "groupset":{
+                   "group":"Country",
+                   "metric":"(MAX(Float)+MIN(Float))/3",
+                   "summary":"-998870",
+                   "totalgroups":"2",
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"-1000000",
+                            "field":{
+                               "Country":"Russia"
+                            }
+                         }
+                      },
+                      {
+                         "group":{
+                            "metric":"1130",
+                            "field":{
+                               "Country":"USA"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "groupset":{
+                   "group":"Country",
+                   "metric":"COUNT(Float)*1.5*(-2)",
+                   "summary":"-36",
+                   "totalgroups":"2",
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"-18",
+                            "field":{
+                               "Country":"Russia"
+                            }
+                         }
+                      },
+                      {
+                         "group":{
+                            "metric":"-18",
+                            "field":{
+                               "Country":"USA"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "groupset":{
+                   "group":"Country",
+                   "metric":"SUM(Float)-AVERAGE(Float)",
+                   "summary":"-2400000",
+                   "totalgroups":"2",
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"-2002260",
+                            "field":{
+                               "Country":"Russia"
+                            }
+                         }
+                      },
+                      {
+                         "group":{
+                            "metric":"1695",
+                            "field":{
+                               "Country":"USA"
+                            }
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~
+~ DOUBLE ~
+~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=(MAX(Double)+MIN(Double))/3&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="(MAX(Double)+MIN(Double))/3" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>-3332736.666666666</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>-3333333.33259</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>596.665923333</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"(MAX(Double)+MIN(Double))/3",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"-3332736.666666666",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"-3333333.33259",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"596.665923333",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(Double)*1.5*(-2)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="COUNT(Double)*1.5*(-2)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>-36</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>-18</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>-18</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(Double)*1.5*(-2)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"-36",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"-18",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"-18",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=SUM(Double)-AVERAGE(Double)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="SUM(Double)-AVERAGE(Double)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>-8000000</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>-6667859.998513334</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>894.998885</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"SUM(Double)-AVERAGE(Double)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"-8000000",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"-6667859.998513334",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"894.998885",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=(MAX(Double)+MIN(Double))/3,COUNT(Double)*1.5*(-2),SUM(Double)-AVERAGE(Double)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country"
+            metric="(MAX(Double)+MIN(Double))/3,COUNT(Double)*1.5*(-2),SUM(Double)-AVERAGE(Double)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <groupsets>
+            <groupset group="Country" metric="(MAX(Double)+MIN(Double))/3">
+                <summary>-3332736.666666666</summary>
+                <totalgroups>2</totalgroups>
+                <groups>
+                    <group>
+                        <metric>-3333333.33259</metric>
+                        <field name="Country">Russia</field>
+                    </group>
+                    <group>
+                        <metric>596.665923333</metric>
+                        <field name="Country">USA</field>
+                    </group>
+                </groups>
+            </groupset>
+            <groupset group="Country" metric="COUNT(Double)*1.5*(-2)">
+                <summary>-36</summary>
+                <totalgroups>2</totalgroups>
+                <groups>
+                    <group>
+                        <metric>-18</metric>
+                        <field name="Country">Russia</field>
+                    </group>
+                    <group>
+                        <metric>-18</metric>
+                        <field name="Country">USA</field>
+                    </group>
+                </groups>
+            </groupset>
+            <groupset group="Country" metric="SUM(Double)-AVERAGE(Double)">
+                <summary>-8000000</summary>
+                <totalgroups>2</totalgroups>
+                <groups>
+                    <group>
+                        <metric>-6667859.998513334</metric>
+                        <field name="Country">Russia</field>
+                    </group>
+                    <group>
+                        <metric>894.998885</metric>
+                        <field name="Country">USA</field>
+                    </group>
+                </groups>
+            </groupset>
+        </groupsets>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"(MAX(Double)+MIN(Double))/3,COUNT(Double)*1.5*(-2),SUM(Double)-AVERAGE(Double)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "groupsets":[
+             {
+                "groupset":{
+                   "group":"Country",
+                   "metric":"(MAX(Double)+MIN(Double))/3",
+                   "summary":"-3332736.666666666",
+                   "totalgroups":"2",
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"-3333333.33259",
+                            "field":{
+                               "Country":"Russia"
+                            }
+                         }
+                      },
+                      {
+                         "group":{
+                            "metric":"596.665923333",
+                            "field":{
+                               "Country":"USA"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "groupset":{
+                   "group":"Country",
+                   "metric":"COUNT(Double)*1.5*(-2)",
+                   "summary":"-36",
+                   "totalgroups":"2",
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"-18",
+                            "field":{
+                               "Country":"Russia"
+                            }
+                         }
+                      },
+                      {
+                         "group":{
+                            "metric":"-18",
+                            "field":{
+                               "Country":"USA"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "groupset":{
+                   "group":"Country",
+                   "metric":"SUM(Double)-AVERAGE(Double)",
+                   "summary":"-8000000",
+                   "totalgroups":"2",
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"-6667859.998513334",
+                            "field":{
+                               "Country":"Russia"
+                            }
+                         }
+                      },
+                      {
+                         "group":{
+                            "metric":"894.998885",
+                            "field":{
+                               "Country":"USA"
+                            }
+                         }
+                      }
+                   ]
                 }
              }
           ]
@@ -1001,6 +1902,8 @@
                 <field name="CloseDate">2014-01-01 00:00:01</field>
                 <field name="Country">Russia</field>
                 <field name="CreateDate">2011-04-05 12:32:08</field>
+                <field name="Double">0.00223</field>
+                <field name="Float">0.001180000021122396</field>
                 <field name="MV">
                     <value>One, Two</value>
                 </field>
@@ -1013,6 +1916,8 @@
                 <field name="CloseDate">2014-01-01 00:00:01</field>
                 <field name="Country">USA</field>
                 <field name="CreateDate">2011-04-05 22:12:14</field>
+                <field name="Double">-0.00223</field>
+                <field name="Float">-0.001180000021122396</field>
                 <field name="MV">
                     <value>Three, Four</value>
                 </field>
@@ -1025,6 +1930,8 @@
                 <field name="CloseDate">2014-01-01 00:00:01</field>
                 <field name="Country">USA</field>
                 <field name="CreateDate">2011-04-15 10:20:01</field>
+                <field name="Double">1790.0</field>
+                <field name="Float">3390.0</field>
                 <field name="MV">
                     <value>Five, Six</value>
                 </field>
@@ -1037,6 +1944,8 @@
                 <field name="CloseDate">2014-01-01 00:00:01</field>
                 <field name="Country">Russia</field>
                 <field name="CreateDate">2011-06-22 09:05:20</field>
+                <field name="Double">-1790.0</field>
+                <field name="Float">-3390.0</field>
                 <field name="MV">
                     <value>Seven, Eight</value>
                 </field>
@@ -1049,6 +1958,8 @@
                 <field name="CloseDate">2014-01-01 00:00:01</field>
                 <field name="Country">Russia</field>
                 <field name="CreateDate">2012-12-30 15:29:04</field>
+                <field name="Double">-1.0E7</field>
+                <field name="Float">-3000000.0</field>
                 <field name="MV">
                     <value>Nine, Ten</value>
                 </field>
@@ -1154,6 +2065,8 @@
                    "CloseDate":"2014-01-01 00:00:01",
                    "Country":"Russia",
                    "CreateDate":"2011-04-05 12:32:08",
+                   "Double":"0.00223",
+                   "Float":"0.001180000021122396",
                    "MV":[
                       "One, Two"
                    ],
@@ -1168,6 +2081,8 @@
                    "CloseDate":"2014-01-01 00:00:01",
                    "Country":"USA",
                    "CreateDate":"2011-04-05 22:12:14",
+                   "Double":"-0.00223",
+                   "Float":"-0.001180000021122396",
                    "MV":[
                       "Three, Four"
                    ],
@@ -1182,6 +2097,8 @@
                    "CloseDate":"2014-01-01 00:00:01",
                    "Country":"USA",
                    "CreateDate":"2011-04-15 10:20:01",
+                   "Double":"1790.0",
+                   "Float":"3390.0",
                    "MV":[
                       "Five, Six"
                    ],
@@ -1196,6 +2113,8 @@
                    "CloseDate":"2014-01-01 00:00:01",
                    "Country":"Russia",
                    "CreateDate":"2011-06-22 09:05:20",
+                   "Double":"-1790.0",
+                   "Float":"-3390.0",
                    "MV":[
                       "Seven, Eight"
                    ],
@@ -1210,6 +2129,8 @@
                    "CloseDate":"2014-01-01 00:00:01",
                    "Country":"Russia",
                    "CreateDate":"2012-12-30 15:29:04",
+                   "Double":"-1.0E7",
+                   "Float":"-3000000.0",
                    "MV":[
                       "Nine, Ten"
                    ],
@@ -1939,6 +2860,887 @@
                    "field":{
                       "Country":"USA"
                    }
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~
+~ FLOAT ~
+~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=MAX(Float)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="MAX(Float)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>3390</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>0.00118</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>3390</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MAX(Float)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"3390",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"0.00118",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"3390",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(Float)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="MIN(Float)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>-3000000</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>-3000000</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>-0.00118</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(Float)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"-3000000",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"-3000000",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"-0.00118",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(Float)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="COUNT(Float)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>12</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>6</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>6</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(Float)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"12",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"6",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"6",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=SUM(Float)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="SUM(Float)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>-3000000</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>-3003389.99882</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>3389.99882</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"SUM(Float)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"-3000000",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"-3003389.99882",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"3389.99882",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=AVERAGE(Float)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="AVERAGE(Float)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>-600000</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>-1001130</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>1695</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"AVERAGE(Float)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"-600000",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"-1001130",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1695",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=(MAX(Float)+MIN(Float))/3&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="(MAX(Float)+MIN(Float))/3" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>-998870</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>-1000000</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>1130</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"(MAX(Float)+MIN(Float))/3",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"-998870",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"-1000000",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1130",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(Float)*1.5*(-2)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="COUNT(Float)*1.5*(-2)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>-36</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>-18</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>-18</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(Float)*1.5*(-2)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"-36",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"-18",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"-18",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=SUM(Float)-AVERAGE(Float)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="SUM(Float)-AVERAGE(Float)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>-2400000</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>-2002260</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>1695</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"SUM(Float)-AVERAGE(Float)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"-2400000",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"-2002260",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1695",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=(MAX(Float)+MIN(Float))/3,COUNT(Float)*1.5*(-2),SUM(Float)-AVERAGE(Float)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country"
+            metric="(MAX(Float)+MIN(Float))/3,COUNT(Float)*1.5*(-2),SUM(Float)-AVERAGE(Float)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <groupsets>
+            <groupset group="Country" metric="(MAX(Float)+MIN(Float))/3">
+                <summary>-998870</summary>
+                <totalgroups>2</totalgroups>
+                <groups>
+                    <group>
+                        <metric>-1000000</metric>
+                        <field name="Country">Russia</field>
+                    </group>
+                    <group>
+                        <metric>1130</metric>
+                        <field name="Country">USA</field>
+                    </group>
+                </groups>
+            </groupset>
+            <groupset group="Country" metric="COUNT(Float)*1.5*(-2)">
+                <summary>-36</summary>
+                <totalgroups>2</totalgroups>
+                <groups>
+                    <group>
+                        <metric>-18</metric>
+                        <field name="Country">Russia</field>
+                    </group>
+                    <group>
+                        <metric>-18</metric>
+                        <field name="Country">USA</field>
+                    </group>
+                </groups>
+            </groupset>
+            <groupset group="Country" metric="SUM(Float)-AVERAGE(Float)">
+                <summary>-2400000</summary>
+                <totalgroups>2</totalgroups>
+                <groups>
+                    <group>
+                        <metric>-2002260</metric>
+                        <field name="Country">Russia</field>
+                    </group>
+                    <group>
+                        <metric>1695</metric>
+                        <field name="Country">USA</field>
+                    </group>
+                </groups>
+            </groupset>
+        </groupsets>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"(MAX(Float)+MIN(Float))/3,COUNT(Float)*1.5*(-2),SUM(Float)-AVERAGE(Float)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "groupsets":[
+             {
+                "groupset":{
+                   "group":"Country",
+                   "metric":"(MAX(Float)+MIN(Float))/3",
+                   "summary":"-998870",
+                   "totalgroups":"2",
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"-1000000",
+                            "field":{
+                               "Country":"Russia"
+                            }
+                         }
+                      },
+                      {
+                         "group":{
+                            "metric":"1130",
+                            "field":{
+                               "Country":"USA"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "groupset":{
+                   "group":"Country",
+                   "metric":"COUNT(Float)*1.5*(-2)",
+                   "summary":"-36",
+                   "totalgroups":"2",
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"-18",
+                            "field":{
+                               "Country":"Russia"
+                            }
+                         }
+                      },
+                      {
+                         "group":{
+                            "metric":"-18",
+                            "field":{
+                               "Country":"USA"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "groupset":{
+                   "group":"Country",
+                   "metric":"SUM(Float)-AVERAGE(Float)",
+                   "summary":"-2400000",
+                   "totalgroups":"2",
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"-2002260",
+                            "field":{
+                               "Country":"Russia"
+                            }
+                         }
+                      },
+                      {
+                         "group":{
+                            "metric":"1695",
+                            "field":{
+                               "Country":"USA"
+                            }
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~
+~ DOUBLE ~
+~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=(MAX(Double)+MIN(Double))/3&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="(MAX(Double)+MIN(Double))/3" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>-3332736.666666666</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>-3333333.33259</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>596.665923333</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"(MAX(Double)+MIN(Double))/3",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"-3332736.666666666",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"-3333333.33259",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"596.665923333",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(Double)*1.5*(-2)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="COUNT(Double)*1.5*(-2)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>-36</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>-18</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>-18</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(Double)*1.5*(-2)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"-36",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"-18",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"-18",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=SUM(Double)-AVERAGE(Double)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="SUM(Double)-AVERAGE(Double)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>-8000000</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>-6667859.998513334</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>894.998885</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"SUM(Double)-AVERAGE(Double)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "summary":"-8000000",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"-6667859.998513334",
+                   "field":{
+                      "Country":"Russia"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"894.998885",
+                   "field":{
+                      "Country":"USA"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=(MAX(Double)+MIN(Double))/3,COUNT(Double)*1.5*(-2),SUM(Double)-AVERAGE(Double)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country"
+            metric="(MAX(Double)+MIN(Double))/3,COUNT(Double)*1.5*(-2),SUM(Double)-AVERAGE(Double)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <groupsets>
+            <groupset group="Country" metric="(MAX(Double)+MIN(Double))/3">
+                <summary>-3332736.666666666</summary>
+                <totalgroups>2</totalgroups>
+                <groups>
+                    <group>
+                        <metric>-3333333.33259</metric>
+                        <field name="Country">Russia</field>
+                    </group>
+                    <group>
+                        <metric>596.665923333</metric>
+                        <field name="Country">USA</field>
+                    </group>
+                </groups>
+            </groupset>
+            <groupset group="Country" metric="COUNT(Double)*1.5*(-2)">
+                <summary>-36</summary>
+                <totalgroups>2</totalgroups>
+                <groups>
+                    <group>
+                        <metric>-18</metric>
+                        <field name="Country">Russia</field>
+                    </group>
+                    <group>
+                        <metric>-18</metric>
+                        <field name="Country">USA</field>
+                    </group>
+                </groups>
+            </groupset>
+            <groupset group="Country" metric="SUM(Double)-AVERAGE(Double)">
+                <summary>-8000000</summary>
+                <totalgroups>2</totalgroups>
+                <groups>
+                    <group>
+                        <metric>-6667859.998513334</metric>
+                        <field name="Country">Russia</field>
+                    </group>
+                    <group>
+                        <metric>894.998885</metric>
+                        <field name="Country">USA</field>
+                    </group>
+                </groups>
+            </groupset>
+        </groupsets>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"(MAX(Double)+MIN(Double))/3,COUNT(Double)*1.5*(-2),SUM(Double)-AVERAGE(Double)",
+             "query":"*",
+             "group":"Country"
+          },
+          "totalobjects":"12",
+          "groupsets":[
+             {
+                "groupset":{
+                   "group":"Country",
+                   "metric":"(MAX(Double)+MIN(Double))/3",
+                   "summary":"-3332736.666666666",
+                   "totalgroups":"2",
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"-3333333.33259",
+                            "field":{
+                               "Country":"Russia"
+                            }
+                         }
+                      },
+                      {
+                         "group":{
+                            "metric":"596.665923333",
+                            "field":{
+                               "Country":"USA"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "groupset":{
+                   "group":"Country",
+                   "metric":"COUNT(Double)*1.5*(-2)",
+                   "summary":"-36",
+                   "totalgroups":"2",
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"-18",
+                            "field":{
+                               "Country":"Russia"
+                            }
+                         }
+                      },
+                      {
+                         "group":{
+                            "metric":"-18",
+                            "field":{
+                               "Country":"USA"
+                            }
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "groupset":{
+                   "group":"Country",
+                   "metric":"SUM(Double)-AVERAGE(Double)",
+                   "summary":"-8000000",
+                   "totalgroups":"2",
+                   "groups":[
+                      {
+                         "group":{
+                            "metric":"-6667859.998513334",
+                            "field":{
+                               "Country":"Russia"
+                            }
+                         }
+                      },
+                      {
+                         "group":{
+                            "metric":"894.998885",
+                            "field":{
+                               "Country":"USA"
+                            }
+                         }
+                      }
+                   ]
                 }
              }
           ]
