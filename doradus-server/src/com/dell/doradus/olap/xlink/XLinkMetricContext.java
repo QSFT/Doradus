@@ -82,7 +82,9 @@ public class XLinkMetricContext {
 	}
 
 	public void setupXLinkMetric(AggregationMetric metric) {
+		if(metric.filter != null) context.setupXLinkQuery(metric.tableDef, metric.filter);
 		List<AggregationGroupItem> items = metric.items;
+		TableDefinition tableDef = metric.tableDef;
 		if(items == null) return;
 		for(int i = items.size() - 1; i >= 0; i--) {
 			AggregationGroupItem item = items.get(i);
@@ -92,12 +94,14 @@ public class XLinkMetricContext {
 			for(int j = i + 1; j < items.size(); j++) {
 				metric.items.add(items.get(j));
 			}
+			metric.tableDef = item.tableDef;
 			XMetrics xmetrics = new XMetrics();
 			if(item.fieldDef.isXLinkDirect()) setupDirect(xmetrics, item.fieldDef, metric, item.query);
 			else setupInverse(xmetrics, item.fieldDef, metric, item.query);
 			item.xlinkContext = xmetrics;
-			// restore the group
+			// restore the group and table definition
 			metric.items = items;
+			metric.tableDef = tableDef;
 		}
 		
 	}

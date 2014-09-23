@@ -63,7 +63,9 @@ public class XLinkGroupContext {
 	}
 	
 	public void setupXLinkGroup(AggregationGroup group) {
+		if(group.filter != null) context.setupXLinkQuery(group.tableDef, group.filter);
 		List<AggregationGroupItem> items = group.items;
+		TableDefinition tableDef = group.tableDef;
 		for(int i = items.size() - 1; i >= 0; i--) {
 			AggregationGroupItem item = items.get(i);
 			if(item.query != null) context.setupXLinkQuery(item.tableDef, item.query);
@@ -72,12 +74,14 @@ public class XLinkGroupContext {
 			for(int j = i + 1; j < items.size(); j++) {
 				group.items.add(items.get(j));
 			}
+			group.tableDef = item.tableDef;
 			XGroups xgroups = new XGroups();
 			if(item.fieldDef.isXLinkDirect()) setupDirect(xgroups, item.fieldDef, group, item.query);
 			else setupInverse(xgroups, item.fieldDef, group, item.query);
 			item.xlinkContext = xgroups;
-			// restore the group
+			// restore the group and table def
 			group.items = items;
+			group.tableDef = tableDef;
 		}
 		
 	}
