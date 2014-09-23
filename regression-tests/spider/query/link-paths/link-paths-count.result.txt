@@ -630,10 +630,108 @@
     }
 
 *** Request
+    GET /Application/Message/_query?q=COUNT(Participants.Department.DEP)>0
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Size">1001</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2001</field>
+            </doc>
+            <doc>
+                <field name="Size">1002</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2002</field>
+            </doc>
+            <doc>
+                <field name="Size">1003</field>
+                <field name="Status">Work in Logistic</field>
+                <field name="_ID">2003</field>
+            </doc>
+            <doc>
+                <field name="Size">1004</field>
+                <field name="Status">Work in Logistic</field>
+                <field name="_ID">2004</field>
+            </doc>
+            <doc>
+                <field name="Size">1005</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2005</field>
+            </doc>
+            <doc>
+                <field name="Size">1006</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2006</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1001",
+                   "Status":"Work in Support",
+                   "_ID":"2001"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1002",
+                   "Status":"Work in Support",
+                   "_ID":"2002"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1003",
+                   "Status":"Work in Logistic",
+                   "_ID":"2003"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1004",
+                   "Status":"Work in Logistic",
+                   "_ID":"2004"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1005",
+                   "Status":"Work in Support",
+                   "_ID":"2005"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1006",
+                   "Status":"Work in Support",
+                   "_ID":"2006"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
     GET /Application/Message/_query?q=COUNT(Participants.Department.DEP)>1
-*** Response: text
-    400 Bad Request
-    query FieldCountRangeQuery not supported
+*** Response: xml
+    200 OK
+    <results>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[]
+       }
+    }
 
 *** Request
     GET /Application/Message/_query?q=COUNT(Participants.Department)>1
@@ -1402,10 +1500,108 @@
     }
 
 *** Request
+    GET /Application/Message/_query?q=COUNT(Participants.Department.DEP)>0
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Size">1001</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2001</field>
+            </doc>
+            <doc>
+                <field name="Size">1002</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2002</field>
+            </doc>
+            <doc>
+                <field name="Size">1003</field>
+                <field name="Status">Work in Logistic</field>
+                <field name="_ID">2003</field>
+            </doc>
+            <doc>
+                <field name="Size">1004</field>
+                <field name="Status">Work in Logistic</field>
+                <field name="_ID">2004</field>
+            </doc>
+            <doc>
+                <field name="Size">1005</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2005</field>
+            </doc>
+            <doc>
+                <field name="Size">1006</field>
+                <field name="Status">Work in Support</field>
+                <field name="_ID">2006</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Size":"1001",
+                   "Status":"Work in Support",
+                   "_ID":"2001"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1002",
+                   "Status":"Work in Support",
+                   "_ID":"2002"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1003",
+                   "Status":"Work in Logistic",
+                   "_ID":"2003"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1004",
+                   "Status":"Work in Logistic",
+                   "_ID":"2004"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1005",
+                   "Status":"Work in Support",
+                   "_ID":"2005"
+                }
+             },
+             {
+                "doc":{
+                   "Size":"1006",
+                   "Status":"Work in Support",
+                   "_ID":"2006"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
     GET /Application/Message/_query?q=COUNT(Participants.Department.DEP)>1
-*** Response: text
-    400 Bad Request
-    query FieldCountRangeQuery not supported
+*** Response: xml
+    200 OK
+    <results>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[]
+       }
+    }
 
 *** Request
     GET /Application/Message/_query?q=COUNT(Participants.Department)>1

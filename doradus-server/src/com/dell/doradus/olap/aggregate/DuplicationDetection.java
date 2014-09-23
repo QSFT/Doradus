@@ -27,8 +27,10 @@ import org.slf4j.LoggerFactory;
 import com.dell.doradus.common.CommonDefs;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.olap.io.BSTR;
+import com.dell.doradus.olap.io.FileDeletedException;
 import com.dell.doradus.olap.io.VDirectory;
 import com.dell.doradus.olap.merge.IxDoc;
+import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.IdReader;
 import com.dell.doradus.search.FieldSet;
 import com.dell.doradus.search.SearchResult;
@@ -38,8 +40,22 @@ import com.dell.doradus.utilities.Timer;
 
 public class DuplicationDetection {
     private static Logger LOG = LoggerFactory.getLogger("DuplicationDetection");
-	
+
 	public static SearchResultList getDuplicateIDs(TableDefinition tableDef, List<VDirectory> dirs, List<String> shards) {
+		// repeat if segment was merged
+		for(int i = 0; i < 5; i++) {
+			try {
+				return getDuplicateIDsInternal(tableDef, dirs, shards);
+			}catch(FileDeletedException ex) {
+				LOG.warn(ex.getMessage() + " - retrying: " + i);
+				continue;
+			}
+		}
+		throw new FileDeletedException("All retries to getDuplicateIDs failed");
+		//return getDuplicateIDsInternal(tableDef, dirs, shards);
+	}
+    
+	public static SearchResultList getDuplicateIDsInternal(TableDefinition tableDef, List<VDirectory> dirs, List<String> shards) {
 		Timer timer = new Timer();
 		LOG.debug("Find duplicate ids in {}/{}", tableDef.getAppDef().getAppName(), tableDef.getTableName());
 		

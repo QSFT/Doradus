@@ -4,6 +4,9 @@ graph-based data model, advanced indexing and search features, and a REST API.
 The Doradus query language (DQL) extends Lucene full-text queries with graph
 navigation features such as link paths, quantifiers, and transitive searches.
 
+New! Doradus can be run in an OpenShift cartridge. See [this Wiki note](https://github.com/dell-oss/Doradus/wiki#openshift-cartridge) and the [doradus-openshift-quickstart](https://github.com/dell-oss/doradus-openshift-quickstart) Github project.
+
+
 #Architecture
 Doradus is a pure Java application that can run as a daemon, Windows service, or
 console application. The REST API is provided by an embedded Jetty server. Each
@@ -72,7 +75,7 @@ Doradus consists of following components:
   
 - **doradus-client**: This is an optional module that allows Java clients to
   access a Doradus server using plain old Java objects (POJOs). It hides the
-  REST API provides basic features for connecting/reconnecting, connection
+  REST API and provides basic features for connecting/reconnecting, connection
   pools, message compression, and exception handling. Requests and results are
   passed as simple Java classes.
 
@@ -90,19 +93,19 @@ The following are the primary Doradus resources:
 
 - **Source code**: Source code can be downloaded from this Github project:
 
-       https://github.com/dell-oss/Doradus
+		https://github.com/dell-oss/Doradus
        
 - **Documentation**: The Ant script (build.xml) creates Java docs for the
   doradus-client module, placed in the folder ./doradus-client/docs. A set of
   PDF files describing various aspects of Doradus can be found in the following
   folder:
 
-       https://github.com/dell-oss/Doradus/docs
+		https://github.com/dell-oss/Doradus/docs
     
 - **Issues**: Please feel free to post bug reports and feature enhancements in
   the Github Issues area:
   
-       https://github.com/dell-oss/Doradus/issues
+		https://github.com/dell-oss/Doradus/issues
     
 - **Downloads**: Source, binary, and doc download bundles will be available soon
   from Maven Central. Stay tuned!
@@ -119,31 +122,33 @@ NOTICE.txt for a list of third party libraries used.
 #Starting the Server
 Cassandra should be running when the Doradus server is running. Doradus connects
 to the server(s) defined in doradus.yaml "dbhost" option. If Cassandra is not
-running when the server starts, it will try connecting every 30 seconds until
+running when the server starts, it will try connecting every 5 seconds until
 successful. In the mean time, REST requests that require the database connection
 will receive a 503 response.
 
 Simple script for starting Doradus: Assuming the following file structure:
 
+```
    ./Doradus/config/
       doradus.yaml
       log4j.properties
    ./Doradus/lib/
       # doradus.jar and dependent jar files
+```
 
-From a folder such as ./Doradus/bin, create a script with a command line such as
+From a folder such as `./Doradus/bin`, create a script with a command line such as
 this:
 
     java -cp "../lib/*:../config/*" com.dell.doradus.core.DoradusServer
     
 Append command line arguments prefixed with a "-" to override doradus.yaml file
-options. For example, doradus.yaml defines "restport: 1123", which sets the REST
+options. For example, doradus.yaml defines `restport: 1123`, which sets the REST
 API listening port number. To override this to 5711, add the command line
 argument:
 
     java -cp "../lib/*:../config/*" com.dell.doradus.core.DoradusServer -restport 5711
     
-See the Doradus Administration document for more information about configuration
+See the [Doradus Administration document](https://github.com/dell-oss/Doradus/blob/master/docs/Doradus%20Administration.pdf) for more information about configuration
 and execution options.
 
 #Accessing Doradus
@@ -161,8 +166,6 @@ the Java docs in the folder ./doradus-client/doc for more information.
   instances to serialize *merge* commands to the same shard. For now, user
   applications should send all *merge* requests to the same Doradus instance.
 
-- In a multi-node cluster, background the Task Manager may encounter errors if
-  an application is deleted while a task is executing.
  
 #License
 Doradus is available under the Apache License Version 2.0. See LICENSE.txt or

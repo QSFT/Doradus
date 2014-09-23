@@ -403,14 +403,11 @@
 ~ Test for Quantifies with IS NULL ~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 *** Request
-    GET /Application/Message/_query?q=ALL(InternalRecipients).ALL(Person).Manager IS NULL
+    GET /Application/Message/_query?q=ALL(InternalRecipients.Person).Manager IS NULL
 *** Response: xml
     200 OK
     <results>
         <docs>
-            <doc>
-                <field name="_ID">3001</field>
-            </doc>
             <doc>
                 <field name="_ID">3002</field>
             </doc>
@@ -423,9 +420,29 @@
           "docs":[
              {
                 "doc":{
-                   "_ID":"3001"
+                   "_ID":"3002"
                 }
-             },
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Message/_query?q=ALL(InternalRecipients).ALL(Person).Manager IS NULL
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="_ID">3002</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
              {
                 "doc":{
                    "_ID":"3002"
@@ -845,14 +862,11 @@
 ~ Test for Quantifies with IS NULL ~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 *** Request
-    GET /Application/Message/_query?q=ALL(InternalRecipients).ALL(Person).Manager IS NULL
+    GET /Application/Message/_query?q=ALL(InternalRecipients.Person).Manager IS NULL
 *** Response: xml
     200 OK
     <results>
         <docs>
-            <doc>
-                <field name="_ID">3001</field>
-            </doc>
             <doc>
                 <field name="_ID">3002</field>
             </doc>
@@ -865,9 +879,29 @@
           "docs":[
              {
                 "doc":{
-                   "_ID":"3001"
+                   "_ID":"3002"
                 }
-             },
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Message/_query?q=ALL(InternalRecipients).ALL(Person).Manager IS NULL
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="_ID">3002</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
              {
                 "doc":{
                    "_ID":"3002"

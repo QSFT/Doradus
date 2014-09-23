@@ -137,8 +137,8 @@
             <field name="FileSize">2000002</field>
             <field name="IsFileTested">TRUE</field>
             <field name="FileCreateDate">2013-11-02 02:22:20</field>
-            <field name="Float">1.18E-38</field>
-            <field name="Double">2.23E-308</field>
+            <field name="Float">1.18E-3</field>
+            <field name="Double">2.23E-3</field>
           </doc>
           <doc _ID="2003" _table="File">
             <field name="ParentFolder">
@@ -162,8 +162,8 @@
                 </add>
             </field>
             <field name="FileCreateDate">2013-11-03 03:33:30</field>
-            <field name="Float">-1.18E-38</field>
-            <field name="Double">-2.23E-308</field>
+            <field name="Float">-1.18E-3</field>
+            <field name="Double">-2.23E-3</field>
           </doc>
           <doc _ID="2004" _table="File">
             <field name="ParentFolder">
@@ -187,8 +187,8 @@
                 </add>
             </field>
             <field name="FileCreateDate">2013-11-04 04:44:40</field>
-            <field name="Float">3.39E+38</field>
-            <field name="Double">1.79E+308</field>
+            <field name="Float">3.39E+3</field>
+            <field name="Double">1.79E+3</field>
           </doc>
           <doc _ID="2005" _table="File">
             <field name="ParentFolder">
@@ -205,8 +205,8 @@
             <field name="FolderName">Folder 5</field>
             <field name="FileSize">2000005</field>
             <field name="FileCreateDate">2013-11-05 05:55:50</field>
-            <field name="Float">-3.39E+38</field>
-            <field name="Double">-1.79E+308</field>
+            <field name="Float">-3.39E+3</field>
+            <field name="Double">-1.79E+3</field>
           </doc>
           <doc _ID="2006" _table="File">
             <field name="ParentFolder">

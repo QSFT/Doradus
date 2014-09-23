@@ -22,7 +22,9 @@
         <docs>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
                 <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
                 <field name="IsMajor">False</field>
                 <field name="LastName">Amosov</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -37,7 +39,9 @@
             </doc>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
                 <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Petrushkin</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -52,7 +56,9 @@
             </doc>
             <doc>
                 <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
                 <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Mikulina</field>
                 <field name="Office">Moscov</field>
@@ -76,7 +82,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"0.022",
                    "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
                    "IsMajor":"False",
                    "LastName":"Amosov",
                    "Office":"Saint-Petersburg",
@@ -93,7 +101,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"-0.023",
                    "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
                    "IsMajor":"True",
                    "LastName":"Petrushkin",
                    "Office":"Saint-Petersburg",
@@ -110,7 +120,9 @@
              {
                 "doc":{
                    "Department":"RD",
+                   "Double":"1790.0",
                    "FirstName":"Alla",
+                   "Float":"3390.0",
                    "IsMajor":"True",
                    "LastName":"Mikulina",
                    "Office":"Moscov",
@@ -143,7 +155,9 @@
         <docs>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
                 <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
                 <field name="IsMajor">False</field>
                 <field name="LastName">Amosov</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -167,7 +181,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"0.022",
                    "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
                    "IsMajor":"False",
                    "LastName":"Amosov",
                    "Office":"Saint-Petersburg",
@@ -194,7 +210,9 @@
         <docs>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
                 <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
                 <field name="IsMajor">False</field>
                 <field name="LastName">Amosov</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -209,7 +227,9 @@
             </doc>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
                 <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Petrushkin</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -233,7 +253,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"0.022",
                    "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
                    "IsMajor":"False",
                    "LastName":"Amosov",
                    "Office":"Saint-Petersburg",
@@ -250,7 +272,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"-0.023",
                    "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
                    "IsMajor":"True",
                    "LastName":"Petrushkin",
                    "Office":"Saint-Petersburg",
@@ -277,7 +301,9 @@
         <docs>
             <doc>
                 <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
                 <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Mikulina</field>
                 <field name="Office">Moscov</field>
@@ -301,7 +327,9 @@
              {
                 "doc":{
                    "Department":"RD",
+                   "Double":"1790.0",
                    "FirstName":"Alla",
+                   "Float":"3390.0",
                    "IsMajor":"True",
                    "LastName":"Mikulina",
                    "Office":"Moscov",
@@ -328,7 +356,9 @@
         <docs>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
                 <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Petrushkin</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -343,7 +373,9 @@
             </doc>
             <doc>
                 <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
                 <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Mikulina</field>
                 <field name="Office">Moscov</field>
@@ -367,7 +399,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"-0.023",
                    "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
                    "IsMajor":"True",
                    "LastName":"Petrushkin",
                    "Office":"Saint-Petersburg",
@@ -384,7 +418,9 @@
              {
                 "doc":{
                    "Department":"RD",
+                   "Double":"1790.0",
                    "FirstName":"Alla",
+                   "Float":"3390.0",
                    "IsMajor":"True",
                    "LastName":"Mikulina",
                    "Office":"Moscov",
@@ -411,7 +447,9 @@
         <docs>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
                 <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
                 <field name="IsMajor">False</field>
                 <field name="LastName">Amosov</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -426,7 +464,9 @@
             </doc>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
                 <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Petrushkin</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -450,7 +490,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"0.022",
                    "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
                    "IsMajor":"False",
                    "LastName":"Amosov",
                    "Office":"Saint-Petersburg",
@@ -467,7 +509,781 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"-0.023",
                    "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
+                   "IsMajor":"True",
+                   "LastName":"Petrushkin",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "222",
+                      "223"
+                   ],
+                   "SendDate":"2013-11-02 03:22:20",
+                   "Size":"1000",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~
+~ Float ~
+~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=Float<1.8E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
+                <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Petrushkin</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>222</value>
+                    <value>223</value>
+                </field>
+                <field name="SendDate">2013-11-02 03:22:20</field>
+                <field name="Size">1000</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"-0.023",
+                   "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
+                   "IsMajor":"True",
+                   "LastName":"Petrushkin",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "222",
+                      "223"
+                   ],
+                   "SendDate":"2013-11-02 03:22:20",
+                   "Size":"1000",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=Float<=1.8E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
+                <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
+                <field name="IsMajor">False</field>
+                <field name="LastName">Amosov</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>543</value>
+                    <value>544</value>
+                </field>
+                <field name="SendDate">2013-11-02 02:22:20</field>
+                <field name="Size">100</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
+                <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Petrushkin</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>222</value>
+                    <value>223</value>
+                </field>
+                <field name="SendDate">2013-11-02 03:22:20</field>
+                <field name="Size">1000</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"0.022",
+                   "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
+                   "IsMajor":"False",
+                   "LastName":"Amosov",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "543",
+                      "544"
+                   ],
+                   "SendDate":"2013-11-02 02:22:20",
+                   "Size":"100",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"-0.023",
+                   "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
+                   "IsMajor":"True",
+                   "LastName":"Petrushkin",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "222",
+                      "223"
+                   ],
+                   "SendDate":"2013-11-02 03:22:20",
+                   "Size":"1000",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=Float>1.8E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
+                <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Mikulina</field>
+                <field name="Office">Moscov</field>
+                <field name="Rooms">
+                    <value>122</value>
+                    <value>123</value>
+                </field>
+                <field name="SendDate">2013-11-02 04:22:20</field>
+                <field name="Size">10000</field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"RD",
+                   "Double":"1790.0",
+                   "FirstName":"Alla",
+                   "Float":"3390.0",
+                   "IsMajor":"True",
+                   "LastName":"Mikulina",
+                   "Office":"Moscov",
+                   "Rooms":[
+                      "122",
+                      "123"
+                   ],
+                   "SendDate":"2013-11-02 04:22:20",
+                   "Size":"10000",
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=Float>=1.8E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
+                <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
+                <field name="IsMajor">False</field>
+                <field name="LastName">Amosov</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>543</value>
+                    <value>544</value>
+                </field>
+                <field name="SendDate">2013-11-02 02:22:20</field>
+                <field name="Size">100</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
+                <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Mikulina</field>
+                <field name="Office">Moscov</field>
+                <field name="Rooms">
+                    <value>122</value>
+                    <value>123</value>
+                </field>
+                <field name="SendDate">2013-11-02 04:22:20</field>
+                <field name="Size">10000</field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"0.022",
+                   "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
+                   "IsMajor":"False",
+                   "LastName":"Amosov",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "543",
+                      "544"
+                   ],
+                   "SendDate":"2013-11-02 02:22:20",
+                   "Size":"100",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Department":"RD",
+                   "Double":"1790.0",
+                   "FirstName":"Alla",
+                   "Float":"3390.0",
+                   "IsMajor":"True",
+                   "LastName":"Mikulina",
+                   "Office":"Moscov",
+                   "Rooms":[
+                      "122",
+                      "123"
+                   ],
+                   "SendDate":"2013-11-02 04:22:20",
+                   "Size":"10000",
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=Float=[-1.8E-2 TO 3.39E+3}&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
+                <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
+                <field name="IsMajor">False</field>
+                <field name="LastName">Amosov</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>543</value>
+                    <value>544</value>
+                </field>
+                <field name="SendDate">2013-11-02 02:22:20</field>
+                <field name="Size">100</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
+                <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Petrushkin</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>222</value>
+                    <value>223</value>
+                </field>
+                <field name="SendDate">2013-11-02 03:22:20</field>
+                <field name="Size">1000</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"0.022",
+                   "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
+                   "IsMajor":"False",
+                   "LastName":"Amosov",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "543",
+                      "544"
+                   ],
+                   "SendDate":"2013-11-02 02:22:20",
+                   "Size":"100",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"-0.023",
+                   "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
+                   "IsMajor":"True",
+                   "LastName":"Petrushkin",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "222",
+                      "223"
+                   ],
+                   "SendDate":"2013-11-02 03:22:20",
+                   "Size":"1000",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~
+~ Double ~
+~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=Double<2.2E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
+                <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Petrushkin</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>222</value>
+                    <value>223</value>
+                </field>
+                <field name="SendDate">2013-11-02 03:22:20</field>
+                <field name="Size">1000</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"-0.023",
+                   "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
+                   "IsMajor":"True",
+                   "LastName":"Petrushkin",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "222",
+                      "223"
+                   ],
+                   "SendDate":"2013-11-02 03:22:20",
+                   "Size":"1000",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=Double<=2.2E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
+                <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
+                <field name="IsMajor">False</field>
+                <field name="LastName">Amosov</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>543</value>
+                    <value>544</value>
+                </field>
+                <field name="SendDate">2013-11-02 02:22:20</field>
+                <field name="Size">100</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
+                <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Petrushkin</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>222</value>
+                    <value>223</value>
+                </field>
+                <field name="SendDate">2013-11-02 03:22:20</field>
+                <field name="Size">1000</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"0.022",
+                   "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
+                   "IsMajor":"False",
+                   "LastName":"Amosov",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "543",
+                      "544"
+                   ],
+                   "SendDate":"2013-11-02 02:22:20",
+                   "Size":"100",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"-0.023",
+                   "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
+                   "IsMajor":"True",
+                   "LastName":"Petrushkin",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "222",
+                      "223"
+                   ],
+                   "SendDate":"2013-11-02 03:22:20",
+                   "Size":"1000",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=Double>2.2E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
+                <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Mikulina</field>
+                <field name="Office">Moscov</field>
+                <field name="Rooms">
+                    <value>122</value>
+                    <value>123</value>
+                </field>
+                <field name="SendDate">2013-11-02 04:22:20</field>
+                <field name="Size">10000</field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"RD",
+                   "Double":"1790.0",
+                   "FirstName":"Alla",
+                   "Float":"3390.0",
+                   "IsMajor":"True",
+                   "LastName":"Mikulina",
+                   "Office":"Moscov",
+                   "Rooms":[
+                      "122",
+                      "123"
+                   ],
+                   "SendDate":"2013-11-02 04:22:20",
+                   "Size":"10000",
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=Double>=2.2E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
+                <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
+                <field name="IsMajor">False</field>
+                <field name="LastName">Amosov</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>543</value>
+                    <value>544</value>
+                </field>
+                <field name="SendDate">2013-11-02 02:22:20</field>
+                <field name="Size">100</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
+                <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Mikulina</field>
+                <field name="Office">Moscov</field>
+                <field name="Rooms">
+                    <value>122</value>
+                    <value>123</value>
+                </field>
+                <field name="SendDate">2013-11-02 04:22:20</field>
+                <field name="Size">10000</field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"0.022",
+                   "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
+                   "IsMajor":"False",
+                   "LastName":"Amosov",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "543",
+                      "544"
+                   ],
+                   "SendDate":"2013-11-02 02:22:20",
+                   "Size":"100",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Department":"RD",
+                   "Double":"1790.0",
+                   "FirstName":"Alla",
+                   "Float":"3390.0",
+                   "IsMajor":"True",
+                   "LastName":"Mikulina",
+                   "Office":"Moscov",
+                   "Rooms":[
+                      "122",
+                      "123"
+                   ],
+                   "SendDate":"2013-11-02 04:22:20",
+                   "Size":"10000",
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=Double=[-2.2E-2 TO 1.79E+3}&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
+                <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
+                <field name="IsMajor">False</field>
+                <field name="LastName">Amosov</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>543</value>
+                    <value>544</value>
+                </field>
+                <field name="SendDate">2013-11-02 02:22:20</field>
+                <field name="Size">100</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
+                <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Petrushkin</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>222</value>
+                    <value>223</value>
+                </field>
+                <field name="SendDate">2013-11-02 03:22:20</field>
+                <field name="Size">1000</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"0.022",
+                   "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
+                   "IsMajor":"False",
+                   "LastName":"Amosov",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "543",
+                      "544"
+                   ],
+                   "SendDate":"2013-11-02 02:22:20",
+                   "Size":"100",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"-0.023",
+                   "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
                    "IsMajor":"True",
                    "LastName":"Petrushkin",
                    "Office":"Saint-Petersburg",
@@ -497,7 +1313,9 @@
         <docs>
             <doc>
                 <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
                 <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Mikulina</field>
                 <field name="Office">Moscov</field>
@@ -521,7 +1339,9 @@
              {
                 "doc":{
                    "Department":"RD",
+                   "Double":"1790.0",
                    "FirstName":"Alla",
+                   "Float":"3390.0",
                    "IsMajor":"True",
                    "LastName":"Mikulina",
                    "Office":"Moscov",
@@ -548,7 +1368,9 @@
         <docs>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
                 <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
                 <field name="IsMajor">False</field>
                 <field name="LastName">Amosov</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -563,7 +1385,9 @@
             </doc>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
                 <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Petrushkin</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -578,7 +1402,9 @@
             </doc>
             <doc>
                 <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
                 <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Mikulina</field>
                 <field name="Office">Moscov</field>
@@ -602,7 +1428,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"0.022",
                    "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
                    "IsMajor":"False",
                    "LastName":"Amosov",
                    "Office":"Saint-Petersburg",
@@ -619,7 +1447,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"-0.023",
                    "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
                    "IsMajor":"True",
                    "LastName":"Petrushkin",
                    "Office":"Saint-Petersburg",
@@ -636,7 +1466,9 @@
              {
                 "doc":{
                    "Department":"RD",
+                   "Double":"1790.0",
                    "FirstName":"Alla",
+                   "Float":"3390.0",
                    "IsMajor":"True",
                    "LastName":"Mikulina",
                    "Office":"Moscov",
@@ -666,7 +1498,9 @@
         <docs>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
                 <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
                 <field name="IsMajor">False</field>
                 <field name="LastName">Amosov</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -681,7 +1515,9 @@
             </doc>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
                 <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Petrushkin</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -705,7 +1541,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"0.022",
                    "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
                    "IsMajor":"False",
                    "LastName":"Amosov",
                    "Office":"Saint-Petersburg",
@@ -722,7 +1560,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"-0.023",
                    "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
                    "IsMajor":"True",
                    "LastName":"Petrushkin",
                    "Office":"Saint-Petersburg",
@@ -749,7 +1589,9 @@
         <docs>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
                 <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Petrushkin</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -764,7 +1606,9 @@
             </doc>
             <doc>
                 <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
                 <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Mikulina</field>
                 <field name="Office">Moscov</field>
@@ -788,7 +1632,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"-0.023",
                    "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
                    "IsMajor":"True",
                    "LastName":"Petrushkin",
                    "Office":"Saint-Petersburg",
@@ -805,7 +1651,9 @@
              {
                 "doc":{
                    "Department":"RD",
+                   "Double":"1790.0",
                    "FirstName":"Alla",
+                   "Float":"3390.0",
                    "IsMajor":"True",
                    "LastName":"Mikulina",
                    "Office":"Moscov",
@@ -832,7 +1680,9 @@
         <docs>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
                 <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Petrushkin</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -856,7 +1706,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"-0.023",
                    "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
                    "IsMajor":"True",
                    "LastName":"Petrushkin",
                    "Office":"Saint-Petersburg",
@@ -903,7 +1755,9 @@
         <docs>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
                 <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
                 <field name="IsMajor">False</field>
                 <field name="LastName">Amosov</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -918,7 +1772,9 @@
             </doc>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
                 <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Petrushkin</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -933,7 +1789,9 @@
             </doc>
             <doc>
                 <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
                 <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Mikulina</field>
                 <field name="Office">Moscov</field>
@@ -957,7 +1815,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"0.022",
                    "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
                    "IsMajor":"False",
                    "LastName":"Amosov",
                    "Office":"Saint-Petersburg",
@@ -974,7 +1834,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"-0.023",
                    "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
                    "IsMajor":"True",
                    "LastName":"Petrushkin",
                    "Office":"Saint-Petersburg",
@@ -991,7 +1853,9 @@
              {
                 "doc":{
                    "Department":"RD",
+                   "Double":"1790.0",
                    "FirstName":"Alla",
+                   "Float":"3390.0",
                    "IsMajor":"True",
                    "LastName":"Mikulina",
                    "Office":"Moscov",
@@ -1024,7 +1888,9 @@
         <docs>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
                 <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
                 <field name="IsMajor">False</field>
                 <field name="LastName">Amosov</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -1048,7 +1914,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"0.022",
                    "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
                    "IsMajor":"False",
                    "LastName":"Amosov",
                    "Office":"Saint-Petersburg",
@@ -1075,7 +1943,9 @@
         <docs>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
                 <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
                 <field name="IsMajor">False</field>
                 <field name="LastName">Amosov</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -1090,7 +1960,9 @@
             </doc>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
                 <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Petrushkin</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -1114,7 +1986,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"0.022",
                    "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
                    "IsMajor":"False",
                    "LastName":"Amosov",
                    "Office":"Saint-Petersburg",
@@ -1131,7 +2005,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"-0.023",
                    "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
                    "IsMajor":"True",
                    "LastName":"Petrushkin",
                    "Office":"Saint-Petersburg",
@@ -1158,7 +2034,9 @@
         <docs>
             <doc>
                 <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
                 <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Mikulina</field>
                 <field name="Office">Moscov</field>
@@ -1182,7 +2060,9 @@
              {
                 "doc":{
                    "Department":"RD",
+                   "Double":"1790.0",
                    "FirstName":"Alla",
+                   "Float":"3390.0",
                    "IsMajor":"True",
                    "LastName":"Mikulina",
                    "Office":"Moscov",
@@ -1209,7 +2089,9 @@
         <docs>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
                 <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Petrushkin</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -1224,7 +2106,9 @@
             </doc>
             <doc>
                 <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
                 <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Mikulina</field>
                 <field name="Office">Moscov</field>
@@ -1248,7 +2132,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"-0.023",
                    "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
                    "IsMajor":"True",
                    "LastName":"Petrushkin",
                    "Office":"Saint-Petersburg",
@@ -1265,7 +2151,9 @@
              {
                 "doc":{
                    "Department":"RD",
+                   "Double":"1790.0",
                    "FirstName":"Alla",
+                   "Float":"3390.0",
                    "IsMajor":"True",
                    "LastName":"Mikulina",
                    "Office":"Moscov",
@@ -1292,7 +2180,9 @@
         <docs>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
                 <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
                 <field name="IsMajor">False</field>
                 <field name="LastName">Amosov</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -1307,7 +2197,9 @@
             </doc>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
                 <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Petrushkin</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -1331,7 +2223,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"0.022",
                    "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
                    "IsMajor":"False",
                    "LastName":"Amosov",
                    "Office":"Saint-Petersburg",
@@ -1348,7 +2242,781 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"-0.023",
                    "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
+                   "IsMajor":"True",
+                   "LastName":"Petrushkin",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "222",
+                      "223"
+                   ],
+                   "SendDate":"2013-11-02 03:22:20",
+                   "Size":"1000",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~
+~ Float ~
+~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=Float<1.8E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
+                <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Petrushkin</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>222</value>
+                    <value>223</value>
+                </field>
+                <field name="SendDate">2013-11-02 03:22:20</field>
+                <field name="Size">1000</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"-0.023",
+                   "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
+                   "IsMajor":"True",
+                   "LastName":"Petrushkin",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "222",
+                      "223"
+                   ],
+                   "SendDate":"2013-11-02 03:22:20",
+                   "Size":"1000",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=Float<=1.8E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
+                <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
+                <field name="IsMajor">False</field>
+                <field name="LastName">Amosov</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>543</value>
+                    <value>544</value>
+                </field>
+                <field name="SendDate">2013-11-02 02:22:20</field>
+                <field name="Size">100</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
+                <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Petrushkin</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>222</value>
+                    <value>223</value>
+                </field>
+                <field name="SendDate">2013-11-02 03:22:20</field>
+                <field name="Size">1000</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"0.022",
+                   "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
+                   "IsMajor":"False",
+                   "LastName":"Amosov",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "543",
+                      "544"
+                   ],
+                   "SendDate":"2013-11-02 02:22:20",
+                   "Size":"100",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"-0.023",
+                   "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
+                   "IsMajor":"True",
+                   "LastName":"Petrushkin",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "222",
+                      "223"
+                   ],
+                   "SendDate":"2013-11-02 03:22:20",
+                   "Size":"1000",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=Float>1.8E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
+                <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Mikulina</field>
+                <field name="Office">Moscov</field>
+                <field name="Rooms">
+                    <value>122</value>
+                    <value>123</value>
+                </field>
+                <field name="SendDate">2013-11-02 04:22:20</field>
+                <field name="Size">10000</field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"RD",
+                   "Double":"1790.0",
+                   "FirstName":"Alla",
+                   "Float":"3390.0",
+                   "IsMajor":"True",
+                   "LastName":"Mikulina",
+                   "Office":"Moscov",
+                   "Rooms":[
+                      "122",
+                      "123"
+                   ],
+                   "SendDate":"2013-11-02 04:22:20",
+                   "Size":"10000",
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=Float>=1.8E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
+                <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
+                <field name="IsMajor">False</field>
+                <field name="LastName">Amosov</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>543</value>
+                    <value>544</value>
+                </field>
+                <field name="SendDate">2013-11-02 02:22:20</field>
+                <field name="Size">100</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
+                <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Mikulina</field>
+                <field name="Office">Moscov</field>
+                <field name="Rooms">
+                    <value>122</value>
+                    <value>123</value>
+                </field>
+                <field name="SendDate">2013-11-02 04:22:20</field>
+                <field name="Size">10000</field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"0.022",
+                   "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
+                   "IsMajor":"False",
+                   "LastName":"Amosov",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "543",
+                      "544"
+                   ],
+                   "SendDate":"2013-11-02 02:22:20",
+                   "Size":"100",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Department":"RD",
+                   "Double":"1790.0",
+                   "FirstName":"Alla",
+                   "Float":"3390.0",
+                   "IsMajor":"True",
+                   "LastName":"Mikulina",
+                   "Office":"Moscov",
+                   "Rooms":[
+                      "122",
+                      "123"
+                   ],
+                   "SendDate":"2013-11-02 04:22:20",
+                   "Size":"10000",
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=Float=[-1.8E-2 TO 3.39E+3}&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
+                <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
+                <field name="IsMajor">False</field>
+                <field name="LastName">Amosov</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>543</value>
+                    <value>544</value>
+                </field>
+                <field name="SendDate">2013-11-02 02:22:20</field>
+                <field name="Size">100</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
+                <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Petrushkin</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>222</value>
+                    <value>223</value>
+                </field>
+                <field name="SendDate">2013-11-02 03:22:20</field>
+                <field name="Size">1000</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"0.022",
+                   "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
+                   "IsMajor":"False",
+                   "LastName":"Amosov",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "543",
+                      "544"
+                   ],
+                   "SendDate":"2013-11-02 02:22:20",
+                   "Size":"100",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"-0.023",
+                   "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
+                   "IsMajor":"True",
+                   "LastName":"Petrushkin",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "222",
+                      "223"
+                   ],
+                   "SendDate":"2013-11-02 03:22:20",
+                   "Size":"1000",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~
+~ Double ~
+~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=Double<2.2E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
+                <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Petrushkin</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>222</value>
+                    <value>223</value>
+                </field>
+                <field name="SendDate">2013-11-02 03:22:20</field>
+                <field name="Size">1000</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"-0.023",
+                   "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
+                   "IsMajor":"True",
+                   "LastName":"Petrushkin",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "222",
+                      "223"
+                   ],
+                   "SendDate":"2013-11-02 03:22:20",
+                   "Size":"1000",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=Double<=2.2E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
+                <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
+                <field name="IsMajor">False</field>
+                <field name="LastName">Amosov</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>543</value>
+                    <value>544</value>
+                </field>
+                <field name="SendDate">2013-11-02 02:22:20</field>
+                <field name="Size">100</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
+                <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Petrushkin</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>222</value>
+                    <value>223</value>
+                </field>
+                <field name="SendDate">2013-11-02 03:22:20</field>
+                <field name="Size">1000</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"0.022",
+                   "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
+                   "IsMajor":"False",
+                   "LastName":"Amosov",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "543",
+                      "544"
+                   ],
+                   "SendDate":"2013-11-02 02:22:20",
+                   "Size":"100",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"-0.023",
+                   "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
+                   "IsMajor":"True",
+                   "LastName":"Petrushkin",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "222",
+                      "223"
+                   ],
+                   "SendDate":"2013-11-02 03:22:20",
+                   "Size":"1000",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=Double>2.2E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
+                <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Mikulina</field>
+                <field name="Office">Moscov</field>
+                <field name="Rooms">
+                    <value>122</value>
+                    <value>123</value>
+                </field>
+                <field name="SendDate">2013-11-02 04:22:20</field>
+                <field name="Size">10000</field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"RD",
+                   "Double":"1790.0",
+                   "FirstName":"Alla",
+                   "Float":"3390.0",
+                   "IsMajor":"True",
+                   "LastName":"Mikulina",
+                   "Office":"Moscov",
+                   "Rooms":[
+                      "122",
+                      "123"
+                   ],
+                   "SendDate":"2013-11-02 04:22:20",
+                   "Size":"10000",
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=Double>=2.2E-2&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
+                <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
+                <field name="IsMajor">False</field>
+                <field name="LastName">Amosov</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>543</value>
+                    <value>544</value>
+                </field>
+                <field name="SendDate">2013-11-02 02:22:20</field>
+                <field name="Size">100</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
+                <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Mikulina</field>
+                <field name="Office">Moscov</field>
+                <field name="Rooms">
+                    <value>122</value>
+                    <value>123</value>
+                </field>
+                <field name="SendDate">2013-11-02 04:22:20</field>
+                <field name="Size">10000</field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"0.022",
+                   "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
+                   "IsMajor":"False",
+                   "LastName":"Amosov",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "543",
+                      "544"
+                   ],
+                   "SendDate":"2013-11-02 02:22:20",
+                   "Size":"100",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Department":"RD",
+                   "Double":"1790.0",
+                   "FirstName":"Alla",
+                   "Float":"3390.0",
+                   "IsMajor":"True",
+                   "LastName":"Mikulina",
+                   "Office":"Moscov",
+                   "Rooms":[
+                      "122",
+                      "123"
+                   ],
+                   "SendDate":"2013-11-02 04:22:20",
+                   "Size":"10000",
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=Double=[-2.2E-2 TO 1.79E+3}&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
+                <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
+                <field name="IsMajor">False</field>
+                <field name="LastName">Amosov</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>543</value>
+                    <value>544</value>
+                </field>
+                <field name="SendDate">2013-11-02 02:22:20</field>
+                <field name="Size">100</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
+                <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
+                <field name="IsMajor">True</field>
+                <field name="LastName">Petrushkin</field>
+                <field name="Office">Saint-Petersburg</field>
+                <field name="Rooms">
+                    <value>222</value>
+                    <value>223</value>
+                </field>
+                <field name="SendDate">2013-11-02 03:22:20</field>
+                <field name="Size">1000</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"0.022",
+                   "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
+                   "IsMajor":"False",
+                   "LastName":"Amosov",
+                   "Office":"Saint-Petersburg",
+                   "Rooms":[
+                      "543",
+                      "544"
+                   ],
+                   "SendDate":"2013-11-02 02:22:20",
+                   "Size":"100",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Department":"CTO",
+                   "Double":"-0.023",
+                   "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
                    "IsMajor":"True",
                    "LastName":"Petrushkin",
                    "Office":"Saint-Petersburg",
@@ -1378,7 +3046,9 @@
         <docs>
             <doc>
                 <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
                 <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Mikulina</field>
                 <field name="Office">Moscov</field>
@@ -1402,7 +3072,9 @@
              {
                 "doc":{
                    "Department":"RD",
+                   "Double":"1790.0",
                    "FirstName":"Alla",
+                   "Float":"3390.0",
                    "IsMajor":"True",
                    "LastName":"Mikulina",
                    "Office":"Moscov",
@@ -1429,7 +3101,9 @@
         <docs>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
                 <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
                 <field name="IsMajor">False</field>
                 <field name="LastName">Amosov</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -1444,7 +3118,9 @@
             </doc>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
                 <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Petrushkin</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -1459,7 +3135,9 @@
             </doc>
             <doc>
                 <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
                 <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Mikulina</field>
                 <field name="Office">Moscov</field>
@@ -1483,7 +3161,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"0.022",
                    "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
                    "IsMajor":"False",
                    "LastName":"Amosov",
                    "Office":"Saint-Petersburg",
@@ -1500,7 +3180,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"-0.023",
                    "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
                    "IsMajor":"True",
                    "LastName":"Petrushkin",
                    "Office":"Saint-Petersburg",
@@ -1517,7 +3199,9 @@
              {
                 "doc":{
                    "Department":"RD",
+                   "Double":"1790.0",
                    "FirstName":"Alla",
+                   "Float":"3390.0",
                    "IsMajor":"True",
                    "LastName":"Mikulina",
                    "Office":"Moscov",
@@ -1547,7 +3231,9 @@
         <docs>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">0.022</field>
                 <field name="FirstName">Egor</field>
+                <field name="Float">0.017999999225139618</field>
                 <field name="IsMajor">False</field>
                 <field name="LastName">Amosov</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -1562,7 +3248,9 @@
             </doc>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
                 <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Petrushkin</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -1586,7 +3274,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"0.022",
                    "FirstName":"Egor",
+                   "Float":"0.017999999225139618",
                    "IsMajor":"False",
                    "LastName":"Amosov",
                    "Office":"Saint-Petersburg",
@@ -1603,7 +3293,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"-0.023",
                    "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
                    "IsMajor":"True",
                    "LastName":"Petrushkin",
                    "Office":"Saint-Petersburg",
@@ -1630,7 +3322,9 @@
         <docs>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
                 <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Petrushkin</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -1645,7 +3339,9 @@
             </doc>
             <doc>
                 <field name="Department">RD</field>
+                <field name="Double">1790.0</field>
                 <field name="FirstName">Alla</field>
+                <field name="Float">3390.0</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Mikulina</field>
                 <field name="Office">Moscov</field>
@@ -1669,7 +3365,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"-0.023",
                    "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
                    "IsMajor":"True",
                    "LastName":"Petrushkin",
                    "Office":"Saint-Petersburg",
@@ -1686,7 +3384,9 @@
              {
                 "doc":{
                    "Department":"RD",
+                   "Double":"1790.0",
                    "FirstName":"Alla",
+                   "Float":"3390.0",
                    "IsMajor":"True",
                    "LastName":"Mikulina",
                    "Office":"Moscov",
@@ -1713,7 +3413,9 @@
         <docs>
             <doc>
                 <field name="Department">CTO</field>
+                <field name="Double">-0.023</field>
                 <field name="FirstName">Terr</field>
+                <field name="Float">-0.017999999225139618</field>
                 <field name="IsMajor">True</field>
                 <field name="LastName">Petrushkin</field>
                 <field name="Office">Saint-Petersburg</field>
@@ -1737,7 +3439,9 @@
              {
                 "doc":{
                    "Department":"CTO",
+                   "Double":"-0.023",
                    "FirstName":"Terr",
+                   "Float":"-0.017999999225139618",
                    "IsMajor":"True",
                    "LastName":"Petrushkin",
                    "Office":"Saint-Petersburg",

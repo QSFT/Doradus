@@ -73,6 +73,28 @@ Doradus OLAP Database -v2.1
     <echo>~~~~~~~~~~~~~</echo>
     <AGGREGATE path="Application/Table" m="((COUNT(MV)/10)*2)+3" f="Country" shards="shard" />
 
+    <echo>~~~~~~~~~</echo>
+    <echo>~ FLOAT ~</echo>
+    <echo>~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Table" m="MAX(Float)" f="Country" shards="shard"/>
+    <AGGREGATE path="Application/Table" m="MIN(Float)" f="Country" shards="shard"/>
+    <AGGREGATE path="Application/Table" m="COUNT(Float)" f="Country" shards="shard"/>
+    <AGGREGATE path="Application/Table" m="SUM(Float)" f="Country" shards="shard"/>
+    <AGGREGATE path="Application/Table" m="AVERAGE(Float)" f="Country" shards="shard"/>
+
+    <AGGREGATE path="Application/Table" m="(MAX(Float)+MIN(Float))/3" f="Country" shards="shard"/>
+    <AGGREGATE path="Application/Table" m="COUNT(Float)*1.5*(-2)" f="Country" shards="shard" />
+    <AGGREGATE path="Application/Table" m="SUM(Float)-AVERAGE(Float)" f="Country" shards="shard" />
+    <AGGREGATE path="Application/Table" m="(MAX(Float)+MIN(Float))/3,COUNT(Float)*1.5*(-2),SUM(Float)-AVERAGE(Float)" f="Country" shards="shard" />
+
+    <echo>~~~~~~~~~~</echo>
+    <echo>~ DOUBLE ~</echo>
+    <echo>~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Table" m="(MAX(Double)+MIN(Double))/3" f="Country" shards="shard"/>
+    <AGGREGATE path="Application/Table" m="COUNT(Double)*1.5*(-2)" f="Country" shards="shard" />
+    <AGGREGATE path="Application/Table" m="SUM(Double)-AVERAGE(Double)" f="Country" shards="shard" />
+    <AGGREGATE path="Application/Table" m="(MAX(Double)+MIN(Double))/3,COUNT(Double)*1.5*(-2),SUM(Double)-AVERAGE(Double)" f="Country" shards="shard" />
+
     <DELETE path="_applications/Application/ApplicationKey"/>
 </FOR>
 

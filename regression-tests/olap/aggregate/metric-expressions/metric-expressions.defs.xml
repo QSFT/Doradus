@@ -15,6 +15,8 @@
                 <field name="People" type="INTEGER"/>
                 <field name="CreateDate" type="TIMESTAMP"/>
                 <field name="CloseDate" type="TIMESTAMP"/>
+                <field name="Float" type="FLOAT"/>
+                <field name="Double" type="DOUBLE"/>
             </fields>
         </table>
     </tables>
@@ -31,6 +33,8 @@
             <field name="People">11980000</field>
             <field name="CreateDate">2011-04-05 12:32:08</field>
             <field name="CloseDate">2014-01-01 00:00:01</field>
+            <field name="Float">1.18E-3</field>
+            <field name="Double">2.23E-3</field>
           </doc>
           <doc _table="Table" _ID="2002" >
             <field name="MV">Three, Four</field>
@@ -39,6 +43,8 @@
             <field name="People">632323</field>
             <field name="CreateDate">2011-04-05 22:12:14</field>
             <field name="CloseDate">2014-01-01 00:00:01</field>
+            <field name="Float">-1.18E-3</field>
+            <field name="Double">-2.23E-3</field>
           </doc>
           <doc _table="Table" _ID="2003" >
             <field name="MV">Five, Six</field>
@@ -47,6 +53,8 @@
             <field name="People">8245000</field>
             <field name="CreateDate">2011-04-15 10:20:01</field>
             <field name="CloseDate">2014-01-01 00:00:01</field>
+            <field name="Float">3.39E+3</field>
+            <field name="Double">1.79E+3</field>
           </doc>
           <doc _table="Table" _ID="2004" >
             <field name="MV">Seven, Eight</field>
@@ -55,6 +63,8 @@
             <field name="People">4880000</field>
             <field name="CreateDate">2011-06-22 09:05:20</field>
             <field name="CloseDate">2014-01-01 00:00:01</field>
+            <field name="Float">-3.39E+3</field>
+            <field name="Double">-1.79E+3</field>
           </doc>
           <doc _table="Table" _ID="2005" >
             <field name="MV">Nine, Ten</field>
@@ -63,6 +73,8 @@
             <field name="People">1255000</field>
             <field name="CreateDate">2012-12-30 15:29:04</field>
             <field name="CloseDate">2014-01-01 00:00:01</field>
+            <field name="Float">-3000000</field>
+            <field name="Double">-10000000</field>
           </doc>
           <doc _table="Table" _ID="2006" >
             <field name="MV">Eleven, Twelve</field>

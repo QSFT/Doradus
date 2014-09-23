@@ -17,6 +17,8 @@
 			<field name="Office" type="Text" />
 			<field name="Rooms" type="Text" collection="true" />
 			<field name="Size" type="INTEGER" />
+			<field name="Float" type="FLOAT" />
+			<field name="Double" type="DOUBLE" />
         	    </fields>
                 </field>
                 <field name="Manager">
@@ -48,6 +50,8 @@
 		</add>
 		</field>
 		<field name="Size">100</field>
+	        <field name="Float">1.8E-2</field>
+        	<field name="Double">2.2E-2</field>
             </fields>
         </field>
         <field name="Manager">
@@ -71,6 +75,8 @@
 		</add>
 		</field>
 		<field name="Size">1000</field>
+                <field name="Float">-1.8E-2</field>
+                <field name="Double">-2.3E-2</field>
             </fields>
         </field>
         <field name="Manager">
@@ -94,6 +100,8 @@
 		</add>
 		</field>
 		<field name="Size">10000</field>
+                <field name="Float">3.39E+3</field>
+                <field name="Double">1.79E+3</field>
             </fields>
         </field>
         <field name="Manager">
