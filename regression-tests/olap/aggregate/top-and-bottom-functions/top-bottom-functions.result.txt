@@ -24,8 +24,8 @@
                 <field name="City">Moscow</field>
                 <field name="Country">Russia</field>
                 <field name="CreateDate">2014-01-01 00:00:00</field>
-                <field name="Double">2.2E300</field>
-                <field name="Float">3.299999974098775E30</field>
+                <field name="Double">2200.0</field>
+                <field name="Float">3300.0</field>
                 <field name="IsTested">True</field>
                 <field name="People">2014</field>
                 <field name="_ID">2001</field>
@@ -44,8 +44,8 @@
                 <field name="City">Saint-Petersburg</field>
                 <field name="Country">Russia</field>
                 <field name="CreateDate">2014-01-01 00:00:00</field>
-                <field name="Double">2.2E300</field>
-                <field name="Float">3.299999974098775E30</field>
+                <field name="Double">2200.0</field>
+                <field name="Float">3300.0</field>
                 <field name="IsTested">True</field>
                 <field name="People">2014</field>
                 <field name="_ID">2002</field>
@@ -64,8 +64,8 @@
                 <field name="City">Tver</field>
                 <field name="Country">Russia</field>
                 <field name="CreateDate">2014-01-01 00:00:00</field>
-                <field name="Double">2.2E300</field>
-                <field name="Float">3.299999974098775E30</field>
+                <field name="Double">2200.0</field>
+                <field name="Float">3300.0</field>
                 <field name="IsTested">True</field>
                 <field name="People">2014</field>
                 <field name="_ID">2003</field>
@@ -84,8 +84,8 @@
                 <field name="City">Pskov</field>
                 <field name="Country">Russia</field>
                 <field name="CreateDate">2014-01-01 00:00:00</field>
-                <field name="Double">2.2E300</field>
-                <field name="Float">3.299999974098775E30</field>
+                <field name="Double">2200.0</field>
+                <field name="Float">3300.0</field>
                 <field name="IsTested">True</field>
                 <field name="People">2014</field>
                 <field name="_ID">2004</field>
@@ -243,8 +243,8 @@
                    "City":"Moscow",
                    "Country":"Russia",
                    "CreateDate":"2014-01-01 00:00:00",
-                   "Double":"2.2E300",
-                   "Float":"3.299999974098775E30",
+                   "Double":"2200.0",
+                   "Float":"3300.0",
                    "IsTested":"True",
                    "People":"2014",
                    "_ID":"2001",
@@ -267,8 +267,8 @@
                    "City":"Saint-Petersburg",
                    "Country":"Russia",
                    "CreateDate":"2014-01-01 00:00:00",
-                   "Double":"2.2E300",
-                   "Float":"3.299999974098775E30",
+                   "Double":"2200.0",
+                   "Float":"3300.0",
                    "IsTested":"True",
                    "People":"2014",
                    "_ID":"2002",
@@ -291,8 +291,8 @@
                    "City":"Tver",
                    "Country":"Russia",
                    "CreateDate":"2014-01-01 00:00:00",
-                   "Double":"2.2E300",
-                   "Float":"3.299999974098775E30",
+                   "Double":"2200.0",
+                   "Float":"3300.0",
                    "IsTested":"True",
                    "People":"2014",
                    "_ID":"2003",
@@ -315,8 +315,8 @@
                    "City":"Pskov",
                    "Country":"Russia",
                    "CreateDate":"2014-01-01 00:00:00",
-                   "Double":"2.2E300",
-                   "Float":"3.299999974098775E30",
+                   "Double":"2200.0",
+                   "Float":"3300.0",
                    "IsTested":"True",
                    "People":"2014",
                    "_ID":"2004",
@@ -511,8 +511,8 @@
                         <field name="City">Moscow</field>
                         <field name="Country">Russia</field>
                         <field name="CreateDate">2014-01-01 00:00:00</field>
-                        <field name="Double">2.2E300</field>
-                        <field name="Float">3.299999974098775E30</field>
+                        <field name="Double">2200.0</field>
+                        <field name="Float">3300.0</field>
                         <field name="IsTested">True</field>
                         <field name="People">2014</field>
                         <field name="_ID">2001</field>
@@ -521,8 +521,8 @@
                         <field name="City">Saint-Petersburg</field>
                         <field name="Country">Russia</field>
                         <field name="CreateDate">2014-01-01 00:00:00</field>
-                        <field name="Double">2.2E300</field>
-                        <field name="Float">3.299999974098775E30</field>
+                        <field name="Double">2200.0</field>
+                        <field name="Float">3300.0</field>
                         <field name="IsTested">True</field>
                         <field name="People">2014</field>
                         <field name="_ID">2002</field>
@@ -531,8 +531,8 @@
                         <field name="City">Tver</field>
                         <field name="Country">Russia</field>
                         <field name="CreateDate">2014-01-01 00:00:00</field>
-                        <field name="Double">2.2E300</field>
-                        <field name="Float">3.299999974098775E30</field>
+                        <field name="Double">2200.0</field>
+                        <field name="Float">3300.0</field>
                         <field name="IsTested">True</field>
                         <field name="People">2014</field>
                         <field name="_ID">2003</field>
@@ -541,8 +541,8 @@
                         <field name="City">Pskov</field>
                         <field name="Country">Russia</field>
                         <field name="CreateDate">2014-01-01 00:00:00</field>
-                        <field name="Double">2.2E300</field>
-                        <field name="Float">3.299999974098775E30</field>
+                        <field name="Double">2200.0</field>
+                        <field name="Float">3300.0</field>
                         <field name="IsTested">True</field>
                         <field name="People">2014</field>
                         <field name="_ID">2004</field>
@@ -667,8 +667,8 @@
                             "City":"Moscow",
                             "Country":"Russia",
                             "CreateDate":"2014-01-01 00:00:00",
-                            "Double":"2.2E300",
-                            "Float":"3.299999974098775E30",
+                            "Double":"2200.0",
+                            "Float":"3300.0",
                             "IsTested":"True",
                             "People":"2014",
                             "_ID":"2001"
@@ -679,8 +679,8 @@
                             "City":"Saint-Petersburg",
                             "Country":"Russia",
                             "CreateDate":"2014-01-01 00:00:00",
-                            "Double":"2.2E300",
-                            "Float":"3.299999974098775E30",
+                            "Double":"2200.0",
+                            "Float":"3300.0",
                             "IsTested":"True",
                             "People":"2014",
                             "_ID":"2002"
@@ -691,8 +691,8 @@
                             "City":"Tver",
                             "Country":"Russia",
                             "CreateDate":"2014-01-01 00:00:00",
-                            "Double":"2.2E300",
-                            "Float":"3.299999974098775E30",
+                            "Double":"2200.0",
+                            "Float":"3300.0",
                             "IsTested":"True",
                             "People":"2014",
                             "_ID":"2003"
@@ -703,8 +703,8 @@
                             "City":"Pskov",
                             "Country":"Russia",
                             "CreateDate":"2014-01-01 00:00:00",
-                            "Double":"2.2E300",
-                            "Float":"3.299999974098775E30",
+                            "Double":"2200.0",
+                            "Float":"3300.0",
                             "IsTested":"True",
                             "People":"2014",
                             "_ID":"2004"
@@ -1539,7 +1539,7 @@
         <groups>
             <group>
                 <metric>4</metric>
-                <field name="Float">3299999974098775000000000000000</field>
+                <field name="Float">3300</field>
             </group>
             <group>
                 <metric>3</metric>
@@ -1572,7 +1572,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Float":"3299999974098775000000000000000"
+                      "Float":"3300"
                    }
                 }
              },
@@ -1616,7 +1616,7 @@
         <groups>
             <group>
                 <metric>4</metric>
-                <field name="Float">3299999974098775000000000000000</field>
+                <field name="Float">3300</field>
             </group>
         </groups>
     </results>
@@ -1637,7 +1637,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Float":"3299999974098775000000000000000"
+                      "Float":"3300"
                    }
                 }
              }
@@ -1657,7 +1657,7 @@
         <groups>
             <group>
                 <metric>4</metric>
-                <field name="Float">3299999974098775000000000000000</field>
+                <field name="Float">3300</field>
             </group>
             <group>
                 <metric>3</metric>
@@ -1690,7 +1690,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Float":"3299999974098775000000000000000"
+                      "Float":"3300"
                    }
                 }
              },
@@ -1746,7 +1746,7 @@
             </group>
             <group>
                 <metric>4</metric>
-                <field name="Float">3299999974098775000000000000000</field>
+                <field name="Float">3300</field>
             </group>
         </groups>
     </results>
@@ -1791,7 +1791,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Float":"3299999974098775000000000000000"
+                      "Float":"3300"
                    }
                 }
              }
@@ -1864,7 +1864,7 @@
             </group>
             <group>
                 <metric>4</metric>
-                <field name="Float">3299999974098775000000000000000</field>
+                <field name="Float">3300</field>
             </group>
         </groups>
     </results>
@@ -1909,7 +1909,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Float":"3299999974098775000000000000000"
+                      "Float":"3300"
                    }
                 }
              }
@@ -1932,7 +1932,7 @@
         <groups>
             <group>
                 <metric>4</metric>
-                <field name="Double">2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</field>
+                <field name="Double">2200</field>
             </group>
             <group>
                 <metric>3</metric>
@@ -1965,7 +1965,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Double":"2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                      "Double":"2200"
                    }
                 }
              },
@@ -2009,7 +2009,7 @@
         <groups>
             <group>
                 <metric>4</metric>
-                <field name="Double">2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</field>
+                <field name="Double">2200</field>
             </group>
         </groups>
     </results>
@@ -2030,7 +2030,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Double":"2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                      "Double":"2200"
                    }
                 }
              }
@@ -2050,7 +2050,7 @@
         <groups>
             <group>
                 <metric>4</metric>
-                <field name="Double">2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</field>
+                <field name="Double">2200</field>
             </group>
             <group>
                 <metric>3</metric>
@@ -2083,7 +2083,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Double":"2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                      "Double":"2200"
                    }
                 }
              },
@@ -2139,7 +2139,7 @@
             </group>
             <group>
                 <metric>4</metric>
-                <field name="Double">2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</field>
+                <field name="Double">2200</field>
             </group>
         </groups>
     </results>
@@ -2184,7 +2184,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Double":"2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                      "Double":"2200"
                    }
                 }
              }
@@ -2257,7 +2257,7 @@
             </group>
             <group>
                 <metric>4</metric>
-                <field name="Double">2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</field>
+                <field name="Double">2200</field>
             </group>
         </groups>
     </results>
@@ -2302,7 +2302,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Double":"2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                      "Double":"2200"
                    }
                 }
              }
@@ -3913,8 +3913,8 @@
                 <field name="City">Moscow</field>
                 <field name="Country">Russia</field>
                 <field name="CreateDate">2014-01-01 00:00:00</field>
-                <field name="Double">2.2E300</field>
-                <field name="Float">3.299999974098775E30</field>
+                <field name="Double">2200.0</field>
+                <field name="Float">3300.0</field>
                 <field name="IsTested">True</field>
                 <field name="People">2014</field>
                 <field name="_ID">2001</field>
@@ -3933,8 +3933,8 @@
                 <field name="City">Saint-Petersburg</field>
                 <field name="Country">Russia</field>
                 <field name="CreateDate">2014-01-01 00:00:00</field>
-                <field name="Double">2.2E300</field>
-                <field name="Float">3.299999974098775E30</field>
+                <field name="Double">2200.0</field>
+                <field name="Float">3300.0</field>
                 <field name="IsTested">True</field>
                 <field name="People">2014</field>
                 <field name="_ID">2002</field>
@@ -3953,8 +3953,8 @@
                 <field name="City">Tver</field>
                 <field name="Country">Russia</field>
                 <field name="CreateDate">2014-01-01 00:00:00</field>
-                <field name="Double">2.2E300</field>
-                <field name="Float">3.299999974098775E30</field>
+                <field name="Double">2200.0</field>
+                <field name="Float">3300.0</field>
                 <field name="IsTested">True</field>
                 <field name="People">2014</field>
                 <field name="_ID">2003</field>
@@ -3973,8 +3973,8 @@
                 <field name="City">Pskov</field>
                 <field name="Country">Russia</field>
                 <field name="CreateDate">2014-01-01 00:00:00</field>
-                <field name="Double">2.2E300</field>
-                <field name="Float">3.299999974098775E30</field>
+                <field name="Double">2200.0</field>
+                <field name="Float">3300.0</field>
                 <field name="IsTested">True</field>
                 <field name="People">2014</field>
                 <field name="_ID">2004</field>
@@ -4132,8 +4132,8 @@
                    "City":"Moscow",
                    "Country":"Russia",
                    "CreateDate":"2014-01-01 00:00:00",
-                   "Double":"2.2E300",
-                   "Float":"3.299999974098775E30",
+                   "Double":"2200.0",
+                   "Float":"3300.0",
                    "IsTested":"True",
                    "People":"2014",
                    "_ID":"2001",
@@ -4156,8 +4156,8 @@
                    "City":"Saint-Petersburg",
                    "Country":"Russia",
                    "CreateDate":"2014-01-01 00:00:00",
-                   "Double":"2.2E300",
-                   "Float":"3.299999974098775E30",
+                   "Double":"2200.0",
+                   "Float":"3300.0",
                    "IsTested":"True",
                    "People":"2014",
                    "_ID":"2002",
@@ -4180,8 +4180,8 @@
                    "City":"Tver",
                    "Country":"Russia",
                    "CreateDate":"2014-01-01 00:00:00",
-                   "Double":"2.2E300",
-                   "Float":"3.299999974098775E30",
+                   "Double":"2200.0",
+                   "Float":"3300.0",
                    "IsTested":"True",
                    "People":"2014",
                    "_ID":"2003",
@@ -4204,8 +4204,8 @@
                    "City":"Pskov",
                    "Country":"Russia",
                    "CreateDate":"2014-01-01 00:00:00",
-                   "Double":"2.2E300",
-                   "Float":"3.299999974098775E30",
+                   "Double":"2200.0",
+                   "Float":"3300.0",
                    "IsTested":"True",
                    "People":"2014",
                    "_ID":"2004",
@@ -4400,8 +4400,8 @@
                         <field name="City">Moscow</field>
                         <field name="Country">Russia</field>
                         <field name="CreateDate">2014-01-01 00:00:00</field>
-                        <field name="Double">2.2E300</field>
-                        <field name="Float">3.299999974098775E30</field>
+                        <field name="Double">2200.0</field>
+                        <field name="Float">3300.0</field>
                         <field name="IsTested">True</field>
                         <field name="People">2014</field>
                         <field name="_ID">2001</field>
@@ -4410,8 +4410,8 @@
                         <field name="City">Saint-Petersburg</field>
                         <field name="Country">Russia</field>
                         <field name="CreateDate">2014-01-01 00:00:00</field>
-                        <field name="Double">2.2E300</field>
-                        <field name="Float">3.299999974098775E30</field>
+                        <field name="Double">2200.0</field>
+                        <field name="Float">3300.0</field>
                         <field name="IsTested">True</field>
                         <field name="People">2014</field>
                         <field name="_ID">2002</field>
@@ -4420,8 +4420,8 @@
                         <field name="City">Tver</field>
                         <field name="Country">Russia</field>
                         <field name="CreateDate">2014-01-01 00:00:00</field>
-                        <field name="Double">2.2E300</field>
-                        <field name="Float">3.299999974098775E30</field>
+                        <field name="Double">2200.0</field>
+                        <field name="Float">3300.0</field>
                         <field name="IsTested">True</field>
                         <field name="People">2014</field>
                         <field name="_ID">2003</field>
@@ -4430,8 +4430,8 @@
                         <field name="City">Pskov</field>
                         <field name="Country">Russia</field>
                         <field name="CreateDate">2014-01-01 00:00:00</field>
-                        <field name="Double">2.2E300</field>
-                        <field name="Float">3.299999974098775E30</field>
+                        <field name="Double">2200.0</field>
+                        <field name="Float">3300.0</field>
                         <field name="IsTested">True</field>
                         <field name="People">2014</field>
                         <field name="_ID">2004</field>
@@ -4556,8 +4556,8 @@
                             "City":"Moscow",
                             "Country":"Russia",
                             "CreateDate":"2014-01-01 00:00:00",
-                            "Double":"2.2E300",
-                            "Float":"3.299999974098775E30",
+                            "Double":"2200.0",
+                            "Float":"3300.0",
                             "IsTested":"True",
                             "People":"2014",
                             "_ID":"2001"
@@ -4568,8 +4568,8 @@
                             "City":"Saint-Petersburg",
                             "Country":"Russia",
                             "CreateDate":"2014-01-01 00:00:00",
-                            "Double":"2.2E300",
-                            "Float":"3.299999974098775E30",
+                            "Double":"2200.0",
+                            "Float":"3300.0",
                             "IsTested":"True",
                             "People":"2014",
                             "_ID":"2002"
@@ -4580,8 +4580,8 @@
                             "City":"Tver",
                             "Country":"Russia",
                             "CreateDate":"2014-01-01 00:00:00",
-                            "Double":"2.2E300",
-                            "Float":"3.299999974098775E30",
+                            "Double":"2200.0",
+                            "Float":"3300.0",
                             "IsTested":"True",
                             "People":"2014",
                             "_ID":"2003"
@@ -4592,8 +4592,8 @@
                             "City":"Pskov",
                             "Country":"Russia",
                             "CreateDate":"2014-01-01 00:00:00",
-                            "Double":"2.2E300",
-                            "Float":"3.299999974098775E30",
+                            "Double":"2200.0",
+                            "Float":"3300.0",
                             "IsTested":"True",
                             "People":"2014",
                             "_ID":"2004"
@@ -5428,7 +5428,7 @@
         <groups>
             <group>
                 <metric>4</metric>
-                <field name="Float">3299999974098775000000000000000</field>
+                <field name="Float">3300</field>
             </group>
             <group>
                 <metric>3</metric>
@@ -5461,7 +5461,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Float":"3299999974098775000000000000000"
+                      "Float":"3300"
                    }
                 }
              },
@@ -5505,7 +5505,7 @@
         <groups>
             <group>
                 <metric>4</metric>
-                <field name="Float">3299999974098775000000000000000</field>
+                <field name="Float">3300</field>
             </group>
         </groups>
     </results>
@@ -5526,7 +5526,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Float":"3299999974098775000000000000000"
+                      "Float":"3300"
                    }
                 }
              }
@@ -5546,7 +5546,7 @@
         <groups>
             <group>
                 <metric>4</metric>
-                <field name="Float">3299999974098775000000000000000</field>
+                <field name="Float">3300</field>
             </group>
             <group>
                 <metric>3</metric>
@@ -5579,7 +5579,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Float":"3299999974098775000000000000000"
+                      "Float":"3300"
                    }
                 }
              },
@@ -5635,7 +5635,7 @@
             </group>
             <group>
                 <metric>4</metric>
-                <field name="Float">3299999974098775000000000000000</field>
+                <field name="Float">3300</field>
             </group>
         </groups>
     </results>
@@ -5680,7 +5680,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Float":"3299999974098775000000000000000"
+                      "Float":"3300"
                    }
                 }
              }
@@ -5753,7 +5753,7 @@
             </group>
             <group>
                 <metric>4</metric>
-                <field name="Float">3299999974098775000000000000000</field>
+                <field name="Float">3300</field>
             </group>
         </groups>
     </results>
@@ -5798,7 +5798,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Float":"3299999974098775000000000000000"
+                      "Float":"3300"
                    }
                 }
              }
@@ -5821,7 +5821,7 @@
         <groups>
             <group>
                 <metric>4</metric>
-                <field name="Double">2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</field>
+                <field name="Double">2200</field>
             </group>
             <group>
                 <metric>3</metric>
@@ -5854,7 +5854,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Double":"2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                      "Double":"2200"
                    }
                 }
              },
@@ -5898,7 +5898,7 @@
         <groups>
             <group>
                 <metric>4</metric>
-                <field name="Double">2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</field>
+                <field name="Double">2200</field>
             </group>
         </groups>
     </results>
@@ -5919,7 +5919,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Double":"2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                      "Double":"2200"
                    }
                 }
              }
@@ -5939,7 +5939,7 @@
         <groups>
             <group>
                 <metric>4</metric>
-                <field name="Double">2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</field>
+                <field name="Double">2200</field>
             </group>
             <group>
                 <metric>3</metric>
@@ -5972,7 +5972,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Double":"2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                      "Double":"2200"
                    }
                 }
              },
@@ -6028,7 +6028,7 @@
             </group>
             <group>
                 <metric>4</metric>
-                <field name="Double">2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</field>
+                <field name="Double">2200</field>
             </group>
         </groups>
     </results>
@@ -6073,7 +6073,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Double":"2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                      "Double":"2200"
                    }
                 }
              }
@@ -6146,7 +6146,7 @@
             </group>
             <group>
                 <metric>4</metric>
-                <field name="Double">2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</field>
+                <field name="Double">2200</field>
             </group>
         </groups>
     </results>
@@ -6191,7 +6191,7 @@
                 "group":{
                    "metric":"4",
                    "field":{
-                      "Double":"2200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                      "Double":"2200"
                    }
                 }
              }

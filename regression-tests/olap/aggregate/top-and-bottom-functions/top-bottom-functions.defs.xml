@@ -38,8 +38,8 @@
             <field name="City">Moscow</field>
             <field name="CreateDate">2014</field>
             <field name="People">2014</field>
-            <field name="Float">3.3E30</field>
-            <field name="Double">2.2E300</field>
+            <field name="Float">3.3E3</field>
+            <field name="Double">2.2E3</field>
             <field name="IsTested">true</field>
             <field name="MV">
               <add>
@@ -52,8 +52,8 @@
             <field name="City">Saint-Petersburg</field>
             <field name="CreateDate">2014</field>
             <field name="People">2014</field>
-            <field name="Float">3.3E30</field>
-            <field name="Double">2.2E300</field>
+            <field name="Float">3.3E3</field>
+            <field name="Double">2.2E3</field>
             <field name="IsTested">true</field>
             <field name="MV">
               <add>
@@ -66,8 +66,8 @@
             <field name="City">Tver</field>
             <field name="CreateDate">2014</field>
             <field name="People">2014</field>
-            <field name="Float">3.3E30</field>
-            <field name="Double">2.2E300</field>
+            <field name="Float">3.3E3</field>
+            <field name="Double">2.2E3</field>
             <field name="IsTested">true</field>
             <field name="MV">
               <add>
@@ -80,8 +80,8 @@
             <field name="City">Pskov</field>
             <field name="CreateDate">2014</field>
             <field name="People">2014</field>
-            <field name="Float">3.3E30</field>
-            <field name="Double">2.2E300</field>
+            <field name="Float">3.3E3</field>
+            <field name="Double">2.2E3</field>
             <field name="IsTested">true</field>
             <field name="MV">
               <add>
