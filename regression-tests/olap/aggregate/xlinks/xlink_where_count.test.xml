@@ -52,6 +52,7 @@
     <echo>~ Test for XLinks ~</echo>
     <echo>~~~~~~~~~~~~~~~~~~~</echo>
     <AGGREGATE path="Application/Persons" m="COUNT(*)" q="Responses.WHERE(COUNT(Mailboxp.WHERE(Message=1))=0)" range="*" xrange="*"/>
+    <AGGREGATE path="Application/Mailboxes" m="COUNT(WHERE((Title='') AND (Person.WHERE(_ID=1002).Responses.Body='Root 2')).*)" q="*" range="*" xrange="*"/>
 
     <DELETE path="_applications/Application/ApplicationKey"/>
 </FOR>

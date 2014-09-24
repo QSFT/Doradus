@@ -147,6 +147,29 @@
     }
 
 *** Request
+    GET /Application/Mailboxes/_aggregate?m=COUNT(WHERE((Title='') AND (Person.WHERE(_ID=1002).Responses.Body='Root 2')).*)&q=*&range=*&xrange=*
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="COUNT(WHERE((Title='') AND (Person.WHERE(_ID=1002).Responses.Body='Root 2')).*)" query="*"/>
+        <totalobjects>3</totalobjects>
+        <value>0</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(WHERE((Title='') AND (Person.WHERE(_ID=1002).Responses.Body='Root 2')).*)",
+             "query":"*"
+          },
+          "totalobjects":"3",
+          "value":"0"
+       }
+    }
+
+*** Request
     DELETE /_applications/Application/ApplicationKey
 *** Response: 
     200 OK
@@ -296,6 +319,29 @@
           },
           "totalobjects":"4",
           "value":"4"
+       }
+    }
+
+*** Request
+    GET /Application/Mailboxes/_aggregate?m=COUNT(WHERE((Title='') AND (Person.WHERE(_ID=1002).Responses.Body='Root 2')).*)&q=*&range=*&xrange=*
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate
+            metric="COUNT(WHERE((Title='') AND (Person.WHERE(_ID=1002).Responses.Body='Root 2')).*)" query="*"/>
+        <totalobjects>3</totalobjects>
+        <value>0</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(WHERE((Title='') AND (Person.WHERE(_ID=1002).Responses.Body='Root 2')).*)",
+             "query":"*"
+          },
+          "totalobjects":"3",
+          "value":"0"
        }
     }
 
