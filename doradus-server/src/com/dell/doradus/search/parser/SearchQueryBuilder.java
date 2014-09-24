@@ -401,7 +401,8 @@ public class SearchQueryBuilder {
         if (second instanceof LinkQuery) {
             if (QueryUtils.HasInnerQuery(second)) {
                 Query last = QueryUtils.GetLastChild(second);
-                if (last instanceof LinkQuery)
+                //TODO check innerQueryFields   (datepartBinary, mvsbinary , not)
+                if (last instanceof LinkQuery || last instanceof TransitiveLinkQuery)
                     QueryUtils.SetInnerQuery(last, first);
                 else {
                     builderContext.queries.push(second);
@@ -856,13 +857,11 @@ public class SearchQueryBuilder {
     private static Query getQuery(LinkItem item, String operation, BuilderContext context) {
 
         String op = operation;
-        NotQuery notQuery = null;
         if (item.operation != null) {
             if (item.operation.equals("ANY"))
                 op = LinkQuery.ANY;
             if (item.operation.equals("NONE")) {
                 op = LinkQuery.NONE;
-                //notQuery = new NotQuery();
             }
             if (item.operation.equals("ALL"))
                 op = LinkQuery.ALL;
@@ -893,7 +892,6 @@ public class SearchQueryBuilder {
             }
         }
         Query result = null;
-        boolean allIsDone = false;
 
         if (item.item != null) {
             if (item.transitive != null && item.transitive.equals("^")) {
@@ -904,15 +902,8 @@ public class SearchQueryBuilder {
                 if (item.value != null) {
                     int tValue = Integer.parseInt(item.value.getValue());
                     tq.depth = tValue;
-                    result = tq;
                 }
-                if (notQuery != null) {
-                    notQuery.innerQuery = tq;
-                    result = notQuery;
-                } else {
-                    result = tq;
-                }
-                allIsDone = true;
+                result = tq;
             } else {
                 if (op.equals("COUNT")) {
                     result = new LinkQuery(op, item.item.getValue(), null);
@@ -935,9 +926,6 @@ public class SearchQueryBuilder {
             }
         }
 
-        if (allIsDone)
-            return result;
-
         for (int k = 0; k < item.items.size(); k++) {
             LinkItem lkitem = item.items.get(k);
 
@@ -949,14 +937,9 @@ public class SearchQueryBuilder {
                 QueryUtils.SetInnerQuery(last, query);
             }
         }
-        if (notQuery != null) {
-            notQuery.innerQuery = result;
-            result = notQuery;
-        }
-
-
         return result;
     }
+
     private static ArrayList<String> getPath(LinkItem item) {
         ArrayList<String> result = new ArrayList<String>();
         if (item.item != null)
