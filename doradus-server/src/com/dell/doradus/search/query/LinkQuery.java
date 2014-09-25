@@ -58,8 +58,9 @@ public class LinkQuery implements Query {
 	
 	@Override
 	public String toString() {
-		if(filter == null) return String.format("%s(%s).WHERE(%s)", quantifier, link, innerQuery.toString());
-		else return String.format("%s(%s.WHERE(%s)).WHERE(%s)", quantifier, link, filter, innerQuery.toString());
+		String innerStr =  innerQuery == null ? "null" : innerQuery.toString();
+		if(filter == null) return String.format("%s(%s).WHERE(%s)", quantifier, link, innerStr);
+		else return String.format("%s(%s.WHERE(%s)).WHERE(%s)", quantifier, link, filter, innerStr);
 	}
 	
 }
