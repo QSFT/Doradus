@@ -456,14 +456,20 @@ public class DoradusSearchQueryGrammar {
                 PeriodDefinition
         );
 
-        SequenceRule CommaSeparatedTermList = new SequenceRule("CommaSeparatedTermList");
+//        SequenceRule CommaSeparatedTermList = new SequenceRule("CommaSeparatedTermList");
 
-        GrammarRule CommaSeparatedTermListContinue = new SwitchRule(SwitchRule.First, "CommaSeparatedTermListContinue",
-                Grammar.Rule(OptWhiteSpaces, COMMA, OptWhiteSpaces, CommaSeparatedTermList),
-                Grammar.emptyRule
-        );
+//        GrammarRule CommaSeparatedTermListContinue = new SwitchRule(SwitchRule.First, "CommaSeparatedTermListContinue",
+//                Grammar.Rule(OptWhiteSpaces, COMMA, OptWhiteSpaces, CommaSeparatedTermList),
+//                Grammar.emptyRule
+//        );
 
-        CommaSeparatedTermList.body = Grammar.asRule(TermOrFunction, CommaSeparatedTermListContinue);
+//        CommaSeparatedTermList.body = Grammar.asRule(TermOrFunction, CommaSeparatedTermListContinue);
+
+        ListRule CommaSeparatedTermList = new ListRule("CommaSeparatedTermList",
+                TermOrFunction,
+                Grammar.Rule(OptWhiteSpaces, COMMA, OptWhiteSpaces)
+                );
+
 
         GrammarRule EqualsExpressionValue = new SwitchRule(SwitchRule.First, "EqualsExpressionValue",
                 RangeExpression,
