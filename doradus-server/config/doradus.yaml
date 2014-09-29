@@ -87,7 +87,7 @@ dbhost: 'localhost'
 
 # dbport: The RPC (Thrift) port of the Cassandra database. It must be the same on all nodes.
 # Default: 9160.
-dbport: 9160
+#dbport: 9160
 
 # jmxport: The JMX port of the Cassandra database. It must be the same on all nodes. Note that JMX
 # can be configured via runtime options to require authentication and/or TLS/SSL. Default: 7199.
@@ -132,8 +132,8 @@ max_read_attempts: 7
 # use_cql: Experimental: Set to true to use Cassandra's CQL API insead of Thrift. CQL is only
 # available if "start_native_transport: true" is set in cassandra.yaml.  Also, set "dbport" in this
 # file to the value of "native_transport_port" in cassandra.yaml, which is normally 9042.
-use_cql: false
-#dbport: 9042
+use_cql: true
+dbport: 9042
 
 ########## Doradus REST API Parameters
 #

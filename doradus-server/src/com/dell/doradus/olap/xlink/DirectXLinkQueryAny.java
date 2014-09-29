@@ -16,58 +16,30 @@
 
 package com.dell.doradus.olap.xlink;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.search.Result;
-import com.dell.doradus.olap.search.ResultBuilder;
 import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.FieldSearcher;
-import com.dell.doradus.olap.store.IdSearcher;
 import com.dell.doradus.olap.store.ValueSearcher;
 import com.dell.doradus.search.query.LinkQuery;
 import com.dell.doradus.search.query.Query;
 
 public class DirectXLinkQueryAny implements Query, XLinkQuery {
 	private FieldDefinition fieldDef;
-	private Query innerQuery;
-	private Set<BSTR> xresult;
-	private Set<BSTR> xfilter;
+	private XQueryAny xresult = new XQueryAny();
 	
 	public DirectXLinkQueryAny(XLinkContext ctx, TableDefinition tableDef, LinkQuery lq) {
 		fieldDef = tableDef.getFieldDef(lq.link);
-		innerQuery = lq.innerQuery;
-		xresult = search(ctx, fieldDef.getInverseTableDef(), innerQuery);
-		if(lq.filter != null) {
-			xfilter = search(ctx, fieldDef.getInverseTableDef(), lq.filter);
-		}
+		xresult.setup(ctx, fieldDef, lq.innerQuery, lq.filter);
 	}
 	
-	private Set<BSTR> search(XLinkContext ctx, TableDefinition tableDef, Query query) {
-		Set<BSTR> set = new HashSet<BSTR>();
-		for(String xshard : ctx.xshards) {
-			CubeSearcher searcher = ctx.olap.getSearcher(ctx.application, xshard);
-			Result r = ResultBuilder.search(tableDef, query, searcher);
-			IdSearcher ids = searcher.getIdSearcher(tableDef.getTableName());
-			for(int i = 0; i < r.size(); i++) {
-				if(!r.get(i)) continue;
-				BSTR id = ids.getId(i);
-				set.add(new BSTR(id));
-			}
-		}
-		return set;
-	}
-	
-
 	public void search(CubeSearcher searcher, Result result) {
 		ValueSearcher vs = searcher.getValueSearcher(fieldDef.getTableName(), fieldDef.getXLinkJunction());
 		Result r = new Result(vs.size());
 		for(int i = 0; i < r.size(); i++) {
 			BSTR val = vs.getValue(i);
-			if(xfilter != null && !xfilter.contains(val)) continue;
 			if(!xresult.contains(val)) continue;
 			r.set(i);
 		}

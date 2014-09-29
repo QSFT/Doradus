@@ -17,11 +17,8 @@
 package com.dell.doradus.olap.aggregate.mr;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import com.dell.doradus.common.Utils;
 import com.dell.doradus.search.aggregate.AggregationGroup;
 import com.dell.doradus.search.aggregate.Matcher;
 

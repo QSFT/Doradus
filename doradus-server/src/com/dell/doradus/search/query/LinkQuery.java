@@ -48,6 +48,13 @@ public class LinkQuery implements Query {
 		this.innerQuery = innerQuery;
 	}
 	
+	public LinkQuery(String quantifier, String link, Query innerQuery, Query filter) {
+		this.quantifier = quantifier;
+		this.link = link;
+		this.innerQuery = innerQuery;
+		this.filter = filter;
+	}
+	
 	public Query getInnerQuery() {
 		if(filter == null) return innerQuery;
 		AndQuery andQuery = new AndQuery();

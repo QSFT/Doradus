@@ -117,14 +117,10 @@ public class XLinkContext {
 			setupXLinkQuery(fieldDef.getInverseTableDef(), lq.filter);
 			if(!fieldDef.isXLinkField()) return;
 			if(fieldDef.isXLinkInverse()) {
-				if(LinkQuery.ALL.equals(lq.quantifier)) {
-					lq.xlink = new InverseXLinkQueryAll(this, tableDef, lq);
-				}
+				if(LinkQuery.ALL.equals(lq.quantifier)) lq.xlink = new InverseXLinkQueryAll(this, tableDef, lq);
 				else lq.xlink = new InverseXLinkQueryAny(this, tableDef, lq);
 			} else {
-				if(LinkQuery.ALL.equals(lq.quantifier)) {
-					lq.xlink = new DirectXLinkQueryAll(this, tableDef, lq);
-				}
+				if(LinkQuery.ALL.equals(lq.quantifier)) lq.xlink = new DirectXLinkQueryAll(this, tableDef, lq);
 				else lq.xlink = new DirectXLinkQueryAny(this, tableDef, lq);
 			}
 			if(LinkQuery.NONE.equals(lq.quantifier)) lq.xlink = new XLinkQueryNone(lq.xlink);

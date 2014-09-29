@@ -17,9 +17,7 @@
 package com.dell.doradus.olap.xlink;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
@@ -47,10 +45,6 @@ import com.dell.doradus.search.query.Query;
 
 // class representing structures needed during the search/aggregate, if external links are present 
 public class XLinkMetricContext {
-	
-	public static class XMetrics {
-		public Map<BSTR, IMetricValue> metricsMap = new HashMap<BSTR, IMetricValue>();
-	}
 	
 	public XLinkContext context;
 	
@@ -95,15 +89,27 @@ public class XLinkMetricContext {
 				metric.items.add(items.get(j));
 			}
 			metric.tableDef = item.tableDef;
-			XMetrics xmetrics = new XMetrics();
-			if(item.fieldDef.isXLinkDirect()) setupDirect(xmetrics, item.fieldDef, metric, item.query);
-			else setupInverse(xmetrics, item.fieldDef, metric, item.query);
+			XMetrics xmetrics = setup(item.fieldDef, metric, item.query);
+			//XMetrics xmetrics = new XMetrics();
+			//if(item.fieldDef.isXLinkDirect()) setupDirect(xmetrics, item.fieldDef, metric, item.query);
+			//else setupInverse(xmetrics, item.fieldDef, metric, item.query);
 			item.xlinkContext = xmetrics;
 			// restore the group and table definition
 			metric.items = items;
 			metric.tableDef = tableDef;
 		}
 		
+	}
+	
+	private XMetrics setup(FieldDefinition fieldDef, AggregationMetric metric, Query filter) {
+		XMetrics xmetrics = new XMetrics();
+		if(fieldDef.getInverseLinkDef().isXLinkDirect()) {
+			setupInverse(xmetrics, fieldDef, metric, filter);
+		}
+		else {
+			setupDirect(xmetrics, fieldDef, metric, filter);
+		}
+		return xmetrics;
 	}
 	
 	private void setupDirect(XMetrics xmetrics, FieldDefinition fieldDef, AggregationMetric metric, Query filter) {

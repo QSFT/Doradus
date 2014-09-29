@@ -16,17 +16,12 @@
 
 package com.dell.doradus.olap.xlink;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.search.Result;
-import com.dell.doradus.olap.search.ResultBuilder;
 import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.FieldSearcher;
-import com.dell.doradus.olap.store.IdSearcher;
 import com.dell.doradus.olap.store.ValueSearcher;
 import com.dell.doradus.search.query.LinkCountQuery;
 import com.dell.doradus.search.query.LinkCountRangeQuery;
@@ -34,56 +29,44 @@ import com.dell.doradus.search.query.Query;
 
 public class DirectXLinkQueryCount implements Query, XLinkQuery {
 	private FieldDefinition fieldDef;
-	private Set<BSTR> xfilter;
+	private XQueryCount xcount = new XQueryCount();
 	private int min;
 	private int max;
 	
 	public DirectXLinkQueryCount(XLinkContext ctx, TableDefinition tableDef, LinkCountQuery lq) {
 		fieldDef = tableDef.getFieldDef(lq.link);
-		if(lq.filter != null) {
-			xfilter = search(ctx, fieldDef.getInverseTableDef(), lq.filter);
-		}
+		xcount.setup(ctx, fieldDef, lq.filter);
 		min = lq.count;
 		max = lq.count + 1;
 	}
 
 	public DirectXLinkQueryCount(XLinkContext ctx, TableDefinition tableDef, LinkCountRangeQuery lq) {
 		fieldDef = tableDef.getFieldDef(lq.link);
-		if(lq.filter != null) {
-			xfilter = search(ctx, fieldDef.getInverseTableDef(), lq.filter);
-		}
+		xcount.setup(ctx, fieldDef, lq.filter);
 		min = lq.range.min == null ? Integer.MIN_VALUE : Integer.parseInt(lq.range.min);
 		max = lq.range.max == null ? Integer.MAX_VALUE : Integer.parseInt(lq.range.max);
 		if(!lq.range.minInclusive) min++;
 		if(lq.range.maxInclusive) max++;
 	}
 	
-	private Set<BSTR> search(XLinkContext ctx, TableDefinition tableDef, Query query) {
-		Set<BSTR> set = new HashSet<BSTR>();
-		for(String xshard : ctx.xshards) {
-			CubeSearcher searcher = ctx.olap.getSearcher(ctx.application, xshard);
-			Result r = ResultBuilder.search(tableDef, query, searcher);
-			IdSearcher ids = searcher.getIdSearcher(tableDef.getTableName());
-			for(int i = 0; i < r.size(); i++) {
-				if(!r.get(i)) continue;
-				BSTR id = ids.getId(i);
-				set.add(new BSTR(id));
-			}
-		}
-		return set;
-	}
-	
-
 	public void search(CubeSearcher searcher, Result result) {
 		ValueSearcher vs = searcher.getValueSearcher(fieldDef.getTableName(), fieldDef.getXLinkJunction());
-		Result r = new Result(vs.size());
-		for(int i = 0; i < r.size(); i++) {
+		int[] counts = new int[vs.size()];
+		for(int i = 0; i < vs.size(); i++) {
 			BSTR val = vs.getValue(i);
-			if(xfilter != null && !xfilter.contains(val)) continue;
-			r.set(i);
+			int count = xcount.get(val);
+			counts[i] = count;
 		}
 		FieldSearcher fs = searcher.getFieldSearcher(fieldDef.getTableName(), fieldDef.getXLinkJunction());
-		fs.fillCount(min, max, r, result);
+		for(int doc = 0; doc < fs.size(); doc++) {
+			int count = 0;
+			int fcount = fs.fieldsCount(doc);
+			for(int i = 0; i < fcount; i++) {
+				int field = fs.getField(doc, i);
+				count += counts[field];
+			}
+			if(count >= min && count < max) result.set(doc);
+		}
 	}
 	
 }

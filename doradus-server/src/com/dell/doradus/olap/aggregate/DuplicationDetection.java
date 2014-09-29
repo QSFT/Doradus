@@ -30,7 +30,6 @@ import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.io.FileDeletedException;
 import com.dell.doradus.olap.io.VDirectory;
 import com.dell.doradus.olap.merge.IxDoc;
-import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.IdReader;
 import com.dell.doradus.search.FieldSet;
 import com.dell.doradus.search.SearchResult;

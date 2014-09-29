@@ -24,7 +24,6 @@ import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.FieldSearcher;
 import com.dell.doradus.olap.store.IntIterator;
 import com.dell.doradus.olap.store.ValueSearcher;
-import com.dell.doradus.olap.xlink.XLinkMetricContext.XMetrics;
 
 public class DirectXLinkMetricCounter extends MetricCounter
 {

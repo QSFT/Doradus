@@ -23,7 +23,6 @@ import com.dell.doradus.olap.collections.BdLongSet;
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.IdSearcher;
-import com.dell.doradus.olap.xlink.XLinkGroupContext.XGroups;
 
 public class InverseXLinkCollector extends MFCollector
 {

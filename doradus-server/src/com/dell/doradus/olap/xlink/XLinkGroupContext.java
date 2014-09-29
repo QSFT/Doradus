@@ -42,12 +42,6 @@ import com.dell.doradus.search.query.Query;
 // class representing structures needed during the search/aggregate, if external links are present 
 public class XLinkGroupContext {
 	
-	public static class XGroups {
-		public int maxValues;
-		public Map<BSTR, BdLongSet> groupsMap = new HashMap<BSTR, BdLongSet>();
-		public List<MGName> groupNames = new ArrayList<MGName>();
-	}
-	
 	public XLinkContext context;
 	
 	public XLinkGroupContext(XLinkContext context) {
@@ -75,15 +69,27 @@ public class XLinkGroupContext {
 				group.items.add(items.get(j));
 			}
 			group.tableDef = item.tableDef;
-			XGroups xgroups = new XGroups();
-			if(item.fieldDef.isXLinkDirect()) setupDirect(xgroups, item.fieldDef, group, item.query);
-			else setupInverse(xgroups, item.fieldDef, group, item.query);
+			XGroups xgroups = setup(item.fieldDef, group, item.query);
+			//XGroups xgroups = new XGroups();
+			//if(item.fieldDef.isXLinkDirect()) setupDirect(xgroups, item.fieldDef, group, item.query);
+			//else setupInverse(xgroups, item.fieldDef, group, item.query);
 			item.xlinkContext = xgroups;
 			// restore the group and table def
 			group.items = items;
 			group.tableDef = tableDef;
 		}
 		
+	}
+	
+	private XGroups setup(FieldDefinition fieldDef, AggregationGroup group, Query filter) {
+		XGroups xgroups = new XGroups();
+		if(fieldDef.getInverseLinkDef().isXLinkDirect()) {
+			setupInverse(xgroups, fieldDef, group, filter);
+		}
+		else {
+			setupDirect(xgroups, fieldDef, group, filter);
+		}
+		return xgroups;
 	}
 	
 	private void setupDirect(XGroups xgroups, FieldDefinition fieldDef, AggregationGroup group, Query filter) {

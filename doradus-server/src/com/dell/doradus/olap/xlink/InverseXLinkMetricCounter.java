@@ -22,7 +22,6 @@ import com.dell.doradus.olap.aggregate.MetricCounter;
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.IdSearcher;
-import com.dell.doradus.olap.xlink.XLinkMetricContext.XMetrics;
 
 public class InverseXLinkMetricCounter extends MetricCounter
 {

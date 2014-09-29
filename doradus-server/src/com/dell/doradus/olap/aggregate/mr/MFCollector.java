@@ -39,7 +39,7 @@ import com.dell.doradus.olap.store.NumSearcherMV;
 import com.dell.doradus.olap.store.ValueSearcher;
 import com.dell.doradus.olap.xlink.DirectXLinkCollector;
 import com.dell.doradus.olap.xlink.InverseXLinkCollector;
-import com.dell.doradus.olap.xlink.XLinkGroupContext.XGroups;
+import com.dell.doradus.olap.xlink.XGroups;
 import com.dell.doradus.search.aggregate.AggregationGroup;
 import com.dell.doradus.search.aggregate.AggregationGroup.SubField;
 import com.dell.doradus.search.aggregate.AggregationGroupItem;

@@ -24,7 +24,7 @@ import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.NumSearcher;
 import com.dell.doradus.olap.xlink.DirectXLinkMetricCounter;
 import com.dell.doradus.olap.xlink.InverseXLinkMetricCounter;
-import com.dell.doradus.olap.xlink.XLinkMetricContext.XMetrics;
+import com.dell.doradus.olap.xlink.XMetrics;
 import com.dell.doradus.search.aggregate.AggregationGroupItem;
 import com.dell.doradus.search.aggregate.AggregationMetric;
 import com.dell.doradus.search.aggregate.BinaryExpression;
