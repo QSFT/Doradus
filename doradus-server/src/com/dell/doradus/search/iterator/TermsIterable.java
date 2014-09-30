@@ -17,6 +17,7 @@
 package com.dell.doradus.search.iterator;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class TermsIterable implements Iterable<ObjectID> {
 	private List<Integer> m_shards;
 	private ObjectID m_continuation;
 	private boolean m_inclusive;
-	private List<String> m_terms = new ArrayList<String>();
+	private Set<String> m_terms = new HashSet<String>();
 
     public TermsIterable(TableDefinition table, List<Integer> shards, ObjectID continuation, boolean inclusive) {
     	m_table = table;
@@ -60,8 +61,8 @@ public class TermsIterable implements Iterable<ObjectID> {
 		if(m_terms.size() == 0) return NoneIterator.instance;
 		
 		if(m_shards.size() * m_terms.size() == 1) {
-			List<ObjectID> lst = SpiderHelper.getTermDocs(m_table, m_shards.get(0), m_terms.get(0), m_continuation, m_inclusive, count);
-			return new TermIterable(m_table, m_shards.get(0), m_terms.get(0), count, lst).iterator();
+			List<ObjectID> lst = SpiderHelper.getTermDocs(m_table, m_shards.get(0), m_terms.iterator().next(), m_continuation, m_inclusive, count);
+			return new TermIterable(m_table, m_shards.get(0), m_terms.iterator().next(), count, lst).iterator();
 		}
 		
 		OrIterable or = new OrIterable(m_shards.size() * m_terms.size());
