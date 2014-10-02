@@ -456,20 +456,10 @@ public class DoradusSearchQueryGrammar {
                 PeriodDefinition
         );
 
-//        SequenceRule CommaSeparatedTermList = new SequenceRule("CommaSeparatedTermList");
-
-//        GrammarRule CommaSeparatedTermListContinue = new SwitchRule(SwitchRule.First, "CommaSeparatedTermListContinue",
-//                Grammar.Rule(OptWhiteSpaces, COMMA, OptWhiteSpaces, CommaSeparatedTermList),
-//                Grammar.emptyRule
-//        );
-
-//        CommaSeparatedTermList.body = Grammar.asRule(TermOrFunction, CommaSeparatedTermListContinue);
-
         ListRule CommaSeparatedTermList = new ListRule("CommaSeparatedTermList",
                 TermOrFunction,
                 Grammar.Rule(OptWhiteSpaces, COMMA, OptWhiteSpaces)
                 );
-
 
         GrammarRule EqualsExpressionValue = new SwitchRule(SwitchRule.First, "EqualsExpressionValue",
                 RangeExpression,
@@ -493,7 +483,6 @@ public class DoradusSearchQueryGrammar {
         SequenceRule ContainsExpression = new SequenceRule("ContainsExpression");
 
 
-
         GrammarRule Value = new SwitchRule("Value",
                 Grammar.Rule(OptWhiteSpaces, LEFTPAREN, OptWhiteSpaces, ContainsExpression, OptWhiteSpaces, RIGHTPAREN),
                 TermOrFunction,
@@ -507,7 +496,7 @@ public class DoradusSearchQueryGrammar {
         );
 
         ContainsExpression.body = Grammar.asRule(Value, ContainsExpressionContinue);
-        //+
+
         GrammarRule CompareOperation = new SwitchRule("CompareOperation",
                 LESS,
                 LESSEQUAL,
@@ -624,7 +613,8 @@ public class DoradusSearchQueryGrammar {
 
         GrammarRule StartingWhereClause = Grammar.Rule("StartingWhereClause",
                 WHERE , Grammar.DropLexem, OptWhiteSpaces, LEFTPAREN, OptWhiteSpaces,
-                Query, OptWhiteSpaces, RIGHTPAREN,  WhereClauseEnd);
+                Query, OptWhiteSpaces, RIGHTPAREN,  WhereClauseEnd
+        );
 
 
         GrammarRule CountExpressionFieldPath = new SwitchRule(SwitchRule.First, "CountExpressionFieldPath",
@@ -633,15 +623,12 @@ public class DoradusSearchQueryGrammar {
                 FieldPath
         );
 
-
         GrammarRule CountExpression = Grammar.Rule("CountExpression",
                 COUNT, Grammar.MustMatchAction, OptWhiteSpaces, LEFTPAREN,
                 OptWhiteSpaces,  CountExpressionFieldPath, OptWhiteSpaces, RIGHTPAREN, LinkFunctionEndSemantic,
                 OptWhiteSpaces, CountExpressionContinue
         );
 
-        SwitchRule FieldPathContinue = new SwitchRule("FieldPathContinue");
-        GrammarRule FieldPathNext = Grammar.Rule("FieldPathNext", FieldName, DotSemantic, FieldPathContinue);
 
         GrammarRule NextClause = new SwitchRule("NextClause",
                 Grammar.Rule(Grammar.WhiteSpaces, OptionalLogicOperation, Query),
@@ -655,6 +642,10 @@ public class DoradusSearchQueryGrammar {
                 WHERE, Grammar.MustMatchAction, OptWhiteSpaces,
                 LEFTPAREN, Grammar.Semantic("("), OptWhiteSpaces, Grammar.MustMatchAction, Query, OptWhiteSpaces, RIGHTPAREN
         );
+
+        SwitchRule FieldPathContinue = new SwitchRule("FieldPathContinue");
+        GrammarRule FieldPathNext = Grammar.Rule("FieldPathNext", FieldName, DotSemantic, FieldPathContinue);
+
 
         FieldPathContinue.body = Grammar.asRule(
                 Grammar.Rule(DOT, Grammar.Semantic("WHERE_FILTER_START"),
@@ -679,15 +670,32 @@ public class DoradusSearchQueryGrammar {
         WhereContinue.body = bodyw;
 
 
-        List<GrammarRule> body = new ArrayList<>();
+        GrammarRule ExpressionContinueWithoutTransitive = new SwitchRule(SwitchRule.First, "ExpressionContinueWithoutTransitive",
+                Grammar.Rule(DOT, TimestampSubfield, Grammar.MustMatchAction, Grammar.SetType("lexem"), DotSemantic, SearchCriteria),
+                Grammar.Rule(DOT, QueryWhere , WhereContinue ),
+                Grammar.Rule(DOT, ExplicitQuantifierFunction, DotSemantic, ExpressionContinue),
+                Grammar.Rule(DOT, Grammar.MustMatchAction, FieldName, DotSemantic, ExpressionContinue),
+                Grammar.Rule(SearchCriteria)
 
+        );
+
+
+        /*
+        List<GrammarRule> body = new ArrayList<>();
             body.add(Grammar.Rule(DOT, TimestampSubfield, Grammar.MustMatchAction, Grammar.SetType("lexem"), DotSemantic, SearchCriteria));
             body.add(Grammar.Rule(DOT, QueryWhere , WhereContinue ));
             body.add(Grammar.Rule(DOT, ExplicitQuantifierFunction, DotSemantic, ExpressionContinue));
             body.add(Grammar.Rule(DOT, Grammar.MustMatchAction, FieldName, DotSemantic, ExpressionContinue));
-            body.add( Grammar.Rule(TRANSITIVE, Grammar.MustMatchAction, OptionalTransitiveLimit, OptionalTransitiveField, SearchCriteria));
-            body.add(SearchCriteria);
+            //body.add( Grammar.Rule(TRANSITIVE, Grammar.MustMatchAction, OptionalTransitiveLimit, OptionalTransitiveField, SearchCriteria));
+            body.add( Grammar.Rule(TRANSITIVE, Grammar.MustMatchAction, OptionalTransitiveLimit, ExpressionContinueWithoutTransitive));
 
+            body.add(SearchCriteria);
+         */
+
+        List<GrammarRule> body = new ArrayList<>();
+            body.add(ExpressionContinueWithoutTransitive);
+            body.add(Grammar.Rule(TRANSITIVE, Grammar.MustMatchAction, OptionalTransitiveLimit, ExpressionContinueWithoutTransitive));
+            body.add(SearchCriteria);
 
         ExpressionContinue.body = body;
 
@@ -720,26 +728,15 @@ public class DoradusSearchQueryGrammar {
                 Query, SkipWhiteSpacesRule, Grammar.Semantic("EOF")
         );
 
-        SequenceRule NumbersList = new SequenceRule("NumbersList");
-
         GrammarRule FloatPointNumberOrTerm = new SwitchRule(SwitchRule.First, "FloatPointNumberOrTerm",
                 FloatPointNumber,
                 Term
         );
 
-        GrammarRule NumbersListContinue = new SwitchRule(SwitchRule.First, "NumbersListContinue",
-                Grammar.Rule(OptWhiteSpaces, COMMA, Grammar.SetType("ignore"), OptWhiteSpaces, NumbersList),
-                Grammar.Rule(Grammar.emptyRule)
-        );
-
-        NumbersList.body = Grammar.asRule(FloatPointNumberOrTerm, Grammar.SetType("BatchValue"), NumbersListContinue);
-
-        SequenceRule ExcludeNameList = new SequenceRule("ExcludeNameList");
-
-        GrammarRule ExcludeNameListContinue = new SwitchRule("ExcludeNameLisContinue",
-                Grammar.Rule(SkipWhiteSpacesRule, COMMA, Grammar.SetType("ignore"), SkipWhiteSpacesRule, Grammar.MustMatchAction, ExcludeNameList),
-                Grammar.emptyRule
-        );
+        ListRule NumbersList = new ListRule("NumbersList",
+                    Grammar.Rule(FloatPointNumberOrTerm, Grammar.SetType("BatchValue")),
+                    Grammar.Rule(OptWhiteSpaces, COMMA, Grammar.SetType("ignore"), OptWhiteSpaces)
+                );
 
         GrammarRule ExcludeItemValue = new SwitchRule(SwitchRule.First, "ExcludeItemValue",
                 FloatPointNumber,
@@ -747,7 +744,10 @@ public class DoradusSearchQueryGrammar {
                 NULL
         );
 
-        ExcludeNameList.body = Grammar.asRule(ExcludeItemValue, Grammar.SetType("excludeValue"), ExcludeNameListContinue);
+        ListRule ExcludeNameList = new ListRule("ExcludeNameList",
+                Grammar.Rule(ExcludeItemValue, Grammar.SetType("excludeValue")),
+                Grammar.Rule(SkipWhiteSpacesRule, COMMA, Grammar.SetType("ignore"), SkipWhiteSpacesRule, Grammar.MustMatchAction)
+        );
 
         SequenceRule AggregationFieldPath = new SequenceRule("AggregationFieldPath");
 
@@ -755,7 +755,6 @@ public class DoradusSearchQueryGrammar {
                 Grammar.Rule(EXCLUDE, Grammar.SetType("ExcludeList")),
                 Grammar.Rule(INCLUDE, Grammar.SetType("IncludeList"))
         );
-
 
         GrammarRule AggregationFieldPathEnd = Grammar.Rule("AggregationFieldPathEnd",
                 DOT, ExcludeOrInclude,  Grammar.MustMatchAction, SkipWhiteSpacesRule, LEFTPAREN, Grammar.SetType("ignore"),
@@ -780,7 +779,7 @@ public class DoradusSearchQueryGrammar {
                 Grammar.emptyRule
         );
 
-        Subfield.body = Grammar.asRule(WORD, Grammar.debugGrammarRule, SubfieldContinue);
+        Subfield.body = Grammar.asRule(WORD, SubfieldContinue);
 
         SwitchRule OptionalWhereClause = new SwitchRule("OptionalWhereClause");
         OptionalWhereClause.setMode(SwitchRule.First);
@@ -1072,9 +1071,6 @@ public class DoradusSearchQueryGrammar {
                         OptWhiteSpaces, LEFTPAREN, OptWhiteSpaces, NUMBER, Grammar.SetType("topbottomvalue"),
                         OptWhiteSpaces, COMMA, Grammar.SetType("ignore"),
                         OptWhiteSpaces, AggregationQueryBatchClause, OptWhiteSpaces, RIGHTPAREN)
-                //Grammar.Rule(OptWhiteSpaces, Grammar.debugGrammarRule, AggregationFieldPath,
-                //            Grammar.SetType(SemanticNames.TRUNCATE_SUBFIELD_VALUE))
-
         );
 
         GrammarRule AggregationAliasName = new SwitchRule(SwitchRule.First, "AggregationAliasName",

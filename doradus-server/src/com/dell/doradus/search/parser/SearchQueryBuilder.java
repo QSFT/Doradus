@@ -398,7 +398,7 @@ public class SearchQueryBuilder {
         if (notQuery)
             second = ((NotQuery) second).innerQuery;
 
-        if (second instanceof LinkQuery) {
+        if (second instanceof LinkQuery || second instanceof TransitiveLinkQuery)   {
             if (QueryUtils.HasInnerQuery(second)) {
                 Query last = QueryUtils.GetLastChild(second);
                 //TODO check innerQueryFields   (datepartBinary, mvsbinary , not)
@@ -415,13 +415,8 @@ public class SearchQueryBuilder {
                     builderContext.queries.push(second);
                 return;
             } else {
-                LinkQuery lq = (LinkQuery) second;
-                lq.innerQuery = first;
-                if (notQuery) {
-                    builderContext.queries.push(secondQuery);
-                } else {
-                    builderContext.queries.push(lq);
-                }
+                QueryUtils.SetInnerQuery(second, first);
+                builderContext.queries.push(second);
                 return;
             }
         } else {
@@ -954,6 +949,10 @@ public class SearchQueryBuilder {
     }
 
     private static GrammarItem GetGrammarItem(LinkItem item) {
+
+        if (item.transitive != null)
+            return null;
+
         if (item.item != null) {
             if (item.operation == null)
                 return item.item;
