@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -381,10 +382,13 @@ public class ServerConfig {
     private static boolean setParamFromString(String name, String value) throws ConfigurationException {
         try {
             Field field = config.getClass().getDeclaredField(name);
-            if (field.getType().toString().compareToIgnoreCase("int") == 0) {
+            String fieldType = field.getType().toString();
+            if (fieldType.compareToIgnoreCase("int") == 0) {
                 field.set(config, Integer.parseInt(value));
-            } else if (field.getType().toString().compareToIgnoreCase("boolean") == 0) {
+            } else if (fieldType.compareToIgnoreCase("boolean") == 0) {
                 field.set(config, Boolean.parseBoolean(value));
+            } else if (fieldType.endsWith("List")) {
+                setCollectionParam(name, Arrays.asList(value.split(",")));
             } else {
                 field.set(config, value);
             }
@@ -428,8 +432,12 @@ public class ServerConfig {
     // Set a List<String> configuration parameter
     private static void setListParam(Field field, List<?> values) {
         try {
-            // Find List method: add(Object) 
+            // Find method: clear() and call it
             Class<?> fieldClass = field.getType();
+            Method clearMethod = fieldClass.getMethod("clear");
+            clearMethod.invoke(field.get(config));
+            
+            // Find List method: add(Object) 
             Method addMethod = fieldClass.getMethod("add", Object.class);
             
             // Add each map key/value to field value
