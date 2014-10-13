@@ -33,7 +33,7 @@ public class MetricValueCount implements IMetricValue {
 
 	@Override public void add(IMetricValue value) {
 		MetricValueCount m = (MetricValueCount)value;
-		add(m.metric);
+		metric += m.metric; 
 	}
 
 	@Override public void add(long value) { metric++; }
