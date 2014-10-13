@@ -28,6 +28,7 @@ public abstract class MetricCounterTransitive extends MetricCounter {
 	protected FieldSearcher m_fs;
 	protected IntIterator m_iter;
 	protected BdLongSet m_set;
+	protected BdLongSet m_filteredSet;
 	protected int m_depth;
 	
 	public abstract void addInternal(IMetricValue value);
@@ -38,6 +39,8 @@ public abstract class MetricCounterTransitive extends MetricCounter {
 		m_iter = new IntIterator();
 		m_set = new BdLongSet(1024);
 		m_set.enableClearBuffer();
+		m_filteredSet = new BdLongSet(1024);
+		m_filteredSet.enableClearBuffer();
 		m_depth = Math.min(depth, 1024);
 		if(m_depth == 0) m_depth = 1024;
 	}
@@ -55,16 +58,23 @@ public abstract class MetricCounterTransitive extends MetricCounter {
 				m_fs.fields(doc, m_iter);
 				for(int j = 0; j < m_iter.count(); j++) {
 					int d = m_iter.get(j);
-					if(m_filter != null && !m_filter.get(d)) continue;
 					m_set.add(d);
 				}
 			}
 			last_size = current_size;
 		}
 		
+		// skip first element because it's the original id
+		for(int i = 1; i < m_set.size(); i++) {
+			long d = m_set.get(i);
+			if(m_filter != null && !m_filter.get((int)d)) continue;
+			m_filteredSet.add(d);
+		}
+		
 		addInternal(value);
 		
 		m_set.clear();
+		m_filteredSet.clear();
 	}
 	
 	
@@ -77,10 +87,8 @@ public abstract class MetricCounterTransitive extends MetricCounter {
 		}
 		
 		@Override public void addInternal(IMetricValue value) {
-			//m_set.sort();
-			//start with 1 because original doc resides at index 0 
-			for(int i = 1; i < m_set.size(); i++) {
-				int d = (int)m_set.get(i);
+			for(int i = 0; i < m_filteredSet.size(); i++) {
+				int d = (int)m_filteredSet.get(i);
 				m_inner.add(d, value);
 			}
 		}
@@ -93,8 +101,8 @@ public abstract class MetricCounterTransitive extends MetricCounter {
 		}
 		
 		@Override public void addInternal(IMetricValue value) {
-			if(m_set.size() <= 1) return;
-			value.add(m_set.size() - 1);
+			if(m_filteredSet.size() == 0) return;
+			value.add(m_filteredSet.size());
 		}
 	}
 	
@@ -105,8 +113,8 @@ public abstract class MetricCounterTransitive extends MetricCounter {
 		}
 		
 		@Override public void addInternal(IMetricValue value) {
-			for(int i = 1; i < m_set.size(); i++) {
-				int d = (int)m_set.get(i);
+			for(int i = 0; i < m_filteredSet.size(); i++) {
+				int d = (int)m_filteredSet.get(i);
 				value.add(d);
 			}
 		}

@@ -479,6 +479,12 @@ public class ResultBuilder {
 				resultsCount = nextCount;
 			}
 			
+			if(lq.filter != null) {
+				Result filter = ResultBuilder.search(extent, lq.filter, searcher);
+				r.and(filter);
+			}
+			return r;
+			
 		} else if(query instanceof IdQuery) {
 			IdQuery iq = (IdQuery)query;
 			if("*".equals(iq.id)) {

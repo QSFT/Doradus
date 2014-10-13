@@ -498,7 +498,6 @@ public abstract class MFCollector {
 					m_fieldSearcher.fields((int)doc, m_iter);
 					for(int j = 0; j < m_iter.count(); j++) {
 						int d = m_iter.get(j);
-						if(m_filter != null && !m_filter.get(d)) continue;
 						m_set.add(d);
 					}
 				}
@@ -507,6 +506,7 @@ public abstract class MFCollector {
 			
 			for(int i = 1; i < m_set.size(); i++) {
 				long d = m_set.get(i);
+				if(m_filter != null && !m_filter.get((int)d)) continue;
 				m_collector.collect(d, values);
 			}
 			
