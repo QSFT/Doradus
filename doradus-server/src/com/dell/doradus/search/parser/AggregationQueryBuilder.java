@@ -251,12 +251,10 @@ public class AggregationQueryBuilder {
                     ai.query = CompileQuery(tableDef, ai.query, filterItems);
                 }
             }
-
         }
 
         metric.sourceText = context.inputString.substring(ptr);
         result.add(metric);
-
         return result;
     }
 
@@ -416,13 +414,23 @@ public class AggregationQueryBuilder {
                 continue;
             }
 
-            if (item.item.getType().equals(SemanticNames.TRANSITIVE_VALUE)) {
-                metric.items.get(metric.items.size() - 1).transitiveDepth = Integer.parseInt(item.item.getValue());
-                continue;
-            }
-            if (item.item.getType().equals(SemanticNames.TRANSITIVE)) {
-                metric.items.get(metric.items.size() - 1).isTransitive = true;
-                ;
+            if (item.item.getType().equals(SemanticNames.TRANSITIVE_VALUE) || item.item.getType().equals(SemanticNames.TRANSITIVE)) {
+                AggregationGroupItem agItem = metric.items.get(metric.items.size() - 1);
+
+                if (item.item.getType().equals(SemanticNames.TRANSITIVE_VALUE)) {
+                    agItem.transitiveDepth = Integer.parseInt(item.item.getValue());
+                } else {
+                    agItem.isTransitive = true;
+                }
+
+                if (item.queryItems != null) {
+                    for (int j = 0; j < item.queryItems.size(); j++) {
+                        ArrayList<GrammarItem> filterItems = item.queryItems.get(j);
+                        agItem.query = CompileQuery(tableDef, agItem.query, filterItems);
+                    }
+                }
+
+
                 continue;
             }
 
@@ -873,13 +881,21 @@ public class AggregationQueryBuilder {
                     continue;
                 }
 
-                if (type.equals(SemanticNames.TRANSITIVE_VALUE)) {
-                    aggregationGroup.items.get(aggregationGroup.items.size() - 1).transitiveDepth = Integer.parseInt(item.item.getValue());
-                    continue;
-                }
-                if (item.item.getType().equals(SemanticNames.TRANSITIVE)) {
-                    aggregationGroup.items.get(aggregationGroup.items.size() - 1).isTransitive = true;
-                    ;
+                if (type.equals(SemanticNames.TRANSITIVE_VALUE) || type.equals(SemanticNames.TRANSITIVE)) {
+                    AggregationGroupItem agItem = aggregationGroup.items.get(aggregationGroup.items.size() - 1);
+                    if (type.equals(SemanticNames.TRANSITIVE_VALUE)) {
+                        agItem.transitiveDepth = Integer.parseInt(item.item.getValue());
+                    } else {
+                        agItem.isTransitive = true;
+                    }
+                    if (item.queryItems != null) {
+                        for (int j = 0; j < item.queryItems.size(); j++) {
+                            ArrayList<GrammarItem> filterItems = item.queryItems.get(j);
+                            agItem.query = CompileQuery(tableDef, agItem.query, filterItems);
+                            GrammarItem last = filterItems.get(filterItems.size() - 2);
+                            lastPos = last.getPtr() + last.getValue().length();
+                        }
+                    }
                     continue;
                 }
 

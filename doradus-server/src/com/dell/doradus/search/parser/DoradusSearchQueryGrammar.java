@@ -793,7 +793,7 @@ public class DoradusSearchQueryGrammar {
         OptionalWhereClause.body = obody;
 
         GrammarRule OptionalTransitiveClause = new SwitchRule(SwitchRule.First, "OptionalTransitiveClause",
-                Grammar.Rule(TRANSITIVE, Grammar.SetType("transitive"), LEFTPAREN, Grammar.DropLexem, NUMBER, Grammar.SetType("transitiveValue"), RIGHTPAREN),
+                Grammar.Rule(TRANSITIVE, Grammar.SetType("transitive"), LEFTPAREN, Grammar.DropLexem, NUMBER, Grammar.SetType("transitiveValue"), RIGHTPAREN, Grammar.DropLexem),
                 Grammar.Rule(TRANSITIVE, Grammar.SetType("transitive") ),
                 Grammar.emptyRule
         );
