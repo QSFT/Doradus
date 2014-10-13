@@ -1105,15 +1105,15 @@
     <results>
         <aggregate group="Country" metric="COUNT(Float)" query="*"/>
         <totalobjects>12</totalobjects>
-        <summary>12</summary>
+        <summary>5</summary>
         <totalgroups>2</totalgroups>
         <groups>
             <group>
-                <metric>6</metric>
+                <metric>3</metric>
                 <field name="Country">Russia</field>
             </group>
             <group>
-                <metric>6</metric>
+                <metric>2</metric>
                 <field name="Country">USA</field>
             </group>
         </groups>
@@ -1128,12 +1128,12 @@
              "group":"Country"
           },
           "totalobjects":"12",
-          "summary":"12",
+          "summary":"5",
           "totalgroups":"2",
           "groups":[
              {
                 "group":{
-                   "metric":"6",
+                   "metric":"3",
                    "field":{
                       "Country":"Russia"
                    }
@@ -1141,7 +1141,7 @@
              },
              {
                 "group":{
-                   "metric":"6",
+                   "metric":"2",
                    "field":{
                       "Country":"USA"
                    }
@@ -1317,15 +1317,15 @@
     <results>
         <aggregate group="Country" metric="COUNT(Float)*1.5*(-2)" query="*"/>
         <totalobjects>12</totalobjects>
-        <summary>-36</summary>
+        <summary>-15</summary>
         <totalgroups>2</totalgroups>
         <groups>
             <group>
-                <metric>-18</metric>
+                <metric>-9</metric>
                 <field name="Country">Russia</field>
             </group>
             <group>
-                <metric>-18</metric>
+                <metric>-6</metric>
                 <field name="Country">USA</field>
             </group>
         </groups>
@@ -1340,12 +1340,12 @@
              "group":"Country"
           },
           "totalobjects":"12",
-          "summary":"-36",
+          "summary":"-15",
           "totalgroups":"2",
           "groups":[
              {
                 "group":{
-                   "metric":"-18",
+                   "metric":"-9",
                    "field":{
                       "Country":"Russia"
                    }
@@ -1353,7 +1353,7 @@
              },
              {
                 "group":{
-                   "metric":"-18",
+                   "metric":"-6",
                    "field":{
                       "Country":"USA"
                    }
@@ -1440,15 +1440,15 @@
                 </groups>
             </groupset>
             <groupset group="Country" metric="COUNT(Float)*1.5*(-2)">
-                <summary>-36</summary>
+                <summary>-15</summary>
                 <totalgroups>2</totalgroups>
                 <groups>
                     <group>
-                        <metric>-18</metric>
+                        <metric>-9</metric>
                         <field name="Country">Russia</field>
                     </group>
                     <group>
-                        <metric>-18</metric>
+                        <metric>-6</metric>
                         <field name="Country">USA</field>
                     </group>
                 </groups>
@@ -1510,12 +1510,12 @@
                 "groupset":{
                    "group":"Country",
                    "metric":"COUNT(Float)*1.5*(-2)",
-                   "summary":"-36",
+                   "summary":"-15",
                    "totalgroups":"2",
                    "groups":[
                       {
                          "group":{
-                            "metric":"-18",
+                            "metric":"-9",
                             "field":{
                                "Country":"Russia"
                             }
@@ -1523,7 +1523,7 @@
                       },
                       {
                          "group":{
-                            "metric":"-18",
+                            "metric":"-6",
                             "field":{
                                "Country":"USA"
                             }
@@ -1625,15 +1625,15 @@
     <results>
         <aggregate group="Country" metric="COUNT(Double)*1.5*(-2)" query="*"/>
         <totalobjects>12</totalobjects>
-        <summary>-36</summary>
+        <summary>-15</summary>
         <totalgroups>2</totalgroups>
         <groups>
             <group>
-                <metric>-18</metric>
+                <metric>-9</metric>
                 <field name="Country">Russia</field>
             </group>
             <group>
-                <metric>-18</metric>
+                <metric>-6</metric>
                 <field name="Country">USA</field>
             </group>
         </groups>
@@ -1648,12 +1648,12 @@
              "group":"Country"
           },
           "totalobjects":"12",
-          "summary":"-36",
+          "summary":"-15",
           "totalgroups":"2",
           "groups":[
              {
                 "group":{
-                   "metric":"-18",
+                   "metric":"-9",
                    "field":{
                       "Country":"Russia"
                    }
@@ -1661,7 +1661,7 @@
              },
              {
                 "group":{
-                   "metric":"-18",
+                   "metric":"-6",
                    "field":{
                       "Country":"USA"
                    }
@@ -1748,15 +1748,15 @@
                 </groups>
             </groupset>
             <groupset group="Country" metric="COUNT(Double)*1.5*(-2)">
-                <summary>-36</summary>
+                <summary>-15</summary>
                 <totalgroups>2</totalgroups>
                 <groups>
                     <group>
-                        <metric>-18</metric>
+                        <metric>-9</metric>
                         <field name="Country">Russia</field>
                     </group>
                     <group>
-                        <metric>-18</metric>
+                        <metric>-6</metric>
                         <field name="Country">USA</field>
                     </group>
                 </groups>
@@ -1818,12 +1818,12 @@
                 "groupset":{
                    "group":"Country",
                    "metric":"COUNT(Double)*1.5*(-2)",
-                   "summary":"-36",
+                   "summary":"-15",
                    "totalgroups":"2",
                    "groups":[
                       {
                          "group":{
-                            "metric":"-18",
+                            "metric":"-9",
                             "field":{
                                "Country":"Russia"
                             }
@@ -1831,7 +1831,7 @@
                       },
                       {
                          "group":{
-                            "metric":"-18",
+                            "metric":"-6",
                             "field":{
                                "Country":"USA"
                             }
@@ -2982,15 +2982,15 @@
     <results>
         <aggregate group="Country" metric="COUNT(Float)" query="*"/>
         <totalobjects>12</totalobjects>
-        <summary>12</summary>
+        <summary>5</summary>
         <totalgroups>2</totalgroups>
         <groups>
             <group>
-                <metric>6</metric>
+                <metric>3</metric>
                 <field name="Country">Russia</field>
             </group>
             <group>
-                <metric>6</metric>
+                <metric>2</metric>
                 <field name="Country">USA</field>
             </group>
         </groups>
@@ -3005,12 +3005,12 @@
              "group":"Country"
           },
           "totalobjects":"12",
-          "summary":"12",
+          "summary":"5",
           "totalgroups":"2",
           "groups":[
              {
                 "group":{
-                   "metric":"6",
+                   "metric":"3",
                    "field":{
                       "Country":"Russia"
                    }
@@ -3018,7 +3018,7 @@
              },
              {
                 "group":{
-                   "metric":"6",
+                   "metric":"2",
                    "field":{
                       "Country":"USA"
                    }
@@ -3194,15 +3194,15 @@
     <results>
         <aggregate group="Country" metric="COUNT(Float)*1.5*(-2)" query="*"/>
         <totalobjects>12</totalobjects>
-        <summary>-36</summary>
+        <summary>-15</summary>
         <totalgroups>2</totalgroups>
         <groups>
             <group>
-                <metric>-18</metric>
+                <metric>-9</metric>
                 <field name="Country">Russia</field>
             </group>
             <group>
-                <metric>-18</metric>
+                <metric>-6</metric>
                 <field name="Country">USA</field>
             </group>
         </groups>
@@ -3217,12 +3217,12 @@
              "group":"Country"
           },
           "totalobjects":"12",
-          "summary":"-36",
+          "summary":"-15",
           "totalgroups":"2",
           "groups":[
              {
                 "group":{
-                   "metric":"-18",
+                   "metric":"-9",
                    "field":{
                       "Country":"Russia"
                    }
@@ -3230,7 +3230,7 @@
              },
              {
                 "group":{
-                   "metric":"-18",
+                   "metric":"-6",
                    "field":{
                       "Country":"USA"
                    }
@@ -3317,15 +3317,15 @@
                 </groups>
             </groupset>
             <groupset group="Country" metric="COUNT(Float)*1.5*(-2)">
-                <summary>-36</summary>
+                <summary>-15</summary>
                 <totalgroups>2</totalgroups>
                 <groups>
                     <group>
-                        <metric>-18</metric>
+                        <metric>-9</metric>
                         <field name="Country">Russia</field>
                     </group>
                     <group>
-                        <metric>-18</metric>
+                        <metric>-6</metric>
                         <field name="Country">USA</field>
                     </group>
                 </groups>
@@ -3387,12 +3387,12 @@
                 "groupset":{
                    "group":"Country",
                    "metric":"COUNT(Float)*1.5*(-2)",
-                   "summary":"-36",
+                   "summary":"-15",
                    "totalgroups":"2",
                    "groups":[
                       {
                          "group":{
-                            "metric":"-18",
+                            "metric":"-9",
                             "field":{
                                "Country":"Russia"
                             }
@@ -3400,7 +3400,7 @@
                       },
                       {
                          "group":{
-                            "metric":"-18",
+                            "metric":"-6",
                             "field":{
                                "Country":"USA"
                             }
@@ -3502,15 +3502,15 @@
     <results>
         <aggregate group="Country" metric="COUNT(Double)*1.5*(-2)" query="*"/>
         <totalobjects>12</totalobjects>
-        <summary>-36</summary>
+        <summary>-15</summary>
         <totalgroups>2</totalgroups>
         <groups>
             <group>
-                <metric>-18</metric>
+                <metric>-9</metric>
                 <field name="Country">Russia</field>
             </group>
             <group>
-                <metric>-18</metric>
+                <metric>-6</metric>
                 <field name="Country">USA</field>
             </group>
         </groups>
@@ -3525,12 +3525,12 @@
              "group":"Country"
           },
           "totalobjects":"12",
-          "summary":"-36",
+          "summary":"-15",
           "totalgroups":"2",
           "groups":[
              {
                 "group":{
-                   "metric":"-18",
+                   "metric":"-9",
                    "field":{
                       "Country":"Russia"
                    }
@@ -3538,7 +3538,7 @@
              },
              {
                 "group":{
-                   "metric":"-18",
+                   "metric":"-6",
                    "field":{
                       "Country":"USA"
                    }
@@ -3625,15 +3625,15 @@
                 </groups>
             </groupset>
             <groupset group="Country" metric="COUNT(Double)*1.5*(-2)">
-                <summary>-36</summary>
+                <summary>-15</summary>
                 <totalgroups>2</totalgroups>
                 <groups>
                     <group>
-                        <metric>-18</metric>
+                        <metric>-9</metric>
                         <field name="Country">Russia</field>
                     </group>
                     <group>
-                        <metric>-18</metric>
+                        <metric>-6</metric>
                         <field name="Country">USA</field>
                     </group>
                 </groups>
@@ -3695,12 +3695,12 @@
                 "groupset":{
                    "group":"Country",
                    "metric":"COUNT(Double)*1.5*(-2)",
-                   "summary":"-36",
+                   "summary":"-15",
                    "totalgroups":"2",
                    "groups":[
                       {
                          "group":{
-                            "metric":"-18",
+                            "metric":"-9",
                             "field":{
                                "Country":"Russia"
                             }
@@ -3708,7 +3708,7 @@
                       },
                       {
                          "group":{
-                            "metric":"-18",
+                            "metric":"-6",
                             "field":{
                                "Country":"USA"
                             }

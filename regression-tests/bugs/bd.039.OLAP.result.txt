@@ -24,15 +24,15 @@
                 </groups>
             </groupset>
             <groupset group="GroupName" metric="COUNT(Float)">
-                <summary>2</summary>
+                <summary>0</summary>
                 <totalgroups>2</totalgroups>
                 <groups>
                     <group>
-                        <metric>1</metric>
+                        <metric>0</metric>
                         <field name="GroupName">Group 1</field>
                     </group>
                     <group>
-                        <metric>1</metric>
+                        <metric>0</metric>
                         <field name="GroupName">Group 2</field>
                     </group>
                 </groups>
@@ -80,12 +80,12 @@
                 "groupset":{
                    "group":"GroupName",
                    "metric":"COUNT(Float)",
-                   "summary":"2",
+                   "summary":"0",
                    "totalgroups":"2",
                    "groups":[
                       {
                          "group":{
-                            "metric":"1",
+                            "metric":"0",
                             "field":{
                                "GroupName":"Group 1"
                             }
@@ -93,7 +93,7 @@
                       },
                       {
                          "group":{
-                            "metric":"1",
+                            "metric":"0",
                             "field":{
                                "GroupName":"Group 2"
                             }
@@ -132,15 +132,15 @@
                 </groups>
             </groupset>
             <groupset group="GroupName" metric="COUNT(Double)">
-                <summary>2</summary>
+                <summary>0</summary>
                 <totalgroups>2</totalgroups>
                 <groups>
                     <group>
-                        <metric>1</metric>
+                        <metric>0</metric>
                         <field name="GroupName">Group 1</field>
                     </group>
                     <group>
-                        <metric>1</metric>
+                        <metric>0</metric>
                         <field name="GroupName">Group 2</field>
                     </group>
                 </groups>
@@ -188,12 +188,12 @@
                 "groupset":{
                    "group":"GroupName",
                    "metric":"COUNT(Double)",
-                   "summary":"2",
+                   "summary":"0",
                    "totalgroups":"2",
                    "groups":[
                       {
                          "group":{
-                            "metric":"1",
+                            "metric":"0",
                             "field":{
                                "GroupName":"Group 1"
                             }
@@ -201,7 +201,7 @@
                       },
                       {
                          "group":{
-                            "metric":"1",
+                            "metric":"0",
                             "field":{
                                "GroupName":"Group 2"
                             }
