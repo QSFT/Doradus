@@ -26,13 +26,14 @@ import com.dell.doradus.search.aggregate.SortOrder;
 import com.dell.doradus.search.util.HeapList;
 
 public class SearchResultComparer {
+	//returns IntIterator with sorted results, or null which means that the results should be post-sorted
 	public static IntIterator sort(CubeSearcher searcher, Result result, SortOrder order, int size) {
 		//will sort later
-		if(size >= result.countSet()) return result.iterate();
+		if(size >= result.countSet()) return null;
 		//link paths will be sorted after all values are retrieved
-		if(order != null && order.items.size() > 1) return result.iterate();
+		if(order != null && order.items.size() > 1) return null;
 		//sort by multivalued values is not optimized as well 
-		if(order != null && order.items.size() == 1 && order.items.get(0).fieldDef.isCollection()) return result.iterate();
+		if(order != null && order.items.size() == 1 && order.items.get(0).fieldDef.isCollection()) return null;
 		if(order == null) {
 			int[] res = new int[size];
 			int num = 0;

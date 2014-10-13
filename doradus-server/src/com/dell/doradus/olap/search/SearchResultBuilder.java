@@ -44,6 +44,12 @@ public class SearchResultBuilder {
 		FieldSetCreator fieldSetCreator = new FieldSetCreator(searcher, fieldSet, order);
 		FVS fvs = new FVS();
 		IntIterator documents_iter = SearchResultComparer.sort(searcher, documents, order, size);
+		boolean needsSorting = false;
+		if(documents_iter == null) {
+			documents_iter = documents.iterate();
+			needsSorting = true;
+			fieldSetCreator.limit = Integer.MAX_VALUE;
+		}
 		IntIterator iter = new IntIterator();
 		fill(searcher, documents_iter, fvs, fieldSetCreator, iter);
 		fvs.resolve(searcher);
@@ -51,7 +57,7 @@ public class SearchResultBuilder {
 		list.documentsCount = documents.countSet();
 		int num = 0;
 		for(int doc = 0; doc < documents_iter.count(); doc++) {
-			if(num >= fieldSet.limit) break;
+			if(!needsSorting && num >= fieldSet.limit) break;
 			int d = documents_iter.get(doc);
 			SearchResult child = build(searcher, d, fvs, fieldSetCreator, iter);
 			child.order = order;
@@ -60,7 +66,8 @@ public class SearchResultBuilder {
 		}
 		Collections.sort(list.results);
 		if(list.results.size() > size) {
-			list.results = (ArrayList<SearchResult>)list.results.subList(0, size);
+			List<SearchResult> subList = list.results.subList(0, size);
+			list.results = new ArrayList<SearchResult>(subList); 
 		}
 		if(list.results.size() < list.documentsCount && list.results.size() > 0) {
 			list.continuation_token = list.results.get(list.results.size() - 1).id();
