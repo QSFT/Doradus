@@ -1848,6 +1848,22 @@ final public class Utils {
     }   // toString
 
     /**
+     * Ensure that the given string is no longer than the given max length, truncating it
+     * if necessary. If string.length() is <= maxLength, the same string is returned.
+     * Otherwise, a substring of the first maxLength characters is returned.
+     * 
+     * @param string       String to test.
+     * @param maxLength    Maximum length.
+     * @return             Same or truncated string as described above.
+     */
+    public static String truncateTo(String string, int maxLength) {
+        if (string.length() <= maxLength) {
+            return string;
+        }
+        return string.substring(0, maxLength);
+    }   // truncateTo
+    
+    /**
      * Truncate the given GregorianCalendar date to the nearest week. This is done by
      * cloning it and rounding the value down to the closest Monday. If the given date
      * already occurs on a Monday, a copy of the same date is returned.
@@ -2000,5 +2016,5 @@ final public class Utils {
 		}
 		return false;
 	}
-	
+
 }   // class Utils

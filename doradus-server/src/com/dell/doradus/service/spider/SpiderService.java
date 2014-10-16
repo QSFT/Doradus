@@ -69,6 +69,9 @@ import com.dell.doradus.service.statistic.StatisticManager;
  * aging, and other features.
  */
 public class SpiderService extends StorageService {
+    // Maximum length of a ColumnFamily name:
+    private static final int MAX_CF_NAME_LENGTH = 48;
+    
     // Singleton object:
     private static final SpiderService INSTANCE = new SpiderService();
     private final ShardCache m_shardCache = new ShardCache();
@@ -295,13 +298,15 @@ public class SpiderService extends StorageService {
 
     /**
      * Return the store name (ColumnFamily) in which objects are stored for the given table.
+     * This name is {application name}_{table name} truncated to {@link #MAX_CF_NAME_LENGTH}
+     * if needed.
      * 
      * @param tableDef  {@link TableDefinition} of a table.
      * @return          Store name (ColumnFamily) in which objects are stored for the given
      *                  table.
      */
     public static String objectsStoreName(TableDefinition tableDef) {
-        return tableDef.getAppDef().getAppName() + "_" + tableDef.getTableName();
+        return Utils.truncateTo(tableDef.getAppDef().getAppName() + "_" + tableDef.getTableName(), MAX_CF_NAME_LENGTH);
     }   // objectsStoreName
     
     /**
@@ -390,13 +395,17 @@ public class SpiderService extends StorageService {
 
     /**
      * Return the store name (ColumnFamily) in which terms are stored for the given table.
+     * This name is the object store name appended with "_terms". If the object store name
+     * is too long, it is truncated so that the terms store name is less than
+     * {@link #MAX_CF_NAME_LENGTH}.
      * 
      * @param tableDef  {@link TableDefinition} of a table.
      * @return          Store name (ColumnFamily) in which terms are stored for the given
      *                  table.
      */
     public static String termsStoreName(TableDefinition tableDef) {
-        return tableDef.getAppDef().getAppName() + "_" + tableDef.getTableName() + "_Terms";
+        String objStoreName = Utils.truncateTo(objectsStoreName(tableDef), MAX_CF_NAME_LENGTH - "_Terms".length());
+        return objStoreName + "_Terms";
     }   // termsStoreName
     
     /**
@@ -655,13 +664,11 @@ public class SpiderService extends StorageService {
     }
     
     private StoreTemplate objectsCFTemplate(TableDefinition tableDef) {
-        String cfName = tableDef.getAppDef().getAppName() + "_" + tableDef.getTableName();
-        return new StoreTemplate(cfName, true);
+        return new StoreTemplate(objectsStoreName(tableDef), true);
     }
     
     private StoreTemplate termsCFTemplate(TableDefinition tableDef) {
-        String cfName = tableDef.getAppDef().getAppName() + "_" + tableDef.getTableName() + "_Terms";
-        return new StoreTemplate(cfName, true);
+        return new StoreTemplate(termsStoreName(tableDef), true);
     }   
     
     // Get all target object IDs for the given sharded link.
