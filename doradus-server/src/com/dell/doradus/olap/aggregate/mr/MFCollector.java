@@ -173,8 +173,8 @@ public abstract class MFCollector {
 				return new MGName(Utils.formatDate(m_Calendar, Calendar.DATE));
 			}
 			else if("WEEK".equals(m_truncate)) {
-				Utils.truncateToWeek(m_Calendar);
-				return new MGName(Utils.formatDate(m_Calendar, Calendar.DATE));
+				GregorianCalendar calendar = Utils.truncateToWeek(m_Calendar);
+				return new MGName(Utils.formatDate(calendar, Calendar.DATE));
 			}
 			else if ("MONTH".equals(m_truncate)) {
 				m_Calendar.set(Calendar.DAY_OF_MONTH, 1);
