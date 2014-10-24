@@ -361,7 +361,7 @@ public final class RESTCommand implements Comparable<RESTCommand> {
         }
         if (node1.length() > 0 && node1.charAt(0) == '{') {
             if (node2.length() > 0 && node2.charAt(0) == '{') {
-                return node1.compareTo(node2);  // Both nodes are parameters
+                return 0;  // Both nodes are parameters; names are irrelevant
             }
             return 1;  // r1 is a parameter but r2 is not, so r2 should come first
         }

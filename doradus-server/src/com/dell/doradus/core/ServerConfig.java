@@ -189,6 +189,7 @@ public class ServerConfig {
 
 
     // Database connection properties
+    public List<String> default_services = new ArrayList<>();
     public List<String> storage_services = new ArrayList<>();
     public String dbhost = DEFAULT_DB_HOST;
     public int dbport = DEFAULT_DB_PORT;

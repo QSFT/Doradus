@@ -110,6 +110,21 @@ final public class DBObject {
         m_tableName = tableName;
     }   // constructor
     
+    /**
+     * Make a copy of this object with the same updates and values but with a new object
+     * ID.
+     * 
+     * @param   objID   Object IF of new object.
+     * @return          Copy of this object except for the object ID.
+     */
+    public DBObject makeCopy(String objID) {
+        DBObject newObj = new DBObject(objID, m_tableName);
+        newObj.m_valueMap.putAll(m_valueMap);
+        newObj.m_valueRemoveMap.putAll(m_valueRemoveMap);
+        newObj.m_deleted = m_deleted;
+        return newObj;
+    }   // makeCopy
+    
     ///// Getters
 
     /**

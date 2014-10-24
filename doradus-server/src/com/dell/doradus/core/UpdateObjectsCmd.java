@@ -32,8 +32,9 @@ import com.dell.doradus.service.rest.ReaderCallback;
 import com.dell.doradus.service.schema.SchemaService;
 
 /**
- * Implements the REST command: PUT /{application}/{store}. Verifies the given application
- * and passes the command to its registered storage service.
+ * Implements the REST commands: PUT /{application}/{store} and
+ * PUT /{application}/{store}?{params}. Verifies the given application and passes the
+ * command to its registered storage service.
  */
 public class UpdateObjectsCmd extends ReaderCallback {
 

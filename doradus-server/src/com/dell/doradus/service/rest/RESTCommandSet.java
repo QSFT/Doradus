@@ -71,6 +71,9 @@ public class RESTCommandSet {
         }
     }   // addCommand
     
+    /**
+     * Clear the registered REST command set.
+     */
     public void clear() {
         synchronized (m_cmdMap) {
             m_cmdMap.clear();
@@ -119,6 +122,20 @@ public class RESTCommandSet {
         }
         return null;
     }   // findMatch
+    
+    /**
+     * Get all registered REST commands as a map of HTTP method names to a sorted set of
+     * {@link RESTCommand}s. The commands are sorted in their evaluation order.
+     * 
+     * @return  Map of HTTP method-to-sorted commands. Example:
+     * <pre>
+     *          GET -> {"/foo/bar", "/foo"}
+     *          PUT -> {"/foo/bar/bat", "/foo?{params}"}
+     * </pre>
+     */
+    public Map<String, SortedSet<RESTCommand>> getCommands() {
+        return m_cmdMap;
+    }   // getCommands
     
 }   // class RESTCommandSet
 

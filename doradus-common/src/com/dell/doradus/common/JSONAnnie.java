@@ -27,34 +27,35 @@ import java.io.Reader;
  * Note that this class supports only the subset of JSON that Doradus uses. As a result,
  * there are a few oddities, as described below:
  * <ul>
- * <li>Arrays within arrays are not supported. That is "foo: [10, [11, 12]]" will throw
- *     an error when the inner array is seen.
+ * <li>Arrays within arrays are not supported. That is, <code>foo: [10, [11, 12]]</code>
+ *     will throw an error when the inner array is seen.
  * </li>
- * <li>All Doradus messages use the general form {"foo": {...stuff...}}. The outer braces
- *     are silently parsed and ignore. When the sequence '"foo": {' is recognized,
- *     {@link SajListener#onStartObject(String)} is called passing "foo" as the object name.
+ * <li>All Doradus messages use the general form <code>{"foo": {...stuff...}}</code>. The
+ *     outer braces are silently parsed and ignore. When the sequence <code>"foo": {</code>
+ *     is recognized, {@link SajListener#onStartObject(String)} is called passing "foo" as
+ *     the object name.
  * </li>
- * <li>When the sequence '"foo": [' is recognized, {@link SajListener#onStartArray(String)}
- *     is called passing "foo" as the array name.
+ * <li>When the sequence <code>"foo": [</code> is recognized,
+ *     {@link SajListener#onStartArray(String)} is called passing "foo" as the array name.
  * </li>
- * <li>When a simple object member value is recognized, e.g., '"name": "value"', the method
- *     {@link SajListener#onValue(String, String)} is called passing "name" and "value". If
- *     the value is the JSON literal <i>null</i>, an empty string is passed as the value.
- *     Numbers are also passed as strings, and the constants <i>true</i> and <i>false</i>
- *     are passed as strings as well.
+ * <li>When a simple object member value is recognized, e.g., <code>"name": "value"</code>,
+ *     the method {@link SajListener#onValue(String, String)} is called passing "name" and
+ *     "value". If the value is the JSON literal <code>null</code>, an empty string is
+ *     passed as the value. Numbers are also passed as strings, as are the constants
+ *     <code>true</code> and <code>false</code>.
  * </li>
  * <li>When a simple array value is recognized, e.g., "123" or "xyz", the method
  *     {@link SajListener#onValue(String, String)} is called passing "value" as the name
  *     and string form of value using the same rules as in the case above.
  * </li>
- * <li>When an array value is a "value object" as in the example '"foo": [{"bar": "bat"}]',
- *     the outer curly braces are tossed, after the onArrayStart("foo") call, the next
- *     call will be onValue("bar", "bar").
+ * <li>When an array value is a "value object" as in the example <code>"foo": [{"bar":
+ *     "bat"}]</code>, the outer curly braces are tossed, after the onArrayStart("foo")
+ *     call, the next call will be onValue("bar", "bar").
  * </li>
- * <li>Similarly, if an array value is a complex object as in the example
- *     '"foo": [{"bar": {...stuff...}}]', the out curly braces are stripped. Instead,
+ * <li>Similarly, if an array value is a complex object as in the example <code>"foo":
+ *     [{"bar": {...stuff...}}]</code>, the outer curly braces are stripped. Instead,
  *     onObjectStart("bar") is called followed by whatever is appropriate based on the
- *     "...stuff..." inside the inner curly braces.
+ *     <code>...stuff...</code> inside the inner curly braces.
  * </li>
  * <li>{@link SajListener#onEndObject() and {@link SajListener#onEndArray()} are called
  *     whenever a matching '}' or ']' is found (except for the ignore-curly-braces cases

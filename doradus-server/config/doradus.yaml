@@ -28,6 +28,39 @@
 
 ########## Doradus Service Parameters
 # 
+# default_services: Defines the internal Doradus services that will be started. These are in
+# addition to storage_services, which are defined separately. DBService and SchemaService are
+# required and will always be started even if not listed here. Other services are optional and can
+# be disabled when not needed. Custom services can be also be added to this list. Note that the
+# default_services parameter is only used by Doradus in stand-alone mode. When Doradus is started
+# as an embedded application, all services (include storage services) must be passed to the
+# startEmbedded() method. Each line must contain the full package name of the service class. The
+# optional services are:
+#
+#   com.dell.doradus.mbeans.MBeanService
+#
+#       Provides monitoring and management services via custom Doradus MBeans. Can be disabled if
+#       custom JMX commands are not needed.
+#
+#   com.dell.doradus.service.rest.RESTService
+#
+#       Provides the REST API via an embedded Jetty server, which listens to the server and port
+#       defined by restaddr and restport. It only makes sense to disable this when running Doradus
+#       as an embedded service.
+#
+#   com.dell.doradus.service.taskmanager.TaskManagerService
+#
+#       Provides background task management for data aging, statistics refreshing (Spider), and
+#       other scheduled tasks. Also manages on-demand tasks such as removing obsolete data (Spider).
+#       Can be disabled if background tasks are not needed for this Doradus instance.
+#
+default_services:
+    - com.dell.doradus.mbeans.MBeanService
+    - com.dell.doradus.service.db.DBService
+    - com.dell.doradus.service.rest.RESTService
+    - com.dell.doradus.service.schema.SchemaService
+    - com.dell.doradus.service.taskmanager.TaskManagerService
+
 # storage_services: This parameter defines which storage service modules are started and therefore
 # available to applications. Most Doradus instances will use a single storage service, although
 # multiple services can be used. If multiple storage services are listed, the first one becomes the
@@ -129,9 +162,9 @@ max_read_attempts: 7
 # max_read_attempts, and max_reconnect_attempts.
 # retry_wait_millis: 5000
 
-# use_cql: Experimental: Set to true to use Cassandra's CQL API insead of Thrift. CQL is only
-# available if "start_native_transport: true" is set in cassandra.yaml.  Also, set "dbport" in this
-# file to the value of "native_transport_port" in cassandra.yaml, which is normally 9042.
+# use_cql: Set to true to use Cassandra's CQL API insead of Thrift. CQL is only available if
+# "start_native_transport: true" is set in cassandra.yaml.  Also, set "dbport" to the value of
+# "native_transport_port" in cassandra.yaml (9042 by default).
 use_cql: false
 #dbport: 9042
 

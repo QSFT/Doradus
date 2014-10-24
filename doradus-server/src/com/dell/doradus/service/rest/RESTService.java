@@ -20,6 +20,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Queue;
+import java.util.SortedSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.eclipse.jetty.io.Connection;
@@ -120,6 +121,7 @@ public class RESTService extends Service {
     // Begin servicing REST requests.
     @Override
     public void startService() {
+        displayCommandSet();
         try {
             m_jettyServer.start();
             setRunning();
@@ -298,4 +300,17 @@ public class RESTService extends Service {
         return sslConnector;
     }   // createSSLConnector
 
+    // If DEBUG logging is enabled, log all REST commands in sorted order.
+    private void displayCommandSet() {
+        if (m_logger.isDebugEnabled()) {
+            m_logger.debug("Registered REST Commands:");
+            Map<String, SortedSet<RESTCommand>> commandMap = m_commandSet.getCommands();
+            for (String method : commandMap.keySet()) {
+                for (RESTCommand cmd : commandMap.get(method)) {
+                    m_logger.debug(cmd.toString());
+                }
+            }
+        }
+    }   // displayCommandSet
+    
 }   // class RESTService

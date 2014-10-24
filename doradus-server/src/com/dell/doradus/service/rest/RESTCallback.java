@@ -16,7 +16,10 @@
 
 package com.dell.doradus.service.rest;
 
+import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.RESTResponse;
+import com.dell.doradus.common.TableDefinition;
+import com.dell.doradus.service.schema.SchemaService;
 
 /**
  * Defines a callback object that is invoked for a specific REST request. A callback
@@ -46,6 +49,16 @@ public abstract class RESTCallback {
     }   // setRequest
     
     /**
+     * Return the {@link RESTRequest} that defines the context of this REST command
+     * execution.
+     * 
+     * @return  The {@link RESTRequest} that was passed to {@link #setRequest(RESTRequest)}. 
+     */
+    final public RESTRequest getRequest() {
+        return m_request;
+    }   // getRequest
+    
+    /**
      * Process the REST request represented by this callback instance by invoking the
      * overridden callback method.
      * 
@@ -54,4 +67,50 @@ public abstract class RESTCallback {
      */
     protected abstract RESTResponse invoke();
 
+    /**
+     * Validate the given parameter as a valid application name. The given parameter is
+     * extracted and decoded, and the corresponding {@link ApplicationDefinition} is
+     * returned. A RuntimeException is thrown if the parameter name does not exist within
+     * this REST request. A {@link NotFoundException} is thrown if the given application
+     * does not exist.
+     * 
+     * @param appParamName          URI parameter name that contains an application name.
+     * @return                      {@link ApplicationDefinition} of application if found.
+     * @throws NotFoundException    If the given application is not defined.
+     */
+    protected ApplicationDefinition validateApplication(String appParamName) throws NotFoundException {
+        String appName = m_request.getVariableDecoded(appParamName);
+        if (appName == null) {
+            throw new RuntimeException("No such parameter name: " + appParamName);
+        }
+        ApplicationDefinition appDef = SchemaService.instance().getApplication(appName);
+        if (appDef == null) {
+            throw new NotFoundException("Unknown application: " + appName);
+        }
+        return appDef;
+    }   // validateApplication
+
+    /**
+     * Validate the given parameter as a valid table belong to the given application. A
+     * RuntimeException is thrown if the parameter name does not exist within this REST
+     * request. A {@link NotFoundException} is thrown if the given table name does not
+     * exist for the given application.
+     * 
+     * @param appDef            {@link ApplicationDefinition} that owns the candidate
+     *                          table name.
+     * @param tableParamName    URI parameter name that holds the table name.
+     * @return
+     */
+    protected TableDefinition validateTable(ApplicationDefinition appDef, String tableParamName) {
+        String tableName = m_request.getVariableDecoded(tableParamName);
+        if (tableName == null) {
+            throw new RuntimeException("No such parameter name: " + tableParamName);
+        }
+        TableDefinition tableDef = appDef.getTableDef(tableName);
+        if (tableDef == null) {
+            throw new NotFoundException("Unknown table '" + tableName + "' for application '" + appDef.getAppName() + "'");
+        }
+        return tableDef;
+    }   // validateTable
+    
 }   // abstract class RESTCallback

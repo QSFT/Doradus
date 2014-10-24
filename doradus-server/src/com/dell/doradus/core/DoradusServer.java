@@ -50,15 +50,6 @@ public final class DoradusServer {
     // Logging interface:
     private final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
 
-    // Default list of non-storage services to run in non-embedded execution:
-    private static final String[] DEFAULT_SERVICES = new String[] {
-        com.dell.doradus.mbeans.MBeanService.class.getName(),
-        com.dell.doradus.service.db.DBService.class.getName(),
-        com.dell.doradus.service.rest.RESTService.class.getName(),
-        com.dell.doradus.service.schema.SchemaService.class.getName(),
-        com.dell.doradus.service.taskmanager.TaskManagerService.class.getName(),
-    };
-
     // Services required in every start (in addition to 1 storage service):
     private static final String[] REQUIRED_SERVICES = new String[] {
         com.dell.doradus.service.db.DBService.class.getName(),
@@ -226,9 +217,11 @@ public final class DoradusServer {
     private DoradusServer() {}
 
     // Merge given service list and configured storage_services into unique list. 
-    private String[] addConfigStorageServices(String[] services) {
+    private String[] addConfigStorageServices(List<String> services) {
         Set<String> serviceSet = new LinkedHashSet<>(); // maintain service order
-        serviceSet.addAll(Arrays.asList(services));
+        if (services != null) {
+            serviceSet.addAll(services);
+        }
         List<String> ssList = ServerConfig.getInstance().storage_services;
         if (ssList != null) {
             serviceSet.addAll(ssList);
@@ -265,7 +258,7 @@ public final class DoradusServer {
             return;
         }
         initConfig(args);
-        initServices(addConfigStorageServices(DEFAULT_SERVICES));
+        initServices(addConfigStorageServices(ServerConfig.getInstance().default_services));
         RESTService.instance().registerRESTCommands(REST_RULES);
         m_bInitialized = true;
     }   // initStandAlone
