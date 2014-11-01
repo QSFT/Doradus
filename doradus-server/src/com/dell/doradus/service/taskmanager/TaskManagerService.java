@@ -139,22 +139,16 @@ public class TaskManagerService extends Service implements ITaskManager {
 
     @Override
     public void startService() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                DBService.instance().waitForFullService();
-				try {
-					m_localHost = InetAddress.getLocalHost().getHostAddress();
-				} catch (UnknownHostException e) {
-					m_localHost = "0.0.0.0";
-				}
-				TaskDBUtils.checkUnknownTasks();
-                TaskDBUtils.checkHangedTasks();
-                m_scheduler.start();
-                startCheckTaskInterruptions();
-                setRunning();
-            }
-        }).start();
+        DBService.instance().waitForFullService();
+		try {
+			m_localHost = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			m_localHost = "0.0.0.0";
+		}
+		TaskDBUtils.checkUnknownTasks();
+        TaskDBUtils.checkHangedTasks();
+        m_scheduler.start();
+        startCheckTaskInterruptions();
     }   // startService
 
     @Override

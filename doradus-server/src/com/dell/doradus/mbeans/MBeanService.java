@@ -96,7 +96,6 @@ final public class MBeanService extends Service {
     public void startService() {
         // Monitor requests only when the MBeanService has been started.
         RESTService.instance().registerRequestCallback(new ConnectionMonitor());
-        setRunning();
     }   // startService
 
     @Override

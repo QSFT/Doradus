@@ -355,17 +355,14 @@ public class ThriftService extends DBService {
     //----- Package-private methods
     
     // Get an available database connection from the pool, creating a new one if needed.
-    // This method will throw an error if the database is not currently available.
+    // This method throws DBNotAvailableException if the service isn't running yet.
     DBConn getDBConnection() {
+        checkState();
         DBConn dbConn = null;
         synchronized (m_dbConnectionList) {
-            if (!getState().isRunning()) {
-                throw new DBNotAvailableException("Initial Cassandra connection hasn't been established");
-            }
             if (m_dbConnectionList.size() > 0) {
                 dbConn = m_dbConnectionList.poll();
             } else {
-                // In the future, we could create a different type based on configuration.
                 dbConn = new DBConn(false);
             }
         }
@@ -400,56 +397,23 @@ public class ThriftService extends DBService {
     //----- Private methods
     
     // Initialize the DBConnection pool by creating the first connection to Cassandra.
-    // Because Cassandra may be started at the same time we are, it may be 10 minutes or
-    // more before Cassandra will talk to us. Hence, if we can't connect now, we just
-    // sleep and keep trying. This is done in an asynchronous thread so we don't block
-    // service requests. However, any request that requires the database will receive a
-    // "waiting for Cassandra" exception until our thread successfully finishes.
     private void initializeDBConnections() {
-        startFirstConnectThread();
-        
-        // If DoradusServer is being started in a test environment, the thread above may
-        // not connect to Cassandra before a request is made, even though Cassandra is
-        // running. To prevent this race condition, we wait up to 3 seconds, trying to
-        // prevent unnecessary "service unavailable" errors. We check every 100 millis
-        // so we proceed as soon as possible.
-        for (int check = 0; !getState().isRunning() && check < 30; check++) {
-            // Wait 100 millis, so 30 * 100 millis = 3 seconds.
+        while (true) {
             try {
-                Thread.sleep(300);
-            } catch (InterruptedException ex) {
-                // ignore
+                DBConn firstDbConn = new DBConn(true);
+                synchronized (m_dbConnectionList) {
+                    m_dbConnectionList.add(firstDbConn);
+                }
+                break;
+            } catch (DBNotAvailableException ex) {
+                m_logger.info("Database is not reachable. Waiting to retry");
+                try {
+                    Thread.sleep(ServerConfig.getInstance().db_connect_retry_wait_millis);
+                } catch (InterruptedException ex2) {
+                    // ignore
+                }
             }
         }
     }   // initializeDBConnections
-
-    // Start the asynchronous thread that connects to Cassandra, waiting indefinitely
-    // until it succeeds. Once a connection is made, setRunning() is called.
-    private void startFirstConnectThread() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (!getState().isRunning()) {
-                    try {
-                        DBConn firstDbConn = new DBConn(true);
-                        synchronized (m_dbConnectionList) {
-                            m_dbConnectionList.add(firstDbConn);
-                            setRunning();
-                        }
-                    } catch (DBNotAvailableException ex) {
-                        m_logger.info("Database is not reachable. Waiting to retry");
-                        try {
-                            Thread.sleep(ServerConfig.getInstance().db_connect_retry_wait_millis);
-                        } catch (InterruptedException ex2) {
-                            // ignore
-                        }
-                    } catch (Throwable ex) {
-                        m_logger.error("!Fatal error trying to create first database connection -- shutting down", ex);
-                        System.exit(1);
-                    }
-                }
-            }   // run
-        }).start();
-    }   // startFirstConnectThread
 
 }   // class ThriftService

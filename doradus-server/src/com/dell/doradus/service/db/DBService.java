@@ -33,16 +33,8 @@ import com.dell.doradus.service.db.thrift.ThriftService;
  * 
  * <h1>Initialization</h1>
  * 
- * DBService is a singleton class, implemented as a Doradus {@link Service}. When
- * {@link #startService()} is called, it launches a thread to establish the first DB
- * connection asynchronously. If a connection cannot be established, the thread keeps
- * retrying until successful. This allows Cassandra to start at its own pace, which can
- * take a while if it needs to recover. Before the first connection is made, all DB access
- * methods throw a {@link DBNotAvailableException}. When DB connections become available,
- * the service's state will change to {@link Service.State#RUNNING}. Hence,
- * {@link Service#waitForFullService()} can be called to block until this happens.
- * <p>
- * Methods for specific DBService areas are described below.
+ * DBService is a singleton class, implemented as a Doradus {@link Service}. Methods for
+ * specific DBService areas are described below.
  * 
  * <h1>Store management</h1>
  * 
@@ -97,7 +89,10 @@ public abstract class DBService extends Service {
         ServerConfig.getInstance().use_cql ? CQLService.instance() : ThriftService.instance();
 
     // Only subclasses can construct an object.
-    protected DBService() {}
+    protected DBService() {
+        // Give up to 1 second after start() to allow startService() to succeed
+        m_startDelayMillis = 1000;
+    }
     
     /**
      * Get the singleton instance of this service. The service may or may not have been
@@ -288,5 +283,16 @@ public abstract class DBService extends Service {
                                                       String             endCol,
                                                       boolean            reversed);
 
+    //----- Protected methods
+    
+    /**
+     * Throw a DBNotAvailableException if we're not running yet.
+     */
+    protected void checkState() {
+        if (!getState().isRunning()) {
+            throw new DBNotAvailableException("Cassandra connection has not been established");
+        }
+    }   // checkState
+    
 }   // class DBService
 

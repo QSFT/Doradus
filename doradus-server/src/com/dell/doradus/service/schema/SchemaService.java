@@ -78,14 +78,8 @@ public class SchemaService extends Service {
     // Wait for the DB service to be up and check application schemas.
     @Override
     public void startService() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                DBService.instance().waitForFullService();
-                checkAppStores();
-                setRunning();
-            }
-        }).start();
+        DBService.instance().waitForFullService();
+        checkAppStores();
     }   // startService
 
     // Currently, we have nothing special to do to "stop".
@@ -105,6 +99,7 @@ public class SchemaService extends Service {
      * @param appDef    {@link ApplicationDefinition} of application to create or update.
      */
     public void defineApplication(ApplicationDefinition appDef) {
+        checkServiceState();
         ApplicationDefinition currAppDef = getApplication(appDef.getAppName());
         StorageService storageService = verifyStorageServiceOption(currAppDef, appDef);
         storageService.validateSchema(appDef);
@@ -119,25 +114,14 @@ public class SchemaService extends Service {
      * @return A list of all registered applications. 
      */
     public List<ApplicationDefinition> getAllApplications() {
+        checkServiceState();
         Map<String, Map<String, String>> rowColMap = DBService.instance().getAllAppProperties();
         List<ApplicationDefinition> result = new ArrayList<>();
         for (String appName : rowColMap.keySet()) {
             Map<String, String> colMap = rowColMap.get(appName);
-            try {
-                ApplicationDefinition appDef = new ApplicationDefinition();
-                String appSchema = colMap.get(Defs.COLNAME_APP_SCHEMA);
-                String format = colMap.get(Defs.COLNAME_APP_SCHEMA_FORMAT);
-                ContentType contentType = Utils.isEmpty(format) ? ContentType.TEXT_XML : new ContentType(format);
-                String versionStr = colMap.get(Defs.COLNAME_APP_SCHEMA_VERSION);
-                int schemaVersion = Utils.isEmpty(versionStr) ? CURRENT_SCHEMA_LEVEL : Integer.parseInt(versionStr);
-                if (schemaVersion > CURRENT_SCHEMA_LEVEL) {
-                    m_logger.warn("Skipping schema with advanced version: {}", schemaVersion);
-                } else {
-                    appDef.parse(UNode.parse(appSchema, contentType));
-                    result.add(appDef);
-                }
-            } catch (Exception e) {
-                m_logger.warn("Error parsing schema for application '" + appName + "'; skipped", e);
+            ApplicationDefinition appDef = loadAppRow(colMap);
+            if (appDef != null) {
+                result.add(appDef);
             }
         }
         return result;
@@ -151,6 +135,7 @@ public class SchemaService extends Service {
      *         such application is registered in the database. 
      */
     public ApplicationDefinition getApplication(String appName) {
+        checkServiceState();
         Map<String, String> colMap = DBService.instance().getAppProperties(appName);
         if (colMap == null || colMap.size() == 0) {
             return null;
@@ -172,6 +157,7 @@ public class SchemaService extends Service {
      * @return          The application's assigned {@link StorageService}.
      */
     public StorageService getStorageService(ApplicationDefinition appDef) {
+        checkServiceState();
         String ssName = getStorageServiceOption(appDef);
         StorageService storageService = DoradusServer.instance().findStorageService(ssName);
         Utils.require(storageService != null, "StorageService is unknown or hasn't been initialized: " + ssName);
@@ -185,6 +171,7 @@ public class SchemaService extends Service {
      * @param appName   Name of application to delete.
      */
     public void deleteApplication(String appName) {
+        checkServiceState();
         ApplicationDefinition appDef = SchemaService.instance().getApplication(appName);
         if (appDef == null) {
             return; 
@@ -206,7 +193,16 @@ public class SchemaService extends Service {
 
     // Check to see if the storage manager is active for each application.
     private void checkAppStores() {
-        for (ApplicationDefinition appDef : getAllApplications()) {
+        Map<String, Map<String, String>> rowColMap = DBService.instance().getAllAppProperties();
+        List<ApplicationDefinition> appList = new ArrayList<>();
+        for (String appName : rowColMap.keySet()) {
+            Map<String, String> colMap = rowColMap.get(appName);
+            ApplicationDefinition appDef = loadAppRow(colMap);
+            if (appDef != null) {
+                appList.add(appDef);
+            }
+        }
+        for (ApplicationDefinition appDef : appList) {
             String ssName = getStorageServiceOption(appDef);
             if (DoradusServer.instance().findStorageService(ssName) == null) {
                 m_logger.warn("Application '{}' uses storage service '{}' which has not been " +
@@ -260,4 +256,25 @@ public class SchemaService extends Service {
         return storageService;
     }   // verifyStorageServiceOption
 
+    // Parse the application schema from the given application row.
+    private ApplicationDefinition loadAppRow(Map<String, String> colMap) {
+        ApplicationDefinition appDef = new ApplicationDefinition();
+        String appSchema = colMap.get(Defs.COLNAME_APP_SCHEMA);
+        String format = colMap.get(Defs.COLNAME_APP_SCHEMA_FORMAT);
+        ContentType contentType = Utils.isEmpty(format) ? ContentType.TEXT_XML : new ContentType(format);
+        String versionStr = colMap.get(Defs.COLNAME_APP_SCHEMA_VERSION);
+        int schemaVersion = Utils.isEmpty(versionStr) ? CURRENT_SCHEMA_LEVEL : Integer.parseInt(versionStr);
+        if (schemaVersion > CURRENT_SCHEMA_LEVEL) {
+            m_logger.warn("Skipping schema with advanced version: {}", schemaVersion);
+            return null;
+        }
+        try {
+            appDef.parse(UNode.parse(appSchema, contentType));
+        } catch (Exception e) {
+            m_logger.warn("Error parsing schema for application '" + appDef.getAppName() + "'; skipped", e);
+            return null;
+        }
+        return appDef;
+    }   // loadAppRow
+        
 }   // class SchemaService

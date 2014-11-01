@@ -20,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.core.DoradusServer;
+import com.dell.doradus.service.db.DBNotAvailableException;
+import com.dell.doradus.service.db.DBService;
 
 /**
  * Abstract root class for Doradus services. Services must provide a singleton object,
@@ -36,17 +38,19 @@ import com.dell.doradus.core.DoradusServer;
  *     {@link State#INITIALIZED}.</li>
  *     
  * <li>{@link #start()}: This method is called once for each service after all services
- *     have been initialized. Before this method is called, the service's state is set to
- *     {@link State#STARTING}. The service may become ready for general service calls
- *     right away, in which case its state becomes {@link State#RUNNING}. However, if the
- *     service requires more time to initialize, a caller can wait for the service by
- *     calling {@link #waitForFullService()}.</li>
+ *     have been initialized. When this method is called, the service's state is first set
+ *     set to {@link State#STARTING}. The service performs startup code in an asynchronous
+ *     thread. When startup is complete, the state becomes {@link State#RUNNING}.</li>
  *     
  * <li>{@link #stop()}: This method is called once when the Doradus Server receives a
  *     shutdown request. It allows the service to gracefully clean-up resources:
  *     close sockets, stop threads, etc. This causes the service's state to transition
  *     to {@link State#STOPPING} and then back to {@link State#INACTIVE}.
  * </ul>
+ * Concrete classes must implement the {@link #initService()}, {@link #startService()},
+ * and {@link #stopService()} methods to provide its details. Any service can wait on
+ * another service to reach running state or even its own methods by calling
+ * {@link #waitForFullService()}.
  */
 public abstract class Service {
     
@@ -107,10 +111,34 @@ public abstract class Service {
             return this == RUNNING;
         }
     }   // enum State
+
+    // Used by start() to call the service's startService() method asynchronously.
+    // Notifies all waiters of this service.
+    private class AsyncServiceStarter extends Thread {
+        @Override
+        public void run() {
+            try {
+                setState(Service.State.STARTING);
+                startService();
+                synchronized (m_runningLock) {
+                    setState(Service.State.RUNNING);
+                    m_logger.info("Notifying waiters");
+                    m_runningLock.notifyAll();
+                }
+            } catch (Throwable e) {
+                m_logger.error("Fatal: Failed to enter running state", e);
+                m_logger.error("Stopping process");
+                System.exit(1);
+            }
+        }
+    }   // AsyncServiceStarter
     
     // Private Member variables:
     private State           m_state = State.INACTIVE;
     private final Object    m_runningLock = new Object();
+    
+    // Services can set this to wait after serviceStart() is called before start() returns.
+    protected int m_startDelayMillis = 0;
     
     // Protected logger available to concrete services:
     protected final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
@@ -135,26 +163,30 @@ public abstract class Service {
         if (m_state.isInitialized()) {
             m_logger.warn("initialize(): Service is already initialized -- ignoring");
         } else {
-            m_logger.info("Initializing");
             this.initService();
-            m_state = State.INITIALIZED;
+            setState(State.INITIALIZED);
         }
     }   // initialize
     
     /**
      * Start this service. A warning is logged and this method is ignored if the service
      * has not been initialized. It is ignored if the service has already been started.
-     * This method causes the service's start to become {@link State#STARTING}. When the
-     * service is fully available for all API calls, its state becomes
-     * {@link State#RUNNING}.
+     * This method uses an asynchronous thread to call {@link #startService()} and adjust
+     * the service's state.
+     * 
+     * @see #startService()
      */
     public final void start() {
         if (!m_state.isInitialized()) {
             m_logger.warn("start(): Service has not been initialized -- ignoring");
         } else if (!m_state.isStarted()) {
-            m_logger.info("Starting");
-            m_state = State.STARTING;
-            this.startService();
+            Thread startThread = new AsyncServiceStarter();
+            startThread.start();
+            if (m_startDelayMillis > 0) {
+                try {
+                    startThread.join(m_startDelayMillis);
+                } catch (InterruptedException e) { }
+            }
         }
     }   // start
     
@@ -167,32 +199,23 @@ public abstract class Service {
         if (!m_state.isStarted()) {
             m_logger.warn("stop(): Service has not been started -- ignoring");
         } else {
-            m_logger.info("Stopping");
-            m_state = State.STOPPING;
+            setState(State.STOPPING);
             this.stopService();
-            m_state = State.INACTIVE;
+            setState(State.INACTIVE);
         }
     }   // stop
     
     /**
-     * If this service has been initialized, wait for its state to become
-     * {@link State#RUNNING}. If the service has not been initialized, a RuntimeException
-     * is immediately thrown. Otherwise, this method blocks until the service has signaled
-     * that its full services are available.
-     * <p> 
-     * When a service is started, it may have to wait for a database connection or other
-     * events before it is fully available. This method can be called to block until this
-     * occurs. Multiple threads can call this method and all will return when the service
-     * is running. However, no deadlock detection is done!
+     * Wait for this service to reach the running state then return. A RuntimeException
+     * is thrown if the service has not been initialized.
+     * 
+     * @throws RuntimeException  If this service has not been initialized.
      */
     public final void waitForFullService() {
         if (!m_state.isInitialized()) {
             throw new RuntimeException("Service has not been initialized");
         }
         synchronized (m_runningLock) {
-            if (!m_state.isStarted()) {
-                m_logger.warn("waitForFullService(): Service state is {}", m_state.toString());
-            }
             while (!m_state.isRunning()) {
                 try {
                     m_runningLock.wait();
@@ -205,33 +228,6 @@ public abstract class Service {
     //----- Protected methods 
 
     /**
-     * Check that this service's state is {@link State#RUNNING} and if it isn't, throw
-     * a RuntimeException with the message "Service is not running". This method can be
-     * used as a prerequisite in public API methods to safeguard against calling a service
-     * that hasn't been initialized and/or hasn't yet started. API methods that intend to
-     * block on delayed service starts should call {@link #waitForFullService()} instead
-     * of this method. 
-     */
-    protected void checkRunning() {
-        // Don't synchronize on m_runningLock since we're just peeking.
-        if (m_state != State.RUNNING) {
-            throw new RuntimeException("Service is not running");
-        }
-    }   // checkRunning
-    
-    /**
-     * Set this service's state to {@link State#RUNNING} and unblock any threads who
-     * called {@link #waitForFullService()}. Each service <b>must</b> call this method
-     * after {@link #startService()} is called once its services are fully available.
-     */
-    protected void setRunning() {
-        synchronized (m_runningLock) {
-            m_state = State.RUNNING;
-            m_runningLock.notifyAll();
-        }
-    }   // setRunning
-    
-    /**
      * This method is called {@link #initialize()} is called. Each service must use this
      * method to perform one-time initialization steps such as checking configuration
      * options. It should throw a RuntimeException if the service cannot be started for
@@ -241,16 +237,17 @@ public abstract class Service {
     protected abstract void initService();
     
     /**
-     * This method is called when {@link #start()} is called. First, the service's
-     * state is set to {@link State#STARTING}. If the service is fully available when this
-     * method is called, it should call {@link #setRunning()}, which upgrades its state to
-     * {@link State#RUNNING}, and then return. If full availability must be delayed, it
-     * must launch an asynchronous thread that eventually calls {@link #setRunning()}.
-     * Either way, this call cannot block.
+     * This method is called when {@link #start()} is called in an asynchronous thread.
+     * The thread first sets the services state to {@link State#STARTING} and then calls
+     * startService. The method should return only when the service is fully available,
+     * hence it should wait on other services, perform database functions, etc. If a fatal
+     * error occurs that prevents the service from starting, startService should throw an
+     * exception. The exception will be logged and the server process stopped. If no
+     * exception occurs, the service's satte is set to {@link State#RUNNING}.
      * <p>
      * Note that the {@link DoradusServer} does not monitor a service for faults once
-     * this method has been called. Hence, each service must monitor and report errors.
-     * If an error occurs that is considered fatal, the service should call
+     * this method has returned. Hence, each service must monitor and report errors. If an
+     * error occurs that is considered fatal, the service should call
      * {@link DoradusServer#shutdown(String[])} to force a server shutdown.
      */
     protected abstract void startService();
@@ -262,5 +259,35 @@ public abstract class Service {
      * state is set to {@link State#INACTIVE}
      */
     protected abstract void stopService();
+    
+    /**
+     * This method is the same as {@link #waitForFullService()} except that it
+     * additionally ensures the the {@link DBService} is running and throws a
+     * {@link DBNotAvailableException} if it isn't. This can be used by public service
+     * methods to throw immediately when the DBService hasn't been initialized, thereby
+     * returning a 503 to the caller. But if the DBService is running and this service
+     * is still starting-up, it waits until it reaches running state.
+     * 
+     * @throws DBNotAvailableException   If the DBService is not yet running.
+
+     */
+    protected void checkServiceState() {
+        State dbServiceState = DBService.instance().getState();
+        if (!dbServiceState.isInitialized()) {
+            throw new RuntimeException("DBService has not been initialized");
+        }
+        if (!dbServiceState.isRunning()) {
+            throw new DBNotAvailableException("Initial Cassandra connection hasn't been established");
+        }
+        waitForFullService();
+    }   // checkServiceState
+
+    //----- Private methods
+
+    // Set the service's state and log the change.
+    private void setState(State newState) {
+        m_logger.info("Entering state: {}", newState.toString());
+        m_state = newState;
+    }   // setState
     
 }   // class Service

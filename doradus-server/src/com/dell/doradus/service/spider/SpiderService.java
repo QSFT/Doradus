@@ -111,8 +111,8 @@ public class SpiderService extends StorageService {
 
     @Override
     public void startService() {
+        SchemaService.instance().waitForFullService();
         m_statManager = StatisticManager.instance();
-        setRunning();
     }   // startService
 
     @Override
@@ -125,7 +125,7 @@ public class SpiderService extends StorageService {
     // Delete all CFs used by the given application.
     @Override
     public void deleteApplication(ApplicationDefinition appDef) {
-        checkRunning();
+        checkServiceState();
         deleteApplicationCFs(appDef);
         m_shardCache.clear(appDef);
     }   // deleteApplication
@@ -133,14 +133,14 @@ public class SpiderService extends StorageService {
     // Create all CFs needed for the given application.
     @Override
     public void initializeApplication(ApplicationDefinition oldAppDef, ApplicationDefinition appDef) {
-        checkRunning();
+        checkServiceState();
         verifyApplicationCFs(oldAppDef, appDef);
     }   // initializeApplication
     
     // Verify that the given application's options are valid for the Spider service.
     @Override
     public void validateSchema(ApplicationDefinition appDef) {
-        checkRunning();
+        checkServiceState();
         validateApplication(appDef);
         validateSchedules(appDef);
     }   // validateSchema
@@ -157,7 +157,7 @@ public class SpiderService extends StorageService {
      */
     @Override
     public DBObject getObject(TableDefinition tableDef, String objID) {
-        checkRunning();
+        checkServiceState();
         String storeName = objectsStoreName(tableDef);
         Iterator<DColumn> colIter = DBService.instance().getAllColumns(storeName, objID);
         if (colIter == null) {
@@ -171,19 +171,19 @@ public class SpiderService extends StorageService {
     
     @Override
     public SearchResultList objectQueryURI(TableDefinition tableDef, String uriQuery) {
-        checkRunning();
+        checkServiceState();
         return new ObjectQuery(tableDef, uriQuery).query();
     }   // objectQueryURI
     
     @Override
     public SearchResultList objectQueryDoc(TableDefinition tableDef, UNode rootNode) {
-        checkRunning();
+        checkServiceState();
         return new ObjectQuery(tableDef, rootNode).query();
     }   // objectQueryDoc    
 
     @Override
     public AggregateResult aggregateQueryURI(TableDefinition tableDef, String uriQuery) {
-        checkRunning();
+        checkServiceState();
         Aggregate aggregate = new Aggregate(tableDef);
         aggregate.parseParameters(uriQuery);
         try {
@@ -196,7 +196,7 @@ public class SpiderService extends StorageService {
     
     @Override
     public AggregateResult aggregateQueryDoc(TableDefinition tableDef, UNode rootNode) {
-        checkRunning();
+        checkServiceState();
         Aggregate aggregate = new Aggregate(tableDef);
         aggregate.parseParameters(rootNode);
         try {
@@ -221,7 +221,7 @@ public class SpiderService extends StorageService {
     @Override
     public BatchResult addBatch(ApplicationDefinition appDef, String tableName,
                                 DBObjectBatch batch, Map<String, String> options) {
-        checkRunning();
+        checkServiceState();
         TableDefinition tableDef = appDef.getTableDef(tableName);
         Utils.require(tableDef != null || appDef.allowsAutoTables(),
                       "Unknown table for application '%s': %s", appDef.getAppName(), tableName);
@@ -239,7 +239,7 @@ public class SpiderService extends StorageService {
     // name, and (for now) all objects in the batch must belong to that table.
     @Override
     public BatchResult deleteBatch(ApplicationDefinition appDef, String tableName, DBObjectBatch batch) {
-        checkRunning();
+        checkServiceState();
         TableDefinition tableDef = appDef.getTableDef(tableName);
         Utils.require(tableDef != null, "Unknown table for application '%s': %s", appDef.getAppName(), tableName);
         
@@ -440,7 +440,7 @@ public class SpiderService extends StorageService {
     public Map<String, Map<String, String>> getObjectScalars(TableDefinition    tableDef,
                                                              Collection<String> objIDs,
                                                              Collection<String> fieldNames) {
-        checkRunning();
+        checkServiceState();
         Map<String, Map<String, String>> objScalarMap = new HashMap<>();
         if (objIDs.size() > 0 && fieldNames.size() > 0) {
             String storeName = objectsStoreName(tableDef);
@@ -474,7 +474,7 @@ public class SpiderService extends StorageService {
     public Map<String, String> getObjectScalar(TableDefinition    tableDef,
                                                Collection<String> objIDs,
                                                String fieldName) {
-        checkRunning();
+        checkServiceState();
         Map<String, String> objScalarMap = new HashMap<>();
         if (objIDs.size() > 0) {
             String storeName = objectsStoreName(tableDef);
@@ -506,7 +506,7 @@ public class SpiderService extends StorageService {
     public void verifyShard(TableDefinition tableDef, int shardNumber) {
         assert tableDef.isSharded();
         assert shardNumber > 0;
-        checkRunning();
+        checkServiceState();
         m_shardCache.verifyShard(tableDef, shardNumber);
     }   // verifyShard
 
@@ -520,7 +520,7 @@ public class SpiderService extends StorageService {
      *                  not be null.
      */
     public Map<Integer, Date> getShards(TableDefinition tableDef) {
-        checkRunning();
+        checkServiceState();
         if (tableDef.isSharded()) {
             return m_shardCache.getShardMap(tableDef);
         } else {
@@ -539,7 +539,7 @@ public class SpiderService extends StorageService {
      * @return          {@link StatsStatus} that holds the refresh statuses. 
      */
     public StatsStatus getStatisticsRefreshStatus(TableDefinition tableDef) {
-        checkRunning();
+        checkServiceState();
     	return m_statManager.getStatStatus(tableDef);
     }   // getStatisticsRefreshStatus
 
@@ -551,7 +551,7 @@ public class SpiderService extends StorageService {
      * @return          {@link StatResult} containing query results.
      */
     public StatResult queryStatisticURI(ApplicationDefinition appDef, StatisticDefinition statDef, String params) {
-        checkRunning();
+        checkServiceState();
     	return m_statManager.getStatistics(appDef, statDef, params);
     }   // queryURIStatistic
 
@@ -563,7 +563,7 @@ public class SpiderService extends StorageService {
      * @param statDef   {@link StatisticDefinition} of statistic to refresh
      */
     public boolean refreshStatistic(String appName, StatisticDefinition statDef) {
-        checkRunning();
+        checkServiceState();
     	return m_statManager.refreshStatistic(appName, statDef);
     }   // refreshStatistic
     
@@ -576,7 +576,7 @@ public class SpiderService extends StorageService {
      * @param tabledef  {@link TableDefinition} of table to refresh statistics for.
      */
     public boolean refreshTableStatistics(String appName, TableDefinition tabledef) {
-        checkRunning();
+        checkServiceState();
     	return m_statManager.refreshStatistic(appName,  tabledef);
     }   // refreshTableStatistics
     

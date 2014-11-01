@@ -45,7 +45,6 @@ import com.dell.doradus.olap.aggregate.AggregationResult;
 import com.dell.doradus.olap.store.SegmentStats;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.StorageService;
-import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
@@ -89,15 +88,8 @@ public class OLAPService extends StorageService {
     
     @Override
     public void startService() {
-        // Launch a thread to wait for full DB service so we can also be full service.
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                DBService.instance().waitForFullService();
-                m_olap = new Olap();
-                setRunning();
-            }
-        }).start();
+        SchemaService.instance().waitForFullService();
+        m_olap = new Olap();
     }   // startService
     
     @Override
@@ -109,7 +101,7 @@ public class OLAPService extends StorageService {
     
     @Override
     public void deleteApplication(ApplicationDefinition appDef) {
-        waitForFullService();
+        checkServiceState();
         m_olap.deleteApplication(appDef.getAppName());
     }   // deleteApplication
     
@@ -133,21 +125,21 @@ public class OLAPService extends StorageService {
     
     @Override
     public SearchResultList objectQueryURI(TableDefinition tableDef, String uriQuery) {
-        waitForFullService();
+        checkServiceState();
         OlapQuery olapQuery = new OlapQuery(uriQuery);
         return m_olap.search(tableDef.getAppDef().getAppName(), tableDef.getTableName(), olapQuery);
     }   // objectQueryURI
     
     @Override
     public SearchResultList objectQueryDoc(TableDefinition tableDef, UNode rootNode) {
-        waitForFullService();
+        checkServiceState();
         OlapQuery olapQuery = new OlapQuery(rootNode);
         return m_olap.search(tableDef.getAppDef().getAppName(), tableDef.getTableName(), olapQuery);
     }   // objectQueryDoc
     
     @Override
     public AggregateResult aggregateQueryURI(TableDefinition tableDef, String uriQuery) {
-        waitForFullService();
+        checkServiceState();
         String application = tableDef.getAppDef().getAppName();
         OlapAggregate request = new OlapAggregate(uriQuery);
         AggregationResult result = m_olap.aggregate(application, tableDef.getTableName(), request);
@@ -156,7 +148,7 @@ public class OLAPService extends StorageService {
     
     @Override
     public AggregateResult aggregateQueryDoc(TableDefinition tableDef, UNode rootNode) {
-        waitForFullService();
+        checkServiceState();
         String application = tableDef.getAppDef().getAppName();
         OlapAggregate request = new OlapAggregate(rootNode);
         AggregationResult result = m_olap.aggregate(application, tableDef.getTableName(), request);
@@ -175,7 +167,7 @@ public class OLAPService extends StorageService {
     @Override
     public BatchResult addBatch(ApplicationDefinition appDef, String shardName,
                                 DBObjectBatch batch, Map<String, String> options) {
-        waitForFullService();
+        checkServiceState();
         String guid = m_olap.addSegment(appDef, shardName, batch, getOverwriteOption(options));
         BatchResult result = new BatchResult();
         result.setStatus(Status.OK);
@@ -214,7 +206,7 @@ public class OLAPService extends StorageService {
      *                      OLAP browser command.
      */
     public String browseOlapp(Map<String, String> parameters) {
-        waitForFullService();
+        checkServiceState();
         return Olapp.process(m_olap, parameters);
     }   // browseOlapp
     
@@ -226,7 +218,7 @@ public class OLAPService extends StorageService {
      * @param shard         Shard name.
      */
     public void deleteShard(String application, String shard) {
-        waitForFullService();
+        checkServiceState();
         m_olap.deleteShard(application, shard);
     }   // deleteShard
 
@@ -271,7 +263,7 @@ public class OLAPService extends StorageService {
      * @return The internal {@link Olap} object.
      */
     public Olap getOlap() {
-        waitForFullService();
+        checkServiceState();
         return m_olap;
     }   // getOlap
     
@@ -285,7 +277,7 @@ public class OLAPService extends StorageService {
      * @return              Shard statistics as a {@link SegmentStats} object.
      */
     public SegmentStats getStats(String application, String shard) {
-        waitForFullService();
+        checkServiceState();
         return m_olap.getStats(application, shard);
     }   // getStats 
     
@@ -296,7 +288,7 @@ public class OLAPService extends StorageService {
      * @return              List of shard names. Empty if there are no shards.
      */
     public List<String> listShards(String application) {
-        waitForFullService();
+        checkServiceState();
         return m_olap.listShards(application);
     }   // listShards
     
@@ -312,7 +304,7 @@ public class OLAPService extends StorageService {
      * @param expireDate    Optional expire-date for shard. Null to remove expire-date.
      */
     public void mergeShard(String application, String shard, Date expireDate) {
-        waitForFullService();
+        checkServiceState();
         m_olap.merge(application, shard, expireDate);
     }   // mergeShard
     
@@ -326,7 +318,7 @@ public class OLAPService extends StorageService {
      *                      expire-date.
      */
     public Date getExpirationDate(String application, String shard) {
-        waitForFullService();
+        checkServiceState();
         return m_olap.getExpirationDate(application, shard);
     }	// getExpirationDate
     
@@ -347,7 +339,7 @@ public class OLAPService extends StorageService {
      *                      returned as a {@link SearchResultList}.
      */
     public SearchResultList getDuplicateIDs(String application, String table, String range) {
-        waitForFullService();
+        checkServiceState();
     	return m_olap.getDuplicateIDs(application, table, range);
     }	// getDuplicateIDs
     

@@ -124,7 +124,6 @@ public class RESTService extends Service {
         displayCommandSet();
         try {
             m_jettyServer.start();
-            setRunning();
         } catch (Exception e) {
             throw new RuntimeException("Failed to start Jetty", e);
         }

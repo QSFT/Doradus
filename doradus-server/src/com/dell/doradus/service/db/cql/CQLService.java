@@ -112,6 +112,7 @@ public class CQLService extends DBService {
     
     @Override
     public void createStoreIfAbsent(StoreTemplate storeTemplate) {
+        checkState();
         String tableName = storeToCQLName(storeTemplate.getName());
         if (!storeExists(tableName)) {
             m_schemaMgr.createCQLTable(storeTemplate);
@@ -120,11 +121,13 @@ public class CQLService extends DBService {
     
     @Override
     public void deleteStoreIfPresent(String storeName) {
+        checkState();
         m_schemaMgr.dropCQLTable(storeToCQLName(storeName));
     }   // deleteStoreIfPresent
 
     @Override
     public boolean storeExists(String storeName) {
+        checkState();
         String tableName = storeToCQLName(storeName);
         return m_schemaMgr.tableExists(tableName);
     }   // storeExists
@@ -133,6 +136,7 @@ public class CQLService extends DBService {
     
     @Override
     public Map<String, Map<String, String>> getAllAppProperties() {
+        checkState();
         Map<String, Map<String, String>> result = new HashMap<>();
         ResultSet rs = executeQuery(Query.SELECT_ALL_ROWS_ALL_COLUMNS, APPS_TABLE_NAME);
         CQLRowIterator rowIter = new CQLRowIterator(rs);
@@ -155,6 +159,7 @@ public class CQLService extends DBService {
 
     @Override
     public Map<String, String> getAppProperties(String appName) {
+        checkState();
         ResultSet rs = executeQuery(Query.SELECT_1_ROW_ALL_COLUMNS, APPS_TABLE_NAME, appName);
         CQLRowIterator rowIter = new CQLRowIterator(rs);
         if (!rowIter.hasNext()) {
@@ -174,11 +179,13 @@ public class CQLService extends DBService {
     
     @Override
     public DBTransaction startTransaction() {
+        checkState();
         return new CQLTransaction();
     }
 
     @Override
     public void commit(DBTransaction dbTran) {
+        checkState();
         ((CQLTransaction)dbTran).commit();
     }   // commit
 
@@ -186,6 +193,7 @@ public class CQLService extends DBService {
 
     @Override
     public Iterator<DColumn> getAllColumns(String storeName, String rowKey) {
+        checkState();
         String tableName = storeToCQLName(storeName);
         return new CQLColumnIterator(executeQuery(Query.SELECT_1_ROW_ALL_COLUMNS, tableName, rowKey));
     }
@@ -196,6 +204,7 @@ public class CQLService extends DBService {
                                             String  startCol,
                                             String  endCol,
                                             boolean reversed) {
+        checkState();
         String tableName = storeToCQLName(storeName);
         ResultSet rs = null;
         if (reversed) {
@@ -212,18 +221,21 @@ public class CQLService extends DBService {
                                             String rowKey,
                                             String startCol,
                                             String endCol) {
+        checkState();
         String tableName = storeToCQLName(storeName);
         return new CQLColumnIterator(executeQuery(Query.SELECT_1_ROW_COLUMN_RANGE, tableName, rowKey, startCol, endCol));
     }
 
     @Override
     public Iterator<DRow> getAllRowsAllColumns(String storeName) {
+        checkState();
         String tableName = storeToCQLName(storeName);
         return new CQLRowIterator(executeQuery(Query.SELECT_ALL_ROWS_ALL_COLUMNS, tableName));
     }
 
     @Override
     public DColumn getColumn(String storeName, String rowKey, String colName) {
+        checkState();
         String tableName = storeToCQLName(storeName);
         CQLColumnIterator colIter = new CQLColumnIterator(executeQuery(Query.SELECT_1_ROW_1_COLUMN, tableName, rowKey, colName));
         if (!colIter.hasNext()) {
@@ -234,6 +246,7 @@ public class CQLService extends DBService {
 
     @Override
     public Iterator<DRow> getRowsAllColumns(String storeName, Collection<String> rowKeys) {
+        checkState();
         String tableName = storeToCQLName(storeName);
         return new CQLRowIterator(executeQuery(Query.SELECT_ROW_SET_ALL_COLUMNS,
                                                tableName,
@@ -244,6 +257,7 @@ public class CQLService extends DBService {
     public Iterator<DRow> getRowsColumns(String             storeName,
                                          Collection<String> rowKeys,
                                          Collection<String> colNames) {
+        checkState();
         String tableName = storeToCQLName(storeName);
         return new CQLRowIterator(executeQuery(Query.SELECT_ROW_SET_COLUMN_SET,
                                                tableName,
@@ -256,6 +270,7 @@ public class CQLService extends DBService {
                                              Collection<String> rowKeys,
                                              String             startCol,
                                              String             endCol) {
+        checkState();
         String tableName = storeToCQLName(storeName);
         return new CQLRowIterator(executeQuery(Query.SELECT_ROW_SET_COLUMN_RANGE,
                                                tableName,
@@ -270,6 +285,7 @@ public class CQLService extends DBService {
                                              String             startCol,
                                              String             endCol,
                                              boolean            reversed) {
+        checkState();
         String tableName = storeToCQLName(storeName);
         ResultSet rs = null;
         if (reversed) {
@@ -337,42 +353,24 @@ public class CQLService extends DBService {
         return m_session.execute(boundState);
     }   // executeQuery
     
+    // Establish the CQL session
     private void initializeCQLSession() {
-        startCreateSessionThread();
-    }   // initializeCQLSession
-
-    private void startCreateSessionThread() {
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (!getState().isRunning()) {
-                    try {
-                        Cluster cluster = buildClusterSpecs();
-                        createKeyspaceSession(cluster);
-                        setRunning();
-                    } catch (Exception e) {
-                        // for now
-                        m_logger.info("Database is not reachable: {}. Waiting to retry", e);
-                        try {
-                            Thread.sleep(ServerConfig.getInstance().db_connect_retry_wait_millis);
-                        } catch (InterruptedException ex2) {
-                            // ignore
-                        }
-                    } catch (Error e) {
-                        // These are fatal. Log and shutdown.
-                        m_logger.error("Fatal error", e);
-                        m_logger.info("Shutting down");
-                        System.exit(1);
-                    }
+        while (true) {
+            try {
+                Cluster cluster = buildClusterSpecs();
+                createKeyspaceSession(cluster);
+                break;
+            } catch (Exception e) {
+                m_logger.info("Database is not reachable: {}. Waiting to retry", e);
+                try {
+                    Thread.sleep(ServerConfig.getInstance().db_connect_retry_wait_millis);
+                } catch (InterruptedException ex2) {
+                    // ignore
                 }
             }
-        });
-        t.start();
-        // wait 1 second: if connection to Cassandra is OK,
-        // it becomes available right after DoradusServer.start or startEmbedded call.
-        try { t.join(1000); } catch (InterruptedException e) {}
-    }   // startNewSessionThread
-    
+        }
+    }   // initializeCQLSession
+
     // Build Cluster object from ServerConfig settings.
     private Cluster buildClusterSpecs() {
         ServerConfig config = ServerConfig.getInstance();
@@ -399,7 +397,7 @@ public class CQLService extends DBService {
             setClusterCredentials(builder);
         }
         
-        // Experimental: Always use compression
+        // compression
         builder.withCompression(Compression.SNAPPY);
         
         // TODO: Allow SSL connections
@@ -517,6 +515,7 @@ public class CQLService extends DBService {
         m_schemaMgr.createCQLTable(template);
     }   // createTasksColumnFamily
     
+    // Display configuration information for the given cluster.
     private void displayClusterInfo(Cluster cluster) {
         Metadata metadata = cluster.getMetadata();
         m_logger.info("Connected to cluster with topography:");
