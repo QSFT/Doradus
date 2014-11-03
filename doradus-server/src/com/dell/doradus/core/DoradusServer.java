@@ -19,7 +19,7 @@ package com.dell.doradus.core;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -257,7 +257,7 @@ public final class DoradusServer {
     
     // Initialize services required for embedded start.
     private void initEmbeddedServices(String[] requestedServices) {
-        Set<String> serviceSet = new HashSet<>();
+        Set<String> serviceSet = new LinkedHashSet<>();
         if (requestedServices != null) {
             serviceSet.addAll(Arrays.asList(requestedServices));
         }
@@ -279,7 +279,7 @@ public final class DoradusServer {
     
     // Initialize services configured+needed for stand-alone operation.
     private void initStandaAloneServices() {
-        Set<String> serviceSet = new HashSet<>();
+        Set<String> serviceSet = new LinkedHashSet<>();
         addDefaultServices(serviceSet);
         addRequiredServices(serviceSet);
         addConfiguredStorageServices(serviceSet);
