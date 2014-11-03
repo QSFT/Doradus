@@ -122,7 +122,7 @@ public abstract class Service {
                 startService();
                 synchronized (m_runningLock) {
                     setState(Service.State.RUNNING);
-                    m_logger.info("Notifying waiters");
+                    m_logger.debug("Notifying waiters");
                     m_runningLock.notifyAll();
                 }
             } catch (Throwable e) {

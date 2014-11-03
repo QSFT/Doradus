@@ -19,7 +19,7 @@ package com.dell.doradus.core;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -97,10 +97,11 @@ public final class DoradusServer {
     }   // instance
     
     /**
-     * Start the Doradus Server overriding doradus.yaml file options with the given options.
-     * All internal services as well as storage_services configured in doradus.yaml are
-     * started. The process blocks until a shutdown signal is received via Ctrl-C or until
-     * {@link #shutdown(String[])} is called.
+     * Start the Doradus Server in stand-alone mode, overriding doradus.yaml file options
+     * with the given options. All required services plus default_services and
+     * storage_services configured in doradus.yaml are started. The process blocks until a
+     * shutdown signal is received via Ctrl-C or until {@link #shutdown(String[])} is
+     * called.
      * 
      * @param args  Optional arguments that override doradus.yaml file options. Arguments
      *              should be provided in the form "-option value" where "option" is a
@@ -216,18 +217,21 @@ public final class DoradusServer {
     // Construction via the instance() method only.
     private DoradusServer() {}
 
-    // Merge given service list and configured storage_services into unique list. 
-    private String[] addConfigStorageServices(List<String> services) {
-        Set<String> serviceSet = new LinkedHashSet<>(); // maintain service order
-        if (services != null) {
-            serviceSet.addAll(services);
-        }
+    // Add configured storage_services to the given set. 
+    private void addConfiguredStorageServices(Set<String> serviceSet) {
         List<String> ssList = ServerConfig.getInstance().storage_services;
         if (ssList != null) {
             serviceSet.addAll(ssList);
         }
-        return serviceSet.toArray(new String[serviceSet.size()]);
-    }   // addConfigStorageServices
+    }   // addConfiguredStorageServices
+    
+    // Add configured default_services to the given set. 
+    private void addDefaultServices(Set<String> serviceSet) {
+        List<String> defaultServices = ServerConfig.getInstance().default_services;
+        if (defaultServices != null) {
+            serviceSet.addAll(defaultServices);
+        }
+    }   // addDefaultServices
     
     // Hook the JVM shutdown hook so we get notified for Ctrl-C.
     private void hookShutdownEvent() {
@@ -246,10 +250,20 @@ public final class DoradusServer {
             return;
         }
         initConfig(args);
-        initServices(addRequiredServices(services));
+        initEmbeddedServices(services);
         RESTService.instance().registerRESTCommands(REST_RULES);
         m_bInitialized = true;
     }   // initEmbedded
+    
+    // Initialize services required for embedded start.
+    private void initEmbeddedServices(String[] requestedServices) {
+        Set<String> serviceSet = new HashSet<>();
+        if (requestedServices != null) {
+            serviceSet.addAll(Arrays.asList(requestedServices));
+        }
+        addRequiredServices(serviceSet);
+        initServices(serviceSet);
+    }   // initEmbeddedServices
     
     // Initialize server configuration and all services for stand-alone running.
     private void initStandAlone(String[] args) {
@@ -258,11 +272,20 @@ public final class DoradusServer {
             return;
         }
         initConfig(args);
-        initServices(addConfigStorageServices(ServerConfig.getInstance().default_services));
+        initStandaAloneServices();
         RESTService.instance().registerRESTCommands(REST_RULES);
         m_bInitialized = true;
     }   // initStandAlone
     
+    // Initialize services configured+needed for stand-alone operation.
+    private void initStandaAloneServices() {
+        Set<String> serviceSet = new HashSet<>();
+        addDefaultServices(serviceSet);
+        addRequiredServices(serviceSet);
+        addConfiguredStorageServices(serviceSet);
+        initServices(serviceSet);
+    }   // initStandaAloneServices
+
     // Initialize the ServerConfig module, which loads the doradus.yaml file.
     private void initConfig(String[] args) {
         try {
@@ -274,8 +297,8 @@ public final class DoradusServer {
     
     // Initialize the given list of services. Register initialized Service and
     // StorageService objects. Throw if a storage service is not requested.
-    private void initServices(String[] services) {
-        for (String serviceName : services) {
+    private void initServices(Set<String> serviceSet) {
+        for (String serviceName : serviceSet) {
             Service service = initService(serviceName);
             m_initializedServices.add(service);
             if (service instanceof StorageService) {
@@ -303,10 +326,8 @@ public final class DoradusServer {
     }   // initService
 
     // Add required services, if missing, to the given list and return.
-    private String[] addRequiredServices(String[] services) {
-        Set<String> serviceSet = new LinkedHashSet<>(Arrays.asList(services)); // preserve order
+    private void addRequiredServices(Set<String> serviceSet) {
         serviceSet.addAll(Arrays.asList(REQUIRED_SERVICES));
-        return serviceSet.toArray(new String[serviceSet.size()]);
     }   // addRequiredServices
     
     // Start the DoradusServer services.
