@@ -56,6 +56,12 @@ public class CassandraSchemaMgr {
     private final Cassandra.Client m_client;
     private final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
 
+    // Maximum time to wait for schema version consensus:
+    private static final int SCHEMA_CONSENSUS_WAIT_MILLIS = 5000;
+    
+    // For single-threading requests to perform schema changes:
+    private static final Object UPDATE_LOCK = new Object();
+    
     /**
      * Create an object uses the given connection to perform schema operations. The given
      * client connection should not be used for anything else until this object is
@@ -144,7 +150,9 @@ public class CassandraSchemaMgr {
         
         // Create the column familiy and wait for all nodes to agree.
         try {
-            validateSchema(m_client.system_add_column_family(cfDef));
+            synchronized (UPDATE_LOCK) {
+                validateSchema(m_client.system_add_column_family(cfDef));
+            }
         } catch (Exception ex) {
             throw new RuntimeException("ColumnFamily creation failed", ex);
         }
@@ -158,7 +166,9 @@ public class CassandraSchemaMgr {
     public void deleteColumnFamily(String cfName) {
         m_logger.info("Deleting ColumnFamily: {}", cfName);
         try {
-            m_client.system_drop_column_family(cfName);
+            synchronized (UPDATE_LOCK) {
+                m_client.system_drop_column_family(cfName);
+            }
         } catch (Exception ex) {
             throw new RuntimeException("drop_column_family failed", ex);
         }
@@ -194,7 +204,9 @@ public class CassandraSchemaMgr {
         
         try {
             KsDef ksDef = setKeySpaceOptions();
-            m_client.system_add_keyspace(ksDef);
+            synchronized (UPDATE_LOCK) {
+                m_client.system_add_keyspace(ksDef);
+            }
         } catch (Exception ex) {
             String errMsg = "Failed to create Keyspace '" + keyspace + "'"; 
             m_logger.error(errMsg, ex);
@@ -301,28 +313,26 @@ public class CassandraSchemaMgr {
     
     // Check that all Cassandra nodes are in agreement on the latest schema change.
     private void validateSchema(String currentVersionId) {
+        m_logger.debug("Waiting for consensus on schema version: {}", currentVersionId);
         Map<String, List<String>> versions = null;
 
-        long limit = System.currentTimeMillis() + 5000;
-        boolean inAgreement = false;
-        do {
+        long limit = System.currentTimeMillis() + SCHEMA_CONSENSUS_WAIT_MILLIS;
+        while (System.currentTimeMillis() < limit) {
             try {
                 versions = m_client.describe_schema_versions(); // getting schema version for nodes of the ring
-            } catch (Exception e) {
-                continue;
-            }
-
-            for (String version : versions.keySet()) {
-                if (version.equals(currentVersionId)) {
-                    inAgreement = true;
-                    break;
+                if (versions.size() == 1) {
+                    m_logger.debug("Reached consensus on new schema version: {}", versions.keySet().iterator().next());
+                    return;     // All nodes on the same version
                 }
+            } catch (Exception e) {
+                m_logger.warn("Cassandra describe_schema_versions", e);
             }
-        } while (limit - System.currentTimeMillis() >= 0 && !inAgreement);
-
-        if (!inAgreement) {
-            throw new RuntimeException("Cannot get agreement on Cassandra schema versions");
+            m_logger.debug("Multiple schema versions found: {}", versions.keySet());
+            try { Thread.sleep(500); } catch (InterruptedException e) { }
         }
+
+        // Failed to reach consensus
+        throw new RuntimeException("Cannot get agreement on Cassandra schema versions");
     }   // validateSchema
 
 }   // class CassandraSchemaMgr
