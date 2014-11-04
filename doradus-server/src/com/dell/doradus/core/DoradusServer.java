@@ -82,6 +82,9 @@ public final class DoradusServer {
         new RESTCommand("PUT    /{application}/{store}          com.dell.doradus.core.UpdateObjectsCmd"),
         new RESTCommand("PUT    /{application}/{store}?{params} com.dell.doradus.core.UpdateObjectsCmd"),
         new RESTCommand("DELETE /{application}/{store}          com.dell.doradus.core.DeleteObjectsCmd"),
+        
+        // System commands:
+        new RESTCommand("GET /_dump com.dell.doradus.core.TheadDumpCmd"),
     });
 
     ///// Public methods
