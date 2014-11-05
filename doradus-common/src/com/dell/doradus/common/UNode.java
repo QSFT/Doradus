@@ -735,10 +735,15 @@ final public class UNode {
                 break;
             case VALUE:
                 // Map to a simple element.
+                String value = m_value;
+                if (Utils.containsIllegalXML(value)) {
+                    value = Utils.base64FromString(m_value);
+                    attrMap.put("encoding", "base64");
+                }
                 if (attrMap.size() > 0) {
-                    xml.addDataElement(elemName, m_value, attrMap);
+                    xml.addDataElement(elemName, value, attrMap);
                 } else {
-                    xml.addDataElement(elemName, m_value);
+                    xml.addDataElement(elemName, value);
                 }
                 break;
             default:
@@ -1041,7 +1046,7 @@ final public class UNode {
 
     // Parse the XML structure rooted at the given element and return the appropriate
     // UNode object. Note that element content is only allowed in "leaf" elements, hence
-    // such elements cannot have child elements. The two rules that that allow element
+    // such elements cannot have child elements. The two rules that allow element
     // content are:
     // 
     // 1) If the element has no attributes and no child nodes, it becomes a VALUE node
@@ -1060,6 +1065,14 @@ final public class UNode {
     //    This becomes a VALUE UNode with name="_ID" and value="lollapalooza". The element
     //    name ("field") is saved in the "tag name" member.
     //
+    // A variant of rules 1) and 2) is that the attribute encoding="Base64" can be present
+    // to denote that the value is Base64-encoded (and UTF-8 encoded under that). Hence,
+    // the following two are identical to the previous examples except that the element
+    // data is Base64 and UTF-8 decoded:
+    //
+    //          <key encoding="Base64">Stellar1</key>
+    //          <field name="_ID" encoding="Base64">lollapalooza</field>
+    //
     // The remaining rules cannot have element content:
     //
     // 3) If the element has exactly two attributes called "name" and "value", it becomes
@@ -1069,7 +1082,8 @@ final public class UNode {
     //
     //    This becomes a VALUE UNode with name="AutoTables" and value="false". This case
     //    is not allowed to have child elements. The element name ("option") is saved in
-    //    the "tag name" member.
+    //    the "tag name" member. The attribute encoding="Base64" can be used for this
+    //    case as well, causing the "value" attribute to be Base64 and UTF-8 decoded.
     //
     // 4) In all remaining cases, the element becomes a MAP or an ARRAY. A MAP is created
     //    if the node has no duplicate child element names, otherwise an ARRAY is created.
@@ -1083,7 +1097,7 @@ final public class UNode {
     //    This becomes a MAP named "Children" with two child members, both VALUE UNodes
     //    with the name/value pairs "type/link" and "inverse/Parents". Another example:
     //
-    //          <add>>
+    //          <add>
     //              <field name="_ID">123</field>
     //              <field name="_ID">456</field>
     //          </add>
@@ -1104,6 +1118,13 @@ final public class UNode {
         
         // Decide what the element becomes as documented above.
         UNode result = null;
+        
+        // Detect base64 encoding attribute and remove it.
+        String encoding = elem.getAttribute("encoding");
+        if (!Utils.isEmpty(encoding) && encoding.equalsIgnoreCase("base64")) {
+            attrMap.removeNamedItem("encoding");
+            content = Utils.base64ToString(content);
+        }
         
         // Case 1): <key>Stellar1</key>
         if (attrMap.getLength() == 0 && childUNodeList.size() == 0) {

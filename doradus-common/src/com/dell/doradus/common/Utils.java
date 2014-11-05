@@ -196,17 +196,6 @@ final public class Utils {
      * @return                          Base64-encoded value.
      * @throws IllegalArgumentException If the given value is null.
      */
-    public static String base64ToString(byte[] value) throws IllegalArgumentException {
-        return DatatypeConverter.printBase64Binary(value);
-    }   // base64ToString
-    
-    /**
-     * Convert (encode) the given binary value using Base64.
-     * 
-     * @param  value                    A binary value.
-     * @return                          Base64-encoded value.
-     * @throws IllegalArgumentException If the given value is null.
-     */
     public static String base64FromBinary(byte[] value) throws IllegalArgumentException {
         return DatatypeConverter.printBase64Binary(value);
     }   // base64FromBinary
@@ -236,6 +225,32 @@ final public class Utils {
     public static String base64FromBinary(byte[] value, int offset, int length) throws IllegalArgumentException {
         return DatatypeConverter.printBase64Binary(Arrays.copyOfRange(value, offset, offset + length));
     }   // base64FromBinary
+    
+    /**
+     * Convert the given String to UTF-8, encode the result with Base64, and return the
+     * encoded value as a string. The result string will only contain valid Base64
+     * characters.
+     * 
+     * @param   value   Unicode String value.
+     * @return          Base64 encoding of UTF-8 encoded String value.
+     */
+    public static String base64FromString(String value) {
+        return DatatypeConverter.printBase64Binary(toBytes(value));
+    }   // base64FromString
+    
+    /**
+     * Decode the given base64 value to binary, then decode the result as a UTF-8 sequence
+     * and return the resulting String.
+     * 
+     * @param base64Value   Base64-encoded value of a UTF-8 encoded string.
+     * @return              Decoded string value.
+     */
+    public static String base64ToString(String base64Value) {
+        Utils.require(base64Value.length() % 4 == 0,
+                      "Invalid base64 value (must be a multiple of 4 chars): " + base64Value);
+        byte[] utf8String = DatatypeConverter.parseBase64Binary(base64Value);
+        return toString(utf8String);
+    }   // base64ToString
     
     /**
      * Return the Java Unicode escape sequence for the given character. For example, the
@@ -426,6 +441,32 @@ final public class Utils {
         return buffer.toString();
     }   // concatenate
 
+    /**
+     * Returns true if the given string contains any characters that are considered illegal
+     * in XML. See http://www.w3.org/TR/xml/#charsets. The legal XML characters XML are:
+     * <pre>
+     *      #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]
+     * </pre>
+     * Note that Java String chars can only be up to 0xFFFF 
+     *  
+     * @param   str Non-null string to be tested.
+     * @return      True if the string contains a character considered illegal in XML.
+     */
+    public static boolean containsIllegalXML(String str) {
+        assert str != null;
+        for (int index = 0; index < str.length(); index++) {
+            char ch = str.charAt(index);
+            if ((ch <= 0x08) ||
+                (ch >= 0x0B && ch <= 0x0C) ||
+                (ch >= 0x0E && ch <= 0x19) ||
+                (ch >= 0xD800 && ch <= 0xDFFF) ||
+                (ch >= 0xFFFE)) {
+                return true;
+            }
+        }
+        return false;
+    }   // containsIllegalXML
+    
     /**
      * Concatenate the contents of all provided byte[] arrays into a single value from
      * left to right. The result byte[] will equal the sum of all the individual byte[]
