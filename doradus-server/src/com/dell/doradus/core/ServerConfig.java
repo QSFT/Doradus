@@ -193,6 +193,8 @@ public class ServerConfig {
     public List<String> storage_services = new ArrayList<>();
     public String dbhost = DEFAULT_DB_HOST;
     public int dbport = DEFAULT_DB_PORT;
+    public boolean dbtls = false;
+    public List<String> dbtls_cipher_suites = new ArrayList<>();
     public int jmxport = DEFAULT_JMX_PORT;
     // Doradus keyspace properties
     public String keyspace = DEFAULT_KS_NAME;
