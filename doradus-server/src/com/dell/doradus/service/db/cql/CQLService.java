@@ -20,13 +20,20 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
@@ -39,6 +46,7 @@ import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ProtocolOptions.Compression;
 import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.SSLOptions;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SocketOptions;
 import com.datastax.driver.core.TableMetadata;
@@ -400,10 +408,56 @@ public class CQLService extends DBService {
         // compression
         builder.withCompression(Compression.SNAPPY);
         
-        // TODO: Allow SSL connections
+        // TLS/SSL
+        if (config.dbtls) {
+            builder.withSSL(getSSLOptions());
+        }
+        
         return builder.build();
     }   // buildClusterSpecs
 
+    // Build SSLOptions from SSL/TLS configuration options. 
+    private SSLOptions getSSLOptions() {
+        ServerConfig config = ServerConfig.getInstance();
+        SSLContext sslContext = null;
+        try {
+            sslContext = getSSLContext(config.truststore,
+                                       config.truststorepassword,
+                                       config.keystore,
+                                       config.keystorepassword);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to build SSLContext", e);
+        }
+        List<String> cipherSuites = config.dbtls_cipher_suites;
+        if (cipherSuites == null) {
+            cipherSuites = new ArrayList<>();
+        }
+        return new SSLOptions(sslContext, cipherSuites.toArray(new String[]{}));
+    }   // getSSLOptions
+    
+    // Build an SSLContext from the given truststore and keystore parameters.
+    private SSLContext getSSLContext(String truststorePath,
+                                     String truststorePassword,
+                                     String keystorePath, 
+                                     String keystorePassword) throws Exception {
+
+        FileInputStream tsf = new FileInputStream(truststorePath);
+        KeyStore ts = KeyStore.getInstance("JKS");
+        ts.load(tsf, truststorePassword.toCharArray());
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        tmf.init(ts);
+
+        FileInputStream ksf = new FileInputStream(keystorePath);
+        KeyStore ks = KeyStore.getInstance("JKS");
+        ks.load(ksf, keystorePassword.toCharArray());
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        kmf.init(ks, keystorePassword.toCharArray());
+
+        SSLContext ctx = SSLContext.getInstance("SSL");
+        ctx.init(kmf.getKeyManagers(), tmf.getTrustManagers(), new SecureRandom());
+        return ctx;
+    }   // getSSLContext
+    
     // Set the cluster credentials for password authentication.
     private void setClusterCredentials(Builder builder) {
         String filename = System.getProperty(PASSWD_FILENAME_PROPERTY);

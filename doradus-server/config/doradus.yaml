@@ -168,6 +168,19 @@ max_read_attempts: 7
 use_cql: false
 #dbport: 9042
 
+# dbtls: Set to true to use TLS/SSL for connections to Cassandra. This option currently only affects
+# CQL, hence use_cql must be true. When dbtls is enabled, the options keystore, keystorepassword,
+# truststore, and truststorepassword are used to initialize certificate information. Default: false.
+dbtls: false
+
+# dbtls_cipher_suites: Set to a list of one or more cipher suites to be used with SSL/TLS to
+# Cassandra. This option is only meaningful if dbtls is set to true. Cassandra must be configured
+# to allow at least one of the same cipher algorithems in order to establish a successful
+# connection. The list can be comma-separated on a single line within square brackets (e.g.,
+# [X, Y, Z]), or each cipher suite can be listed on its own line, indented and prefixed with a "-".
+# The cipher suite TLS_RSA_WITH_AES_128_CBC_SHA is generally always allowed by Cassandra.
+dbtls_cipher_suites: [TLS_RSA_WITH_AES_128_CBC_SHA]
+
 ########## Doradus REST API Parameters
 #
 # These parameters affect the Doradus REST API.
