@@ -87,12 +87,15 @@ import java.util.TreeSet;
  * </pre>
  */
 final public class DBObject {
+    // Known system field keys:
+    private static final String _ID = "_ID";  
+    private static final String _TABLE = "_table";
+    private static final String _SHARD = "_shard";
+    private static final String _DELETED = "_deleted";
+    
     // Members:
     private final Map<String, List<String>> m_valueMap = new HashMap<>();
     private final Map<String, List<String>> m_valueRemoveMap = new HashMap<>();
-    private String                          m_objID;
-    private String                          m_tableName;
-    private boolean                         m_deleted;
     
     /**
      * Create a new, empty DBObject.
@@ -106,8 +109,12 @@ final public class DBObject {
      * @param tableName New object's table (_table field).
      */
     public DBObject(String objID, String tableName) {
-        m_objID = objID;
-        m_tableName = tableName;
+        if (!Utils.isEmpty(objID)) {
+            setObjectID(objID);
+        }
+        if (!Utils.isEmpty(tableName)) {
+            setTableName(tableName);
+        }
     }   // constructor
     
     /**
@@ -118,10 +125,9 @@ final public class DBObject {
      * @return          Copy of this object except for the object ID.
      */
     public DBObject makeCopy(String objID) {
-        DBObject newObj = new DBObject(objID, m_tableName);
+        DBObject newObj = new DBObject();
         newObj.m_valueMap.putAll(m_valueMap);
         newObj.m_valueRemoveMap.putAll(m_valueRemoveMap);
-        newObj.m_deleted = m_deleted;
         return newObj;
     }   // makeCopy
     
@@ -129,8 +135,7 @@ final public class DBObject {
 
     /**
      * Return the field names for which this DBObject has a value. The set does not
-     * include fields that have "remove" values stored, but it does include system
-     * fields (e.g., _ID). The set is copied.
+     * include fields that have "remove" values stored. The set is copied.
      * 
      * @return Field names for which this DBObject has a value. Empty if there are no
      *         field values for this object.
@@ -138,7 +143,6 @@ final public class DBObject {
      */
     public Set<String> getFieldNames() {
         HashSet<String> result = new HashSet<>(m_valueMap.keySet());
-        result.addAll(getSystemFieldNames());
         return result;
     }   // getFieldNames
     
@@ -164,7 +168,7 @@ final public class DBObject {
      * @return  This DBObject's ID or null if none has been assigned.
      */
     public String getObjectID() {
-        return m_objID;
+        return getSystemField(_ID);
     }   // getObjectID
     
     /**
@@ -173,11 +177,7 @@ final public class DBObject {
      * @return  This object's shard name, if any, otherwise null.
      */
     public String getShardName() {
-        List<String> values = m_valueMap.get("_shard");
-        if (values == null || values.isEmpty()) {
-            return null;
-        }
-        return values.get(0);
+        return getSystemField(_SHARD);
     }   // getShardName
     
     /**
@@ -186,13 +186,12 @@ final public class DBObject {
      * @return  This object's table name, if any.
      */
     public String getTableName() {
-        return m_tableName;
+        return getSystemField(_TABLE);
     }   // getTableName
     
     /**
      * Get the names of all fields updated by this object, including fields that have new
-     * and/or remove values assigned. This set does *not* include system fields such as
-     * _ID. The set is copied and may be empty but not null.
+     * and/or remove values assigned. The set is copied and may be empty but not null.
      * 
      * @return Set of all field names being added or remove for this object.
      */
@@ -226,10 +225,10 @@ final public class DBObject {
     }   // getUpdatedScalarFieldNames
     
     /**
-     * Get the single value of the user or system field with the given name or null if no
-     * value is assigned to the given field. This method is intended to be used for fields
-     * expected to have a single value. An exception is thrown if it is called for a field
-     * with multiple values.
+     * Get the single value of the field with the given name or null if no value is
+     * assigned to the given field. This method is intended to be used for fields expected
+     * to have a single value. An exception is thrown if it is called for a field with
+     * multiple values.
      * 
      * @param fieldName Name of a field.
      * @return          Value of field for this object or null if there is none.
@@ -237,9 +236,6 @@ final public class DBObject {
     public String getFieldValue(String fieldName) {
         Utils.require(!Utils.isEmpty(fieldName), "fieldName");
         
-        if (fieldName.charAt(0) == '_') {
-            return getSystemField(fieldName);
-        }
         List<String> values = m_valueMap.get(fieldName);
         if (values == null || values.size() == 0) {
             return null;
@@ -250,20 +246,15 @@ final public class DBObject {
     
     /**
      * Get all values of the field with the given name or null if no values are assigned
-     * to the given field. This method can only be called for user fields. If the field
-     * has at least one value, the list returned is *not* copied. This means it may have
-     * duplicate values as well.
+     * to the given field. If the field has at least one value, the list returned is *not*
+     * copied. This means it may have duplicate values as well.
      * 
      * @param  fieldName    Name of a field.
      * @return              Set of all values assigned to the field.
      */
     public List<String> getFieldValues(String fieldName) {
         Utils.require(!Utils.isEmpty(fieldName), "fieldName");
-        Utils.require(fieldName.charAt(0) != '_', "Method not valid for system fields: " + fieldName);
         
-        if (!m_valueMap.containsKey(fieldName)) {
-            return null;
-        }
         return m_valueMap.get(fieldName);
     }   // getFieldValues
     
@@ -274,7 +265,8 @@ final public class DBObject {
      *          or parsed from a UNode tree.
      */
     public boolean isDeleted() {
-        return m_deleted;
+        String value = getSystemField(_DELETED);
+        return value == null ? false : Boolean.parseBoolean(value);
     }   // isDeleted
     
     /**
@@ -300,7 +292,6 @@ final public class DBObject {
      */
     public UNode toDoc() {
         UNode resultNode = UNode.createMapNode("doc");
-        addSystemFields(resultNode);
         for (String fieldName : getUpdatedFieldNames()) {
             leafFieldtoDoc(resultNode, fieldName);
         }
@@ -333,7 +324,6 @@ final public class DBObject {
     public UNode toGroupedDoc(TableDefinition tableDef) {
         Utils.require(tableDef != null, "tableDef");
         UNode resultNode = UNode.createMapNode("doc");
-        addSystemFields(resultNode);
         
         Set<FieldDefinition> deferredFields = new HashSet<FieldDefinition>();
         for (String fieldName : getUpdatedFieldNames()) {
@@ -396,8 +386,8 @@ final public class DBObject {
     }   // addFieldValues
 
     /**
-     * Add the given value to the field with the given name. An exception is thrown if
-     * the _ID field receives more than one value. If the given value is null or empty,
+     * Add the given value to the field with the given name. For a system field, its
+     * existing value, if any, is replaced. If the given value is null or empty,
      * this method is a no-op.
      * 
      * @param fieldName Name of a field.
@@ -481,7 +471,7 @@ final public class DBObject {
      * @param objID     The object's new ID.
      */
     public void setObjectID(String objID) {
-        m_objID = objID;
+        setSystemField(_ID, objID);
     }   // setObjectID
     
     /**
@@ -491,7 +481,7 @@ final public class DBObject {
      * @param shardName New value for _shard field.
      */
     public void setShardName(String shardName) {
-        m_valueMap.put("_shard", Arrays.asList(shardName));
+        setSystemField(_SHARD, shardName);
     }   // setShardName
     
     /**
@@ -501,7 +491,7 @@ final public class DBObject {
      * @param tableName New value for _table field.
      */
     public void setTableName(String tableName) {
-        m_tableName = tableName;
+        setSystemField(_TABLE, tableName);
     }   // setTableName
     
     /**
@@ -511,24 +501,10 @@ final public class DBObject {
      * @param bDeleted  New value for the _deleted field.
      */
     public void setDeleted(boolean bDeleted) {
-        m_deleted = bDeleted;
+        setSystemField(_DELETED, Boolean.toString(bDeleted));
     }   // setDeleted
     
     ///// Private methods for UNode handling
-    
-    // Add child UNodes to the given parent for system fields
-    private void addSystemFields(UNode parentNode) {
-        if (!Utils.isEmpty(m_objID)) {
-            parentNode.addValueNode("_ID", m_objID, "field");
-        }
-        if (!Utils.isEmpty(m_tableName)) {
-            parentNode.addValueNode("_table", m_tableName, "field");
-        }
-        if (m_deleted) {
-            parentNode.addValueNode("_deleted", "true", "field");
-        }
-        // _shard lives in m_valueMap and is added separately 
-    }   // addSystemFields
     
     // Create a UNode for the leaf field with the given name and add it to the given
     // parent node.
@@ -624,59 +600,16 @@ final public class DBObject {
         removeFieldValues(fieldName, removeValueSet);
     }   // parseFieldRemove
 
-    // Get the value of the given system field, which must begin with "_".
+    // Get the first value of the given field, or null if there is no value.
     private String getSystemField(String fieldName) {
-        switch (fieldName) {
-        case "_ID":
-            return getObjectID();
-        case "_table":
-            return getTableName();
-        case "_deleted":
-            return m_deleted ? "true" : null;
-        case "_shard":
-            return getShardName();
-        default:
-            Utils.require(false, "Unknown system field: " + fieldName);
-            return null;
-        }
+        List<String> values = m_valueMap.get(fieldName);
+        return values == null ? null : values.get(0);
     }   // getSystemField
-    
-    // Get the names of system fields that have a value: _ID, _table, _deleted, _shard.
-    private Collection<String> getSystemFieldNames() {
-        HashSet<String> result = new HashSet<>();
-        if (!Utils.isEmpty(m_objID)) {
-            result.add("_ID");
-        }
-        if (!Utils.isEmpty(m_tableName)) {
-            result.add("_table");
-        }
-        if (m_deleted) {
-            result.add("_deleted");
-        }
-        if (m_valueMap.containsKey("_shard")) {
-            result.add("_shard");
-        }
-        return result;
-    }   // getSystemFieldNames
 
-    // Set the given system field, which begins with an "_".
+    // Set the given field to the given single value. Note that the array returned by
+    // Arrays.asList() cannot be expanded.
     private void setSystemField(String fieldName, String value) {
-        switch (fieldName) {
-        case "_ID":
-            setObjectID(value);
-            break;
-        case "_deleted":
-            setDeleted(Boolean.parseBoolean(value));
-            break;
-        case "_shard":
-            setShardName(value);
-            break;
-        case "_table":
-            setTableName(value);
-            break;
-        default:
-            Utils.require(false, "Unknown system field: " + fieldName);
-        }
+        m_valueMap.put(fieldName, Arrays.asList(value));
     }   // setSystemField
     
 }   // class DBObject
