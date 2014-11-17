@@ -320,14 +320,18 @@ public class CassandraSchemaMgr {
         while (System.currentTimeMillis() < limit) {
             try {
                 versions = m_client.describe_schema_versions(); // getting schema version for nodes of the ring
-                if (versions.size() == 1) {
+                if (versions != null && versions.size() == 1) {
                     m_logger.debug("Reached consensus on new schema version: {}", versions.keySet().iterator().next());
                     return;     // All nodes on the same version
                 }
             } catch (Exception e) {
                 m_logger.warn("Cassandra describe_schema_versions", e);
             }
-            m_logger.debug("Multiple schema versions found: {}", versions.keySet());
+            if (versions == null) {
+                m_logger.debug("describe_schema_versions returned null");
+            } else {
+                m_logger.debug("Multiple schema versions found: {}", versions.keySet());
+            }
             try { Thread.sleep(500); } catch (InterruptedException e) { }
         }
 
