@@ -39,6 +39,7 @@ import com.dell.doradus.common.ScheduleDefinition.SchedType;
 import com.dell.doradus.olap.Olap;
 import com.dell.doradus.olap.OlapAggregate;
 import com.dell.doradus.olap.OlapQuery;
+import com.dell.doradus.olap.OlapStatistics;
 import com.dell.doradus.olap.Olapp;
 import com.dell.doradus.olap.aggregate.AggregateResultConverter;
 import com.dell.doradus.olap.aggregate.AggregationResult;
@@ -64,6 +65,7 @@ public class OLAPService extends StorageService {
         new RESTCommand("DELETE /{application}/_shards/{shard}              com.dell.doradus.service.olap.DeleteSegmentCmd"),
         new RESTCommand("GET    /{application}/_shards                      com.dell.doradus.service.olap.ListShardsCmd"),
         new RESTCommand("GET    /{application}/_shards/{shard}              com.dell.doradus.service.olap.ShardStatsCmd"),
+        new RESTCommand("GET    /{application}/_statistics/{shard}          com.dell.doradus.service.olap.ShardStatisticsCmd"),
         new RESTCommand("GET    /{application}/{table}/_duplicates?{params} com.dell.doradus.service.olap.DuplicatesCmd"),
                
         new RESTCommand("GET    /_olapp?{params}                             com.dell.doradus.service.olap.OlappCmd"),
@@ -279,6 +281,11 @@ public class OLAPService extends StorageService {
     public SegmentStats getStats(String application, String shard) {
         checkServiceState();
         return m_olap.getStats(application, shard);
+    }   // getStats 
+
+    public UNode getStatistics(String application, String shard) {
+        checkServiceState();
+        return OlapStatistics.getStatistics(m_olap.getSearcher(application, shard));
     }   // getStats 
     
     /**

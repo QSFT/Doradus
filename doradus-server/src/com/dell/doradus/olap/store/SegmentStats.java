@@ -62,6 +62,7 @@ public class SegmentStats {
 		field.max = writer.max;
 		field.min_pos = writer.min_pos;
 		field.bits = writer.bits;
+		field.isSingleValued = true;
 		t.numFields.put(field.name, field);
 	}
 
@@ -264,7 +265,7 @@ public class SegmentStats {
 			public String table() { return Table.this.name; }
 			public int documents() { return Table.this.documents; }
 			public long memory() {
-				if(isSingleValued) return documents() * bits / 8;
+				if(isSingleValued) return documents() * bits / 8 + documents() / 8;
 				else return documents() * 4 + doclistSize * bits / 8;
 			}
 		}

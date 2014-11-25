@@ -127,6 +127,18 @@ public class VDirectory {
 		if(list.size() == 0 || list.get(0).columnName.length() != 0) return -1;
 		else return list.get(0).getLong();
 	}
+
+	public long compressedLength(String file) { 
+		long compressedLength = 0;
+		int i = 0;
+		while(true) {
+			byte[] val = m_helper.getValue(m_storeName, m_row + "/" + file, "" + i);
+			if(val == null) break;
+			compressedLength += val.length;
+			i++;
+		}
+		return compressedLength;
+	}
 	
 	public boolean fileExists(String file) {
 		return fileLength(file) >= 0;

@@ -126,8 +126,7 @@ public class Olap {
 		CubeSearcher s = getSearcher(application, shard, cube);
 		return s.getStats();
 	}
-	
-	
+
 	public String addSegment(String application, String shard, OlapBatch batch) {
 		return addSegment(application, shard, batch, true);
 	}

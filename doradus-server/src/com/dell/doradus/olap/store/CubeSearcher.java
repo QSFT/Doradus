@@ -87,4 +87,5 @@ public class CubeSearcher {
 		}
 	}
 	
+	public VDirectory getDirectory() { return m_directory; }
 }
