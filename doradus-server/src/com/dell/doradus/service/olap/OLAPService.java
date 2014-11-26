@@ -65,7 +65,7 @@ public class OLAPService extends StorageService {
         new RESTCommand("DELETE /{application}/_shards/{shard}              com.dell.doradus.service.olap.DeleteSegmentCmd"),
         new RESTCommand("GET    /{application}/_shards                      com.dell.doradus.service.olap.ListShardsCmd"),
         new RESTCommand("GET    /{application}/_shards/{shard}              com.dell.doradus.service.olap.ShardStatsCmd"),
-        new RESTCommand("GET    /{application}/_statistics/{shard}          com.dell.doradus.service.olap.ShardStatisticsCmd"),
+        new RESTCommand("GET    /{application}/_statistics/{shard}?{params} com.dell.doradus.service.olap.ShardStatisticsCmd"),
         new RESTCommand("GET    /{application}/{table}/_duplicates?{params} com.dell.doradus.service.olap.DuplicatesCmd"),
                
         new RESTCommand("GET    /_olapp?{params}                             com.dell.doradus.service.olap.OlappCmd"),
@@ -286,6 +286,11 @@ public class OLAPService extends StorageService {
     public UNode getStatistics(String application, String shard) {
         checkServiceState();
         return OlapStatistics.getStatistics(m_olap.getSearcher(application, shard));
+    }   // getStats
+    
+    public UNode getStatisticsFileData(String application, String shard, String file) {
+        checkServiceState();
+        return OlapStatistics.getFileData(m_olap.getSearcher(application, shard), file);
     }   // getStats 
     
     /**

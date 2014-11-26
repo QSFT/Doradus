@@ -16,6 +16,8 @@
 
 package com.dell.doradus.service.olap;
 
+import java.util.Map;
+
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
@@ -26,6 +28,8 @@ import com.dell.doradus.service.schema.SchemaService;
 /**
  * Handle the REST command: GET /{application}/_statistics/{shard}
  * Extended statistics for a shard
+ * Handle the REST command: GET /{application}/_statistics/{shard}?file={file}
+ * Get contents of a file 
  */
 public class ShardStatisticsCmd extends UNodeOutCallback {
 
@@ -38,9 +42,17 @@ public class ShardStatisticsCmd extends UNodeOutCallback {
         Utils.require(OLAPService.class.getSimpleName().equals(appDef.getStorageService()),
         		"Application '%s' is not an OLAP application", application);
         String shard = m_request.getVariableDecoded("shard");
-
-        UNode stats = OLAPService.instance().getStatistics(application, shard);
-        return stats;
+        
+        String params = m_request.getVariableDecoded("params");
+        Map<String, String> paramMap = Utils.parseURIQuery(params);
+        String file = paramMap.get("file");
+        if(file != null) {
+            UNode stats = OLAPService.instance().getStatisticsFileData(application, shard, file);
+            return stats;
+        } else {
+	        UNode stats = OLAPService.instance().getStatistics(application, shard);
+	        return stats;
+        }
     }
 
 } 
