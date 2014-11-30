@@ -17,6 +17,7 @@
 package com.dell.doradus.olap;
 
 import com.dell.doradus.common.UNode;
+import com.dell.doradus.olap.io.FileInfo;
 import com.dell.doradus.olap.io.VDirectory;
 import com.dell.doradus.olap.io.VInputStream;
 import com.dell.doradus.olap.store.CubeSearcher;
@@ -40,11 +41,11 @@ public class OlapStatistics {
 		long total_fields_count = 0;
 		
 		//long total
-		for(String file: dir.listFiles()) {
+		for(FileInfo file: dir.listFiles()) {
 			UNode fileNode = fnode.addMapNode("file");
-			fileNode.addValueNode("name", file, true);
+			fileNode.addValueNode("name", file.getName(), true);
 			long cl = dir.compressedLength(file);
-			long ul = dir.fileLength(file);
+			long ul = file.getLength();
 			fileNode.addValueNode("cmp", fmt(cl), true);
 			fileNode.addValueNode("unc", fmt(ul), true);
 			total_cl += cl;

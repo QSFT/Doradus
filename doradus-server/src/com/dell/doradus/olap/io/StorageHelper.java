@@ -34,8 +34,10 @@ public class StorageHelper {
 		}
     }
 
-	public void writeFileChunk(String app, String key, String columnName, byte[] value, boolean useCache) {
-		value = Compressor.compress(value);
+	public void writeFileChunk(String app, String key, String columnName, byte[] value, boolean useCache, boolean uncompressed) {
+		if(!uncompressed) {
+			value = Compressor.compress(value);
+		}
 		write(app, key, columnName, value);
 		if(useCache && m_chunkCache != null) {
 			String cacheKey = app + "/" + key + "/" + columnName;
@@ -43,11 +45,13 @@ public class StorageHelper {
 		}
 	}
 
-	public byte[] readFileChunk(String app, String key, String columnName, boolean useCache) {
+	public byte[] readFileChunk(String app, String key, String columnName, boolean useCache, boolean uncompressed) {
 		if(useCache && m_chunkCache != null) {
 			byte[] cached = m_chunkCache.get(app + "/" + key + "/" + columnName);
 			if(cached != null) {
-				cached = Compressor.uncompress(cached);
+				if(!uncompressed) {
+					cached = Compressor.uncompress(cached);
+				}
 				return cached;
 			}
 		}
@@ -57,7 +61,9 @@ public class StorageHelper {
 			String k = app + "/" + key + "/" + columnName;
 			m_chunkCache.put(k, value, value.length + 2 * k.length() + 16);
 		}
-		value = Compressor.uncompress(value);
+		if(!uncompressed) {
+			value = Compressor.uncompress(value);
+		}
 		return value;
 	}
 	

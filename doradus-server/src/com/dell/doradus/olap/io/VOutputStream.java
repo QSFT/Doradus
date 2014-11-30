@@ -16,25 +16,16 @@
 
 package com.dell.doradus.olap.io;
 
-import com.dell.doradus.common.Utils;
-
 public class VOutputStream {
-	private StorageHelper m_helper;
-	private String m_app;
-	private String m_row;
-	private String m_name;
+	private IBufferWriter m_bufferWriter;
     private byte[] m_buffer = new byte[VDirectory.CHUNK_SIZE];
-    private long m_buffersCount;
+    private int m_buffersCount;
     private int m_positionInBuffer;
     private BSTR m_cur = new BSTR();
-    public boolean useCache = true;
 
-    public VOutputStream(StorageHelper helper, String app, String row, String name)
+    public VOutputStream(IBufferWriter bufferWriter)
     {
-    	m_helper = helper;
-    	m_app = app;
-    	m_row = row;
-    	m_name = name;
+    	m_bufferWriter = bufferWriter;
         m_buffersCount = 0;
         m_positionInBuffer = 0;
     }
@@ -45,17 +36,12 @@ public class VOutputStream {
     {
     	long length = position();
     	if(m_positionInBuffer != 0) writeBuffer();
-    	m_helper.write(m_app, m_row, "File/" + m_name, Utils.toBytes("" + length));
+    	m_bufferWriter.close(length);
     }
 
     private void writeBuffer()
     {
-    	byte[] buf = m_buffer;
-    	if(m_positionInBuffer != buf.length) {
-    		buf = new byte[m_positionInBuffer];
-    		System.arraycopy(m_buffer, 0, buf, 0, buf.length);
-    	}
-    	m_helper.writeFileChunk(m_app, m_row + "/" + m_name, "" + m_buffersCount, buf, useCache);
+    	m_bufferWriter.writeBuffer(m_buffersCount, m_buffer, m_positionInBuffer);
     	m_buffersCount++;
     	m_positionInBuffer = 0;
     }

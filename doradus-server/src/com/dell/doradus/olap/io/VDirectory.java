@@ -25,8 +25,9 @@ import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.common.Utils;
 
+// Virtual directory storage for OLAP
 public class VDirectory {
-    private static Logger m_logger = LoggerFactory.getLogger("Olap.VDirectory");
+	private static Logger m_logger = LoggerFactory.getLogger("Olap.VDirectory");
 	static int CHUNK_SIZE = 1024 * 1024;
 	
 	private VDirectory m_parent;
@@ -34,6 +35,7 @@ public class VDirectory {
 	private String m_storeName;
 	private String m_name;
 	private String m_row;
+
 	
 	public VDirectory(String storeName) {
 		m_parent = null;
@@ -71,24 +73,38 @@ public class VDirectory {
 	public VDirectory getDirectory(String name) { return new VDirectory(this, name); }
 
 	public List<String> listDirectories() {
-		List<ColumnValue> lst = m_helper.get(m_storeName, m_row, "Directory/");
-		List<String> result = new ArrayList<String>(lst.size());
-		for(ColumnValue v : lst) {
+		List<ColumnValue> list = m_helper.get(m_storeName, m_row, "Directory/");
+		List<String> result = new ArrayList<String>(list.size());
+		for(ColumnValue v : list) {
 			result.add(v.columnName);
+		}
+		return result;
+	}
+	
+	public List<FileInfo> listFiles() {
+		String prefix = "File/";
+		List<ColumnValue> list = m_helper.get(m_storeName, m_row, prefix);
+		List<FileInfo> result = new ArrayList<FileInfo>(list.size());
+		for(ColumnValue v : list) {
+			result.add(new FileInfo(v.columnName, v.getString()));
 		}
 		return result;
 	}
 
 	public boolean directoryExists(String name) {
-		List<ColumnValue> lst = m_helper.get(m_storeName, m_row, "Directory/" + name);
-		return lst.size() == 1 && lst.get(0).columnName.length() == 0;
+		byte[] b = m_helper.getValue(m_storeName, m_row, "Directory/" + name);
+		return b != null;
+	}
+
+	public boolean fileExists(String file) {
+		byte[] b = m_helper.getValue(m_storeName, m_row, "File/" + file);
+		return b != null;
 	}
 	
 	public long totalLength(boolean recursive) {
-		String prefix = "File/";
-		List<ColumnValue> list = m_helper.get(m_storeName, m_row, prefix);
+		List<FileInfo> list = listFiles();
 		long totalLength = 0;
-		for(ColumnValue v : list) totalLength += v.getLong();
+		for(FileInfo f : list) totalLength += f.getLength();
 		if(recursive) {
 			for(String child : listDirectories()) {
 				totalLength += getDirectory(child).totalLength(recursive);
@@ -107,12 +123,19 @@ public class VDirectory {
 			m_helper.deleteCF(m_storeName);
 			m_logger.info("Deleted CF {}", m_storeName);
 		} else {
-			List<String> childFiles = listFiles();
-			List<String> childDirs = listDirectories();
+			List<FileInfo> childFiles = listFiles();
 			//first, detach directory from parent to make delete transactional
 			m_helper.delete(m_storeName, m_parent.m_row, "Directory/" + m_name);
-			for(String child : childFiles) m_helper.delete(m_storeName, m_row + "/" + child);
+			for(FileInfo child : childFiles) {
+				if(!child.getSharesRow()) {
+					m_helper.delete(m_storeName, m_row + "/" + child);
+				}
+			}
+			m_helper.delete(m_storeName, m_row + "/_share");
+			
+			List<String> childDirs = listDirectories();
 			for(String child : childDirs) getDirectory(child).delete();
+			
 			m_helper.delete(m_storeName, m_row);
 			m_logger.debug("Deleted {}", m_row);
 		}
@@ -121,18 +144,30 @@ public class VDirectory {
 	
 	// ************** FILES ************** //
 	
-	public long fileLength(String file) { 
-		String prefix = "File/" + file;
-		List<ColumnValue> list = m_helper.get(m_storeName, m_row, prefix);
-		if(list.size() == 0 || list.get(0).columnName.length() != 0) return -1;
-		else return list.get(0).getLong();
+	public FileInfo getFileInfo(String file) {
+		byte[] val = m_helper.getValue(m_storeName, m_row, "File/" + file);
+		if(val == null) return null;
+		FileInfo info = new FileInfo(file, Utils.toString(val));
+		return info;
+	}
+	
+	public long fileLength(String file) {
+		FileInfo info = getFileInfo(file);
+		if(info == null) return -1;
+		return info.getLength();
 	}
 
-	public long compressedLength(String file) { 
+	public long compressedLength(FileInfo file) {
+		if(file.getUncompressed()) return file.getLength();
 		long compressedLength = 0;
 		int i = 0;
+		byte[] val = null;
 		while(true) {
-			byte[] val = m_helper.getValue(m_storeName, m_row + "/" + file, "" + i);
+			if(file.getSharesRow()) {
+				val = m_helper.getValue(m_storeName, m_row + "/_share", file.getName() + "/" + i);
+			} else {
+				val = m_helper.getValue(m_storeName, m_row + "/" + file.getName(), "" + i);
+			}
 			if(val == null) break;
 			compressedLength += val.length;
 			i++;
@@ -140,52 +175,46 @@ public class VDirectory {
 		return compressedLength;
 	}
 	
-	public boolean fileExists(String file) {
-		return fileLength(file) >= 0;
-	}
-	
-	public List<String> listFiles() {
-		String prefix = "File/";
-		List<ColumnValue> list = m_helper.get(m_storeName, m_row, prefix);
-		List<String> lst = new ArrayList<String>(list.size());
-		for(ColumnValue v : list) {
-			lst.add(v.columnName);
-		}
-		return lst;
-	}
-	
 	public VInputStream open(String name) {
-		return new VInputStream(m_helper, m_storeName, m_row, name, fileLength(name));
+		return open(name, true);
+	}
+	
+	public VInputStream open(String name, boolean useCache) {
+		FileInfo info = getFileInfo(name);
+    	if(info == null) {
+    		throw new FileDeletedException("File '" + name + "' does not exist in '" + m_storeName + "/" + m_row + "'");
+    	}
+		IBufferReader bufferReader = new BufferReaderRow(m_helper, m_storeName, m_row, info, useCache);
+		VInputStream stream = new VInputStream(bufferReader, info.getLength());
+		return stream;
 	}
 
 	public VOutputStream create(String name) {
-		return new VOutputStream(m_helper, m_storeName, m_row, name);
+		return create(name, true);
+	}
+	
+	public VOutputStream create(String name, boolean useCache) {
+		IBufferWriter bufferWriter = new BufferWriterRow(m_helper, m_storeName, m_row, name, useCache);
+		VOutputStream stream = new VOutputStream(bufferWriter);
+		return stream;
 	}
 
 	public String readAllText(String file) {
-		VInputStream stream = open(file);
-		stream.useCache = false;
+		VInputStream stream = open(file, false);
 		byte[] b = new byte[(int)stream.length()];
 		stream.read(b, 0, b.length);
 		return Utils.toString(b);
 	}
 	
 	public void writeAllText(String file, String text) {
-		VOutputStream stream = create(file);
-		stream.useCache = false;
+		VOutputStream stream = create(file, false);
 		byte[] b = Utils.toBytes(text);
 		stream.write(b, 0, b.length);
 		stream.close();
 	}
 	
 	public void deleteFile(String name) {
-		long len = fileLength(name);
-		if(len < 0) return;
-		m_helper.delete(m_storeName, m_row, "File/" + name);
-		int chunks = (int)((len + CHUNK_SIZE - 1) / CHUNK_SIZE); 
-		for(int i=0; i<chunks; i++) {
-			m_helper.delete(m_storeName, m_row, "Chunk/" + name + "/" + i);
-		}
+		m_helper.delete(m_storeName, m_row + "/" + name);		
 	}
 	
 }

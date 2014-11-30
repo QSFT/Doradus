@@ -17,40 +17,28 @@
 package com.dell.doradus.olap.io;
 
 public class VInputStream {
-	private StorageHelper m_helper;
-	private String m_app;
-	private String m_row;
-	private String m_name;
+	private IBufferReader m_bufferReader;
 	private long m_length;
 	private int m_bufferSize = VDirectory.CHUNK_SIZE;
     private byte[] m_buffer;
-    private long m_buffersCount;
-    public boolean useCache = true;
-
-    private long m_bufferNumber;
+    private int m_buffersCount;
+    private int m_bufferNumber;
     private int m_bufferLength;
     private int m_positionInBuffer;
 
-    public VInputStream(StorageHelper helper, String app, String row, String name, long length)
+    public VInputStream(IBufferReader bufferReader, long length)
     {
-    	if(length < 0) throw new FileDeletedException("File '" + name + "' does not exist in '" + app + "/" + row + "'");
-    	m_helper = helper;
-    	m_app = app;
-    	m_row = row;
-    	m_name = name;
+    	if(length < 0) throw new RuntimeException("Length<0");
+    	m_bufferReader = bufferReader;
     	m_length = length;
-    	
-        m_buffersCount = (m_length + m_bufferSize - 1) / m_bufferSize;
+        m_buffersCount = (int)((m_length + m_bufferSize - 1) / m_bufferSize);
         m_bufferNumber = -1;
         m_bufferLength = 0;
         m_positionInBuffer = 0;
     }
     
     public VInputStream(VInputStream stream) {
-    	m_helper = stream.m_helper;
-    	m_app = stream.m_app;
-    	m_row = stream.m_row;
-    	m_name = stream.m_name;
+    	m_bufferReader = stream.m_bufferReader;
     	m_length = stream.m_length;
     	m_bufferSize = stream.m_bufferSize;
         m_buffer = stream.m_buffer;
@@ -58,7 +46,6 @@ public class VInputStream {
         m_bufferNumber = stream.m_bufferNumber;
         m_bufferLength = stream.m_bufferLength;
         m_positionInBuffer = stream.m_positionInBuffer;
-        useCache = stream.useCache;
     }
 
     public long length() { return m_length; }
@@ -81,21 +68,21 @@ public class VInputStream {
         }
         else
         {
-            long bufferNumber = position / m_bufferSize;
+            int bufferNumber = (int)(position / m_bufferSize);
             readBuffer(bufferNumber);
             m_positionInBuffer = (int)(position % m_bufferSize);
             if (m_positionInBuffer > m_bufferLength) throw new RuntimeException("End of stream");
         }
     }
 
-    private void readBuffer(long bufferNumber)
+    private void readBuffer(int bufferNumber)
     {
         if (m_bufferNumber == bufferNumber) return;
         if (bufferNumber < 0 || bufferNumber >= m_buffersCount) {
         	throw new RuntimeException("End of stream");
         }
         m_bufferNumber = bufferNumber;
-        m_buffer = m_helper.readFileChunk(m_app, m_row + "/" + m_name, "" + bufferNumber, useCache);
+        m_buffer = m_bufferReader.readBuffer(bufferNumber);
         m_bufferLength = m_buffer.length;
         m_positionInBuffer = 0;
     }

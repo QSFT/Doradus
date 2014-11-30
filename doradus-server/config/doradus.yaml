@@ -323,7 +323,7 @@ olap_loaded_segments: 0
 # olap_store_cache_size_mb: size, in megabytes, of the cached raw OLAP data, such as values of text
 # field. It does not affect shards loaded in memory. 0 means they are not cached.
 # Default is 100
-olap_file_cache_size_mb: 100
+olap_file_cache_size_mb: 0
 
 # olap_query_cache_size_mb: size, in megabytes, of the cached search results. Each cached result
 # takes 1 bit per each document in the table. 0 means no caching.
