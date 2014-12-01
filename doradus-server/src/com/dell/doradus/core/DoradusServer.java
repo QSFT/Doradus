@@ -85,6 +85,7 @@ public final class DoradusServer {
         
         // System commands:
         new RESTCommand("GET /_dump com.dell.doradus.core.TheadDumpCmd"),
+        new RESTCommand("GET /_logs?{params} com.dell.doradus.core.LogDumpCmd"),
     });
 
     ///// Public methods
