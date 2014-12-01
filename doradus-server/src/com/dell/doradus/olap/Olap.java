@@ -214,47 +214,16 @@ public class Olap {
 		return Searcher.search(s, tableDef, query, fieldSet, olapQuery.getPageSizeWithSkip(), sortOrder);
 	}
 	
-	// just merge
+	// default merge (used in tests): forceMerge enabled
 	public void merge(String application, String shard) {
-		String key = application + "/" + shard;
-		synchronized(m_mergedCubes) {
-			if(m_mergedCubes.contains(key)) throw new IllegalArgumentException(key + " is being merged");
-			m_mergedCubes.add(key);
-		}
-		try {
-			Timer t = new Timer();
-			ApplicationDefinition appDef = getApplicationDefinition(application);
-			VDirectory shardDir = m_root.getDirectory(application).getDirectory(shard);
-			List<String> segments = shardDir.listDirectories();
-			if(segments.size() == 0) return;
-			
-			List<VDirectory> sources = new ArrayList<VDirectory>();
-			for(String segment : segments) {
-				sources.add(shardDir.getDirectory(segment));
-			}
-			
-			String guid = ".cube." + UUID.randomUUID().toString();
-			VDirectory destination = shardDir.getDirectory(guid);
-			
-			Merger.mergeApplication(appDef, sources, destination);
-			
-			shardDir.writeAllText(".cube.txt", guid);
-			
-			destination.create();
-			
-			for(String segment : segments) {
-				shardDir.getDirectory(segment).delete();
-			}
-			
-			LOG.debug("merge {} segments to {}/{} in {}", new Object[]{ segments.size(), application, shard, t} );
-		} finally {
-			synchronized(m_mergedCubes) {
-				m_mergedCubes.remove(key);
-			}
-		}
+		MergeOptions options = new MergeOptions(null, 0, true);
+		merge(application, shard, options);
 	}
-	
-	public void merge(String application, String shard, Date expirationDate) {
+
+	public void merge(String application, String shard, MergeOptions options) {
+		if(options == null) {
+			options = new MergeOptions();
+		}
 		String key = application + "/" + shard;
 		synchronized(m_mergedCubes) {
 			if(m_mergedCubes.contains(key)) throw new IllegalArgumentException(key + " is being merged");
@@ -264,14 +233,18 @@ public class Olap {
 			Timer t = new Timer();
 			ApplicationDefinition appDef = getApplicationDefinition(application);
 			VDirectory shardDir = m_root.getDirectory(application).getDirectory(shard);
-			String expDateStr = expirationDate == null ? "" : XType.toString(expirationDate);
-			shardDir.writeAllText("expiration.txt", expDateStr);
+			
+			if(options.getExpireDate() != null) {
+				shardDir.writeAllText("expiration.txt", XType.toString(options.getExpireDate()));
+			} else {
+				shardDir.writeAllText("expiration.txt", "");
+			}
 			
 			List<String> segments = shardDir.listDirectories();
 			if(segments.size() == 0) {
 				LOG.debug("No segments in {}/{}", application, shard);
 				return;
-			} else if(segments.size() == 1 && segments.get(0).startsWith(".cube.")) {
+			} else if(segments.size() == 1 && segments.get(0).startsWith(".cube.") && !options.getForceMerge()) {
 				LOG.debug("Shard {}/{} was not modified", application, shard);
 				return;
 			}
@@ -289,6 +262,14 @@ public class Olap {
 			shardDir.writeAllText(".cube.txt", guid);
 			
 			destination.create();
+			
+			LOG.debug("finished merging {} segments to {}/{} in {}", new Object[]{ segments.size(), application, shard, t} );
+			
+			if(options.getTimeout() > 0) {
+				try {
+					Thread.sleep(options.getTimeout() * 1000);
+				} catch (InterruptedException e) { LOG.warn("sleep interrupted", e); }
+			}
 			
 			for(String segment : segments) {
 				shardDir.getDirectory(segment).delete();
@@ -382,22 +363,4 @@ public class Olap {
 		m_root.getDirectory(appName).writeAllText("_tasks.json", tasks.toDoc().toJSON());
 	}	// setTasks
 	
-	/**
-	 * Creates/updates table of tasks statuses for a given application
-	 * @param appName	Application name
-	 */
-// Alex: I presume this is no longer needed?	
-//	private void correctTasksTable(String appName) {
-//		OlapTasks tasks = getTasks(appName);
-//		
-//		String taskId = "*/data-aging";
-//		TaskStatus status = tasks.getTaskStatus(taskId);
-//		if (status == null) {
-//			status = new TaskStatus();
-//		}
-//		tasks.getTasks().clear();
-//		tasks.setTaskStatus(taskId, status);
-//		saveTasks(appName, tasks);
-//	}	// correctTasksTable
-
 }

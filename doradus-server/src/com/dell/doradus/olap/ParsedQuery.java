@@ -16,6 +16,7 @@
 
 package com.dell.doradus.olap;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -93,6 +94,17 @@ public class ParsedQuery {
     }
 
     /**
+     * Returns a Date by the key specified or null.
+     * Date format can be yyyy-MM-dd or yyyy-DD-mm hh:mm:ss
+     * See Utils.dateFromString for full list of allowed date formats
+     */
+    public Date getDate(String key) {
+    	String value = get(key);
+        Date result = Utils.isEmpty(value)  ? null : Utils.dateFromString(value);
+    	return result;
+    }
+    
+    /**
      * Returns an integer value by the key specified and throws exception if it was not specified 
      */
     public int getInt(String key) {
@@ -116,6 +128,15 @@ public class ParsedQuery {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(key + " parameter should be a number");
         }
+    }
+
+    /**
+     * Returns a boolean value by the key specified or defaultValue if the key was not provided  
+     */
+    public boolean getBoolean(String key, boolean defaultValue) {
+    	String value = get(key);
+    	if(value == null) return defaultValue;
+   		return XType.getBoolean(value);
     }
     
 

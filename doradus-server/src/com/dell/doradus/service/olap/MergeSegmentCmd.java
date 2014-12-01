@@ -16,13 +16,11 @@
 
 package com.dell.doradus.service.olap;
 
-import java.util.Date;
-import java.util.Map;
-
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.olap.MergeOptions;
 import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.schema.SchemaService;
@@ -45,10 +43,8 @@ public class MergeSegmentCmd extends RESTCallback {
         
         String shard = m_request.getVariableDecoded("shard");
         String params = m_request.getVariableDecoded("params");
-        Map<String, String> paramMap = Utils.parseURIQuery(params);
-        String expDate = paramMap.get("expire-date");
-        Date expireDate = Utils.isEmpty(expDate)  ? null : Utils.dateFromString(expDate);
-        OLAPService.instance().mergeShard(application, shard, expireDate);
+        MergeOptions options = new MergeOptions(params);
+        OLAPService.instance().mergeShard(application, shard, options);
         return new RESTResponse(HttpCode.OK);
     }   // invoke
 

@@ -25,17 +25,18 @@ import java.util.Map;
 import com.dell.doradus.common.AggregateResult;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.BatchResult;
+import com.dell.doradus.common.BatchResult.Status;
 import com.dell.doradus.common.CommonDefs;
 import com.dell.doradus.common.DBObject;
 import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.ScheduleDefinition;
+import com.dell.doradus.common.ScheduleDefinition.SchedType;
 import com.dell.doradus.common.StatisticDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.common.BatchResult.Status;
-import com.dell.doradus.common.ScheduleDefinition.SchedType;
+import com.dell.doradus.olap.MergeOptions;
 import com.dell.doradus.olap.Olap;
 import com.dell.doradus.olap.OlapAggregate;
 import com.dell.doradus.olap.OlapQuery;
@@ -313,12 +314,12 @@ public class OLAPService extends StorageService {
      * 
      * @param application   OLAP application name.
      * @param shard         Shard name.
-     * @param expireDate    Optional expire-date for shard. Null to remove expire-date.
+     * @param options    	Merge options
      */
-    public void mergeShard(String application, String shard, Date expireDate) {
+    public void mergeShard(String application, String shard, MergeOptions options) {
         checkServiceState();
-        m_olap.merge(application, shard, expireDate);
-    }   // mergeShard
+        m_olap.merge(application, shard, options);
+    }
     
     /**
      * Get the expire-date for the given shard name and OLAP application. Null is returned
