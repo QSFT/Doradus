@@ -143,25 +143,23 @@ public class OlapStatistics {
 	}
 
 	public static UNode getFileData(CubeSearcher searcher, String file) {
-		UNode unode = UNode.createMapNode("filedata");
+		UNode unode = UNode.createMapNode("file");
 		VDirectory dir = searcher.getDirectory();
 		VInputStream strm = dir.open(file);
-		byte[] buffer = new byte[16 * 1024];
+		int length = (int)Math.min(16 * 1024, strm.length());
+		byte[] buffer = new byte[length];
 		int len = strm.read(buffer, 0, buffer.length);
+		if(len != length) throw new RuntimeException("Failed to read file data");
 		
 		StringBuilder sb1 = new StringBuilder(3 * len);
 		StringBuilder sb2 = new StringBuilder(3 * len);
 		for(int i = 0; i < len; i++) {
 			byte b = buffer[i];
 			sb1.append(String.format("%d ", b));
-			if(b < 32) {
-				sb2.append('(');
-				sb2.append(String.format("%d", b));
-				sb2.append(')');
-			}
+			if(b < 32) sb2.append('-');
 			else sb2.append((char)b);
 		}
-		unode.addValueNode("hex", sb1.toString(), false);
+		unode.addValueNode("data", sb1.toString(), false);
 		unode.addValueNode("txt", sb2.toString(), false);
 		
 		return unode;
