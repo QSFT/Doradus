@@ -60,7 +60,6 @@ public class RESTServlet extends HttpServlet {
 
             // Extract the query component of the request, if any, but move _api and
             // _format parameters to the variable map if present.
-            m_logger.debug("Processing REST request: {}", request.toString());
             Map<String, String> variableMap = new HashMap<String, String>();
             String query = extractQueryParam(request, variableMap);
             RESTCommand cmd = RESTService.instance().matchCommand(request.getMethod(),
@@ -71,6 +70,7 @@ public class RESTServlet extends HttpServlet {
                 throw new NotFoundException("Request does not match a known URI: " + request.getRequestURL());
             }
             Utils.require(cmd != null, "Request does not match a known URI: " + request.getRequestURL());
+            m_logger.debug("Command: {}", cmd.toString());
             RESTCallback callback = cmd.getNewCallback(new RESTRequest(request, variableMap));
             RESTResponse restResponse = callback.invoke();
             

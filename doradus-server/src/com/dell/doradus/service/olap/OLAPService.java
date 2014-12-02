@@ -420,30 +420,28 @@ public class OLAPService extends StorageService {
         } else if (fieldDef.isLinkType()) {
             Utils.require(!fieldDef.isSharded(),
                           "Link and xlink fields cannot be sharded: {}", fieldDef);
-//            Utils.require(!fieldDef.isXLinkField() || !fieldDef.getName().equals(fieldDef.getLinkInverse()),
-//                          "xlinks cannot be their own inverse (self-reflexive): " + fieldDef);
         }
     }   // validateField
     
     // Validate OLAP background tasks schedules. At least one "data-aging" task
     // should exist, no table must be defined for that task
     private void validateSchedules(ApplicationDefinition appDef) {
-    	for (ScheduleDefinition schedDef : appDef.getSchedules().values()) {
-    		schedDef.validate(getClass().getSimpleName());
-    	}
+        for (ScheduleDefinition schedDef : appDef.getSchedules().values()) {
+            schedDef.validate(getClass().getSimpleName());
+        }
 
     	boolean hasDataAgingTask = false;
-		for (ScheduleDefinition schedDef : appDef.getSchedules().values()) {
-			SchedType taskType = schedDef.getType();
-			if (taskType == SchedType.DATA_AGING) {
-				hasDataAgingTask = true;
-				break;
-			}
-		}
-		if (!hasDataAgingTask) {
-			appDef.addSchedule(SchedType.DATA_AGING, 
-					ScheduleDefinition.DEFAULT_AGING_SCHEDULE, null, null);
-		}
+        for (ScheduleDefinition schedDef : appDef.getSchedules().values()) {
+            SchedType taskType = schedDef.getType();
+            if (taskType == SchedType.DATA_AGING) {
+                hasDataAgingTask = true;
+                break;
+            }
+        }
+        if (!hasDataAgingTask) {
+            appDef.addSchedule(SchedType.DATA_AGING,
+                               ScheduleDefinition.DEFAULT_AGING_SCHEDULE, null, null);
+        }
     }
 
 }   // class OLAPService
