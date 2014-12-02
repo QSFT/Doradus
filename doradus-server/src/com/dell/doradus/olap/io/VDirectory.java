@@ -128,7 +128,7 @@ public class VDirectory {
 			m_helper.delete(m_storeName, m_parent.m_row, "Directory/" + m_name);
 			for(FileInfo child : childFiles) {
 				if(!child.getSharesRow()) {
-					m_helper.delete(m_storeName, m_row + "/" + child);
+					m_helper.delete(m_storeName, m_row + "/" + child.getName());
 				}
 			}
 			m_helper.delete(m_storeName, m_row + "/_share");
