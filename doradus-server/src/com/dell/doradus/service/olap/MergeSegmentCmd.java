@@ -43,6 +43,9 @@ public class MergeSegmentCmd extends RESTCallback {
         
         String shard = m_request.getVariableDecoded("shard");
         String params = m_request.getVariableDecoded("params");
+        if (params == null) {
+            params = "";
+        }
         MergeOptions options = new MergeOptions(params);
         OLAPService.instance().mergeShard(application, shard, options);
         return new RESTResponse(HttpCode.OK);

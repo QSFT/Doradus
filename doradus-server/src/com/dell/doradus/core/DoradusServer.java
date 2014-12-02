@@ -250,9 +250,10 @@ public final class DoradusServer {
     // Initialize server configuration and given+required services for embedded running.
     private void initEmbedded(String[] args, String[] services) {
         if (m_bInitialized) {
-            m_logger.warn("init: Already initialized -- ignoring");
+            m_logger.warn("initEmbedded: Already initialized -- ignoring");
             return;
         }
+        m_logger.info("Initializing embedded mode");
         initConfig(args);
         initEmbeddedServices(services);
         RESTService.instance().registerRESTCommands(REST_RULES);
@@ -272,9 +273,10 @@ public final class DoradusServer {
     // Initialize server configuration and all services for stand-alone running.
     private void initStandAlone(String[] args) {
         if (m_bInitialized) {
-            m_logger.warn("init: Already initialized -- ignoring");
+            m_logger.warn("initStandAlone: Already initialized -- ignoring");
             return;
         }
+        m_logger.info("Initializing standalone mode");
         initConfig(args);
         initStandaAloneServices();
         RESTService.instance().registerRESTCommands(REST_RULES);
@@ -384,6 +386,7 @@ public final class DoradusServer {
     
     // Loop forever without consuming resources.
     private void waitForShutdown() {
+        m_logger.info("Main thread waiting for shutdown notice");
         synchronized (this) {
             while (true) {
                 try {

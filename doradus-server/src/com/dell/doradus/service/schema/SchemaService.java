@@ -101,6 +101,11 @@ public class SchemaService extends Service {
     public void defineApplication(ApplicationDefinition appDef) {
         checkServiceState();
         ApplicationDefinition currAppDef = getApplication(appDef.getAppName());
+        if (currAppDef == null) {
+            m_logger.info("Defining application: {}", appDef.getAppName());
+        } else {
+            m_logger.info("Updating application: {}", appDef.getAppName());
+        }
         StorageService storageService = verifyStorageServiceOption(currAppDef, appDef);
         storageService.validateSchema(appDef);
         storeApplicationSchema(appDef);
@@ -177,7 +182,8 @@ public class SchemaService extends Service {
             return; 
         }
         
-        // Delete storage service-specific data first. 
+        // Delete storage service-specific data first.
+        m_logger.info("Deleting application: {}", appName);
         StorageService storageService = getStorageService(appDef);
         storageService.deleteApplication(appDef);
         
