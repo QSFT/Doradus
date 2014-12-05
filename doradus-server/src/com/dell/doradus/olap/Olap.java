@@ -52,6 +52,8 @@ import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.search.aggregate.SortOrder;
 import com.dell.doradus.search.parser.AggregationQueryBuilder;
 import com.dell.doradus.search.parser.DoradusQueryBuilder;
+import com.dell.doradus.search.query.AndQuery;
+import com.dell.doradus.search.query.IdRangeQuery;
 import com.dell.doradus.search.query.Query;
 import com.dell.doradus.search.util.LRUCache;
 import com.dell.doradus.service.olap.OLAPService;
@@ -176,6 +178,12 @@ public class Olap {
 		TableDefinition tableDef = appDef.getTableDef(table);
 		if(tableDef == null) throw new IllegalArgumentException("Table " + table + " does not exist");
     	Query query = DoradusQueryBuilder.Build(olapQuery.getQuery(), tableDef);
+    	if(olapQuery.getContinueAfter() != null) {
+    		query = new AndQuery(new IdRangeQuery(olapQuery.getContinueAfter(), false, null, false), query);
+    	}
+    	if(olapQuery.getContinueAt() != null) {
+    		query = new AndQuery(new IdRangeQuery(olapQuery.getContinueAt(), true, null, false), query);
+    	}
     	FieldSet fieldSet = new FieldSet(tableDef, olapQuery.getFieldSet());
     	fieldSet.expand();
     	SortOrder sortOrder = AggregationQueryBuilder.BuildSortOrder(olapQuery.getSortOrder(), tableDef);

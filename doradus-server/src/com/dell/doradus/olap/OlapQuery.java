@@ -37,6 +37,8 @@ public class OlapQuery {
     private String m_pair;					// &pair parameter
     private String m_xshards;  				// &xshards parameter
     private String m_xshardsRange;			// &xrange parameter
+    private String  m_continueAt;			// &e parameter
+    private String  m_continueAfter;		// &g parameter
     
     /**
      * Create an OlapQuery with query parameters extracted from the given "search" UNode.
@@ -56,6 +58,8 @@ public class OlapQuery {
         m_pair = parsedQuery.get("pair");
         m_xshards = parsedQuery.get("x-shards");
         m_xshardsRange = parsedQuery.get("x-shards-range");
+        m_continueAt = parsedQuery.get("continue-at");
+        m_continueAfter = parsedQuery.get("continue-after");
         parsedQuery.checkInvalidParameters();
         checkDefaults();
     }
@@ -83,6 +87,8 @@ public class OlapQuery {
         m_pair = parsedQuery.get("pair");
         m_xshards = parsedQuery.get("xshards");
         m_xshardsRange = parsedQuery.get("xrange");
+        m_continueAt = parsedQuery.get("e");
+        m_continueAfter = parsedQuery.get("g");
         parsedQuery.checkInvalidParameters();
         checkDefaults();
     }
@@ -116,6 +122,8 @@ public class OlapQuery {
     public int getSkip() { return m_skip; }
     public String getQuery() { return m_query; }
     public String getSortOrder() { return m_sortOrder; }
+    public String getContinueAt() { return m_continueAt; }
+    public String getContinueAfter() { return m_continueAfter; }
     
     public List<String> getShards(String application, Olap olap) {
     	return olap.getShardsList(application, m_shards, m_shardsRange);
@@ -136,6 +144,9 @@ public class OlapQuery {
     private void checkDefaults() {
         Utils.require(m_shards != null || m_shardsRange != null, "shards or range parameter is not set");
         Utils.require(m_shards == null || m_shardsRange == null, "shards and range parameters cannot be both set");
+        
+        Utils.require(m_continueAt == null || m_continueAfter == null, "Both continue-at and continue-after parameters cannot be set");
+        Utils.require((m_continueAt == null && m_continueAfter == null) || m_sortOrder == null, "continuation oarameters cannot be set if sort order is set");
         
         Utils.require(m_xshards == null || m_xshardsRange == null, "xshards and xrange parameters cannot be both set");
         if(m_xshards == null && m_xshardsRange == null) {

@@ -104,6 +104,11 @@ public class MergeResult {
 			searchResultList.results.add(merged);
 		}
 		
+		List<SearchResult> res = searchResultList.results;
+		if(res.size() < searchResultList.documentsCount && res.size() > 0) {
+			searchResultList.continuation_token = res.get(res.size() - 1).id();
+		}
+		
 		return searchResultList;
 	}
 	
