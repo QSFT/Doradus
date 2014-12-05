@@ -874,8 +874,13 @@ public class AggregationQueryBuilder {
                 if (type.equals(SemanticNames.TOPBOTTOM)) {
                     if (item.item.getValue().equals("TOP"))
                         aggregationGroup.selection = AggregationGroup.Selection.Top;
-                    else
+                    else if (item.item.getValue().equals("BOTTOM"))
                         aggregationGroup.selection = AggregationGroup.Selection.Bottom;
+                    else if (item.item.getValue().equals("FIRST"))
+                        aggregationGroup.selection = AggregationGroup.Selection.First;
+                    else if (item.item.getValue().equals("LAST"))
+                        aggregationGroup.selection = AggregationGroup.Selection.Last;
+                    else throw new RuntimeException("TOP/BOTTOM/FIRST/LAST allowed");
 
                     SetFilter(aggregationGroup, tableDef, item);
                     continue;

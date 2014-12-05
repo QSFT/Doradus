@@ -28,6 +28,8 @@ public class AggregationGroup {
     public static enum  Selection  {
         Top,
         Bottom,
+        First,
+        Last,
         None
     }
 
