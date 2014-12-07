@@ -93,6 +93,16 @@ public class AggregationQueryBuilder {
         }
     }
 
+    public static SortOrder[] BuildSortOrders(String string, TableDefinition definition) {
+    	if(string == null || string.trim().length() == 0) return null;
+    	List<String> strings = Utils.split(string, ',');
+    	SortOrder[] orders = new SortOrder[strings.size()];
+    	for(int i = 0; i<strings.size(); i++) {
+    		orders[i] = BuildSortOrder(strings.get(i), definition);
+    	}
+    	return orders;
+    }
+    
     public static SortOrder BuildSortOrder(String string, TableDefinition definition) {
         string = definition.replaceAliaces(string);
         Parser parser = Parser.GetSortOrderParser();
@@ -571,6 +581,7 @@ public class AggregationQueryBuilder {
             return null;
 
         SortOrder result = new SortOrder();
+        result.tableDef = definition;
 
         ArrayList<Item> items = extractTokens(context);
         TableDefinition tableDef = definition;

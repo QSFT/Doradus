@@ -33,11 +33,11 @@ public class Searcher {
 	
 	
 	// for unit tests
-	public static SearchResultList search(CubeSearcher searcher, TableDefinition tableDef, String query, String fields, int size, SortOrder sortOrder) {
+	public static SearchResultList search(CubeSearcher searcher, TableDefinition tableDef, String query, String fields, int size, SortOrder[] sortOrders) {
     	Query qu = DoradusQueryBuilder.Build(query, tableDef);
     	FieldSet fieldSet = new FieldSet(tableDef, fields);
     	Result documents = ResultBuilder.search(tableDef, qu, searcher);
-		SearchResultList list = SearchResultBuilder.build(searcher, documents, fieldSet, size, sortOrder);
+		SearchResultList list = SearchResultBuilder.build(searcher, documents, fieldSet, size, sortOrders);
 		return list;
 	}
 
@@ -52,17 +52,17 @@ public class Searcher {
 	}
 	
 	
-	public static SearchResultList search(CubeSearcher searcher, TableDefinition tableDef, Query query, FieldSet fieldSet, int size, SortOrder sortOrder) {
+	public static SearchResultList search(CubeSearcher searcher, TableDefinition tableDef, Query query, FieldSet fieldSet, int size, SortOrder[] sortOrders) {
     	Result documents = ResultBuilder.search(tableDef, query, searcher);
-		SearchResultList list = SearchResultBuilder.build(searcher, documents, fieldSet, size, sortOrder);
+		SearchResultList list = SearchResultBuilder.build(searcher, documents, fieldSet, size, sortOrders);
 		return list;
 	}
 
 	
-	public static GroupResult aggregate(CubeSearcher searcher, TableDefinition tableDef, Query query, AggregationGroup group, AggregationMetric metric) {
-    	Result documents = ResultBuilder.search(tableDef, query, searcher);
-    	GroupResult r = AggregationBuilder.aggregate(searcher, documents, group, metric);
-    	return r;
-	}
+	//public static GroupResult aggregate(CubeSearcher searcher, TableDefinition tableDef, Query query, AggregationGroup group, AggregationMetric metric) {
+    //	Result documents = ResultBuilder.search(tableDef, query, searcher);
+    //	GroupResult r = AggregationBuilder.aggregate(searcher, documents, group, metric);
+    //	return r;
+	//}
 	
 }

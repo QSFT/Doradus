@@ -18,8 +18,16 @@ package com.dell.doradus.search.aggregate;
 
 import java.util.List;
 
-public class SortOrder {
+import com.dell.doradus.common.TableDefinition;
 
+public class SortOrder {
+	public TableDefinition tableDef;
     public  List<AggregationGroupItem> items;
     public boolean  ascending = true;
+    
+    public AggregationGroup getAggregationGroup() {
+    	AggregationGroup group = new AggregationGroup(tableDef);
+    	group.items = items;
+    	return group;
+    }
 }

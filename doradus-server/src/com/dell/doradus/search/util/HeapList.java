@@ -33,10 +33,15 @@ public class HeapList<T> {
     private int m_Count;
     private int m_Capacity;
     private Comparator<T> m_Comparator;
+    private boolean m_bInverse;
 
     public HeapList(int capacity)
     {
     	this(capacity, null);
+    }
+    
+    public void setInverse(boolean inverse) {
+    	m_bInverse = inverse;
     }
     
     //Create a heap list with the specified capacity and the object comparator
@@ -49,8 +54,10 @@ public class HeapList<T> {
 
 	protected boolean greaterThan(T v1, T v2)
     {
-    	if(m_Comparator != null)return m_Comparator.compare(v1, v2) > 0;
-    	else return ((Comparable<T>)v1).compareTo(v2) > 0;
+		boolean c;
+    	if(m_Comparator != null) c = m_Comparator.compare(v1, v2) > 0;
+    	else c = ((Comparable<T>)v1).compareTo(v2) > 0;
+    	return m_bInverse ? !c : c;
     }
 
     //returns the count of items that are in the list.

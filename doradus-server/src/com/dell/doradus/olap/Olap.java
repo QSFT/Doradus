@@ -186,14 +186,14 @@ public class Olap {
     	}
     	FieldSet fieldSet = new FieldSet(tableDef, olapQuery.getFieldSet());
     	fieldSet.expand();
-    	SortOrder sortOrder = AggregationQueryBuilder.BuildSortOrder(olapQuery.getSortOrder(), tableDef);
+    	SortOrder[] sortOrders = AggregationQueryBuilder.BuildSortOrders(olapQuery.getSortOrder(), tableDef);
 		List<SearchResultList> results = new ArrayList<SearchResultList>();
 		List<String> shardsList = olapQuery.getShards(application, this); 
 		List<String> xshardsList = olapQuery.getXShards(application, this); 
     	XLinkContext xcontext = new XLinkContext(application, this, xshardsList, tableDef);
     	xcontext.setupXLinkQuery(tableDef, query);
 		for(String shard : shardsList) {
-			results.add(search(application, shard, tableDef, query, fieldSet, olapQuery, sortOrder));
+			results.add(search(application, shard, tableDef, query, fieldSet, olapQuery, sortOrders));
 		}
 		SearchResultList result = MergeResult.merge(results, fieldSet);
 		if(olapQuery.getSkip() > 0) {
@@ -203,12 +203,12 @@ public class Olap {
 		return result;
 	}
 
-	private SearchResultList search(String application, String shard, TableDefinition tableDef, Query query, FieldSet fieldSet, OlapQuery olapQuery, SortOrder sortOrder) {
+	private SearchResultList search(String application, String shard, TableDefinition tableDef, Query query, FieldSet fieldSet, OlapQuery olapQuery, SortOrder[] sortOrders) {
 		// repeat if segment was merged
 		for(int i = 0; i < 2; i++) {
 			try {
 				CubeSearcher s = getSearcher(application, shard, getCubeSegment(application, shard));
-				SearchResultList result = Searcher.search(s, tableDef, query, fieldSet, olapQuery.getPageSizeWithSkip(), sortOrder);
+				SearchResultList result = Searcher.search(s, tableDef, query, fieldSet, olapQuery.getPageSizeWithSkip(), sortOrders);
 				for(SearchResult sr: result.results) {
 					sr.scalars.put("_shard", shard);
 				}
@@ -219,7 +219,7 @@ public class Olap {
 			}
 		}
 		CubeSearcher s = getSearcher(application, shard, getCubeSegment(application, shard));
-		return Searcher.search(s, tableDef, query, fieldSet, olapQuery.getPageSizeWithSkip(), sortOrder);
+		return Searcher.search(s, tableDef, query, fieldSet, olapQuery.getPageSizeWithSkip(), sortOrders);
 	}
 	
 	// default merge (used in tests): forceMerge enabled

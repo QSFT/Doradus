@@ -76,6 +76,7 @@ public class BdLongSet {
 			m_size--;
 			m_indexBuffer[m_valueIndexes[m_size]] = -1;
 		}
+		m_bSorted = false;
 	}
 	
 	public void restoreAfterSort() {

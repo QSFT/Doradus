@@ -93,11 +93,8 @@ public class QueryExecutor {
             		Math.min(p, def.initialScalarBuffer));
             int cap = Math.min(p, 10000);
             DBEntitySequenceFactory factory = new DBEntitySequenceFactory(cap, cap, cap, options);
-            SortOrder order = null;
-            if(sortOrder != null) {
-            	order = AggregationQueryBuilder.BuildSortOrder(sortOrder, m_table);
-            }
-            FieldSetCreator fieldSetCreator = new FieldSetCreator(fieldSet, order);
+            SortOrder[] orders = AggregationQueryBuilder.BuildSortOrders(sortOrder, m_table);
+            FieldSetCreator fieldSetCreator = new FieldSetCreator(fieldSet, orders);
             EntitySequence sequence = factory.getSequence(m_table, iter, fieldSetCreator.loadedFields);
             SearchResultList searchResultList = fieldSetCreator.create(sequence, m_skip);
             return searchResultList;

@@ -331,22 +331,22 @@
             <doc>
                 <field name="City">Chicago</field>
                 <field name="Country">USA</field>
-                <field name="_ID">2012</field>
+                <field name="_ID">2006</field>
             </doc>
             <doc>
                 <field name="City">Chicago</field>
                 <field name="Country">USA</field>
-                <field name="_ID">2006</field>
-            </doc>
-            <doc>
-                <field name="City">Moscow</field>
-                <field name="Country">Russia</field>
-                <field name="_ID">2007</field>
+                <field name="_ID">2012</field>
             </doc>
             <doc>
                 <field name="City">Moscow</field>
                 <field name="Country">Russia</field>
                 <field name="_ID">2001</field>
+            </doc>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="Country">Russia</field>
+                <field name="_ID">2007</field>
             </doc>
             <doc>
                 <field name="City">New York</field>
@@ -365,21 +365,14 @@
                 "doc":{
                    "City":"Chicago",
                    "Country":"USA",
-                   "_ID":"2012"
+                   "_ID":"2006"
                 }
              },
              {
                 "doc":{
                    "City":"Chicago",
                    "Country":"USA",
-                   "_ID":"2006"
-                }
-             },
-             {
-                "doc":{
-                   "City":"Moscow",
-                   "Country":"Russia",
-                   "_ID":"2007"
+                   "_ID":"2012"
                 }
              },
              {
@@ -387,6 +380,13 @@
                    "City":"Moscow",
                    "Country":"Russia",
                    "_ID":"2001"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "Country":"Russia",
+                   "_ID":"2007"
                 }
              },
              {
@@ -421,12 +421,12 @@
             <doc>
                 <field name="City">New York</field>
                 <field name="Country">USA</field>
-                <field name="_ID">2009</field>
+                <field name="_ID">2003</field>
             </doc>
             <doc>
                 <field name="City">New York</field>
                 <field name="Country">USA</field>
-                <field name="_ID">2003</field>
+                <field name="_ID">2009</field>
             </doc>
             <doc>
                 <field name="City">Moscow</field>
@@ -466,14 +466,14 @@
                 "doc":{
                    "City":"New York",
                    "Country":"USA",
-                   "_ID":"2009"
+                   "_ID":"2003"
                 }
              },
              {
                 "doc":{
                    "City":"New York",
                    "Country":"USA",
-                   "_ID":"2003"
+                   "_ID":"2009"
                 }
              },
              {
@@ -848,22 +848,22 @@
             <doc>
                 <field name="City">Chicago</field>
                 <field name="Country">USA</field>
-                <field name="_ID">2012</field>
+                <field name="_ID">2006</field>
             </doc>
             <doc>
                 <field name="City">Chicago</field>
                 <field name="Country">USA</field>
-                <field name="_ID">2006</field>
-            </doc>
-            <doc>
-                <field name="City">Moscow</field>
-                <field name="Country">Russia</field>
-                <field name="_ID">2007</field>
+                <field name="_ID">2012</field>
             </doc>
             <doc>
                 <field name="City">Moscow</field>
                 <field name="Country">Russia</field>
                 <field name="_ID">2001</field>
+            </doc>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="Country">Russia</field>
+                <field name="_ID">2007</field>
             </doc>
             <doc>
                 <field name="City">New York</field>
@@ -882,21 +882,14 @@
                 "doc":{
                    "City":"Chicago",
                    "Country":"USA",
-                   "_ID":"2012"
+                   "_ID":"2006"
                 }
              },
              {
                 "doc":{
                    "City":"Chicago",
                    "Country":"USA",
-                   "_ID":"2006"
-                }
-             },
-             {
-                "doc":{
-                   "City":"Moscow",
-                   "Country":"Russia",
-                   "_ID":"2007"
+                   "_ID":"2012"
                 }
              },
              {
@@ -904,6 +897,13 @@
                    "City":"Moscow",
                    "Country":"Russia",
                    "_ID":"2001"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "Country":"Russia",
+                   "_ID":"2007"
                 }
              },
              {
@@ -940,12 +940,12 @@
             <doc>
                 <field name="City">New York</field>
                 <field name="Country">USA</field>
-                <field name="_ID">2009</field>
+                <field name="_ID">2003</field>
             </doc>
             <doc>
                 <field name="City">New York</field>
                 <field name="Country">USA</field>
-                <field name="_ID">2003</field>
+                <field name="_ID">2009</field>
             </doc>
             <doc>
                 <field name="City">Moscow</field>
@@ -985,14 +985,14 @@
                 "doc":{
                    "City":"New York",
                    "Country":"USA",
-                   "_ID":"2009"
+                   "_ID":"2003"
                 }
              },
              {
                 "doc":{
                    "City":"New York",
                    "Country":"USA",
-                   "_ID":"2003"
+                   "_ID":"2009"
                 }
              },
              {

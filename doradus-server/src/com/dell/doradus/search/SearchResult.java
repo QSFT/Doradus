@@ -37,10 +37,10 @@ import com.dell.doradus.search.aggregate.SortOrder;
 public class SearchResult implements Comparable<SearchResult> {
     public ObjectID id;
 	public FieldSet fieldSet;
-	public SortOrder order;
+	public SortOrder[] orders;
 	public TreeMap<String, String> scalars = new TreeMap<String, String>();
 	public TreeMap<String, List<SearchResultList>> links = new TreeMap<String, List<SearchResultList>>();
-	private List<BSTR> sortKey = null;
+	private List<List<BSTR>> sortKeys = null;
 	
     public SearchResult() { }
 
@@ -86,19 +86,18 @@ public class SearchResult implements Comparable<SearchResult> {
         return docNode;
     }
 
-	private void loadSortKey() {
+	private void loadSortKeys() {
 		// cache sort key so we won't reload it each time
-		if(sortKey != null) return;
-		
-		sortKey = new ArrayList<BSTR>(); 
-		if(order == null || order.items.size() == 0) {
-			sortKey.add(new BSTR(id()));
-			return;
+		if(sortKeys != null) return;
+		if(orders == null || orders.length == 0) return;
+		sortKeys = new ArrayList<List<BSTR>>(orders.length);
+		for(SortOrder order: orders) {
+			Set<BSTR> sortValues = new HashSet<BSTR>();
+			loadSortKey(order.items, 0, sortValues);
+			List<BSTR> sortArray = new ArrayList<BSTR>(sortValues);
+			Collections.sort(sortArray);
+			sortKeys.add(sortArray);
 		}
-		Set<BSTR> sortValues = new HashSet<BSTR>();
-		loadSortKey(order.items, 0, sortValues);
-		sortKey.addAll(sortValues);
-		Collections.sort(sortKey);
 	}
     
 	private void loadSortKey(List<AggregationGroupItem> items, int index, Set<BSTR> sortedSet) {
@@ -155,27 +154,37 @@ public class SearchResult implements Comparable<SearchResult> {
 	}
     
 	@Override public int compareTo(SearchResult o) {
-		loadSortKey();
-		o.loadSortKey();
+		if(orders == null) {
+			return id().compareTo(o.id());
+		}
 		
-		int minK = Math.min(sortKey.size(), o.sortKey.size());
-		int c = 0;
+		loadSortKeys();
+		o.loadSortKeys();
 		
-		if(order == null || order.ascending) {
-			for(int i = 0; i < minK; i++) {
-				c = sortKey.get(i).compareTo(o.sortKey.get(i));
+		for(int s = 0; s < sortKeys.size(); s++) {
+			List<BSTR> x = sortKeys.get(s);
+			List<BSTR> y = o.sortKeys.get(s);
+			SortOrder order = orders[s];
+			int minK = Math.min(x.size(), y.size());
+			int c = 0;
+			if(order == null || order.ascending) {
+				for(int i = 0; i < minK; i++) {
+					c = x.get(i).compareTo(y.get(i));
+					if(c != 0) return c;
+				}
+				c = Integer.compare(x.size(), y.size());
 				if(c != 0) return c;
-			}
-			c = Integer.compare(sortKey.size(), o.sortKey.size());
-			return c;
-		} else {
-			for(int i = minK - 1; i >= 0; i--) {
-				c = sortKey.get(i).compareTo(o.sortKey.get(i));
+			} else {
+				for(int i = minK - 1; i >= 0; i--) {
+					c = x.get(i).compareTo(y.get(i));
+					if(c != 0) return -c;
+				}
+				c = Integer.compare(x.size(), y.size());
 				if(c != 0) return -c;
 			}
-			c = Integer.compare(sortKey.size(), o.sortKey.size());
-			return -c;
 		}
+		
+		return id().compareTo(o.id());
 	}
 
 	@Override public String toString() {
