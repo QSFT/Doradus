@@ -23,6 +23,7 @@ public class AggregationRequestData {
 	public String table;
 	public List<String> shards;
 	public List<String> xshards;
+	public boolean flat;
 	
 	public String metrics;
 	public Part[] parts;
