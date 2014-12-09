@@ -94,6 +94,7 @@ public class Olap {
 	// For testing: use default keyspace and register app with DBService
 	public VDirectory createApplication(String appName) {
         String keyspace = ServerConfig.getInstance().keyspace;
+        DBService.instance().createKeyspace(keyspace);
         DBService.instance().registerApplication(keyspace, appName);
         return createApplication(keyspace, appName);
 	}
