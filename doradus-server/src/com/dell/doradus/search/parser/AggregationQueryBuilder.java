@@ -93,6 +93,16 @@ public class AggregationQueryBuilder {
         }
     }
 
+    public static SortOrder[] BuildSortOrders(String string, TableDefinition definition) {
+    	if(string == null || string.trim().length() == 0) return null;
+    	List<String> strings = Utils.split(string, ',');
+    	SortOrder[] orders = new SortOrder[strings.size()];
+    	for(int i = 0; i<strings.size(); i++) {
+    		orders[i] = BuildSortOrder(strings.get(i), definition);
+    	}
+    	return orders;
+    }
+    
     public static SortOrder BuildSortOrder(String string, TableDefinition definition) {
         string = definition.replaceAliaces(string);
         Parser parser = Parser.GetSortOrderParser();
@@ -571,6 +581,7 @@ public class AggregationQueryBuilder {
             return null;
 
         SortOrder result = new SortOrder();
+        result.tableDef = definition;
 
         ArrayList<Item> items = extractTokens(context);
         TableDefinition tableDef = definition;
@@ -874,8 +885,13 @@ public class AggregationQueryBuilder {
                 if (type.equals(SemanticNames.TOPBOTTOM)) {
                     if (item.item.getValue().equals("TOP"))
                         aggregationGroup.selection = AggregationGroup.Selection.Top;
-                    else
+                    else if (item.item.getValue().equals("BOTTOM"))
                         aggregationGroup.selection = AggregationGroup.Selection.Bottom;
+                    else if (item.item.getValue().equals("FIRST"))
+                        aggregationGroup.selection = AggregationGroup.Selection.First;
+                    else if (item.item.getValue().equals("LAST"))
+                        aggregationGroup.selection = AggregationGroup.Selection.Last;
+                    else throw new RuntimeException("TOP/BOTTOM/FIRST/LAST allowed");
 
                     SetFilter(aggregationGroup, tableDef, item);
                     continue;

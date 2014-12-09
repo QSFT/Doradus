@@ -17,6 +17,7 @@
 package com.dell.doradus.olap.aggregate.mr;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,36 @@ public class MFAggregationBuilder {
 		}
 		if(collector == null) collector = new AggregationCollector(0);
 		AggregationResult result = AggregationResultBuilder.build(request, collector);
+		
+		
+		if(request.flat) {
+			int topGroupsCount = 0; // number of top-level groups to leave
+			int lastSubgroups = 0; // number of nested groups to leave in the last top-level groups
+			int maxGroups = request.getTop(0); // total number of subgroups to leave
+			int curGroups = 0;
+			for(int i = 0; i < result.groups.size(); i++) {
+				topGroupsCount++;
+				AggregationResult.AggregationGroup group = result.groups.get(i);
+				int subGroups = group.innerResult.groups.size();
+				if(curGroups + subGroups >= maxGroups) {
+					lastSubgroups = maxGroups - curGroups;
+					break;
+				}
+				curGroups += subGroups;
+			}
+			if(result.groups.size() > topGroupsCount) {
+				List<AggregationResult.AggregationGroup> grp = new ArrayList<AggregationResult.AggregationGroup>(topGroupsCount);
+				for(int i = 0; i < topGroupsCount; i++) grp.add(result.groups.get(i));
+				result.groups = grp;
+			}
+			AggregationResult last = result.groups.get(topGroupsCount - 1).innerResult;
+			if(last.groups.size() > lastSubgroups) {
+				List<AggregationResult.AggregationGroup> grp = new ArrayList<AggregationResult.AggregationGroup>(lastSubgroups);
+				for(int i = 0; i < lastSubgroups; i++) grp.add(last.groups.get(i));
+				last.groups = grp;
+			}
+		}
+		
 		return result;
 	}
 	

@@ -46,6 +46,7 @@ import com.dell.doradus.search.query.FieldCountQuery;
 import com.dell.doradus.search.query.FieldCountRangeQuery;
 import com.dell.doradus.search.query.IdInQuery;
 import com.dell.doradus.search.query.IdQuery;
+import com.dell.doradus.search.query.IdRangeQuery;
 import com.dell.doradus.search.query.LinkCountQuery;
 import com.dell.doradus.search.query.LinkCountRangeQuery;
 import com.dell.doradus.search.query.LinkIdQuery;
@@ -407,19 +408,21 @@ public class ResultBuilder {
 			FieldDefinition f = tableDef.getFieldDef(field);
 			if(f == null) throw new IllegalArgumentException("Field '" + field + "' not found");
 			if(f.getType() == FieldType.TEXT) {
-				rq.min = rq.min == null ? "" : rq.min.toLowerCase();
-				rq.max = rq.max == null ? "\uFFFF" : rq.max.toLowerCase();
-				if(!rq.minInclusive) rq.min += "\u0000";
-				if(rq.maxInclusive) rq.max += "\u0000";
+				String min = rq.min == null ? "" : rq.min.toLowerCase();
+				if(!rq.minInclusive) min += "\u0000";
 				ValueSearcher vs = searcher.getValueSearcher(tableDef.getTableName(), field);
-				BSTR term = new BSTR(rq.min);
+				BSTR term = new BSTR(min);
 				int term_min = vs.find(term, false);
-				term = new BSTR(rq.max);
-				int term_max = vs.find(term, false);
-				if(term_min >= 0) {
-					FieldSearcher field_searcher = searcher.getFieldSearcher(tableDef.getTableName(), field);
-					field_searcher.fill(term_min, term_max, r);
+				if(term_min < 0) term_min = vs.size();
+				int term_max = vs.size();
+				if(rq.max != null) {
+					String max = rq.max.toLowerCase();
+					if(rq.maxInclusive) max += "\u0000";
+					term = new BSTR(max);
+					term_max = vs.find(term, false);
 				}
+				FieldSearcher field_searcher = searcher.getFieldSearcher(tableDef.getTableName(), field);
+				field_searcher.fill(term_min, term_max, r);
 			} else if(NumSearcher.isNumericType(f.getType())) {
 				long min = Long.MIN_VALUE;
 				long max = Long.MAX_VALUE;
@@ -609,6 +612,24 @@ public class ResultBuilder {
 			else {
 				FieldSearcher field_searcher = searcher.getFieldSearcher(f.getTableName(),f.getName());
 				field_searcher.fillCount(min, max, r);
+			}
+		} else if(query instanceof IdRangeQuery) {
+			IdRangeQuery rq = (IdRangeQuery)query;
+			String min = rq.min == null ? "" : rq.min;
+			if(!rq.minInclusive) min += "\u0000";
+			IdSearcher idSearcher = searcher.getIdSearcher(tableDef.getTableName());
+			BSTR term = new BSTR(min);
+			int term_min = idSearcher.find(term, false);
+			if(term_min < 0) term_min = idSearcher.size();
+			int term_max = idSearcher.size();
+			if(rq.max != null) {
+				String max = rq.max;
+				if(rq.maxInclusive) max += "\u0000";
+				term = new BSTR(max);
+				term_max = idSearcher.find(term, false);
+			}
+			for(int i = term_min; i < term_max; i++) {
+				r.set(i);
 			}
 		} else throw new IllegalArgumentException("Query " + query.getClass().getSimpleName() + " not supported");
 		return r;

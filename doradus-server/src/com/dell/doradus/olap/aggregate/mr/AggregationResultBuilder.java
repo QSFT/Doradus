@@ -46,17 +46,16 @@ public class AggregationResultBuilder {
 		if(group == null) return result;
 		Collection<AggregationCollector.Group> groups = group.groups();
 		List<AggregationCollector.Group> grps;
+		Comparator<AggregationCollector.Group> comparer = null;
 		switch(requestGroup.selection) {
 		case None: {
-			Comparator<AggregationCollector.Group> nameComparer = new Comparator<AggregationCollector.Group>() {
+			comparer = new Comparator<AggregationCollector.Group>() {
 				@Override public int compare(Group x, Group y) {
 					return x.getKey().compareTo(y.getKey());
 				}};
-			grps = new ArrayList<AggregationCollector.Group>(groups);
-			Collections.sort(grps, nameComparer);
 			break;
 		} case Top: {
-			Comparator<AggregationCollector.Group> topComparer = new Comparator<AggregationCollector.Group>() {
+			comparer = new Comparator<AggregationCollector.Group>() {
 				@Override public int compare(Group x, Group y) {
 					MetricValueSet valueX = x.getValue();
 					MetricValueSet valueY = y.getValue();
@@ -68,19 +67,9 @@ public class AggregationResultBuilder {
 					if(!specialX && !specialY) return c;
 					return specialX ? 1 : -1;
 				}};
-				
-			if(requestGroup.selectionValue == 0 || requestGroup.selectionValue > groups.size()) {
-				grps = new ArrayList<AggregationCollector.Group>(groups);
-				Collections.sort(grps, topComparer);
-				break;
-			}
-			HeapList<AggregationCollector.Group> heap =
-					new HeapList<AggregationCollector.Group>(requestGroup.selectionValue, topComparer);
-			for(AggregationCollector.Group g: groups) heap.Add(g);
-			grps = heap.values();
 			break;
 		} case Bottom: {
-			Comparator<AggregationCollector.Group> bottomComparer = new Comparator<AggregationCollector.Group>() {
+			comparer = new Comparator<AggregationCollector.Group>() {
 				@Override public int compare(Group x, Group y) {
 					MetricValueSet valueX = x.getValue();
 					MetricValueSet valueY = y.getValue();
@@ -92,17 +81,30 @@ public class AggregationResultBuilder {
 					if(!specialX && !specialY) return c;
 					return specialX ? 1 : -1;
 				}};
-			if(requestGroup.selectionValue == 0 || requestGroup.selectionValue > groups.size()) {
-				grps = new ArrayList<AggregationCollector.Group>(groups);
-				Collections.sort(grps, bottomComparer);
-				break;
-			}
-			HeapList<AggregationCollector.Group> heap =
-					new HeapList<AggregationCollector.Group>(requestGroup.selectionValue, bottomComparer);
-			for(AggregationCollector.Group g: groups) heap.Add(g);
-			grps = heap.values();
+			break;
+		} case First: {
+			comparer = new Comparator<AggregationCollector.Group>() {
+				@Override public int compare(Group x, Group y) {
+					return x.getKey().compareTo(y.getKey());
+				}};
+			break;
+		} case Last: {
+			comparer = new Comparator<AggregationCollector.Group>() {
+				@Override public int compare(Group x, Group y) {
+					return y.getKey().compareTo(x.getKey());
+				}};
 			break;
 		} default: throw new RuntimeException("Unknown comparer: " + requestGroup.selection);
+		}
+		
+		if(requestGroup.selectionValue == 0 || requestGroup.selectionValue > groups.size()) {
+			grps = new ArrayList<AggregationCollector.Group>(groups);
+			Collections.sort(grps, comparer);
+		} else {
+			HeapList<AggregationCollector.Group> heap =
+					new HeapList<AggregationCollector.Group>(requestGroup.selectionValue, comparer);
+			for(AggregationCollector.Group g: groups) heap.Add(g);
+			grps = heap.values();
 		}
 
 		for(AggregationCollector.Group g: grps) {

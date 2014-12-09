@@ -33,6 +33,8 @@ public class OlapAggregate {
     private String m_pair;
     private String m_xshards;  				// &xshards parameter
     private String m_xshardsRange;			// &xrange parameter
+    private boolean m_flat;
+    
     
     /**
      * Create an OlapAggregate with query parameters extracted from the given "search" UNode.
@@ -52,6 +54,7 @@ public class OlapAggregate {
         m_pair = parsedQuery.get("pair");
         m_xshards = parsedQuery.get("x-shards");
         m_xshardsRange = parsedQuery.get("x-shards-range");
+        m_flat = parsedQuery.getBoolean("flat", false);
         parsedQuery.checkInvalidParameters();
         checkDefaults();
     }
@@ -79,6 +82,7 @@ public class OlapAggregate {
         m_pair = parsedQuery.get("pair");
         m_xshards = parsedQuery.get("xshards");
         m_xshardsRange = parsedQuery.get("xrange");
+        m_flat = parsedQuery.getBoolean("flat", false);
         parsedQuery.checkInvalidParameters();
         checkDefaults();
     }
@@ -106,6 +110,7 @@ public class OlapAggregate {
 		requestData.xshards = olap.getShardsList(application, m_xshards, m_xshardsRange);
 		requestData.table = table;
 		requestData.metrics = m_metrics;
+		requestData.flat = m_flat;
 		
 		if(m_pair == null) {
 			requestData.parts = new AggregationRequestData.Part[1];

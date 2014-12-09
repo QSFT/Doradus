@@ -38,20 +38,20 @@ public class FieldSetCreator {
 	 */
 	public int limit;
 	public Filter filter;
-	public SortOrder order;
+	public SortOrder[] orders;
 	public TableDefinition tableDef;
 	public List<String> scalarFields;
 	public List<String> loadedFields;
 	public TreeMap<String, List<FieldSetCreator>> links = new TreeMap<String, List<FieldSetCreator>>();
 	public FieldSet fieldSet;
 	
-	public FieldSetCreator(FieldSet fieldSet, SortOrder order) {
+	public FieldSetCreator(FieldSet fieldSet, SortOrder[] orders) {
 		tableDef = fieldSet.tableDef;
 		limit = fieldSet.limit;
 		if(limit == -1) limit = Integer.MAX_VALUE;
 		scalarFields = fieldSet.ScalarFields;
 		loadedFields = scalarFields;
-		this.order = order;
+		this.orders = orders;
 		this.fieldSet = fieldSet;
 		
 		Set<String> flds = new HashSet<String>(scalarFields.size());
@@ -60,12 +60,12 @@ public class FieldSetCreator {
 			filter = new QueryExecutor(tableDef).filter(fieldSet.filter);
 			filter.addFields(flds);
 		}
-		if(order != null) {
-			if(order.items.size() != 1) throw new IllegalArgumentException("Link paths not supported in sort order");
-			if(!order.items.get(0).isLink) {
-				flds.add(order.items.get(0).name);
-			}
-		}
+		//if(orders != null) {
+		//	if(order.items.size() != 1) throw new IllegalArgumentException("Link paths not supported in sort order");
+		//	if(!order.items.get(0).isLink) {
+		//		flds.add(order.items.get(0).name);
+		//	}
+		//}
 		if(flds.contains("*")) {
 			flds.clear();
 			flds.add("*");
@@ -90,7 +90,7 @@ public class FieldSetCreator {
 		
 		SearchResultList resultList = new SearchResultList();
 		
-		if(order == null || limit == Integer.MAX_VALUE) {
+		if(orders == null || limit == Integer.MAX_VALUE) {
 	        for(Entity entity: sequence) {
 	        	if(filter != null && !filter.check(entity)) continue;
 	        	SearchResult result = createResult(entity);
@@ -108,7 +108,7 @@ public class FieldSetCreator {
 	        SearchResult[] arr = results.GetValues(SearchResult.class);
 	        for(SearchResult result : arr) resultList.results.add(result);
 		}
-        if(limit == Integer.MAX_VALUE && order != null) Collections.sort(resultList.results);
+        if(limit == Integer.MAX_VALUE && orders != null) Collections.sort(resultList.results);
         if (skip > 0) {
         	if (skip > resultList.results.size()) {
         		resultList.results.clear();
@@ -124,7 +124,7 @@ public class FieldSetCreator {
     	SearchResult result = new SearchResult();
         result.scalars.put(CommonDefs.ID_FIELD, entity.id().toString());
         result.id = entity.id();
-        result.order = order;
+        result.orders = orders;
         result.fieldSet = fieldSet;
         for(String f: scalarFields) {
             if(f.equals(CommonDefs.ID_FIELD)) continue;

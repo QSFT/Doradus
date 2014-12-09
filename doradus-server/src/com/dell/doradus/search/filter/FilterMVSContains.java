@@ -41,7 +41,10 @@ public class FilterMVSContains implements Filter {
 
     @Override public boolean check(Entity entity) {
     	String fieldValue = entity.get(m_field);
-    	if(fieldValue == null) return false;
+    	if(fieldValue == null) {
+    		if(m_quantifier == Quantifier.NONE) return true;
+    		else return false;
+    	}
         if(m_quantifier == Quantifier.ANY) {
     		for(String subvalue: Utils.split(fieldValue, CommonDefs.MV_SCALAR_SEP_CHAR)) {
     			if(FilterContains.compare(subvalue, m_value)) return true;

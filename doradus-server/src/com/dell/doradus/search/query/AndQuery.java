@@ -25,6 +25,14 @@ public class AndQuery implements Query {
 	//The list of subqueries
 	public ArrayList<Query> subqueries = new ArrayList<Query>();
 
+	public AndQuery() {}
+	
+	public AndQuery(Query... queries) {
+		for(Query q: queries) {
+			this.subqueries.add(q);
+		}
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

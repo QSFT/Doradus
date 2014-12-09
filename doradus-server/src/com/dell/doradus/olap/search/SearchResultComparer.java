@@ -16,78 +16,59 @@
 
 package com.dell.doradus.olap.search;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.dell.doradus.olap.aggregate.mr.MFCollectorSet;
+import com.dell.doradus.olap.collections.BdLongSet;
 import com.dell.doradus.olap.store.CubeSearcher;
-import com.dell.doradus.olap.store.FieldSearcher;
 import com.dell.doradus.olap.store.IntIterator;
-import com.dell.doradus.olap.store.NumSearcher;
-import com.dell.doradus.olap.store.NumSearcherMV;
-import com.dell.doradus.search.aggregate.AggregationGroupItem;
+import com.dell.doradus.search.aggregate.AggregationGroup;
 import com.dell.doradus.search.aggregate.SortOrder;
 import com.dell.doradus.search.util.HeapList;
 
 public class SearchResultComparer {
-	//returns IntIterator with sorted results, or null which means that the results should be post-sorted
-	public static IntIterator sort(CubeSearcher searcher, Result result, SortOrder order, int size) {
-		//will sort later
-		if(size >= result.countSet()) return null;
-		//link paths will be sorted after all values are retrieved
-		if(order != null && order.items.size() > 1) return null;
-		//sort by multivalued values is not optimized as well 
-		if(order != null && order.items.size() == 1 && order.items.get(0).fieldDef.isCollection()) return null;
-		if(order == null) {
-			int[] res = new int[size];
+	
+	public static IntIterator sort(CubeSearcher searcher, Result result, SortOrder[] orders, int size) {
+		if(orders == null || orders.length == 0 || size >= result.countSet()) {
+			int[] res = new int[Math.min(size, result.countSet())];
 			int num = 0;
 			for(int i = 0; i < result.size(); i++) {
-				if(num >= size) break;
+				if(num >= res.length) break;
 				if(!result.get(i)) continue;
 				res[num++] = i;
 			}
 			return new IntIterator(res, 0, res.length);
 		}
-		//if(order.items.size() != 1) throw new IllegalArgumentException("Paths are not supported in the sort order");
-		AggregationGroupItem item = order.items.get(0);
-		
-		HeapList<DocAndField> heap = new HeapList<DocAndField>(size);
-		DocAndField cur = new DocAndField();
-		
-		if(NumSearcher.isNumericType(item.fieldDef.getType())) {
-			NumSearcherMV s = searcher.getNumSearcher(item.fieldDef.getTableName(), item.fieldDef.getName());
-			for(int i = 0; i < result.size(); i++) {
-				if(!result.get(i)) continue;
-				if(cur == null) cur = new DocAndField();
-				cur.doc = i;
-				cur.field = s.isNull(i) ? Long.MIN_VALUE : s.get(i, 0);
-				if(!order.ascending) cur.field = -cur.field;
-				cur = heap.AddEx(cur);
-			}
+
+		BdLongSet[] sets = new BdLongSet[orders.length];
+		for(int i = 0; i < orders.length; i++) {
+			sets[i] = new BdLongSet(1024);
+			sets[i].enableClearBuffer();
 		}
-		else {
-			FieldSearcher s = searcher.getFieldSearcher(item.fieldDef.getTableName(), item.fieldDef.getName());
-			IntIterator ii = new IntIterator();
-			for(int i = 0; i < result.size(); i++) {
-				if(!result.get(i)) continue;
-				if(cur == null) cur = new DocAndField();
-				cur.doc = i;
-				s.fields(i, ii);
-				if(ii.count() != 0) cur.field = ii.get(0);
-				if(!order.ascending) cur.field = -cur.field;
-				cur = heap.AddEx(cur);
-			}
+		
+		List<AggregationGroup> aggGroups = new ArrayList<AggregationGroup>(orders.length);
+		for(SortOrder order: orders) { aggGroups.add(order.getAggregationGroup()); }
+		MFCollectorSet collectorSet = new MFCollectorSet(searcher, aggGroups, false); 
+		
+		HeapList<SortKey> heap = new HeapList<SortKey>(size);
+		SortKey cur = null;
+		
+		for(int doc = 0; doc < result.size(); doc++) {
+			if(!result.get(doc)) continue;
+			collectorSet.collect(doc, sets);
+			if(cur == null) cur = new SortKey(orders);
+			cur.set(doc, sets);
+			cur = heap.AddEx(cur);
+			for(int i = 0; i < sets.length; i++) sets[i].clear();
 		}
-		DocAndField[] arr = heap.GetValues(DocAndField.class);
-		int[] res = new int[arr.length];
-		for(int i = 0; i < arr.length; i++) {
-			res[i] = arr[i].doc;
+		
+		SortKey[] keys = heap.GetValues(SortKey.class);
+		int[] res = new int[keys.length];
+		for(int i = 0; i < keys.length; i++) {
+			res[i] = keys[i].doc();
 		}
 		return new IntIterator(res, 0, res.length);
 	}
 	
-	public static class DocAndField implements Comparable<DocAndField> {
-		public int doc;
-		public long field;
-		@Override public int compareTo(DocAndField o) {
-			if(field != o.field) return field > o.field ? 1 : -1;
-			else return doc - o.doc;
-		}
-	}
 }

@@ -43,6 +43,7 @@ public class AggregationRequest {
 	public List<String> xshards;
 	public List<MetricExpression> metrics;
 	public Part[] parts;
+	public boolean flat;
 	
 	public static class Part {
 		public Query query;
@@ -64,6 +65,7 @@ public class AggregationRequest {
 		shards = requestData.shards;
 		xshards = requestData.xshards;
 		metrics = AggregationQueryBuilder.BuildAggregationMetricsExpression(requestData.metrics, tableDef);
+		flat = requestData.flat;
 		
 		parts = new AggregationRequest.Part[requestData.parts.length];
 		for(int i = 0; i < parts.length; i++) {

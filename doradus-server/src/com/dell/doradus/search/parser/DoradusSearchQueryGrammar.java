@@ -314,6 +314,8 @@ public class DoradusSearchQueryGrammar {
 
         Keyword TOP = new Keyword("TOP", WORD);
         Keyword BOTTOM = new Keyword("BOTTOM", WORD);
+        Keyword FIRST = new Keyword("FIRST", WORD);
+        Keyword LAST = new Keyword("LAST", WORD);
         GrammarToken GMT = new GrammarToken("GMT");
 
         Keyword MIN = new Keyword("MIN", WORD, false);
@@ -1055,7 +1057,9 @@ public class DoradusSearchQueryGrammar {
 
         GrammarRule TopBottom = new SwitchRule("TopBottom",
                 TOP,
-                BOTTOM
+                BOTTOM,
+                FIRST,
+                LAST
         );
 
         SequenceRule AggregationQueryList = new SequenceRule("AggregationQueryList");

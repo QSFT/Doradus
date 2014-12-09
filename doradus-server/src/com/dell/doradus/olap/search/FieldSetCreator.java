@@ -28,18 +28,18 @@ import com.dell.doradus.search.aggregate.SortOrder;
 public class FieldSetCreator {
 	public int limit;
 	public Result filter;
-	public SortOrder order;
+	public SortOrder[] orders;
 	public TableDefinition tableDef;
 	public List<String> scalarFields;
 	public TreeMap<String, List<FieldSetCreator>> links = new TreeMap<String, List<FieldSetCreator>>();
 	public FieldSet fieldSet;
 	
-	public FieldSetCreator(CubeSearcher searcher, FieldSet fieldSet, SortOrder order) {
+	public FieldSetCreator(CubeSearcher searcher, FieldSet fieldSet, SortOrder[] orders) {
 		tableDef = fieldSet.tableDef;
 		limit = fieldSet.limit;
 		if(limit == -1) limit = Integer.MAX_VALUE;
 		scalarFields = fieldSet.ScalarFields;
-		this.order = order;
+		this.orders = orders;
 		this.fieldSet = fieldSet;
 
 		if(fieldSet.filter != null) {

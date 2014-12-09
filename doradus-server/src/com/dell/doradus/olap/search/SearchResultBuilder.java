@@ -38,31 +38,22 @@ import com.dell.doradus.search.aggregate.SortOrder;
 
 public class SearchResultBuilder {
 	
-	public static SearchResultList build(CubeSearcher searcher, Result documents, FieldSet fieldSet, int size, SortOrder order) {
+	public static SearchResultList build(CubeSearcher searcher, Result documents, FieldSet fieldSet, int size, SortOrder[] orders) {
 		if(size == 0) size = Integer.MAX_VALUE;
 		fieldSet.limit = size;
-		FieldSetCreator fieldSetCreator = new FieldSetCreator(searcher, fieldSet, order);
+		FieldSetCreator fieldSetCreator = new FieldSetCreator(searcher, fieldSet, orders);
 		FVS fvs = new FVS();
-		IntIterator documents_iter = SearchResultComparer.sort(searcher, documents, order, size);
-		boolean needsSorting = false;
-		if(documents_iter == null) {
-			documents_iter = documents.iterate();
-			needsSorting = true;
-			fieldSetCreator.limit = Integer.MAX_VALUE;
-		}
+		IntIterator documents_iter = SearchResultComparer.sort(searcher, documents, orders, size);
 		IntIterator iter = new IntIterator();
 		fill(searcher, documents_iter, fvs, fieldSetCreator, iter);
 		fvs.resolve(searcher);
 		SearchResultList list = new SearchResultList();
 		list.documentsCount = documents.countSet();
-		int num = 0;
 		for(int doc = 0; doc < documents_iter.count(); doc++) {
-			if(!needsSorting && num >= fieldSet.limit) break;
 			int d = documents_iter.get(doc);
 			SearchResult child = build(searcher, d, fvs, fieldSetCreator, iter);
-			child.order = order;
+			child.orders = orders;
 			list.results.add(child);
-			num++;
 		}
 		Collections.sort(list.results);
 		if(list.results.size() > size) {
