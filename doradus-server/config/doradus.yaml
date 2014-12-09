@@ -78,16 +78,19 @@ storage_services:
 
 ########## Cassandra Keyspace Parameters
 #
-# These parameters are used to create the initial Cassandra Keyspace used by Doradus. When Doradus
-# starts, if the given Keyspace name doesn't exist, Doradus creates it with the configured options.
-# However, once the Keyspace exists, these parameters are not used. Keyspace must be modified via
-# Cassandra-level tools. 
+# These parameters are used for Cassandra Keyspaces created by Doradus. Each application is assigned
+# an explicit or default "tenant", which is used as the keyspace name. Applications sharing the same
+# keyspace use the same metadata ColumnFamilies. When the first application is assigned to a given
+# Keyspace, Doradus creates the Keyspace with the ks_defaults defined below. After creation,
+# Keyspace options can be modified via Cassandra-level tools. 
 #
 
-# keyspace: Name of the Keyspace that contains Doradus-managed data. Default: 'Doradus'.
+# keyspace: Name of the default Keyspace for applications created without an explicit "tenant".
+# Default: 'Doradus'.
 keyspace: 'Doradus'
 
-# ks_defaults: See Cassandra documentation for details on default keyspace parameters.
+# ks_defaults: Keyspace options whenever a new Keyspace is created. See Cassandra documentation for
+# details on keyspace parameters.
 ks_defaults:
     - strategy_class: SimpleStrategy
     - strategy_options:
@@ -118,17 +121,13 @@ cf_defaults:
 # 'localhost'.
 dbhost: 'localhost'
 
-# dbport: The RPC (Thrift) port of the Cassandra database. It must be the same on all nodes.
-# Default: 9160.
-dbport: 9160
+# dbport: The native (CQL) port of the Cassandra database. It must be the same on all nodes listed
+# in "dbhost". Default: 9042.
+dbport: 9042
 
 # jmxport: The JMX port of the Cassandra database. It must be the same on all nodes. Note that JMX
 # can be configured via runtime options to require authentication and/or TLS/SSL. Default: 7199.
 jmxport: 7199
-
-# dbauthenticator: The fully qualified class name of the authenticator class to use when the
-# Cassandra Thrift API is configured to require authentication. Default: null (no authentication).
-# dbauthenticator: com.dell.doradus.service.db.SimpleAuthenticator
 
 # db_timeout_millis: Database timeout in milliseconds. This time is used both when connecting to
 # Cassandra and when performing read/write operations. Default: 60 seconds.
@@ -161,12 +160,6 @@ max_read_attempts: 7
 # little longer with each successive failed call. Default: 5 seconds. See also max_commit_attempts,
 # max_read_attempts, and max_reconnect_attempts.
 # retry_wait_millis: 5000
-
-# use_cql: Set to true to use Cassandra's CQL API insead of Thrift. CQL is only available if
-# "start_native_transport: true" is set in cassandra.yaml.  Also, set "dbport" to the value of
-# "native_transport_port" in cassandra.yaml (9042 by default).
-use_cql: false
-#dbport: 9042
 
 # dbtls: Set to true to use TLS/SSL for connections to Cassandra. This option currently only affects
 # CQL, hence use_cql must be true. When dbtls is enabled, the options keystore, keystorepassword,
@@ -349,7 +342,7 @@ olap_cf_defaults:
 # before flushing to the database. After the mutation are generated for each object in a batch
 # update, Spider checks to see if this threshold has been met and flushes the current mutation
 # batch if it has. Larger values improve performance by reducing Cassandra round trips, but they
-# require larger Thrift API buffer sizes. The default is 10,000.
+# require larger API buffer sizes. The default is 10,000.
 batch_mutation_threshold: 10000
 
 

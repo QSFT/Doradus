@@ -37,9 +37,9 @@ public class VDirectory {
 	private String m_row;
 
 	
-	public VDirectory(String storeName) {
+	public VDirectory(String appName, String storeName) {
 		m_parent = null;
-		IO io = new CassandraIO();
+		IO io = new CassandraIO(appName);
 		//IO io = new FileIO();
 		//IO io = new SqlIO();
 		//IO io = new MemIO();

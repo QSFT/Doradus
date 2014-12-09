@@ -57,7 +57,6 @@ import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
-import com.dell.doradus.service.db.StoreTemplate;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
@@ -132,9 +131,11 @@ public class SpiderService extends StorageService {
     
     // Create all CFs needed for the given application.
     @Override
-    public void initializeApplication(ApplicationDefinition oldAppDef, ApplicationDefinition appDef) {
+    public void initializeApplication(String keyspace, 
+                                      ApplicationDefinition oldAppDef,
+                                      ApplicationDefinition appDef) {
         checkServiceState();
-        verifyApplicationCFs(oldAppDef, appDef);
+        verifyApplicationCFs(keyspace, oldAppDef, appDef);
     }   // initializeApplication
     
     // Verify that the given application's options are valid for the Spider service.
@@ -159,7 +160,7 @@ public class SpiderService extends StorageService {
     public DBObject getObject(TableDefinition tableDef, String objID) {
         checkServiceState();
         String storeName = objectsStoreName(tableDef);
-        Iterator<DColumn> colIter = DBService.instance().getAllColumns(storeName, objID);
+        Iterator<DColumn> colIter = DBService.instance().getAllColumns(tableDef.getAppDef().getAppName(), storeName, objID);
         if (colIter == null) {
             return null;
         }
@@ -298,15 +299,17 @@ public class SpiderService extends StorageService {
 
     /**
      * Return the store name (ColumnFamily) in which objects are stored for the given table.
-     * This name is {application name}_{table name} truncated to {@link #MAX_CF_NAME_LENGTH}
-     * if needed.
+     * This name is either {table name} or {application name}_{table name} truncated to
+     * {@link #MAX_CF_NAME_LENGTH} if needed.
      * 
      * @param tableDef  {@link TableDefinition} of a table.
      * @return          Store name (ColumnFamily) in which objects are stored for the given
      *                  table.
      */
     public static String objectsStoreName(TableDefinition tableDef) {
-        return Utils.truncateTo(tableDef.getAppDef().getAppName() + "_" + tableDef.getTableName(), MAX_CF_NAME_LENGTH);
+        String storeName = null;
+        storeName = tableDef.getAppDef().getAppName() + "_" + tableDef.getTableName();
+        return Utils.truncateTo(storeName, MAX_CF_NAME_LENGTH);
     }   // objectsStoreName
     
     /**
@@ -374,6 +377,18 @@ public class SpiderService extends StorageService {
     }   // shardedLinkTermRowKey
     
     /**
+     * Return the store name (ColumnFamily) in which statistics are stored for the given
+     * table.
+     * 
+     * @param tableDef  {@link TableDefinition} of a table.
+     * @return          Store name (ColumnFamily) in which statistics are stored for the
+     *                  given table.
+     */
+    public static String statsStoreName(String appName) {
+        return appName + "_" + "Statistics";
+    }   // statsStoreName
+    
+    /**
      * Create the Terms row key for the given table, object, field name, and term.
      * 
      * @param tableDef  {@link TableDefinition} of table that owns object.
@@ -408,18 +423,6 @@ public class SpiderService extends StorageService {
         return objStoreName + "_Terms";
     }   // termsStoreName
     
-    /**
-     * Return the store name (ColumnFamily) in which statistics are stored for the given
-     * table.
-     * 
-     * @param tableDef  {@link TableDefinition} of a table.
-     * @return          Store name (ColumnFamily) in which statistics are stored for the
-     *                  given table.
-     */
-    public static String statsStoreName(String appName) {
-    	return appName + "_Statistics";
-    }   // statsStoreName
-    
     //----- SpiderService public methods
     
     /**
@@ -443,8 +446,9 @@ public class SpiderService extends StorageService {
         checkServiceState();
         Map<String, Map<String, String>> objScalarMap = new HashMap<>();
         if (objIDs.size() > 0 && fieldNames.size() > 0) {
+            String appName = tableDef.getAppDef().getAppName();
             String storeName = objectsStoreName(tableDef);
-            Iterator<DRow> rowIter = DBService.instance().getRowsColumns(storeName, objIDs, fieldNames);
+            Iterator<DRow> rowIter = DBService.instance().getRowsColumns(appName, storeName, objIDs, fieldNames);
             while (rowIter.hasNext()) {
                 DRow row = rowIter.next();
                 Map<String, String> scalarMap = new HashMap<>();
@@ -478,7 +482,9 @@ public class SpiderService extends StorageService {
         Map<String, String> objScalarMap = new HashMap<>();
         if (objIDs.size() > 0) {
             String storeName = objectsStoreName(tableDef);
-            Iterator<DRow> rowIter = DBService.instance().getRowsColumns(storeName, objIDs, Arrays.asList(fieldName));
+            String appName = tableDef.getAppDef().getAppName();
+            Iterator<DRow> rowIter =
+                DBService.instance().getRowsColumns(appName, storeName, objIDs, Arrays.asList(fieldName));
             while (rowIter.hasNext()) {
                 DRow row = rowIter.next();
                 Iterator<DColumn> colIter = row.getColumns();
@@ -637,39 +643,16 @@ public class SpiderService extends StorageService {
     // Delete all ColumnFamilies used by the given application. Only delete the ones that
     // actually exist in case a previous delete-app failed.
     private void deleteApplicationCFs(ApplicationDefinition appDef) {
-        // Application-level CFs:
-        for (StoreTemplate cfTemplate : applicationCFTemplates(appDef)) {
-            DBService.instance().deleteStoreIfPresent(cfTemplate.getName());
-        }
+        // Statistics CF:
+        String keyspace = DBService.instance().getKeyspaceForApp(appDef.getAppName());
+        DBService.instance().deleteStoreIfPresent(keyspace, statsStoreName(appDef.getAppName()));
         
         // Table-level CFs:
         for (TableDefinition tableDef : appDef.getTableDefinitions().values()) {
-            for (StoreTemplate cfTemplate : tableCFTemplates(tableDef)) {
-                DBService.instance().deleteStoreIfPresent(cfTemplate.getName());
-            }
+            DBService.instance().deleteStoreIfPresent(keyspace, objectsStoreName(tableDef));
+            DBService.instance().deleteStoreIfPresent(keyspace, termsStoreName(tableDef));
         }
     }   // deleteApplicationCFs
-    
-    private Collection<StoreTemplate> applicationCFTemplates(ApplicationDefinition appDef) {
-        return Arrays.asList(new StoreTemplate[] {statisticsCFTemplate(appDef)});
-    }   // applicationCFTemplates
-
-    private StoreTemplate statisticsCFTemplate(ApplicationDefinition appDef) {
-        String cfName = appDef.getAppName() + "_Statistics";
-        return new StoreTemplate(cfName, true);
-    }
-    
-    private Collection<StoreTemplate> tableCFTemplates(TableDefinition tableDef) {
-        return Arrays.asList(new StoreTemplate[] {objectsCFTemplate(tableDef), termsCFTemplate(tableDef)});
-    }
-    
-    private StoreTemplate objectsCFTemplate(TableDefinition tableDef) {
-        return new StoreTemplate(objectsStoreName(tableDef), true);
-    }
-    
-    private StoreTemplate termsCFTemplate(TableDefinition tableDef) {
-        return new StoreTemplate(termsStoreName(tableDef), true);
-    }   
     
     // Get all target object IDs for the given sharded link.
     private Set<String> getShardedLinkValues(String objID, FieldDefinition linkDef, Set<Integer> shardNums) {
@@ -683,8 +666,9 @@ public class SpiderService extends StorageService {
         for (Integer shardNumber : shardNums) {
             termRowKeys.add(shardedLinkTermRowKey(linkDef, objID, shardNumber));
         }
+        String appName = linkDef.getTableDef().getAppDef().getAppName();
         String termStore = termsStoreName(linkDef.getTableDef());
-        Iterator<DRow> rowIter = DBService.instance().getRowsAllColumns(termStore, termRowKeys);
+        Iterator<DRow> rowIter = DBService.instance().getRowsAllColumns(appName, termStore, termRowKeys);
         
         // We only need the column names from each row.
         while (rowIter.hasNext()) {
@@ -881,35 +865,35 @@ public class SpiderService extends StorageService {
     }   // validateTableOptionShardingStart
 
     // Verify that all ColumnFamilies needed for the given application exist.
-    private void verifyApplicationCFs(ApplicationDefinition oldAppDef, ApplicationDefinition appDef) {
-        // Add new application-level CFs:
-        for (StoreTemplate cfTemplate : applicationCFTemplates(appDef)) {
-            DBService.instance().createStoreIfAbsent(cfTemplate);
-        }
+    private void verifyApplicationCFs(String keyspace,
+                                      ApplicationDefinition oldAppDef,
+                                      ApplicationDefinition appDef) {
+        // Statistics CF:
+        String appName = appDef.getAppName();
+        DBService dbService = DBService.instance();
+        dbService.createStoreIfAbsent(keyspace, statsStoreName(appDef.getAppName()), true);
         
         // Add new table-level CFs:
         for (TableDefinition tableDef : appDef.getTableDefinitions().values()) {
-            for (StoreTemplate cfTemplate : tableCFTemplates(tableDef)) {
-                DBService.instance().createStoreIfAbsent(cfTemplate);
-            }
+            dbService.createStoreIfAbsent(keyspace, objectsStoreName(tableDef), true);
+            dbService.createStoreIfAbsent(keyspace, termsStoreName(tableDef), true);
         }
         
         // Delete obsolete table-level CFs:
         if (oldAppDef != null) {
             for (TableDefinition oldTableDef : oldAppDef.getTableDefinitions().values()) {
                 if (appDef.getTableDef(oldTableDef.getTableName()) == null) {
-                    for (StoreTemplate cfTemplate : tableCFTemplates(oldTableDef)) {
-                        DBService.instance().deleteStoreIfPresent(cfTemplate.getName());
-                    }
+                    dbService.deleteStoreIfPresent(keyspace, objectsStoreName(oldTableDef));
+                    dbService.deleteStoreIfPresent(keyspace, termsStoreName(oldTableDef));
                 }
             }
         }
         
         // Remove unrelated rows in the statistics table
         Set<String> tableNames = appDef.getTableDefinitions().keySet();
-        DBTransaction transaction = DBService.instance().startTransaction();
+        DBTransaction transaction = dbService.startTransaction(appName);
         String statsStoreName = statsStoreName(appDef.getAppName());
-        Iterator<DRow> statRows = DBService.instance().getAllRowsAllColumns(statsStoreName);
+        Iterator<DRow> statRows = dbService.getAllRowsAllColumns(appName, statsStoreName);
         while (statRows.hasNext()) {
         	DRow row = statRows.next();
         	// Row keys has a form of {table}/{statName} or {table}/{statName}/_status
@@ -924,7 +908,7 @@ public class SpiderService extends StorageService {
         		transaction.deleteRow(statsStoreName, rowKey);
         	}
         }
-        DBService.instance().commit(transaction);
+        dbService.commit(transaction);
     }   // verifyApplicationCFs
     
     // Performs semantic schedules validation after all the structure checks,

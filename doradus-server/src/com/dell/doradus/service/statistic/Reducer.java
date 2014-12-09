@@ -31,16 +31,17 @@ import com.dell.doradus.service.spider.SpiderService;
 public class Reducer {
 	public static void reduce(StatisticRunner task) {
 		DBService dbService = DBService.instance();
-		String tableName = SpiderService.statsStoreName(task.getAppName());
+		String appName = task.getAppName();
+		String tableName = SpiderService.statsStoreName(appName);
 
 		StatisticResult result = task.getStatistic();
 
 		String fieldName = result.getFieldName();
-		DBTransaction transaction = dbService.startTransaction();
+		DBTransaction transaction = dbService.startTransaction(appName);
 		transaction.deleteRow(tableName, fieldName);
 		dbService.commit(transaction);
 
-		transaction = dbService.startTransaction();
+		transaction = dbService.startTransaction(appName);
 		for(AbstractMap.SimpleEntry<String, Object> entry : result.getValues()) {
 			transaction.addColumn(tableName, fieldName, entry.getKey(), Utils.toBytes(entry.getValue().toString()));
 		}
@@ -49,11 +50,11 @@ public class Reducer {
 		if(result instanceof AverageStatistic) {
 			AverageStatistic average = (AverageStatistic)result;
 			String sumName = average.getSumFieldName();
-			transaction = dbService.startTransaction();
+			transaction = dbService.startTransaction(appName);
 			transaction.deleteRow(tableName, sumName);
 			dbService.commit(transaction);
 
-			transaction = dbService.startTransaction();
+			transaction = dbService.startTransaction(appName);
 			for(AbstractMap.SimpleEntry<String, Object> entry : average.getSumValues())
 			{
 				transaction.addColumn(tableName, sumName, entry.getKey(), Utils.toBytes(entry.getValue().toString()));

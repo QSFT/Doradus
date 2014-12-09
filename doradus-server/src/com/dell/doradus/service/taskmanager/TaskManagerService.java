@@ -85,6 +85,20 @@ public class TaskManagerService extends Service implements ITaskManager {
     // Singleton object:
     private static final TaskManagerService INSTANCE = new TaskManagerService();
     
+    // REST commands registered:
+    private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
+//      new RESTCommand("GET    /_tasks                                 com.dell.doradus.service.taskmanager.ListTasksCmd"),
+        new RESTCommand("GET    /_tasks/{application}                   com.dell.doradus.service.taskmanager.ListTasksCmd"),
+        new RESTCommand("GET    /_tasks/{application}/{table}           com.dell.doradus.service.taskmanager.ListTasksCmd"),
+        new RESTCommand("GET    /_tasks/{application}/{table}/{task}    com.dell.doradus.service.taskmanager.ListTasksCmd"),
+        
+        new RESTCommand("PUT    /_tasks?{command}                                 com.dell.doradus.service.taskmanager.TaskControlCmd"),
+        new RESTCommand("PUT    /_tasks/{application}?{command}                   com.dell.doradus.service.taskmanager.TaskControlCmd"),
+        new RESTCommand("PUT    /_tasks/{application}/{table}?{command}           com.dell.doradus.service.taskmanager.TaskControlCmd"),
+        new RESTCommand("PUT    /_tasks/{application}/{table}/{task}?{command}    com.dell.doradus.service.taskmanager.TaskControlCmd"),
+        new RESTCommand("PUT    /_tasks/{application}/{table}/{task}/{param}?{command}    com.dell.doradus.service.taskmanager.TaskControlCmd"),
+    });
+    
     /**
      * Get the singleton instance of this service. The service may or may not have been
      * initialized yet.
@@ -117,24 +131,9 @@ public class TaskManagerService extends Service implements ITaskManager {
 			public TaskTable getTasks() {
 				return TaskDBUtils.getTasksSchedule();
 			}
-        	
         });
         m_scheduler.addSchedulerListener(new DoradusSchedulerListener());
-        
-        // REST commands registering
-        List<RESTCommand> restCommands = Arrays.asList(new RESTCommand[] {
-        		new RESTCommand("GET    /_tasks                                 com.dell.doradus.service.taskmanager.ListTasksCmd"),
-        		new RESTCommand("GET    /_tasks/{application}                   com.dell.doradus.service.taskmanager.ListTasksCmd"),
-        		new RESTCommand("GET    /_tasks/{application}/{table}           com.dell.doradus.service.taskmanager.ListTasksCmd"),
-        		new RESTCommand("GET    /_tasks/{application}/{table}/{task}    com.dell.doradus.service.taskmanager.ListTasksCmd"),
-
-        		new RESTCommand("PUT    /_tasks?{command}                                 com.dell.doradus.service.taskmanager.TaskControlCmd"),
-        		new RESTCommand("PUT    /_tasks/{application}?{command}                   com.dell.doradus.service.taskmanager.TaskControlCmd"),
-        		new RESTCommand("PUT    /_tasks/{application}/{table}?{command}           com.dell.doradus.service.taskmanager.TaskControlCmd"),
-        		new RESTCommand("PUT    /_tasks/{application}/{table}/{task}?{command}    com.dell.doradus.service.taskmanager.TaskControlCmd"),
-        		new RESTCommand("PUT    /_tasks/{application}/{table}/{task}/{param}?{command}    com.dell.doradus.service.taskmanager.TaskControlCmd"),
-        });
-        RESTService.instance().registerRESTCommands(restCommands);
+        RESTService.instance().registerRESTCommands(REST_RULES);
     }   // initService
 
     @Override
@@ -444,15 +443,6 @@ public class TaskManagerService extends Service implements ITaskManager {
         return nameParts[1];
     }
     
-	public static void migrateTasksInfo() {
-		Map<String, Map<String, TaskStatus>> taskMap = TaskDBUtils.getAllOldTasks();
-		for (Map.Entry<String, Map<String, TaskStatus>> entry : taskMap.entrySet()) {
-			for (Map.Entry<String, TaskStatus> taskEntry : entry.getValue().entrySet()) {
-				TaskDBUtils.setTaskStatus(entry.getKey(), taskEntry.getKey(), taskEntry.getValue());
-			}
-		}
-	}
-	
 	/**
 	 * Selects tasks by a given filter and interrupts them.
 	 * @param filter

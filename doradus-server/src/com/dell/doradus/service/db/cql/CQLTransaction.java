@@ -25,15 +25,11 @@ import java.util.Map;
 
 import com.datastax.driver.core.BatchStatement;
 import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.ColumnMetadata;
-import com.datastax.driver.core.DataType;
-import com.datastax.driver.core.KeyspaceMetadata;
-import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Statement;
-import com.datastax.driver.core.TableMetadata;
 import com.datastax.driver.core.BatchStatement.Type;
+import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.cql.CQLStatementCache.Update;
 
@@ -50,13 +46,17 @@ public class CQLTransaction extends DBTransaction {
     // is null or empty, the whole row is to be deleted.
     private final Map<String, Map<String, List<String>>> m_deleteMap = new HashMap<>();
     
-    // Total updates performed.
+    private final String m_keyspace;
     private int m_updates;
 
     /**
      * Start a new CQLTransaction.
      */
-    public CQLTransaction() { }
+    public CQLTransaction(String appName) {
+        // Ensure session is possible with app' keyspace.
+        m_keyspace = CQLService.instance().getKeyspaceForApp(appName);
+        CQLService.instance().getSession(m_keyspace);
+    }
 
     //----- General methods
     
@@ -76,12 +76,12 @@ public class CQLTransaction extends DBTransaction {
     
     @Override
     public void addAppColumn(String appName, String colName, String colValue) {
-        addColumn(CQLService.APPS_TABLE_NAME, appName, colName, colValue);
+        addColumn(DBService.APPS_STORE_NAME, appName, colName, colValue);
     }   // addAppColumn
 
     @Override
     public void deleteAppRow(String appName) {
-        deleteRow(CQLService.APPS_TABLE_NAME, appName);
+        deleteRow(DBService.APPS_STORE_NAME, appName);
     }
 
     //----- Column/row update methods
@@ -198,7 +198,7 @@ public class CQLTransaction extends DBTransaction {
         }
         List<CQLColumn> colList = rowMap.get(rowKey);
         if (colList == null) {
-            colList = new ArrayList<>();
+            colList = new ArrayList<>(1000);
             rowMap.put(rowKey, colList);
         }
         return colList;
@@ -208,7 +208,7 @@ public class CQLTransaction extends DBTransaction {
     private Map<String, List<String>> getDeleteColMap(String tableName) {
         Map<String, List<String>> rowMap = m_deleteMap.get(tableName);
         if (rowMap == null) {
-            rowMap = new HashMap<>();
+            rowMap = new HashMap<>(1000);
             m_deleteMap.put(tableName, rowMap);
         }
         return rowMap;
@@ -237,9 +237,9 @@ public class CQLTransaction extends DBTransaction {
     
     // Add row/column update statements for the given table to the given batch.
     private void addTableUpdates(String tableName, BatchStatement batchState) {
-        boolean valueIsBinary = columnValueIsBinary(tableName);
+        boolean valueIsBinary = CQLService.instance().columnValueIsBinary(m_keyspace, tableName);
         PreparedStatement prepState =
-            CQLService.instance().getQueryCache().getPreparedUpdate(Update.INSERT_ROW, tableName);
+            CQLService.instance().getPreparedUpdate(m_keyspace, Update.INSERT_ROW, tableName);
         Map<String, List<CQLColumn>> rowMap = m_updateMap.get(tableName);
         for (String key : rowMap.keySet()) {
             List<CQLColumn> colList = rowMap.get(key);
@@ -280,13 +280,13 @@ public class CQLTransaction extends DBTransaction {
             if (colList != null && colList.size() > 0) {
                 // Unfortunately, we have to delete one column at a time.
                 PreparedStatement prepState =
-                    CQLService.instance().getQueryCache().getPreparedUpdate(Update.DELETE_COLUMN, tableName);
+                    CQLService.instance().getPreparedUpdate(m_keyspace, Update.DELETE_COLUMN, tableName);
                 for (String colName : colList) {
                     batchState.add(addColumnDelete(prepState, key, colName));
                 }
             } else {
                 PreparedStatement prepState =
-                    CQLService.instance().getQueryCache().getPreparedUpdate(Update.DELETE_ROW, tableName);
+                    CQLService.instance().getPreparedUpdate(m_keyspace, Update.DELETE_ROW, tableName);
                 batchState.add(addRowDelete(prepState, key));
             }
         }
@@ -314,20 +314,11 @@ public class CQLTransaction extends DBTransaction {
     private ResultSet executeUpdate(Statement state) {
         m_logger.debug("Executing batch with {} updates", getUpdateCount());
         try {
-            return CQLService.instance().getSession().execute(state);
+            return CQLService.instance().getSession(m_keyspace).execute(state);
         } catch (Exception e) {
             m_logger.error("Batch statement failed", e);
             throw e;
         }
     }   // executeUpdate
     
-    // Determine text/blob status of key, column1, and value columns
-    private boolean columnValueIsBinary(String tableName) {
-        Metadata metadata = CQLService.instance().getSession().getCluster().getMetadata();
-        KeyspaceMetadata ksMetadata = metadata.getKeyspace(CQLService.instance().getKeyspace());
-        TableMetadata tableMetadata = ksMetadata.getTable(tableName);
-        ColumnMetadata colMetadata = tableMetadata.getColumn("value");
-        return colMetadata.getType().equals(DataType.blob());
-    }   // columnValueIsBinary
-
 }   // class CQLTransaction

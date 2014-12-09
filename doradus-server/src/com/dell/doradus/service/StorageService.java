@@ -51,13 +51,17 @@ public abstract class StorageService extends Service {
 
     /**
      * Implement storage service-specific storage changes, if any, for the given
-     * application. If the application is being modified, the existing application's
-     * definition is passed since the new one has already been stored.
+     * application, stored in the given keyspace. The keyspace is given in case the
+     * application is new and has no CFs yet registered in the given keyspace. If the
+     * application is being modified, the existing application's definition is passed
+     * since the new one has already been stored.
      * 
+     * @param keyspace  Keyspace in which new/existing application resides.
      * @param oldAppDef {@link ApplicationDefinition} of existing application, if present.
      * @param appDef    {@link ApplicationDefinition} of a new application.
      */
-    public abstract void initializeApplication(ApplicationDefinition oldAppDef,
+    public abstract void initializeApplication(String                keyspace,
+                                               ApplicationDefinition oldAppDef,
                                                ApplicationDefinition appDef);
     
     /**

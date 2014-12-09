@@ -18,8 +18,10 @@ package com.dell.doradus.olap;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -29,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.TableDefinition;
-import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.olap.aggregate.AggregationRequest;
@@ -54,6 +55,7 @@ import com.dell.doradus.search.parser.AggregationQueryBuilder;
 import com.dell.doradus.search.parser.DoradusQueryBuilder;
 import com.dell.doradus.search.query.Query;
 import com.dell.doradus.search.util.LRUCache;
+import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.olap.OLAPService;
 import com.dell.doradus.utilities.Timer;
 
@@ -79,18 +81,41 @@ import com.dell.doradus.utilities.Timer;
 public class Olap {
     private static Logger LOG = LoggerFactory.getLogger("Olap.Olap");
 	
-	public static void deleteAll() {
-	    new VDirectory("OLAP").delete();
-	}
-	
-	private VDirectory m_root;
+    private Map<String, VDirectory> m_appRoots = new HashMap<>();
 	private FieldsCache m_fieldsCache = new FieldsCache(ServerConfig.getInstance().olap_cache_size_mb * 1024L * 1024);
 	private LRUCache<String, CubeSearcher> m_cachedSearchers = new LRUCache<>(
 			ServerConfig.getInstance().olap_loaded_segments == 0 ? 8192 : ServerConfig.getInstance().olap_loaded_segments);
 	private Set<String> m_mergedCubes = new HashSet<String>();
 	
-	public Olap() {
-		m_root = new VDirectory("OLAP").getDirectoryCreate("applications");
+	public Olap() { }
+	
+	// For testing: use default keyspace and register app with DBService
+	public VDirectory createApplication(String appName) {
+        String keyspace = ServerConfig.getInstance().keyspace;
+        DBService.instance().registerApplication(keyspace, appName);
+        return createApplication(keyspace, appName);
+	}
+	
+	public VDirectory createApplication(String keyspace, String appName) {
+	    DBService.instance().createStoreIfAbsent(keyspace, "OLAP", true);
+	    VDirectory root = new VDirectory(appName, "OLAP").getDirectoryCreate("applications").getDirectoryCreate(appName);
+	    synchronized (m_appRoots) {
+	        m_appRoots.put(appName, root);
+	    }
+	    return root;
+	}
+	
+	// Returns $root/applications/<appName> from correct keyspace/OLAP CF
+	public VDirectory getRoot(String appName) {
+	    VDirectory root = m_appRoots.get(appName);
+	    if (root == null) {
+	        root = new VDirectory(appName, "OLAP").getDirectory("applications").getDirectory(appName);
+	        assert root != null;
+	        synchronized (m_appRoots) {
+	            m_appRoots.put(appName, root);
+	        }
+	    }
+	    return root;
 	}
 	
 	public ApplicationDefinition getApplicationDefinition(String applicationName) {
@@ -98,24 +123,28 @@ public class Olap {
 	}
 	
 	public void deleteApplication(String appName) {
-		m_root.getDirectory(appName).delete();
+	    VDirectory root = getRoot(appName);
+	    synchronized (m_appRoots) {
+	        root.delete();
+	        m_appRoots.remove(appName);
+	    }
 	}
 
 	public void deleteShard(String appName, String shard) {
-		m_root.getDirectory(appName).getDirectory(shard).delete();
+		getRoot(appName).getDirectory(shard).delete();
 	}
 	
 	public List<String> listShards(String application) {
-		return m_root.getDirectory(application).listDirectories();
+		return getRoot(application).listDirectories();
 	}
 
 	public List<String> listSegments(String application, String shard) {
-		VDirectory shardDir = m_root.getDirectory(application).getDirectory(shard);
+		VDirectory shardDir = getRoot(application).getDirectory(shard);
 		return shardDir.listDirectories();
 	}
 	
 	public String getCubeSegment(String application, String shard) {
-		VDirectory shardDir = m_root.getDirectory(application).getDirectory(shard);
+		VDirectory shardDir = getRoot(application).getDirectory(shard);
 		if(!shardDir.fileExists(".cube.txt")) return null;
 		return shardDir.readAllText(".cube.txt");
 	}
@@ -134,7 +163,7 @@ public class Olap {
 	public String addSegment(String application, String shard, OlapBatch batch, boolean overwrite) {
 		Timer t = new Timer();
 		ApplicationDefinition appDef = getApplicationDefinition(application);
-		VDirectory shardDir = m_root.getDirectoryCreate(application).getDirectoryCreate(shard);
+		VDirectory shardDir = getRoot(application).getDirectoryCreate(shard);
 		String prefix = overwrite ? "" : ".before.";
 		String guid = prefix + Long.toString(System.currentTimeMillis(), 32) + "-" + UUID.randomUUID().toString();
 		VDirectory segmentDir = shardDir.getDirectory(guid);
@@ -151,7 +180,7 @@ public class Olap {
 	public String addSegment(ApplicationDefinition appDef, String shard, DBObjectBatch batch, boolean overwrite) {
 	    Timer t = new Timer();
 	    String application = appDef.getAppName();
-	    VDirectory shardDir = m_root.getDirectoryCreate(application).getDirectoryCreate(shard);
+	    VDirectory shardDir = getRoot(application).getDirectoryCreate(shard);
 		String prefix = overwrite ? "" : ".before.";
 	    String guid = prefix + Long.toString(System.currentTimeMillis(), 32) + "-" + UUID.randomUUID().toString();
 	    VDirectory segmentDir = shardDir.getDirectory(guid);
@@ -232,7 +261,7 @@ public class Olap {
 		try {
 			Timer t = new Timer();
 			ApplicationDefinition appDef = getApplicationDefinition(application);
-			VDirectory shardDir = m_root.getDirectory(application).getDirectory(shard);
+			VDirectory shardDir = getRoot(application).getDirectory(shard);
 			
 			if(options.getExpireDate() != null) {
 				shardDir.writeAllText("expiration.txt", XType.toString(options.getExpireDate()));
@@ -284,7 +313,7 @@ public class Olap {
 	}
 	
 	public Date getExpirationDate(String application, String shard) {
-		VDirectory shardDir = m_root.getDirectory(application).getDirectory(shard);
+		VDirectory shardDir = getRoot(application).getDirectory(shard);
 		if(!shardDir.fileExists("expiration.txt")) return null;
 		String expDateStr = shardDir.readAllText("expiration.txt"); 
 		if(expDateStr.length() == 0) return null;
@@ -296,7 +325,7 @@ public class Olap {
 			String key = app + "/" + shard + "/" + segment;
 			CubeSearcher s = m_cachedSearchers.get(key);
 			if(s == null) {
-				VDirectory dir = m_root.getDirectory(app);
+				VDirectory dir = getRoot(app);
 				dir = dir.getDirectory(shard);
 				dir = dir.getDirectory(segment);
 				s = new CubeSearcher(dir, m_fieldsCache);
@@ -313,7 +342,7 @@ public class Olap {
 		TableDefinition tableDef = appDef.getTableDef(table);
 		if(tableDef == null) throw new IllegalArgumentException("Table " + table + " not found in " + application);
 		List<String> shards = getShardsList(application, null, shardsRange);
-		VDirectory appDir = m_root.getDirectory(application);
+		VDirectory appDir = getRoot(application);
 		List<VDirectory> dirs = new ArrayList<VDirectory>(shards.size());
 		for(String shard : shards) {
 			String segment = getCubeSegment(application, shard);
@@ -349,18 +378,5 @@ public class Olap {
     	}
     	return shardsList;
 	}
-	
-	public OlapTasks getTasks(String appName) {
-		VDirectory appDir = m_root.getDirectory(appName);
-		OlapTasks tasks = new OlapTasks();
-		if (appDir.fileExists("_tasks.json")) {
-			tasks.parse(UNode.parseJSON(appDir.readAllText("_tasks.json")));
-		}
-		return tasks;
-	}	// getTasks
-	
-	public void saveTasks(String appName, OlapTasks tasks) {
-		m_root.getDirectory(appName).writeAllText("_tasks.json", tasks.toDoc().toJSON());
-	}	// setTasks
 	
 }

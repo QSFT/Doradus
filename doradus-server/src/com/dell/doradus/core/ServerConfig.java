@@ -209,7 +209,6 @@ public class ServerConfig {
     public String keystorepassword;
     public String truststore;
     public String truststorepassword;
-    public String dbauthenticator;
     public String dbhome = null;
     public String dbtool = DEFAULT_DBTOOL_NAME;
     public String aging_recheck_freq = DEFAULT_AGING_RECHECK;
@@ -264,8 +263,8 @@ public class ServerConfig {
     public int olap_file_cache_size_mb = 100;
     public int olap_query_cache_size_mb = 100;
     
-    // Temporary until CQL is fully adopted
-    public boolean use_cql = false;
+    // Only CQL is now supported
+    public boolean use_cql = true;
     
     //
     // search configuration properties

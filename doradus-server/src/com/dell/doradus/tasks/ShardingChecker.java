@@ -72,6 +72,11 @@ public class ShardingChecker extends DoradusTask {
 		private DBService m_dbService = DBService.instance();
 		// incorporated transaction object
 		private DBTransaction m_dbTransaction = null;
+		private final String m_appName;
+		
+		CheckerTransaction(String appName) {
+		    m_appName = appName;
+		}
 		
 		/**
 		 * Checks whether we can use the transaction object.
@@ -79,7 +84,7 @@ public class ShardingChecker extends DoradusTask {
 		 */
 		private void checkExists() {
 			if (m_dbTransaction == null) {
-				m_dbTransaction = m_dbService.startTransaction();
+				m_dbTransaction = m_dbService.startTransaction(m_appName);
 			}
 		}
 		
@@ -270,6 +275,7 @@ public class ShardingChecker extends DoradusTask {
 					                  linkedObjectId,
 					                  EMPTY_BYTES);
 		}
+
 	}
 
     // Logging interface:
@@ -293,9 +299,13 @@ public class ShardingChecker extends DoradusTask {
 	
 	private File m_tempDir;
 	private String m_pathToKeys;
-	private CheckerTransaction m_checkerTransaction = new CheckerTransaction();
+	private final CheckerTransaction m_checkerTransaction;
 
     long m_startTime;
+    
+    protected ShardingChecker() {
+        m_checkerTransaction = new CheckerTransaction(m_appName);
+    }
     
 	/**
 	 * Main function for start as a background task. It takes the program parameters from
@@ -429,7 +439,7 @@ public class ShardingChecker extends DoradusTask {
 		
 		String termsTable = SpiderService.termsStoreName(tabDef);
 		
-		if (dbService.getColumn(
+		if (dbService.getColumn(m_appName,
 				termsTable, Defs.TABLE_CHECKS_ROW_KEY, TABLE_CHECKED_COL) != null) {
 			// OK, the table is already checked; skip it
 			return;
@@ -440,7 +450,7 @@ public class ShardingChecker extends DoradusTask {
 		List<String> keys = new ArrayList<String>(m_maxListCapacity);
 		BigSet setKeysToMove = new BigSet(m_pathToKeys + "objkeystomove", SET_CARDINALITY);
 		
-		Iterator<DColumn> colIterator = dbService.getAllColumns(termsTable, Defs.ALL_OBJECTS_ROW_KEY);
+		Iterator<DColumn> colIterator = dbService.getAllColumns(m_appName, termsTable, Defs.ALL_OBJECTS_ROW_KEY);
 		if (colIterator == null) {
 			// No objects, table is empty (or does not exist)
 			return;
@@ -481,7 +491,7 @@ public class ShardingChecker extends DoradusTask {
 		// Get objects with their _IDs and Shard field values
 		Iterator<DRow> collectedFields = 
 				dbService.getRowsColumns(
-						objectTable, keys, Arrays.asList(CommonDefs.ID_FIELD, shardingFieldName));
+						m_appName, objectTable, keys, Arrays.asList(CommonDefs.ID_FIELD, shardingFieldName));
 
 		keys.clear();
 
@@ -550,7 +560,7 @@ public class ShardingChecker extends DoradusTask {
 		m_checkerTransaction.addAllObjectsColumn(tabDef, shardNo, objectId);
 
 		// Moving terms
-		for (Iterator<DColumn> iColumns = DBService.instance().getAllColumns(objectTable, objectId);
+		for (Iterator<DColumn> iColumns = DBService.instance().getAllColumns(m_appName, objectTable, objectId);
 				iColumns.hasNext();) {
 			DColumn column = iColumns.next();
 			String fieldName = column.getName();
@@ -586,7 +596,7 @@ public class ShardingChecker extends DoradusTask {
 			}
 		}
 		Iterator<DColumn> colsIter = dbService.getAllColumns(
-				SpiderService.termsStoreName(tableFrom), Defs.TABLE_CHECKS_ROW_KEY);
+				m_appName, SpiderService.termsStoreName(tableFrom), Defs.TABLE_CHECKS_ROW_KEY);
 		if (colsIter != null) {
 			while (colsIter.hasNext()) {
 				DColumn column = colsIter.next();
@@ -602,7 +612,7 @@ public class ShardingChecker extends DoradusTask {
 		m_logger.info("Checking sharded links from " + tableFrom.getTableName());
 		
 		Iterator<DRow> rowsIter = dbService.getAllRowsAllColumns(
-				SpiderService.objectsStoreName(tableFrom));
+				m_appName, SpiderService.objectsStoreName(tableFrom));
 		KeysMap keysMap = new KeysMap(tableFrom, m_pathToKeys, m_checkerTransaction);
 		while (rowsIter.hasNext()) {
 			DRow row = rowsIter.next();
@@ -658,11 +668,13 @@ public class ShardingChecker extends DoradusTask {
 		// Table definition for the objects to process.
 		private final TableDefinition tableFrom;
 		private final CheckerTransaction m_checkerTransaction;
+		private final String m_appName;
 		
 		public KeysMap(TableDefinition tabFrom, String pathToTempDir, CheckerTransaction checkerTransaction) {
 			tableFrom = tabFrom;
 			keysSet = new BigSet(pathToTempDir + "linkstomove", SET_CARDINALITY);
 			m_checkerTransaction = checkerTransaction;
+			m_appName = tabFrom.getAppDef().getAppName();
 		}
 		
 		/**
@@ -704,7 +716,7 @@ public class ShardingChecker extends DoradusTask {
 			// Get objects with their Sharding fields values
 			List<String> shardingFieldName = Arrays.asList(tableTo.getShardingField().getName());
 			Iterator<DRow> rowsIter = dbService.getRowsColumns(
-					SpiderService.objectsStoreName(tableTo), keys, shardingFieldName);
+					m_appName, SpiderService.objectsStoreName(tableTo), keys, shardingFieldName);
 			while (rowsIter.hasNext()) {
 				DRow row = rowsIter.next();
 				String rowKey = row.getKey();

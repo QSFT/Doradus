@@ -16,10 +16,7 @@
 
 package com.dell.doradus.service.db.cql;
 
-import java.io.BufferedInputStream;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -29,7 +26,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -37,7 +37,6 @@ import javax.net.ssl.TrustManagerFactory;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Cluster.Builder;
 import com.datastax.driver.core.ColumnMetadata;
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Host;
@@ -51,25 +50,27 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SocketOptions;
 import com.datastax.driver.core.TableMetadata;
 import com.datastax.driver.core.policies.RoundRobinPolicy;
-import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
-import com.dell.doradus.service.db.StoreTemplate;
 import com.dell.doradus.service.db.cql.CQLStatementCache.Query;
+import com.dell.doradus.service.db.cql.CQLStatementCache.Update;
 
+/**
+ * Implements the DBService interface using the CQL API to communicate with Cassandra.
+ * Note on ServerConfig.application_keyspaces: Currently, if this option is false, all
+ * applications are accessed from the global keyspace, defined by ServerConfig.keyspace.
+ * If application_keyspaces is true, then each application is accessed in its own
+ * keyspace where the application name == the keyspace name. Two instances of the server
+ * can be run at the same time, each with differing application_keyspaces values, so that
+ * a mix of applications can be used in the same cluster.
+ */
 public class CQLService extends DBService {
-    // Global CFs are quoted to enforce backwards compatibility/case-sensitivity:
-    public static final String APPS_TABLE_NAME = "\"" + StoreTemplate.APPLICATIONS_STORE_NAME + "\"";
-    public static final String TASKS_TABLE_NAME = "\"" + StoreTemplate.TASKS_STORE_NAME + "\"";
-
-    // Authentication constants:
-    private static final String PASSWD_FILENAME_PROPERTY    = "passwd.properties";
-    private static final String USERNAME_KEY                = "dbusername";
-    private static final String PASSWORD_KEY                = "dbpassword";
-    private static final String DEFAULT_CONFIGFILE          = "config/doradus.properties";
+    // Compare to store names, table names are quoted 
+    private static final String APPS_TABLE_NAME = "\"" + DBService.APPS_STORE_NAME + "\"";
+    private static final String TASKS_TABLE_NAME = "\"" + DBService.TASKS_STORE_NAME + "\"";
     
     // Singleton instance:
     private static final CQLService INSTANCE = new CQLService();
@@ -78,10 +79,10 @@ public class CQLService extends DBService {
     private CQLService() { }
 
     // Members:
-    private String m_keyspace;
-    private Session m_session;
-    private CQLStatementCache m_queryCache;
-    private CQLSchemaManager m_schemaMgr;
+    private Cluster m_cluster;
+    private final Map<String, String> m_appKeyspaceMap = new HashMap<String, String>();
+    private final Map<String, Session> m_ksSessionMap = new HashMap<>();
+    private final Map<String, CQLStatementCache> m_ksStatementCacheMap = new HashMap<>();
     
     //----- Public Service methods
 
@@ -95,71 +96,147 @@ public class CQLService extends DBService {
     @Override
     protected void initService() {
         ServerConfig config = ServerConfig.getInstance();
-        m_keyspace = storeToCQLName(config.keyspace);   // Quoted for compatibility with Thrift
         m_logger.debug("Cassandra host list: {}", Arrays.toString(config.dbhost.split(",")));
         m_logger.debug("Cassandra port: {}", config.dbport);
-        m_logger.debug("Cassandra keyspace: {}", m_keyspace);
+        m_logger.debug("Default application keyspace: {}", config.keyspace);
     }
 
     @Override
     protected void startService() {
-        initializeCQLSession();
+        initializeCluster();
     }   // startService
 
     @Override
     protected void stopService() {
-        if (m_session != null && !m_session.isClosed()) {
-            m_session.close();
+        synchronized (m_ksSessionMap) {
+            for (Session session : m_ksSessionMap.values()) {
+                session.close();
+            }
+            m_ksSessionMap.clear();
+            m_ksStatementCacheMap.clear();
         }
-        m_session = null;
-        m_queryCache = null;
-        m_schemaMgr = null;
     }   // stopService
 
     //----- Public DBService methods: Store management
+
+    @Override
+    public void createKeyspace(String keyspace) {
+        String cqlKeyspace = storeToCQLName(keyspace);
+        KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(cqlKeyspace);
+        if (ksMetadata == null) {
+            try (Session session = m_cluster.connect()) {   // no-keyspace session
+                CQLSchemaManager schemaMgr = new CQLSchemaManager(session, null);
+                schemaMgr.createKeyspace(cqlKeyspace);
+            }
+        }
+    }   // createKeyspace
+
+    @Override
+    public void dropKeyspace(String keyspace) {
+        String cqlKeyspace = storeToCQLName(keyspace);
+        synchronized (m_ksSessionMap) {
+            Session session = m_ksSessionMap.get(cqlKeyspace);
+            if (session != null) {
+                session.close();
+                m_ksSessionMap.remove(cqlKeyspace);
+                m_ksStatementCacheMap.remove(cqlKeyspace);
+            }
+            try (Session noKSSession = m_cluster.connect()) {   // no-keyspace session
+                CQLSchemaManager schemaMgr = new CQLSchemaManager(noKSSession, null);
+                schemaMgr.dropKeyspace(cqlKeyspace);
+            }
+        }
+    }   // dropKeyspace
     
     @Override
-    public void createStoreIfAbsent(StoreTemplate storeTemplate) {
+    public String getKeyspaceForApp(String appName) {
+        synchronized (m_appKeyspaceMap) {
+            if (!m_appKeyspaceMap.containsKey(appName)) {
+                refreshAppKeyspaceMap();
+            }
+            return m_appKeyspaceMap.get(appName);
+        }
+    }   // getKeyspaceForApp
+    
+    @Override
+    public void createStoreIfAbsent(String keyspace, String storeName, boolean bBinaryValues) {
         checkState();
-        String tableName = storeToCQLName(storeTemplate.getName());
-        if (!storeExists(tableName)) {
-            m_schemaMgr.createCQLTable(storeTemplate);
+        String cqlKeyspace = storeToCQLName(keyspace);
+        String tableName = storeToCQLName(storeName);
+        if (!storeExists(cqlKeyspace, tableName)) {
+            Session session = getOrCreateKeyspaceSession(cqlKeyspace);
+            CQLSchemaManager schemaMgr = new CQLSchemaManager(session, cqlKeyspace);
+            schemaMgr.createCQLTable(storeName, bBinaryValues);
         }
     }   // createStoreIfAbsent
     
     @Override
-    public void deleteStoreIfPresent(String storeName) {
+    public void deleteStoreIfPresent(String keyspace, String storeName) {
         checkState();
-        m_schemaMgr.dropCQLTable(storeToCQLName(storeName));
+        String cqlKeyspace = storeToCQLName(keyspace);
+        String tableName = storeToCQLName(storeName);
+        if (storeExists(cqlKeyspace, tableName)) {
+            Session session = getOrCreateKeyspaceSession(cqlKeyspace);
+            CQLSchemaManager schemaMgr = new CQLSchemaManager(session, cqlKeyspace);
+            schemaMgr.dropCQLTable(tableName);
+        }
     }   // deleteStoreIfPresent
 
     @Override
-    public boolean storeExists(String storeName) {
+    public void registerApplication(String keyspace, String appName) {
+        synchronized (m_appKeyspaceMap) {
+            m_appKeyspaceMap.put(appName, storeToCQLName(keyspace));
+        }
+    }   // registerApplication
+
+    @Override
+    public SortedMap<String, SortedSet<String>> getTenantMap() {
         checkState();
-        String tableName = storeToCQLName(storeName);
-        return m_schemaMgr.tableExists(tableName);
-    }   // storeExists
+        refreshAppKeyspaceMap();
+        SortedMap<String, SortedSet<String>> result = new TreeMap<>();
+        synchronized (m_appKeyspaceMap) {
+            for (String appName : m_appKeyspaceMap.keySet()) {
+                String keyspace = m_appKeyspaceMap.get(appName);
+                SortedSet<String> appNameSet = result.get(keyspace);
+                if (appNameSet == null) {
+                    appNameSet = new TreeSet<>();
+                    result.put(keyspace, appNameSet);
+                }
+                appNameSet.add(appName);
+            }
+        }
+        return result;
+    }   // getTenantMap
+    
+    /**
+     * Return true if column values for the given keyspace/table name are binary.
+     * 
+     * @param keyspace  Quoted keyspace name.
+     * @param tableName Quoted columnfamily name.
+     * @return          True if the given table's column values are binary.
+     */
+    public boolean columnValueIsBinary(String keyspace, String tableName) {
+        assert keyspace.charAt(0) == '"';
+        assert tableName.charAt(0) == '"';
+        KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(keyspace);
+        TableMetadata tableMetadata = ksMetadata.getTable(tableName);
+        ColumnMetadata colMetadata = tableMetadata.getColumn("value");
+        return colMetadata.getType().equals(DataType.blob());
+    }   // columnValueIsBinary
 
     //----- Public DBService methods: Schema management
     
     @Override
     public Map<String, Map<String, String>> getAllAppProperties() {
         checkState();
+        refreshAppKeyspaceMap();
         Map<String, Map<String, String>> result = new HashMap<>();
-        ResultSet rs = executeQuery(Query.SELECT_ALL_ROWS_ALL_COLUMNS, APPS_TABLE_NAME);
-        CQLRowIterator rowIter = new CQLRowIterator(rs);
-        while (rowIter.hasNext()) {
-        	DRow row = rowIter.next();
-            String appName = row.getKey();
-            if (appName.charAt(0) == '_') {
-                continue;
-            }
-            Map<String, String> appProps = new HashMap<>();
-            result.put(appName, appProps);
-            Iterator<DColumn> colIter = row.getColumns();
-            while (colIter.hasNext()) {
-            	DColumn column = colIter.next();
-            	appProps.put(column.getName(), column.getValue());
+        synchronized (m_appKeyspaceMap) {
+            for (String appName : m_appKeyspaceMap.keySet()) {
+                Map<String, String> appProps = getAppProperties(appName);
+                if (appProps != null) { // watch for just-deleted apps
+                    result.put(appName, appProps);
+                }
             }
         }
         return result;
@@ -168,27 +245,19 @@ public class CQLService extends DBService {
     @Override
     public Map<String, String> getAppProperties(String appName) {
         checkState();
-        ResultSet rs = executeQuery(Query.SELECT_1_ROW_ALL_COLUMNS, APPS_TABLE_NAME, appName);
-        CQLRowIterator rowIter = new CQLRowIterator(rs);
-        if (!rowIter.hasNext()) {
-        	return null;
+        String cqlKeyspace = getKeyspaceForApp(appName);
+        if (cqlKeyspace == null) {
+            return null;
         }
-        Map<String, String> result = new HashMap<>();
-    	DRow row = rowIter.next();
-        Iterator<DColumn> colIter = row.getColumns();
-        while (colIter.hasNext()) {
-        	DColumn column = colIter.next();
-        	result.put(column.getName(), column.getValue());
-        }
-        return result;
+        return getAppProperties(cqlKeyspace, appName);
     }	// getAppProperties
 
     //----- Public DBService methods: Updates
-    
+
     @Override
-    public DBTransaction startTransaction() {
+    public DBTransaction startTransaction(String appName) {
         checkState();
-        return new CQLTransaction();
+        return new CQLTransaction(appName);
     }
 
     @Override
@@ -200,52 +269,58 @@ public class CQLService extends DBService {
     //----- Public DBService methods: Queries
 
     @Override
-    public Iterator<DColumn> getAllColumns(String storeName, String rowKey) {
+    public Iterator<DColumn> getAllColumns(String appName, String storeName, String rowKey) {
         checkState();
+        String keyspace = getKeyspaceForApp(appName);
         String tableName = storeToCQLName(storeName);
-        return new CQLColumnIterator(executeQuery(Query.SELECT_1_ROW_ALL_COLUMNS, tableName, rowKey));
+        return new CQLColumnIterator(executeQuery(Query.SELECT_1_ROW_ALL_COLUMNS, keyspace, tableName, rowKey));
     }
 
     @Override
-    public Iterator<DColumn> getColumnSlice(String  storeName,
-                                            String  rowKey,
-                                            String  startCol,
-                                            String  endCol,
-                                            boolean reversed) {
+    public Iterator<DColumn> getColumnSlice(String appName, String storeName, String rowKey,
+                                            String startCol, String  endCol, boolean reversed) {
         checkState();
+        String keyspace = getKeyspaceForApp(appName);
         String tableName = storeToCQLName(storeName);
         ResultSet rs = null;
         if (reversed) {
             // Swap start/end columns for CQL reversed queries
-            rs = executeQuery(Query.SELECT_1_ROW_COLUMN_RANGE_DESC, tableName, rowKey, endCol, startCol);
+            rs = executeQuery(Query.SELECT_1_ROW_COLUMN_RANGE_DESC, keyspace, tableName, rowKey, endCol, startCol);
         } else {
-            rs = executeQuery(Query.SELECT_1_ROW_COLUMN_RANGE, tableName, rowKey, startCol, endCol);
+            rs = executeQuery(Query.SELECT_1_ROW_COLUMN_RANGE, keyspace, tableName, rowKey, startCol, endCol);
         }
         return new CQLColumnIterator(rs);
     }
 
     @Override
-    public Iterator<DColumn> getColumnSlice(String storeName,
-                                            String rowKey,
-                                            String startCol,
-                                            String endCol) {
+    public Iterator<DColumn> getColumnSlice(String appName, String storeName, String rowKey,
+                                            String startCol, String endCol) {
         checkState();
+        String keyspace = getKeyspaceForApp(appName);
         String tableName = storeToCQLName(storeName);
-        return new CQLColumnIterator(executeQuery(Query.SELECT_1_ROW_COLUMN_RANGE, tableName, rowKey, startCol, endCol));
+        return new CQLColumnIterator(executeQuery(Query.SELECT_1_ROW_COLUMN_RANGE,
+                                                  keyspace,
+                                                  tableName,
+                                                  rowKey,
+                                                  startCol,
+                                                  endCol));
     }
 
     @Override
-    public Iterator<DRow> getAllRowsAllColumns(String storeName) {
+    public Iterator<DRow> getAllRowsAllColumns(String appName, String storeName) {
         checkState();
+        String keyspace = getKeyspaceForApp(appName);
         String tableName = storeToCQLName(storeName);
-        return new CQLRowIterator(executeQuery(Query.SELECT_ALL_ROWS_ALL_COLUMNS, tableName));
+        return new CQLRowIterator(executeQuery(Query.SELECT_ALL_ROWS_ALL_COLUMNS, keyspace, tableName));
     }
 
     @Override
-    public DColumn getColumn(String storeName, String rowKey, String colName) {
+    public DColumn getColumn(String appName, String storeName, String rowKey, String colName) {
         checkState();
+        String keyspace = getKeyspaceForApp(appName);
         String tableName = storeToCQLName(storeName);
-        CQLColumnIterator colIter = new CQLColumnIterator(executeQuery(Query.SELECT_1_ROW_1_COLUMN, tableName, rowKey, colName));
+        CQLColumnIterator colIter =
+            new CQLColumnIterator(executeQuery(Query.SELECT_1_ROW_1_COLUMN, keyspace, tableName, rowKey, colName));
         if (!colIter.hasNext()) {
             return null;
         }
@@ -253,87 +328,132 @@ public class CQLService extends DBService {
     }   // getColumn
 
     @Override
-    public Iterator<DRow> getRowsAllColumns(String storeName, Collection<String> rowKeys) {
+    public Iterator<DRow> getRowsAllColumns(String appName, String storeName, Collection<String> rowKeys) {
         checkState();
+        String keyspace = getKeyspaceForApp(appName);
         String tableName = storeToCQLName(storeName);
         return new CQLRowIterator(executeQuery(Query.SELECT_ROW_SET_ALL_COLUMNS,
+                                               keyspace,
                                                tableName,
                                                new ArrayList<String>(rowKeys)));
-    }
+    }   // getRowsAllColumns
 
     @Override
-    public Iterator<DRow> getRowsColumns(String             storeName,
+    public Iterator<DRow> getRowsColumns(String             appName,
+                                         String             storeName,
                                          Collection<String> rowKeys,
                                          Collection<String> colNames) {
         checkState();
+        String keyspace = getKeyspaceForApp(appName);
         String tableName = storeToCQLName(storeName);
         return new CQLRowIterator(executeQuery(Query.SELECT_ROW_SET_COLUMN_SET,
+                                               keyspace,
                                                tableName,
                                                new ArrayList<String>(rowKeys),
                                                new ArrayList<String>(colNames)));
-    }
+    }   // getRowsColumns
 
     @Override
-    public Iterator<DRow> getRowsColumnSlice(String             storeName,
+    public Iterator<DRow> getRowsColumnSlice(String             appName,
+                                             String             storeName,
                                              Collection<String> rowKeys,
                                              String             startCol,
                                              String             endCol) {
         checkState();
+        String keyspace = getKeyspaceForApp(appName);
         String tableName = storeToCQLName(storeName);
         return new CQLRowIterator(executeQuery(Query.SELECT_ROW_SET_COLUMN_RANGE,
+                                               keyspace,
                                                tableName,
                                                new ArrayList<String>(rowKeys),
                                                startCol,
                                                endCol));
-    }
+    }   // getRowsColumnSlice
 
-    @Override
-    public Iterator<DRow> getRowsColumnSlice(String             storeName,
+/*    @Override
+    public Iterator<DRow> getRowsColumnSlice(String             appName,
+                                             String             storeName,
                                              Collection<String> rowKeys,
                                              String             startCol,
                                              String             endCol,
                                              boolean            reversed) {
         checkState();
+        String keyspace = getKeyspaceForApp(appName);
         String tableName = storeToCQLName(storeName);
         ResultSet rs = null;
         if (reversed) {
             // Swap start/end columns for CQL reversed queries
-            rs = executeQuery(Query.SELECT_ROW_SET_COLUMN_RANGE_DESC, tableName, new ArrayList<String>(rowKeys), endCol, startCol);
+            rs = executeQuery(Query.SELECT_ROW_SET_COLUMN_RANGE_DESC,
+                              keyspace,
+                              tableName,
+                              new ArrayList<String>(rowKeys),
+                              endCol,
+                              startCol);
         } else {
-            rs = executeQuery(Query.SELECT_ROW_SET_COLUMN_RANGE, tableName, new ArrayList<String>(rowKeys), startCol, endCol);
+            rs = executeQuery(Query.SELECT_ROW_SET_COLUMN_RANGE,
+                              keyspace,
+                              tableName,
+                              new ArrayList<String>(rowKeys),
+                              startCol,
+                              endCol);
         }
         return new CQLRowIterator(rs);
-    }
+    }   // getRowsColumnSlice
+*/
+    //----- Public methods: Task queries
+    
+    public Iterator<DRow> getAllTaskRows(String keyspace) {
+        checkState();
+        String cqlKeyspace = storeToCQLName(keyspace);
+        String tableName = storeToCQLName(TASKS_TABLE_NAME);
+        return new CQLRowIterator(executeQuery(Query.SELECT_ALL_ROWS_ALL_COLUMNS, cqlKeyspace, tableName));
+    }   // getAllTaskRow
+
 
     //----- CQLService-specific public methods
- 
+
     /**
-     * Get the keyspace name being used by this CQL service in the form needed for CQL
-     * methods. In this form, it is quoted to invoke case sensitivity.
+     * Get the {@link PreparedStatement} for the given {@link CQLStatementCache.Query} to
+     * the given table name, residing in the given keyspace. If needed, the query
+     * statement is compiled and cached.
      * 
-     * @return	Quoted keyspace name used by this CQL service.
+     * @param keyspace      Keyspace name.
+     * @param query         Query statement type.
+     * @param tableName     Quoted table name.
+     * @return              PreparedStatement for requested keyspace/table/update.
      */
-    public String getKeyspace() {
-    	return m_keyspace;
-    }	// getKeyspace
+    public PreparedStatement getPreparedQuery(String keyspace, Query query, String tableName) {
+        String cqlKeysapce = storeToCQLName(keyspace);
+        CQLStatementCache statementCache = m_ksStatementCacheMap.get(cqlKeysapce);
+        assert statementCache != null;
+        return statementCache.getPreparedQuery(query, tableName);
+    }   // getPreparedQuery
     
     /**
-     * Get the {@link CQLStatementCache} object used by this CQL Service to cache prepared
-     * statements.
+     * Get the {@link PreparedStatement} for the given {@link CQLStatementCache.Update} to
+     * the given table name, residing in the given keyspace. If needed, the update
+     * statement is compiled and cached.
      * 
-     * @return	Prepared statement query cache object.
+     * @param keyspace      Keyspace name.
+     * @param update        Update statement type.
+     * @param tableName     Quoted table name.
+     * @return              PreparedStatement for requested keyspace/table/update.
      */
-	public CQLStatementCache getQueryCache() {
-		return m_queryCache;
-	}	// getQueryCache
- 
+	public PreparedStatement getPreparedUpdate(String keyspace, Update update, String tableName) {
+        String cqlKeyspace = storeToCQLName(keyspace);
+	    CQLStatementCache statementCache = m_ksStatementCacheMap.get(cqlKeyspace);
+	    assert statementCache != null;
+	    return statementCache.getPreparedUpdate(update, tableName);
+	}  // getPreparedUpdate
+	
 	/**
 	 * Get the CQL session being used by this CQL service.
 	 * 
-	 * @return The CQL Session object connected to the appropriate keyspace.
+	 * @param keyspace Keyspace to which session applies.
+	 * @return         The CQL Session object connected to the appropriate keyspace.
 	 */
-	public Session getSession() {
-		return m_session;
+	public Session getSession(String keyspace) {
+		return getOrCreateKeyspaceSession(keyspace);
 	}	// getSession
 	
     /**
@@ -351,24 +471,95 @@ public class CQLService extends DBService {
     }   // storeToCQLName
     
     //----- Private methods
+
+    // Rebuild the m_appKeyspaceMap from all current keyspaces/Applications CFs
+    private void refreshAppKeyspaceMap() {
+        List<KeyspaceMetadata> ksMetadataList = m_cluster.getMetadata().getKeyspaces();
+        synchronized (m_appKeyspaceMap) {
+            m_appKeyspaceMap.clear();
+            for (KeyspaceMetadata ksMetadata : ksMetadataList) {
+                String keyspace = storeToCQLName(ksMetadata.getName());
+                TableMetadata tableMeta = ksMetadata.getTable(APPS_TABLE_NAME);
+                if (!keyspace.startsWith("system") && tableMeta != null) {
+                    Map<String, Map<String, String>> allAppProps = getAllAppProperties(keyspace);
+                    for (String appName : allAppProps.keySet()) {
+                        String existingKeyspace = m_appKeyspaceMap.get(appName);
+                        if (existingKeyspace == null) {
+                            m_appKeyspaceMap.put(appName, keyspace);
+                        } else {
+                            m_logger.warn("Application {} found in multiple keyspaces: " +
+                                          "instance in keyspace {} will be used; " +
+                                          "instance in keyspace {} will be ignored.",
+                                          new Object[]{appName, existingKeyspace, keyspace});
+                        }
+                    }
+                }
+            }
+        }
+    }   // refreshAppKeyspaceMap
+
+    // Return true if the given table exists in the given keyspace.
+    private boolean storeExists(String keyspace, String tableName) {
+        KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(keyspace);
+        return (ksMetadata != null) && (ksMetadata.getTable(tableName) != null);
+    }   // storeExists
+
+    // Get the properties of all applications defined in the Applications CF in the given keyspace.
+    // Return empty map if none found.
+    private Map<String, Map<String, String>> getAllAppProperties(String cqlKeyspace) {
+        Map<String, Map<String, String>> result = new HashMap<>();
+        ResultSet rs = executeQuery(Query.SELECT_ALL_ROWS_ALL_COLUMNS, cqlKeyspace, APPS_TABLE_NAME);
+        CQLRowIterator rowIter = new CQLRowIterator(rs);
+        while (rowIter.hasNext()) {
+            DRow row = rowIter.next();
+            String appName = row.getKey();
+            result.put(appName, getAllRowColumns(row));
+        }
+        return result;
+    }   // getAppProperties
+
+    // Get all properties for the given application defined in the given keyspace.
+    // Return null if not found.
+    private Map<String, String> getAppProperties(String cqlKeyspace, String appName) {
+        ResultSet rs = executeQuery(Query.SELECT_1_ROW_ALL_COLUMNS, cqlKeyspace, APPS_TABLE_NAME, appName);
+        CQLRowIterator rowIter = new CQLRowIterator(rs);
+        if (!rowIter.hasNext()) {
+            return null;
+        }
+        DRow row = rowIter.next();
+        return getAllRowColumns(row);
+    }   // getAppProperties
+    
+    // Get all column values of the given row as name/value string pairs.
+    private Map<String, String> getAllRowColumns(DRow row) {
+        Map<String, String> rowProps = new HashMap<>();
+        Iterator<DColumn> colIter = row.getColumns();
+        while (colIter.hasNext()) {
+            DColumn column = colIter.next();
+            rowProps.put(column.getName(), column.getValue());
+        }
+        return rowProps;
+    }   // getAllRowColumns
     
     // Execute the given query for the given table using the given values.
-    private ResultSet executeQuery(Query query, String tableName, Object... values) {
-        m_logger.debug("Executing statement {} on table {}; total params={}",
-                       new Object[]{query, tableName, values.length});
-        PreparedStatement prepState = m_queryCache.getPreparedQuery(query, tableName);
+    private ResultSet executeQuery(Query query, String cqlKeyspace, String tableName, Object... values) {
+        m_logger.debug("Executing statement {} on table {}/{}; total params={}",
+                       new Object[]{query, cqlKeyspace, tableName, values.length});
+        Session session = getOrCreateKeyspaceSession(cqlKeyspace);
+        PreparedStatement prepState = getPreparedQuery(cqlKeyspace, query, tableName);
         BoundStatement boundState = prepState.bind(values);
-        return m_session.execute(boundState);
+        return session.execute(boundState);
     }   // executeQuery
     
     // Establish the CQL session
-    private void initializeCQLSession() {
+    private void initializeCluster() {
         while (true) {
             try {
-                Cluster cluster = buildClusterSpecs();
-                createKeyspaceSession(cluster);
+                m_cluster = buildClusterSpecs();
+                connectToCluster();
                 break;
             } catch (Exception e) {
+                m_cluster = null;
                 m_logger.info("Database is not reachable: {}. Waiting to retry", e);
                 try {
                     Thread.sleep(ServerConfig.getInstance().db_connect_retry_wait_millis);
@@ -377,7 +568,7 @@ public class CQLService extends DBService {
                 }
             }
         }
-    }   // initializeCQLSession
+    }   // initializeCluster
 
     // Build Cluster object from ServerConfig settings.
     private Cluster buildClusterSpecs() {
@@ -398,12 +589,6 @@ public class CQLService extends DBService {
         socketOpts.setReadTimeoutMillis(config.db_timeout_millis);
         socketOpts.setConnectTimeoutMillis(config.db_connect_retry_wait_millis);
         builder.withSocketOptions(socketOpts);
-        
-        // dbauthenticator
-        String authenticator = config.dbauthenticator;
-        if (!Utils.isEmpty(authenticator) && authenticator.endsWith("PasswordAuthenticator")) {
-            setClusterCredentials(builder);
-        }
         
         // compression
         builder.withCompression(Compression.SNAPPY);
@@ -458,126 +643,49 @@ public class CQLService extends DBService {
         return ctx;
     }   // getSSLContext
     
-    // Set the cluster credentials for password authentication.
-    private void setClusterCredentials(Builder builder) {
-        String filename = System.getProperty(PASSWD_FILENAME_PROPERTY);
-        if (filename == null) {
-            filename = DEFAULT_CONFIGFILE;
-        }
-        try (InputStream in = new BufferedInputStream(new FileInputStream(filename))) {
-            Properties props = new Properties();
-            props.load(in);
-            String username = props.getProperty(USERNAME_KEY);
-            String password = props.getProperty(PASSWORD_KEY);
-            builder.withCredentials(username, password);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not access passwd.properties file", e);
-        }       
-    }   // setClusterCredentials
-    
-    // Attempt to connect to the given cluster and set m_session to the right keyspace.
-    private void createKeyspaceSession(Cluster cluster) {
-        cluster.init();     // force connection and throw if unavailable
-        displayClusterInfo(cluster);
-        checkKeyspace(cluster);
-        connectToKeyspace(cluster);
-        checkColumnFamilyCompatibility();
-        checkGlobalTables();
-    }   // createKeyspaceSession
+    // Attempt to connect to the given cluster and throw if it is unavailable.
+    private void connectToCluster() {
+        assert m_cluster != null;
+        m_cluster.init();     // force connection and throw if unavailable
+        displayClusterInfo();
+    }   // connectToCluster
 
-    // Ensure the keyspace and initial CFs exist.
-    private void checkKeyspace(Cluster cluster) {
-        Metadata metadata = cluster.getMetadata();
-        KeyspaceMetadata ksMetadata = metadata.getKeyspace(m_keyspace);
-        if (ksMetadata == null) {
-            m_logger.info("Creating keyspace {}", m_keyspace);
-            CQLSchemaManager.createKeySpace(cluster, m_keyspace);
-        }
-    }   // checkKeyspace
-    
-    // Set m_session to a keyspace-specific session and initialize query cache and schema
-    // manager.
-    private void connectToKeyspace(Cluster cluster) {
-        m_session = cluster.connect(m_keyspace);
-        m_queryCache = new CQLStatementCache(m_session);
-        m_schemaMgr = new CQLSchemaManager(m_session, m_keyspace);
-    }   // connectToKeyspace
-    
-    // Check that all existing CFs have key and column1 types of text.
-    private void checkColumnFamilyCompatibility() {
-        Metadata metadata = m_session.getCluster().getMetadata();
-        KeyspaceMetadata ksMetadata = metadata.getKeyspace(CQLService.instance().getKeyspace());
-        for (TableMetadata tableMetadata : ksMetadata.getTables()) {
-            String errMsg = null;
-            ColumnMetadata colMetadata = tableMetadata.getColumn("key");
-            if (colMetadata == null) {
-                errMsg = "does not have a column named 'key'";
-            }
-            if (errMsg == null && !colMetadata.getType().equals(DataType.text())) {
-                errMsg = "the column 'key' must have type 'text' but is '" +
-                         colMetadata.getType().toString() + "'";
-            }
-            colMetadata = tableMetadata.getColumn("column1");
-            if (errMsg == null && colMetadata == null) {
-                errMsg = "does not have a column named 'column1'";
-            }
-            if (errMsg == null && !colMetadata.getType().equals(DataType.text())) {
-                errMsg = "the column 'column1' must have type 'text' but is '" +
-                         colMetadata.getType().toString() + "'";
-            }
-            colMetadata = tableMetadata.getColumn("value");
-            if (errMsg == null && colMetadata == null) {
-                errMsg = "does not have a column named 'value'";
-            }
-            if (errMsg != null) {
-                // Throw an Error to force server shutdown.
-                String throwMsg =
-                    String.format("This database is not compatible with the CQL API. " +
-                                  "ColumnFamily '%s': %s. Please create a new database " +
-                                  "or use the Thrift API.",
-                                  tableMetadata.getName(), errMsg);
-                throw new Error(throwMsg);
+    // Get or create a session to the given keyspace.
+    private Session getOrCreateKeyspaceSession(String keyspace) {
+        String cqlKeyspace = storeToCQLName(keyspace);
+        Session session = m_ksSessionMap.get(cqlKeyspace);
+        if (session == null) {
+            synchronized (m_ksSessionMap) {
+                // Watch for race conditions outside of synchronized block
+                session = m_ksSessionMap.get(cqlKeyspace);
+                if (session == null) {
+                    session = m_cluster.connect(cqlKeyspace);
+                    m_ksSessionMap.put(cqlKeyspace, session);
+                    m_ksStatementCacheMap.put(cqlKeyspace, new CQLStatementCache(session));
+                }
             }
         }
-    }   // checkColumnFamilyCompatibility
-    
-    // Check that the global required CFs exist, creating them if needed. 
-    private void checkGlobalTables() {
-        Cluster cluster = m_session.getCluster();
-        Metadata metadata = cluster.getMetadata();
-        KeyspaceMetadata ksMetadata = metadata.getKeyspace(m_keyspace);
-        
-        TableMetadata tableMetadata = ksMetadata.getTable(APPS_TABLE_NAME);
-        if (tableMetadata == null) {
-            createApplicationsTable();
-        }
-        tableMetadata = ksMetadata.getTable(TASKS_TABLE_NAME);
-        if (tableMetadata == null) {
-            createTasksTable();
-        }
-    }   // checkGlobalTables
-
-    // Create the global Applications table.
-    private void createApplicationsTable() {
-        StoreTemplate template = new StoreTemplate(APPS_TABLE_NAME, false);
-        m_schemaMgr.createCQLTable(template);
-    }   // createApplicationsColumnFamily
-
-    // Create the global Tasks table.
-    private void createTasksTable() {
-        StoreTemplate template = new StoreTemplate(TASKS_TABLE_NAME, false);
-        m_schemaMgr.createCQLTable(template);
-    }   // createTasksColumnFamily
+        return session;
+    }   // getOrCreateKeyspaceSession
     
     // Display configuration information for the given cluster.
-    private void displayClusterInfo(Cluster cluster) {
-        Metadata metadata = cluster.getMetadata();
+    private void displayClusterInfo() {
+        Metadata metadata = m_cluster.getMetadata();
         m_logger.info("Connected to cluster with topography:");
         RoundRobinPolicy policy = new RoundRobinPolicy();
         for (Host host : metadata.getAllHosts()) {
             m_logger.info("   Host {}: datacenter: {}, rack: {}, distance: {}",
                           new Object[]{host.getAddress(), host.getDatacenter(), 
                 host.getRack(), policy.distance(host)});
+        }
+        m_logger.info("Current keyspaces:");
+        List<KeyspaceMetadata> keyspaces = metadata.getKeyspaces();
+        if (keyspaces.isEmpty()) {
+            m_logger.info("   <none>");
+        }
+        for (KeyspaceMetadata keyspace : keyspaces) {
+            Collection<TableMetadata> tables = keyspace.getTables();
+            m_logger.info("   {}: contains {} ColumnFamilies", keyspace.getName(), tables.size());
         }
     }   // displayClusterInfo
 

@@ -49,7 +49,7 @@ public class CQLColumn implements DColumn {
      */
     public CQLColumn(String colName, byte[] colValue) {
         m_colName = colName;
-        m_binaryValue = colValue.clone();
+        m_binaryValue = colValue == null ? new byte[0] : colValue.clone();
     }
     
     /**

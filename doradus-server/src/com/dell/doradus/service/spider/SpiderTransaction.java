@@ -43,8 +43,9 @@ import com.dell.doradus.service.db.DBTransaction;
  * the same timestamp as previous commits.
  */
 public class SpiderTransaction {
-    // The embedded DBTransaction that holds column/row updates:
-    private DBTransaction m_dbTran = DBService.instance().startTransaction();
+    // The keyspace and the embedded DBTransaction that holds column/row updates:
+    private final String m_appName;
+    private DBTransaction m_dbTran;
     
     // This map holds table/term references. It prevents duplicate updates in the same
     // transaction. It's format is <table> -> Set<field name>
@@ -55,12 +56,15 @@ public class SpiderTransaction {
     // Non-sharded objects belong to shard number 0. It prevents duplicate updates.
     private final Map<TableDefinition, Map<Integer, Map<String, Set<String>>>> m_tableTermRefMap =
         new HashMap<TableDefinition, Map<Integer, Map<String, Set<String>>>>();
-
+    
     /**
      * Create a new SpiderTransaction object, which starts a new transaction with "now"
      * as the timestamp.
      */
-    public SpiderTransaction() { }
+    public SpiderTransaction(String appName) {
+        m_appName = appName;
+        m_dbTran  = DBService.instance().startTransaction(appName);
+    }
     
     /**
      * Clear this transaction's updates without committing them.
@@ -79,7 +83,7 @@ public class SpiderTransaction {
         try {
             DBService.instance().commit(m_dbTran);
             // Re-create the transaction to renew its timestamp.
-        	m_dbTran = DBService.instance().startTransaction();
+        	m_dbTran = DBService.instance().startTransaction(m_appName);
         } finally {
             clear();
         }

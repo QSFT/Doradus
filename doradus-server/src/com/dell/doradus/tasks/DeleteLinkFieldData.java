@@ -41,7 +41,7 @@ public class DeleteLinkFieldData extends DoradusTask {
 	private final Logger logger = LoggerFactory.getLogger(DeleteLinkFieldData.class);
 	
 	protected DBService m_dbService = DBService.instance();
-	protected DBTransaction m_dbTran = m_dbService.startTransaction();
+	protected DBTransaction m_dbTran = m_dbService.startTransaction(m_appName);
 	protected final int MAX_MUTATION_COUNT = ServerConfig.getInstance().batch_mutation_threshold;
 
 	@Override
@@ -78,7 +78,7 @@ public class DeleteLinkFieldData extends DoradusTask {
 		String termsStore = SpiderService.termsStoreName(tabDef);
 		
 		// 1. Deleting links from the object table 
-		Iterator<DRow> iRows = m_dbService.getAllRowsAllColumns(objectsStore);
+		Iterator<DRow> iRows = m_dbService.getAllRowsAllColumns(m_appName, objectsStore);
 		while (iRows.hasNext()) {
 			DRow row = iRows.next();
 			Set<String> colNames = new HashSet<>();
@@ -99,7 +99,7 @@ public class DeleteLinkFieldData extends DoradusTask {
 		}
 		
 		// 2. Deleting links from the terms table
-		iRows = m_dbService.getAllRowsAllColumns(termsStore);
+		iRows = m_dbService.getAllRowsAllColumns(m_appName, termsStore);
 		int updCount = 0;
 		while (iRows.hasNext()) {
 			DRow nextRow = iRows.next();

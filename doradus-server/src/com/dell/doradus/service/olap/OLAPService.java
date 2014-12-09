@@ -109,8 +109,11 @@ public class OLAPService extends StorageService {
     }   // deleteApplication
     
     @Override
-    public void initializeApplication(ApplicationDefinition oldAppDef, ApplicationDefinition appDef) {
-        // Nothing extra to do
+    public void initializeApplication(String keyspace,
+                                      ApplicationDefinition oldAppDef,
+                                      ApplicationDefinition appDef) {
+        checkServiceState();
+        m_olap.createApplication(keyspace, appDef.getAppName());
     }   // initializeApplication
     
     @Override

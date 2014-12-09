@@ -223,7 +223,8 @@ public class Client implements AutoCloseable {
     /**
      * Create a new application in the connected Doradus server as defined in the given
      * {@link ApplicationDefinition} object. If the given application already exists, its
-     * schema is replaced with the given definition. The {@link ApplicationDefinition} for
+     * schema is replaced with the given definition. If the application is new, it is
+     * created in the default tenant keyspace. The {@link ApplicationDefinition} for
      * the same application is returned, updated with any system-assigned defaults. An
      * exception is thrown if an error occurs.
      * 
@@ -232,6 +233,23 @@ public class Client implements AutoCloseable {
      *                  any system-assigned defaults.
      */
     public ApplicationDefinition createApplication(ApplicationDefinition appDef) {
+        return createApplication(appDef, null);
+    }   // createApplication
+    
+    /**
+     * Create a new application in the connected Doradus server as defined in the given
+     * {@link ApplicationDefinition} object. If the given application already exists, its
+     * schema is replaced with the given definition. The {@link ApplicationDefinition} for
+     * the same application is returned, updated with any system-assigned defaults. An
+     * exception is thrown if an error occurs.
+     * 
+     * @param appDef    {@link ApplicationDefinition} of application to create or update.
+     * @param tenant    Name of tenant keyspace in which to create the application. The
+     *                  default keyspace is used if this is null or empty.
+     * @return          {@link ApplicationDefinition} of same application, updated with
+     *                  any system-assigned defaults.
+     */
+    public ApplicationDefinition createApplication(ApplicationDefinition appDef, String tenant) {
         Utils.require(!m_restClient.isClosed(), "Client has been closed");
         Utils.require(appDef != null, "appDef");
         Utils.require(appDef.getAppName() != null && appDef.getAppName().length() > 0,
@@ -244,9 +262,14 @@ public class Client implements AutoCloseable {
             byte[] body = null;
             body = Utils.toBytes(appDef.toDoc().toJSON());
             
-            // Send a POST request to the "/_applications".
+            // Send a POST request to the "/_applications" or "/_applications?tenant=<tenant>"
+            StringBuilder uri = new StringBuilder("/_applications");
+            if (!Utils.isEmpty(tenant)) {
+                uri.append("?tenant=");
+                uri.append(tenant);
+            }
             RESTResponse response =
-                m_restClient.sendRequest(HttpMethod.POST, "/_applications", ContentType.APPLICATION_JSON, body);
+                m_restClient.sendRequest(HttpMethod.POST, uri.toString(), ContentType.APPLICATION_JSON, body);
             m_logger.debug("defineApplication() response: {}", response.toString());
             throwIfErrorResponse(response);
             return getAppDef(appDef.getAppName());

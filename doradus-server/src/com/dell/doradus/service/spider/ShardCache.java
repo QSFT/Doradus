@@ -140,7 +140,8 @@ public class ShardCache {
     
     // Create a local transaction to add the register the given shard, then cache it.
     private void addShardStart(TableDefinition tableDef, int shardNumber, Date shardDate) {
-        SpiderTransaction dbTran = new SpiderTransaction();
+        String appName = tableDef.getAppDef().getAppName();
+        SpiderTransaction dbTran = new SpiderTransaction(appName);
         dbTran.addShardStart(tableDef, shardNumber, shardDate);
         dbTran.commit();
         synchronized (this) {
@@ -198,7 +199,7 @@ public class ShardCache {
         }
         
         Iterator<DColumn> colIter =
-            DBService.instance().getAllColumns(SpiderService.termsStoreName(tableDef), Defs.SHARDS_ROW_KEY);
+            DBService.instance().getAllColumns(appName, SpiderService.termsStoreName(tableDef), Defs.SHARDS_ROW_KEY);
         if (colIter != null) {
             while (colIter.hasNext()) {
                 DColumn col = colIter.next();

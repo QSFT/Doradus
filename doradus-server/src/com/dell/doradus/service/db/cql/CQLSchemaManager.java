@@ -26,14 +26,13 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.dell.doradus.core.ServerConfig;
-import com.dell.doradus.service.db.StoreTemplate;
 
 /**
  * Performs schema management operations using the CQL API. An object is created with a
  * CQL Session connected to the keyspace in which schema operations will be performed.
- * The exception is the static function {@link #createKeySpace(Cluster, String)}, which
- * is passed a Cluster object: it uses this to create a no-keyspace session to create a
- * new keyspace.
+ * The exception is the function {@link #createKeySpace(Cluster, String)} and
+ * {@link #dropKeySpace(Cluster, String)}, which should be used with a CQLSchemaManager
+ * constructed with a no-keyspace session.
  */
 public class CQLSchemaManager {
     // Members:
@@ -47,7 +46,8 @@ public class CQLSchemaManager {
      * from CQL's metadata.
      *  
      * @param session   CQL session to use for DDL commands.
-     * @param keyspace  Keyspace name that session is using.
+     * @param keyspace  Keyspace name that session is using. This should be quoted for
+     *                  compatibility with Thrift conventions.
      */
     public CQLSchemaManager(Session session, String keyspace) {
         m_session = session;
@@ -57,27 +57,46 @@ public class CQLSchemaManager {
     //----- Public methods
     
     /**
-     * Create a new keyspace with the given name. The cluster object is passed so that a
-     * no-keyspace session can be used to execute the CQL command:
+     * Create a new keyspace with the given name. The CQLSchemaManager object should be
+     * constructed with a no-keyspace session. The keyspace is created with the following
+     * CQL command:
      * <pre>
-     *      CREATE KEYSPACE "<i>ks name</i>" WITH <i>prop</i>=<i>value</i> AND ...;
+     *      CREATE KEYSPACE "<i>keyspace</i>" WITH <i>prop</i>=<i>value</i> AND ...;
      * </pre>
+     * Where the list of <i>prop</i> properties come from {@link ServerConfig#ks_defaults}.
      * 
-     * @param cluster   Cluster used to create a temporary no-keyspace session.
-     * @param keyspace  Name of keyspace to create (should be quoted).
+     * @param keyspace  Name of keyspace to create.
      */
-    public static void createKeySpace(Cluster cluster, String keyspace) {
+    public void createKeyspace(String keyspace) {
+        String cqlKeyspace = CQLService.storeToCQLName(keyspace);
+        m_logger.info("Creating new keyspace: {}", cqlKeyspace);
         StringBuilder cql = new StringBuilder();
         cql.append("CREATE KEYSPACE ");
-        cql.append(keyspace);
+        cql.append(cqlKeyspace);
         cql.append(keyspaceDefaultsToCQLString());
         cql.append(";");
-        
-        // Use a temporary, no-keyspace session to create the keyspace
-        try (Session noKSSession = cluster.connect()) {
-            noKSSession.execute(cql.toString());
-        }
-    }   // createKeySpace
+        m_session.execute(cql.toString());
+    }   // createKeyspace
+    
+    /**
+     * Drop the keyspace with the given name. The CQLSchemaManager object should be
+     * constructed with a no-keyspace session. The keyspace is dropped with the following
+     * CQL command:
+     * <pre>
+     *      DROP KEYSPACE "<i>keyspace</i>";
+     * </pre>
+     * 
+     * @param keyspace  Name of keyspace to drop.
+     */
+    public void dropKeyspace(String keyspace) {
+        String cqlKeyspace = CQLService.storeToCQLName(keyspace);
+        m_logger.info("Dropping keyspace: {}", cqlKeyspace);
+        StringBuilder cql = new StringBuilder();
+        cql.append("DROP KEYSPACE ");
+        cql.append(cqlKeyspace);
+        cql.append(";");
+        m_session.execute(cql.toString());
+    }   // dropKeyspace
     
     /**
      * Create a CQL table with the given template. For backward compatibility with the
@@ -86,29 +105,31 @@ public class CQLSchemaManager {
      *      CREATE TABLE "<i>name</i>" (
      *          key     text,
      *          column1 text,
-     *          value   text,   // or blob based on cfTemplate.valuesAreBinary()
+     *          value   text,   // or blob based on bBinaryValues
      *          PRIMARY KEY(key, column1)
-     *      ) WITH COMPACT STORAGE [WITH ...]
+     *      ) WITH COMPACT STORAGE [WITH <i>prop</i> AND <i>prop</i> AND ...]
      * </pre>
-     * The WITH clauses are generated depending on doradus.yaml file options.
+     * Where the WITH <i>prop</i> clauses come from {@link ServerConfig#olap_cf_defaults}
+     * or {@link ServerConfig#cf_defaults}.
      * 
-     * @param template  StoreTemplate on which to pattern the table.
+     * @param storeName     Name of table (unquoted) to create.
+     * @param bBinaryValues True if store's values will be binary.
      */
-    public void createCQLTable(StoreTemplate template) {
-        String tableName = CQLService.storeToCQLName(template.getName());
+    public void createCQLTable(String storeName, boolean bBinaryValues) {
+        String tableName = CQLService.storeToCQLName(storeName);
         m_logger.info("Creating CQL table {}", tableName);
         
         StringBuffer cql = new StringBuffer();
         cql.append("CREATE TABLE ");
         cql.append(tableName);
         cql.append("(key text,column1 text,value ");
-        if (template.valuesAreBinary()) {
+        if (bBinaryValues) {
             cql.append("blob,");
         } else {
             cql.append("text,");
         }
         cql.append("PRIMARY KEY(key,column1)) WITH COMPACT STORAGE ");
-        cql.append(tablePropertiesToCQLString(template));
+        cql.append(tablePropertiesToCQLString(storeName));
         cql.append(";");
         executeCQL(cql.toString());
     }   // createCQLTable
@@ -143,11 +164,11 @@ public class CQLSchemaManager {
     // Find doradus.yaml options for the given template and turn into a CQL string:
     //      "AND <prop>=<value> AND..."
     @SuppressWarnings("unchecked")
-    private String tablePropertiesToCQLString(StoreTemplate template) {
+    private String tablePropertiesToCQLString(String storeName) {
         StringBuilder buffer = new StringBuilder();
         
         // A little kludgey for now
-        Map<String, Object> cfOptions = template.getName().startsWith("OLAP")
+        Map<String, Object> cfOptions = storeName.startsWith("OLAP")
                                       ? ServerConfig.getInstance().olap_cf_defaults
                                       : ServerConfig.getInstance().cf_defaults;
         if (cfOptions != null) {

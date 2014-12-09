@@ -19,79 +19,32 @@ package com.dell.doradus.service.db;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
 
+import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.db.cql.CQLService;
-import com.dell.doradus.service.db.thrift.ThriftService;
 
 /**
  * Provides methods that access the physical database. This is currently Cassandra but
  * could be other physical stores. Database configuration options (host, port, keyspace,
  * etc.) are defined in doradus.yaml and loaded via {@link ServerConfig}.
- * 
- * <h1>Initialization</h1>
- * 
- * DBService is a singleton class, implemented as a Doradus {@link Service}. Methods for
- * specific DBService areas are described below.
- * 
- * <h1>Store management</h1>
- * 
- * Methods are provided to add, delete, and query physical <i>stores</i>. In Cassandra,
- * these are ColumnFamilies. A generic {@link StoreTemplate} is used to create new stores.
- * See these methods:
- * 
- * <pre>
- *      {@link #createStore(StoreTemplate)} - Create a new store.
- *      {@link #deleteStoreIfPresent(String)} - Delete an existing store.
- * </pre>
- * 
- * <h1>Schema management</h1>
- * 
- * Methods are provided to add, update, and get application schemas. An application is
- * defines as a set of <i>properties</i>, one of which is its schema. See methods such as:
- * 
- * <pre>
- *      {@link #getAllAppProperties()} - Get properties for all applications.
- *      {@link #getAppProperties(String)} - Get properties for a specific application.
- * </pre>
- * 
- * <h1>Updates</h1>
- * 
- * Updates are handled by creating a {@link DBTransaction} object, adding column and row
- * updates to it, and then committing it. See these methods:
- * 
- * <pre>
- *      {@link #startTransaction()} - Create a new {@link DBTransaction}.
- *      {@link #commit(DBTransaction)} - Commit the changes in a {@link DBTransaction}
- * </pre>
- * 
- * <h1>Queries</h1>
- * 
- * Methods are provided to fetch data in various ways: single column of a single row, a
- * set of columns for a set of rows, all columns of all rows (careful!), etc. Columns are
- * returned as a {@link DColumn}; rows are returned as a {@link DRow}. Set of columns or
- * rows are returned as iterators of these objects. Iterators typically return a batch
- * from the database; additional batches are fetched, if needed, as the objects are
- * iterated. See methods such as these:
- * 
- * <pre>
- *      {@link #getAllColumns(String, String)} - Get all columns of a single row.
- *      {@link #getAllRowsAllColumns(String)} - Get all rows of all columns.
- *      {@link #getColumn(String, String, String)} - Get a single column from a single row.
- *      {@link #getRowsAllColumns(String, Set)} - Get all columns of a set of row keys.
- * </pre>
  */
 public abstract class DBService extends Service {
-    // Experimental: Choose service based on doradus.yaml setting
-    private static final DBService INSTANCE =
-        ServerConfig.getInstance().use_cql ? CQLService.instance() : ThriftService.instance();
+    // ColumnFamily names shared by apps in the global keyspace
+    public static final String APPS_STORE_NAME = "Applications";
+    public static final String TASKS_STORE_NAME = "Tasks";
+
+    // Choose service based on doradus.yaml setting
+    private static final DBService INSTANCE = CQLService.instance();
 
     // Only subclasses can construct an object.
     protected DBService() {
         // Give up to 1 second after start() to allow startService() to succeed
         m_startDelayMillis = 1000;
+        Utils.require(ServerConfig.getInstance().use_cql, "Thrift is no longer supported; use_cql must be true");
     }
     
     /**
@@ -109,29 +62,64 @@ public abstract class DBService extends Service {
     //----- Public DBService methods: Store management
     
     /**
-     * Create a new store using the given template if a store with the given name does not
-     * exist. If the given store name already exists, this is a no-op.
+     * Create a new keyspace with the given name.
      * 
-     * @param storeTemplate {@link StoreTemplate} that describes new store to create.
+     * @param keyspace  Name of new keyspace.
      */
-    public abstract void createStoreIfAbsent(StoreTemplate storeTemplate);
+    public abstract void createKeyspace(String keyspace);
+
+    /**
+     * Drop the keyspace with the given name. Cassandra will take a snapshot of all CFs
+     * so they can be recovered if needed.
+     * 
+     * @param keyspace  Name of keyspace to delete.
+     */
+    public abstract void dropKeyspace(String keyspace);
     
     /**
-     * Delete the store with the given name if it exists. If the store does not exist,
-     * this is a no-op.
+     * Return the keyspace in which the given application currently resides. Null is
+     * returned if the application cannot be found amoung any active keyspaces.
      * 
-     * @param storeName Name of store to delete.
+     * @param appName   Application name.
+     * @return          Keyspace name in which application resides or null if unknown.
      */
-    public abstract void deleteStoreIfPresent(String storeName);
+    public abstract String getKeyspaceForApp(String appName);
     
     /**
-     * Return true if the given store name exists in the database.
+     * Create a new store using the given template if it does not yet exist. The template
+     * defines the application, if any, to which the store belongs. If the given store
+     * name already exists, this is a no-op.
      * 
-     * @param storeName Candidate store name.
-     * @return          True if the given store name exists in the database.
+     * TODO: params
      */
-    public abstract boolean storeExists(String storeName);
+    public abstract void createStoreIfAbsent(String keyspace, String storeName, boolean bBinaryValues);
     
+    /**
+     * Delete the store with the given name belonging to the given application if it
+     * exists. If the store does not exist, this is a no-op.
+     * 
+     * TODO: params
+     */
+    public abstract void deleteStoreIfPresent(String keyspace, String storeName);
+
+    /**
+     * Register the given application as a tenant of the given keyspace so that it will be
+     * recognized even if the application's stores have not yet been created or its schema
+     * has not yet been stored.
+     * 
+     * @param keyspace  Name of keyspace of which application is a tenant.
+     * @param appName   Name of application to register.
+     */
+    public abstract void registerApplication(String keyspace, String appName);
+
+    /**
+     * Get the "tenant map", which maps each keyspace to the application names that it
+     * contains.
+     * 
+     * @return  Map of keyspaces to application names.
+     */
+    public abstract SortedMap<String, SortedSet<String>> getTenantMap();        
+
     //----- Public DBService methods: Schema management
     
     /**
@@ -161,12 +149,14 @@ public abstract class DBService extends Service {
     //----- Public DBService methods: Updates
     
     /**
-     * Create a new {@link DBTransaction} object that holds updates that will be committed
-     * together. The transactions can be by calling {@link #commit(DBTransaction)}.
+     * Create a new {@link DBTransaction} object that holds updates for the given
+     * application that will be committed together. The transactions can be by calling
+     * {@link #commit(DBTransaction)}.
      * 
-     * @return  New {@link DBTransaction} with a timestamp of "now".
+     * @param appName   Application name to which updates will be applied.
+     * @return          New {@link DBTransaction} with a timestamp of "now".
      */
-    public abstract DBTransaction startTransaction();
+    public abstract DBTransaction startTransaction(String appName);
     
     /**
      * Commit the updates in the given {@link DBTransaction}. An exception is thrown if
@@ -185,11 +175,14 @@ public abstract class DBService extends Service {
      * returned as an Iterator of {@link DColumn}s. Null is returned if no row is
      * found with the given key.
      * 
+     * @param appName   Application that owns the given store. 
      * @param storeName Name of store to query.
      * @param rowKey    Key of row to fetch.
      * @return          Iterator of {@link DColumn}s, or null if there is no such row.
      */
-    public abstract Iterator<DColumn> getAllColumns(String storeName, String rowKey);
+    public abstract Iterator<DColumn> getAllColumns(String appName,
+                                                    String storeName,
+                                                    String rowKey);
 
     /**
      * Get columns for the row with the given key in the given store. Columns range
@@ -197,6 +190,7 @@ public abstract class DBService extends Service {
      * as an Iterator of {@link DColumn}s. Empty iterator is returned if no row
      * is found with the given key or no columns in the given interval found.
      * 
+     * @param appName   Application that owns the given store. 
      * @param storeName Name of store to query.
      * @param rowKey    Key of row to fetch.
      * @param startCol	First name in the column names interval.
@@ -204,8 +198,8 @@ public abstract class DBService extends Service {
      * @param reversed	Flag: reverse iteration?
      * @return          Iterator of {@link DColumn}s, or null if there is no such row.
      */
-    public abstract Iterator<DColumn> getColumnSlice(String storeName, String rowKey,
-    		String startCol, String endCol, boolean reversed);
+    public abstract Iterator<DColumn> getColumnSlice(String appName, String storeName,
+            String rowKey, String startCol, String endCol, boolean reversed);
 
     /**
      * Get columns for the row with the given key in the given store. Columns range
@@ -213,14 +207,15 @@ public abstract class DBService extends Service {
      * as an Iterator of {@link DColumn}s. Empty iterator is returned if no row
      * is found with the given key or no columns in the given interval found.
      * 
+     * @param appName   Application that owns the given store. 
      * @param storeName Name of store to query.
      * @param rowKey    Key of row to fetch.
      * @param startCol	First name in the column names interval.
      * @param endCol	Last name in the column names interval.
      * @return          Iterator of {@link DColumn}s, or null if there is no such row.
      */
-    public abstract Iterator<DColumn> getColumnSlice(String storeName, String rowKey,
-    		String startCol, String endCol);
+    public abstract Iterator<DColumn> getColumnSlice(String appName, String storeName,
+            String rowKey, String startCol, String endCol);
 
     /**
      * Get all rows of all columns in the given store. The results are returned as an
@@ -228,34 +223,38 @@ public abstract class DBService extends Service {
      * method will immediately return false. If more rows are fetched than an internal
      * limit allows, an exception is thrown.
      * 
+     * @param appName   Application that owns the given store. 
      * @param storeName Name of physical store to query.
      * @return          Iterator of {@link DRow} objects. May be empty but not null.
      */
-    public abstract Iterator<DRow> getAllRowsAllColumns(String storeName);
+    public abstract Iterator<DRow> getAllRowsAllColumns(String appName, String storeName);
 
     /**
      * Get a single column for a single row in the given store. If the given row or column
      * is not found, null is returned. Otherwise, a {@link DColumn} containing the column
      * name and value is returned.
      * 
+     * @param appName   Application that owns the given store. 
      * @param storeName Name of store to query.
      * @param rowKey    Key of row to read.
      * @param colName   Name of column to fetch.
      * @return          {@link DColumn} containing the column name and value or null if
      *                  the row or column was not found.
      */
-    public abstract DColumn getColumn(String storeName, String rowKey, String colName);
+    public abstract DColumn getColumn(String appName, String storeName, String rowKey, String colName);
 
     /**
      * Get all columns for rows with a specific set of keys. Results are returned as an
      * Iterator of {@link DRow} objects. If any given row is not found, no entry will
      * with its key will be returned.
      * 
-     * @param store     Name of store to query.
+     * @param appName   Application that owns the given store. 
+     * @param storeName Name of store to query.
      * @param rowKeys   Collection of row keys to read.
      * @return          Iterator of {@link DRow} objects. May be empty but not null.
      */
-    public abstract Iterator<DRow> getRowsAllColumns(String storeName, Collection<String> rowKeys);
+    public abstract Iterator<DRow> getRowsAllColumns(String appName, String storeName,
+            Collection<String> rowKeys);
 
     /**
      * Get a specific set of columns for a specific set of rows. Results are returned as an
@@ -263,25 +262,40 @@ public abstract class DBService extends Service {
      * for it in iterator. If a row is found but none of the requested columns were found,
      * DRow object's column iterator will be empty.
      * 
-     * @param store     Name of store to query.
+     * @param appName   Application that owns the given store. 
+     * @param storeName Name of store to query.
      * @param rowKeys   Collection of row keys to read.
      * @param colNames  Collection of column names to read.
      * @return          Iterator for {@link DRow} objects. May be empty but not null.
      */
-    public abstract Iterator<DRow> getRowsColumns(String             storeName,
-                                                  Collection<String> rowKeys,
-                                                  Collection<String> colNames);
+    public abstract Iterator<DRow> getRowsColumns(String appName, String storeName,
+            Collection<String> rowKeys, Collection<String> colNames);
     
-    public abstract Iterator<DRow> getRowsColumnSlice(String             storeName,
-                                                      Collection<String> rowKeys,
-                                                      String             startCol,
-                                                      String             endCol);
+    /**
+     * Get a range of columns for a specific set of rows. Results are returned as an
+     * Iterator of {@link DRow} objects. If any given row is not found, no entry will exist
+     * for it in iterator. If a row is found but no columns were found in the requested
+     * range, DRow object's column iterator will be empty.
+     * 
+     * @param appName   Application that owns the given store. 
+     * @param storeName Name of store to query.
+     * @param rowKeys   Collection of row keys to read.
+     * @param startCol  Column names >= this name are returned.
+     * @param endCol    Column names <= this name are returned.
+     * @return          Iterator for {@link DRow} objects. May be empty but not null.
+     */
+    public abstract Iterator<DRow> getRowsColumnSlice(String appName, String storeName,
+            Collection<String> rowKeys, String startCol, String endCol);
 
-    public abstract Iterator<DRow> getRowsColumnSlice(String             storeName,
-                                                      Collection<String> rowKeys,
-                                                      String             startCol,
-                                                      String             endCol,
-                                                      boolean            reversed);
+    //----- Public methods: Task queries
+    
+    /**
+     * Get all rows and columns from the Tasks table in the given keyspace.
+     * 
+     * @param  keyspace Keyspace name whose Tasks table to query.
+     * @return          Row iterator over all rows in the table.
+     */
+    public abstract Iterator<DRow> getAllTaskRows(String keyspace);
 
     //----- Protected methods
     
@@ -293,6 +307,6 @@ public abstract class DBService extends Service {
             throw new DBNotAvailableException("Cassandra connection has not been established");
         }
     }   // checkState
-    
+
 }   // class DBService
 

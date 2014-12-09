@@ -253,8 +253,11 @@ abstract class MathGroup extends Group {
 	@Override
 	void update(String value) {
 		try {
-			doUpdate(value);
-			m_count++;
+		    // TODO: RLG kludge?
+		    if (value != null) {
+		        doUpdate(value);
+		        m_count++;
+		    }
 		}catch (Exception ex) {
 			log.debug("Failed to update '%s' group metric value", getDisplayName(), ex);
 		}

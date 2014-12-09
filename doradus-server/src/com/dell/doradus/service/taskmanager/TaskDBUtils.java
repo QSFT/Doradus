@@ -19,7 +19,6 @@ package com.dell.doradus.service.taskmanager;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -32,13 +31,10 @@ import com.dell.doradus.core.Defs;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.management.TaskRunState;
 import com.dell.doradus.management.TaskStatus;
-import com.dell.doradus.olap.Olap;
-import com.dell.doradus.olap.OlapTasks;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
-import com.dell.doradus.service.db.StoreTemplate;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.tasks.DoradusTask;
 
@@ -134,29 +130,23 @@ public class TaskDBUtils {
 	 * @return	Map of application names to the set of registered task names.
 	 */
 	public static Map<String, Set<String>> getAllTaskNames() {
-		Set<String> appNames = DBService.instance().getAllAppProperties().keySet();
-		Map<String, Set<String>> allTaskNames = new HashMap<>();
-		for (String appName : appNames) {
-			allTaskNames.put(appName, new HashSet<String>());
-		}
-		String storeName = StoreTemplate.TASKS_STORE_NAME;
-		Iterator<DRow> taskRows = DBService.instance().getAllRowsAllColumns(storeName);
-		while (taskRows.hasNext()) {
-		    String rowKey = taskRows.next().getKey();
-			if (!rowKey.startsWith(Defs.TASK_CLAIM_ROW_PREFIX + "/")) {
-				int slashNdx = rowKey.indexOf('/');
-				if (slashNdx > 0) {
-					String appName = rowKey.substring(0, slashNdx);
-					if (appNames.contains(appName)) {
-						allTaskNames.get(appName).add(rowKey.substring(slashNdx + 1));
-					}
-				}
-			}
-		}
-		
-		return allTaskNames;
-	}	// getAllTaskNames
-	
+	    Set<String> appNames = DBService.instance().getAllAppProperties().keySet();
+	    Map<String, Set<String>> allTaskNames = new HashMap<>();
+	    for (String appName : appNames) {
+	        Set<String> taskSet = new HashSet<>();
+	        allTaskNames.put(appName, taskSet);
+	        Iterator<DRow> taskRows = DBService.instance().getAllRowsAllColumns(appName, DBService.TASKS_STORE_NAME);
+	        while (taskRows.hasNext()) {
+	            String rowKey = taskRows.next().getKey();
+	            int slashNdx = rowKey.indexOf('/');
+	            if (slashNdx > 0 && rowKey.substring(0, slashNdx).equals(appName)) {
+	                taskSet.add(rowKey.substring(slashNdx + 1));
+	            }
+	        }
+	    }
+	    return allTaskNames;
+	}  // getAllTaskNames
+
 	/**
 	 * Returns all the task ids as they are defined in all the applications.
 	 * 
@@ -197,13 +187,10 @@ public class TaskDBUtils {
 	 * @return			Task status (undefined if no status was actually found)
 	 */
 	public static TaskStatus getTaskStatus(String appName, String taskId) {
-		String storeName = StoreTemplate.TASKS_STORE_NAME;
-		Iterator<DColumn> colIter = null;
+		String storeName = DBService.TASKS_STORE_NAME;
 		TaskStatus status = new TaskStatus(TaskRunState.Undefined, -1, -1, -1, new HashMap<String, String>(), false, "0.0.0.0");
-		try {
-		    colIter = DBService.instance().getAllColumns(storeName, appName + "/" + taskId);
-		} catch (Exception e) {
-		}
+		Iterator<DColumn> colIter =
+		    DBService.instance().getAllColumns(appName, storeName, appName + "/" + taskId);
 		if (colIter == null) {
 			return status;
 		}
@@ -247,32 +234,23 @@ public class TaskDBUtils {
 	
 	/**
 	 * Extracts all the states of the tasks that are registered in the Tasks table
-	 * (hence were once started).
+	 * (hence were once started) for the given application.
 	 * 
 	 * @param appName	Show only the tasks that belong a given application.
-	 * 					If null - shows all tasks.
-	 * @return	Map (taskId -> taskStatus) of the tasks in the Tasks table.
+	 * @return	        Map (taskId -> taskStatus) of the tasks in the Tasks table.
 	 */
 	public static Set<TaskId> getLiveTasks(String appName) {
+	    assert appName != null;
 		Set<TaskId> tasksSet = new HashSet<>();
-		String tasksStore = StoreTemplate.TASKS_STORE_NAME;
-    	Iterator<DRow> rowIter = DBService.instance().getAllRowsAllColumns(tasksStore);
+		String tasksStore = DBService.TASKS_STORE_NAME;
+    	Iterator<DRow> rowIter = DBService.instance().getAllRowsAllColumns(appName, tasksStore);
     	while (rowIter.hasNext()) {
     	    DRow row = rowIter.next();
     	    String taskName = row.getKey();
-    		if (taskName.startsWith(Defs.TASK_CLAIM_ROW_PREFIX + "/")) {
-    			// There are "task" rows and "claim" rows in the table.
-    			// We are interested in "task" rows only.
-    			continue;
+    		if (taskName.startsWith(appName + "/")) {
+    		    TaskId taskId = TaskId.fromTaskTableId(taskName);
+    		    tasksSet.add(taskId);
     		}
-    		
-    		if (appName != null && !taskName.startsWith(appName + "/")) {
-    			// A task doesn't belong to the needed application
-    			continue;
-    		}
-    		
-    		TaskId taskId = TaskId.fromTaskTableId(taskName);
-    		tasksSet.add(taskId);
     	}
 		return tasksSet;
 	}	// getLiveTasks
@@ -285,9 +263,9 @@ public class TaskDBUtils {
 	 * @param status	Task status
 	 */
 	public static void setTaskStatus(String appName, String taskId, TaskStatus status) {
-		String store = StoreTemplate.TASKS_STORE_NAME;
+        String store = DBService.TASKS_STORE_NAME;
 		String rowKey = appName + "/" + taskId;
-		DBTransaction transaction = DBService.instance().startTransaction();
+		DBTransaction transaction = DBService.instance().startTransaction(appName);
 		transaction.addColumn(store, rowKey, TaskStatus.SCHEDULED_START_COL_NAME, status.getLastRunScheduledStartTime());
 		transaction.addColumn(store, rowKey, TaskStatus.STATUS_COL_NAME, Utils.toBytes(status.getLastRunState().name()));
 		transaction.addColumn(store, rowKey, TaskStatus.ACTUAL_FINISH_COL_NAME, status.getLastRunFinishTime());
@@ -307,7 +285,7 @@ public class TaskDBUtils {
 	 * @return				true if the claim was confirmed
 	 */
 	public static boolean claim(String appName, String taskId, long scheduledAt) {
-		String store = StoreTemplate.TASKS_STORE_NAME;
+		String store = DBService.TASKS_STORE_NAME;
 		String rowKey = Defs.TASK_CLAIM_ROW_PREFIX + "/" + appName + "/" + taskId;
 		String host = TaskManagerService.instance().getLocalHostAddress();
 		String strScheduledAt = Long.toString(scheduledAt) + "/";
@@ -321,8 +299,8 @@ public class TaskDBUtils {
 		
 		// 2. Check whether there were more claims from other nodes
 		DBService dbService = DBService.instance();
-		DBTransaction transaction = dbService.startTransaction();
-		Iterator<DColumn> allColumns = dbService.getAllColumns(store, rowKey);
+		DBTransaction transaction = dbService.startTransaction(appName);
+		Iterator<DColumn> allColumns = dbService.getAllColumns(appName, store, rowKey);
 		if (allColumns != null) {
 			boolean found = false;
 			while (allColumns.hasNext()) {
@@ -345,7 +323,7 @@ public class TaskDBUtils {
 		}
 		
 		// 4. Claim for the execution
-		transaction = dbService.startTransaction();
+		transaction = dbService.startTransaction(appName);
 		transaction.addColumn(store, rowKey, strScheduledAt + host, System.currentTimeMillis());
 		dbService.commit(transaction);
 		
@@ -357,7 +335,7 @@ public class TaskDBUtils {
 		}
 		
 		// 6. Select an earliest claim to see whether we won.
-		Iterator<DColumn> allClaims = dbService.getAllColumns(store, rowKey);
+		Iterator<DColumn> allClaims = dbService.getAllColumns(appName, store, rowKey);
 		String earliestClaim = null;
 		long earliestTime = Long.MAX_VALUE;
 		while (allClaims.hasNext()) {
@@ -479,7 +457,8 @@ public class TaskDBUtils {
 	 * application. The function is called once on TaskManagmentService start.
 	 */
 	public static void checkUnknownTasks() {
-		String tasksStore = StoreTemplate.TASKS_STORE_NAME;
+	    // TODO: Need to rethink this
+/*		String tasksStore = StoreTemplate.TASKS_STORE_NAME;
     	Iterator<DRow> rowIter = DBService.instance().getAllRowsAllColumns(tasksStore);
     	Set<String> unknownApps = new HashSet<String>();
 
@@ -496,14 +475,15 @@ public class TaskDBUtils {
     	for (String appName : unknownApps) {
     		deleteAppTasks(appName);
     	}
-	}
+*/	}
 	
 	/**
 	 * Tests tasks records to find any tasks that were started by this node but
 	 * was never ended. The function is called once on TaskManagmentService start.
 	 */
 	public static void checkHangedTasks() {
-		String host = TaskManagerService.instance().getLocalHostAddress();
+	    // TODO: Need to rethink this
+/*		String host = TaskManagerService.instance().getLocalHostAddress();
 		String tasksStore = StoreTemplate.TASKS_STORE_NAME;
 		// Transaction for changing tasks status
 		DBTransaction transaction = DBService.instance().startTransaction();
@@ -538,73 +518,17 @@ public class TaskDBUtils {
     		}
     	}
 		DBService.instance().commit(transaction);
-	}	// checkHangedTasks
+*/	}	// checkHangedTasks
 	
-	/**
-	 * Prepares a migration from "old" tasks structure to a "new" (services) tasks structure.
-	 * 
-	 * @return	Information about tasks extracted from "old" structures.
-	 */
-	public static Map<String, Map<String, TaskStatus>> getAllOldTasks() {
-		Olap olap = new Olap();
-		Map<String, Map<String, TaskStatus>> map = new HashMap<>();
-		List<ApplicationDefinition> allApps = SchemaService.instance().getAllApplications();
-		for (ApplicationDefinition app : allApps) {
-			String appName = app.getAppName();
-			if ("OLAPService".equals(app.getStorageService())) {
-				OlapTasks olapTasks = olap.getTasks(appName);
-				Map<String, TaskStatus> tasksMap = olapTasks.getTasks();
-				if (!tasksMap.isEmpty()) {
-					for (TaskStatus task : tasksMap.values()) {
-						task.setLastRunScheduledStartTime(task.getLastRunActualStartTime());
-					}
-					map.put(appName, tasksMap);
-				}
-				olapTasks.getTasks().clear();
-				olap.saveTasks(appName, olapTasks);
-			} else if (DBService.instance().storeExists(appName + "_Tasks")) {
-				Iterator<DRow> iRows = DBService.instance().getAllRowsAllColumns(appName + "_Tasks");
-				while (iRows.hasNext()) {
-					DRow row = iRows.next();
-					Map<String, TaskStatus> tasks = map.get(appName);
-					if (tasks == null) {
-						map.put(appName, tasks = new HashMap<String, TaskStatus>());
-					}
-					TaskStatus taskStatus = new TaskStatus();
-					Iterator<DColumn> iColumns = row.getColumns();
-					while (iColumns.hasNext()) {
-						DColumn column = iColumns.next();
-						switch (column.getName()) {
-						case TaskStatus.DEFAULT_DB_STATUS:
-							taskStatus.setLastRunState(TaskRunState.statusFromString(column.getValue()));
-							break;
-						case TaskStatus.DEFAULT_DB_STARTTIME:
-							long time = Utils.toLong(column.getRawValue());
-							taskStatus.setLastRunActualStartTime(time);
-							taskStatus.setLastRunScheduledStartTime(time);
-							break;
-						case TaskStatus.DEFAULT_DB_FINISHTIME:
-							taskStatus.setLastRunFinishTime(Utils.toLong(column.getRawValue()));
-							break;
-						}
-					}
-					tasks.put(row.getKey(), taskStatus);
-				}
-				DBService.instance().deleteStoreIfPresent(appName + "_Tasks");
-			}
-		}
-		return map;
-	}	// getAllOldTasks
-
 	/**
 	 * Deletes information about tasks of a given application.
 	 * 
 	 * @param appName	Application name
 	 */
 	public static void deleteAppTasks(String appName) {
-		DBTransaction transaction = DBService.instance().startTransaction();
-		String tasksStore = StoreTemplate.TASKS_STORE_NAME;
-		Iterator<DRow> rowIter = DBService.instance().getAllRowsAllColumns(tasksStore);
+		DBTransaction transaction = DBService.instance().startTransaction(appName);
+		String tasksStore = DBService.TASKS_STORE_NAME;
+		Iterator<DRow> rowIter = DBService.instance().getAllRowsAllColumns(appName, tasksStore);
 		while (rowIter.hasNext()) {
 			DRow nextRow = rowIter.next();
 			String rowKey = nextRow.getKey();

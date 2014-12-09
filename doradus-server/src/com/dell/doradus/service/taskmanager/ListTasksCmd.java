@@ -30,6 +30,14 @@ import com.dell.doradus.management.TaskStatus;
 import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.schema.SchemaService;
 
+/**
+ * Handle any of the following REST commands:
+ * <pre>
+ *      GET /_tasks/{application}
+ *      GET /_tasks/{application}/{table}
+ *      GET /_tasks/{application}/{table}/{task}
+ * </pre>
+ */
 public class ListTasksCmd extends RESTCallback {
 
 	@Override
@@ -37,15 +45,13 @@ public class ListTasksCmd extends RESTCallback {
 		// Check service availability
 		TaskManagerService tmService = TaskManagerService.instance();
 		if (!tmService.isInitialized()) {
-			return new RESTResponse(
-					HttpCode.SERVICE_UNAVAILABLE, 
-					"Task management service is unavailable. Please try later");
+			return new RESTResponse(HttpCode.SERVICE_UNAVAILABLE, "TaskManager service is not initialized.");
 		}
 		
 		// Process request parameters
 		Map<String, String> variables = m_request.getVariables();
 		String appNamePar = variables.get("application");
-		if (appNamePar == null) appNamePar = "*";
+		assert appNamePar != null;
 		String tableNamePar = variables.get("table");
 		if (tableNamePar == null) tableNamePar = "*";
 		String taskTypePar = variables.get("task");

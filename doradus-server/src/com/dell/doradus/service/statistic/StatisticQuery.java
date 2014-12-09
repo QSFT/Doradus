@@ -84,6 +84,7 @@ public class StatisticQuery
         //      <table name>/<field name>
         String rowKey = m_tableName + StatisticResult.KEYSEPARATOR + m_statName;
     	Iterator<DColumn> iColumns = dbService.getColumnSlice(
+    	        m_appName,
     			statsStoreName, 
     			m_bAverageMetric ? rowKey + StatisticResult.AVERAGESEPARATOR + StatisticResult.SUMKEY : rowKey, 
     			m_startColName, m_endColName);
@@ -96,21 +97,21 @@ public class StatisticQuery
 		
         if(!m_bAverageMetric) {
             if(!statMap.containsKey(StatisticResult.SUMMARY)) {
-            	DColumn summary = dbService.getColumn(
-            			statsStoreName, rowKey, StatisticResult.SUMMARY);
+            	DColumn summary =
+            	    dbService.getColumn(m_appName, statsStoreName, rowKey, StatisticResult.SUMMARY);
             	if(summary != null && summary.getValue() != null)
             		statMap.put(StatisticResult.SUMMARY, summary.getValue());
             }
         } else {
         	String sumKey = rowKey + StatisticResult.AVERAGESEPARATOR + StatisticResult.SUMKEY;
         	String countKey = rowKey + StatisticResult.AVERAGESEPARATOR + StatisticResult.COUNTKEY;
-        	Iterator<DColumn> iSumColumn = dbService.getColumnSlice(statsStoreName, countKey, m_startColName, m_endColName);
+        	Iterator<DColumn> iSumColumn =
+        	    dbService.getColumnSlice(m_appName, statsStoreName, countKey, m_startColName, m_endColName);
             while (iSumColumn.hasNext()) {
             	DColumn nextCol = iSumColumn.next();
-            	if(statMap.containsKey(nextCol.getName())) {
+            	if (statMap.containsKey(nextCol.getName())) {
             		Long counterValue = Long.parseLong(nextCol.getValue());
-            		if(counterValue != 0)
-            		{
+            		if (counterValue != 0) {
             			Long value = Long.parseLong(statMap.remove(nextCol.getName()).toString());
             			Double dValue = (double)value / (double)counterValue;
             			statMap.put(nextCol.getName(), dValue);
@@ -118,14 +119,13 @@ public class StatisticQuery
             	}
             }
 
-            if(!statMap.containsKey(StatisticResult.SUMMARY))
-            {
-            	String sumValue = dbService.getColumn(
-            			statsStoreName, sumKey, StatisticResult.SUMMARY).getValue();
+            if (!statMap.containsKey(StatisticResult.SUMMARY)) {
+            	String sumValue =
+            	    dbService.getColumn(m_appName, statsStoreName, sumKey, StatisticResult.SUMMARY).getValue();
             	if(sumValue != null) {
             		Long value = Long.parseLong(sumValue);
             		Long counterValue = Long.parseLong(
-            				dbService.getColumn(statsStoreName, countKey, 
+            				dbService.getColumn(m_appName, statsStoreName, countKey, 
             						StatisticResult.SUMMARY).getValue());
             		if(counterValue != 0) {
             			Double dValue = (double)value / (double)counterValue;

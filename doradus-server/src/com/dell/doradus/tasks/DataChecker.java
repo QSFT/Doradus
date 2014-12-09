@@ -446,7 +446,7 @@ public class DataChecker extends DoradusTask {
 		BigSet termsRegSet = new BigSet(m_termsRegPath, SET_CARDINALITY);
 		
 		// Process objects table
-		Iterator<DRow> iRows = m_dbService.getAllRowsAllColumns(objectTable);
+		Iterator<DRow> iRows = m_dbService.getAllRowsAllColumns(m_appName, objectTable);
 		while (iRows.hasNext()) {
 			if (isInterrupted()) {
 				return;
@@ -459,7 +459,7 @@ public class DataChecker extends DoradusTask {
 			
 			if (sharded) {
 				String shardDate = m_dbService.getColumn(
-						objectTable, objectID, 
+						m_appName, objectTable, objectID, 
 						tabDef.getShardingField().getName()).getValue();
 				int shardNo = tabDef.computeShardNumber(Utils.dateFromString(shardDate));
 				// shard prefix always exists for sharded tables
@@ -518,7 +518,7 @@ public class DataChecker extends DoradusTask {
 		startTime = elapsedTime("Object table processed time", startTime);
 		
 		// Process terms table
-		Iterator<DRow> itRows = m_dbService.getAllRowsAllColumns(termsTable);
+		Iterator<DRow> itRows = m_dbService.getAllRowsAllColumns(m_appName, termsTable);
 		while (itRows.hasNext()) {
 			if (isInterrupted()) {
 				return;
@@ -542,7 +542,7 @@ public class DataChecker extends DoradusTask {
 				rTabDef = tabDef.getAppDef().getTableDef(rowKey.getFieldDef().getLinkExtent());
 				rLinkDef = rTabDef.getFieldDef(rowKey.getFieldDef().getLinkInverse());
 				if (rLinkDef.isSharded()) {
-					String shardDate = m_dbService.getColumn(objectTable, rowKey.getObjectId(), 
+					String shardDate = m_dbService.getColumn(m_appName, objectTable, rowKey.getObjectId(), 
 							tabDef.getShardingField().getName()).getValue();
 					shardNo = tabDef.computeShardNumber(Utils.dateFromString(shardDate));
 				}
@@ -920,7 +920,7 @@ public class DataChecker extends DoradusTask {
 		}
 		
 		// Object table scanning; only link fields are processed
-		Iterator<DRow> iRows = m_dbService.getAllRowsAllColumns(objectTable);
+		Iterator<DRow> iRows = m_dbService.getAllRowsAllColumns(m_appName, objectTable);
 		while (iRows.hasNext()) {
 			if (isInterrupted()) {
 				return;
@@ -935,7 +935,7 @@ public class DataChecker extends DoradusTask {
 
 			// Calculate shard number for sharded tables
 			if (sharded) {
-				String shardDate = m_dbService.getColumn(objectTable, objectID, tabDef.getShardingField().getName()).getValue();
+				String shardDate = m_dbService.getColumn(m_appName, objectTable, objectID, tabDef.getShardingField().getName()).getValue();
 				int shardNo = tabDef.computeShardNumber(Utils.dateFromString(shardDate));
 				// shard prefix always exists for sharded tables
 				shardPrefix = shardNo + "/";
@@ -958,7 +958,7 @@ public class DataChecker extends DoradusTask {
 		}
 		
 		// Terms table scanning
-		Iterator<DRow> itRows = m_dbService.getAllRowsAllColumns(termsTable);
+		Iterator<DRow> itRows = m_dbService.getAllRowsAllColumns(m_appName, termsTable);
 		while (itRows.hasNext()) {
 			if (isInterrupted()) {
 				return;
@@ -977,7 +977,7 @@ public class DataChecker extends DoradusTask {
 			if (rowKey.getObjectId() != null) {
 				// Sharded links row; calculate additional information
 				if (tabDef.isSharded()) {
-					String shardDate = m_dbService.getColumn(objectTable, rowKey.getObjectId(), tabDef.getShardingField().getName()).getValue();
+					String shardDate = m_dbService.getColumn(m_appName, objectTable, rowKey.getObjectId(), tabDef.getShardingField().getName()).getValue();
 					shardNo = tabDef.computeShardNumber(Utils.dateFromString(shardDate));
 				}
 				rTabDef = tabDef.getAppDef().getTableDef(rowKey.getFieldDef().getLinkExtent());
@@ -1036,8 +1036,10 @@ public class DataChecker extends DoradusTask {
 	 */
 	private int getObjectShardNo(TableDefinition tabDef, String objectID) {
 		if (tabDef.isSharded()) {
-			String shardValue = m_dbService.getColumn(SpiderService.objectsStoreName(tabDef), 
-					objectID, tabDef.getShardingField().getName()).getValue();
+			String shardValue =
+			    m_dbService.getColumn(m_appName, SpiderService.objectsStoreName(tabDef), 
+			                          objectID, tabDef.getShardingField().getName()
+			                         ).getValue();
 			if (shardValue == null) {
 				return 0;
 			} else {
@@ -1062,8 +1064,9 @@ public class DataChecker extends DoradusTask {
 	 * @return
 	 */
 	private boolean checkTerm(TableDefinition tabDef, int shardNo, String objectID, String fieldName, String term) {
-		String value = m_dbService.getColumn(
-				SpiderService.objectsStoreName(tabDef), objectID, fieldName).getValue();
+		String value =
+		    m_dbService.getColumn(m_appName, SpiderService.objectsStoreName(tabDef), objectID, fieldName
+		                         ).getValue();
 		if (value == null) {
 			return false;
 		}
@@ -1083,8 +1086,9 @@ public class DataChecker extends DoradusTask {
 	 * @return
 	 */
 	private boolean checkObjectExists(TableDefinition tabDef, int shardNo, String objectID) {
-		String idValue = m_dbService.getColumn(
-				SpiderService.objectsStoreName(tabDef), objectID, CommonDefs.ID_FIELD).getValue();
+		String idValue =
+		    m_dbService.getColumn(m_appName, SpiderService.objectsStoreName(tabDef), objectID, CommonDefs.ID_FIELD
+		                         ).getValue();
 		if (idValue == null) {
 			return false;
 		}
@@ -1095,7 +1099,7 @@ public class DataChecker extends DoradusTask {
 		String message = "Integrity error improvement: set " + table +
 				"[\'" + rowKey + "\'][\'" + columnName + "\']=\'\';";
 		m_logger.info(message);
-		DBTransaction transaction = m_dbService.startTransaction();
+		DBTransaction transaction = m_dbService.startTransaction(m_appName);
 		transaction.addColumn(table, rowKey, columnName, new byte[0]);
 		m_dbService.commit(transaction);
 	}
@@ -1104,7 +1108,7 @@ public class DataChecker extends DoradusTask {
 		String message = "Integrity error improvement: del " + table +
 				"[\'" + rowKey + "\'][\'" + columnName + "\'];";
 		m_logger.info(message);
-		DBTransaction transaction = m_dbService.startTransaction();
+		DBTransaction transaction = m_dbService.startTransaction(m_appName);
 		transaction.deleteColumn(table, rowKey, columnName);
 		m_dbService.commit(transaction);
 	}
@@ -1129,15 +1133,16 @@ public class DataChecker extends DoradusTask {
 		if (linkTo == null) return false;
 		int shardTo = linkTo.isSharded() ? getObjectShardNo(tabFrom, objectFrom) : 0;
 		if (shardTo == 0) {
-			DColumn column = m_dbService.getColumn(
-					SpiderService.objectsStoreName(tabTo), objectTo,
-					new Link(linkTo, objectFrom).getColumnName());
+			DColumn column = m_dbService.getColumn(m_appName, 
+			                                       SpiderService.objectsStoreName(tabTo),
+			                                       objectTo,
+			                                       new Link(linkTo, objectFrom).getColumnName());
 			return column != null && !Utils.isEmpty(column.getValue());
 		} else {
-			DColumn column = m_dbService.getColumn(
-					SpiderService.termsStoreName(tabTo),
-					shardTo + "/" + new Link(linkTo, objectTo).getColumnName(),
-					objectFrom);
+			DColumn column = m_dbService.getColumn(m_appName,
+			                                       SpiderService.termsStoreName(tabTo),
+			                                       shardTo + "/" + new Link(linkTo, objectTo).getColumnName(),
+			                                       objectFrom);
 			return column != null && !Utils.isEmpty(column.getValue());
 		}
 	}

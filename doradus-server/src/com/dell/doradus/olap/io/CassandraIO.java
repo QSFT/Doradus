@@ -23,16 +23,17 @@ import java.util.List;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
-import com.dell.doradus.service.db.StoreTemplate;
 
 public class CassandraIO implements IO {
-    private static Object g_createCFLock = new Object();
+    private final String m_appName;
     
-	public CassandraIO() { }
+	public CassandraIO(String appName) {
+	    m_appName = appName;
+	}
 
 	@Override
 	public byte[] getValue(String app, String key, String column) {
-		DColumn col = DBService.instance().getColumn(app, key, column);
+		DColumn col = DBService.instance().getColumn(m_appName, app, key, column);
 		if(col == null) return null;
 		return col.getRawValue();
 	}
@@ -40,7 +41,7 @@ public class CassandraIO implements IO {
 	@Override
 	public List<ColumnValue> get(String app, String key, String prefix) {
 		List<ColumnValue> result = new ArrayList<ColumnValue>();
-		Iterator<DColumn> iColumns = DBService.instance().getColumnSlice(app, key, prefix, prefix + "\uFFFF");
+		Iterator<DColumn> iColumns = DBService.instance().getColumnSlice(m_appName, app, key, prefix, prefix + "\uFFFF");
 		for (int i = 0; iColumns.hasNext() && i < 16000; ++i) {
 			DColumn column = iColumns.next();
 			result.add(new ColumnValue(column.getName().substring(prefix.length()), column.getRawValue()));
@@ -50,19 +51,15 @@ public class CassandraIO implements IO {
 
 	@Override
 	public void createCF(String name) {
-	    synchronized (g_createCFLock) {
-	        DBService.instance().createStoreIfAbsent(new StoreTemplate(name, true));
-	    }
 	}
 
 	@Override
 	public void deleteCF(String name) {
-		DBService.instance().deleteStoreIfPresent(name);
 	}
 
 	@Override
 	public void delete(String columnFamily, String key, String columnName) {
-		DBTransaction transaction = DBService.instance().startTransaction();
+		DBTransaction transaction = DBService.instance().startTransaction(m_appName);
 		if (columnName == null) {
 			transaction.deleteRow(columnFamily, key);
 		} else {
@@ -72,7 +69,7 @@ public class CassandraIO implements IO {
 	}
 
 	@Override public void write(String app, String key, List<ColumnValue> values) {
-	    DBTransaction transaction = DBService.instance().startTransaction();
+	    DBTransaction transaction = DBService.instance().startTransaction(m_appName);
 	    for(ColumnValue v : values) {
 	        transaction.addColumn(app, key, v.columnName, v.columnValue);
 	    }

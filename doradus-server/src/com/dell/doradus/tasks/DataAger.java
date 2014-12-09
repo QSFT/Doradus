@@ -16,8 +16,6 @@
 
 package com.dell.doradus.tasks;
 
-//import java.text.ParseException;
-//import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -168,13 +166,13 @@ public class DataAger extends DoradusTask {
         GregorianCalendar expireDate = table.m_retAge.getExpiredDate(checkDate);
         int objsExpired = 0;
 
-       // Define the query '{aging field} <= "{expire date}"', fetching the _ID and
+        // Define the query '{aging field} <= "{expire date}"', fetching the _ID and
         // aging field, up to a batch full at a time.
         TableDefinition tableDef = table.m_tableDef;
         String text = "q=" + table.m_agingFieldDef.getName() + " <= " +
                       "\"" + Utils.formatDate(expireDate) + "\"";
         
-        SpiderTransaction transaction = new SpiderTransaction();
+        SpiderTransaction transaction = new SpiderTransaction(tableDef.getAppDef().getAppName());
         ObjectUpdater updater = new ObjectUpdater(transaction, tableDef);
         for(SearchResult result : SpiderService.instance().objectQueryURI(tableDef, text).results)
         {

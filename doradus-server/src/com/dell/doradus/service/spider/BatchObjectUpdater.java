@@ -46,7 +46,7 @@ import com.dell.doradus.core.ServerConfig;
  */
 public class BatchObjectUpdater {
     // Members:
-    private final SpiderTransaction m_dbTran = new SpiderTransaction();
+    private final SpiderTransaction m_dbTran;
     private final TableDefinition   m_tableDef;
 
     // Logging interface:
@@ -59,6 +59,7 @@ public class BatchObjectUpdater {
      */
     public BatchObjectUpdater(TableDefinition tableDef) {
         m_tableDef = tableDef;
+        m_dbTran = new SpiderTransaction(tableDef.getAppDef().getAppName());
     }   // constructor
     
     /**

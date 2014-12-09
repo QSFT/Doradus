@@ -68,8 +68,8 @@ public class ReIndexFieldData extends FixDataTask {
 		deleteTerms(tabDef, fieldName);
 		
 		// 2. Scan objects and add terms
-		m_dbTran = m_dbService.startTransaction();
-		Iterator<DRow> objRows = m_dbService.getAllRowsAllColumns(objectStore);
+		m_dbTran = m_dbService.startTransaction(m_appName);
+		Iterator<DRow> objRows = m_dbService.getAllRowsAllColumns(m_appName, objectStore);
 		Set<String> fields = new HashSet<>();
 		fields.add(CommonDefs.ID_FIELD);
 		fields.add(fieldName);
@@ -81,7 +81,7 @@ public class ReIndexFieldData extends FixDataTask {
 			for (int count = 0; objRows.hasNext() && count < MAX_MUTATION_COUNT; count ++) {
 				keys.add(objRows.next().getKey());
 			}
-			Iterator<DRow> data = m_dbService.getRowsColumns(objectStore, keys, fields);
+			Iterator<DRow> data = m_dbService.getRowsColumns(m_appName, objectStore, keys, fields);
 			while (data.hasNext()) {
 				DRow dataRow = data.next();
 				String objId = null;

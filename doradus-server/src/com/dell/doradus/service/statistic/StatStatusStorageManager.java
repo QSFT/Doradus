@@ -56,7 +56,7 @@ public class StatStatusStorageManager {
 	 */
 	public static void stamp(String appName, String tabName, String statName) {
 		DBService dbService = DBService.instance();
-		DBTransaction transaction = dbService.startTransaction();
+		DBTransaction transaction = dbService.startTransaction(appName);
 		String storeName = SpiderService.statsStoreName(appName);
 		String rowKey = tabName + "/" + statName + "/" + STAT_ROW_SUFFIX;
 		transaction.addColumn(
@@ -75,7 +75,7 @@ public class StatStatusStorageManager {
 	 */
 	public static void put(String appName, String tabName, String statName, TaskInfo taskInfo) {
 		DBService dbService = DBService.instance();
-		DBTransaction transaction = dbService.startTransaction();
+		DBTransaction transaction = dbService.startTransaction(appName);
 		String storeName = SpiderService.statsStoreName(appName);
 		String rowKey = tabName + "/" + statName + "/" + STAT_ROW_SUFFIX;
 		transaction.addColumn(
@@ -122,9 +122,9 @@ public class StatStatusStorageManager {
 	 */
 	public static TaskInfo get(String appName, String tabName, String statName) {
 		DBService dbService = DBService.instance();
-		Iterator<DColumn> colIterator = dbService.getAllColumns(
-				SpiderService.statsStoreName(appName),
-				tabName + "/" + statName + "/" + STAT_ROW_SUFFIX);
+		Iterator<DColumn> colIterator =
+		    dbService.getAllColumns(appName, SpiderService.statsStoreName(appName),
+		                            tabName + "/" + statName + "/" + STAT_ROW_SUFFIX);
 		if (colIterator == null) return null;
 		TaskInfo taskInfo = new TaskInfo();
 		while (colIterator.hasNext()) {

@@ -28,6 +28,7 @@ import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.Defs;
 import com.dell.doradus.core.DoradusServer;
+import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.StorageService;
 import com.dell.doradus.service.db.DBService;
@@ -50,9 +51,12 @@ public class SchemaService extends Service {
 
     // REST commands supported by the SchemaService:
     private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
+        new RESTCommand("GET    /_tenants                          com.dell.doradus.service.schema.ListTenantsCmd"),
+        new RESTCommand("GET    /_tenants/{tenant}                 com.dell.doradus.service.schema.ListTenantsCmd"),
         new RESTCommand("GET    /_applications                     com.dell.doradus.service.schema.ListApplicationsCmd"),
         new RESTCommand("GET    /_applications/{application}       com.dell.doradus.service.schema.ListApplicationCmd"),
         new RESTCommand("POST   /_applications                     com.dell.doradus.service.schema.DefineApplicationCmd"),
+        new RESTCommand("POST   /_applications?{params}            com.dell.doradus.service.schema.DefineApplicationCmd"),
         new RESTCommand("PUT    /_applications/{application}       com.dell.doradus.service.schema.ModifyApplicationCmd"),
         new RESTCommand("DELETE /_applications/{application}/{key} com.dell.doradus.service.schema.DeleteApplicationCmd"),
     });
@@ -99,6 +103,19 @@ public class SchemaService extends Service {
      * @param appDef    {@link ApplicationDefinition} of application to create or update.
      */
     public void defineApplication(ApplicationDefinition appDef) {
+        defineApplication(appDef, null);
+    }   // defineApplication
+
+    /**
+     * Create the application with the given name. If the given application already
+     * exists, the request is treated as an application update. If the update is
+     * successfully validated, its schema is stored in the database, and the
+     * appropriate storage service is notified to implement required physical database
+     * changes, if any.
+     * 
+     * @param appDef    {@link ApplicationDefinition} of application to create or update.
+     */
+    public void defineApplication(ApplicationDefinition appDef, Map<String, String> options) {
         checkServiceState();
         ApplicationDefinition currAppDef = getApplication(appDef.getAppName());
         if (currAppDef == null) {
@@ -106,12 +123,12 @@ public class SchemaService extends Service {
         } else {
             m_logger.info("Updating application: {}", appDef.getAppName());
         }
+        String keyspace = verifyAppOptions(currAppDef, options);
         StorageService storageService = verifyStorageServiceOption(currAppDef, appDef);
         storageService.validateSchema(appDef);
-        storeApplicationSchema(appDef);
-        storageService.initializeApplication(currAppDef, appDef);
+        initializeApplication(currAppDef, appDef, keyspace);
     }   // defineApplication
-
+    
     /**
      * Return a list of all {@link ApplicationDefinition}s for all applications registered
      * in the database.
@@ -186,8 +203,6 @@ public class SchemaService extends Service {
         m_logger.info("Deleting application: {}", appName);
         StorageService storageService = getStorageService(appDef);
         storageService.deleteApplication(appDef);
-        
-        // Delete the application's schema and properties.
         deleteAppProperties(appDef);
         TaskDBUtils.deleteAppTasks(appDef.getAppName());
     }   // deleteApplication
@@ -208,10 +223,17 @@ public class SchemaService extends Service {
                 appList.add(appDef);
             }
         }
+        m_logger.info("The following applications are defined:");
+        if (appList.size() == 0) {
+            m_logger.info("   <none>");
+        }
         for (ApplicationDefinition appDef : appList) {
+            String appName = appDef.getAppName();
             String ssName = getStorageServiceOption(appDef);
+            m_logger.info("   Application '{}': StorageService={}; keyspace={}",
+                          new Object[]{appName, ssName, DBService.instance().getKeyspaceForApp(appName)});
             if (DoradusServer.instance().findStorageService(ssName) == null) {
-                m_logger.warn("Application '{}' uses storage service '{}' which has not been " +
+                m_logger.warn("   >>>Application '{}' uses storage service '{}' which has not been " +
                               "initialized; application will not be accessible via this server",
                               appDef.getAppName(), ssName);
             }
@@ -231,21 +253,64 @@ public class SchemaService extends Service {
 
     // Delete the given application's schema row from the Applications CF.
     private void deleteAppProperties(ApplicationDefinition appDef) {
-        DBTransaction dbTran = DBService.instance().startTransaction();
+        DBTransaction dbTran = DBService.instance().startTransaction(appDef.getAppName());
         dbTran.deleteAppRow(appDef.getAppName());
         DBService.instance().commit(dbTran);
     }   // deleteApplicationSchema
     
+    // Initialize storage and store the given schema for the given new or updated application.
+    private void initializeApplication(ApplicationDefinition currAppDef, ApplicationDefinition appDef, String keyspace) {
+        initializeApplicationKeyspace(keyspace, appDef);
+        storeApplicationSchema(appDef);
+        getStorageService(appDef).initializeApplication(keyspace, currAppDef, appDef);
+    }   // initializeApplication
+
+    // Initialize keyspace and metadata tables for the given application.
+    private void initializeApplicationKeyspace(String keyspace, ApplicationDefinition appDef) {
+        DBService dbService = DBService.instance();
+        dbService.createKeyspace(keyspace);
+        dbService.createStoreIfAbsent(keyspace, DBService.APPS_STORE_NAME, false);
+        dbService.createStoreIfAbsent(keyspace, DBService.TASKS_STORE_NAME, false); // TODO: Push to TaskManager?
+        dbService.registerApplication(keyspace, appDef.getAppName());
+    }   // initializeApplicationKeyspace
+    
     // Store the application row with schema, version, and format.
     private void storeApplicationSchema(ApplicationDefinition appDef) {
-        DBTransaction dbTran = DBService.instance().startTransaction();
         String appName = appDef.getAppName();
+        DBTransaction dbTran = DBService.instance().startTransaction(appName);
         dbTran.addAppColumn(appName, Defs.COLNAME_APP_SCHEMA, appDef.toDoc().toJSON());
         dbTran.addAppColumn(appName, Defs.COLNAME_APP_SCHEMA_FORMAT, ContentType.APPLICATION_JSON.toString());
         dbTran.addAppColumn(appName, Defs.COLNAME_APP_SCHEMA_VERSION, Integer.toString(CURRENT_SCHEMA_LEVEL));
         DBService.instance().commit(dbTran);
     }   // storeApplicationSchema
     
+    // Verify the given application option map and return the new/default keyspace
+    private String verifyAppOptions(ApplicationDefinition currAppDef, Map<String, String> options) {
+        String keyspace = null;
+        if (options != null) {
+            for (String optName : options.keySet()) {
+                if (optName.equals("tenant")) {
+                    keyspace = options.get(optName);
+                } else {
+                    Utils.require(false, "Unrecognized option: %s", optName);
+                }
+            }
+        }
+        if (keyspace == null) {
+            if (currAppDef == null) {
+                keyspace = ServerConfig.getInstance().keyspace;
+            } else {
+                keyspace = DBService.instance().getKeyspaceForApp(currAppDef.getAppName());
+            }
+        } else if (currAppDef != null) {
+            String currKeyspace = DBService.instance().getKeyspaceForApp(currAppDef.getAppName());
+            Utils.require(currKeyspace.equals(keyspace),
+                          "Application '%s': tenant option cannot be changed. Current='%s', new='%s'",
+                          currAppDef.getAppName(), currKeyspace, keyspace);
+        }
+        return keyspace;
+    }   // verifyAppOptions
+
     // Verify the given application's StorageService option and, if this is a schema
     // change, ensure it hasn't changed.  Return the application's StorageService object.
     private StorageService verifyStorageServiceOption(ApplicationDefinition currAppDef, ApplicationDefinition appDef) {
@@ -282,5 +347,5 @@ public class SchemaService extends Service {
         }
         return appDef;
     }   // loadAppRow
-        
+
 }   // class SchemaService
