@@ -34,7 +34,7 @@ final public class ApplicationDefinition {
     // Application name (case-sensitive):
     private String m_appName;
     
-    // Unique application key:
+    // Optional application key:
     private String m_key;
     
     // Map of options used by this application. Option names are case-sensitive.
@@ -166,9 +166,6 @@ final public class ApplicationDefinition {
             }
         }
         
-        // Ensure "key" was specified.
-        Utils.require(m_key != null, "application definition missing 'key' definition");
-
         // Finalize this application definition, including external link validation.
         finalizeDefinition(externalLinkMap);
     }   // parse(UNode)
@@ -185,9 +182,10 @@ final public class ApplicationDefinition {
     }   // getName
     
     /**
-     * Get this application's unique key.
+     * Get this application's key. If no key has been defined for the application, null is
+     * returned.
      * 
-     * @return This application's unique key.
+     * @return This application's key, if any.
      */
     public String getKey() {
         return m_key;
@@ -302,7 +300,9 @@ final public class ApplicationDefinition {
         UNode appNode = UNode.createMapNode(m_appName, "application");
         
         // Add the application's key.
-        appNode.addValueNode("key", m_key);
+        if (!Utils.isEmpty(m_key)) {
+            appNode.addValueNode("key", m_key);
+        }
         
         // Add options, if any, in a MAP node.
         if (m_optionMap.size() > 0) {

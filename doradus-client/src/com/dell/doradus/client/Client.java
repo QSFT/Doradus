@@ -254,8 +254,6 @@ public class Client implements AutoCloseable {
         Utils.require(appDef != null, "appDef");
         Utils.require(appDef.getAppName() != null && appDef.getAppName().length() > 0,
                       "Application must have a 'name' defined");
-        Utils.require(appDef.getKey() != null && appDef.getKey().length() > 0,
-                      "Application must have a 'key' defined");
         
         try {
             // Serialize as a JSON message and convert to bytes.

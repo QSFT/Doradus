@@ -22,7 +22,6 @@ package com.dell.doradus.service.schema;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.RESTResponse;
-import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.RESTCallback;
 
@@ -36,8 +35,7 @@ public class DeleteApplicationCmd extends RESTCallback {
         if (appDef == null) {
             throw new NotFoundException("Application not found: " + application);
         }
-        Utils.require(appDef.getKey().equals(key), "Application key does not match: " + key);
-        SchemaService.instance().deleteApplication(application);
+        SchemaService.instance().deleteApplication(application, key);
         return new RESTResponse(HttpCode.OK);
     }   // invoke
 

@@ -58,6 +58,7 @@ public class SchemaService extends Service {
         new RESTCommand("POST   /_applications                     com.dell.doradus.service.schema.DefineApplicationCmd"),
         new RESTCommand("POST   /_applications?{params}            com.dell.doradus.service.schema.DefineApplicationCmd"),
         new RESTCommand("PUT    /_applications/{application}       com.dell.doradus.service.schema.ModifyApplicationCmd"),
+        new RESTCommand("DELETE /_applications/{application}       com.dell.doradus.service.schema.DeleteApplicationCmd"),
         new RESTCommand("DELETE /_applications/{application}/{key} com.dell.doradus.service.schema.DeleteApplicationCmd"),
     });
 
@@ -117,12 +118,7 @@ public class SchemaService extends Service {
      */
     public void defineApplication(ApplicationDefinition appDef, Map<String, String> options) {
         checkServiceState();
-        ApplicationDefinition currAppDef = getApplication(appDef.getAppName());
-        if (currAppDef == null) {
-            m_logger.info("Defining application: {}", appDef.getAppName());
-        } else {
-            m_logger.info("Updating application: {}", appDef.getAppName());
-        }
+        ApplicationDefinition currAppDef = verifyExistingApplication(appDef);
         String keyspace = verifyAppOptions(currAppDef, options);
         StorageService storageService = verifyStorageServiceOption(currAppDef, appDef);
         storageService.validateSchema(appDef);
@@ -188,7 +184,8 @@ public class SchemaService extends Service {
 
     /**
      * Delete the given application, including all of its data. If the given application
-     * doesn't exist, the call is a no-op.
+     * doesn't exist, the call is a no-op. WARNING: This method deletes an application
+     * regardless of wether it has a key defined.
      * 
      * @param appName   Name of application to delete.
      */
@@ -197,6 +194,30 @@ public class SchemaService extends Service {
         ApplicationDefinition appDef = SchemaService.instance().getApplication(appName);
         if (appDef == null) {
             return; 
+        }
+        deleteApplication(appName, appDef.getKey());
+    }   // deleteApplication
+    
+    /**
+     * Delete the given application, including all of its data. If the given application
+     * doesn't exist, the call is a no-op. The given key must match the application's
+     * key, if one is defined, or be null/empty if no key is defined.
+     * 
+     * @param appName   Name of application to delete.
+     * @param key       Application key of existing application, if any.
+     */
+    public void deleteApplication(String appName, String key) {
+        checkServiceState();
+        ApplicationDefinition appDef = SchemaService.instance().getApplication(appName);
+        if (appDef == null) {
+            return; 
+        }
+        
+        String appKey = appDef.getKey();
+        if (Utils.isEmpty(appKey)) {
+            Utils.require(Utils.isEmpty(key), "Application key does not match: %s", key);
+        } else {
+            Utils.require(appKey.equals(key), "Application key does not match: %s", key);
         }
         
         // Delete storage service-specific data first.
@@ -283,6 +304,20 @@ public class SchemaService extends Service {
         dbTran.addAppColumn(appName, Defs.COLNAME_APP_SCHEMA_VERSION, Integer.toString(CURRENT_SCHEMA_LEVEL));
         DBService.instance().commit(dbTran);
     }   // storeApplicationSchema
+    
+    // Verify key match of an existing application, if any, and return it's definition. 
+    private ApplicationDefinition verifyExistingApplication(ApplicationDefinition appDef) {
+        ApplicationDefinition currAppDef = getApplication(appDef.getAppName());
+        if (currAppDef == null) {
+            m_logger.info("Defining application: {}", appDef.getAppName());
+        } else {
+            m_logger.info("Updating application: {}", appDef.getAppName());
+            String appKey = currAppDef.getKey();
+            Utils.require(Utils.isEmpty(appKey) || appKey.equals(appDef.getKey()),
+                          "Application key cannot be changed: %s", appDef.getKey());
+        }
+        return currAppDef;
+    }   // verifyExistingApplication 
     
     // Verify the given application option map and return the new/default keyspace
     private String verifyAppOptions(ApplicationDefinition currAppDef, Map<String, String> options) {

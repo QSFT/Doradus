@@ -38,10 +38,7 @@ public class ModifyApplicationCmd extends UNodeInCallback {
         ApplicationDefinition newAppDef = new ApplicationDefinition();
         newAppDef.parse(inNode);
         Utils.require(newAppDef.getAppName().equals(currAppDef.getAppName()),
-                  "Application name cannot be changed: %s", application);
-        
-        Utils.require(newAppDef.getKey().equals(currAppDef.getKey()), 
-        	      "Application key cannot be changed: %s", newAppDef.getKey());
+                      "Application name cannot be changed: %s", application);
         
         SchemaService.instance().defineApplication(newAppDef);
         return new RESTResponse(HttpCode.OK);
