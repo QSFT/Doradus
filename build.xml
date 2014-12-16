@@ -142,7 +142,7 @@
 			<url url="http://repo1.maven.org/maven2/com/google/guava/guava/15.0/guava-15.0.jar"/>
 		</get>
 		<get dest="${server.lib.dir}">
-			<url url="http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/2.0.2/cassandra-driver-core-2.0.2.jar"/>
+			<url url="http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/2.1.2/cassandra-driver-core-2.1.2.jar"/>
 		</get>
 		<get dest="${server.lib.dir}">
 			<url url="http://repo1.maven.org/maven2/net/jpountz/lz4/lz4/1.2.0/lz4-1.2.0.jar"/>
