@@ -96,6 +96,7 @@ public class CQLService extends DBService {
     @Override
     protected void initService() {
         ServerConfig config = ServerConfig.getInstance();
+        m_logger.info("Using CQL API");
         m_logger.debug("Cassandra host list: {}", Arrays.toString(config.dbhost.split(",")));
         m_logger.debug("Cassandra port: {}", config.dbport);
         m_logger.debug("Default application keyspace: {}", config.keyspace);
@@ -370,36 +371,6 @@ public class CQLService extends DBService {
                                                endCol));
     }   // getRowsColumnSlice
 
-/*    @Override
-    public Iterator<DRow> getRowsColumnSlice(String             appName,
-                                             String             storeName,
-                                             Collection<String> rowKeys,
-                                             String             startCol,
-                                             String             endCol,
-                                             boolean            reversed) {
-        checkState();
-        String keyspace = getKeyspaceForApp(appName);
-        String tableName = storeToCQLName(storeName);
-        ResultSet rs = null;
-        if (reversed) {
-            // Swap start/end columns for CQL reversed queries
-            rs = executeQuery(Query.SELECT_ROW_SET_COLUMN_RANGE_DESC,
-                              keyspace,
-                              tableName,
-                              new ArrayList<String>(rowKeys),
-                              endCol,
-                              startCol);
-        } else {
-            rs = executeQuery(Query.SELECT_ROW_SET_COLUMN_RANGE,
-                              keyspace,
-                              tableName,
-                              new ArrayList<String>(rowKeys),
-                              startCol,
-                              endCol);
-        }
-        return new CQLRowIterator(rs);
-    }   // getRowsColumnSlice
-*/
     //----- Public methods: Task queries
     
     public Iterator<DRow> getAllTaskRows(String keyspace) {

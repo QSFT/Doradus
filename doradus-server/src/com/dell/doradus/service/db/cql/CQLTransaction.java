@@ -26,17 +26,18 @@ import java.util.Map;
 import com.datastax.driver.core.BatchStatement;
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.ResultSetFuture;
+import com.datastax.driver.core.Session;
 import com.datastax.driver.core.BatchStatement.Type;
+import com.dell.doradus.common.Utils;
+import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.cql.CQLStatementCache.Update;
 
 /**
  * Concrete DBTransaction for use with the Cassandra CQL API. Updates are stored in
- * separate maps for column adds/updates and row/column deletions. No timestamp is
- * maintained since CQL chooses the timestamp when the batch is applied.
+ * separate maps for column adds/updates and row/column deletions.
  */
 public class CQLTransaction extends DBTransaction {
     // Map of table name -> row key -> CQLColumn list.
@@ -46,8 +47,10 @@ public class CQLTransaction extends DBTransaction {
     // is null or empty, the whole row is to be deleted.
     private final Map<String, Map<String, List<String>>> m_deleteMap = new HashMap<>();
     
-    private final String m_keyspace;
+    private final String  m_keyspace;
+    private final Session m_session;
     private int m_updates;
+    private long m_timestamp;   // Used for async updates only
 
     /**
      * Start a new CQLTransaction.
@@ -55,7 +58,7 @@ public class CQLTransaction extends DBTransaction {
     public CQLTransaction(String appName) {
         // Ensure session is possible with app' keyspace.
         m_keyspace = CQLService.instance().getKeyspaceForApp(appName);
-        CQLService.instance().getSession(m_keyspace);
+        m_session = CQLService.instance().getSession(m_keyspace);
     }
 
     //----- General methods
@@ -181,7 +184,11 @@ public class CQLTransaction extends DBTransaction {
      */
     public void commit() {
         try {
+            m_timestamp = Utils.getTimeMicros();
             applyUpdates();
+        } catch (Exception e) {
+            m_logger.error("Updates failed", e);
+            throw e;
         } finally {
             clear();
         }
@@ -218,15 +225,116 @@ public class CQLTransaction extends DBTransaction {
     private void applyUpdates() {
         if (getUpdateCount() == 0) {
             m_logger.debug("Skipping commit with no updates");
-            return;
+        } else if (ServerConfig.getInstance().async_updates) {
+            executeUpdatesAsynchronous();
+        } else {
+            executeUpdatesSynchronous();
         }
+    }   // applyUpdates
 
-        // Allow CQL to assign the batch timestamp.
+    ///// Methods for asynchronous updates
+    
+     // Execute all updates asynchronously and wait for results.
+    private void executeUpdatesAsynchronous() {
+        List<ResultSetFuture> futureList = new ArrayList<>(1000);
+        executeTableUpdatesAsynchronously(futureList);
+        executeTableDeletesAsynchronously(futureList);
+        m_logger.debug("Waiting for {} asynchronous futures", futureList.size());
+        for (ResultSetFuture future : futureList) {
+            future.getUninterruptibly();
+        }
+    }   // executeUpdatesAsynchronous
+
+    // Execute all table updates asynchronously and add futures to the given list.
+    private void executeTableUpdatesAsynchronously(List<ResultSetFuture> futureList) {
+        for (String tableName : m_updateMap.keySet()) {
+            executeTableUpdatesAsynchronous(tableName, futureList);
+        }
+    }   // executeTableUpdatesAsynchronously
+    
+    // Execute updates for the given table asynchronously and add futures to the given list.
+    private void executeTableUpdatesAsynchronous(String tableName, List<ResultSetFuture> futureList) {
+        boolean bBinary = CQLService.instance().columnValueIsBinary(m_keyspace, tableName);
+        PreparedStatement prepState =
+            CQLService.instance().getPreparedUpdate(m_keyspace, Update.INSERT_ROW_TS, tableName);
+        Map<String, List<CQLColumn>> rowMap = m_updateMap.get(tableName);
+        for (String key : rowMap.keySet()) {
+            // All columns for the same row key are added to a single batch.
+            BatchStatement batchState = new BatchStatement(Type.UNLOGGED);
+            for (CQLColumn column : rowMap.get(key)) {
+                BoundStatement boundState = prepState.bind();
+                boundState.setString(0, key);
+                boundState.setString(1, column.getName());
+                if (bBinary) {
+                    boundState.setBytes(2, ByteBuffer.wrap(column.getRawValue()));
+                } else {
+                    boundState.setString(2, column.getValue());
+                }
+                boundState.setLong(3, m_timestamp);
+                batchState.add(boundState);
+            }
+            futureList.add(m_session.executeAsync(batchState));
+        }
+    }   // executeTableUpdatesAsynchronous
+
+    // Execute all table deletes asynchronously and add futures to the given list.
+    private void executeTableDeletesAsynchronously(List<ResultSetFuture> futureList) {
+        for (String tableName : m_deleteMap.keySet()) {
+            executeTableDeleteAsynchronous(tableName, futureList);
+        }
+    }   // executeTableDeletesAsynchronously
+    
+    // Execute deletes for the given table asynchronously and add futures to the given list.
+    private void executeTableDeleteAsynchronous(String tableName, List<ResultSetFuture> futureList) {
+        Map<String, List<String>> rowKeyMap = m_deleteMap.get(tableName);
+        PreparedStatement deleteColPrepState = CQLService.instance().getPreparedUpdate(m_keyspace, Update.DELETE_COLUMN_TS, tableName);
+        PreparedStatement deleteRowPrepState = CQLService.instance().getPreparedUpdate(m_keyspace, Update.DELETE_ROW_TS, tableName);
+        for (String key : rowKeyMap.keySet()) {
+            List<String> colList = rowKeyMap.get(key);
+            if (colList != null && colList.size() > 0) {
+                executeTableDeleteColumnsAsynchronous(key, colList, deleteColPrepState, futureList);
+            } else {
+                executeTableRowDeleteAsynchronously(key, deleteRowPrepState, futureList);
+            }
+        }
+    }   // executeTableDeleteAsynchronous
+    
+    // Delete all columns for the given row in an asynchronous batch update and add
+    // a future to the given list.
+    private void executeTableDeleteColumnsAsynchronous(String                key,
+                                                       List<String>          colList,
+                                                       PreparedStatement     deleteColPrepState,
+                                                       List<ResultSetFuture> futureList) {
+        BatchStatement batchState = new BatchStatement(Type.UNLOGGED);
+        for (String colName : colList) {
+            BoundStatement boundState = deleteColPrepState.bind();
+            boundState.setLong(0, m_timestamp);
+            boundState.setString(1, key);
+            boundState.setString(2, colName);
+            batchState.add(boundState);
+        }
+        futureList.add(m_session.executeAsync(batchState));
+    }   // executeTableDeleteColumnsAsynchronous
+    
+    // Execute a row delete asynchronously and add a future to the given list.
+    private void executeTableRowDeleteAsynchronously(String                key,
+                                                     PreparedStatement     deleteRowPrepState,
+                                                     List<ResultSetFuture> futureList) {
+        BoundStatement boundState = deleteRowPrepState.bind();
+        boundState.setLong(0, m_timestamp);
+        boundState.setString(1, key);
+        futureList.add(m_session.executeAsync(boundState));
+    }   // executeTableRowDeleteAsynchronously
+    
+    ///// Methods for synchronous updates
+
+    // Execute all updates and deletes using synchronous statements.
+    private void executeUpdatesSynchronous() {
         BatchStatement batchState = new BatchStatement(Type.UNLOGGED);
         addUpdates(batchState);
         addDeletes(batchState);
-        executeUpdate(batchState);
-    }   // applyUpdates
+        executeBatch(batchState);
+    }   // executeUpdatesSynchronous
 
     // Add row/column updates in the given transaction to the batch.
     private void addUpdates(BatchStatement batchState) {
@@ -311,14 +419,11 @@ public class CQLTransaction extends DBTransaction {
     }   // addRowDelete
     
     // Execute and given update statement.
-    private ResultSet executeUpdate(Statement state) {
-        m_logger.debug("Executing batch with {} updates", getUpdateCount());
-        try {
-            return CQLService.instance().getSession(m_keyspace).execute(state);
-        } catch (Exception e) {
-            m_logger.error("Batch statement failed", e);
-            throw e;
+    private void executeBatch(BatchStatement batchState) {
+        if (batchState.size() > 0) {
+            m_logger.debug("Executing synchronous batch with {} statements", batchState.size());
+            m_session.execute(batchState);
         }
-    }   // executeUpdate
+    }   // executeBatch
     
 }   // class CQLTransaction

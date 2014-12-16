@@ -67,8 +67,11 @@ public class CQLStatementCache {
      */
     public enum Update {
         INSERT_ROW,
+        INSERT_ROW_TS,
         DELETE_COLUMN,
+        DELETE_COLUMN_TS,
         DELETE_ROW,
+        DELETE_ROW_TS,
     }   // enum Update
     
     /**
@@ -172,17 +175,38 @@ public class CQLStatementCache {
             cql.append(tableName);
             cql.append(" (key,column1,value) VALUES (?, ?, ?);");
             break;
+        case INSERT_ROW_TS:
+            // INSERT INTO "Foo" (key,column1,value) VALUES (<key>, <colname>, <colvalue>) USING TIMESTAMP <timestamp>;
+            // Note timestamp is the last parameter
+            cql.append("INSERT INTO ");
+            cql.append(tableName);
+            cql.append(" (key,column1,value) VALUES (?, ?, ?) USING TIMESTAMP ?;");
+            break;
         case DELETE_COLUMN:
             // DELETE FROM "Foo" WHERE key=<key> AND column1=<column name>;
             cql.append("DELETE FROM ");
             cql.append(tableName);
             cql.append(" WHERE key=? AND column1=?;");
             break;
+        case DELETE_COLUMN_TS:
+            // DELETE FROM "Foo" USING TIMESTAMP <timestamp> WHERE key=<key> AND column1=<column name>;
+            // Note timestamp is the first parameter
+            cql.append("DELETE FROM ");
+            cql.append(tableName);
+            cql.append(" USING TIMESTAMP ? WHERE key=? AND column1=?;");
+            break;
         case DELETE_ROW:
             // DELETE FROM "Foo" WHERE key='key';
             cql.append("DELETE FROM ");
             cql.append(tableName);
             cql.append(" WHERE key=?;");
+            break;
+        case DELETE_ROW_TS:
+            // DELETE FROM "Foo" USING TIMESTAMP <timestamp> WHERE key='key';
+            // Note timestamp is the first parameter
+            cql.append("DELETE FROM ");
+            cql.append(tableName);
+            cql.append(" USING TIMESTAMP ? WHERE key=?;");
             break;
         }
         m_logger.debug("Preparing update statement: {}", cql);

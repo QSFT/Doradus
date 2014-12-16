@@ -266,6 +266,9 @@ public class ServerConfig {
     // Only CQL is now supported
     public boolean use_cql = true;
     
+    // Experimental: use async update statement execution
+    public boolean async_updates = false;
+    
     //
     // search configuration properties
     //

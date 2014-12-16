@@ -22,10 +22,10 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
 
-import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.db.cql.CQLService;
+import com.dell.doradus.service.db.thrift.ThriftService;
 
 /**
  * Provides methods that access the physical database. This is currently Cassandra but
@@ -38,13 +38,13 @@ public abstract class DBService extends Service {
     public static final String TASKS_STORE_NAME = "Tasks";
 
     // Choose service based on doradus.yaml setting
-    private static final DBService INSTANCE = CQLService.instance();
+    private static final DBService INSTANCE =
+        ServerConfig.getInstance().use_cql ? CQLService.instance() : ThriftService.instance();
 
     // Only subclasses can construct an object.
     protected DBService() {
         // Give up to 1 second after start() to allow startService() to succeed
         m_startDelayMillis = 1000;
-        Utils.require(ServerConfig.getInstance().use_cql, "Thrift is no longer supported; use_cql must be true");
     }
     
     /**

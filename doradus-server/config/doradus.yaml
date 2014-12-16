@@ -116,14 +116,22 @@ cf_defaults:
 #
 
 # dbhost: The host name(s) or address(es) of the Cassandra node(s) to connect to. Static IP
-# addresses are preferred over host names. If a comma-separated list of hosts is provided, Doradus
-# will connect to each one in round-robin fashion, allowing load balancing and failover. Default:
-# 'localhost'.
-dbhost: 'localhost'
+# addresses are preferred over host names. If a comma-separated list of hosts is provided, one of
+# the servers must be available before Doradus will initialize. With the Thrift API, only the nodes
+# listed here are used. With the CQL API, all nodes in the cluster are automatically used on a
+# round-robin basis. Default: 'localhost'.
+dbhost: localhost
 
-# dbport: The native (CQL) port of the Cassandra database. It must be the same on all nodes listed
-# in "dbhost". Default: 9042.
-dbport: 9042
+# use_cql: If this is false, the Thrift API is used for communicating with Cassandra. If true the
+# CQL API is used. Note that Thrift and CQL use different port numbers (see dbport below).
+# Default: true
+use_cql: false
+
+# dbport: The port number to use for Cassandra database connections. It must be the same on all
+# nodes listed in "dbhost". For Thrift, the default port normally 9160; for CQL, it is 9042.
+# Default: 9042.
+dbport: 9160
+#dbport: 9042
 
 # jmxport: The JMX port of the Cassandra database. It must be the same on all nodes. Note that JMX
 # can be configured via runtime options to require authentication and/or TLS/SSL. Default: 7199.
