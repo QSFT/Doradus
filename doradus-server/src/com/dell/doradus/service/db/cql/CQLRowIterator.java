@@ -74,9 +74,9 @@ public class CQLRowIterator implements Iterator<DRow> {
         String key = m_nextRow.getString("key");
         do {
             if (m_bValueIsBinary) {
-                columnList.add(new CQLColumn(m_nextRow.getString("column1"), m_nextRow.getBytes("value")));
+                columnList.add(new DColumn(m_nextRow.getString("column1"), m_nextRow.getBytes("value")));
             } else {
-                columnList.add(new CQLColumn(m_nextRow.getString("column1"), m_nextRow.getString("value")));
+                columnList.add(new DColumn(m_nextRow.getString("column1"), m_nextRow.getString("value")));
             }
             m_nextRow = m_rs.one();
         } while (m_nextRow != null && m_nextRow.getString("key").equals(key));

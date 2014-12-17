@@ -33,6 +33,7 @@ import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
+import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.cql.CQLStatementCache.Update;
 
 /**
@@ -41,7 +42,7 @@ import com.dell.doradus.service.db.cql.CQLStatementCache.Update;
  */
 public class CQLTransaction extends DBTransaction {
     // Map of table name -> row key -> CQLColumn list.
-    private final Map<String, Map<String, List<CQLColumn>>> m_updateMap = new HashMap<>();
+    private final Map<String, Map<String, List<DColumn>>> m_updateMap = new HashMap<>();
     
     // Map of table name -> row key -> list of column names. If a row's column name list
     // is null or empty, the whole row is to be deleted.
@@ -99,8 +100,8 @@ public class CQLTransaction extends DBTransaction {
     @Override
     public void addColumn(String storeName, String rowKey, String colName, String colValue) {
         String tableName = CQLService.storeToCQLName(storeName);
-        List<CQLColumn> colList = getUpdateColList(tableName, rowKey);
-        colList.add(new CQLColumn(colName, colValue));
+        List<DColumn> colList = getUpdateColList(tableName, rowKey);
+        colList.add(new DColumn(colName, colValue));
         m_updates++;
     }
     
@@ -108,8 +109,8 @@ public class CQLTransaction extends DBTransaction {
     @Override
     public void addColumn(String storeName, String rowKey, String colName, byte[] colValue) {
         String tableName = CQLService.storeToCQLName(storeName);
-        List<CQLColumn> colList = getUpdateColList(tableName, rowKey);
-        colList.add(new CQLColumn(colName, colValue));
+        List<DColumn> colList = getUpdateColList(tableName, rowKey);
+        colList.add(new DColumn(colName, colValue));
         m_updates++;
     }
 
@@ -197,13 +198,13 @@ public class CQLTransaction extends DBTransaction {
     //----- Private methods
     
     // Get the column list for the given table/row, adding the outer maps if needed.
-    private List<CQLColumn> getUpdateColList(String tableName, String rowKey) {
-        Map<String, List<CQLColumn>> rowMap = m_updateMap.get(tableName);
+    private List<DColumn> getUpdateColList(String tableName, String rowKey) {
+        Map<String, List<DColumn>> rowMap = m_updateMap.get(tableName);
         if (rowMap == null) {
             rowMap = new HashMap<>();
             m_updateMap.put(tableName, rowMap);
         }
-        List<CQLColumn> colList = rowMap.get(rowKey);
+        List<DColumn> colList = rowMap.get(rowKey);
         if (colList == null) {
             colList = new ArrayList<>(1000);
             rowMap.put(rowKey, colList);
@@ -257,11 +258,11 @@ public class CQLTransaction extends DBTransaction {
         boolean bBinary = CQLService.instance().columnValueIsBinary(m_keyspace, tableName);
         PreparedStatement prepState =
             CQLService.instance().getPreparedUpdate(m_keyspace, Update.INSERT_ROW_TS, tableName);
-        Map<String, List<CQLColumn>> rowMap = m_updateMap.get(tableName);
+        Map<String, List<DColumn>> rowMap = m_updateMap.get(tableName);
         for (String key : rowMap.keySet()) {
             // All columns for the same row key are added to a single batch.
             BatchStatement batchState = new BatchStatement(Type.UNLOGGED);
-            for (CQLColumn column : rowMap.get(key)) {
+            for (DColumn column : rowMap.get(key)) {
                 BoundStatement boundState = prepState.bind();
                 boundState.setString(0, key);
                 boundState.setString(1, column.getName());
@@ -348,10 +349,10 @@ public class CQLTransaction extends DBTransaction {
         boolean valueIsBinary = CQLService.instance().columnValueIsBinary(m_keyspace, tableName);
         PreparedStatement prepState =
             CQLService.instance().getPreparedUpdate(m_keyspace, Update.INSERT_ROW, tableName);
-        Map<String, List<CQLColumn>> rowMap = m_updateMap.get(tableName);
+        Map<String, List<DColumn>> rowMap = m_updateMap.get(tableName);
         for (String key : rowMap.keySet()) {
-            List<CQLColumn> colList = rowMap.get(key);
-            for (CQLColumn column : colList) {
+            List<DColumn> colList = rowMap.get(key);
+            for (DColumn column : colList) {
                 batchState.add(addColumnUpdate(prepState, valueIsBinary, key, column));
             }
         }
@@ -361,7 +362,7 @@ public class CQLTransaction extends DBTransaction {
     private BoundStatement addColumnUpdate(PreparedStatement prepState,
                                            boolean           valueIsBinary,
                                            String            key,
-                                           CQLColumn         column) {
+                                           DColumn           column) {
         BoundStatement boundState = prepState.bind();
         boundState.setString(0, key);
         boundState.setString(1, column.getName());

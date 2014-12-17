@@ -727,7 +727,7 @@ public class DBConn implements AutoCloseable {
     	    return null;
     	}
     	Column col = cosc.getColumn();
-        return new CassandraColumn(col.getName(), col.getValue());
+        return new DColumn(col.getName(), col.getValue());
     }   // fetchColumn
 
     // Fetch all columns of the rows with the given keys from the given ColumnFamily.

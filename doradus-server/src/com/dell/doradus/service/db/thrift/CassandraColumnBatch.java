@@ -124,7 +124,7 @@ public class CassandraColumnBatch implements Iterator<DColumn> {
             ColumnOrSuperColumn cosc = m_iColumns.next();
             m_sliceSize++;
             Column column = cosc.getColumn();
-            m_next = new CassandraColumn(column.getName(), column.getValue());
+            m_next = new DColumn(column.getName(), column.getValue());
         } else if (m_sliceSize < CassandraDefs.MAX_COLS_BATCH_SIZE) {
             // All columns were read; no sense to try to get more columns
             m_next = null;
@@ -144,7 +144,7 @@ public class CassandraColumnBatch implements Iterator<DColumn> {
             ColumnOrSuperColumn cosc = m_iColumns.next();
             m_sliceSize++;
             Column column = cosc.getColumn();
-            m_next = new CassandraColumn(column.getName(), column.getValue());
+            m_next = new DColumn(column.getName(), column.getValue());
             // Most probably we've got a column already read...
             // Shift from this column to the next one.
             if (lastName.equals(m_next.getName())) {

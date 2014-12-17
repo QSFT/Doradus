@@ -69,11 +69,11 @@ public class CQLColumnIterator implements Iterator<DColumn> {
     @Override
     public DColumn next() {
         Utils.require(m_nextRow != null, "No more columns to return"); 
-        CQLColumn cqlCol = null;
+        DColumn cqlCol = null;
         if (m_bValueIsBinary) {
-            cqlCol = new CQLColumn(m_nextRow.getString("column1"), m_nextRow.getBytes("value"));
+            cqlCol = new DColumn(m_nextRow.getString("column1"), m_nextRow.getBytes("value"));
         } else {
-            cqlCol = new CQLColumn(m_nextRow.getString("column1"), m_nextRow.getString("value"));
+            cqlCol = new DColumn(m_nextRow.getString("column1"), m_nextRow.getString("value"));
         }
         m_nextRow = m_rs.one();
         if (m_nextRow != null && !m_key.equals(m_nextRow.getString("key"))) {
