@@ -19,55 +19,37 @@ package com.dell.doradus.olap.io;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dell.doradus.core.ServerConfig;
-import com.dell.doradus.search.util.LRUSizeCache;
-
 public class StorageHelper {
-    private LRUSizeCache<String, byte[]> m_chunkCache;
+	private FileCache m_fileCache;
     private IO m_io;
 
     public StorageHelper(IO io) {
     	m_io = io;
-		int cacheSize = ServerConfig.getInstance().olap_file_cache_size_mb;  
-		if(cacheSize > 0) {
-			m_chunkCache = new LRUSizeCache<String, byte[]>(cacheSize, cacheSize * 1024L * 1024L);
-		}
+    	m_fileCache = new FileCache();
     }
 
-	public void writeFileChunk(String app, String key, String columnName, byte[] value, boolean useCache, boolean uncompressed) {
-		if(!uncompressed) {
-			value = Compressor.compress(value);
-		}
+	public void writeFileChunk(String app, String key, String columnName, byte[] value) {
 		write(app, key, columnName, value);
-		if(useCache && m_chunkCache != null) {
-			String cacheKey = app + "/" + key + "/" + columnName;
-			m_chunkCache.put(cacheKey, value, value.length + 2 * cacheKey.length() + 16);
+		m_fileCache.put(app, key, columnName, value);
+	}
+	
+	public void writeFileChunks(String app, String key, List<ColumnValue> columns) {
+		write(app, key, columns);
+		for(ColumnValue cv: columns) {
+			m_fileCache.put(app, key, cv.columnName, cv.columnValue);
 		}
 	}
-
-	public byte[] readFileChunk(String app, String key, String columnName, boolean useCache, boolean uncompressed) {
-		if(useCache && m_chunkCache != null) {
-			byte[] cached = m_chunkCache.get(app + "/" + key + "/" + columnName);
-			if(cached != null) {
-				if(!uncompressed) {
-					cached = Compressor.uncompress(cached);
-				}
-				return cached;
-			}
-		}
-		byte[] value = getValue(app, key, columnName);
-		if(value == null) throw new FileDeletedException();
-		if(useCache && m_chunkCache != null) {
-			String k = app + "/" + key + "/" + columnName;
-			m_chunkCache.put(k, value, value.length + 2 * k.length() + 16);
-		}
-		if(!uncompressed) {
-			value = Compressor.uncompress(value);
+	
+	public byte[] readFileChunk(String app, String key, String columnName) {
+		byte[] value = m_fileCache.get(app, key, columnName);
+		if(value == null) {
+			value = getValue(app, key, columnName);
+			if(value == null) throw new FileDeletedException();
+			m_fileCache.put(app, key, columnName, value);
 		}
 		return value;
 	}
 	
-
 	public void write(String app, String key, String columnName, byte[] value) {
 		ColumnValue v = new ColumnValue(columnName);
 		v.columnValue = value;
@@ -76,19 +58,18 @@ public class StorageHelper {
 		write(app, key, list);
 	}
 	
+	public void createCF(String name) { m_io.createCF(name); } 
+	public void deleteCF(String name) { m_io.deleteCF(name); }
+	
 	public void delete(String app, String key) {
 		delete(app, key, null);
 	}
-
 	public byte[] getValue(String app, String key, String column) { 
 		return m_io.getValue(app, key, column);
 	}
 	public List<ColumnValue> get(String app, String key, String prefix) {
 		return m_io.get(app, key, prefix);
 	}
-	public void createCF(String name) { m_io.createCF(name); } 
-	public void deleteCF(String name) { m_io.deleteCF(name); }
-	
 	protected void write(String app, String key, List<ColumnValue> values) {
 		m_io.write(app, key, values);
 	}

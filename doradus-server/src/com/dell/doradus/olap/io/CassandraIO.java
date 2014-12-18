@@ -42,7 +42,7 @@ public class CassandraIO implements IO {
 	public List<ColumnValue> get(String app, String key, String prefix) {
 		List<ColumnValue> result = new ArrayList<ColumnValue>();
 		Iterator<DColumn> iColumns = DBService.instance().getColumnSlice(m_appName, app, key, prefix, prefix + "\uFFFF");
-		for (int i = 0; iColumns.hasNext() && i < 16000; ++i) {
+		while (iColumns.hasNext()) {
 			DColumn column = iColumns.next();
 			result.add(new ColumnValue(column.getName().substring(prefix.length()), column.getRawValue()));
 		}

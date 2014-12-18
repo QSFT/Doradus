@@ -128,12 +128,13 @@ public class SegmentStats {
 	};
 	
 	public void save(VDirectory dir) {
-        dir.writeAllText("stats.xml", toUNode().toString(ContentType.TEXT_XML));
+		dir.putProperty("stats.xml", toUNode().toString(ContentType.TEXT_XML));
 	}
 	
 	public static SegmentStats load(VDirectory dir) {
-		if(!dir.fileExists("stats.xml")) return new SegmentStats();
-        return SegmentStats.fromDoc(UNode.parseXML(dir.readAllText("stats.xml")));
+		String stats = dir.getProperty("stats.xml");
+		if(stats == null) return new SegmentStats();
+        return SegmentStats.fromDoc(UNode.parseXML(stats));
 	}
 
 	public UNode toUNode() {

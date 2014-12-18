@@ -309,27 +309,17 @@ l2r_enable: true
 # These parameters control the operation of the OLAP Service.
 #
 
-# olap_cache_size_mb: size, in megabytes, allowed for cache of most-recently-used fields
-# simultaneously loaded into RAM. If it is exceeded, older fields will be un-loaded from memory.
-# The default is 100
+# olap_cache_size_mb: size, in megabytes, allowed for cache of most-recently-used fields simultaneously
+# loaded into RAM. If it is exceeded, older fields will be un-loaded from memory. Default is 100
 olap_cache_size_mb: 1000
 
-# olap_loaded_segments: number of most-recently-used segment statistics structures cached.
-# Statistics structures are needed to load segment fields; they are small and do not occupy much
-# memory. If this value is zero, the default value is 1 million, which is sufficient even if your
-# application performs many merges.
-# Default is 0, which allows up to 1M segment statistics structures to be loaded.
-olap_loaded_segments: 0
+# olap_query_cache_size_mb: size, in megabytes, of the cached search results. Each cached result
+# takes 1 bit per each document in the table. 0 means no caching. Default is 100.
+olap_query_cache_size_mb: 100
 
 # olap_store_cache_size_mb: size, in megabytes, of the cached raw OLAP data, such as values of text
-# field. It does not affect shards loaded in memory. 0 means they are not cached.
-# Default is 100
+# field. It does not affect shards loaded in memory. 0 means they are not cached (default).
 olap_file_cache_size_mb: 0
-
-# olap_query_cache_size_mb: size, in megabytes, of the cached search results. Each cached result
-# takes 1 bit per each document in the table. 0 means no caching.
-# Default is 100
-olap_query_cache_size_mb: 100
 
 # olap_cf_defaults: Options used to create the OLAP ColumnFamily. This CF is only created when the
 # server is first started for a new database. If these options are changed, an existing OLAP CF is

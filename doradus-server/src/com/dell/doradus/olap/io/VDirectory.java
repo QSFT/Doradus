@@ -18,7 +18,9 @@ package com.dell.doradus.olap.io;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +37,8 @@ public class VDirectory {
 	private String m_storeName;
 	private String m_name;
 	private String m_row;
-
+	private DataCache m_dataCache;
+	private Map<String, FileInfo> filesMap;
 	
 	public VDirectory(String appName, String storeName) {
 		m_parent = null;
@@ -48,6 +51,7 @@ public class VDirectory {
 		m_name = "$root";
 		m_helper.createCF(m_storeName);
 		m_row = "Directory/" + m_name;
+		m_dataCache = new DataCache(m_storeName, m_row, m_helper);
 	}
 	
 	private VDirectory(VDirectory parent, String name) {
@@ -56,6 +60,7 @@ public class VDirectory {
 		m_storeName = parent.m_storeName;
 		m_name = name;
 		m_row = m_parent.m_row + "/" + m_name;
+		m_dataCache = new DataCache(m_storeName, m_row, m_helper);
 	}
 
 	public VDirectory getParent() { return m_parent; }
@@ -115,6 +120,7 @@ public class VDirectory {
 	
 	public void create() {
 		if(m_parent == null) return;
+		m_dataCache.flush();
 		m_helper.write(m_storeName, m_parent.m_row, "Directory/" + m_name, new byte[0]); 
 	}
 	
@@ -143,12 +149,15 @@ public class VDirectory {
 
 	
 	// ************** FILES ************** //
-	
 	public FileInfo getFileInfo(String file) {
-		byte[] val = m_helper.getValue(m_storeName, m_row, "File/" + file);
-		if(val == null) return null;
-		FileInfo info = new FileInfo(file, Utils.toString(val));
-		return info;
+		if(filesMap == null) {
+			filesMap = new HashMap<>();
+			List<FileInfo> allFiles = listFiles();
+			for(FileInfo fi: allFiles) {
+				filesMap.put(fi.getName(), fi);
+			}
+		}
+		return filesMap.get(file);
 	}
 	
 	public long fileLength(String file) {
@@ -176,45 +185,51 @@ public class VDirectory {
 	}
 	
 	public VInputStream open(String name) {
-		return open(name, true);
-	}
-	
-	public VInputStream open(String name, boolean useCache) {
 		FileInfo info = getFileInfo(name);
     	if(info == null) {
     		throw new FileDeletedException("File '" + name + "' does not exist in '" + m_storeName + "/" + m_row + "'");
     	}
-		IBufferReader bufferReader = new BufferReaderRow(m_helper, m_storeName, m_row, info, useCache);
+		IBufferReader bufferReader = new BufferReaderRow(m_helper, m_storeName, m_row, info);
 		VInputStream stream = new VInputStream(bufferReader, info.getLength());
 		return stream;
 	}
 
 	public VOutputStream create(String name) {
-		return create(name, true);
-	}
-	
-	public VOutputStream create(String name, boolean useCache) {
-		IBufferWriter bufferWriter = new BufferWriterRow(m_helper, m_storeName, m_row, name, useCache);
+		IBufferWriter bufferWriter = new BufferWriterRow(m_dataCache, m_helper, m_storeName, m_row, name);
 		VOutputStream stream = new VOutputStream(bufferWriter);
 		return stream;
 	}
 
-	public String readAllText(String file) {
-		VInputStream stream = open(file, false);
-		byte[] b = new byte[(int)stream.length()];
-		stream.read(b, 0, b.length);
-		return Utils.toString(b);
+	public String getProperty(String name) {
+		byte[] buffer = m_helper.getValue(m_storeName, m_row, "Property/" + name);
+		// compatibility: properties were files before;
+		// but if we encountered this then it means that it's already cached
+		if(buffer == null) {
+			FileInfo info = getFileInfo(name);
+			// file does not exist => no property defined
+	    	if(info == null) return null;
+			VInputStream stream = open(name);
+			buffer = new byte[(int)stream.length()];
+			stream.read(buffer, 0, buffer.length);
+		}
+		return Utils.toString(buffer);
 	}
-	
-	public void writeAllText(String file, String text) {
-		VOutputStream stream = create(file, false);
-		byte[] b = Utils.toBytes(text);
-		stream.write(b, 0, b.length);
-		stream.close();
+
+	public void putProperty(String name, String value) {
+		if(value == null) {
+			m_helper.delete(m_storeName, m_row, "Property/" + name);
+		} else {
+			m_helper.write(m_storeName, m_row, "Property/" + name, Utils.toBytes(value));
+		}
 	}
 	
 	public void deleteFile(String name) {
-		m_helper.delete(m_storeName, m_row + "/" + name);		
+		FileInfo fi = getFileInfo(name);
+		if(fi.getSharesRow()) {
+			m_helper.delete(m_storeName, m_row + "/_share", name + "/0");
+		} else {
+			m_helper.delete(m_storeName, m_row + "/" + name);
+		}
 	}
 	
 }

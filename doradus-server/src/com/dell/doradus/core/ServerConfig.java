@@ -257,10 +257,10 @@ public class ServerConfig {
     
     //OLAP
     public Map<String, Object> olap_cf_defaults = new HashMap<>();
-    public int olap_loaded_segments = 30;
+    public int olap_loaded_segments = 8192;
     public boolean olap_internal_compression = true;
     public int olap_cache_size_mb = 100;
-    public int olap_file_cache_size_mb = 100;
+    public int olap_file_cache_size_mb = 0; // turned out to be faster without file cache
     public int olap_query_cache_size_mb = 100;
     
     // Only CQL is now supported

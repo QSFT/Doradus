@@ -6,15 +6,15 @@ public class BufferWriterRow implements IBufferWriter {
 	private StorageHelper m_helper;
 	private String m_app;
 	private String m_row;
-    private boolean m_useCache = true;
+    private DataCache m_dataCache;
     
     private FileInfo m_info;
     
-    public BufferWriterRow(StorageHelper helper, String app, String row, String name, boolean useCache) {
+    public BufferWriterRow(DataCache dataCache, StorageHelper helper, String app, String row, String name) {
+    	m_dataCache = dataCache;
     	m_helper = helper;
     	m_app = app;
     	m_row = row;
-    	m_useCache = useCache;
     	m_info = new FileInfo(name);
     }
     
@@ -29,16 +29,24 @@ public class BufferWriterRow implements IBufferWriter {
     		buf = new byte[length];
     		System.arraycopy(buffer, 0, buf, 0, buf.length);
     	}
+    	if(!m_info.getUncompressed()) {
+			buf = Compressor.compress(buf);
+    	}
+    	
     	if(m_info.getSharesRow()) {
-    		m_helper.writeFileChunk(m_app, m_row + "/_share", m_info.getName() + "/" + bufferNumber, buf, m_useCache, m_info.getUncompressed());
+    		m_dataCache.addData(m_info, buf);
     	} else {
-    		m_helper.writeFileChunk(m_app, m_row + "/" + m_info.getName(), "" + bufferNumber, buf, m_useCache, m_info.getUncompressed());
+    		m_helper.writeFileChunk(m_app, m_row + "/" + m_info.getName(), "" + bufferNumber, buf);
     	}
 	}
 	
     @Override public void close(long length) {
     	m_info.setLength(length);
-    	m_helper.write(m_app, m_row, "File/" + m_info.getName(), Utils.toBytes(m_info.asString()));
+    	if(m_info.getSharesRow()) {
+    		m_dataCache.addInfo(m_info);
+    	} else {
+        	m_helper.write(m_app, m_row, "File/" + m_info.getName(), Utils.toBytes(m_info.asString()));
+    	}
 	}
 
 }

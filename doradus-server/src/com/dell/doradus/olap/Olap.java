@@ -85,8 +85,7 @@ public class Olap {
 	
     private Map<String, VDirectory> m_appRoots = new HashMap<>();
 	private FieldsCache m_fieldsCache = new FieldsCache(ServerConfig.getInstance().olap_cache_size_mb * 1024L * 1024);
-	private LRUCache<String, CubeSearcher> m_cachedSearchers = new LRUCache<>(
-			ServerConfig.getInstance().olap_loaded_segments == 0 ? 8192 : ServerConfig.getInstance().olap_loaded_segments);
+	private LRUCache<String, CubeSearcher> m_cachedSearchers = new LRUCache<>(Math.min(8192, ServerConfig.getInstance().olap_loaded_segments));
 	private Set<String> m_mergedCubes = new HashSet<String>();
 	
 	public Olap() { }
@@ -148,8 +147,7 @@ public class Olap {
 	
 	public String getCubeSegment(String application, String shard) {
 		VDirectory shardDir = getRoot(application).getDirectory(shard);
-		if(!shardDir.fileExists(".cube.txt")) return null;
-		return shardDir.readAllText(".cube.txt");
+		return shardDir.getProperty(".cube.txt");
 	}
 	
 	public SegmentStats getStats(String application, String shard) {
@@ -273,9 +271,9 @@ public class Olap {
 			VDirectory shardDir = getRoot(application).getDirectory(shard);
 			
 			if(options.getExpireDate() != null) {
-				shardDir.writeAllText("expiration.txt", XType.toString(options.getExpireDate()));
+				shardDir.putProperty("expiration.txt", XType.toString(options.getExpireDate()));
 			} else {
-				shardDir.writeAllText("expiration.txt", "");
+				shardDir.putProperty("expiration.txt", "");
 			}
 			
 			List<String> segments = shardDir.listDirectories();
@@ -297,7 +295,7 @@ public class Olap {
 			
 			Merger.mergeApplication(appDef, sources, destination);
 			
-			shardDir.writeAllText(".cube.txt", guid);
+			shardDir.putProperty(".cube.txt", guid);
 			
 			destination.create();
 			
@@ -323,9 +321,8 @@ public class Olap {
 	
 	public Date getExpirationDate(String application, String shard) {
 		VDirectory shardDir = getRoot(application).getDirectory(shard);
-		if(!shardDir.fileExists("expiration.txt")) return null;
-		String expDateStr = shardDir.readAllText("expiration.txt"); 
-		if(expDateStr.length() == 0) return null;
+		String expDateStr = shardDir.getProperty("expiration.txt"); 
+		if(expDateStr == null || expDateStr.length() == 0) return null;
 		else return Utils.dateFromString(expDateStr);
 	}
 	
