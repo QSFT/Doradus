@@ -26,10 +26,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -55,23 +51,15 @@ import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
+import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.db.cql.CQLStatementCache.Query;
 import com.dell.doradus.service.db.cql.CQLStatementCache.Update;
+import com.dell.doradus.service.schema.SchemaService;
 
 /**
  * Implements the DBService interface using the CQL API to communicate with Cassandra.
- * Note on ServerConfig.application_keyspaces: Currently, if this option is false, all
- * applications are accessed from the global keyspace, defined by ServerConfig.keyspace.
- * If application_keyspaces is true, then each application is accessed in its own
- * keyspace where the application name == the keyspace name. Two instances of the server
- * can be run at the same time, each with differing application_keyspaces values, so that
- * a mix of applications can be used in the same cluster.
  */
 public class CQLService extends DBService {
-    // Compare to store names, table names are quoted 
-    private static final String APPS_TABLE_NAME = "\"" + DBService.APPS_STORE_NAME + "\"";
-    private static final String TASKS_TABLE_NAME = "\"" + DBService.TASKS_STORE_NAME + "\"";
-    
     // Singleton instance:
     private static final CQLService INSTANCE = new CQLService();
 
@@ -80,7 +68,6 @@ public class CQLService extends DBService {
 
     // Members:
     private Cluster m_cluster;
-    private final Map<String, String> m_appKeyspaceMap = new HashMap<String, String>();
     private final Map<String, Session> m_ksSessionMap = new HashMap<>();
     private final Map<String, CQLStatementCache> m_ksStatementCacheMap = new HashMap<>();
     
@@ -121,8 +108,8 @@ public class CQLService extends DBService {
     //----- Public DBService methods: Store management
 
     @Override
-    public void createKeyspace(String keyspace) {
-        String cqlKeyspace = storeToCQLName(keyspace);
+    public void createTenant(Tenant tenant) {
+        String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
         KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(cqlKeyspace);
         if (ksMetadata == null) {
             try (Session session = m_cluster.connect()) {   // no-keyspace session
@@ -133,8 +120,8 @@ public class CQLService extends DBService {
     }   // createKeyspace
 
     @Override
-    public void dropKeyspace(String keyspace) {
-        String cqlKeyspace = storeToCQLName(keyspace);
+    public void dropTenant(Tenant tenant) {
+        String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
         synchronized (m_ksSessionMap) {
             Session session = m_ksSessionMap.get(cqlKeyspace);
             if (session != null) {
@@ -150,19 +137,9 @@ public class CQLService extends DBService {
     }   // dropKeyspace
     
     @Override
-    public String getKeyspaceForApp(String appName) {
-        synchronized (m_appKeyspaceMap) {
-            if (!m_appKeyspaceMap.containsKey(appName)) {
-                refreshAppKeyspaceMap();
-            }
-            return m_appKeyspaceMap.get(appName);
-        }
-    }   // getKeyspaceForApp
-    
-    @Override
-    public void createStoreIfAbsent(String keyspace, String storeName, boolean bBinaryValues) {
+    public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
         checkState();
-        String cqlKeyspace = storeToCQLName(keyspace);
+        String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
         String tableName = storeToCQLName(storeName);
         if (!storeExists(cqlKeyspace, tableName)) {
             Session session = getOrCreateKeyspaceSession(cqlKeyspace);
@@ -172,9 +149,9 @@ public class CQLService extends DBService {
     }   // createStoreIfAbsent
     
     @Override
-    public void deleteStoreIfPresent(String keyspace, String storeName) {
+    public void deleteStoreIfPresent(Tenant tenant, String storeName) {
         checkState();
-        String cqlKeyspace = storeToCQLName(keyspace);
+        String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
         String tableName = storeToCQLName(storeName);
         if (storeExists(cqlKeyspace, tableName)) {
             Session session = getOrCreateKeyspaceSession(cqlKeyspace);
@@ -184,29 +161,18 @@ public class CQLService extends DBService {
     }   // deleteStoreIfPresent
 
     @Override
-    public void registerApplication(String keyspace, String appName) {
-        synchronized (m_appKeyspaceMap) {
-            m_appKeyspaceMap.put(appName, storeToCQLName(keyspace));
-        }
-    }   // registerApplication
-
-    @Override
-    public SortedMap<String, SortedSet<String>> getTenantMap() {
+    public Collection<Tenant> getTenants() {
         checkState();
-        refreshAppKeyspaceMap();
-        SortedMap<String, SortedSet<String>> result = new TreeMap<>();
-        synchronized (m_appKeyspaceMap) {
-            for (String appName : m_appKeyspaceMap.keySet()) {
-                String keyspace = m_appKeyspaceMap.get(appName);
-                SortedSet<String> appNameSet = result.get(keyspace);
-                if (appNameSet == null) {
-                    appNameSet = new TreeSet<>();
-                    result.put(keyspace, appNameSet);
+        List<Tenant> tenants = new ArrayList<>();
+        try (Session session = m_cluster.connect()) {
+            List<KeyspaceMetadata> keyspaceList = m_cluster.getMetadata().getKeyspaces();
+            for (KeyspaceMetadata ksMetadata : keyspaceList) {
+                if (ksMetadata.getTable(SchemaService.APPS_STORE_NAME) != null) {
+                    tenants.add(new Tenant(ksMetadata.getName()));
                 }
-                appNameSet.add(appName);
             }
         }
-        return result;
+        return tenants;
     }   // getTenantMap
     
     /**
@@ -225,40 +191,12 @@ public class CQLService extends DBService {
         return colMetadata.getType().equals(DataType.blob());
     }   // columnValueIsBinary
 
-    //----- Public DBService methods: Schema management
-    
-    @Override
-    public Map<String, Map<String, String>> getAllAppProperties() {
-        checkState();
-        refreshAppKeyspaceMap();
-        Map<String, Map<String, String>> result = new HashMap<>();
-        synchronized (m_appKeyspaceMap) {
-            for (String appName : m_appKeyspaceMap.keySet()) {
-                Map<String, String> appProps = getAppProperties(appName);
-                if (appProps != null) { // watch for just-deleted apps
-                    result.put(appName, appProps);
-                }
-            }
-        }
-        return result;
-    }   // getAllAppProperties
-
-    @Override
-    public Map<String, String> getAppProperties(String appName) {
-        checkState();
-        String cqlKeyspace = getKeyspaceForApp(appName);
-        if (cqlKeyspace == null) {
-            return null;
-        }
-        return getAppProperties(cqlKeyspace, appName);
-    }	// getAppProperties
-
     //----- Public DBService methods: Updates
 
     @Override
-    public DBTransaction startTransaction(String appName) {
+    public DBTransaction startTransaction(Tenant tenant) {
         checkState();
-        return new CQLTransaction(appName);
+        return new CQLTransaction(tenant);
     }
 
     @Override
@@ -270,18 +208,18 @@ public class CQLService extends DBService {
     //----- Public DBService methods: Queries
 
     @Override
-    public Iterator<DColumn> getAllColumns(String appName, String storeName, String rowKey) {
+    public Iterator<DColumn> getAllColumns(Tenant tenant, String storeName, String rowKey) {
         checkState();
-        String keyspace = getKeyspaceForApp(appName);
+        String keyspace = tenant.getKeyspace();
         String tableName = storeToCQLName(storeName);
         return new CQLColumnIterator(executeQuery(Query.SELECT_1_ROW_ALL_COLUMNS, keyspace, tableName, rowKey));
     }
 
     @Override
-    public Iterator<DColumn> getColumnSlice(String appName, String storeName, String rowKey,
+    public Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName, String rowKey,
                                             String startCol, String  endCol, boolean reversed) {
         checkState();
-        String keyspace = getKeyspaceForApp(appName);
+        String keyspace = tenant.getKeyspace();
         String tableName = storeToCQLName(storeName);
         ResultSet rs = null;
         if (reversed) {
@@ -294,10 +232,10 @@ public class CQLService extends DBService {
     }
 
     @Override
-    public Iterator<DColumn> getColumnSlice(String appName, String storeName, String rowKey,
+    public Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName, String rowKey,
                                             String startCol, String endCol) {
         checkState();
-        String keyspace = getKeyspaceForApp(appName);
+        String keyspace = tenant.getKeyspace();
         String tableName = storeToCQLName(storeName);
         return new CQLColumnIterator(executeQuery(Query.SELECT_1_ROW_COLUMN_RANGE,
                                                   keyspace,
@@ -308,17 +246,17 @@ public class CQLService extends DBService {
     }
 
     @Override
-    public Iterator<DRow> getAllRowsAllColumns(String appName, String storeName) {
+    public Iterator<DRow> getAllRowsAllColumns(Tenant tenant, String storeName) {
         checkState();
-        String keyspace = getKeyspaceForApp(appName);
+        String keyspace = tenant.getKeyspace();
         String tableName = storeToCQLName(storeName);
         return new CQLRowIterator(executeQuery(Query.SELECT_ALL_ROWS_ALL_COLUMNS, keyspace, tableName));
     }
 
     @Override
-    public DColumn getColumn(String appName, String storeName, String rowKey, String colName) {
+    public DColumn getColumn(Tenant tenant, String storeName, String rowKey, String colName) {
         checkState();
-        String keyspace = getKeyspaceForApp(appName);
+        String keyspace = tenant.getKeyspace();
         String tableName = storeToCQLName(storeName);
         CQLColumnIterator colIter =
             new CQLColumnIterator(executeQuery(Query.SELECT_1_ROW_1_COLUMN, keyspace, tableName, rowKey, colName));
@@ -329,9 +267,9 @@ public class CQLService extends DBService {
     }   // getColumn
 
     @Override
-    public Iterator<DRow> getRowsAllColumns(String appName, String storeName, Collection<String> rowKeys) {
+    public Iterator<DRow> getRowsAllColumns(Tenant tenant, String storeName, Collection<String> rowKeys) {
         checkState();
-        String keyspace = getKeyspaceForApp(appName);
+        String keyspace = tenant.getKeyspace();
         String tableName = storeToCQLName(storeName);
         return new CQLRowIterator(executeQuery(Query.SELECT_ROW_SET_ALL_COLUMNS,
                                                keyspace,
@@ -340,12 +278,12 @@ public class CQLService extends DBService {
     }   // getRowsAllColumns
 
     @Override
-    public Iterator<DRow> getRowsColumns(String             appName,
+    public Iterator<DRow> getRowsColumns(Tenant             tenant,
                                          String             storeName,
                                          Collection<String> rowKeys,
                                          Collection<String> colNames) {
         checkState();
-        String keyspace = getKeyspaceForApp(appName);
+        String keyspace = tenant.getKeyspace();
         String tableName = storeToCQLName(storeName);
         return new CQLRowIterator(executeQuery(Query.SELECT_ROW_SET_COLUMN_SET,
                                                keyspace,
@@ -355,13 +293,13 @@ public class CQLService extends DBService {
     }   // getRowsColumns
 
     @Override
-    public Iterator<DRow> getRowsColumnSlice(String             appName,
+    public Iterator<DRow> getRowsColumnSlice(Tenant             tenant,
                                              String             storeName,
                                              Collection<String> rowKeys,
                                              String             startCol,
                                              String             endCol) {
         checkState();
-        String keyspace = getKeyspaceForApp(appName);
+        String keyspace = tenant.getKeyspace();
         String tableName = storeToCQLName(storeName);
         return new CQLRowIterator(executeQuery(Query.SELECT_ROW_SET_COLUMN_RANGE,
                                                keyspace,
@@ -370,16 +308,6 @@ public class CQLService extends DBService {
                                                startCol,
                                                endCol));
     }   // getRowsColumnSlice
-
-    //----- Public methods: Task queries
-    
-    public Iterator<DRow> getAllTaskRows(String keyspace) {
-        checkState();
-        String cqlKeyspace = storeToCQLName(keyspace);
-        String tableName = storeToCQLName(TASKS_TABLE_NAME);
-        return new CQLRowIterator(executeQuery(Query.SELECT_ALL_ROWS_ALL_COLUMNS, cqlKeyspace, tableName));
-    }   // getAllTaskRow
-
 
     //----- CQLService-specific public methods
 
@@ -443,75 +371,12 @@ public class CQLService extends DBService {
     
     //----- Private methods
 
-    // Rebuild the m_appKeyspaceMap from all current keyspaces/Applications CFs
-    private void refreshAppKeyspaceMap() {
-        List<KeyspaceMetadata> ksMetadataList = m_cluster.getMetadata().getKeyspaces();
-        synchronized (m_appKeyspaceMap) {
-            m_appKeyspaceMap.clear();
-            for (KeyspaceMetadata ksMetadata : ksMetadataList) {
-                String keyspace = storeToCQLName(ksMetadata.getName());
-                TableMetadata tableMeta = ksMetadata.getTable(APPS_TABLE_NAME);
-                if (!keyspace.startsWith("system") && tableMeta != null) {
-                    Map<String, Map<String, String>> allAppProps = getAllAppProperties(keyspace);
-                    for (String appName : allAppProps.keySet()) {
-                        String existingKeyspace = m_appKeyspaceMap.get(appName);
-                        if (existingKeyspace == null) {
-                            m_appKeyspaceMap.put(appName, keyspace);
-                        } else {
-                            m_logger.warn("Application {} found in multiple keyspaces: " +
-                                          "instance in keyspace {} will be used; " +
-                                          "instance in keyspace {} will be ignored.",
-                                          new Object[]{appName, existingKeyspace, keyspace});
-                        }
-                    }
-                }
-            }
-        }
-    }   // refreshAppKeyspaceMap
-
     // Return true if the given table exists in the given keyspace.
     private boolean storeExists(String keyspace, String tableName) {
         KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(keyspace);
         return (ksMetadata != null) && (ksMetadata.getTable(tableName) != null);
     }   // storeExists
 
-    // Get the properties of all applications defined in the Applications CF in the given keyspace.
-    // Return empty map if none found.
-    private Map<String, Map<String, String>> getAllAppProperties(String cqlKeyspace) {
-        Map<String, Map<String, String>> result = new HashMap<>();
-        ResultSet rs = executeQuery(Query.SELECT_ALL_ROWS_ALL_COLUMNS, cqlKeyspace, APPS_TABLE_NAME);
-        CQLRowIterator rowIter = new CQLRowIterator(rs);
-        while (rowIter.hasNext()) {
-            DRow row = rowIter.next();
-            String appName = row.getKey();
-            result.put(appName, getAllRowColumns(row));
-        }
-        return result;
-    }   // getAppProperties
-
-    // Get all properties for the given application defined in the given keyspace.
-    // Return null if not found.
-    private Map<String, String> getAppProperties(String cqlKeyspace, String appName) {
-        ResultSet rs = executeQuery(Query.SELECT_1_ROW_ALL_COLUMNS, cqlKeyspace, APPS_TABLE_NAME, appName);
-        CQLRowIterator rowIter = new CQLRowIterator(rs);
-        if (!rowIter.hasNext()) {
-            return null;
-        }
-        DRow row = rowIter.next();
-        return getAllRowColumns(row);
-    }   // getAppProperties
-    
-    // Get all column values of the given row as name/value string pairs.
-    private Map<String, String> getAllRowColumns(DRow row) {
-        Map<String, String> rowProps = new HashMap<>();
-        Iterator<DColumn> colIter = row.getColumns();
-        while (colIter.hasNext()) {
-            DColumn column = colIter.next();
-            rowProps.put(column.getName(), column.getValue());
-        }
-        return rowProps;
-    }   // getAllRowColumns
-    
     // Execute the given query for the given table using the given values.
     private ResultSet executeQuery(Query query, String cqlKeyspace, String tableName, Object... values) {
         m_logger.debug("Executing statement {} on table {}/{}; total params={}",

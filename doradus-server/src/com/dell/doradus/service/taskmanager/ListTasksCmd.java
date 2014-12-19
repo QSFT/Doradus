@@ -17,7 +17,6 @@
 package com.dell.doradus.service.taskmanager;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import com.dell.doradus.common.ApplicationDefinition;
@@ -61,8 +60,7 @@ public class ListTasksCmd extends RESTCallback {
 		
 		// Peek up task statuses and form the result
 		UNode response = UNode.createMapNode("tasks");
-		List<ApplicationDefinition> applications = SchemaService.instance().getAllApplications();
-		for (ApplicationDefinition appDef : applications) {
+		for (ApplicationDefinition appDef : SchemaService.instance().getAllApplications()) {
 			String appName = appDef.getAppName();
 			Map<String, ScheduleDefinition> schedDefinitions = appDef.getSchedules();
 			for(ScheduleDefinition definition : schedDefinitions.values()) {

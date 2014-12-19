@@ -25,6 +25,7 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.core.Defs;
 import com.dell.doradus.service.db.DRow;
+import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.spider.SpiderService;
 
@@ -50,7 +51,7 @@ public class DeleteScalarFieldData extends FixDataTask {
 		String termsStore = SpiderService.termsStoreName(tabDef);
 		
 		// 1. Deleting data from the object table 
-		Iterator<DRow> iRows = m_dbService.getAllRowsAllColumns(m_appName, objectsStore);
+		Iterator<DRow> iRows = m_dbService.getAllRowsAllColumns(Tenant.getTenant(m_appDef), objectsStore);
 		while (iRows.hasNext()) {
 			for (int count = 0; iRows.hasNext() && count < MAX_MUTATION_COUNT; ++count) {
 				m_dbTran.deleteColumn(objectsStore, iRows.next().getKey(), fieldName);

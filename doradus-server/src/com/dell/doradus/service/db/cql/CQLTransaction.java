@@ -31,9 +31,9 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.BatchStatement.Type;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
-import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
+import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.db.cql.CQLStatementCache.Update;
 
 /**
@@ -56,9 +56,9 @@ public class CQLTransaction extends DBTransaction {
     /**
      * Start a new CQLTransaction.
      */
-    public CQLTransaction(String appName) {
+    public CQLTransaction(Tenant tenant) {
         // Ensure session is possible with app' keyspace.
-        m_keyspace = CQLService.instance().getKeyspaceForApp(appName);
+        m_keyspace = tenant.getKeyspace();
         m_session = CQLService.instance().getSession(m_keyspace);
     }
 
@@ -74,18 +74,6 @@ public class CQLTransaction extends DBTransaction {
     @Override
     public int getUpdateCount() {
         return m_updates;
-    }
-
-    //----- Application schema update methods
-    
-    @Override
-    public void addAppColumn(String appName, String colName, String colValue) {
-        addColumn(DBService.APPS_STORE_NAME, appName, colName, colValue);
-    }   // addAppColumn
-
-    @Override
-    public void deleteAppRow(String appName) {
-        deleteRow(DBService.APPS_STORE_NAME, appName);
     }
 
     //----- Column/row update methods

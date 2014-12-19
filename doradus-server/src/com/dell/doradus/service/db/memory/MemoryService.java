@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TreeMap;
 
 import com.dell.doradus.core.ServerConfig;
@@ -31,6 +30,7 @@ import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
+import com.dell.doradus.service.db.Tenant;
 
 public class MemoryService extends DBService {
 	public static class Row implements DRow {
@@ -88,71 +88,54 @@ public class MemoryService extends DBService {
     @Override public void startService() { }
     @Override public void stopService() { }
 
-    @Override public void createKeyspace(String keyspace) {
+    @Override public void createTenant(Tenant tenant) {
     	synchronized (m_sync) {
+    	    String keyspace = tenant.getKeyspace();
     		if(m_Keyspaces.get(keyspace) != null) return;
     		Keyspace ks = new Keyspace(keyspace);
     		m_Keyspaces.put(keyspace, ks);
 		}
     }
 
-    @Override public void dropKeyspace(String keyspace) {
+    @Override public void dropTenant(Tenant tenant) {
     	synchronized (m_sync) {
+            String keyspace = tenant.getKeyspace();
     		if(m_Keyspaces.get(keyspace) == null) return;
     		m_Keyspaces.remove(keyspace);
 		}
     }
     
-    @Override public String getKeyspaceForApp(String appName) { return "Doradus"; }
-    @Override public void registerApplication(String keyspace, String appName) { }
-    
-    @Override public Map<String, Map<String, String>> getAllAppProperties() {
-    	Map<String, Map<String, String>> properties = new HashMap<>();
-    	synchronized(m_sync) {
-    		Keyspace ks = m_Keyspaces.get("Doradus");
-    		if(ks == null) return properties;
-			Store st = ks.stores.get("Applications");
-			if(st == null) throw new RuntimeException("Store does not exist");
-			for(Row r: st.rows.values()) {
-				properties.put(r.name, getAppProperties(r.name));
-			}
-    	}
-    	return properties;
-    }
-    @Override public Map<String, String> getAppProperties(String appName) {
-    	Map<String, String> properties = new HashMap<>();
-    	Iterator<DColumn> iter = getAllColumns("", "Applications", appName);
-    	while(iter.hasNext()) {
-    		DColumn column = iter.next();
-    		properties.put(column.getName(), column.getValue());
-    	}
-    	return properties;
-    }
-    
-    @Override public SortedMap<String, SortedSet<String>> getTenantMap() { throw new RuntimeException("Not implemented"); }
-    @Override public Iterator<DRow> getAllTaskRows(String keyspace) { throw new RuntimeException("Not implemented"); }
-    
-    @Override public void createStoreIfAbsent(String keyspace, String storeName, boolean bBinaryValues) {
+    @Override public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
     	synchronized (m_sync) {
-    		Keyspace ks = m_Keyspaces.get(keyspace);
+    		Keyspace ks = m_Keyspaces.get(tenant.getKeyspace());
     		if(ks == null) throw new RuntimeException("Keyspace does not exist");
     		Store st = ks.stores.get(storeName);
     		if(st == null) ks.stores.put(storeName, new Store(storeName));
 		}
     }
     
-    @Override public void deleteStoreIfPresent(String keyspace, String storeName) {
+    @Override public void deleteStoreIfPresent(Tenant tenant, String storeName) {
     	synchronized (m_sync) {
-    		Keyspace ks = m_Keyspaces.get(keyspace);
+    		Keyspace ks = m_Keyspaces.get(tenant.getKeyspace());
     		if(ks == null) throw new RuntimeException("Keyspace does not exist");
     		Store st = ks.stores.get(storeName);
     		if(st != null) ks.stores.remove(storeName);
 		}
     }
     
-    @Override public DBTransaction startTransaction(String appName) {
+    @Override public Collection<Tenant> getTenants() {
+        List<Tenant> tenants = new ArrayList<>();
+        synchronized (m_sync) {
+            for (String keyspace : m_Keyspaces.keySet()) {
+                tenants.add(new Tenant(keyspace));
+            }
+        }
+        return tenants;
+    }
+
+    @Override public DBTransaction startTransaction(Tenant tenant) {
     	synchronized (m_sync) {
-    		Keyspace ks = getKeyspace(appName);
+    		Keyspace ks = getKeyspace(tenant);
     		return new MemoryTransaction(ks.name);
 		}
     }
@@ -207,8 +190,8 @@ public class MemoryService extends DBService {
 		}
     }
     
-    private Keyspace getKeyspace(String appName) {
-		String keyspace = getKeyspaceForApp(appName);
+    private Keyspace getKeyspace(Tenant tenant) {
+		String keyspace = tenant.getKeyspace();
 		Keyspace ks = m_Keyspaces.get(keyspace);
 		if(ks == null) {
 			ks = new Keyspace(keyspace);
@@ -217,9 +200,9 @@ public class MemoryService extends DBService {
 		return ks;
     }
     
-    @Override public Iterator<DColumn> getAllColumns(String appName, String storeName, String rowKey) {
+    @Override public Iterator<DColumn> getAllColumns(Tenant tenant, String storeName, String rowKey) {
     	synchronized (m_sync) {
-    		Keyspace ks = getKeyspace(appName);
+    		Keyspace ks = getKeyspace(tenant);
     		Store st = ks.stores.get(storeName);
     		if(st == null) return new ArrayList<DColumn>(0).iterator();
     		Row r = st.rows.get(rowKey);
@@ -232,11 +215,11 @@ public class MemoryService extends DBService {
 		}
     }
 
-    @Override public Iterator<DColumn> getColumnSlice(String appName, String storeName, String rowKey,
+    @Override public Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName, String rowKey,
                                             String startCol, String endCol, boolean reversed) {
     	if(reversed) throw new RuntimeException("Not supported");
     	synchronized (m_sync) {
-    		Keyspace ks = getKeyspace(appName);
+    		Keyspace ks = getKeyspace(tenant);
     		Store st = ks.stores.get(storeName);
     		if(st == null) throw new RuntimeException("Store does not exist");
     		Row r = st.rows.get(rowKey);
@@ -251,14 +234,14 @@ public class MemoryService extends DBService {
 		}
     }
 
-    @Override public Iterator<DColumn> getColumnSlice(String appName, String storeName, String rowKey,
+    @Override public Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName, String rowKey,
                                             String startCol, String endCol) {
-        return getColumnSlice(appName, storeName, rowKey, startCol, endCol, false);
+        return getColumnSlice(tenant, storeName, rowKey, startCol, endCol, false);
     }
 
-    @Override public DColumn getColumn(String appName, String storeName, String rowKey, String colName) {
+    @Override public DColumn getColumn(Tenant tenant, String storeName, String rowKey, String colName) {
     	synchronized (m_sync) {
-    		Keyspace ks = getKeyspace(appName);
+    		Keyspace ks = getKeyspace(tenant);
     		Store st = ks.stores.get(storeName);
     		if(st == null) throw new RuntimeException("Store does not exist");
     		Row r = st.rows.get(rowKey);
@@ -269,9 +252,9 @@ public class MemoryService extends DBService {
 		}
     }
 
-    @Override public Iterator<DRow> getAllRowsAllColumns(String appName, String storeName) {
+    @Override public Iterator<DRow> getAllRowsAllColumns(Tenant tenant, String storeName) {
     	synchronized (m_sync) {
-    		Keyspace ks = getKeyspace(appName);
+    		Keyspace ks = getKeyspace(tenant);
     		Store st = ks.stores.get(storeName);
     		if(st == null) return new ArrayList<DRow>(0).iterator();
     		List<DRow> list = new ArrayList<>();
@@ -282,18 +265,18 @@ public class MemoryService extends DBService {
 		}
     }
     
-    @Override public Iterator<DRow> getRowsAllColumns(String appName, String storeName, Collection<String> rowKeys) {
+    @Override public Iterator<DRow> getRowsAllColumns(Tenant tenant, String storeName, Collection<String> rowKeys) {
     	throw new RuntimeException("Not supported");
     }
 
-    @Override public Iterator<DRow> getRowsColumns(String             appName,
+    @Override public Iterator<DRow> getRowsColumns(Tenant   tenant,
                                          String             storeName,
                                          Collection<String> rowKeys,
                                          Collection<String> colNames) {
     	throw new RuntimeException("Not supported");
     }
     
-    @Override public Iterator<DRow> getRowsColumnSlice(String             appName,
+    @Override public Iterator<DRow> getRowsColumnSlice(Tenant   tenant,
                                              String             storeName,
                                              Collection<String> rowKeys,
                                              String             startCol,

@@ -308,8 +308,10 @@ final public class ApplicationDefinition {
         if (m_optionMap.size() > 0) {
             UNode optsNode = appNode.addMapNode("options");
             for (String optName : m_optionMap.keySet()) {
-                // Set each option's tag name to "option" for XML's sake.
-                optsNode.addValueNode(optName, m_optionMap.get(optName), "option");
+                if (!optName.equals("Tenant")) {    // don't include for now
+                    // Set each option's tag name to "option" for XML's sake.
+                    optsNode.addValueNode(optName, m_optionMap.get(optName), "option");
+                }
             }
         }
         

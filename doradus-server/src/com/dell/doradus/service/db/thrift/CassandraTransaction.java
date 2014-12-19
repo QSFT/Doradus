@@ -36,8 +36,8 @@ import org.apache.cassandra.thrift.SuperColumn;
 import org.slf4j.Logger;
 
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
+import com.dell.doradus.service.db.Tenant;
 
 /**
  * Extends {@link DBTransaction} for Cassandra-specific transactions. Holds a map of column
@@ -66,8 +66,8 @@ public class CassandraTransaction extends DBTransaction {
     /**
      * Create a new transaction with a timestamp of "now".
      */
-    public CassandraTransaction(String appName) {
-        m_keyspace = DBService.instance().getKeyspaceForApp(appName);
+    public CassandraTransaction(Tenant tenant) {
+        m_keyspace = tenant.getKeyspace();
         m_timestamp = Utils.getTimeMicros();
     }   // constructor
 
@@ -103,19 +103,6 @@ public class CassandraTransaction extends DBTransaction {
         return m_keyspace;
     }   // getKeyspace
     
-    //----- DBTransaction: Application schema update methods 
-    
-    @Override
-    public void addAppColumn(String appName, String colName, String colValue) {
-        Mutation mutation = createMutation(Utils.toBytes(colName), Utils.toBytes(colValue), m_timestamp);
-        addMutation(DBConn.COLUMN_FAMILY_APPS, appName, mutation);
-    }   // addAppColumn
-
-    @Override
-    public void deleteAppRow(String appName) {
-        deleteRow(DBConn.COLUMN_FAMILY_APPS, appName);
-    }   // deleteAppRow
-
     //----- DBTransaction: Column/row update methods
 
     @Override

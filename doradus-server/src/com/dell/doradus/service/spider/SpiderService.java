@@ -57,6 +57,7 @@ import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
+import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
@@ -131,11 +132,11 @@ public class SpiderService extends StorageService {
     
     // Create all CFs needed for the given application.
     @Override
-    public void initializeApplication(String keyspace, 
-                                      ApplicationDefinition oldAppDef,
+    public void initializeApplication(ApplicationDefinition oldAppDef,
                                       ApplicationDefinition appDef) {
         checkServiceState();
-        verifyApplicationCFs(keyspace, oldAppDef, appDef);
+        Tenant tenant = Tenant.getTenant(appDef);
+        verifyApplicationCFs(tenant.getKeyspace(), oldAppDef, appDef);
     }   // initializeApplication
     
     // Verify that the given application's options are valid for the Spider service.
@@ -160,7 +161,7 @@ public class SpiderService extends StorageService {
     public DBObject getObject(TableDefinition tableDef, String objID) {
         checkServiceState();
         String storeName = objectsStoreName(tableDef);
-        Iterator<DColumn> colIter = DBService.instance().getAllColumns(tableDef.getAppDef().getAppName(), storeName, objID);
+        Iterator<DColumn> colIter = DBService.instance().getAllColumns(Tenant.getTenant(tableDef), storeName, objID);
         if (colIter == null) {
             return null;
         }
@@ -446,9 +447,9 @@ public class SpiderService extends StorageService {
         checkServiceState();
         Map<String, Map<String, String>> objScalarMap = new HashMap<>();
         if (objIDs.size() > 0 && fieldNames.size() > 0) {
-            String appName = tableDef.getAppDef().getAppName();
             String storeName = objectsStoreName(tableDef);
-            Iterator<DRow> rowIter = DBService.instance().getRowsColumns(appName, storeName, objIDs, fieldNames);
+            Iterator<DRow> rowIter =
+                DBService.instance().getRowsColumns(Tenant.getTenant(tableDef), storeName, objIDs, fieldNames);
             while (rowIter.hasNext()) {
                 DRow row = rowIter.next();
                 Map<String, String> scalarMap = new HashMap<>();
@@ -477,14 +478,13 @@ public class SpiderService extends StorageService {
      */
     public Map<String, String> getObjectScalar(TableDefinition    tableDef,
                                                Collection<String> objIDs,
-                                               String fieldName) {
+                                               String             fieldName) {
         checkServiceState();
         Map<String, String> objScalarMap = new HashMap<>();
         if (objIDs.size() > 0) {
             String storeName = objectsStoreName(tableDef);
-            String appName = tableDef.getAppDef().getAppName();
             Iterator<DRow> rowIter =
-                DBService.instance().getRowsColumns(appName, storeName, objIDs, Arrays.asList(fieldName));
+                DBService.instance().getRowsColumns(Tenant.getTenant(tableDef), storeName, objIDs, Arrays.asList(fieldName));
             while (rowIter.hasNext()) {
                 DRow row = rowIter.next();
                 Iterator<DColumn> colIter = row.getColumns();
@@ -644,13 +644,13 @@ public class SpiderService extends StorageService {
     // actually exist in case a previous delete-app failed.
     private void deleteApplicationCFs(ApplicationDefinition appDef) {
         // Statistics CF:
-        String keyspace = DBService.instance().getKeyspaceForApp(appDef.getAppName());
-        DBService.instance().deleteStoreIfPresent(keyspace, statsStoreName(appDef.getAppName()));
+        Tenant tenant = Tenant.getTenant(appDef);
+        DBService.instance().deleteStoreIfPresent(tenant, statsStoreName(appDef.getAppName()));
         
         // Table-level CFs:
         for (TableDefinition tableDef : appDef.getTableDefinitions().values()) {
-            DBService.instance().deleteStoreIfPresent(keyspace, objectsStoreName(tableDef));
-            DBService.instance().deleteStoreIfPresent(keyspace, termsStoreName(tableDef));
+            DBService.instance().deleteStoreIfPresent(tenant, objectsStoreName(tableDef));
+            DBService.instance().deleteStoreIfPresent(tenant, termsStoreName(tableDef));
         }
     }   // deleteApplicationCFs
     
@@ -666,9 +666,9 @@ public class SpiderService extends StorageService {
         for (Integer shardNumber : shardNums) {
             termRowKeys.add(shardedLinkTermRowKey(linkDef, objID, shardNumber));
         }
-        String appName = linkDef.getTableDef().getAppDef().getAppName();
+        TableDefinition tableDef = linkDef.getTableDef();
         String termStore = termsStoreName(linkDef.getTableDef());
-        Iterator<DRow> rowIter = DBService.instance().getRowsAllColumns(appName, termStore, termRowKeys);
+        Iterator<DRow> rowIter = DBService.instance().getRowsAllColumns(Tenant.getTenant(tableDef), termStore, termRowKeys);
         
         // We only need the column names from each row.
         while (rowIter.hasNext()) {
@@ -726,6 +726,10 @@ public class SpiderService extends StorageService {
                 
             case CommonDefs.OPT_STORAGE_SERVICE:
                 assert optValue.equals(this.getClass().getSimpleName());
+                break;
+                
+            case "Tenant":
+                // Ignore
                 break;
                 
             default:
@@ -869,31 +873,31 @@ public class SpiderService extends StorageService {
                                       ApplicationDefinition oldAppDef,
                                       ApplicationDefinition appDef) {
         // Statistics CF:
-        String appName = appDef.getAppName();
+        Tenant tenant = Tenant.getTenant(appDef);
         DBService dbService = DBService.instance();
-        dbService.createStoreIfAbsent(keyspace, statsStoreName(appDef.getAppName()), true);
+        dbService.createStoreIfAbsent(tenant, statsStoreName(appDef.getAppName()), true);
         
         // Add new table-level CFs:
         for (TableDefinition tableDef : appDef.getTableDefinitions().values()) {
-            dbService.createStoreIfAbsent(keyspace, objectsStoreName(tableDef), true);
-            dbService.createStoreIfAbsent(keyspace, termsStoreName(tableDef), true);
+            dbService.createStoreIfAbsent(tenant, objectsStoreName(tableDef), true);
+            dbService.createStoreIfAbsent(tenant, termsStoreName(tableDef), true);
         }
         
         // Delete obsolete table-level CFs:
         if (oldAppDef != null) {
             for (TableDefinition oldTableDef : oldAppDef.getTableDefinitions().values()) {
                 if (appDef.getTableDef(oldTableDef.getTableName()) == null) {
-                    dbService.deleteStoreIfPresent(keyspace, objectsStoreName(oldTableDef));
-                    dbService.deleteStoreIfPresent(keyspace, termsStoreName(oldTableDef));
+                    dbService.deleteStoreIfPresent(tenant, objectsStoreName(oldTableDef));
+                    dbService.deleteStoreIfPresent(tenant, termsStoreName(oldTableDef));
                 }
             }
         }
         
         // Remove unrelated rows in the statistics table
         Set<String> tableNames = appDef.getTableDefinitions().keySet();
-        DBTransaction transaction = dbService.startTransaction(appName);
+        DBTransaction transaction = dbService.startTransaction(tenant);
         String statsStoreName = statsStoreName(appDef.getAppName());
-        Iterator<DRow> statRows = dbService.getAllRowsAllColumns(appName, statsStoreName);
+        Iterator<DRow> statRows = dbService.getAllRowsAllColumns(tenant, statsStoreName);
         while (statRows.hasNext()) {
         	DRow row = statRows.next();
         	// Row keys has a form of {table}/{statName} or {table}/{statName}/_status

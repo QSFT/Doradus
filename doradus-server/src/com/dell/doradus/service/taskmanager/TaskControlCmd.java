@@ -18,7 +18,6 @@ package com.dell.doradus.service.taskmanager;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.dell.doradus.common.ApplicationDefinition;
@@ -73,8 +72,7 @@ public class TaskControlCmd extends RESTCallback {
 			break;
 		default:
 			boolean taskFound = false;
-			List<ApplicationDefinition> applications = SchemaService.instance().getAllApplications();
-			for (ApplicationDefinition appDef : applications) {
+			for (ApplicationDefinition appDef : SchemaService.instance().getAllApplications()) {
 				String appName = appDef.getAppName();
 				for(ScheduleDefinition definition : appDef.getSchedules().values()) {
 					SchedType taskType = definition.getType();

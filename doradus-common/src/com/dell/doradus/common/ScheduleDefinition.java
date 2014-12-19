@@ -97,36 +97,6 @@ public class ScheduleDefinition {
                 		}
                         Utils.require(schedDef.m_taskDeclaration == null, "'statistic' attribute not valid for " + getName());
                 	}
-                },
-        DATA_CHECKS("data-checks", "com.dell.doradus.tasks.DataChecker",
-        		new String[] {"SpiderService"}) {
-        			@Override
-                	public void validate(ScheduleDefinition schedDef, String serviceName) {
-                		super.validate(schedDef, serviceName);
-                		if (schedDef.m_tableName != null) {
-                			String[] tableNames = schedDef.m_tableName.split(",");
-                			for (String tableName : tableNames) {
-                				TableDefinition tabDef = schedDef.m_appDef.getTableDef(tableName.trim());
-                				Utils.require(tabDef != null, "Table " + schedDef.m_tableName + " not defined for " + getName());
-                			}
-                		}
-                        Utils.require(schedDef.m_taskDeclaration == null, "'statistic' attribute not valid for " + getName());
-                	}
-                },
-        SHARDING_CHECK("sharding-check", "com.dell.doradus.tasks.ShardingChecker",
-        		new String[] {"SpiderService"}) {
-        			@Override
-                	public void validate(ScheduleDefinition schedDef, String serviceName) {
-                		super.validate(schedDef, serviceName);
-                		if (schedDef.m_tableName != null) {
-                			String[] tableNames = schedDef.m_tableName.split(",");
-                			for (String tableName : tableNames) {
-                				TableDefinition tabDef = schedDef.m_appDef.getTableDef(tableName.trim());
-                				Utils.require(tabDef != null, "Table " + schedDef.m_tableName + " not defined for " + getName());
-                			}
-                		}
-                        Utils.require(schedDef.m_taskDeclaration == null, "'statistic' attribute not valid for " + getName());
-                	}
                 };
 
         /**
@@ -152,8 +122,6 @@ public class ScheduleDefinition {
         	List<String> list = new ArrayList<String>();
         	list.add(STAT_REFRESH.getName());
         	list.add(DATA_AGING.getName());
-        	list.add(SHARDING_CHECK.getName());
-        	list.add(DATA_CHECKS.getName());
         	return list;
         }
         
@@ -267,7 +235,6 @@ public class ScheduleDefinition {
      *      app-default/{application name}
      *      table-default/{application name}/{table name}
      *      data-aging/{application name}/{table name}
-     *      data-checks/{application name}/{table name}/{checker name}
      *      stat-refresh/{application name}/{table name}/{statistic name}
      * </pre>
      * Examples:
@@ -275,7 +242,6 @@ public class ScheduleDefinition {
      *      app-default/Magellan
      *      table-default/Magellan/Stars
      *      data-aging/Magellan/Stars
-     *      data-checks/Magellan/Stars/Links
      *      stat-refresh/Magellan/Stars/AverageLuminescence
      * </pre>
      */
@@ -290,9 +256,7 @@ public class ScheduleDefinition {
         // Add additional parameters, if needed.
         switch (m_schedType) {
         case TABLE_DEFAULT:
-        case SHARDING_CHECK:
         case DATA_AGING:
-        case DATA_CHECKS:
             // Add "/{table name}/*" for these.
            	buffer.append("/").append(m_tableName != null ? m_tableName : "*");
             break;
@@ -394,8 +358,6 @@ public class ScheduleDefinition {
         switch (m_schedType) {
         case TABLE_DEFAULT:
         case DATA_AGING:
-        case SHARDING_CHECK:
-        case DATA_CHECKS:
             // These have optional table name.
             if (!Utils.isEmpty(m_tableName)) {
                 schedNode.addValueNode("table", m_tableName, true);

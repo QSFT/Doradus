@@ -35,6 +35,7 @@ import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
+import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.tasks.DoradusTask;
 
@@ -130,12 +131,12 @@ public class TaskDBUtils {
 	 * @return	Map of application names to the set of registered task names.
 	 */
 	public static Map<String, Set<String>> getAllTaskNames() {
-	    Set<String> appNames = DBService.instance().getAllAppProperties().keySet();
 	    Map<String, Set<String>> allTaskNames = new HashMap<>();
-	    for (String appName : appNames) {
+	    for (ApplicationDefinition appDef : SchemaService.instance().getAllApplications()) {
+	        String appName = appDef.getAppName();
 	        Set<String> taskSet = new HashSet<>();
 	        allTaskNames.put(appName, taskSet);
-	        Iterator<DRow> taskRows = DBService.instance().getAllRowsAllColumns(appName, DBService.TASKS_STORE_NAME);
+	        Iterator<DRow> taskRows = DBService.instance().getAllRowsAllColumns(Tenant.getTenant(appDef), SchemaService.TASKS_STORE_NAME);
 	        while (taskRows.hasNext()) {
 	            String rowKey = taskRows.next().getKey();
 	            int slashNdx = rowKey.indexOf('/');
@@ -187,10 +188,11 @@ public class TaskDBUtils {
 	 * @return			Task status (undefined if no status was actually found)
 	 */
 	public static TaskStatus getTaskStatus(String appName, String taskId) {
-		String storeName = DBService.TASKS_STORE_NAME;
+		String storeName = SchemaService.TASKS_STORE_NAME;
 		TaskStatus status = new TaskStatus(TaskRunState.Undefined, -1, -1, -1, new HashMap<String, String>(), false, "0.0.0.0");
+		ApplicationDefinition appDef = SchemaService.instance().getApplication(appName);
 		Iterator<DColumn> colIter =
-		    DBService.instance().getAllColumns(appName, storeName, appName + "/" + taskId);
+		    DBService.instance().getAllColumns(Tenant.getTenant(appDef), storeName, appName + "/" + taskId);
 		if (colIter == null) {
 			return status;
 		}
@@ -241,9 +243,10 @@ public class TaskDBUtils {
 	 */
 	public static Set<TaskId> getLiveTasks(String appName) {
 	    assert appName != null;
+        ApplicationDefinition appDef = SchemaService.instance().getApplication(appName);
 		Set<TaskId> tasksSet = new HashSet<>();
-		String tasksStore = DBService.TASKS_STORE_NAME;
-    	Iterator<DRow> rowIter = DBService.instance().getAllRowsAllColumns(appName, tasksStore);
+		String tasksStore = SchemaService.TASKS_STORE_NAME;
+    	Iterator<DRow> rowIter = DBService.instance().getAllRowsAllColumns(Tenant.getTenant(appDef), tasksStore);
     	while (rowIter.hasNext()) {
     	    DRow row = rowIter.next();
     	    String taskName = row.getKey();
@@ -263,9 +266,10 @@ public class TaskDBUtils {
 	 * @param status	Task status
 	 */
 	public static void setTaskStatus(String appName, String taskId, TaskStatus status) {
-        String store = DBService.TASKS_STORE_NAME;
+        String store = SchemaService.TASKS_STORE_NAME;
 		String rowKey = appName + "/" + taskId;
-		DBTransaction transaction = DBService.instance().startTransaction(appName);
+        ApplicationDefinition appDef = SchemaService.instance().getApplication(appName);
+		DBTransaction transaction = DBService.instance().startTransaction(Tenant.getTenant(appDef));
 		transaction.addColumn(store, rowKey, TaskStatus.SCHEDULED_START_COL_NAME, status.getLastRunScheduledStartTime());
 		transaction.addColumn(store, rowKey, TaskStatus.STATUS_COL_NAME, Utils.toBytes(status.getLastRunState().name()));
 		transaction.addColumn(store, rowKey, TaskStatus.ACTUAL_FINISH_COL_NAME, status.getLastRunFinishTime());
@@ -285,7 +289,7 @@ public class TaskDBUtils {
 	 * @return				true if the claim was confirmed
 	 */
 	public static boolean claim(String appName, String taskId, long scheduledAt) {
-		String store = DBService.TASKS_STORE_NAME;
+		String store = SchemaService.TASKS_STORE_NAME;
 		String rowKey = Defs.TASK_CLAIM_ROW_PREFIX + "/" + appName + "/" + taskId;
 		String host = TaskManagerService.instance().getLocalHostAddress();
 		String strScheduledAt = Long.toString(scheduledAt) + "/";
@@ -299,8 +303,10 @@ public class TaskDBUtils {
 		
 		// 2. Check whether there were more claims from other nodes
 		DBService dbService = DBService.instance();
-		DBTransaction transaction = dbService.startTransaction(appName);
-		Iterator<DColumn> allColumns = dbService.getAllColumns(appName, store, rowKey);
+        ApplicationDefinition appDef = SchemaService.instance().getApplication(appName);
+        Tenant tenant = Tenant.getTenant(appDef);
+		DBTransaction transaction = dbService.startTransaction(tenant);
+		Iterator<DColumn> allColumns = dbService.getAllColumns(tenant, store, rowKey);
 		if (allColumns != null) {
 			boolean found = false;
 			while (allColumns.hasNext()) {
@@ -323,7 +329,7 @@ public class TaskDBUtils {
 		}
 		
 		// 4. Claim for the execution
-		transaction = dbService.startTransaction(appName);
+		transaction = dbService.startTransaction(tenant);
 		transaction.addColumn(store, rowKey, strScheduledAt + host, System.currentTimeMillis());
 		dbService.commit(transaction);
 		
@@ -335,7 +341,7 @@ public class TaskDBUtils {
 		}
 		
 		// 6. Select an earliest claim to see whether we won.
-		Iterator<DColumn> allClaims = dbService.getAllColumns(appName, store, rowKey);
+		Iterator<DColumn> allClaims = dbService.getAllColumns(tenant, store, rowKey);
 		String earliestClaim = null;
 		long earliestTime = Long.MAX_VALUE;
 		while (allClaims.hasNext()) {
@@ -525,10 +531,12 @@ public class TaskDBUtils {
 	 * 
 	 * @param appName	Application name
 	 */
-	public static void deleteAppTasks(String appName) {
-		DBTransaction transaction = DBService.instance().startTransaction(appName);
-		String tasksStore = DBService.TASKS_STORE_NAME;
-		Iterator<DRow> rowIter = DBService.instance().getAllRowsAllColumns(appName, tasksStore);
+	public static void deleteAppTasks(ApplicationDefinition appDef) {
+        String appName = appDef.getAppName();
+        Tenant tenant = Tenant.getTenant(appDef);
+		DBTransaction transaction = DBService.instance().startTransaction(tenant);
+		String tasksStore = SchemaService.TASKS_STORE_NAME;
+		Iterator<DRow> rowIter = DBService.instance().getAllRowsAllColumns(tenant, tasksStore);
 		while (rowIter.hasNext()) {
 			DRow nextRow = rowIter.next();
 			String rowKey = nextRow.getKey();

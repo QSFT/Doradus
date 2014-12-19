@@ -18,9 +18,6 @@ package com.dell.doradus.service.db;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.SortedSet;
 
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;
@@ -33,10 +30,6 @@ import com.dell.doradus.service.db.thrift.ThriftService;
  * etc.) are defined in doradus.yaml and loaded via {@link ServerConfig}.
  */
 public abstract class DBService extends Service {
-    // ColumnFamily names shared by apps in the global keyspace
-    public static final String APPS_STORE_NAME = "Applications";
-    public static final String TASKS_STORE_NAME = "Tasks";
-
     // Choose service based on doradus.yaml setting
     private static final DBService INSTANCE =
         ServerConfig.getInstance().use_cql ? CQLService.instance() : ThriftService.instance();
@@ -57,106 +50,64 @@ public abstract class DBService extends Service {
         return INSTANCE;
     }   // instance
 
-    //----- Public Service methods: implemented by subclass
+    //----- Public Service methods
+
+    // Implemented by subclasses
     
     //----- Public DBService methods: Store management
     
     /**
-     * Create a new keyspace with the given name.
+     * Create a new tenant.
      * 
-     * @param keyspace  Name of new keyspace.
+     * @param tenant    {@link Tenant} that defines new tenant.
      */
-    public abstract void createKeyspace(String keyspace);
+    public abstract void createTenant(Tenant tenant);
 
     /**
-     * Drop the keyspace with the given name. Cassandra will take a snapshot of all CFs
-     * so they can be recovered if needed.
+     * Drop the given tenant.
      * 
-     * @param keyspace  Name of keyspace to delete.
+     * @param tenant    {@link Tenant} to drop.
      */
-    public abstract void dropKeyspace(String keyspace);
+    public abstract void dropTenant(Tenant tenant);
     
     /**
-     * Return the keyspace in which the given application currently resides. Null is
-     * returned if the application cannot be found amoung any active keyspaces.
+     * Create a new store in the given tenant. Columns hold string or binary values as
+     * requested. If the given store already exists, this is a no-op.
      * 
-     * @param appName   Application name.
-     * @return          Keyspace name in which application resides or null if unknown.
+     * @param tenant        {@link Tenant} that holds new store.
+     * @param storeName     Name of new store to create.
+     * @param bBinaryValues True to ensure that new store holds binary values. False means
+     *                      columns hold string values.
      */
-    public abstract String getKeyspaceForApp(String appName);
+    public abstract void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues);
     
     /**
-     * Create a new store using the given template if it does not yet exist. The template
-     * defines the application, if any, to which the store belongs. If the given store
-     * name already exists, this is a no-op.
+     * Delete the store with the given name belonging to the given tenant. If the store
+     * does not exist, this is a no-op.
      * 
-     * TODO: params
+     * @param tenant    Tenant that owns store.
+     * @param storeName Name of store to delete.
      */
-    public abstract void createStoreIfAbsent(String keyspace, String storeName, boolean bBinaryValues);
-    
-    /**
-     * Delete the store with the given name belonging to the given application if it
-     * exists. If the store does not exist, this is a no-op.
-     * 
-     * TODO: params
-     */
-    public abstract void deleteStoreIfPresent(String keyspace, String storeName);
+    public abstract void deleteStoreIfPresent(Tenant tenant, String storeName);
 
     /**
-     * Register the given application as a tenant of the given keyspace so that it will be
-     * recognized even if the application's stores have not yet been created or its schema
-     * has not yet been stored.
+     * Get a list of all known {@link Tenant}s.
      * 
-     * @param keyspace  Name of keyspace of which application is a tenant.
-     * @param appName   Name of application to register.
+     * @return  Map of tenants to application names.
      */
-    public abstract void registerApplication(String keyspace, String appName);
+    public abstract Collection<Tenant> getTenants();        
 
-    /**
-     * Get the "tenant map", which maps each keyspace to the application names that it
-     * contains.
-     * 
-     * @return  Map of keyspaces to application names.
-     */
-    public abstract SortedMap<String, SortedSet<String>> getTenantMap();        
-
-    //----- Public DBService methods: Schema management
-    
-    /**
-     * Get all properties of all registered applications. The result is a map of
-     * application names to a map of application properties. Example application properties
-     * are _application, _version, and _format, which define the application's schema
-     * and the way it is stored in the database. The result is empty if there are no
-     * applications defined.
-     * 
-     * @return  Map of application name -> property name -> property value for all
-     *          known applications. Empty of there are no applications defined.
-     */
-    public abstract Map<String, Map<String, String>> getAllAppProperties();
-
-    /**
-     * Get all properties of the application with the given name. The property names are
-     * typically _application, _version, and _format, which define the application's
-     * schema and the way it is stored in the database. The result is null if the given
-     * application is not defined. 
-     * 
-     * @param appName   Name of application whose properties to get.
-     * @return          Map of application properties as key/value pairs or null if no
-     *                  such application is defined.
-     */
-    public abstract Map<String, String> getAppProperties(String appName);
-    
     //----- Public DBService methods: Updates
     
     /**
-     * Create a new {@link DBTransaction} object that holds updates for the given
-     * application that will be committed together. The transactions can be by calling
-     * {@link #commit(DBTransaction)}.
+     * Create a new {@link DBTransaction} object that holds updates for stores in the
+     * given tenant that will be committed together. The transactions can be committed by
+     * calling {@link #commit(DBTransaction)}.
      * 
-     * @param appName   Application name to which updates will be applied.
-     * @return          New {@link DBTransaction} with a timestamp of "now".
+     * @param tenant    {@link Tenant} in which updates will be made.
+     * @return          New {@link DBTransaction}.
      */
-    public abstract DBTransaction startTransaction(String appName);
+    public abstract DBTransaction startTransaction(Tenant tenant);
     
     /**
      * Commit the updates in the given {@link DBTransaction}. An exception is thrown if
@@ -175,12 +126,12 @@ public abstract class DBService extends Service {
      * returned as an Iterator of {@link DColumn}s. Null is returned if no row is
      * found with the given key.
      * 
-     * @param appName   Application that owns the given store. 
+     * @param tenant    {@link Tenant} that owns the store. 
      * @param storeName Name of store to query.
      * @param rowKey    Key of row to fetch.
      * @return          Iterator of {@link DColumn}s, or null if there is no such row.
      */
-    public abstract Iterator<DColumn> getAllColumns(String appName,
+    public abstract Iterator<DColumn> getAllColumns(Tenant tenant,
                                                     String storeName,
                                                     String rowKey);
 
@@ -190,7 +141,7 @@ public abstract class DBService extends Service {
      * as an Iterator of {@link DColumn}s. Empty iterator is returned if no row
      * is found with the given key or no columns in the given interval found.
      * 
-     * @param appName   Application that owns the given store. 
+     * @param tenant    {@link Tenant} that owns the store. 
      * @param storeName Name of store to query.
      * @param rowKey    Key of row to fetch.
      * @param startCol	First name in the column names interval.
@@ -198,7 +149,7 @@ public abstract class DBService extends Service {
      * @param reversed	Flag: reverse iteration?
      * @return          Iterator of {@link DColumn}s, or null if there is no such row.
      */
-    public abstract Iterator<DColumn> getColumnSlice(String appName, String storeName,
+    public abstract Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName,
             String rowKey, String startCol, String endCol, boolean reversed);
 
     /**
@@ -207,14 +158,14 @@ public abstract class DBService extends Service {
      * as an Iterator of {@link DColumn}s. Empty iterator is returned if no row
      * is found with the given key or no columns in the given interval found.
      * 
-     * @param appName   Application that owns the given store. 
+     * @param tenant    {@link Tenant} that owns the store. 
      * @param storeName Name of store to query.
      * @param rowKey    Key of row to fetch.
      * @param startCol	First name in the column names interval.
      * @param endCol	Last name in the column names interval.
      * @return          Iterator of {@link DColumn}s, or null if there is no such row.
      */
-    public abstract Iterator<DColumn> getColumnSlice(String appName, String storeName,
+    public abstract Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName,
             String rowKey, String startCol, String endCol);
 
     /**
@@ -223,37 +174,37 @@ public abstract class DBService extends Service {
      * method will immediately return false. If more rows are fetched than an internal
      * limit allows, an exception is thrown.
      * 
-     * @param appName   Application that owns the given store. 
+     * @param tenant    {@link Tenant} that owns the store. 
      * @param storeName Name of physical store to query.
      * @return          Iterator of {@link DRow} objects. May be empty but not null.
      */
-    public abstract Iterator<DRow> getAllRowsAllColumns(String appName, String storeName);
+    public abstract Iterator<DRow> getAllRowsAllColumns(Tenant tenant, String storeName);
 
     /**
      * Get a single column for a single row in the given store. If the given row or column
      * is not found, null is returned. Otherwise, a {@link DColumn} containing the column
      * name and value is returned.
      * 
-     * @param appName   Application that owns the given store. 
+     * @param tenant    {@link Tenant} that owns the store. 
      * @param storeName Name of store to query.
      * @param rowKey    Key of row to read.
      * @param colName   Name of column to fetch.
      * @return          {@link DColumn} containing the column name and value or null if
      *                  the row or column was not found.
      */
-    public abstract DColumn getColumn(String appName, String storeName, String rowKey, String colName);
+    public abstract DColumn getColumn(Tenant tenant, String storeName, String rowKey, String colName);
 
     /**
      * Get all columns for rows with a specific set of keys. Results are returned as an
      * Iterator of {@link DRow} objects. If any given row is not found, no entry will
      * with its key will be returned.
      * 
-     * @param appName   Application that owns the given store. 
+     * @param tenant    {@link Tenant} that owns the store. 
      * @param storeName Name of store to query.
      * @param rowKeys   Collection of row keys to read.
      * @return          Iterator of {@link DRow} objects. May be empty but not null.
      */
-    public abstract Iterator<DRow> getRowsAllColumns(String appName, String storeName,
+    public abstract Iterator<DRow> getRowsAllColumns(Tenant tenant, String storeName,
             Collection<String> rowKeys);
 
     /**
@@ -262,13 +213,13 @@ public abstract class DBService extends Service {
      * for it in iterator. If a row is found but none of the requested columns were found,
      * DRow object's column iterator will be empty.
      * 
-     * @param appName   Application that owns the given store. 
+     * @param tenant    {@link Tenant} that owns the store. 
      * @param storeName Name of store to query.
      * @param rowKeys   Collection of row keys to read.
      * @param colNames  Collection of column names to read.
      * @return          Iterator for {@link DRow} objects. May be empty but not null.
      */
-    public abstract Iterator<DRow> getRowsColumns(String appName, String storeName,
+    public abstract Iterator<DRow> getRowsColumns(Tenant tenant, String storeName,
             Collection<String> rowKeys, Collection<String> colNames);
     
     /**
@@ -277,25 +228,15 @@ public abstract class DBService extends Service {
      * for it in iterator. If a row is found but no columns were found in the requested
      * range, DRow object's column iterator will be empty.
      * 
-     * @param appName   Application that owns the given store. 
+     * @param tenant    {@link Tenant} that owns the store. 
      * @param storeName Name of store to query.
      * @param rowKeys   Collection of row keys to read.
      * @param startCol  Column names >= this name are returned.
      * @param endCol    Column names <= this name are returned.
      * @return          Iterator for {@link DRow} objects. May be empty but not null.
      */
-    public abstract Iterator<DRow> getRowsColumnSlice(String appName, String storeName,
+    public abstract Iterator<DRow> getRowsColumnSlice(Tenant tenant, String storeName,
             Collection<String> rowKeys, String startCol, String endCol);
-
-    //----- Public methods: Task queries
-    
-    /**
-     * Get all rows and columns from the Tasks table in the given keyspace.
-     * 
-     * @param  keyspace Keyspace name whose Tasks table to query.
-     * @return          Row iterator over all rows in the table.
-     */
-    public abstract Iterator<DRow> getAllTaskRows(String keyspace);
 
     //----- Protected methods
     

@@ -56,25 +56,6 @@ public abstract class DBTransaction {
      */
     public abstract int getUpdateCount();
     
-    //----- Application schema update methods
-    
-    /**
-     * Add the given column to the application definition row for the given application.
-     * 
-     * @param appName   Name of application.
-     * @param colName   Column name in string form.
-     * @param colValue  Column value in string form.
-     */
-    public abstract void addAppColumn(String appName, String colName, String colValue);
-
-    /**
-     * Add an update that will delete the application definition row for the given
-     * application name.
-     * 
-     * @param appName   Name of application.
-     */
-    public abstract void deleteAppRow(String appName);
-
     //----- Column/row update methods
     
     /**

@@ -31,6 +31,7 @@ import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.Defs;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
+import com.dell.doradus.service.db.Tenant;
 
 /**
  * Represents an update transaction for the Spider storage service. SpiderTransaction
@@ -44,7 +45,7 @@ import com.dell.doradus.service.db.DBTransaction;
  */
 public class SpiderTransaction {
     // The keyspace and the embedded DBTransaction that holds column/row updates:
-    private final String m_appName;
+    private final Tenant m_tenant;
     private DBTransaction m_dbTran;
     
     // This map holds table/term references. It prevents duplicate updates in the same
@@ -61,9 +62,9 @@ public class SpiderTransaction {
      * Create a new SpiderTransaction object, which starts a new transaction with "now"
      * as the timestamp.
      */
-    public SpiderTransaction(String appName) {
-        m_appName = appName;
-        m_dbTran  = DBService.instance().startTransaction(appName);
+    public SpiderTransaction(Tenant tenant) {
+        m_tenant = tenant;
+        m_dbTran  = DBService.instance().startTransaction(tenant);
     }
     
     /**
@@ -83,7 +84,7 @@ public class SpiderTransaction {
         try {
             DBService.instance().commit(m_dbTran);
             // Re-create the transaction to renew its timestamp.
-        	m_dbTran = DBService.instance().startTransaction(m_appName);
+        	m_dbTran = DBService.instance().startTransaction(m_tenant);
         } finally {
             clear();
         }
@@ -316,10 +317,6 @@ public class SpiderTransaction {
         }
     }   // addTermReferences
     
-    public void setApplicationMetadata(String appName, String dataName, String dataValue) {
-    	m_dbTran.addAppColumn(appName, dataName, dataValue);
-    }
-
     /**
      * Delete the "all objects" column with the given object ID from the given table.
      * 

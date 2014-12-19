@@ -16,9 +16,9 @@
 
 package com.dell.doradus.service.olap;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +47,7 @@ import com.dell.doradus.olap.aggregate.AggregationResult;
 import com.dell.doradus.olap.store.SegmentStats;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.StorageService;
+import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
@@ -109,11 +110,10 @@ public class OLAPService extends StorageService {
     }   // deleteApplication
     
     @Override
-    public void initializeApplication(String keyspace,
-                                      ApplicationDefinition oldAppDef,
+    public void initializeApplication(ApplicationDefinition oldAppDef,
                                       ApplicationDefinition appDef) {
         checkServiceState();
-        m_olap.createApplication(keyspace, appDef.getAppName());
+        m_olap.createApplication(Tenant.getTenant(appDef), appDef.getAppName());
     }   // initializeApplication
     
     @Override
@@ -236,12 +236,10 @@ public class OLAPService extends StorageService {
      *          service.
      */
     public List<ApplicationDefinition> getAllOLAPApplications() {
-        List<ApplicationDefinition> appDefs = SchemaService.instance().getAllApplications();
-        Iterator<ApplicationDefinition> iter = appDefs.iterator();
-        while (iter.hasNext()) {
-            ApplicationDefinition appDef = iter.next();
-            if (!OLAPService.class.getSimpleName().equals(appDef.getStorageService())) {
-                iter.remove();
+        List<ApplicationDefinition> appDefs = new ArrayList<>();
+        for (ApplicationDefinition appDef : SchemaService.instance().getAllApplications()) {
+            if (OLAPService.class.getSimpleName().equals(appDef.getStorageService())) {
+                appDefs.add(appDef);
             }
         }
         return appDefs;
@@ -386,6 +384,10 @@ public class OLAPService extends StorageService {
             switch (optName) {
             case CommonDefs.OPT_STORAGE_SERVICE:
                 assert optValue.equals(this.getClass().getSimpleName());
+                break;
+                
+            case "Tenant":
+                // Ignore
                 break;
                 
             default:

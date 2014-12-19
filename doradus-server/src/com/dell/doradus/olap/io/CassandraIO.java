@@ -23,17 +23,18 @@ import java.util.List;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
+import com.dell.doradus.service.db.Tenant;
 
 public class CassandraIO implements IO {
-    private final String m_appName;
+    private final Tenant m_tenant;
     
-	public CassandraIO(String appName) {
-	    m_appName = appName;
+	public CassandraIO(Tenant tenant) {
+	    m_tenant = tenant;
 	}
 
 	@Override
 	public byte[] getValue(String app, String key, String column) {
-		DColumn col = DBService.instance().getColumn(m_appName, app, key, column);
+		DColumn col = DBService.instance().getColumn(m_tenant, app, key, column);
 		if(col == null) return null;
 		return col.getRawValue();
 	}
@@ -41,7 +42,7 @@ public class CassandraIO implements IO {
 	@Override
 	public List<ColumnValue> get(String app, String key, String prefix) {
 		List<ColumnValue> result = new ArrayList<ColumnValue>();
-		Iterator<DColumn> iColumns = DBService.instance().getColumnSlice(m_appName, app, key, prefix, prefix + "\uFFFF");
+		Iterator<DColumn> iColumns = DBService.instance().getColumnSlice(m_tenant, app, key, prefix, prefix + "\uFFFF");
 		while (iColumns.hasNext()) {
 			DColumn column = iColumns.next();
 			result.add(new ColumnValue(column.getName().substring(prefix.length()), column.getRawValue()));
@@ -59,7 +60,7 @@ public class CassandraIO implements IO {
 
 	@Override
 	public void delete(String columnFamily, String key, String columnName) {
-		DBTransaction transaction = DBService.instance().startTransaction(m_appName);
+		DBTransaction transaction = DBService.instance().startTransaction(m_tenant);
 		if (columnName == null) {
 			transaction.deleteRow(columnFamily, key);
 		} else {
@@ -69,7 +70,7 @@ public class CassandraIO implements IO {
 	}
 
 	@Override public void write(String app, String key, List<ColumnValue> values) {
-	    DBTransaction transaction = DBService.instance().startTransaction(m_appName);
+	    DBTransaction transaction = DBService.instance().startTransaction(m_tenant);
 	    for(ColumnValue v : values) {
 	        transaction.addColumn(app, key, v.columnName, v.columnValue);
 	    }

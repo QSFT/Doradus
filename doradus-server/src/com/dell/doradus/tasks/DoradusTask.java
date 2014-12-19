@@ -54,6 +54,7 @@ public abstract class DoradusTask extends Task {
 	// Parameters
 	protected String 	m_taskId;
 	protected String 	m_taskType;
+	protected ApplicationDefinition m_appDef;
 	protected String 	m_appName;
 	protected String 	m_tableName;
 	protected String 	m_taskParam;
@@ -134,6 +135,7 @@ public abstract class DoradusTask extends Task {
 			}
 			task.m_taskId = taskId.toString();
 			task.m_taskType = taskType;
+			task.m_appDef = app;
 			task.m_appName = appName;
 			task.m_tableName = tableName;
 			task.m_taskParam = taskParam;

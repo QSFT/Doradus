@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.service.db.Tenant;
 
 // Virtual directory storage for OLAP
 public class VDirectory {
@@ -40,9 +41,9 @@ public class VDirectory {
 	private DataCache m_dataCache;
 	private Map<String, FileInfo> filesMap;
 	
-	public VDirectory(String appName, String storeName) {
+	public VDirectory(Tenant tenant, String storeName) {
 		m_parent = null;
-		IO io = new CassandraIO(appName);
+		IO io = new CassandraIO(tenant);
 		//IO io = new FileIO();
 		//IO io = new SqlIO();
 		//IO io = new MemIO();

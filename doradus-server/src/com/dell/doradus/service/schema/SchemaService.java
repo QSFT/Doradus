@@ -16,8 +16,10 @@
 
 package com.dell.doradus.service.schema;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +35,9 @@ import com.dell.doradus.service.Service;
 import com.dell.doradus.service.StorageService;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
+import com.dell.doradus.service.db.DColumn;
+import com.dell.doradus.service.db.DRow;
+import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.taskmanager.TaskDBUtils;
@@ -43,11 +48,19 @@ import com.dell.doradus.service.taskmanager.TaskDBUtils;
  * appropriate storage service of the change.
  */
 public class SchemaService extends Service {
+    // Metadata ColumnFamily names:
+    public static final String APPS_STORE_NAME = "Applications";
+    public static final String TASKS_STORE_NAME = "Tasks";
+    
     // Singleton instance:
     private static final SchemaService INSTANCE = new SchemaService();
     
     // Current format version with which we store schema definitions:
     private static final int CURRENT_SCHEMA_LEVEL = 2;
+
+    // For now, cache application name-to-tenant map so we don't have to search every
+    // keyspace each time getApplication(appName) is called.
+    private final Map<String, Tenant> m_appTenantMap = new HashMap<>();
 
     // REST commands supported by the SchemaService:
     private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
@@ -118,31 +131,21 @@ public class SchemaService extends Service {
      */
     public void defineApplication(ApplicationDefinition appDef, Map<String, String> options) {
         checkServiceState();
-        ApplicationDefinition currAppDef = verifyExistingApplication(appDef);
-        String keyspace = verifyAppOptions(currAppDef, options);
+        ApplicationDefinition currAppDef = checkApplicationKey(appDef);
+        chooseOrValidateTenant(currAppDef, appDef, options);
         StorageService storageService = verifyStorageServiceOption(currAppDef, appDef);
         storageService.validateSchema(appDef);
-        initializeApplication(currAppDef, appDef, keyspace);
+        initializeApplication(currAppDef, appDef);
     }   // defineApplication
     
     /**
-     * Return a list of all {@link ApplicationDefinition}s for all applications registered
-     * in the database.
+     * Return the {@link ApplicationDefinition} for all known applications.
      * 
-     * @return A list of all registered applications. 
+     * @return A collection of application definitions. 
      */
-    public List<ApplicationDefinition> getAllApplications() {
+    public Collection<ApplicationDefinition> getAllApplications() {
         checkServiceState();
-        Map<String, Map<String, String>> rowColMap = DBService.instance().getAllAppProperties();
-        List<ApplicationDefinition> result = new ArrayList<>();
-        for (String appName : rowColMap.keySet()) {
-            Map<String, String> colMap = rowColMap.get(appName);
-            ApplicationDefinition appDef = loadAppRow(colMap);
-            if (appDef != null) {
-                result.add(appDef);
-            }
-        }
-        return result;
+        return refreshAppTenantMap().values();
     }   // getApplicationList
     
     /**
@@ -154,16 +157,7 @@ public class SchemaService extends Service {
      */
     public ApplicationDefinition getApplication(String appName) {
         checkServiceState();
-        Map<String, String> colMap = DBService.instance().getAppProperties(appName);
-        if (colMap == null || colMap.size() == 0) {
-            return null;
-        }
-        ApplicationDefinition appDef = new ApplicationDefinition();
-        String appSchema = colMap.get(Defs.COLNAME_APP_SCHEMA);
-        String format = colMap.get(Defs.COLNAME_APP_SCHEMA_FORMAT);
-        ContentType contentType = Utils.isEmpty(format) ? ContentType.TEXT_XML : new ContentType(format);
-        appDef.parse(UNode.parse(appSchema, contentType));
-        return appDef;
+        return getApplicationDefinition(appName);
     }   // getApplication
 
     /**
@@ -225,7 +219,10 @@ public class SchemaService extends Service {
         StorageService storageService = getStorageService(appDef);
         storageService.deleteApplication(appDef);
         deleteAppProperties(appDef);
-        TaskDBUtils.deleteAppTasks(appDef.getAppName());
+        TaskDBUtils.deleteAppTasks(appDef);
+        synchronized (m_appTenantMap) {
+            m_appTenantMap.remove(appName);
+        }
     }   // deleteApplication
     
     //----- Private methods
@@ -235,15 +232,8 @@ public class SchemaService extends Service {
 
     // Check to see if the storage manager is active for each application.
     private void checkAppStores() {
-        Map<String, Map<String, String>> rowColMap = DBService.instance().getAllAppProperties();
-        List<ApplicationDefinition> appList = new ArrayList<>();
-        for (String appName : rowColMap.keySet()) {
-            Map<String, String> colMap = rowColMap.get(appName);
-            ApplicationDefinition appDef = loadAppRow(colMap);
-            if (appDef != null) {
-                appList.add(appDef);
-            }
-        }
+        // Don't call public getApplications() since we aren't "running" yet.
+        Collection<ApplicationDefinition> appList = refreshAppTenantMap().values();
         m_logger.info("The following applications are defined:");
         if (appList.size() == 0) {
             m_logger.info("   <none>");
@@ -251,8 +241,9 @@ public class SchemaService extends Service {
         for (ApplicationDefinition appDef : appList) {
             String appName = appDef.getAppName();
             String ssName = getStorageServiceOption(appDef);
+            Tenant tenant = Tenant.getTenant(appDef);
             m_logger.info("   Application '{}': StorageService={}; keyspace={}",
-                          new Object[]{appName, ssName, DBService.instance().getKeyspaceForApp(appName)});
+                          new Object[]{appName, ssName, tenant.getKeyspace()});
             if (DoradusServer.instance().findStorageService(ssName) == null) {
                 m_logger.warn("   >>>Application '{}' uses storage service '{}' which has not been " +
                               "initialized; application will not be accessible via this server",
@@ -274,39 +265,42 @@ public class SchemaService extends Service {
 
     // Delete the given application's schema row from the Applications CF.
     private void deleteAppProperties(ApplicationDefinition appDef) {
-        DBTransaction dbTran = DBService.instance().startTransaction(appDef.getAppName());
-        dbTran.deleteAppRow(appDef.getAppName());
+        Tenant tenant = Tenant.getTenant(appDef);
+        DBTransaction dbTran = DBService.instance().startTransaction(tenant);
+        dbTran.deleteRow(SchemaService.APPS_STORE_NAME, appDef.getAppName());
         DBService.instance().commit(dbTran);
-    }   // deleteApplicationSchema
+    }   // deleteAppProperties
     
     // Initialize storage and store the given schema for the given new or updated application.
-    private void initializeApplication(ApplicationDefinition currAppDef, ApplicationDefinition appDef, String keyspace) {
-        initializeApplicationKeyspace(keyspace, appDef);
+    private void initializeApplication(ApplicationDefinition currAppDef, ApplicationDefinition appDef) {
+        initializeTenant(appDef);
         storeApplicationSchema(appDef);
-        getStorageService(appDef).initializeApplication(keyspace, currAppDef, appDef);
+        getStorageService(appDef).initializeApplication(currAppDef, appDef);
     }   // initializeApplication
 
     // Initialize keyspace and metadata tables for the given application.
-    private void initializeApplicationKeyspace(String keyspace, ApplicationDefinition appDef) {
+    private Tenant initializeTenant(ApplicationDefinition appDef) {
         DBService dbService = DBService.instance();
-        dbService.createKeyspace(keyspace);
-        dbService.createStoreIfAbsent(keyspace, DBService.APPS_STORE_NAME, false);
-        dbService.createStoreIfAbsent(keyspace, DBService.TASKS_STORE_NAME, false); // TODO: Push to TaskManager?
-        dbService.registerApplication(keyspace, appDef.getAppName());
-    }   // initializeApplicationKeyspace
+        Tenant tenant = Tenant.getTenant(appDef);
+        dbService.createTenant(tenant);
+        dbService.createStoreIfAbsent(tenant, SchemaService.APPS_STORE_NAME, false);
+        dbService.createStoreIfAbsent(tenant, SchemaService.TASKS_STORE_NAME, false); // TODO: Push to TaskManager?
+        return tenant;
+    }   // initializeTenant
     
     // Store the application row with schema, version, and format.
     private void storeApplicationSchema(ApplicationDefinition appDef) {
         String appName = appDef.getAppName();
-        DBTransaction dbTran = DBService.instance().startTransaction(appName);
-        dbTran.addAppColumn(appName, Defs.COLNAME_APP_SCHEMA, appDef.toDoc().toJSON());
-        dbTran.addAppColumn(appName, Defs.COLNAME_APP_SCHEMA_FORMAT, ContentType.APPLICATION_JSON.toString());
-        dbTran.addAppColumn(appName, Defs.COLNAME_APP_SCHEMA_VERSION, Integer.toString(CURRENT_SCHEMA_LEVEL));
+        Tenant tenant = Tenant.getTenant(appDef);
+        DBTransaction dbTran = DBService.instance().startTransaction(tenant);
+        dbTran.addColumn(SchemaService.APPS_STORE_NAME, appName, Defs.COLNAME_APP_SCHEMA, appDef.toDoc().toJSON());
+        dbTran.addColumn(SchemaService.APPS_STORE_NAME, appName, Defs.COLNAME_APP_SCHEMA_FORMAT, ContentType.APPLICATION_JSON.toString());
+        dbTran.addColumn(SchemaService.APPS_STORE_NAME, appName, Defs.COLNAME_APP_SCHEMA_VERSION, Integer.toString(CURRENT_SCHEMA_LEVEL));
         DBService.instance().commit(dbTran);
     }   // storeApplicationSchema
     
     // Verify key match of an existing application, if any, and return it's definition. 
-    private ApplicationDefinition verifyExistingApplication(ApplicationDefinition appDef) {
+    private ApplicationDefinition checkApplicationKey(ApplicationDefinition appDef) {
         ApplicationDefinition currAppDef = getApplication(appDef.getAppName());
         if (currAppDef == null) {
             m_logger.info("Defining application: {}", appDef.getAppName());
@@ -317,34 +311,42 @@ public class SchemaService extends Service {
                           "Application key cannot be changed: %s", appDef.getKey());
         }
         return currAppDef;
-    }   // verifyExistingApplication 
+    }   // checkApplicationKey 
     
-    // Verify the given application option map and return the new/default keyspace
-    private String verifyAppOptions(ApplicationDefinition currAppDef, Map<String, String> options) {
+    // Validate the given options and set the new/updated application's Tenant option.
+    private void chooseOrValidateTenant(ApplicationDefinition currAppDef,
+                                          ApplicationDefinition newAppDef,
+                                          Map<String, String> options) {
         String keyspace = null;
         if (options != null) {
             for (String optName : options.keySet()) {
-                if (optName.equals("tenant")) {
+                if (optName.equalsIgnoreCase("tenant")) {
                     keyspace = options.get(optName);
                 } else {
                     Utils.require(false, "Unrecognized option: %s", optName);
                 }
             }
         }
+        Tenant tenant = null;
         if (keyspace == null) {
             if (currAppDef == null) {
-                keyspace = ServerConfig.getInstance().keyspace;
+                tenant = new Tenant(ServerConfig.getInstance().keyspace);
             } else {
-                keyspace = DBService.instance().getKeyspaceForApp(currAppDef.getAppName());
+                tenant = Tenant.getTenant(currAppDef);
             }
         } else if (currAppDef != null) {
-            String currKeyspace = DBService.instance().getKeyspaceForApp(currAppDef.getAppName());
-            Utils.require(currKeyspace.equals(keyspace),
+            Tenant currentTenant = Tenant.getTenant(currAppDef);
+            Utils.require(currentTenant.getKeyspace().equals(keyspace),
                           "Application '%s': tenant option cannot be changed. Current='%s', new='%s'",
-                          currAppDef.getAppName(), currKeyspace, keyspace);
+                          currAppDef.getAppName(), currentTenant.getKeyspace(), keyspace);
         }
-        return keyspace;
-    }   // verifyAppOptions
+        setTenant(newAppDef, tenant);
+    }   // chooseOrValidateTenant
+
+    // Set the given application's "Tenant" option to the given tenant's keyspace.
+    private void setTenant(ApplicationDefinition appDef, Tenant tenant) {
+        appDef.setOption("Tenant", tenant.getKeyspace());
+    }
 
     // Verify the given application's StorageService option and, if this is a schema
     // change, ensure it hasn't changed.  Return the application's StorageService object.
@@ -362,10 +364,22 @@ public class SchemaService extends Service {
         return storageService;
     }   // verifyStorageServiceOption
 
+    private Map<String, String> getColumnMap(Iterator<DColumn> colIter) {
+        Map<String, String> colMap = new HashMap<>();
+        while (colIter.hasNext()) {
+            DColumn col = colIter.next();
+            colMap.put(col.getName(), col.getValue());
+        }
+        return colMap;
+    }   // getColumnMap
+    
     // Parse the application schema from the given application row.
-    private ApplicationDefinition loadAppRow(Map<String, String> colMap) {
+    private ApplicationDefinition loadAppRow(Tenant tenant, Map<String, String> colMap) {
         ApplicationDefinition appDef = new ApplicationDefinition();
         String appSchema = colMap.get(Defs.COLNAME_APP_SCHEMA);
+        if (appSchema == null) {
+            return null;    // Not a real application definition row
+        }
         String format = colMap.get(Defs.COLNAME_APP_SCHEMA_FORMAT);
         ContentType contentType = Utils.isEmpty(format) ? ContentType.TEXT_XML : new ContentType(format);
         String versionStr = colMap.get(Defs.COLNAME_APP_SCHEMA_VERSION);
@@ -380,7 +394,47 @@ public class SchemaService extends Service {
             m_logger.warn("Error parsing schema for application '" + appDef.getAppName() + "'; skipped", e);
             return null;
         }
+        setTenant(appDef, tenant);
         return appDef;
     }   // loadAppRow
 
+    // Get the given application's application. If it's not in our app-to-tenant map,
+    // refresh the map in case the application was just created.
+    private ApplicationDefinition getApplicationDefinition(String appName) {
+        Tenant tenant = null;
+        synchronized (m_appTenantMap) {
+            tenant = m_appTenantMap.get(appName);
+            if (tenant == null) {
+                return refreshAppTenantMap().get(appName);  // still may return null
+            }
+        }
+        Iterator<DColumn> colIter = DBService.instance().getAllColumns(tenant, SchemaService.APPS_STORE_NAME, appName);
+        if (colIter == null) {
+            return null;    // Application deleted?
+        }
+        return loadAppRow(tenant, getColumnMap(colIter));
+    }   // getApplicationDefinition
+
+    // Refresh the application-to-tenant cache. This method also returns a snapshot of all
+    // application schemas by application name.
+    private Map<String, ApplicationDefinition> refreshAppTenantMap() {
+        Map<String, ApplicationDefinition> result = new HashMap<>();
+        synchronized (m_appTenantMap) {
+            m_appTenantMap.clear();
+            Collection<Tenant> tenants = DBService.instance().getTenants();
+            for (Tenant tenant : tenants) {
+                Iterator<DRow> rowIter = DBService.instance().getAllRowsAllColumns(tenant, SchemaService.APPS_STORE_NAME);
+                while (rowIter.hasNext()) {
+                    DRow row = rowIter.next();
+                    ApplicationDefinition appDef = loadAppRow(tenant, getColumnMap(row.getColumns()));
+                    if (appDef != null) {
+                        m_appTenantMap.put(appDef.getAppName(), tenant);
+                        result.put(appDef.getAppName(), appDef);
+                    }
+                }
+            }
+        }
+        return result;
+    }   // refreshAppTenantMap
+    
 }   // class SchemaService

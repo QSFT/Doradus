@@ -50,14 +50,6 @@ public class MemoryTransaction extends DBTransaction {
         return m_updates;
     }
 
-    @Override public void addAppColumn(String appName, String colName, String colValue) {
-        addColumn("Applications", appName, colName, colValue);
-    }
-
-    @Override public void deleteAppRow(String appName) {
-        deleteRow("Applications", appName);
-    }
-
     @Override public void addColumn(String storeName, String rowKey, String colName) {
         addColumn(storeName, rowKey, colName, "");
     }

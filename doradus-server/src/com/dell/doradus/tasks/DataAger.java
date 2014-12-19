@@ -36,6 +36,7 @@ import com.dell.doradus.common.RetentionAge;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.search.SearchResult;
+import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.olap.OLAPService;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.spider.ObjectUpdater;
@@ -172,7 +173,7 @@ public class DataAger extends DoradusTask {
         String text = "q=" + table.m_agingFieldDef.getName() + " <= " +
                       "\"" + Utils.formatDate(expireDate) + "\"";
         
-        SpiderTransaction transaction = new SpiderTransaction(tableDef.getAppDef().getAppName());
+        SpiderTransaction transaction = new SpiderTransaction(Tenant.getTenant(tableDef));
         ObjectUpdater updater = new ObjectUpdater(transaction, tableDef);
         for(SearchResult result : SpiderService.instance().objectQueryURI(tableDef, text).results)
         {

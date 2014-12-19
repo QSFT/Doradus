@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.StatResult;
 import com.dell.doradus.common.StatisticDefinition;
 import com.dell.doradus.common.Utils;
@@ -32,12 +33,15 @@ import com.dell.doradus.search.aggregate.Aggregate.StatisticResult;
 import com.dell.doradus.search.aggregate.Statistic.StatisticParameter;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DColumn;
+import com.dell.doradus.service.db.Tenant;
+import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.spider.SpiderService;
 
 public class StatisticQuery 
 {
     private static final int MAX_GROUP_LEVELS = 100;
     
+    private final ApplicationDefinition	m_appDef;
     private final String				m_appName;
     private final String            	m_tableName;
     private final String           		m_statName;
@@ -63,6 +67,7 @@ public class StatisticQuery
         assert statDefinition != null;
         
         // Capture parameters
+        m_appDef = SchemaService.instance().getApplication(appName);
         m_appName = appName;
         m_statDefinition = statDefinition;
         m_statName = statDefinition.getStatName();
@@ -84,7 +89,7 @@ public class StatisticQuery
         //      <table name>/<field name>
         String rowKey = m_tableName + StatisticResult.KEYSEPARATOR + m_statName;
     	Iterator<DColumn> iColumns = dbService.getColumnSlice(
-    	        m_appName,
+    	        Tenant.getTenant(m_appDef),
     			statsStoreName, 
     			m_bAverageMetric ? rowKey + StatisticResult.AVERAGESEPARATOR + StatisticResult.SUMKEY : rowKey, 
     			m_startColName, m_endColName);
@@ -98,7 +103,7 @@ public class StatisticQuery
         if(!m_bAverageMetric) {
             if(!statMap.containsKey(StatisticResult.SUMMARY)) {
             	DColumn summary =
-            	    dbService.getColumn(m_appName, statsStoreName, rowKey, StatisticResult.SUMMARY);
+            	    dbService.getColumn(Tenant.getTenant(m_appDef), statsStoreName, rowKey, StatisticResult.SUMMARY);
             	if(summary != null && summary.getValue() != null)
             		statMap.put(StatisticResult.SUMMARY, summary.getValue());
             }
@@ -106,7 +111,7 @@ public class StatisticQuery
         	String sumKey = rowKey + StatisticResult.AVERAGESEPARATOR + StatisticResult.SUMKEY;
         	String countKey = rowKey + StatisticResult.AVERAGESEPARATOR + StatisticResult.COUNTKEY;
         	Iterator<DColumn> iSumColumn =
-        	    dbService.getColumnSlice(m_appName, statsStoreName, countKey, m_startColName, m_endColName);
+        	    dbService.getColumnSlice(Tenant.getTenant(m_appDef), statsStoreName, countKey, m_startColName, m_endColName);
             while (iSumColumn.hasNext()) {
             	DColumn nextCol = iSumColumn.next();
             	if (statMap.containsKey(nextCol.getName())) {
@@ -121,11 +126,11 @@ public class StatisticQuery
 
             if (!statMap.containsKey(StatisticResult.SUMMARY)) {
             	String sumValue =
-            	    dbService.getColumn(m_appName, statsStoreName, sumKey, StatisticResult.SUMMARY).getValue();
+            	    dbService.getColumn(Tenant.getTenant(m_appDef), statsStoreName, sumKey, StatisticResult.SUMMARY).getValue();
             	if(sumValue != null) {
             		Long value = Long.parseLong(sumValue);
             		Long counterValue = Long.parseLong(
-            				dbService.getColumn(m_appName, statsStoreName, countKey, 
+            				dbService.getColumn(Tenant.getTenant(m_appDef), statsStoreName, countKey, 
             						StatisticResult.SUMMARY).getValue());
             		if(counterValue != 0) {
             			Double dValue = (double)value / (double)counterValue;

@@ -17,16 +17,14 @@
 package com.dell.doradus.service.db.thrift;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
@@ -35,12 +33,11 @@ import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
+import com.dell.doradus.service.db.Tenant;
+import com.dell.doradus.service.schema.SchemaService;
 
 public class ThriftService extends DBService {
     private static final ThriftService INSTANCE = new ThriftService();
-
-    // Known app names to keyspace map:
-    private final Map<String, String> m_appKeyspaceMap = new HashMap<String, String>();
 
     // Keyspace names to DBConn queue:
     private final Map<String, Queue<DBConn>> m_dbKeyspaceDBConns = new HashMap<>();
@@ -78,9 +75,10 @@ public class ThriftService extends DBService {
     //----- Public DBService methods: Store management
 
     @Override
-    public void createKeyspace(String keyspace) {
+    public void createTenant(Tenant tenant) {
         checkState();
         // Use a temporary, no-keyspace session
+        String keyspace = tenant.getKeyspace();
         try (DBConn dbConn = new DBConn(null)) {
             CassandraSchemaMgr schemaMgr = new CassandraSchemaMgr(dbConn.getClientSession());
             if (!schemaMgr.keyspaceExists(keyspace)) {
@@ -90,9 +88,10 @@ public class ThriftService extends DBService {
     }   // createKeyspace
 
     @Override
-    public void dropKeyspace(String keyspace) {
+    public void dropTenant(Tenant tenant) {
         checkState();
         // Use a temporary, no-keyspace session
+        String keyspace = tenant.getKeyspace();
         try (DBConn dbConn = new DBConn(null)) {
             CassandraSchemaMgr schemaMgr = new CassandraSchemaMgr(dbConn.getClientSession());
             if (!schemaMgr.keyspaceExists(keyspace)) {
@@ -102,19 +101,9 @@ public class ThriftService extends DBService {
     }   // dropKeyspace
     
     @Override
-    public String getKeyspaceForApp(String appName) {
+    public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
         checkState();
-        synchronized (m_appKeyspaceMap) {
-            if (!m_appKeyspaceMap.containsKey(appName)) {
-                refreshAppKeyspaceMap();
-            }
-            return m_appKeyspaceMap.get(appName);
-        }
-    }   // getKeyspaceForApp
-    
-    @Override
-    public void createStoreIfAbsent(String keyspace, String storeName, boolean bBinaryValues) {
-        checkState();
+        String keyspace = tenant.getKeyspace();
         DBConn dbConn = getDBConnection(keyspace);
         try {   
             CassandraSchemaMgr schemaMgr = new CassandraSchemaMgr(dbConn.getClientSession());
@@ -127,8 +116,9 @@ public class ThriftService extends DBService {
     }   // createStoreIfAbsent
     
     @Override
-    public void deleteStoreIfPresent(String keyspace, String storeName) {
+    public void deleteStoreIfPresent(Tenant tenant, String storeName) {
         checkState();
+        String keyspace = tenant.getKeyspace();
         DBConn dbConn = getDBConnection(keyspace);
         try {
             CassandraSchemaMgr schemaMgr = new CassandraSchemaMgr(dbConn.getClientSession());
@@ -141,91 +131,28 @@ public class ThriftService extends DBService {
     }   // deleteStoreIfPresent
     
     @Override
-    public void registerApplication(String keyspace, String appName) {
+    public Collection<Tenant> getTenants() {
         checkState();
-        synchronized (m_appKeyspaceMap) {
-            m_appKeyspaceMap.put(appName, keyspace);
-        }
-    }   // registerApplication
-
-    @Override
-    public SortedMap<String, SortedSet<String>> getTenantMap() {
-        checkState();
-        refreshAppKeyspaceMap();
-        SortedMap<String, SortedSet<String>> result = new TreeMap<>();
-        synchronized (m_appKeyspaceMap) {
-            for (String appName : m_appKeyspaceMap.keySet()) {
-                String keyspace = m_appKeyspaceMap.get(appName);
-                SortedSet<String> appNameSet = result.get(keyspace);
-                if (appNameSet == null) {
-                    appNameSet = new TreeSet<>();
-                    result.put(keyspace, appNameSet);
+        List<Tenant> tenantList = new ArrayList<>();
+        // Use a temporary, no-keyspace session
+        try (DBConn dbConn = new DBConn(null)) {
+            CassandraSchemaMgr schemaMgr = new CassandraSchemaMgr(dbConn.getClientSession());
+            Collection<String> keyspaceList = schemaMgr.getKeyspaces();
+            for (String keyspace : keyspaceList) {
+                if (schemaMgr.columnFamilyExists(keyspace, SchemaService.APPS_STORE_NAME)) {
+                    tenantList.add(new Tenant(keyspace));
                 }
-                appNameSet.add(appName);
             }
         }
-        return result;
+        return tenantList;
     }   // getTenantMap
-    
-    //----- Public DBService methods: Schema management
-    
-    /**
-     * Get all properties of all registered applications. The result is a map of
-     * application names to a map of application properties. Example application properties
-     * are _application, _version, and _format, which define the application's schema
-     * and the way it is stored in the database. The result is empty if there are no
-     * applications defined.
-     * 
-     * @return  Map of application name -> property name -> property value for all
-     *          known applications. Empty of there are no applications defined.
-     */
-    @Override
-    public Map<String, Map<String, String>> getAllAppProperties() {
-        checkState();
-        refreshAppKeyspaceMap();
-        Map<String, Map<String, String>> result = new HashMap<>();
-        synchronized (m_appKeyspaceMap) {
-            for (String appName : m_appKeyspaceMap.keySet()) {
-                Map<String, String> appProps = getAppProperties(appName);
-                if (appProps != null) { // watch for just-deleted apps
-                    result.put(appName, appProps);
-                }
-            }
-        }
-        return result;
-    }   // getAllAppProperties
-
-    /**
-     * Get all properties of the application with the given name. The property names are
-     * typically _application, _version, and _format, which define the application's
-     * schema and the way it is stored in the database. The result is null if the given
-     * application is not defined. 
-     * 
-     * @param appName   Name of application whose properties to get.
-     * @return          Map of application properties as key/value pairs or null if no
-     *                  such application is defined.
-     */
-    @Override
-    public Map<String, String> getAppProperties(String appName) {
-        checkState();
-        String keyspace = getKeyspaceForApp(appName);
-        if (keyspace == null) {
-            return null;
-        }
-        DBConn dbConn = getDBConnection(keyspace);
-        try {
-            return dbConn.getAppProperties(appName);
-        } finally {
-            returnDBConnection(dbConn);
-        }
-    }   // getAppProperties
     
     //----- Public DBService methods: Updates
     
     @Override
-    public DBTransaction startTransaction(String appName) {
+    public DBTransaction startTransaction(Tenant tenant) {
         checkState();
-        return new CassandraTransaction(appName);
+        return new CassandraTransaction(tenant);
     }   // startTransaction
     
     @Override
@@ -243,9 +170,9 @@ public class ThriftService extends DBService {
     //----- Public DBService methods: Queries
 
     @Override
-    public Iterator<DColumn> getAllColumns(String appName, String storeName, String rowKey) {
+    public Iterator<DColumn> getAllColumns(Tenant tenant, String storeName, String rowKey) {
         checkState();
-        String keyspace = getKeyspaceForApp(appName);
+        String keyspace = tenant.getKeyspace();
         DBConn dbConn = getDBConnection(keyspace);
         try {
             return dbConn.getAllColumns(storeName, rowKey);
@@ -255,10 +182,10 @@ public class ThriftService extends DBService {
     }   // getAllColumns
 
     @Override
-    public Iterator<DColumn> getColumnSlice(String appName, String storeName, String rowKey,
+    public Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName, String rowKey,
                                             String startCol, String endCol, boolean reversed) {
         checkState();
-        String keyspace = getKeyspaceForApp(appName);
+        String keyspace = tenant.getKeyspace();
         DBConn dbConn = getDBConnection(keyspace);
         try {
             return dbConn.getColumnSlice(storeName, rowKey, startCol, endCol, reversed);
@@ -268,16 +195,16 @@ public class ThriftService extends DBService {
     }   // getColumnSlice
 
     @Override
-    public Iterator<DColumn> getColumnSlice(String appName, String storeName, String rowKey,
+    public Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName, String rowKey,
                                             String startCol, String endCol) {
         checkState();
-        return getColumnSlice(appName, storeName, rowKey, startCol, endCol, false);
+        return getColumnSlice(tenant, storeName, rowKey, startCol, endCol, false);
     }   // getColumnSlice
 
     @Override
-    public Iterator<DRow> getAllRowsAllColumns(String appName, String storeName) {
+    public Iterator<DRow> getAllRowsAllColumns(Tenant tenant, String storeName) {
         checkState();
-        String keyspace = getKeyspaceForApp(appName);
+        String keyspace = tenant.getKeyspace();
         DBConn dbConn = getDBConnection(keyspace);
         try {
             return dbConn.getAllRowsAllColumns(storeName);
@@ -287,9 +214,9 @@ public class ThriftService extends DBService {
     }   // getAllRowsAllColumns
 
     @Override
-    public DColumn getColumn(String appName, String storeName, String rowKey, String colName) {
+    public DColumn getColumn(Tenant tenant, String storeName, String rowKey, String colName) {
         checkState();
-        String keyspace = getKeyspaceForApp(appName);
+        String keyspace = tenant.getKeyspace();
         DBConn dbConn = getDBConnection(keyspace);
         try {
             return dbConn.getColumn(storeName, rowKey, colName);
@@ -299,9 +226,9 @@ public class ThriftService extends DBService {
     }   // getColumn
 
     @Override
-    public Iterator<DRow> getRowsAllColumns(String appName, String storeName, Collection<String> rowKeys) {
+    public Iterator<DRow> getRowsAllColumns(Tenant tenant, String storeName, Collection<String> rowKeys) {
         checkState();
-        String keyspace = getKeyspaceForApp(appName);
+        String keyspace = tenant.getKeyspace();
         DBConn dbConn = getDBConnection(keyspace);
         try {
             return dbConn.getRowsAllColumns(storeName, rowKeys);
@@ -311,12 +238,12 @@ public class ThriftService extends DBService {
     }   // getRowsAllColumns
 
     @Override
-    public Iterator<DRow> getRowsColumns(String             appName,
+    public Iterator<DRow> getRowsColumns(Tenant             tenant,
                                          String             storeName,
                                          Collection<String> rowKeys,
                                          Collection<String> colNames) {
         checkState();
-        String keyspace = getKeyspaceForApp(appName);
+        String keyspace = tenant.getKeyspace();
         DBConn dbConn = getDBConnection(keyspace);
         try {
             return dbConn.getRowsColumns(storeName, rowKeys, colNames);
@@ -326,13 +253,13 @@ public class ThriftService extends DBService {
     }   // getRowsColumnSet
     
     @Override
-    public Iterator<DRow> getRowsColumnSlice(String             appName,
+    public Iterator<DRow> getRowsColumnSlice(Tenant             tenant,
                                              String             storeName,
                                              Collection<String> rowKeys,
                                              String             startCol,
                                              String             endCol) {
         checkState();
-        String keyspace = getKeyspaceForApp(appName);
+        String keyspace = tenant.getKeyspace();
         DBConn dbConn = getDBConnection(keyspace);
         try {
             return dbConn.getRowsColumns(storeName, rowKeys, startCol, endCol);
@@ -340,19 +267,6 @@ public class ThriftService extends DBService {
             returnDBConnection(dbConn);
         }
     }   // getRowsColumnSlice
-
-    //----- Public methods: Task queries
-    
-    @Override
-    public Iterator<DRow> getAllTaskRows(String keyspace) {
-        checkState();
-        DBConn dbConn = getDBConnection(keyspace);
-        try {
-            return dbConn.getAllRowsAllColumns(TASKS_STORE_NAME);
-        } finally {
-            returnDBConnection(dbConn);
-        }
-    }   // getAllTaskRows
 
     //----- Package-private methods
     
@@ -410,16 +324,6 @@ public class ThriftService extends DBService {
         }
     }   // returnGoodConnection
 
-    // Get all properties for applications that live in the given keyspace. 
-    private Map<String, Map<String, String>> getAllAppProperties(String keyspace) {
-        DBConn dbConn = getDBConnection(keyspace);
-        try {
-            return dbConn.getAllAppProperties();
-        } finally {
-            returnDBConnection(dbConn);
-        }
-    }   // getAllAppProperties
-    
     // Initialize the DBConnection pool by creating the first connection to Cassandra.
     private void initializeDBConnections() {
         while (true) {
@@ -454,32 +358,4 @@ public class ThriftService extends DBService {
         }
     }   // purgeAllConnections
     
-    // Rebuild the m_appKeyspaceMap from all current keyspaces/Applications CFs
-    private void refreshAppKeyspaceMap() {
-        synchronized (m_appKeyspaceMap) {
-            m_appKeyspaceMap.clear();
-            // Use a temporary, no-keyspace session
-            try (DBConn dbConn = new DBConn(null)) {
-                CassandraSchemaMgr schemaMgr = new CassandraSchemaMgr(dbConn.getClientSession());
-                Collection<String> keyspaceList = schemaMgr.getKeyspaces();
-                for (String keyspace : keyspaceList) {
-                    if (schemaMgr.columnFamilyExists(keyspace, APPS_STORE_NAME)) {
-                        Map<String, Map<String, String>> allAppProps = getAllAppProperties(keyspace);
-                        for (String appName : allAppProps.keySet()) {
-                            String existingKeyspace = m_appKeyspaceMap.get(appName);
-                            if (existingKeyspace == null) {
-                                m_appKeyspaceMap.put(appName, keyspace);
-                            } else {
-                                m_logger.warn("Application {} found in multiple keyspaces: " +
-                                              "instance in keyspace {} will be used; " +
-                                              "instance in keyspace {} will be ignored.",
-                                              new Object[]{appName, existingKeyspace, keyspace});
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }   // refreshAppKeyspaceMap
-
 }   // class ThriftService

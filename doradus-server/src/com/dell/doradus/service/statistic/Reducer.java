@@ -23,6 +23,7 @@ import com.dell.doradus.search.aggregate.Aggregate.AverageStatistic;
 import com.dell.doradus.search.aggregate.Aggregate.StatisticResult;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
+import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.spider.SpiderService;
 
 /**
@@ -37,11 +38,12 @@ public class Reducer {
 		StatisticResult result = task.getStatistic();
 
 		String fieldName = result.getFieldName();
-		DBTransaction transaction = dbService.startTransaction(appName);
+		Tenant tenant = Tenant.getTenant(task.getAppDef());
+		DBTransaction transaction = dbService.startTransaction(tenant);
 		transaction.deleteRow(tableName, fieldName);
 		dbService.commit(transaction);
 
-		transaction = dbService.startTransaction(appName);
+		transaction = dbService.startTransaction(tenant);
 		for(AbstractMap.SimpleEntry<String, Object> entry : result.getValues()) {
 			transaction.addColumn(tableName, fieldName, entry.getKey(), Utils.toBytes(entry.getValue().toString()));
 		}
@@ -50,11 +52,11 @@ public class Reducer {
 		if(result instanceof AverageStatistic) {
 			AverageStatistic average = (AverageStatistic)result;
 			String sumName = average.getSumFieldName();
-			transaction = dbService.startTransaction(appName);
+			transaction = dbService.startTransaction(tenant);
 			transaction.deleteRow(tableName, sumName);
 			dbService.commit(transaction);
 
-			transaction = dbService.startTransaction(appName);
+			transaction = dbService.startTransaction(tenant);
 			for(AbstractMap.SimpleEntry<String, Object> entry : average.getSumValues())
 			{
 				transaction.addColumn(tableName, sumName, entry.getKey(), Utils.toBytes(entry.getValue().toString()));

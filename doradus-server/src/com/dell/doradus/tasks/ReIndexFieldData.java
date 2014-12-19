@@ -33,6 +33,7 @@ import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.Defs;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
+import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.spider.SpiderHelper;
 import com.dell.doradus.service.spider.SpiderService;
@@ -68,8 +69,8 @@ public class ReIndexFieldData extends FixDataTask {
 		deleteTerms(tabDef, fieldName);
 		
 		// 2. Scan objects and add terms
-		m_dbTran = m_dbService.startTransaction(m_appName);
-		Iterator<DRow> objRows = m_dbService.getAllRowsAllColumns(m_appName, objectStore);
+		m_dbTran = m_dbService.startTransaction(Tenant.getTenant(m_appDef));
+		Iterator<DRow> objRows = m_dbService.getAllRowsAllColumns(Tenant.getTenant(m_appDef), objectStore);
 		Set<String> fields = new HashSet<>();
 		fields.add(CommonDefs.ID_FIELD);
 		fields.add(fieldName);
@@ -81,7 +82,7 @@ public class ReIndexFieldData extends FixDataTask {
 			for (int count = 0; objRows.hasNext() && count < MAX_MUTATION_COUNT; count ++) {
 				keys.add(objRows.next().getKey());
 			}
-			Iterator<DRow> data = m_dbService.getRowsColumns(m_appName, objectStore, keys, fields);
+			Iterator<DRow> data = m_dbService.getRowsColumns(Tenant.getTenant(m_appDef), objectStore, keys, fields);
 			while (data.hasNext()) {
 				DRow dataRow = data.next();
 				String objId = null;

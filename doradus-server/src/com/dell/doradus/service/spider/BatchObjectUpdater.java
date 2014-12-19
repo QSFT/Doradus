@@ -35,6 +35,7 @@ import com.dell.doradus.common.ObjectResult;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.service.db.Tenant;
 
 /**
  * Performs updates for a batch of objects in a specific table. All updates are accummulated
@@ -59,7 +60,7 @@ public class BatchObjectUpdater {
      */
     public BatchObjectUpdater(TableDefinition tableDef) {
         m_tableDef = tableDef;
-        m_dbTran = new SpiderTransaction(tableDef.getAppDef().getAppName());
+        m_dbTran = new SpiderTransaction(Tenant.getTenant(tableDef));
     }   // constructor
     
     /**

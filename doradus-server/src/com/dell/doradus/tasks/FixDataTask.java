@@ -25,6 +25,7 @@ import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
+import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.spider.SpiderService;
 
 public abstract class FixDataTask extends DoradusTask {
@@ -34,14 +35,14 @@ public abstract class FixDataTask extends DoradusTask {
 	protected final int MAX_MUTATION_COUNT = ServerConfig.getInstance().batch_mutation_threshold;
 
 	protected FixDataTask() {
-	    m_dbTran = m_dbService.startTransaction(m_appName);
+	    m_dbTran = m_dbService.startTransaction(Tenant.getTenant(m_appDef));
 	}
 	
 	protected void deleteTerms(TableDefinition tabDef, String fieldName) {
 		String termsStore = SpiderService.termsStoreName(tabDef);
 		
 		// 1. Deleting terms from unsharded rows
-		Iterator<DColumn> iTerms = m_dbService.getAllColumns(m_appName,
+		Iterator<DColumn> iTerms = m_dbService.getAllColumns(Tenant.getTenant(m_appDef),
 		                                                     termsStore,
 		                                                     Defs.TERMS_REGISTRY_ROW_PREFIX + "/" + fieldName);
 		if (iTerms != null) {
@@ -61,7 +62,7 @@ public abstract class FixDataTask extends DoradusTask {
 		// 2. Same for sharded rows
 		Set<Integer> shardsSet = SpiderService.instance().getShards(tabDef).keySet();
 		for (Integer shard : shardsSet) {
-			iTerms = m_dbService.getAllColumns(m_appName,
+			iTerms = m_dbService.getAllColumns(Tenant.getTenant(m_appDef),
 			                                   termsStore,
 			                                   shard + "/" + Defs.TERMS_REGISTRY_ROW_PREFIX + "/" + fieldName);
 			if (iTerms != null) {

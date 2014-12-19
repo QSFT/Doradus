@@ -18,10 +18,13 @@ package com.dell.doradus.service.statistic;
 
 import java.util.Iterator;
 
+import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
+import com.dell.doradus.service.db.Tenant;
+import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.spider.SpiderService;
 import com.dell.doradus.service.statistic.TaskInfo.Status;
 
@@ -56,7 +59,8 @@ public class StatStatusStorageManager {
 	 */
 	public static void stamp(String appName, String tabName, String statName) {
 		DBService dbService = DBService.instance();
-		DBTransaction transaction = dbService.startTransaction(appName);
+		ApplicationDefinition appDef = SchemaService.instance().getApplication(appName);
+		DBTransaction transaction = dbService.startTransaction(Tenant.getTenant(appDef));
 		String storeName = SpiderService.statsStoreName(appName);
 		String rowKey = tabName + "/" + statName + "/" + STAT_ROW_SUFFIX;
 		transaction.addColumn(
@@ -75,7 +79,8 @@ public class StatStatusStorageManager {
 	 */
 	public static void put(String appName, String tabName, String statName, TaskInfo taskInfo) {
 		DBService dbService = DBService.instance();
-		DBTransaction transaction = dbService.startTransaction(appName);
+        ApplicationDefinition appDef = SchemaService.instance().getApplication(appName);
+		DBTransaction transaction = dbService.startTransaction(Tenant.getTenant(appDef));
 		String storeName = SpiderService.statsStoreName(appName);
 		String rowKey = tabName + "/" + statName + "/" + STAT_ROW_SUFFIX;
 		transaction.addColumn(
@@ -122,8 +127,9 @@ public class StatStatusStorageManager {
 	 */
 	public static TaskInfo get(String appName, String tabName, String statName) {
 		DBService dbService = DBService.instance();
+        ApplicationDefinition appDef = SchemaService.instance().getApplication(appName);
 		Iterator<DColumn> colIterator =
-		    dbService.getAllColumns(appName, SpiderService.statsStoreName(appName),
+		    dbService.getAllColumns(Tenant.getTenant(appDef), SpiderService.statsStoreName(appName),
 		                            tabName + "/" + statName + "/" + STAT_ROW_SUFFIX);
 		if (colIterator == null) return null;
 		TaskInfo taskInfo = new TaskInfo();

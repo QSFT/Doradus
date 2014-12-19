@@ -31,6 +31,7 @@ import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.Defs;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DColumn;
+import com.dell.doradus.service.db.Tenant;
 
 /**
  * This class caches sharding information for sharded tables. For each sharded table, a
@@ -140,8 +141,7 @@ public class ShardCache {
     
     // Create a local transaction to add the register the given shard, then cache it.
     private void addShardStart(TableDefinition tableDef, int shardNumber, Date shardDate) {
-        String appName = tableDef.getAppDef().getAppName();
-        SpiderTransaction dbTran = new SpiderTransaction(appName);
+        SpiderTransaction dbTran = new SpiderTransaction(Tenant.getTenant(tableDef));
         dbTran.addShardStart(tableDef, shardNumber, shardDate);
         dbTran.commit();
         synchronized (this) {
@@ -199,7 +199,7 @@ public class ShardCache {
         }
         
         Iterator<DColumn> colIter =
-            DBService.instance().getAllColumns(appName, SpiderService.termsStoreName(tableDef), Defs.SHARDS_ROW_KEY);
+            DBService.instance().getAllColumns(Tenant.getTenant(tableDef), SpiderService.termsStoreName(tableDef), Defs.SHARDS_ROW_KEY);
         if (colIter != null) {
             while (colIter.hasNext()) {
                 DColumn col = colIter.next();

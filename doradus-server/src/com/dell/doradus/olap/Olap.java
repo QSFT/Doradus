@@ -58,7 +58,9 @@ import com.dell.doradus.search.query.IdRangeQuery;
 import com.dell.doradus.search.query.Query;
 import com.dell.doradus.search.util.LRUCache;
 import com.dell.doradus.service.db.DBService;
+import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.olap.OLAPService;
+import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.utilities.Timer;
 
 
@@ -90,17 +92,17 @@ public class Olap {
 	
 	public Olap() { }
 	
-	// For testing: use default keyspace and register app with DBService
+	// For testing: use default keyspace
 	public VDirectory createApplication(String appName) {
         String keyspace = ServerConfig.getInstance().keyspace;
-        DBService.instance().createKeyspace(keyspace);
-        DBService.instance().registerApplication(keyspace, appName);
-        return createApplication(keyspace, appName);
+        Tenant tenant = new Tenant(keyspace);
+        DBService.instance().createTenant(tenant);
+        return createApplication(tenant, appName);
 	}
 	
-	public VDirectory createApplication(String keyspace, String appName) {
-	    DBService.instance().createStoreIfAbsent(keyspace, "OLAP", true);
-	    VDirectory root = new VDirectory(appName, "OLAP").getDirectoryCreate("applications").getDirectoryCreate(appName);
+	public VDirectory createApplication(Tenant tenant, String appName) {
+	    DBService.instance().createStoreIfAbsent(tenant, "OLAP", true);
+	    VDirectory root = new VDirectory(tenant, "OLAP").getDirectoryCreate("applications").getDirectoryCreate(appName);
 	    synchronized (m_appRoots) {
 	        m_appRoots.put(appName, root);
 	    }
@@ -111,7 +113,9 @@ public class Olap {
 	public VDirectory getRoot(String appName) {
 	    VDirectory root = m_appRoots.get(appName);
 	    if (root == null) {
-	        root = new VDirectory(appName, "OLAP").getDirectory("applications").getDirectory(appName);
+	        ApplicationDefinition appDef = SchemaService.instance().getApplication(appName);
+	        Tenant tenant = Tenant.getTenant(appDef);
+	        root = new VDirectory(tenant, "OLAP").getDirectory("applications").getDirectory(appName);
 	        assert root != null;
 	        synchronized (m_appRoots) {
 	            m_appRoots.put(appName, root);

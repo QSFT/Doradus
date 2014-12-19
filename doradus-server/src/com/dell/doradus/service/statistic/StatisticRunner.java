@@ -19,10 +19,12 @@ package com.dell.doradus.service.statistic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.StatisticDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.search.aggregate.Aggregate.StatisticResult;
+import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.statistic.TaskInfo.Status;
 
 public class StatisticRunner implements Runnable {
@@ -30,6 +32,7 @@ public class StatisticRunner implements Runnable {
     // Logging interface:
     private Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
     
+    private final ApplicationDefinition m_appDef;
 	private final StatisticDefinition m_statDef;
 	private final String m_appName;
 	private final TaskInfo m_taskInfo = new TaskInfo();
@@ -38,10 +41,13 @@ public class StatisticRunner implements Runnable {
 	
     public StatisticRunner(String appName, StatisticDefinition statDef) {
     	m_appName = appName;
+    	m_appDef = SchemaService.instance().getApplication(appName);
     	m_statDef = statDef;
     }
     
     public String getAppName() { return m_appName; }
+    
+    public ApplicationDefinition getAppDef() { return m_appDef; }
     
     public StatisticDefinition getStatDefinition() { return m_statDef; }
     
