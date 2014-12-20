@@ -69,9 +69,6 @@
 		<get dest="${common.lib.dir}">
 			<url url="http://repo1.maven.org/maven2/org/yaml/snakeyaml/1.6/snakeyaml-1.6.jar"/> 
 		</get>
-		<get dest="${common.lib.dir}">
-			<url url="http://repo1.maven.org/maven2/com/megginson/sax/xml-writer/0.2/xml-writer-0.2.jar"/> 
-		</get>
 	</target>
 	
 	<target name="CommonCompile" depends="CommonLoadLibs">

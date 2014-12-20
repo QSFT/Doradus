@@ -643,13 +643,9 @@ final public class UNode {
      */
     public String toXML() throws IllegalArgumentException {
         XMLBuilder xml = new XMLBuilder();
-        try {
-            xml.startDocument();
-            toXML(xml);
-            xml.endDocument();
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
-        }
+        xml.startDocument();
+        toXML(xml);
+        xml.endDocument();
         return xml.toString();
     }   // toXML
     
@@ -664,13 +660,9 @@ final public class UNode {
     public String toXML(boolean bPretty) throws IllegalArgumentException {
         int indent = bPretty ? 3 : 0;
         XMLBuilder xml = new XMLBuilder(indent);
-        try {
-            xml.startDocument();
-            toXML(xml);
-            xml.endDocument();
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
-        }
+        xml.startDocument();
+        toXML(xml);
+        xml.endDocument();
         return xml.toString();
     }   // toXML
     
@@ -694,63 +686,59 @@ final public class UNode {
         
         // Add child VALUE nodes marked as "attribute" in its own map.
         addXMLAttributes(attrMap);
-        try {
-            switch (m_type) {
-            case ARRAY:
-                // Start an element with or without attributes.
-                if (attrMap.size() > 0) {
-                    xml.startElement(elemName, attrMap);
-                } else {
-                    xml.startElement(elemName);
-                }
-                
-                // Add XML for non-attribute child nodes.
-                if (m_children != null) {
-                    for (UNode childNode : m_children) {
-                        if (childNode.m_type != NodeType.VALUE || !childNode.m_bAttribute) {
-                            childNode.toXML(xml);
-                        }
-                    }
-                }
-                xml.endElement();
-                break;
-            case MAP:
-                // Start an element with or without attributes.
-                if (attrMap.size() > 0) {
-                    xml.startElement(elemName, attrMap);
-                } else {
-                    xml.startElement(elemName);
-                }
-                
-                // Add XML for non-attribute child nodes in name order.
-                if (m_childNodeMap != null) {
-                    assert m_childNodeMap.size() == m_children.size();
-                    for (UNode childNode : m_childNodeMap.values()) {
-                        if (childNode.m_type != NodeType.VALUE || !childNode.m_bAttribute) {
-                            childNode.toXML(xml);
-                        }
-                    }
-                }
-                xml.endElement();
-                break;
-            case VALUE:
-                // Map to a simple element.
-                String value = m_value;
-                if (Utils.containsIllegalXML(value)) {
-                    value = Utils.base64FromString(m_value);
-                    attrMap.put("encoding", "base64");
-                }
-                if (attrMap.size() > 0) {
-                    xml.addDataElement(elemName, value, attrMap);
-                } else {
-                    xml.addDataElement(elemName, value);
-                }
-                break;
-            default:
-                assert false : "Unexpected NodeType: " + m_type;
+        switch (m_type) {
+        case ARRAY:
+            // Start an element with or without attributes.
+            if (attrMap.size() > 0) {
+                xml.startElement(elemName, attrMap);
+            } else {
+                xml.startElement(elemName);
             }
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
+            
+            // Add XML for non-attribute child nodes.
+            if (m_children != null) {
+                for (UNode childNode : m_children) {
+                    if (childNode.m_type != NodeType.VALUE || !childNode.m_bAttribute) {
+                        childNode.toXML(xml);
+                    }
+                }
+            }
+            xml.endElement();
+            break;
+        case MAP:
+            // Start an element with or without attributes.
+            if (attrMap.size() > 0) {
+                xml.startElement(elemName, attrMap);
+            } else {
+                xml.startElement(elemName);
+            }
+            
+            // Add XML for non-attribute child nodes in name order.
+            if (m_childNodeMap != null) {
+                assert m_childNodeMap.size() == m_children.size();
+                for (UNode childNode : m_childNodeMap.values()) {
+                    if (childNode.m_type != NodeType.VALUE || !childNode.m_bAttribute) {
+                        childNode.toXML(xml);
+                    }
+                }
+            }
+            xml.endElement();
+            break;
+        case VALUE:
+            // Map to a simple element.
+            String value = m_value;
+            if (Utils.containsIllegalXML(value)) {
+                value = Utils.base64FromString(m_value);
+                attrMap.put("encoding", "base64");
+            }
+            if (attrMap.size() > 0) {
+                xml.addDataElement(elemName, value, attrMap);
+            } else {
+                xml.addDataElement(elemName, value);
+            }
+            break;
+        default:
+            assert false : "Unexpected NodeType: " + m_type;
         }
     }   // toXML
 

@@ -16,33 +16,22 @@
 
 package com.dell.doradus.common;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
 import java.util.Stack;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import com.megginson.sax.DataWriter;
-import com.megginson.sax.XMLWriter;
-
 /**
- * Creates XML documents using the com.megginson.sax.XMLWriter class. It also steals, er,
- * borrows ideas from com.dell.rogue.util.RogueMLWriter.
- * TODO: Currently this class does not stream: It builds everything up in a String and
- * outputs it with the toString() method.
+ * Creates XML documents by writing to a StringWriter.
  */
 final public class XMLBuilder {
-    // Stack of element names, so they don't have to be passed-in to endElement():
+    private final static Attributes EMPTY_ATTS = new AttributesImpl();
     private final Stack<String> m_tagStack = new Stack<String>();
-    
-    // Where the data is pushed (for now):
     private final StringWriter m_stringWriter = new StringWriter();
-
-    // The XMLWriter, which does all the work:
-    private XMLWriter m_xmlWriter;
+    private final int m_indent;
+    private final String m_prefix;
 
     // Default constructor creates an XML Builder that generates the unformatted XML.
     // Use XMLBuilder(indent) constructor to generate the formatted XML.
@@ -51,148 +40,89 @@ final public class XMLBuilder {
     }
     
     // Creates an XMLBuilder that generates the formatted XML
-    public XMLBuilder(int indent){
-    	if (indent == 0){
-    		m_xmlWriter = new XMLWriter(m_stringWriter);    		
-    	}
-    	else {
-    		m_xmlWriter = new DataWriter(m_stringWriter);
-    		((DataWriter)m_xmlWriter).setIndentStep(indent);
-    	}
+    public XMLBuilder(int indent) {
+        m_indent = indent;
+        StringBuilder buffer = new StringBuilder();
+        for (int index = 0; index < indent; index++) {
+            buffer.append(' ');
+        }
+        m_prefix = buffer.toString();
     }
 
     // Start a new XML document.
-    public void startDocument() throws IOException {
-        try {
-            m_xmlWriter.startDocument();
-        } catch (SAXException ex) {
-            // Repackage as an IOException
-            throw new IOException("Error building XML document", ex);
-        }
+    public void startDocument() {
+        m_stringWriter.write("<?xml version=\"1.0\" standalone=\"yes\"?>\n");
         m_tagStack.clear();
     }   // startDocument
     
     // Finish the current XML document.
-    public void endDocument() throws IOException {
+    public void endDocument() {
         if (m_tagStack.size() != 0) {
-            throw new IOException("XML 'endDocument' with unfinished tags");
+            throw new RuntimeException("XML 'endDocument' with unfinished tags");
         }
-        try {
-            m_xmlWriter.endDocument();
-        } catch (SAXException ex) {
-            // Repackage as an IOException
-            throw new IOException("Error building XML document", ex);
-        }
+        m_stringWriter.write('\n');
     }   // endDocument
     
     // Start a new XML element using the given start tag only.
-    public void startElement(String elemName) throws IOException {
-        try {
-            m_xmlWriter.startElement(elemName);
-        } catch (SAXException ex) {
-            // Repackage as an IOException
-            throw new IOException("Error building XML document", ex);
-        }
+    public void startElement(String elemName) {
+        writeStartElement(elemName, EMPTY_ATTS);
         m_tagStack.push(elemName);
     }   // startElement
     
     // Start a new XML element using the given start tag and single attribute.
-    public void startElement(String elemName, String attrName, String attrValue) throws IOException {
+    public void startElement(String elemName, String attrName, String attrValue) {
         AttributesImpl attrs = new AttributesImpl();
         attrs.addAttribute("", attrName, "", "CDATA", attrValue);
-        try {
-            m_xmlWriter.startElement("", elemName, "", attrs);
-        } catch (SAXException ex) {
-            // Repackage as an IOException
-            throw new IOException("Error building XML document", ex);
-        }
+        writeStartElement(elemName, attrs);
         m_tagStack.push(elemName);
     }   // startElement
 
     // Start a new XML element using the given name and attribute set.
-    public void startElement(String elemName, Attributes attrs) throws IOException {
-        try {
-            m_xmlWriter.startElement("", elemName, "", attrs);
-        } catch (SAXException ex) {
-            // Repackage as an IOException
-            throw new IOException("Error building XML document", ex);
-        }
+    public void startElement(String elemName, Attributes attrs) {
+        writeStartElement(elemName, attrs);
         m_tagStack.push(elemName);
     }   // startElement
 
     // Same as above but using an attribute map.
-    public void startElement(String elemName, Map<String,String> attrs) throws IOException {
+    public void startElement(String elemName, Map<String,String> attrs) {
         startElement(elemName, toAttributes(attrs));
     }   // startElement
 
     // Finish the outer-most XML element that was started.
-    public void endElement() throws IOException {
+    public void endElement() {
         if (m_tagStack.size() == 0) {
-            throw new IOException("XML 'endElement' with no unfinished tags");
+            throw new RuntimeException("XML 'endElement' with no unfinished tags");
         }
-        try {
-            m_xmlWriter.endElement(m_tagStack.pop());
-        } catch (SAXException ex) {
-            // Repackage as an IOException
-            throw new IOException("Error building XML document", ex);
-        }
+        writeEndElement(m_tagStack.pop());
     }   // endElement
     
     // Add an element, including start and end tags, with the content as text data within.
-    public void addDataElement(String elemName, String content) throws IOException {
-        try {
-            m_xmlWriter.dataElement(elemName, content);
-        } catch (SAXException ex) {
-            // Repackage as an IOException
-            throw new IOException("Error building XML document", ex);
-        }
+    public void addDataElement(String elemName, String content) {
+        writeDataElement(elemName, EMPTY_ATTS, content);
     }   // addDataElement
     
     // Same as above but with a single attribute name/value pair as well.
-    public void addDataElement(String elemName, String content, String attrName, String attrValue)
-            throws IOException {
+    public void addDataElement(String elemName, String content, String attrName, String attrValue) {
         AttributesImpl attrs = new AttributesImpl();
         attrs.addAttribute("", attrName, "", "CDATA", attrValue);
-        try {
-            m_xmlWriter.dataElement("", elemName, "", attrs, content);
-        } catch (SAXException ex) {
-            // Repackage as an IOException
-            throw new IOException("Error building XML document", ex);
-        }
+        writeDataElement(elemName, attrs, content);
     }   // addDataElement
 
     // Same as above but using an attribute set.
-    public void addDataElement(String elemName, String content, Attributes attrs) 
-            throws IOException {
-        try {
-            m_xmlWriter.dataElement("", elemName, "", attrs, content);
-        } catch (SAXException ex) {
-            // Repackage as an IOException
-            throw new IOException("Error building XML document", ex);
-        }
+    public void addDataElement(String elemName, String content, Attributes attrs) {
+        writeDataElement(elemName, attrs, content);
     }   // addDataElement
 
-    public void addEmptyElement(String elemName, Map<String,String> attrs) throws IOException{
-    	addEmptyElement(elemName, toAttributes(attrs));
-    }
-
-    public void addEmptyElement(String elemName, Attributes attrs) throws IOException {
-        try { 
-        	m_xmlWriter.emptyElement("", elemName, "", attrs);
-        	m_xmlWriter.characters("");
-        } catch (SAXException ex) { throw new IOException("Error building XML document", ex); }
-    }
-
     // Same as above but using an attribute map.
-    public void addDataElement(String elemName, String content, Map<String,String> attrs) 
-    		throws IOException{
+    public void addDataElement(String elemName, String content, Map<String,String> attrs) {
     	addDataElement(elemName, content, toAttributes(attrs));
     }   // addDataElement
     
     @Override
     public String toString() {
-        // We can't throw, so just assert.
-        assert m_tagStack.size() == 0;
+        if (m_tagStack.size() != 0) {
+            throw new RuntimeException("Stack is not empty");
+        }
         return m_stringWriter.toString();
     }   // toString
 
@@ -205,4 +135,92 @@ final public class XMLBuilder {
         return impl;
     }   // toAttributes
     
+    private void writeStartElement(String elemName, Attributes atts) {
+        for (int level = 0; level < m_tagStack.size(); level++) {
+            m_stringWriter.write(m_prefix);
+        }
+        m_stringWriter.write('<');
+        m_stringWriter.write(elemName);
+        writeAttributes(atts);
+        m_stringWriter.write('>');
+        if (m_indent > 0) {
+            m_stringWriter.write('\n');
+        }
+    }
+    
+    private void writeEndElement(String elemName) {
+        for (int level = 0; level < m_tagStack.size(); level++) {
+            m_stringWriter.write(m_prefix);
+        }
+        m_stringWriter.write("</");
+        m_stringWriter.write(elemName);
+        m_stringWriter.write('>');
+        if (m_indent > 0) {
+            m_stringWriter.write('\n');
+        }
+    }
+    
+    private void writeDataElement(String elemName, Attributes atts, String content) {
+        startElement(elemName, atts);
+        writeCharacters(content);
+        endElement();
+    }
+
+    private void writeAttributes(Attributes atts) {
+        for (int i = 0; i < atts.getLength(); i++) {
+            char value[] = atts.getValue(i).toCharArray();
+            m_stringWriter.write(' ');
+            m_stringWriter.write(atts.getLocalName(i));
+            m_stringWriter.write("=\"");
+            writeEscaped(value, 0, value.length, true);
+            m_stringWriter.write('"');
+        }
+    }
+
+    public void writeCharacters(String data)  {
+        for (int level = 0; level < m_tagStack.size(); level++) {
+            m_stringWriter.write(m_prefix);
+        }
+        char ch[] = data.toCharArray();
+        writeCharacters(ch, 0, ch.length);
+        if (m_indent > 0) {
+            m_stringWriter.write('\n');
+        }
+    }
+    
+    public void writeCharacters(char ch[], int start, int len) {
+        writeEscaped(ch, start, len, false);
+    }
+    
+    private void writeEscaped(char ch[], int start, int length, boolean isAttVal) {
+        for (int i = start; i < start + length; i++) {
+            switch (ch[i]) {
+            case '&':
+                m_stringWriter.write("&amp;");
+                break;
+            case '<':
+                m_stringWriter.write("&lt;");
+                break;
+            case '>':
+                m_stringWriter.write("&gt;");
+                break;
+            case '\"':
+                if (isAttVal) {
+                    m_stringWriter.write("&quot;");
+                } else {
+                    m_stringWriter.write('\"');
+                }
+                break;
+            default:
+                if (ch[i] > '\u007f') {
+                    m_stringWriter.write("&#");
+                    m_stringWriter.write(Integer.toString(ch[i]));
+                    m_stringWriter.write(';');
+                } else {
+                    m_stringWriter.write(ch[i]);
+                }
+            }
+        }
+    }
+
 }   // class XMLBuilder
