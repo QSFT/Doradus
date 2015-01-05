@@ -1,3 +1,8 @@
+#Doradus at Strata 2015
+If you need an excuse to visit sunny California in February, come learn about Doradus at [Strata+Hadoop World 2015](http://strataconf.com/big-data-conference-ca-2015/), which takes place February 17-20, 2015 in San Jose, CA. I'll be describing Doradus at this session: [One Billion Objects in 2GB: Big Data Analytics on Small Clusters with Doradus OLAP](http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/38276). Love to see you there!
+
+\- Randy
+
 #Overview
 Doradus is a REST service that extends a Cassandra NoSQL database with a
 graph-based data model, advanced indexing and search features, and a REST API.
