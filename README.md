@@ -57,9 +57,7 @@ The Doradus query language (DQL) supports Lucene-like full text clauses such as
 expressions*, which can use *quantifiers*, *filters*, and *transitive* searches.
 DQL can be used in *object queries*, which return matching objects, and
 *aggregate queries*, which perform metric calculations on selected objects,
-optionally grouped with an arbitrary number of levels. Doradus Spider allows
-aggregate queries to persisted as *statistics* and refreshed in the background
-to provide fast REST API access.
+optionally grouped with an arbitrary number of levels.
 
 Both OLAP and Spider offer automatic data aging.
 
