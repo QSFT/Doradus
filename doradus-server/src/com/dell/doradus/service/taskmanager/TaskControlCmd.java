@@ -81,9 +81,6 @@ public class TaskControlCmd extends RESTCallback {
 						continue;
 					}
 					String taskName = taskType.getName();
-					if (definition.getTaskDeclaration() != null) {
-						taskName += "/" + definition.getTaskDeclaration();
-					}
 					String tableName = definition.getTableName();
 					if (tableName == null) {
 						tableName = "*";

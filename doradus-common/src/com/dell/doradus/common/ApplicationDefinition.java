@@ -252,10 +252,9 @@ final public class ApplicationDefinition {
      * @param schedType
      * @param schedSpec
      * @param tableName
-     * @param taskDeclaration
      */
-    public void addSchedule(SchedType schedType, String schedSpec, String tableName, String taskDeclaration) {
-    	addSchedule(new ScheduleDefinition(this, schedType, schedSpec, tableName, taskDeclaration));
+    public void addSchedule(SchedType schedType, String schedSpec, String tableName) {
+    	addSchedule(new ScheduleDefinition(this, schedType, schedSpec, tableName));
     }	// addSchedule
     
     /**

@@ -48,17 +48,6 @@ public class AggregationQueryBuilder {
         }
     }
 
-    public static Statistic.StatisticParameter BuildStatisticParameters(String string) {
-        Parser parser = Parser.GetStatisticParametersParser();
-        ParseResult res1 = parser.Parse(string);
-        if (res1.error == null) {
-            Statistic.StatisticParameter parameter = BuildStatisticParameters(res1.context);
-            return parameter;
-        } else {
-            throw new IllegalArgumentException(res1.error);
-        }
-    }
-
     public static List<AggregationGroup> BuildStatistic(String string, TableDefinition definition) {
         List<AggregationGroup> group = Build(string, definition);
         return group;
@@ -138,44 +127,6 @@ public class AggregationQueryBuilder {
         } else {
             throw new IllegalArgumentException(res1.error);
         }
-    }
-
-    private static Statistic.StatisticParameter BuildStatisticParameters(Context context) {
-
-        Statistic.StatisticParameter result = new Statistic.StatisticParameter();
-        Stack<String> stack = new Stack<String>();
-        for (int i = 0; i < context.items.size(); i++) {
-            GrammarItem grammarItem = context.items.get(i);
-            if (grammarItem.getType().equals("lexem") || grammarItem.getType().equals("string"))
-                stack.push(grammarItem.getValue());
-
-            if (grammarItem.getType().equals("semantic")) {
-                if (grammarItem.getValue().equals("level")) {
-                    String level = stack.pop();
-                    try {
-                        result.level = Integer.parseInt(level);
-                        continue;
-                    } catch (Exception e) {
-                        throw new IllegalArgumentException("Wrong value for level: " + level);
-                    }
-                }
-
-                if (grammarItem.getValue().equals("value")) {
-                    String value = stack.pop();
-                    result.maxValue = value;
-                    result.minValue = value;
-                    continue;
-                }
-                if (grammarItem.getValue().equals("rangeValue")) {
-                    result.maxValue = stack.pop();
-                    result.minValue = stack.pop();
-                    continue;
-                }
-            }
-        }
-        if (result.maxValue == null || result.maxValue == null)
-            result = null;
-        return result;
     }
 
     private static ArrayList<AggregationMetric> BuildMetrics(Context context, TableDefinition definition) {

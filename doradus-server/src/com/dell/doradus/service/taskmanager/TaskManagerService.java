@@ -196,9 +196,6 @@ public class TaskManagerService extends Service implements ITaskManager {
 			ScheduleDefinition definition = scheduleTasks.get(key);
 			SchedType taskType = definition.getType();
 			String taskName = taskType.getName();
-			if (definition.getStatisticName() != null) {
-				taskName += "/" + definition.getStatisticName();
-			}
 			String tableName = definition.getTableName();
 			if (tableName == null) {
 				tableName = "*";
@@ -344,8 +341,7 @@ public class TaskManagerService extends Service implements ITaskManager {
 			oldAppDef.addSchedule(new ScheduleDefinition(
 					oldAppDef, taskType,
 					settings.getSchedule(),
-					settings.getTableName(),
-					taskIdParts.length <= 2 ? "" : taskIdParts[2]));
+					settings.getTableName()));
 		}
 		SchemaService.instance().defineApplication(oldAppDef);
 	}

@@ -41,9 +41,6 @@ import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.FieldType;
 import com.dell.doradus.common.RetentionAge;
 import com.dell.doradus.common.ScheduleDefinition;
-import com.dell.doradus.common.StatResult;
-import com.dell.doradus.common.StatisticDefinition;
-import com.dell.doradus.common.StatsStatus;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
@@ -54,14 +51,12 @@ import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.search.aggregate.Aggregate;
 import com.dell.doradus.service.StorageService;
 import com.dell.doradus.service.db.DBService;
-import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
-import com.dell.doradus.service.statistic.StatisticManager;
 
 /**
  * The main class for the SpiderService storage service. The Spider service stores objects
@@ -75,16 +70,9 @@ public class SpiderService extends StorageService {
     // Singleton object:
     private static final SpiderService INSTANCE = new SpiderService();
     private final ShardCache m_shardCache = new ShardCache();
-    private StatisticManager m_statManager;
 
     // SpiderService-specific commands:
     private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
-        // Statistics commands
-        new RESTCommand("PUT /{application}/{table}/_statistics/_refresh            com.dell.doradus.service.spider.StatsRefreshTableCmd"),
-        new RESTCommand("PUT /{application}/{table}/_statistics/{stat}/_refresh     com.dell.doradus.service.spider.StatsRefreshStatCmd"),
-        new RESTCommand("GET /{application}/{table}/_statistics/_status             com.dell.doradus.service.spider.StatsGetStatusCmd"),
-        new RESTCommand("GET /{application}/{table}/_statistics/{stat}?{params}     com.dell.doradus.service.spider.QueryStatCmd"),
-        
         // On-demand data integrity tasks for the Spider service:
         new RESTCommand("POST   /_tasks/{application}/{table}/{task-type}/{field}           com.dell.doradus.service.spider.FixDataCmd"),
         new RESTCommand("POST   /_tasks/{application}/{table}/{task-type}/{field}?{param}   com.dell.doradus.service.spider.FixDataCmd"),
@@ -112,7 +100,6 @@ public class SpiderService extends StorageService {
     @Override
     public void startService() {
         SchemaService.instance().waitForFullService();
-        m_statManager = StatisticManager.instance();
     }   // startService
 
     @Override
@@ -267,10 +254,6 @@ public class SpiderService extends StorageService {
         return addBatch(appDef, storeName, batch, paramMap);
     }   // updateBatch
     
-    //----- Access to StatisticManager
-    
-    public StatisticManager getStatisticManager() { return m_statManager; }
-
     //----- SpiderService-specific public static methods
     
     /**
@@ -376,18 +359,6 @@ public class SpiderService extends StorageService {
         shardPrefix.append(linkColumnName(linkDef, objID));
         return shardPrefix.toString();
     }   // shardedLinkTermRowKey
-    
-    /**
-     * Return the store name (ColumnFamily) in which statistics are stored for the given
-     * table.
-     * 
-     * @param tableDef  {@link TableDefinition} of a table.
-     * @return          Store name (ColumnFamily) in which statistics are stored for the
-     *                  given table.
-     */
-    public static String statsStoreName(String appName) {
-        return appName + "_" + "Statistics";
-    }   // statsStoreName
     
     /**
      * Create the Terms row key for the given table, object, field name, and term.
@@ -534,58 +505,6 @@ public class SpiderService extends StorageService {
         }
     }   // getShards
     
-    //----- SpiderService Statistics commands
-
-    /**
-     * Get the refresh status of all statistics in the given table, which belongs to a
-     * SpiderService-managed application.
-     * 
-     * @param tableDef  {@link TableDefinition} of table to get statistics refresh status
-     *                  for.
-     * @return          {@link StatsStatus} that holds the refresh statuses. 
-     */
-    public StatsStatus getStatisticsRefreshStatus(TableDefinition tableDef) {
-        checkServiceState();
-    	return m_statManager.getStatStatus(tableDef);
-    }   // getStatisticsRefreshStatus
-
-    /**
-     * Query the given statistic with the given URI-encoded parameters.
-     *  
-     * @param statDef   {@link StatisticDefinition} of the statistic to query.
-     * @param params    URI-encoded parameters of a statistics query.
-     * @return          {@link StatResult} containing query results.
-     */
-    public StatResult queryStatisticURI(ApplicationDefinition appDef, StatisticDefinition statDef, String params) {
-        checkServiceState();
-    	return m_statManager.getStatistics(appDef, statDef, params);
-    }   // queryURIStatistic
-
-    /**
-     * Refresh the given statistic, which belongs to a SpiderService application and table.
-     * A task is scheduled to refresh the statistic asynchronously.
-     * 
-     * @param appName	Application name
-     * @param statDef   {@link StatisticDefinition} of statistic to refresh
-     */
-    public boolean refreshStatistic(String appName, StatisticDefinition statDef) {
-        checkServiceState();
-    	return m_statManager.refreshStatistic(appName, statDef);
-    }   // refreshStatistic
-    
-    /**
-     * Refresh all statistics in the given table, which belongs to a SpiderService
-     * application. A task is scheduled for each statistic and refreshed asynchronously.
-     * If the table has no statistics, this method is a no-op.
-     * 
-     * @param appName	Application name
-     * @param tabledef  {@link TableDefinition} of table to refresh statistics for.
-     */
-    public boolean refreshTableStatistics(String appName, TableDefinition tabledef) {
-        checkServiceState();
-    	return m_statManager.refreshStatistic(appName,  tabledef);
-    }   // refreshTableStatistics
-    
     //----- Private methods
     
     // Singleton creation only
@@ -643,11 +562,8 @@ public class SpiderService extends StorageService {
     // Delete all ColumnFamilies used by the given application. Only delete the ones that
     // actually exist in case a previous delete-app failed.
     private void deleteApplicationCFs(ApplicationDefinition appDef) {
-        // Statistics CF:
-        Tenant tenant = Tenant.getTenant(appDef);
-        DBService.instance().deleteStoreIfPresent(tenant, statsStoreName(appDef.getAppName()));
-        
         // Table-level CFs:
+        Tenant tenant = Tenant.getTenant(appDef);
         for (TableDefinition tableDef : appDef.getTableDefinitions().values()) {
             DBService.instance().deleteStoreIfPresent(tenant, objectsStoreName(tableDef));
             DBService.instance().deleteStoreIfPresent(tenant, termsStoreName(tableDef));
@@ -872,12 +788,9 @@ public class SpiderService extends StorageService {
     private void verifyApplicationCFs(String keyspace,
                                       ApplicationDefinition oldAppDef,
                                       ApplicationDefinition appDef) {
-        // Statistics CF:
-        Tenant tenant = Tenant.getTenant(appDef);
-        DBService dbService = DBService.instance();
-        dbService.createStoreIfAbsent(tenant, statsStoreName(appDef.getAppName()), true);
-        
         // Add new table-level CFs:
+        DBService dbService = DBService.instance();
+        Tenant tenant = Tenant.getTenant(appDef);
         for (TableDefinition tableDef : appDef.getTableDefinitions().values()) {
             dbService.createStoreIfAbsent(tenant, objectsStoreName(tableDef), true);
             dbService.createStoreIfAbsent(tenant, termsStoreName(tableDef), true);
@@ -892,27 +805,6 @@ public class SpiderService extends StorageService {
                 }
             }
         }
-        
-        // Remove unrelated rows in the statistics table
-        Set<String> tableNames = appDef.getTableDefinitions().keySet();
-        DBTransaction transaction = dbService.startTransaction(tenant);
-        String statsStoreName = statsStoreName(appDef.getAppName());
-        Iterator<DRow> statRows = dbService.getAllRowsAllColumns(tenant, statsStoreName);
-        while (statRows.hasNext()) {
-        	DRow row = statRows.next();
-        	// Row keys has a form of {table}/{statName} or {table}/{statName}/_status
-        	String rowKey = row.getKey();
-        	String[] keySegments = rowKey.split("/");
-        	// We delete non-empty rows related to non-existing tables or
-        	// non-existing statistics within existing tables.
-        	if (keySegments.length > 1 &&
-        			(!tableNames.contains(keySegments[0]) ||
-        			 !appDef.getTableDef(keySegments[0]).getStatDefNames().contains(keySegments[1])) &&
-        			row.getColumns().hasNext()) {
-        		transaction.deleteRow(statsStoreName, rowKey);
-        	}
-        }
-        dbService.commit(transaction);
     }   // verifyApplicationCFs
     
     // Performs semantic schedules validation after all the structure checks,
@@ -924,15 +816,10 @@ public class SpiderService extends StorageService {
     	}
     	
     	// Tables that have aging field and retention age defined
-    	// Tables that have some statistics defined
     	Set<String> dataAgingTables = new HashSet<>();
-    	Set<String> statRefreshTables = new HashSet<>();
     	for (TableDefinition tabDef : appDef.getTableDefinitions().values()) {
     		if (tabDef.isSetForAging()) {
     			dataAgingTables.add(tabDef.getTableName());
-    		}
-    		if (tabDef.getStatDefinitions().iterator().hasNext()) {
-    			statRefreshTables.add(tabDef.getTableName());
     		}
     	}
     	
@@ -945,8 +832,6 @@ public class SpiderService extends StorageService {
     			} else {
     				dataAgingTables.removeAll(Arrays.asList(schedDef.getTableName().split(",")));
     			}
-    		} else if (taskType == SchedType.STAT_REFRESH) {
-    			statRefreshTables.remove(schedDef.getTableName());
     		}
     	}
 
@@ -956,16 +841,7 @@ public class SpiderService extends StorageService {
 			appDef.addSchedule(
 					SchedType.DATA_AGING,
 					ScheduleDefinition.DEFAULT_AGING_SCHEDULE,
-					Utils.concatenate(dataAgingTables, ","), null);
-		}
-
-    	// If there are tables with statistics that have no stat-refresh task defined,
-		// then define the task for those tables.
-		for (String table : statRefreshTables) {
-			appDef.addSchedule(
-					SchedType.STAT_REFRESH,
-					ScheduleDefinition.DEFAULT_STATREFRESH_SCHEDULE,
-					table, null);
+					Utils.concatenate(dataAgingTables, ","));
 		}
     }
 

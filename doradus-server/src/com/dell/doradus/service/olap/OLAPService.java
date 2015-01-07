@@ -32,7 +32,6 @@ import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.ScheduleDefinition;
 import com.dell.doradus.common.ScheduleDefinition.SchedType;
-import com.dell.doradus.common.StatisticDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
@@ -407,11 +406,6 @@ public class OLAPService extends StorageService {
             Utils.require(false, "Unknown option for OLAPService table: " + optName);
         }
         
-        // Statistics are not supported.
-        for (StatisticDefinition statDef : tableDef.getStatDefinitions()) {
-            Utils.require(false, "OLAPService applications do not support statistic definitions: " + statDef.getStatName());
-        }
-        
         for (FieldDefinition fieldDef : tableDef.getFieldDefinitions()) {
             validateField(fieldDef);
         }
@@ -445,7 +439,7 @@ public class OLAPService extends StorageService {
         }
         if (!hasDataAgingTask) {
             appDef.addSchedule(SchedType.DATA_AGING,
-                               ScheduleDefinition.DEFAULT_AGING_SCHEDULE, null, null);
+                               ScheduleDefinition.DEFAULT_AGING_SCHEDULE, null);
         }
     }
 

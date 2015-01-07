@@ -74,9 +74,6 @@ public class TaskDBUtils {
 						String taskId = schedDef.getTableName();
 						if (taskId == null) taskId = "*";
 						taskId += '/' + schedType.getName();
-						if (schedDef.getTaskDeclaration() != null) {
-							taskId += '/' + schedDef.getTaskDeclaration();
-						}
 						taskSchedules.put(taskId, schedDef.getSchedSpec());
 					}
 				}
@@ -169,9 +166,6 @@ public class TaskDBUtils {
 				String taskId = schedDef.getTableName();
 				if (taskId == null) taskId = "*";
 				taskId += '/' + schedType.getName();
-				if (schedDef.getTaskDeclaration() != null) {
-					taskId += '/' + schedDef.getTaskDeclaration();
-				}
 				taskIds.add(taskId);
         	}
         	allTaskNames.put(appName,  taskIds);

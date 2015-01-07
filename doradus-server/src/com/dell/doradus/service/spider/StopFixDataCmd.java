@@ -47,7 +47,7 @@ public class StopFixDataCmd extends RESTCallback {
         
         StorageService storageService = SchemaService.instance().getStorageService(appDef);
         Utils.require(storageService.getClass().getSimpleName().equals(SpiderService.class.getSimpleName()),
-                      "Only SpiderService applications support statistics: %s", application);
+                      "Only SpiderService applications support this request: %s", application);
         
         String table = m_request.getVariableDecoded("table");
         TableDefinition tableDef = appDef.getTableDef(table);

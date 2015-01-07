@@ -87,11 +87,6 @@ public class ServerConfig {
     public static final int DEFAULT_DBESOPTIONS_INITIAL_LINK_BUFFER = 10;
     public static final int DEFAULT_DBESOPTIONS_INITIAL_LINK_BUFFER_DIMENSION = 1000;
     public static final int DEFAULT_DBESOPTIONS_INITIAL_SCALAR_BUFFER = 30;
-	public static final int MAX_STATISTIC_WORK_BACKLOG = 1000;
-	// Statistic defaults (Temporary solution until generic scheduler is implemented)
-	public static final int STATISTIC_SCHEDULER_CONCURRENT_THREAD_COUNT = 2; // The number of threads for statistic recalculation
-	public static final long STATISTIC_SCHEDULED_PERIOD = 24;
-	public static final long STATISTIC_SCHEDULER_INITIAL_DELAY = 0;
 	// Default Thrift timeout and retry values (not advertised in getUsage):
     public static final int DEFAULT_DB_TIMEOUT_MILLIS = 60000;
     public static final int DEFAULT_MAX_COMMIT_ATTEMPTS = 10;

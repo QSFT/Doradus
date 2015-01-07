@@ -34,10 +34,9 @@ import com.dell.doradus.management.TaskSettings;
 public class ScheduleDefinition {
 	/**
 	 * Default schedules that are assigned to automatically created data-aging
-	 * and stat-refresh tasks (every day at midnight). 
+	 * tasks (every day at midnight). 
 	 */
 	public static final String DEFAULT_AGING_SCHEDULE = "0 0 * * *";
-	public static final String DEFAULT_STATREFRESH_SCHEDULE	= "0 0 * * *";
 	
     /**
      * Represents the types of {@link ScheduleDefinition}s currently recognized.
@@ -49,7 +48,6 @@ public class ScheduleDefinition {
         		super.validate(schedDef, serviceName);
         		Utils.require(schedDef.m_schedSpec != null, "Value should be defined for " + getName());
                 Utils.require(schedDef.m_tableName == null, "'table' attribute not valid for " + getName());
-                Utils.require(schedDef.m_taskDeclaration == null, "'statistic' attribute not valid for " + getName());
         	}
         },
         TABLE_DEFAULT("table-default", null, null) {
@@ -59,28 +57,11 @@ public class ScheduleDefinition {
         		Utils.require(schedDef.m_schedSpec != null, "Value should be defined for " + getName());
                 Utils.require(schedDef.m_tableName != null, "'table' attribute should be defined for " + getName());
                 Utils.require(schedDef.m_appDef.getTableDef(schedDef.m_tableName) != null, "Table " + schedDef.m_tableName + " not defined for " + getName());
-                Utils.require(schedDef.m_taskDeclaration == null, "'statistic' attribute not valid for " + getName());
         	}
         },
         RE_INDEX("re-index", "com.dell.doradus.tasks.ReIndexFieldData", new String[0]),
         DELETE_SCALAR("delete-scalar", "com.dell.doradus.tasks.DeleteScalarFieldData", new String[0]),
         DELETE_LINK("delete-link", "com.dell.doradus.tasks.DeleteLinkFieldData", new String[0]),
-        STAT_REFRESH("stat-refresh", "com.dell.doradus.service.statistic.StatRefresher",
-        		new String[] {"SpiderService"}) {
-        			@Override
-                	public void validate(ScheduleDefinition schedDef, String serviceName) {
-                		super.validate(schedDef, serviceName);
-                        Utils.require(schedDef.m_tableName != null, "'table' attribute should be defined for " + getName());
-                        TableDefinition tabDef = schedDef.m_appDef.getTableDef(schedDef.m_tableName);
-                        Utils.require(tabDef != null, "Table " + schedDef.m_tableName + " not defined for " + getName());
-                        Utils.require(tabDef.getStatDefinitions().iterator().hasNext(), 
-                        		"No statistics defined for the " + schedDef.m_tableName + " table");
-                        if (!Utils.isEmpty(schedDef.m_taskDeclaration)) {
-	                        Utils.require(tabDef.getStatDefNames().contains(schedDef.m_taskDeclaration),
-	                        		"Statistic " + schedDef.m_taskDeclaration + " is not defined for " + schedDef.m_tableName + " table");
-                        }
-                	}
-                },
         DATA_AGING("data-aging", "com.dell.doradus.tasks.DataAger",
         		new String[] {"SpiderService", "OLAPService"}) {
         			@Override
@@ -95,7 +76,6 @@ public class ScheduleDefinition {
                 				Utils.require(tabDef != null, "Table " + schedDef.m_tableName + " not defined for " + getName());
                 			}
                 		}
-                        Utils.require(schedDef.m_taskDeclaration == null, "'statistic' attribute not valid for " + getName());
                 	}
                 };
 
@@ -120,7 +100,6 @@ public class ScheduleDefinition {
         
         public static List<String> getTaskNames() {
         	List<String> list = new ArrayList<String>();
-        	list.add(STAT_REFRESH.getName());
         	list.add(DATA_AGING.getName());
         	return list;
         }
@@ -199,50 +178,41 @@ public class ScheduleDefinition {
     // Table name required for all but APP_DEFAULT schedules:
     private String m_tableName;
     
-    // Statistic name required for STAT_REFRESH schedules:
-    private String m_taskDeclaration;
-    
     /**
      * Create an empty ScheduleDefinition that belongs to the given
      * {@link ApplicationDefinition}. The schedule will not be valid until its
      * members are set via a parse or set method.
      *  
-     * @param appDef    {@link ApplicationDefinition} to which this statistic definition
+     * @param appDef    {@link ApplicationDefinition} to which this schedule definition
      *                  belongs.
      */
     public ScheduleDefinition(ApplicationDefinition appDef) {
         m_appDef = appDef;
     }   // constructor
     
-    public ScheduleDefinition(ApplicationDefinition appDef, SchedType schedType, String schedSpec, String tableName, String taskDeclaration) {
-        if ("".equals(taskDeclaration)) {
-        	taskDeclaration = null;
-        }
+    public ScheduleDefinition(ApplicationDefinition appDef, SchedType schedType, String schedSpec, String tableName) {
     	m_appDef = appDef;
     	m_schedType = schedType;
     	m_schedSpec = schedSpec;
     	m_tableName = tableName;
-    	m_taskDeclaration = taskDeclaration;
     }   // constructor
 
     ///// Getters
 
     /**
      * Return a hierarchical "name" that uniquely identifies this schedule. The name
-     * always includes the schedule's type and owning application, plus table name and/or
-     * statistic name if applicable. Hence the format is always one of these:
+     * always includes the schedule's type and owning application, plus table name
+     * if applicable. Hence the format is always one of these:
      * <pre>
      *      app-default/{application name}
      *      table-default/{application name}/{table name}
      *      data-aging/{application name}/{table name}
-     *      stat-refresh/{application name}/{table name}/{statistic name}
      * </pre>
      * Examples:
      * <pre>
      *      app-default/Magellan
      *      table-default/Magellan/Stars
      *      data-aging/Magellan/Stars
-     *      stat-refresh/Magellan/Stars/AverageLuminescence
      * </pre>
      */
     @SuppressWarnings("incomplete-switch")
@@ -261,34 +231,9 @@ public class ScheduleDefinition {
            	buffer.append("/").append(m_tableName != null ? m_tableName : "*");
             break;
 
-        case STAT_REFRESH:
-            // Add "/{table name}/{statistic name}" for this one.
-            buffer.append("/");
-            buffer.append(m_tableName);
-            buffer.append("/");
-            buffer.append(m_taskDeclaration);
-            break;
-
         }
         return buffer.toString();
     }   // getName
-    
-    /**
-     * Get the name of the task to which this schedule definition applies. A name
-     * will be returned only if this schedule definition's type is
-     * {@link SchedType#STAT_REFRESH}, otherwise null is returned.
-     * 
-     * @return  The name of the statistic to which this schedule definition applies, or
-     *          null if not applicable.
-     */
-	public String getTaskDeclaration() 	
-	{
-		return m_taskDeclaration;
-	}
-
-    public String getStatisticName() {
-        return m_taskDeclaration;
-    }   // getStatisticName
     
     /**
      * Get the name of the table to which this schedule definition applies, if applicable.
@@ -363,14 +308,6 @@ public class ScheduleDefinition {
                 schedNode.addValueNode("table", m_tableName, true);
             }
             break;
-        
-        case STAT_REFRESH:
-            // This needs table and optional statistics names.
-            schedNode.addValueNode("table", m_tableName, true);
-            if (!Utils.isEmpty(m_taskDeclaration)) {
-            	schedNode.addValueNode("statistic", m_taskDeclaration, true);
-            }
-            break;
         }
         return schedNode;
     }   // toDoc
@@ -416,19 +353,13 @@ public class ScheduleDefinition {
                               "'type' attribute can be specified only once");
                 m_schedType = SchedType.getByName(attrValue);
                 Utils.require(m_schedType != null,
-                              "Unrecognized 'type': " + m_tableName);
+                              "Unrecognized 'type': " + attrValue);
                 
             // 'table'
             } else if (attrName.equals("table")) {
                 Utils.require(m_tableName == null,
                               "'table' can be specified only once");
                 m_tableName = attrValue;
-                
-            // 'statistic'
-            } else if (attrName.equals("statistic")) {
-                Utils.require(m_taskDeclaration == null,
-                              "'statistic' can be specified only once");
-                m_taskDeclaration = attrValue;
                 
             // 'value'
             } else if (attrName.equals("value")) {

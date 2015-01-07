@@ -55,10 +55,6 @@ final public class TableDefinition {
     private final SortedMap<String, FieldDefinition> m_fieldDefMap =
         new TreeMap<String, FieldDefinition>();
     
-    // Map of statistics that this table owns:
-    private final SortedMap<String, StatisticDefinition> m_statDefMap =
-        new TreeMap<String, StatisticDefinition>();
-
     // Map of alias definitions sorted by name:
     private final SortedMap<String, AliasDefinition> m_aliasDefMap =
         new TreeMap<String, AliasDefinition>();
@@ -163,7 +159,6 @@ final public class TableDefinition {
         assert tableNode != null;
         assert m_appDef != null;
         assert m_fieldDefMap.isEmpty();
-        assert m_statDefMap.isEmpty();
         assert m_optionMap.isEmpty();
         assert m_tableName == null;
         
@@ -204,24 +199,6 @@ final public class TableDefinition {
                     }
                 }
                 
-            // "statistics"
-            } else if (childName.equals("statistics")) {
-                // Value must be a map.
-                Utils.require(childNode.isMap(),
-                              "'statistics' must be a map of unique names: " + childNode);
-                
-                // Parse the each statistic definition.
-                for (String statName : childNode.getMemberNames()) {
-                    // Create a stat def and parse the details into it.
-                    StatisticDefinition statDef = new StatisticDefinition(m_tableName);
-                    statDef.parse(childNode.getMember(statName));
-                    
-                    // Ensure statistic names are unique.
-                    Utils.require(!m_statDefMap.containsKey(statDef.getStatName()),
-                                  "Statistic names must be unique: " + statDef.getStatName());
-                    addStatDefinition(statDef);
-                }
-                
             // "options"
             } else if (childName.equals("options")) {
                 // Value should be a map.
@@ -253,7 +230,7 @@ final public class TableDefinition {
                     aliasDef.parse(childNode.getMember(aliasName));
                     addAliasDefinition(aliasDef);
                 }
-                
+            
             // Unrecognized
             } else {
                 Utils.require(false, "Unrecognized 'table' element: " + childName);
@@ -266,8 +243,7 @@ final public class TableDefinition {
 
     /**
      * Indicate if the given string is a valid table name. Table names must begin with a
-     * letter and consist of all letters, digits, and underscores. The special names
-     * "Counters", "Links", and "Statistics" are also not allowed.
+     * letter and consist of all letters, digits, and underscores.
      * 
      * @param tableName Candidate table name.
      * @return          True if the name is not null, not empty, starts with a letter, and
@@ -277,10 +253,7 @@ final public class TableDefinition {
         return tableName != null &&
                tableName.length() > 0 &&
                Utils.isLetter(tableName.charAt(0)) &&
-               Utils.allAlphaNumUnderscore(tableName) &&
-               !tableName.equals("Counters") &&
-               !tableName.equals("Links") &&
-               !tableName.equals("Statistics");
+               Utils.allAlphaNumUnderscore(tableName);
     }   // isValidTableName
 
     ///// Getters
@@ -546,37 +519,6 @@ final public class TableDefinition {
     }   // getAliasDef
     
     /**
-     * Get the statistic definitions for statistics owned by this table as an Iterable
-     * object. NOTE: The statistic definitions are not copied, hence the caller must be
-     * careful not to modify it!
-     * 
-     * @return StatisticDefinitions owned by this table as an Iterable.
-     */
-    public Iterable<StatisticDefinition> getStatDefinitions() {
-        return m_statDefMap.values();
-    }   // getStatDefinitions
-    
-    /**
-     * Get statistics names.
-     * 
-     * @return Set of statistics names
-     */
-    public Set<String> getStatDefNames() {
-    	return m_statDefMap.keySet();
-    }
-
-    /**
-     * Get the {@link StatisticDefinition} belonging to this table with the given name, or
-     * null if this table does not own such a statistic.
-     * 
-     * @param statName  Name of statistic owned by this table.
-     * @return          {@link StatisticDefinition} of statistic or null if unknown.
-     */
-    public StatisticDefinition getStatDef(String statName) {
-        return m_statDefMap.get(statName);
-    }   // getStatDef
-    
-    /**
      * Return true if the given field name is an MV scalar field. Since scalar fields
      * must be declared as MV, only predefined fields can be MV.
      * 
@@ -688,15 +630,6 @@ final public class TableDefinition {
             UNode aliasesNode = tableNode.addMapNode("aliases");
             for (AliasDefinition aliasDef : m_aliasDefMap.values()) {
                 aliasesNode.addChildNode(aliasDef.toDoc());
-            }
-        }
-        
-        // Add a "statistics", if any.
-        if (m_statDefMap.size() > 0) {
-            // Statistics node is a MAP. 
-            UNode statsNode = tableNode.addMapNode("statistics");
-            for (StatisticDefinition statDef : m_statDefMap.values()) {
-                statsNode.addChildNode(statDef.toDoc());
             }
         }
         
@@ -845,16 +778,6 @@ final public class TableDefinition {
         
         m_aliasDefMap.put(aliasDef.getName(), aliasDef);
     }   // addAliasDefinition
-
-    // Add the given statistic definition to this table definition.
-    private void addStatDefinition(StatisticDefinition newStatDef) {
-        // Prerequisites:
-        assert newStatDef != null;
-        assert !m_statDefMap.containsKey(newStatDef.getStatName());
-        assert newStatDef.getTableName().equals(this.getTableName());
-        
-        m_statDefMap.put(newStatDef.getStatName(), newStatDef);
-    }   // addStatDefinition
 
     // Perform final validation checks for the table definition we just pased.
     private void finalizeTableDefinition(Map<String, Map<String, FieldDefinition>> externalLinkMap) {
