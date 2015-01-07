@@ -1,36 +1,27 @@
 *** Request
-    POST /Application/shard
-    <batch>
-        <docs>
-            <doc>
-                <field name="Field">xxx</field>
-                <field name="_table">Table</field>
-            </doc>
-        </docs>
-    </batch>
-*** Response: text
-    400 Bad Request
-    Object is missing '_ID' field
-
-*** Request
     POST /Application/_shards/shard
 *** Response: 
     200 OK
 
 *** Request
-    GET /Application/Table/_query?q=*&shards=shard
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&shards=shard
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <aggregate metric="COUNT(*)" query="*"/>
+        <totalobjects>2</totalobjects>
+        <value>2</value>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*"
+          },
+          "totalobjects":"2",
+          "value":"2"
        }
     }
 

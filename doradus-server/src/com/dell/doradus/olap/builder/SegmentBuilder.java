@@ -27,6 +27,7 @@ import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.core.IDGenerator;
 import com.dell.doradus.olap.OlapBatch;
 import com.dell.doradus.olap.OlapDocument;
 import com.dell.doradus.olap.io.VDirectory;
@@ -119,7 +120,9 @@ public class SegmentBuilder {
 	}
 
 	private void add(OlapDocument document) {
-		Utils.require(document.id != null, "_ID field is not set for a document");
+		if (document.id == null) {
+		    document.id = Utils.base64FromBinary(IDGenerator.nextID());
+		}
 		TableDefinition tableDef = application.getTableDef(document.table);
 		Utils.require(tableDef != null, "Table '" + document.table + "' does not exist");
 		TableBuilder b = getTable(tableDef);
@@ -131,7 +134,9 @@ public class SegmentBuilder {
 	}
 	
 	private void add(DBObject dbObj) {
-	    Utils.require(!Utils.isEmpty(dbObj.getObjectID()), "Object is missing '_ID' field");
+	    if (Utils.isEmpty(dbObj.getObjectID())) {
+	        dbObj.setObjectID(Utils.base64FromBinary(IDGenerator.nextID()));
+	    }
 	    String tableName = dbObj.getTableName();
 	    Utils.require(!Utils.isEmpty(tableName), "Object is missing '_table' definition");
 	    TableDefinition tableDef = application.getTableDef(tableName);

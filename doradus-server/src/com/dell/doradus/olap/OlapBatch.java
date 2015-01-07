@@ -206,7 +206,6 @@ public class OlapBatch {
                 addFieldValues(document, fieldNode);
             }
             Utils.require(document.table != null, "'doc' node missing '_table' value");
-            Utils.require(document.id != null, "'doc' node missing '_ID' value");
             batch.documents.add(document);
         }
         return batch;

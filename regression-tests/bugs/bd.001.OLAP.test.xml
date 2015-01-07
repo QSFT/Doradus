@@ -29,7 +29,6 @@
     </XML>
     </POST>
 
-    <enable-output/>
     <POST path="Application/shard">
     <XML>
         <batch>
@@ -42,9 +41,11 @@
         </batch>
     </XML>
     </POST>
+
+    <enable-output/>
     <POST path="Application/_shards/shard"/>
 
-    <QUERY path="Application/Table" q="*" shards="shard"/>
+    <AGGREGATE path="Application/Table" q="*" m="COUNT(*)" shards="shard"/>
 
 <DELETE path="_applications/Application/ApplicationKey"/>
 <DISCONNECT/>
