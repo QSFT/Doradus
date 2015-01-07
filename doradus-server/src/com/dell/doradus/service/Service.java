@@ -286,7 +286,7 @@ public abstract class Service {
 
     // Set the service's state and log the change.
     private void setState(State newState) {
-        m_logger.info("Entering state: {}", newState.toString());
+        m_logger.debug("Entering state: {}", newState.toString());
         m_state = newState;
     }   // setState
     

@@ -19,6 +19,7 @@ package com.dell.doradus.core;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
@@ -350,7 +351,7 @@ public final class DoradusServer {
     
     // Start all registered services.
     private void startServices() {
-        m_logger.debug("Starting initialized services");
+        m_logger.info("Starting services: {}", simpleServiceNames(m_initializedServices));
         for (Service service : m_initializedServices) {
             m_logger.debug("Starting service: " + service.getClass().getSimpleName());
             service.start();
@@ -358,6 +359,18 @@ public final class DoradusServer {
         }
     }   // startServices
     
+    // Get simple service names as a comma-separated list. 
+    private String simpleServiceNames(Collection<Service> services) {
+        StringBuilder buffer = new StringBuilder();
+        for (Service service : services) {
+            if (buffer.length() > 0) {
+                buffer.append(",");
+            }
+            buffer.append(service.getClass().getSimpleName());
+        }
+        return buffer.toString();
+    }   // simpleServiceNames
+
     // Stop all registered services.
     private void stopServices() {
         // Stop services in reverse order of starting.

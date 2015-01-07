@@ -57,9 +57,9 @@ public class ThriftService extends DBService {
     public void initService() {
         ServerConfig config = ServerConfig.getInstance();
         m_logger.info("Using Thrift API");
-        m_logger.debug("Cassandra host list: {}", Arrays.toString(config.dbhost.split(",")));
-        m_logger.debug("Cassandra port: {}", config.dbport);
-        m_logger.debug("Default application keyspace: {}", config.keyspace);
+        m_logger.info("Cassandra host list: {}", Arrays.toString(config.dbhost.split(",")));
+        m_logger.info("Cassandra port: {}", config.dbport);
+        m_logger.info("Default application keyspace: {}", config.keyspace);
     }   // initService
 
     @Override

@@ -670,7 +670,7 @@ public class DBConn implements AutoCloseable {
         for (int attempt = 1; attempt <= dbHosts.length; attempt++) {
             try {
                 m_host = chooseHost(dbHosts);
-                m_logger.info("Connecting to Cassandra node {}:{}", m_host, config.dbport);
+                m_logger.debug("Connecting to Cassandra node {}:{}", m_host, config.dbport);
                 TSocket socket = new TSocket(m_host, config.dbport, config.db_timeout_millis);
                 TTransport transport = new TFramedTransport(socket);
                 TProtocol protocol = new TBinaryProtocol(transport);
