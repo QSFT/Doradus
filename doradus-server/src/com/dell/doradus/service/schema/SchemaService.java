@@ -315,8 +315,8 @@ public class SchemaService extends Service {
     
     // Validate the given options and set the new/updated application's Tenant option.
     private void chooseOrValidateTenant(ApplicationDefinition currAppDef,
-                                          ApplicationDefinition newAppDef,
-                                          Map<String, String> options) {
+                                        ApplicationDefinition newAppDef,
+                                        Map<String, String> options) {
         String keyspace = null;
         if (options != null) {
             for (String optName : options.keySet()) {
@@ -334,11 +334,14 @@ public class SchemaService extends Service {
             } else {
                 tenant = Tenant.getTenant(currAppDef);
             }
-        } else if (currAppDef != null) {
+        } else if (currAppDef == null) {
+            tenant = new Tenant(keyspace);
+        } else {
             Tenant currentTenant = Tenant.getTenant(currAppDef);
             Utils.require(currentTenant.getKeyspace().equals(keyspace),
                           "Application '%s': tenant option cannot be changed. Current='%s', new='%s'",
                           currAppDef.getAppName(), currentTenant.getKeyspace(), keyspace);
+            tenant = currentTenant;
         }
         setTenant(newAppDef, tenant);
     }   // chooseOrValidateTenant
