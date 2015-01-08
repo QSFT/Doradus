@@ -58,7 +58,7 @@ public class CQLTransaction extends DBTransaction {
      */
     public CQLTransaction(Tenant tenant) {
         // Ensure session is possible with app' keyspace.
-        m_keyspace = tenant.getKeyspace();
+        m_keyspace = CQLService.storeToCQLName(tenant.getKeyspace());
         m_session = CQLService.instance().getSession(m_keyspace);
     }
 
