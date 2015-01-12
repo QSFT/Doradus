@@ -71,6 +71,8 @@ public abstract class MFCollector {
 			collector = new InverseXLinkCollector(searcher, fieldDef, (XGroups)last.xlinkContext);
 		} else if(fieldDef.getType() == FieldType.TEXT) {
 			collector = new EndTextField(searcher, fieldDef);
+		} else if(last.isID) {
+			collector = new IdField(searcher, last.tableDef);
 		} else throw new IllegalArgumentException("Invalid field in aggregation group: " + last.name);
 		
 		for(int i = group.items.size() - 2; i >= 0; i--) {

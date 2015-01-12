@@ -24,6 +24,7 @@ import java.util.List;
 
 public class AggregationGroupItem {
    public boolean  isLink;
+   public boolean  isID;
    public TableDefinition tableDef;
    public String name;
    public Query query;

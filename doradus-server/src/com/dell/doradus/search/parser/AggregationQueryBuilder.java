@@ -866,6 +866,7 @@ public class AggregationQueryBuilder {
                     continue;
                 }
 
+                
                 AggregationGroupItem ai = new AggregationGroupItem();
                 if (aggregationGroup.items == null)
                     aggregationGroup.items = new ArrayList<AggregationGroupItem>();
@@ -874,6 +875,10 @@ public class AggregationQueryBuilder {
                 ai.name = item.item.getValue();
                 if (tableDef != null) {
                     FieldDefinition fd = tableDef.getFieldDef(ai.name);
+                    if("_ID".equals(ai.name)) { // special case for sorting by _ID
+                    	fd = new FieldDefinition(tableDef);
+                    	ai.isID = true;
+                    }
                     ai.fieldDef = fd;
                     if (fd == null)
                         throw new IllegalArgumentException(" Undefined field: " + QueryUtils.FullLinkName(aggregationGroup.items));
