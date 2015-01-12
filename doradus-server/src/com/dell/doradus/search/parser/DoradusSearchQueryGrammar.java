@@ -764,6 +764,7 @@ public class DoradusSearchQueryGrammar {
         );
 
         GrammarRule AggregationFieldPathContinue = new SwitchRule(SwitchRule.First, "AggregationFieldPathContinue",
+                Grammar.Rule(AggregationFieldPathEnd, AggregationFieldPathEnd), // Include + Exclude
                 AggregationFieldPathEnd,
                 Grammar.Rule(DOT, TimestampSubfield, Grammar.SetType(SemanticNames.TRUNCATE_SUBFIELD_VALUE)) ,
                 Grammar.Rule(DOT, AggregationFieldPath),
