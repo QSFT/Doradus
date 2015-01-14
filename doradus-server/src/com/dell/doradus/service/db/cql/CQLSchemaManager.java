@@ -57,8 +57,8 @@ public class CQLSchemaManager {
     //----- Public methods
     
     /**
-     * Create a new keyspace with the given name. The CQLSchemaManager object should be
-     * constructed with a no-keyspace session. The keyspace is created with the following
+     * Create a new keyspace with the given name and optional options. This method should
+     * be used with a no-keyspace session. The keyspace is created with the following
      * CQL command:
      * <pre>
      *      CREATE KEYSPACE "<i>keyspace</i>" WITH <i>prop</i>=<i>value</i> AND ...;
@@ -67,13 +67,13 @@ public class CQLSchemaManager {
      * 
      * @param keyspace  Name of keyspace to create.
      */
-    public void createKeyspace(String keyspace) {
+    public void createKeyspace(String keyspace, Map<String, String> options) {
         String cqlKeyspace = CQLService.storeToCQLName(keyspace);
         m_logger.info("Creating new keyspace: {}", cqlKeyspace);
         StringBuilder cql = new StringBuilder();
         cql.append("CREATE KEYSPACE ");
         cql.append(cqlKeyspace);
-        cql.append(keyspaceDefaultsToCQLString());
+        cql.append(keyspaceDefaultsToCQLString(options));
         cql.append(";");
         m_session.execute(cql.toString());
     }   // createKeyspace
@@ -194,8 +194,9 @@ public class CQLSchemaManager {
     // Turn keyspace options into the CQL string:
     //      "WITH DURABLE_WRITES=true AND
     //            REPLICATION={'class':'SimpleStrategy', 'replication_factor':'1'}"
+    // Allow RF to be overridden with ReplicationFactor in the given options.
     @SuppressWarnings("unchecked")
-    private static String keyspaceDefaultsToCQLString() {
+    private static String keyspaceDefaultsToCQLString(Map<String, String> options) {
         // Defaults:
         boolean durable_writes = true;
         Map<String, Object> replication = new HashMap<String, Object>();
@@ -220,6 +221,11 @@ public class CQLSchemaManager {
                     }
                 }
             }
+        }
+        
+        // Override replication_factor if requested.
+        if (options != null && options.containsKey("ReplicationFactor")) {
+            replication.put("replication_factor", options.get("ReplicationFactor"));
         }
         
         StringBuilder buffer = new StringBuilder();

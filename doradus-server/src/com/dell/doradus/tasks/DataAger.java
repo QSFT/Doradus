@@ -121,15 +121,16 @@ public class DataAger extends DoradusTask {
 		OLAPService olap = OLAPService.instance();
 		
 		m_logger.debug("Check shards for application: " + appName);
-		List<String> shards = olap.listShards(appName);
+		ApplicationDefinition appDef = SchemaService.instance().getApplication(m_tenant, appName);
+		List<String> shards = olap.listShards(appDef);
 		for (String shardName : shards) {
         	if (isInterrupted()) {
         		return;
         	}
 			m_logger.debug("Shard: " + shardName);
-			Date expirationDate = olap.getExpirationDate(appName, shardName);
+			Date expirationDate = olap.getExpirationDate(appDef, shardName);
 			if (expirationDate != null && expirationDate.before(now)) {
-				olap.deleteShard(appName, shardName);
+				olap.deleteShard(appDef, shardName);
 				m_logger.info("Expired shard " + appName + "." + shardName + " deleted");
 			}
 		}
@@ -144,7 +145,7 @@ public class DataAger extends DoradusTask {
 			// No tables found
 			return;
 		}
-		ApplicationDefinition appDef = SchemaService.instance().getApplication(getAppName());
+		ApplicationDefinition appDef = SchemaService.instance().getApplication(getTenant(), getAppName());
 		Collection<String> tableNames = "*".equals(m_tableName) ? appDef.getTableDefinitions().keySet() : Arrays.asList(m_tableName.split(","));
         
 		// Cycle through all the tables looking for any that need checking
@@ -213,7 +214,7 @@ public class DataAger extends DoradusTask {
     	List<AgingTable> tableList = new ArrayList<AgingTable>();
 
         // Get the current schema and watch for the application to have been deleted.
-		ApplicationDefinition appDef = SchemaService.instance().getApplication(getAppName());
+		ApplicationDefinition appDef = SchemaService.instance().getApplication(getTenant(), getAppName());
         if (appDef == null) {
             // Our designated application has apparently been deleted, so its time to shutdown.
 			m_logger.error("Application {} doesn\'t exist anymore", getAppName());

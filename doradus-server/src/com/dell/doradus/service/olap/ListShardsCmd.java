@@ -19,9 +19,7 @@ package com.dell.doradus.service.olap;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.UNodeOutCallback;
-import com.dell.doradus.service.schema.SchemaService;
 
 /**
  * Handle the REST command: GET /{application}/_shards
@@ -31,19 +29,15 @@ public class ListShardsCmd extends UNodeOutCallback {
     @Override
     public UNode invokeUNodeOut(UNode inNode) {
         Utils.require(inNode == null, "Input message not expected for this command");
-        String application = m_request.getVariableDecoded("application");
-        ApplicationDefinition appDef = SchemaService.instance().getApplication(application);
-        if (appDef == null) {
-            throw new NotFoundException("Unknown application: " + application);
-        }
+        ApplicationDefinition appDef = m_request.getAppDef();
         Utils.require(OLAPService.class.getSimpleName().equals(appDef.getStorageService()),
-                      "Application '%s' is not an OLAP application", application);
+                      "Application '%s' is not an OLAP application", appDef.getAppName());
         
         // "result": {"<app name>": {"shards": [*<shard name>]}}
         UNode resultNode = UNode.createMapNode("result");
-        UNode appNode = resultNode.addMapNode(application, "application");
+        UNode appNode = resultNode.addMapNode(appDef.getAppName(), "application");
         UNode shardsNode = appNode.addArrayNode("shards");
-        for (String shard : OLAPService.instance().listShards(application)) {
+        for (String shard : OLAPService.instance().listShards(appDef)) {
             shardsNode.addValueNode("value", shard);
         }
         return resultNode;

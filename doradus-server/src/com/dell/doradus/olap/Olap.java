@@ -60,7 +60,6 @@ import com.dell.doradus.search.util.LRUCache;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.olap.OLAPService;
-import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.utilities.Timer;
 
 
@@ -85,7 +84,7 @@ import com.dell.doradus.utilities.Timer;
 public class Olap {
     private static Logger LOG = LoggerFactory.getLogger("Olap.Olap");
 	
-    private Map<String, VDirectory> m_appRoots = new HashMap<>();
+    private Map<String, Map<String, VDirectory>> m_tenantAppRoots = new HashMap<>();
 	private FieldsCache m_fieldsCache = new FieldsCache(ServerConfig.getInstance().olap_cache_size_mb * 1024L * 1024);
 	private LRUCache<String, CubeSearcher> m_cachedSearchers = new LRUCache<>(Math.min(8192, ServerConfig.getInstance().olap_loaded_segments));
 	private Set<String> m_mergedCubes = new HashSet<String>();
@@ -96,85 +95,101 @@ public class Olap {
 	public VDirectory createApplication(String appName) {
         String keyspace = ServerConfig.getInstance().keyspace;
         Tenant tenant = new Tenant(keyspace);
-        DBService.instance().createTenant(tenant);
         return createApplication(tenant, appName);
 	}
 	
 	public VDirectory createApplication(Tenant tenant, String appName) {
 	    DBService.instance().createStoreIfAbsent(tenant, "OLAP", true);
 	    VDirectory root = new VDirectory(tenant, "OLAP").getDirectoryCreate("applications").getDirectoryCreate(appName);
-	    synchronized (m_appRoots) {
-	        m_appRoots.put(appName, root);
+	    synchronized (m_tenantAppRoots) {
+	        String tenantName = tenant.getKeyspace();
+	        Map<String, VDirectory> appRoots = m_tenantAppRoots.get(tenantName);
+	        if (appRoots == null) {
+	            appRoots = new HashMap<>();
+	            m_tenantAppRoots.put(tenantName, appRoots);
+	        }
+	        appRoots.put(appName, root);
 	    }
 	    return root;
 	}
 	
 	// Returns $root/applications/<appName> from correct keyspace/OLAP CF
-	public VDirectory getRoot(String appName) {
-	    VDirectory root = m_appRoots.get(appName);
-	    if (root == null) {
-	        ApplicationDefinition appDef = SchemaService.instance().getApplication(appName);
-	        Tenant tenant = Tenant.getTenant(appDef);
-	        root = new VDirectory(tenant, "OLAP").getDirectory("applications").getDirectory(appName);
-	        assert root != null;
-	        synchronized (m_appRoots) {
-	            m_appRoots.put(appName, root);
+	public VDirectory getRoot(ApplicationDefinition appDef) {
+	    VDirectory root = null;
+	    Tenant tenant = Tenant.getTenant(appDef);
+	    synchronized (m_tenantAppRoots) {
+	        Map<String, VDirectory> appRoots = m_tenantAppRoots.get(tenant.getKeyspace());
+	        if (appRoots == null) {
+	            appRoots = new HashMap<>();
+	            m_tenantAppRoots.put(tenant.getKeyspace(), appRoots);
+	        }
+            root = appRoots.get(appDef.getAppName());
+	        if (root == null) {
+	            root = new VDirectory(tenant, "OLAP").getDirectory("applications").getDirectory(appDef.getAppName());
+	            assert root != null;
+	            appRoots.put(appDef.getAppName(), root);
 	        }
 	    }
 	    return root;
 	}
 	
+	/**
+	 * @deprecated This method only works in single-tenant mode.
+	 */
 	public ApplicationDefinition getApplicationDefinition(String applicationName) {
 	    return OLAPService.instance().getOLAPApplication(applicationName);
 	}
 	
-	public void deleteApplication(String appName) {
-	    VDirectory root = getRoot(appName);
-	    synchronized (m_appRoots) {
+	public void deleteApplication(ApplicationDefinition appDef) {
+	    VDirectory root = getRoot(appDef);
+	    synchronized (m_tenantAppRoots) {
 	        root.delete();
-	        m_appRoots.remove(appName);
+	        String tenantName = Tenant.getTenant(appDef).getKeyspace();
+	        Map<String, VDirectory> appRoots = m_tenantAppRoots.get(tenantName);
+	        if (appRoots != null) {
+	            appRoots.remove(appDef.getAppName());
+	        }
 	    }
 	}
 
-	public void deleteShard(String appName, String shard) {
-		getRoot(appName).getDirectory(shard).delete();
+	public void deleteShard(ApplicationDefinition appDef, String shard) {
+		getRoot(appDef).getDirectory(shard).delete();
 	}
 	
-	public List<String> listShards(String application) {
-		return getRoot(application).listDirectories();
+	public List<String> listShards(ApplicationDefinition appDef) {
+		return getRoot(appDef).listDirectories();
 	}
 
-	public List<String> listSegments(String application, String shard) {
-		VDirectory shardDir = getRoot(application).getDirectory(shard);
+	public List<String> listSegments(ApplicationDefinition appDef, String shard) {
+		VDirectory shardDir = getRoot(appDef).getDirectory(shard);
 		return shardDir.listDirectories();
 	}
 	
-	public String getCubeSegment(String application, String shard) {
-		VDirectory shardDir = getRoot(application).getDirectory(shard);
+	public String getCubeSegment(ApplicationDefinition appDef, String shard) {
+		VDirectory shardDir = getRoot(appDef).getDirectory(shard);
 		return shardDir.getProperty(".cube.txt");
 	}
 	
-	public SegmentStats getStats(String application, String shard) {
-		String cube = getCubeSegment(application, shard);
+	public SegmentStats getStats(ApplicationDefinition appDef, String shard) {
+		String cube = getCubeSegment(appDef, shard);
 		if(cube == null) throw new IllegalArgumentException("Application does not exist or does not have merges yet");
-		CubeSearcher s = getSearcher(application, shard, cube);
+		CubeSearcher s = getSearcher(appDef, shard, cube);
 		return s.getStats();
 	}
 
-	public String addSegment(String application, String shard, OlapBatch batch) {
-		return addSegment(application, shard, batch, true);
+	public String addSegment(ApplicationDefinition appDef, String shard, OlapBatch batch) {
+		return addSegment(appDef, shard, batch, true);
 	}
 	
-	public String addSegment(String application, String shard, OlapBatch batch, boolean overwrite) {
+	public String addSegment(ApplicationDefinition appDef, String shard, OlapBatch batch, boolean overwrite) {
 		Timer t = new Timer();
-		ApplicationDefinition appDef = getApplicationDefinition(application);
-		VDirectory shardDir = getRoot(application).getDirectoryCreate(shard);
+		VDirectory shardDir = getRoot(appDef).getDirectoryCreate(shard);
 		String prefix = overwrite ? "" : ".before.";
 		String guid = prefix + Long.toString(System.currentTimeMillis(), 32) + "-" + UUID.randomUUID().toString();
 		VDirectory segmentDir = shardDir.getDirectory(guid);
 		batch.flushSegment(appDef, segmentDir);
 		segmentDir.create();
-		LOG.debug("add {} objects to {}/{} in {}", new Object[] { batch.documents.size(), application, shard, t} );
+		LOG.debug("add {} objects to {}/{} in {}", new Object[] { batch.documents.size(), appDef.getAppName(), shard, t} );
 		return guid;
 	}
 
@@ -184,8 +199,7 @@ public class Olap {
 	
 	public String addSegment(ApplicationDefinition appDef, String shard, DBObjectBatch batch, boolean overwrite) {
 	    Timer t = new Timer();
-	    String application = appDef.getAppName();
-	    VDirectory shardDir = getRoot(application).getDirectoryCreate(shard);
+	    VDirectory shardDir = getRoot(appDef).getDirectoryCreate(shard);
 		String prefix = overwrite ? "" : ".before.";
 	    String guid = prefix + Long.toString(System.currentTimeMillis(), 32) + "-" + UUID.randomUUID().toString();
 	    VDirectory segmentDir = shardDir.getDirectory(guid);
@@ -193,21 +207,21 @@ public class Olap {
         builder.add(batch);
         builder.flush(segmentDir);
 	    segmentDir.create();
-	    LOG.debug("add {} objects to {}/{} in {}", new Object[] { batch.getObjectCount(), application, shard, t} );
+	    LOG.debug("add {} objects to {}/{} in {}", new Object[] { batch.getObjectCount(), appDef.getAppName(), shard, t} );
 	    return guid;
 	}
 	
-	public AggregationResult aggregate(String application, String table, OlapAggregate olapAggregate) {
-		AggregationRequestData requestData = olapAggregate.createRequestData(this, application, table);
-		AggregationRequest aggregationRequest = new AggregationRequest(this, requestData);
-		AggregationResult result = MFAggregationBuilder.aggregate(this, aggregationRequest);
+	public AggregationResult aggregate(ApplicationDefinition appDef, String table, OlapAggregate olapAggregate) {
+		AggregationRequestData requestData = olapAggregate.createRequestData(this, appDef, table);
+		AggregationRequest aggregationRequest = new AggregationRequest(this, appDef, requestData);
+		AggregationResult result = MFAggregationBuilder.aggregate(this, appDef, aggregationRequest);
 		return result;
 	}
 
-	public SearchResultList search(String application, String table, OlapQuery olapQuery) {
+	public SearchResultList search(ApplicationDefinition appDef, String table, OlapQuery olapQuery) {
 		olapQuery.fixPairParameter();
-		ApplicationDefinition appDef = getApplicationDefinition(application);
 		TableDefinition tableDef = appDef.getTableDef(table);
+		String application = appDef.getAppName();
 		if(tableDef == null) throw new IllegalArgumentException("Table " + table + " does not exist");
     	Query query = DoradusQueryBuilder.Build(olapQuery.getQuery(), tableDef);
     	if(olapQuery.getContinueAfter() != null) {
@@ -220,12 +234,12 @@ public class Olap {
     	fieldSet.expand();
     	SortOrder[] sortOrders = AggregationQueryBuilder.BuildSortOrders(olapQuery.getSortOrder(), tableDef);
 		List<SearchResultList> results = new ArrayList<SearchResultList>();
-		List<String> shardsList = olapQuery.getShards(application, this); 
-		List<String> xshardsList = olapQuery.getXShards(application, this); 
+		List<String> shardsList = olapQuery.getShards(appDef, this); 
+		List<String> xshardsList = olapQuery.getXShards(appDef, this); 
     	XLinkContext xcontext = new XLinkContext(application, this, xshardsList, tableDef);
     	xcontext.setupXLinkQuery(tableDef, query);
 		for(String shard : shardsList) {
-			results.add(search(application, shard, tableDef, query, fieldSet, olapQuery, sortOrders));
+			results.add(search(appDef, shard, tableDef, query, fieldSet, olapQuery, sortOrders));
 		}
 		SearchResultList result = MergeResult.merge(results, fieldSet);
 		if(olapQuery.getSkip() > 0) {
@@ -235,11 +249,11 @@ public class Olap {
 		return result;
 	}
 
-	private SearchResultList search(String application, String shard, TableDefinition tableDef, Query query, FieldSet fieldSet, OlapQuery olapQuery, SortOrder[] sortOrders) {
+	private SearchResultList search(ApplicationDefinition appDef, String shard, TableDefinition tableDef, Query query, FieldSet fieldSet, OlapQuery olapQuery, SortOrder[] sortOrders) {
 		// repeat if segment was merged
 		for(int i = 0; i < 2; i++) {
 			try {
-				CubeSearcher s = getSearcher(application, shard, getCubeSegment(application, shard));
+				CubeSearcher s = getSearcher(appDef, shard, getCubeSegment(appDef, shard));
 				SearchResultList result = Searcher.search(s, tableDef, query, fieldSet, olapQuery.getPageSizeWithSkip(), sortOrders);
 				for(SearchResult sr: result.results) {
 					sr.scalars.put("_shard", shard);
@@ -250,29 +264,28 @@ public class Olap {
 				continue;
 			}
 		}
-		CubeSearcher s = getSearcher(application, shard, getCubeSegment(application, shard));
+		CubeSearcher s = getSearcher(appDef, shard, getCubeSegment(appDef, shard));
 		return Searcher.search(s, tableDef, query, fieldSet, olapQuery.getPageSizeWithSkip(), sortOrders);
 	}
 	
 	// default merge (used in tests): forceMerge enabled
-	public void merge(String application, String shard) {
+	public void merge(ApplicationDefinition appDef, String shard) {
 		MergeOptions options = new MergeOptions(null, 0, true);
-		merge(application, shard, options);
+		merge(appDef, shard, options);
 	}
 
-	public void merge(String application, String shard, MergeOptions options) {
+	public void merge(ApplicationDefinition appDef, String shard, MergeOptions options) {
 		if(options == null) {
 			options = new MergeOptions();
 		}
-		String key = application + "/" + shard;
+		String key = appDef.getAppName() + "/" + shard;
 		synchronized(m_mergedCubes) {
 			if(m_mergedCubes.contains(key)) throw new IllegalArgumentException(key + " is being merged");
 			m_mergedCubes.add(key);
 		}
 		try {
 			Timer t = new Timer();
-			ApplicationDefinition appDef = getApplicationDefinition(application);
-			VDirectory shardDir = getRoot(application).getDirectory(shard);
+			VDirectory shardDir = getRoot(appDef).getDirectory(shard);
 			
 			if(options.getExpireDate() != null) {
 				shardDir.putProperty("expiration.txt", XType.toString(options.getExpireDate()));
@@ -282,10 +295,10 @@ public class Olap {
 			
 			List<String> segments = shardDir.listDirectories();
 			if(segments.size() == 0) {
-				LOG.debug("No segments in {}/{}", application, shard);
+				LOG.debug("No segments in {}/{}", appDef.getAppName(), shard);
 				return;
 			} else if(segments.size() == 1 && segments.get(0).startsWith(".cube.") && !options.getForceMerge()) {
-				LOG.debug("Shard {}/{} was not modified", application, shard);
+				LOG.debug("Shard {}/{} was not modified", appDef.getAppName(), shard);
 				return;
 			}
 			
@@ -303,7 +316,7 @@ public class Olap {
 			
 			destination.create();
 			
-			LOG.debug("finished merging {} segments to {}/{} in {}", new Object[]{ segments.size(), application, shard, t} );
+			LOG.debug("finished merging {} segments to {}/{} in {}", new Object[]{ segments.size(), appDef.getAppName(), shard, t} );
 			
 			if(options.getTimeout() > 0) {
 				try {
@@ -315,7 +328,7 @@ public class Olap {
 				shardDir.getDirectory(segment).delete();
 			}
 			
-			LOG.debug("merge {} segments to {}/{} in {}", new Object[]{ segments.size(), application, shard, t} );
+			LOG.debug("merge {} segments to {}/{} in {}", new Object[]{ segments.size(), appDef.getAppName(), shard, t} );
 		} finally {
 			synchronized(m_mergedCubes) {
 				m_mergedCubes.remove(key);
@@ -323,19 +336,19 @@ public class Olap {
 		}
 	}
 	
-	public Date getExpirationDate(String application, String shard) {
-		VDirectory shardDir = getRoot(application).getDirectory(shard);
+	public Date getExpirationDate(ApplicationDefinition appDef, String shard) {
+		VDirectory shardDir = getRoot(appDef).getDirectory(shard);
 		String expDateStr = shardDir.getProperty("expiration.txt"); 
 		if(expDateStr == null || expDateStr.length() == 0) return null;
 		else return Utils.dateFromString(expDateStr);
 	}
 	
-	private CubeSearcher getSearcher(String app, String shard, String segment) {
+	private CubeSearcher getSearcher(ApplicationDefinition appDef, String shard, String segment) {
 		synchronized(m_cachedSearchers) {
-			String key = app + "/" + shard + "/" + segment;
+			String key = appDef.getAppName() + "/" + shard + "/" + segment;
 			CubeSearcher s = m_cachedSearchers.get(key);
 			if(s == null) {
-				VDirectory dir = getRoot(app);
+				VDirectory dir = getRoot(appDef);
 				dir = dir.getDirectory(shard);
 				dir = dir.getDirectory(segment);
 				s = new CubeSearcher(dir, m_fieldsCache);
@@ -346,16 +359,15 @@ public class Olap {
 		}
 	}
 
-	public SearchResultList getDuplicateIDs(String application, String table, String shardsRange) {
-		ApplicationDefinition appDef = getApplicationDefinition(application);
-		if(appDef == null) throw new IllegalArgumentException("Application " + application + " not found");
+	public SearchResultList getDuplicateIDs(ApplicationDefinition appDef, String table, String shardsRange) {
+		String application = appDef.getAppName();
 		TableDefinition tableDef = appDef.getTableDef(table);
 		if(tableDef == null) throw new IllegalArgumentException("Table " + table + " not found in " + application);
-		List<String> shards = getShardsList(application, null, shardsRange);
-		VDirectory appDir = getRoot(application);
+		List<String> shards = getShardsList(appDef, null, shardsRange);
+		VDirectory appDir = getRoot(appDef);
 		List<VDirectory> dirs = new ArrayList<VDirectory>(shards.size());
 		for(String shard : shards) {
-			String segment = getCubeSegment(application, shard);
+			String segment = getCubeSegment(appDef, shard);
 			VDirectory shardDir = appDir.getDirectory(shard);
 			VDirectory segmentDir = shardDir.getDirectory(segment);
 			dirs.add(segmentDir);
@@ -364,12 +376,12 @@ public class Olap {
 		return result;
 	}
 	
-	public CubeSearcher getSearcher(String app, String shard) {
-		String segment = getCubeSegment(app, shard);
-		return getSearcher(app, shard, segment);
+	public CubeSearcher getSearcher(ApplicationDefinition appDef, String shard) {
+		String segment = getCubeSegment(appDef, shard);
+		return getSearcher(appDef, shard, segment);
 	}
 	
-	public List<String> getShardsList(String application, String shards, String shardsRange) {
+	public List<String> getShardsList(ApplicationDefinition appDef, String shards, String shardsRange) {
     	if(shards != null && shardsRange != null) throw new IllegalArgumentException("Both shards and range parameters cannot be set");
     	if(shards == null && shardsRange == null) throw new IllegalArgumentException("shards or range parameter not set");
 		List<String> shardsList = new ArrayList<String>();
@@ -377,7 +389,7 @@ public class Olap {
     	else if(shardsRange != null) {
     		String[] range = Utils.split(shardsRange, ',').toArray(new String[0]);
     		if(range.length == 0 || range.length > 2) throw new IllegalArgumentException("Shards range must be in form start-shard,end-shard or start-shard");
-      		List<String> allShards = listShards(application);
+      		List<String> allShards = listShards(appDef);
     		String startShard = range[0];
     		String endShard = range.length == 1 ? null : range[1];
     		for(String shard : allShards) {

@@ -36,7 +36,7 @@ public class XQueryAny {
 	
 	private void setupDirect(XLinkContext ctx, TableDefinition tableDef, Query query, Query filter) {
 		for(String xshard : ctx.xshards) {
-			CubeSearcher searcher = ctx.olap.getSearcher(ctx.application, xshard);
+			CubeSearcher searcher = ctx.olap.getSearcher(tableDef.getAppDef(), xshard);
 			Result r = ResultBuilder.search(tableDef, query, searcher);
 			if(filter != null) {
 				Result f = ResultBuilder.search(tableDef, filter, searcher);
@@ -54,7 +54,7 @@ public class XQueryAny {
 	
 	private void setupInverse(XLinkContext ctx, TableDefinition tableDef, Query query, Query filter, String field) {
 		for(String xshard : ctx.xshards) {
-			CubeSearcher searcher = ctx.olap.getSearcher(ctx.application, xshard);
+			CubeSearcher searcher = ctx.olap.getSearcher(tableDef.getAppDef(), xshard);
 			Result r = ResultBuilder.search(tableDef, query, searcher);
 			if(filter != null) {
 				Result f = ResultBuilder.search(tableDef, filter, searcher);

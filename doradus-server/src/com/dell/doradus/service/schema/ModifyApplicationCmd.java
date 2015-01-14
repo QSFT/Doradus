@@ -31,14 +31,11 @@ public class ModifyApplicationCmd extends UNodeInCallback {
     @Override
     public RESTResponse invokeUNodeIn(UNode inNode) {
         Utils.require(inNode != null, "This command requires an input entity");
-        String application = m_request.getVariableDecoded("application");
-        ApplicationDefinition currAppDef = SchemaService.instance().getApplication(application);
-        Utils.require(currAppDef != null, "Application does not exist: %s", application);
-        
+        ApplicationDefinition currAppDef = m_request.getAppDef();
         ApplicationDefinition newAppDef = new ApplicationDefinition();
         newAppDef.parse(inNode);
         Utils.require(newAppDef.getAppName().equals(currAppDef.getAppName()),
-                      "Application name cannot be changed: %s", application);
+                      "Application name cannot be changed: %s", newAppDef.getAppName());
         
         SchemaService.instance().defineApplication(newAppDef);
         return new RESTResponse(HttpCode.OK);

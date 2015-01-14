@@ -54,10 +54,11 @@ import com.dell.doradus.common.Utils;
  */
 public final class RESTCommand implements Comparable<RESTCommand> {
     // Components of a REST command:
-    private final String               m_method;        // Value for <method>
-    private final String[]             m_pathNodes;     // Value for path nodes
-    private final String               m_query;         // Value for <query>
-    private final Class<RESTCallback>  m_callbackClass; // Callback class for this command
+    private String               m_method;          // Value for <method>
+    private List<String>         m_pathNodes;       // Value for path nodes
+    private String               m_query;           // Value for <query>
+    private Class<RESTCallback>  m_callbackClass;   // Callback class for this command
+    private boolean              m_bSystemCmd;      // true for non-tenant commands.
     
     /**
      * Creates a RESTCommand from a "REST rule", which includes the HTTP method, URI, and
@@ -75,40 +76,44 @@ public final class RESTCommand implements Comparable<RESTCommand> {
      * The command class must be derived from {@link RESTCallback}, and it must have a
      * zero-argument constructor. Using that constructor, an instance of the given command
      * class is created and used to process requests to the specified REST command.
+     * <p>
+     * This constructor creates a non-system command, which means it is executed in the
+     * context of a specific tenant.
      * 
      * @param ruleString    REST request and command callback class in the form "method
      *                      URI callback".
      */
-    @SuppressWarnings("unchecked")
     public RESTCommand(String ruleString) {
-        String[] parts = ruleString.split(" +");
-        Utils.require(parts.length == 3, "Invalid rule format: " + ruleString);
-        
-        // Method
-        m_method = parts[0].toUpperCase();
-        
-        // URI and query
-        List<String> pathNodeList = new ArrayList<String>();
-        StringBuilder query = new StringBuilder();
-        StringBuilder fragment = new StringBuilder();
-        Utils.parseURI(parts[1], pathNodeList, query, fragment);
-        if (pathNodeList.size() == 0) {
-            throw new IllegalArgumentException("Invalid URI path: " + parts[1]);
-        }
-        m_pathNodes = new String[pathNodeList.size()];
-        for (int index = 0; index < pathNodeList.size(); index++) {
-            m_pathNodes[index] = Utils.urlDecode(pathNodeList.get(index));
-        }
-        m_query = Utils.urlDecode(query.toString());
-        
-        // Command class
-        String cmdClassPath = parts[2];
-        try {
-            m_callbackClass = (Class<RESTCallback>) Class.forName(cmdClassPath);
-        } catch (Exception e) {
-            throw new RuntimeException("Error instantiating callback object '" + cmdClassPath + "'", e);
-        }
+        m_bSystemCmd = false;
+        parseRuleString(ruleString);
     }   // constructor
+    
+    /**
+     * Same as {@link #RESTCommand(String)} but optionally marks this command as a system
+     * command, which means it is not executed in the context of a tenant.
+     * 
+     * @param ruleString        REST request and command callback class in the form
+     *                          "method URI callback".
+     * @param bSystemCommand    If true, marks this object as a non-system command.
+     */
+    public RESTCommand(String ruleString, boolean bSystemCommand) {
+        m_bSystemCmd = bSystemCommand;
+        parseRuleString(ruleString);
+    }   // constructor
+
+    public void prependPathNode(String node) {
+        m_pathNodes.add(0, node);
+    }   // prependPathNode
+    
+    /**
+     * Indicate if this is a system command, which means it executes without a specific
+     * tenant context.
+     * 
+     * @return  True if this is a system command.
+     */
+    public boolean isSystemCommand() {
+        return m_bSystemCmd;
+    }   // isSystemCommand
     
     /**
      * Return true if this object matches the given URI components. If it does, any
@@ -129,12 +134,12 @@ public final class RESTCommand implements Comparable<RESTCommand> {
                               List<String>          pathNodeList,
                               String                query,
                               Map<String, String>   variableMap) {
-        if (!m_method.equalsIgnoreCase(method) || pathNodeList.size() != m_pathNodes.length) {
+        if (!m_method.equalsIgnoreCase(method) || pathNodeList.size() != m_pathNodes.size()) {
             return false;
         }
         Map<String, String> matchedVarMap = new HashMap<>();
         for (int index = 0; index < pathNodeList.size(); index++) {
-            if (!matches(pathNodeList.get(index), m_pathNodes[index], matchedVarMap)) {
+            if (!matches(pathNodeList.get(index), m_pathNodes.get(index), matchedVarMap)) {
                 return false;
             }
         }
@@ -163,11 +168,9 @@ public final class RESTCommand implements Comparable<RESTCommand> {
     @Override
     public int compareTo(RESTCommand other) {
         // Compare the node list for each object.
-        String[] list1 = this.getPath();
-        String[] list2 = other.getPath();
-        for (int index = 0; index < Math.min(list1.length, list2.length); index++) {
-            String node1 = list1[index];
-            String node2 = list2[index];
+        for (int index = 0; index < Math.min(m_pathNodes.size(), other.m_pathNodes.size()); index++) {
+            String node1 = m_pathNodes.get(index);
+            String node2 = other.m_pathNodes.get(index);
             int diff = compareNodes(node1, node2);
             if (diff != 0) {
                 return diff;    // this node decides it
@@ -175,10 +178,10 @@ public final class RESTCommand implements Comparable<RESTCommand> {
         }
         
         // Here, all common nodes are identical.
-        if (list1.length < list2.length) {
+        if (m_pathNodes.size() < other.m_pathNodes.size()) {
             return 1;   // r2 has more nodes, so sort before r1
         }
-        if (list1.length > list2.length) {
+        if (m_pathNodes.size() > other.m_pathNodes.size()) {
             return -1;  // r1 has more nodes, so sort before r2
         }
         
@@ -214,7 +217,7 @@ public final class RESTCommand implements Comparable<RESTCommand> {
     }   // toString
     
     /**
-     * Return true if the given object is a RESTCOmmand with the same method, path nodes,
+     * Return true if the given object is a RESTCommand with the same method, path nodes,
      * and query component as this one.
      * 
      * @return  True if the given object is considered the same as this one.
@@ -231,11 +234,11 @@ public final class RESTCommand implements Comparable<RESTCommand> {
         if (!m_method.equalsIgnoreCase(otherCmd.m_method)) {
             return false;   // Different method
         }
-        if (m_pathNodes.length != otherCmd.m_pathNodes.length) {
+        if (m_pathNodes.size() != otherCmd.m_pathNodes.size()) {
             return false;   // Different # of nodes
         }
-        for (int index = 0; index < m_pathNodes.length; index++) {
-            if (!samePattern(m_pathNodes[index], otherCmd.m_pathNodes[index])) {
+        for (int index = 0; index < m_pathNodes.size(); index++) {
+            if (!samePattern(m_pathNodes.get(index), otherCmd.m_pathNodes.get(index))) {
                 return false;   // This node is different
             }
         }
@@ -279,7 +282,7 @@ public final class RESTCommand implements Comparable<RESTCommand> {
      * 
      * @return  This command's URI path.
      */
-    public String[] getPath() {
+    public List<String> getPath() {
         return m_pathNodes;
     }   // getApplication
     
@@ -310,6 +313,38 @@ public final class RESTCommand implements Comparable<RESTCommand> {
     }   // getCallback
     
     ///// Private methods
+    
+    // Parse the given rule string and map to member variables.
+    @SuppressWarnings("unchecked")
+    private void parseRuleString(String ruleString) {
+        String[] parts = ruleString.split(" +");
+        Utils.require(parts.length == 3, "Invalid rule format: " + ruleString);
+        
+        // Method
+        m_method = parts[0].toUpperCase();
+        
+        // URI and query
+        List<String> pathNodeList = new ArrayList<String>();
+        StringBuilder query = new StringBuilder();
+        StringBuilder fragment = new StringBuilder();
+        Utils.parseURI(parts[1], pathNodeList, query, fragment);
+        if (pathNodeList.size() == 0) {
+            throw new IllegalArgumentException("Invalid URI path: " + parts[1]);
+        }
+        m_pathNodes = new ArrayList<>();
+        for (String encodedNode : pathNodeList) {
+            m_pathNodes.add(Utils.urlDecode(encodedNode));
+        }
+        m_query = Utils.urlDecode(query.toString());
+        
+        // Command class
+        String cmdClassPath = parts[2];
+        try {
+            m_callbackClass = (Class<RESTCallback>) Class.forName(cmdClassPath);
+        } catch (Exception e) {
+            throw new RuntimeException("Error instantiating callback object '" + cmdClassPath + "'", e);
+        }
+    }   // parseRuleString 
     
     // Extract the variable name from the given URI component value. For example, if the
     // value is {application}, the variable name "application" is returned. An error is

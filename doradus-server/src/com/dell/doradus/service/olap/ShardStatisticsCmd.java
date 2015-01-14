@@ -21,9 +21,7 @@ import java.util.Map;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.UNodeOutCallback;
-import com.dell.doradus.service.schema.SchemaService;
 
 /**
  * Handle the REST command: GET /{application}/_statistics/{shard}
@@ -36,21 +34,19 @@ public class ShardStatisticsCmd extends UNodeOutCallback {
     @Override
     public UNode invokeUNodeOut(UNode inNode) {
         Utils.require(inNode == null, "Input message not expected for this command");
-        String application = m_request.getVariableDecoded("application");
-        ApplicationDefinition appDef = SchemaService.instance().getApplication(application);
-        if (appDef == null) throw new NotFoundException("Unknown application: " + application);
+        ApplicationDefinition appDef = m_request.getAppDef();
         Utils.require(OLAPService.class.getSimpleName().equals(appDef.getStorageService()),
-        		"Application '%s' is not an OLAP application", application);
+        		      "Application '%s' is not an OLAP application", appDef.getAppName());
         String shard = m_request.getVariableDecoded("shard");
         
         String params = m_request.getVariableDecoded("params");
         Map<String, String> paramMap = Utils.parseURIQuery(params);
         String file = paramMap.get("file");
         if(file != null) {
-            UNode stats = OLAPService.instance().getStatisticsFileData(application, shard, file);
+            UNode stats = OLAPService.instance().getStatisticsFileData(appDef, shard, file);
             return stats;
         } else {
-	        UNode stats = OLAPService.instance().getStatistics(application, shard);
+	        UNode stats = OLAPService.instance().getStatistics(appDef, shard);
 	        return stats;
         }
     }

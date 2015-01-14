@@ -87,15 +87,18 @@ public class CassandraSchemaMgr {
     }   // getKeyspaces
 
     /**
-     * Create a new keyspace with the given name. This method should be passed a
-     * no-keyspace client session.
+     * Create a new keyspace with the given name and optional options. This method should
+     * be used with a no-keyspace client session.
      * 
      * @param keyspace  Name of new keyspace.
+     * @param options   Optional map of new keyspace options, which override ks_defaults
+     *                  in the configuration file.
      */
-    public void createKeyspace(String keyspace) {
+    public void createKeyspace(String keyspace, Map<String, String> options) {
         m_logger.info("Creating Keyspace '{}'", keyspace);
         try {
             KsDef ksDef = setKeySpaceOptions(keyspace);
+            overrideKSOptions(ksDef, options);
             m_client.system_add_keyspace(ksDef);
         } catch (Exception ex) {
             String errMsg = "Failed to create Keyspace '" + keyspace + "'"; 
@@ -296,7 +299,19 @@ public class CassandraSchemaMgr {
         }
         return ksDef;
     }   // setKeySpaceOptions
-    
+
+    // Override KsDef options recognized in the given option map.
+    private void overrideKSOptions(KsDef ksDef, Map<String, String> options) {
+        if (options != null) {
+            String rfOpt = options.get("ReplicationFactor");
+            if (rfOpt != null) {
+                Map<String, String> stratOpts = new HashMap<>();
+                stratOpts.put("replication_factor", rfOpt);
+                ksDef.setStrategy_options(stratOpts);
+            }
+        }
+    }   // overrideKSOptions
+
     // Check that all Cassandra nodes are in agreement on the latest schema change.
     private void validateSchema(String currentVersionId) {
         Map<String, List<String>> versions = null;

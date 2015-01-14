@@ -69,8 +69,8 @@ public class RESTClient implements Closeable {
     private OutputStream            m_outStream;
     private SSLTransportParameters  m_sslParams;
     private boolean                 m_bCompress;
-    private int                     m_apiVersion = 1;
-
+    private Credentials             m_credentials;
+    
     // Current "Accept" format we use until changed.
     private ContentType m_acceptFormat = ContentType.APPLICATION_JSON;  // default
     
@@ -79,6 +79,7 @@ public class RESTClient implements Closeable {
     
     /**
      * Create a RESTClient while opening a connection to the specified host and port.
+     * This constructor requests an unsecured connection (no TLS/SSL).
      *  
      * @param host  Host name or IP address to use.
      * @param port  Port number to use.
@@ -88,9 +89,11 @@ public class RESTClient implements Closeable {
     }   // constructor
     
     /**
-     * Create a RESTClient by opening a connection to the specified host and port.
+     * Create a RESTClient by opening a connection to the specified host and port,
+     * optionally using TLS/SSL.
      *  
-     * @param sslParams parameters needed to establish ssl connection 
+     * @param sslParams {@link SSLTransportParameters} needed to use TLS/SSL for this
+     *                  connection. Can be null to request a non-secured connection.
      * @param host      Host name or IP address to use.
      * @param port      Port number to use.
      */
@@ -112,16 +115,16 @@ public class RESTClient implements Closeable {
     
     /**
      * Create a new RESTClient using the same parameters used to create this one: host,
-     * port, and TLS parameters. The given RESTClient's compression and other connection
-     * parameters are also copied.
+     * port, and TLS parameters. The given RESTClient's other connection parameters are
+     * also copied.
      * 
      * @param restClient    RESTClient object to copy.
      */
     public RESTClient(RESTClient restClient) {
         this(restClient.m_sslParams, restClient.m_host, restClient.m_port);
         setAcceptType(restClient.m_acceptFormat);
-        setAPIVersion(restClient.m_apiVersion);
         setCompression(restClient.m_bCompress);
+        setCredentials(restClient.m_credentials);
     }   // constructor
     
     /**
@@ -132,7 +135,24 @@ public class RESTClient implements Closeable {
      *          unsecured (HTTP) connection was created.
      */
     public SSLTransportParameters getSSLParams() { return m_sslParams; }
+
+    /**
+     * Get the compression option for this RESTClient.
+     * 
+     * @return  True if compression is set for all message bodies.
+     */
+    public boolean getCompression() { return m_bCompress; }
     
+    /**
+     * Get the credentials being used to authenticate requests made by this RESTClient. It
+     * may be null to indicate that requests are being made unauthenticated.
+     * 
+     * @return  {@link Credentials} being used to authorize requests made by this
+     *          RESTClient. May be null.
+     */
+    public Credentials getCredentials() {
+        return m_credentials;
+    }
     /**
      * Get the REST API host name/IP address used for this RESTClient connection.
      * 
@@ -147,19 +167,6 @@ public class RESTClient implements Closeable {
      */
     public int getPort() { return m_port; }
 
-    /**
-     * Set the API version to the given value. The API version is 1 by default. This value
-     * caues a header to be added to each API request:
-     * <pre>
-     *      x-api-version: [version]
-     * </pre>
-     * 
-     * @param apiVersion    New version to use for client API. 
-     */
-    public void setAPIVersion(int apiVersion) {
-        m_apiVersion = apiVersion;
-    }   // setAPIVersion
-    
     /**
      * Set the "accept" type used in requests to the given value. This value is used for
      * all requests until it is changed.
@@ -183,6 +190,16 @@ public class RESTClient implements Closeable {
     }   // setCompression
     
     /**
+     * Set the credentials to be used for requests made through this RESTClient.
+     * 
+     * @param credentials {@link Credentials} to be used for future REST commands. If
+     *                    null is passed, no credentials will be used.
+     */
+    public void setCredentials(Credentials credentials) {
+        m_credentials = credentials;
+    }   // setCredentials
+    
+    /**
      * Send a REST command with the given method and URI (but no entityt) to the
      * server and return the response in a {@link RESTResponse} object.
      * 
@@ -192,40 +209,7 @@ public class RESTClient implements Closeable {
      * @throws IOException  If an I/O error occurs on the socket.
      */
     public RESTResponse sendRequest(HttpMethod method, String uri) throws IOException {
-        // Do it here rather than failing on write().
-        if (isClosed()) {
-            throw new IOException("Socket has been closed");
-        }
-        
-        // Form the message header first line: <method> <uri> HTTP/1.1
-        m_logger.debug("Sending request: {}", uri);
-        StringBuilder request = new StringBuilder();
-        request.append(method.toString());
-        request.append(" " + uri + " HTTP/1.1\r\n");
-        
-        // Set host name
-        Utils.addHttpHeader(request, HttpDefs.HOST, m_host);
-        
-        // Set the expected response format.
-        Utils.addHttpHeader(request, HttpDefs.ACCEPT, m_acceptFormat.toString());
-        
-        // Add x-api-version if version is > 1.
-        if (m_apiVersion > 1) {
-            Utils.addHttpHeader(request, HttpDefs.API_VERSION, m_apiVersion);
-        }
-
-        // Add "Accept-Encoding: gzip" header if compression is enabled. 
-        if (m_bCompress) {
-            Utils.addHttpHeader(request, HttpDefs.ACCEPT_ENCODING, "gzip");
-        }
-        
-        // Add "content-length: 0" to explicitly declare no entity and finish the header
-        Utils.addHttpHeader(request, HttpDefs.CONTENT_LENGTH, 0);
-        
-        // Terminate the header
-        request.append("\r\n");
-        
-        return sendAndReceive(request.toString(), null);
+        return sendRequest(method, uri, null, null);
     }   // sendRequest
     
     /**
@@ -242,49 +226,18 @@ public class RESTClient implements Closeable {
     public RESTResponse sendRequest(HttpMethod method, String uri,
                                     ContentType contentType, byte[] body)
             throws IOException {
-        // Do it here rather than failing on write().
-        if (isClosed()) {
-            throw new IOException("Socket has been closed");
+        Map<String, String> headers = new HashMap<>();
+        if (contentType != null) {
+            headers.put(HttpDefs.CONTENT_TYPE, contentType.toString());
         }
-        
-        // Form the message header first line: <method> <uri> HTTP/1.1
-        StringBuilder request = new StringBuilder();
-        request.append(method.toString());
-        request.append(" ");
-        request.append(uri);
-        request.append(" HTTP/1.1\r\n");
-        
-        // Set host name
-        Utils.addHttpHeader(request, HttpDefs.HOST, m_host);
-        
-        // Set the expected response format.
-        Utils.addHttpHeader(request, HttpDefs.ACCEPT, m_acceptFormat.toString());
-        
-        // Add x-api-version if version is > 1.
-        if (m_apiVersion > 1) {
-            Utils.addHttpHeader(request, HttpDefs.API_VERSION, m_apiVersion);
-        }
-        
-        // Add a content-type header
-        Utils.addHttpHeader(request, HttpDefs.CONTENT_TYPE, contentType.toString());
         
         // Compress body using GZIP and add a content-encoding header if compression is requested.
         byte[] entity = body;
-        if (m_bCompress && body.length > 0) {
+        if (m_bCompress && body != null && body.length > 0) {
             entity = Utils.compressGZIP(body);
-            Utils.addHttpHeader(request, HttpDefs.CONTENT_ENCODING, "gzip");
+            headers.put(HttpDefs.CONTENT_ENCODING, "gzip");
         }
-        
-        // Add "Accept-Encoding: gzip" header to request if compression is enabled.
-        if (m_bCompress) {
-            Utils.addHttpHeader(request, HttpDefs.ACCEPT_ENCODING, "gzip");
-        }
-        
-        // Add content-length header and finish the header
-        Utils.addHttpHeader(request, HttpDefs.CONTENT_LENGTH, entity.length);
-        request.append("\r\n");
-        
-        return sendAndReceive(request.toString(), entity);
+        return sendAndReceive(method, uri, headers, entity);
     }   // sendRequest
 
     /**
@@ -304,51 +257,11 @@ public class RESTClient implements Closeable {
     public RESTResponse sendRequestCompressed(HttpMethod  method,
                                               String      uri,
                                               ContentType contentType,
-                                              byte[]      body)
-            throws IOException {
-        // Do it here rather than failing on write().
-        if (isClosed()) {
-            throw new IOException("Socket has been closed");
-        }
-        
-        // Form the message header first line: <method> <uri> HTTP/1.1
-        StringBuilder request = new StringBuilder();
-        request.append(method.toString());
-        request.append(" ");
-        request.append(uri);
-        request.append(" HTTP/1.1\r\n");
-        
-        // Set host name
-        Utils.addHttpHeader(request, HttpDefs.HOST, m_host);
-        
-        // Set the expected response format.
-        Utils.addHttpHeader(request, HttpDefs.ACCEPT, m_acceptFormat.toString());
-        
-        // Add x-api-version if version is > 1.
-        if (m_apiVersion > 1) {
-            Utils.addHttpHeader(request, HttpDefs.API_VERSION, m_apiVersion);
-        }
-        
-        // Add a content-type header
-        Utils.addHttpHeader(request, HttpDefs.CONTENT_TYPE, contentType.toString());
-        
-        // Add content-encoding header.
-        Utils.addHttpHeader(request, HttpDefs.CONTENT_ENCODING, "gzip");
-        
-        // Add "Accept-Encoding: gzip" header to request if compression is enabled.
-        if (m_bCompress) {
-            Utils.addHttpHeader(request, HttpDefs.ACCEPT_ENCODING, "gzip");
-        }
-        
-        // Add content-length header and finish the header
-        Utils.addHttpHeader(request, HttpDefs.CONTENT_LENGTH, body.length);
-        request.append("\r\n");
-        
-        // Send the request, allowing for a retry if necessary.
-        sendRequest(request.toString(), body);
-        
-        // read and return response.
-        return readResponse();
+                                              byte[]      body) throws IOException {
+        Map<String, String> headers = new HashMap<>();
+        headers.put(HttpDefs.CONTENT_TYPE, contentType.toString());
+        headers.put(HttpDefs.CONTENT_ENCODING, "gzip");
+        return sendAndReceive(method, uri, headers, body);
     }   // sendRequestCompressed
     
     /**
@@ -385,9 +298,50 @@ public class RESTClient implements Closeable {
         m_outStream = m_socket.getOutputStream();
     }   // reconnect
     
+    // Add standard headers to the given request and send it.
+    private RESTResponse sendAndReceive(HttpMethod          method,
+                                        String              uri,
+                                        Map<String, String> headers,
+                                        byte[]              body) throws IOException {
+        // Add standard headers
+        assert headers != null;
+        headers.put(HttpDefs.HOST, m_host);
+        headers.put(HttpDefs.ACCEPT, m_acceptFormat.toString());
+        headers.put(HttpDefs.CONTENT_LENGTH, Integer.toString(body == null ? 0 : body.length));
+        if (m_bCompress) {
+            headers.put(HttpDefs.ACCEPT_ENCODING, "gzip");
+        }
+        if (m_credentials != null) {
+            String authString =
+                "Basic " + Utils.base64FromString(m_credentials.getUserid() + ":" + m_credentials.getPassword());
+            headers.put("Authorization", authString);
+        }
+        
+        // Form the message header.
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(method.toString());
+        buffer.append(" ");
+        buffer.append(uri);
+        buffer.append(" HTTP/1.1\r\n");
+        for (String name : headers.keySet()) {
+            buffer.append(name);
+            buffer.append(": ");
+            buffer.append(headers.get(name));
+            buffer.append("\r\n");
+        }
+        buffer.append("\r\n");
+
+        return sendAndReceive(buffer.toString(), body);
+    }   // sendAndReceive 
+    
     // Send the given request and read the corresponding response. If a socket error occurs,
     // we reconnect and retry up to MAX_SOCKET_RETRIES before giving up.
     private RESTResponse sendAndReceive(String header, byte[] body) throws IOException {
+        // Fail before trying if socket has been closed.
+        if (isClosed()) {
+            throw new IOException("Socket has been closed");
+        }
+        
         Exception lastException = null;
         for (int attempt = 0; attempt < MAX_SOCKET_RETRIES; attempt++) {
             try {
@@ -405,6 +359,7 @@ public class RESTClient implements Closeable {
         // the server or the request.
         throw new IOException("Socket error; all retries failed", lastException);
     }   // sendAndReceive
+    
     
     // Send the request represented by the given header and optional body.
     private void sendRequest(String header, byte[] body) throws IOException {

@@ -18,6 +18,7 @@ package com.dell.doradus.service.db;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;
@@ -54,21 +55,40 @@ public abstract class DBService extends Service {
 
     // Implemented by subclasses
     
-    //----- Public DBService methods: Store management
+    //----- Public DBService methods: Tenant management
     
     /**
-     * Create a new tenant.
+     * Create a new tenant with the given options.
      * 
      * @param tenant    {@link Tenant} that defines new tenant.
+     * @param options   Optional map of options for new tenant.
      */
-    public abstract void createTenant(Tenant tenant);
-
+    public abstract void createTenant(Tenant tenant, Map<String, String> options);
+    
     /**
      * Drop the given tenant.
      * 
      * @param tenant    {@link Tenant} to drop.
      */
     public abstract void dropTenant(Tenant tenant);
+    
+    /**
+     * Add the given map of user ids/passwords to the database and authorize them to
+     * access the given tenant.
+     * 
+     * @param tenant    {@link Tenant} to add users for.
+     * @param users     Map of user ids/passwords to add and authorize for the tenant.
+     */
+    public abstract void addUsers(Tenant tenant, Map<String, String> users);
+    
+    /**
+     * Get a list of all known {@link Tenant}s.
+     * 
+     * @return  Map of tenants to application names.
+     */
+    public abstract Collection<Tenant> getTenants();        
+
+    //----- Public DBService methods: Store management
     
     /**
      * Create a new store in the given tenant. Columns hold string or binary values as
@@ -89,13 +109,6 @@ public abstract class DBService extends Service {
      * @param storeName Name of store to delete.
      */
     public abstract void deleteStoreIfPresent(Tenant tenant, String storeName);
-
-    /**
-     * Get a list of all known {@link Tenant}s.
-     * 
-     * @return  Map of tenants to application names.
-     */
-    public abstract Collection<Tenant> getTenants();        
 
     //----- Public DBService methods: Updates
     

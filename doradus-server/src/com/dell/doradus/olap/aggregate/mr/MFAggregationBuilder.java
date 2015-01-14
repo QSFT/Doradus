@@ -22,6 +22,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.olap.Olap;
 import com.dell.doradus.olap.aggregate.AggregationRequest;
 import com.dell.doradus.olap.aggregate.AggregationResult;
@@ -40,10 +41,10 @@ import com.dell.doradus.search.aggregate.AggregationGroup;
 public class MFAggregationBuilder {
     private static Logger LOG = LoggerFactory.getLogger("MFAggregationBuilder");
 	
-	public static AggregationResult aggregate(Olap olap, AggregationRequest request) {
+	public static AggregationResult aggregate(Olap olap, ApplicationDefinition appDef, AggregationRequest request) {
 		AggregationCollector collector = null;
 		for(String shard: request.shards) {
-			AggregationCollector agg = aggregate(olap, request.application, shard, request);
+			AggregationCollector agg = aggregate(olap, appDef, shard, request);
 			if(collector == null) collector = agg;
 			else collector.merge(agg);
 		}
@@ -82,18 +83,18 @@ public class MFAggregationBuilder {
 		return result;
 	}
 	
-	private static AggregationCollector aggregate(Olap olap, String application, String shard, AggregationRequest request) {
+	private static AggregationCollector aggregate(Olap olap, ApplicationDefinition appDef, String shard, AggregationRequest request) {
 		// repeat if segment was merged
 		for(int i = 0; i < 2; i++) {
 			try {
-				CubeSearcher searcher = olap.getSearcher(application, shard);
+				CubeSearcher searcher = olap.getSearcher(appDef, shard);
 				return aggregate(searcher, request);
 			}catch(FileDeletedException ex) {
 				LOG.warn(ex.getMessage() + " - retrying: " + i);
 				continue;
 			}
 		}
-		CubeSearcher searcher = olap.getSearcher(application, shard);
+		CubeSearcher searcher = olap.getSearcher(appDef, shard);
 		return aggregate(searcher, request);
 	}
 	

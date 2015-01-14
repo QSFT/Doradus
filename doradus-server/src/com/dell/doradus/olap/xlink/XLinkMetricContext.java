@@ -19,6 +19,7 @@ package com.dell.doradus.olap.xlink;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.olap.aggregate.IMetricCollector;
@@ -115,8 +116,9 @@ public class XLinkMetricContext {
 	private void setupDirect(XMetrics xmetrics, FieldDefinition fieldDef, AggregationMetric metric, Query filter) {
 		if(filter == null) filter = new AllQuery();
 		TableDefinition invTable = fieldDef.getInverseTableDef();
+		ApplicationDefinition appDef = fieldDef.getTableDef().getAppDef();
 		for(String xshard : context.xshards) {
-			CubeSearcher searcher = context.olap.getSearcher(context.application, xshard);
+			CubeSearcher searcher = context.olap.getSearcher(appDef, xshard);
 			Result bvQuery = ResultBuilder.search(invTable, filter, searcher);
 			MetricCounter metricCounter = MetricCounterFactory.create(searcher, metric);
 			IMetricCollector metricCollector = MetricCollectorFactory.create(searcher, metric);
@@ -135,8 +137,9 @@ public class XLinkMetricContext {
 		if(filter == null) filter = new AllQuery();
 		TableDefinition invTable = fieldDef.getInverseTableDef();
 		FieldDefinition inv = fieldDef.getInverseLinkDef();
+        ApplicationDefinition appDef = fieldDef.getTableDef().getAppDef();
 		for(String xshard : context.xshards) {
-			CubeSearcher searcher = context.olap.getSearcher(context.application, xshard);
+			CubeSearcher searcher = context.olap.getSearcher(appDef, xshard);
 			Result bvQuery = ResultBuilder.search(invTable, filter, searcher);
 			MetricCounter metricCounter = MetricCounterFactory.create(searcher, metric);
 			IMetricCollector metricCollector = MetricCollectorFactory.create(searcher, metric);

@@ -76,7 +76,7 @@ public class Client implements AutoCloseable {
     
     /**
      * Create a new Client that will communicate with the Doradus server using the given
-     * REST API host and port. With this constructor, an unsedure (HTTP) connection is
+     * REST API host and port. With this constructor, an unsecure (HTTP) connection is
      * created. An exception is thrown if the server is not available at the given host
      * and port or if it doesn't allow unsecured connection.
      * 
@@ -156,6 +156,14 @@ public class Client implements AutoCloseable {
         m_restClient.setCompression(compression);
     }   // setCompression
     
+    /**
+     * Set the credentials to use for requests made via this client. When an 
+     * @param credentials
+     */
+    public void setCredentials(Credentials credentials) {
+        m_restClient.setCredentials(credentials);
+    }   // setCredentials
+    
     //----- Application session methods
     
     /**
@@ -169,22 +177,31 @@ public class Client implements AutoCloseable {
      * be established. If successful, the session object will be specific to the type of
      * application opened, and it will have its own REST session to the Doradus server.
      * 
-     * @param appName   Name of an application to open.
-     * @param host      REST API host name or IP address.
-     * @param port      REST API port number.
-     * @param sslParams {@link SSLTransportParameters} object containing TLS/SSL
-     *                  parameters to use, or null to open an HTTP connection. 
-     * @return          {@link ApplicationSession} through which the application can be
-     *                  accessed.
-     * @see   com.dell.doradus.client.OLAPSession
-     * @see   com.dell.doradus.client.SpiderSession
+     * @param appName
+     *            Name of an application to open.
+     * @param host
+     *            REST API host name or IP address.
+     * @param port
+     *            REST API port number.
+     * @param sslParams
+     *            {@link SSLTransportParameters} object containing TLS/SSL parameters to
+     *            use, or null to open an HTTP connection.
+     * @param credentials
+     *            {@link Credentials} to use for all requests with the new application
+     *            session. Can be null to use an unauthenticated session.
+     * @return {@link ApplicationSession}
+     *            through which the application can be accessed.
+     * @see com.dell.doradus.client.OLAPSession
+     * @see com.dell.doradus.client.SpiderSession
      */
     public static ApplicationSession openApplication(String appName, String host, int port,
-                                                     SSLTransportParameters sslParams) {
+                                                     SSLTransportParameters sslParams,
+                                                     Credentials credentials) {
         Utils.require(!Utils.isEmpty(appName), "appName");
         Utils.require(!Utils.isEmpty(host), "host");
 
         try (Client client = new Client(host, port, sslParams)) {
+            client.setCredentials(credentials);
             ApplicationDefinition appDef = client.getAppDef(appName);
             Utils.require(appDef != null, "Unknown application: %s", appName);
             RESTClient restClient = new RESTClient(client.m_restClient);
@@ -224,32 +241,16 @@ public class Client implements AutoCloseable {
      * Create a new application in the connected Doradus server as defined in the given
      * {@link ApplicationDefinition} object. If the given application already exists, its
      * schema is replaced with the given definition. If the application is new, it is
-     * created in the default tenant keyspace. The {@link ApplicationDefinition} for
-     * the same application is returned, updated with any system-assigned defaults. An
-     * exception is thrown if an error occurs.
+     * created in the tenant defined by the current user credentials. The
+     * {@link ApplicationDefinition} for the same application is returned, updated with
+     * any system-assigned defaults. An exception is thrown if an error occurs.
      * 
      * @param appDef    {@link ApplicationDefinition} of application to create or update.
      * @return          {@link ApplicationDefinition} of same application, updated with
      *                  any system-assigned defaults.
+     * @see #setCredentials(Credentials)
      */
     public ApplicationDefinition createApplication(ApplicationDefinition appDef) {
-        return createApplication(appDef, null);
-    }   // createApplication
-    
-    /**
-     * Create a new application in the connected Doradus server as defined in the given
-     * {@link ApplicationDefinition} object. If the given application already exists, its
-     * schema is replaced with the given definition. The {@link ApplicationDefinition} for
-     * the same application is returned, updated with any system-assigned defaults. An
-     * exception is thrown if an error occurs.
-     * 
-     * @param appDef    {@link ApplicationDefinition} of application to create or update.
-     * @param tenant    Name of tenant keyspace in which to create the application. The
-     *                  default keyspace is used if this is null or empty.
-     * @return          {@link ApplicationDefinition} of same application, updated with
-     *                  any system-assigned defaults.
-     */
-    public ApplicationDefinition createApplication(ApplicationDefinition appDef, String tenant) {
         Utils.require(!m_restClient.isClosed(), "Client has been closed");
         Utils.require(appDef != null, "appDef");
         Utils.require(appDef.getAppName() != null && appDef.getAppName().length() > 0,
@@ -260,14 +261,10 @@ public class Client implements AutoCloseable {
             byte[] body = null;
             body = Utils.toBytes(appDef.toDoc().toJSON());
             
-            // Send a POST request to the "/_applications" or "/_applications?tenant=<tenant>"
-            StringBuilder uri = new StringBuilder("/_applications");
-            if (!Utils.isEmpty(tenant)) {
-                uri.append("?tenant=");
-                uri.append(tenant);
-            }
+            // Send a POST request to the "/_applications"
+            String uri = uriRoot() + "_applications";
             RESTResponse response =
-                m_restClient.sendRequest(HttpMethod.POST, uri.toString(), ContentType.APPLICATION_JSON, body);
+                m_restClient.sendRequest(HttpMethod.POST, uri, ContentType.APPLICATION_JSON, body);
             m_logger.debug("defineApplication() response: {}", response.toString());
             throwIfErrorResponse(response);
             return getAppDef(appDef.getAppName());
@@ -302,8 +299,8 @@ public class Client implements AutoCloseable {
     }   // createdApplication
     
     /**
-     * Get the {@link ApplicationDefinition} for all applications defined in the connected
-     * Doradus database.
+     * Get the {@link ApplicationDefinition} for all applications defined in the tenant
+     * identified by this client's credentials.
      * 
      * @return  A collection of all applications defined in the database, possible empty.
      */
@@ -312,7 +309,8 @@ public class Client implements AutoCloseable {
 
         try {
             // Send a GET request to "/_applications" to list all applications.
-            RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, "/_applications");
+            String uri = uriRoot() + "_applications";
+            RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri);
             m_logger.debug("listAllApplications() response: {}", response.toString());
             throwIfErrorResponse(response);
             
@@ -343,7 +341,7 @@ public class Client implements AutoCloseable {
 
         try {
             // Send a GET request to "/_applications/{application}
-            String uri = "/_applications/" + Utils.urlEncode(appName);
+            String uri = uriRoot() + "_applications/" + Utils.urlEncode(appName);
             RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri);
             m_logger.debug("listApplication() response: {}", response.toString());
             if (response.getCode() == HttpCode.NOT_FOUND) {
@@ -360,13 +358,14 @@ public class Client implements AutoCloseable {
     }   // getAppDef
     
     /**
-     * Delete an existing application from the connected Doradus server, including all of
+     * Delete an existing application from the current Doradus tenant, including all of
      * its tables and data. Because updates are idempotent, deleting an already-deleted
      * application is acceptable. Hence, if no error is thrown, the result is always true.
      * An exception is thrown if an error occurs.
      * 
      * @param appName   Name of existing application to delete.
-     * @param key       Name of key of application to delete.
+     * @param key       Name of key of application to delete. Can be null if the
+     *                  application has no key.
      * @return          True if the application was deleted or already deleted.
      */
     public boolean deleteApplication(String appName, String key) {
@@ -376,7 +375,7 @@ public class Client implements AutoCloseable {
         
         try {
             // Send a DELETE request to "/_applications/{application}/{key}".
-            String uri = "/_applications/" + Utils.urlEncode(appName) + "/" + Utils.urlEncode(key);
+            String uri = uriRoot() + "_applications/" + Utils.urlEncode(appName) + "/" + Utils.urlEncode(key);
             RESTResponse response = m_restClient.sendRequest(HttpMethod.DELETE, uri);
             m_logger.debug("deleteApplication() response: {}", response.toString());
             if (response.getCode() != HttpCode.NOT_FOUND) {
@@ -390,6 +389,16 @@ public class Client implements AutoCloseable {
     }   // deleteApplication
     
     //----- Private methods
+    
+    // Return the URI root "/" or "/{tenant}/" depending on whether this application's
+    // RESTClient currently has credentials with an assigned tenant name.
+    private String uriRoot() {
+        Credentials creds = m_restClient.getCredentials();
+        if (creds == null || creds.getTenant() == null) {
+            return "/";
+        }
+        return "/" + creds.getTenant() + "/";
+    }   // uriRoot
     
     // Create an ApplicationSession using the given appDef. The session takes ownership of
     // the given restClient. If the open fails, the restClient is closed.

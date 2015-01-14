@@ -16,10 +16,7 @@
 
 package com.dell.doradus.service.schema;
 
-import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.UNode;
-import com.dell.doradus.common.Utils;
-import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 
 /**
@@ -29,13 +26,7 @@ public class ListApplicationCmd extends UNodeOutCallback {
 
     @Override
     public UNode invokeUNodeOut(UNode inNode) {
-        String appName = m_request.getVariableDecoded("application");
-        assert !Utils.isEmpty(appName);
-        ApplicationDefinition appDef = SchemaService.instance().getApplication(appName);
-        if (appDef == null) {
-            throw new NotFoundException("Application not found: " + appName);
-        }
-        return appDef.toDoc();
+        return m_request.getAppDef().toDoc();
     }   // invokeUNodeOut
 
 }   // class ListApplicationCmd

@@ -29,10 +29,13 @@ import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.FieldType;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.olap.aggregate.AggregationResult;
+import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.olap.OLAPService;
+import com.dell.doradus.service.schema.SchemaService;
 
 // simple REST application based on OLAP
 public class Olapp {
+    private Tenant m_tenant;
     private Olap m_olap;
 	private Map<String, String> m_parameters;
 	private StringBuilder m_builder;
@@ -51,14 +54,15 @@ public class Olapp {
 		return value;
 	}
 	
-	public Olapp(Olap olap, Map<String, String> parameters) {
+	public Olapp(Tenant tenant, Olap olap, Map<String, String> parameters) {
+	    m_tenant = tenant;
 	    m_olap = olap;
 	    m_parameters = parameters;
 	    m_builder = new StringBuilder();
 	}
 	
-	public static String process(Olap olap, Map<String, String> parameters) {
-	    Olapp olapp = new Olapp(olap, parameters);
+	public static String process(Tenant tenant, Olap olap, Map<String, String> parameters) {
+	    Olapp olapp = new Olapp(tenant, olap, parameters);
 	    return olapp.process();
 	}
 	
@@ -73,13 +77,13 @@ public class Olapp {
 	}
 	
 	private String processGetApplications() {
-	    List<ApplicationDefinition> appDefs = OLAPService.instance().getAllOLAPApplications();
+	    List<ApplicationDefinition> appDefs = OLAPService.instance().getAllOLAPApplications(m_tenant);
 		m_builder.append("<html><body><table border='1'>");
 		addHeader("Applications", "Shards", "Tables");
 		for(ApplicationDefinition appDef : appDefs) {
 		    String application = appDef.getAppName();
 			addRow("<b>"+application+"</b>", "", "");
-			for(String shard : m_olap.listShards(application)) {
+			for(String shard : m_olap.listShards(appDef)) {
 				addRow("", "<b>" + shard + "</b>", "");
 				for(TableDefinition tableDef : appDef.getTableDefinitions().values()) {
 					addRow("", "",
@@ -110,7 +114,7 @@ public class Olapp {
 		m_builder.append("</table>\n\n");
 
 		//Fields to group by
-		ApplicationDefinition appDef = m_olap.getApplicationDefinition(getApplication());
+		ApplicationDefinition appDef = SchemaService.instance().getApplication(m_tenant, getApplication());
 		TableDefinition tableDef = appDef.getTableDef(getTable());
 		
 		if(getLink() == null) {
@@ -216,7 +220,7 @@ public class Olapp {
 			m_builder.append("<br/>\n");
 		}
 		
-		AggregationResult r = m_olap.aggregate(getApplication(), getTable(), new OlapAggregate(
+		AggregationResult r = m_olap.aggregate(appDef, getTable(), new OlapAggregate(
 				getShard(),
 				getQuery().replaceAll("\\|", " AND "),
 				getField() == null ? null : "TOP(20," + getField() + ")",

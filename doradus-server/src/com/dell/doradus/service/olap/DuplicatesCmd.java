@@ -23,9 +23,7 @@ import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.search.SearchResultList;
-import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.UNodeOutCallback;
-import com.dell.doradus.service.schema.SchemaService;
 
 /**
  * Handle the REST command: GET /{application}/{table}/_duplicates?{params}
@@ -35,18 +33,10 @@ public class DuplicatesCmd extends UNodeOutCallback {
     @Override
     public UNode invokeUNodeOut(UNode inNode) {
         Utils.require(inNode == null, "Input message not expected for this command");
-        String application = m_request.getVariableDecoded("application");
-        ApplicationDefinition appDef = SchemaService.instance().getApplication(application);
-        if (appDef == null) {
-            throw new NotFoundException("Unknown application: " + application);
-        }
+        ApplicationDefinition appDef = m_request.getAppDef();
         Utils.require(OLAPService.class.getSimpleName().equals(appDef.getStorageService()),
-                      "Application '%s' is not an OLAP application", application);
-
-        String table = m_request.getVariableDecoded("table");
-        TableDefinition tableDef = appDef.getTableDef(table);
-        Utils.require(tableDef != null, "Unknown table for application '%s': %s", application, table);
-        
+                      "Application '%s' is not an OLAP application", appDef.getAppName());
+        TableDefinition tableDef = m_request.getTableDef(appDef);
         String queryParams = m_request.getVariable("params");	// leave encoded
         Map<String, String> params = Utils.parseURIQuery(queryParams);
         String range = params.get("range");
@@ -54,7 +44,7 @@ public class DuplicatesCmd extends UNodeOutCallback {
         	range = "";
         }
 
-    	SearchResultList result = OLAPService.instance().getDuplicateIDs(application, table, range);
+    	SearchResultList result = OLAPService.instance().getDuplicateIDs(appDef, tableDef.getTableName(), range);
         return result.toDoc();
     }   // invokeUNodeOut
 }

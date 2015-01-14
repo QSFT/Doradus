@@ -22,6 +22,7 @@ import java.util.Set;
 
 import com.dell.doradus.management.TaskSettings;
 import com.dell.doradus.management.TaskStatus;
+import com.dell.doradus.service.db.Tenant;
 
 
 
@@ -60,7 +61,7 @@ public interface ITaskManager {
 	 * 		value.
 	 * @throws IOException 
 	 */
-	Map<String,TaskSettings> getAppSettings(String appName) throws IOException;	
+	Map<String,TaskSettings> getAppSettings(Tenant tenant, String appName) throws IOException;	
 	
 	/**
 	 * Gets the current status of identified task belonging to named application.
@@ -69,7 +70,7 @@ public interface ITaskManager {
 	 * @param taskKey The key provided by the TaskSettings object that represents the task.
 	 * @return TaskStatus
 	 */
-	TaskStatus getTaskStatus(String appName, String taskKey);
+	TaskStatus getTaskStatus(Tenant tenant, String appName, String taskKey);
 	
 	/**
 	 * Sends the "interrupt execution" signal to each currently executing task.
@@ -182,7 +183,7 @@ public interface ITaskManager {
 	 * @param settings TaskSettings object containing new values of settings.
 	 * @throws IOException 
 	 */
-	void updateSettings(String appName, TaskSettings settings) throws IOException;
+	void updateSettings(Tenant tenant, String appName, TaskSettings settings) throws IOException;
 	
 	/**
 	 * Refreshes the table of the tasks schedule. The method should be called
@@ -199,7 +200,7 @@ public interface ITaskManager {
 	 * @param taskName Task Name
 	 * @return
 	 */
-	TaskStatus getTaskInfo(String appName, String taskName);
+	TaskStatus getTaskInfo(Tenant tenant, String appName, String taskName);
 	
 	/**
 	 * Stores current task status into the database. The status is changed
@@ -208,7 +209,7 @@ public interface ITaskManager {
 	 * @param taskName
 	 * @param status
 	 */
-	void setTaskInfo(String appName, String taskName, TaskStatus status);
+	void setTaskInfo(Tenant tenant, String appName, String taskName, TaskStatus status);
 	
 	/**
 	 * Starts the task once immediately in addition to its general schedule.
@@ -217,5 +218,5 @@ public interface ITaskManager {
 	 * @return True if the task is found and can be started, False otherwise.
 	 * @throws IOException 
 	 */
-	boolean startImmediately(String appName, String taskId) throws IOException;
+	boolean startImmediately(Tenant tenant, String appName, String taskId) throws IOException;
 }

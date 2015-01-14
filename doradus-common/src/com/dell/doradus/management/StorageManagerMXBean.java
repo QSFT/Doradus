@@ -151,13 +151,13 @@ public interface StorageManagerMXBean {
 	/////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////
 	
-	String  sendInterruptTaskCommand(String appName, String taskOrGroupKey);
-	String  sendSuspendSchedulingCommand(String appName, String taskOrGroupKey);
-	String  sendResumeSchedulingCommand(String appName, String taskOrGroupKey);
-	String  sendUpdateSettingsCommand(String appName, TaskSettings taskOrGroupSettings);
-	TaskSettings getGlobalDefaultSettings();
-	Set<String> getAppNames();
-	Map<String, TaskSettings> getAppSettings(String appName);
-	TaskStatus getTaskStatus(String appName, String taskKey);
+//	String  sendInterruptTaskCommand(String appName, String taskOrGroupKey);
+//	String  sendSuspendSchedulingCommand(String appName, String taskOrGroupKey);
+//	String  sendResumeSchedulingCommand(String appName, String taskOrGroupKey);
+//	String  sendUpdateSettingsCommand(String appName, TaskSettings taskOrGroupSettings);
+//	TaskSettings getGlobalDefaultSettings();
+//	Set<String> getAppNames();
+//	Map<String, TaskSettings> getAppSettings(String appName);
+//	TaskStatus getTaskStatus(String appName, String taskKey);
 
 }

@@ -105,7 +105,7 @@ public class OLAPService extends StorageService {
     @Override
     public void deleteApplication(ApplicationDefinition appDef) {
         checkServiceState();
-        m_olap.deleteApplication(appDef.getAppName());
+        m_olap.deleteApplication(appDef);
     }   // deleteApplication
     
     @Override
@@ -132,31 +132,29 @@ public class OLAPService extends StorageService {
     public SearchResultList objectQueryURI(TableDefinition tableDef, String uriQuery) {
         checkServiceState();
         OlapQuery olapQuery = new OlapQuery(uriQuery);
-        return m_olap.search(tableDef.getAppDef().getAppName(), tableDef.getTableName(), olapQuery);
+        return m_olap.search(tableDef.getAppDef(), tableDef.getTableName(), olapQuery);
     }   // objectQueryURI
     
     @Override
     public SearchResultList objectQueryDoc(TableDefinition tableDef, UNode rootNode) {
         checkServiceState();
         OlapQuery olapQuery = new OlapQuery(rootNode);
-        return m_olap.search(tableDef.getAppDef().getAppName(), tableDef.getTableName(), olapQuery);
+        return m_olap.search(tableDef.getAppDef(), tableDef.getTableName(), olapQuery);
     }   // objectQueryDoc
     
     @Override
     public AggregateResult aggregateQueryURI(TableDefinition tableDef, String uriQuery) {
         checkServiceState();
-        String application = tableDef.getAppDef().getAppName();
         OlapAggregate request = new OlapAggregate(uriQuery);
-        AggregationResult result = m_olap.aggregate(application, tableDef.getTableName(), request);
+        AggregationResult result = m_olap.aggregate(tableDef.getAppDef(), tableDef.getTableName(), request);
         return AggregateResultConverter.create(result, request);
     }
     
     @Override
     public AggregateResult aggregateQueryDoc(TableDefinition tableDef, UNode rootNode) {
         checkServiceState();
-        String application = tableDef.getAppDef().getAppName();
         OlapAggregate request = new OlapAggregate(rootNode);
-        AggregationResult result = m_olap.aggregate(application, tableDef.getTableName(), request);
+        AggregationResult result = m_olap.aggregate(tableDef.getAppDef(), tableDef.getTableName(), request);
         return AggregateResultConverter.create(result, request);
     }
     
@@ -205,38 +203,40 @@ public class OLAPService extends StorageService {
     /**
      * Perform the given OLAP browser (_olapp) command.
      * 
+     * @param tenant        Tenant context for command.
      * @param parameters    OLAP browser parameters. Should be empty to start the browser
      *                      at the home page.
      * @return              An HTML-formatted page containing the results of the given
      *                      OLAP browser command.
      */
-    public String browseOlapp(Map<String, String> parameters) {
+    public String browseOlapp(Tenant tenant, Map<String, String> parameters) {
         checkServiceState();
-        return Olapp.process(m_olap, parameters);
+        return Olapp.process(tenant, m_olap, parameters);
     }   // browseOlapp
     
     /**
      * Delete the shard for the given application, including all of its data. This method
      * is a no-op if the given shard does not exist or has no data.
      * 
-     * @param application   OLAP application name.
+     * @param appDef        {@link ApplicationDefinition} of application.
      * @param shard         Shard name.
      */
-    public void deleteShard(String application, String shard) {
+    public void deleteShard(ApplicationDefinition appDef, String shard) {
         checkServiceState();
-        m_olap.deleteShard(application, shard);
+        m_olap.deleteShard(appDef, shard);
     }   // deleteShard
 
     /**
-     * Get a list of {@link ApplicationDefinition}s that are assigned to the OLAP service.
-     * An empty list is returned if there are no OLAP applications.
+     * Get a list of {@link ApplicationDefinition}s that are assigned to the OLAP service
+     * for the given tenant. An empty list is returned if there are no OLAP applications.
      * 
+     * @param   tenant  {@link Tenant} that owns the OLAP applications.
      * @return  A list of {@link ApplicationDefinition}s that are assigned to the OLAP
      *          service.
      */
-    public List<ApplicationDefinition> getAllOLAPApplications() {
+    public List<ApplicationDefinition> getAllOLAPApplications(Tenant tenant) {
         List<ApplicationDefinition> appDefs = new ArrayList<>();
-        for (ApplicationDefinition appDef : SchemaService.instance().getAllApplications()) {
+        for (ApplicationDefinition appDef : SchemaService.instance().getAllApplications(tenant)) {
             if (OLAPService.class.getSimpleName().equals(appDef.getStorageService())) {
                 appDefs.add(appDef);
             }
@@ -250,6 +250,8 @@ public class OLAPService extends StorageService {
      * 
      * @param applicationName   Name of an OLAP application.
      * @return                  {@link ApplicationDefinition} for the given OLAP application
+     * @deprecated This method only works for the default tenant and hence only in
+     *             single-tenant mode.
      */
     public ApplicationDefinition getOLAPApplication(String applicationName) {
         ApplicationDefinition appDef = SchemaService.instance().getApplication(applicationName);
@@ -275,34 +277,34 @@ public class OLAPService extends StorageService {
      * returned as a {@link SegmentStats} object. If there is no information for the given
      * shard, an IllegalArgumentException is thrown.
      *  
-     * @param application   OLAP application name.
+     * @param appDef        OLAP application definition.
      * @param shard         Shard name.
      * @return              Shard statistics as a {@link SegmentStats} object.
      */
-    public SegmentStats getStats(String application, String shard) {
+    public SegmentStats getStats(ApplicationDefinition appDef, String shard) {
         checkServiceState();
-        return m_olap.getStats(application, shard);
+        return m_olap.getStats(appDef, shard);
     }   // getStats 
 
-    public UNode getStatistics(String application, String shard) {
+    public UNode getStatistics(ApplicationDefinition appDef, String shard) {
         checkServiceState();
-        return OlapStatistics.getStatistics(m_olap.getSearcher(application, shard));
+        return OlapStatistics.getStatistics(m_olap.getSearcher(appDef, shard));
     }   // getStats
     
-    public UNode getStatisticsFileData(String application, String shard, String file) {
+    public UNode getStatisticsFileData(ApplicationDefinition appDef, String shard, String file) {
         checkServiceState();
-        return OlapStatistics.getFileData(m_olap.getSearcher(application, shard), file);
+        return OlapStatistics.getFileData(m_olap.getSearcher(appDef, shard), file);
     }   // getStats 
     
     /**
      * List the names of all shards for the given OLAP application.
      * 
-     * @param application   OLAP application name.
+     * @param appDef        OLAP application definition.
      * @return              List of shard names. Empty if there are no shards.
      */
-    public List<String> listShards(String application) {
+    public List<String> listShards(ApplicationDefinition appDef) {
         checkServiceState();
-        return m_olap.listShards(application);
+        return m_olap.listShards(appDef);
     }   // listShards
     
     /**
@@ -312,27 +314,27 @@ public class OLAPService extends StorageService {
      * expire-date. If the given expireDate is null, the shard will be updated to not have
      * an expire-date.
      * 
-     * @param application   OLAP application name.
+     * @param appDef        OLAP application definition.
      * @param shard         Shard name.
      * @param options    	Merge options
      */
-    public void mergeShard(String application, String shard, MergeOptions options) {
+    public void mergeShard(ApplicationDefinition appDef, String shard, MergeOptions options) {
         checkServiceState();
-        m_olap.merge(application, shard, options);
+        m_olap.merge(appDef, shard, options);
     }
     
     /**
      * Get the expire-date for the given shard name and OLAP application. Null is returned
      * if the shard does not exist or has no expire-date.
      * 
-     * @param application   OLAP application name.
+     * @param appDef        OLAP application definition.
      * @param shard         Shard name.
      * @return              Shard's expire-date or null if it doesn't exist or has no
      *                      expire-date.
      */
-    public Date getExpirationDate(String application, String shard) {
+    public Date getExpirationDate(ApplicationDefinition appDef, String shard) {
         checkServiceState();
-        return m_olap.getExpirationDate(application, shard);
+        return m_olap.getExpirationDate(appDef, shard);
     }	// getExpirationDate
     
     /**
@@ -351,9 +353,9 @@ public class OLAPService extends StorageService {
      * @return              List of object IDs in more than one shard within the given range,
      *                      returned as a {@link SearchResultList}.
      */
-    public SearchResultList getDuplicateIDs(String application, String table, String range) {
+    public SearchResultList getDuplicateIDs(ApplicationDefinition appDef, String table, String range) {
         checkServiceState();
-    	return m_olap.getDuplicateIDs(application, table, range);
+    	return m_olap.getDuplicateIDs(appDef, table, range);
     }	// getDuplicateIDs
     
     //----- Private methods

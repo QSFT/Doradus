@@ -43,7 +43,7 @@ public class OlappCmd extends RESTCallback {
             parameters = Utils.parseURIQuery(params);
         }
         
-        String html = OLAPService.instance().browseOlapp(parameters);
+        String html = OLAPService.instance().browseOlapp(m_request.getTenant(), parameters);
         Map<String, String> headers = new HashMap<String, String>();
         headers.put(HttpDefs.CONTENT_TYPE, "text/html");
         return new RESTResponse(HttpCode.OK, Utils.toBytes(html), headers);

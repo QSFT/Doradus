@@ -18,6 +18,7 @@ package com.dell.doradus.olap;
 
 import java.util.List;
 
+import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
@@ -125,12 +126,12 @@ public class OlapQuery {
     public String getContinueAt() { return m_continueAt; }
     public String getContinueAfter() { return m_continueAfter; }
     
-    public List<String> getShards(String application, Olap olap) {
-    	return olap.getShardsList(application, m_shards, m_shardsRange);
+    public List<String> getShards(ApplicationDefinition appDef, Olap olap) {
+    	return olap.getShardsList(appDef, m_shards, m_shardsRange);
     }
 
-    public List<String> getXShards(String application, Olap olap) {
-    	return olap.getShardsList(application, m_xshards, m_xshardsRange);
+    public List<String> getXShards(ApplicationDefinition appDef, Olap olap) {
+    	return olap.getShardsList(appDef, m_xshards, m_xshardsRange);
     }
     
     public int getPageSizeWithSkip() {

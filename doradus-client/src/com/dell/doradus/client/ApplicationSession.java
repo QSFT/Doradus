@@ -110,7 +110,7 @@ abstract public class ApplicationSession implements AutoCloseable {
     public ApplicationDefinition refreshSchema()  {
         try {
             // Send a GET request to "/_applications/{application}
-            String uri = "/_applications/" + Utils.urlEncode(m_appDef.getAppName());
+            String uri = uriRoot() + "_applications/" + Utils.urlEncode(m_appDef.getAppName());
             RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri);
             m_logger.debug("listApplication() response: {}", response.toString());
             throwIfErrorResponse(response);
@@ -139,7 +139,7 @@ abstract public class ApplicationSession implements AutoCloseable {
         try {
             // Send a PUT request to "/_applications/{application}".
             byte[] body = Utils.toBytes(text);
-            String uri = "/_applications/" + Utils.urlEncode(m_appDef.getAppName());
+            String uri = uriRoot() + "_applications/" + Utils.urlEncode(m_appDef.getAppName());
             RESTResponse response =
                 m_restClient.sendRequest(HttpMethod.PUT, uri, ContentType.APPLICATION_JSON, body);
             m_logger.debug("updateSchema() response: {}", response.toString());
@@ -254,6 +254,16 @@ abstract public class ApplicationSession implements AutoCloseable {
     public abstract QueryResult objectQuery(String tableName, Map<String, String> params);
     
     //----- Protected methods
+    
+    // Return the URI root "/" or "/{tenant}/" depending on whether this application's
+    // RESTClient currently has credentials with an assigned tenant name.
+    protected String uriRoot() {
+        Credentials creds = m_restClient.getCredentials();
+        if (creds == null || creds.getTenant() == null) {
+            return "/";
+        }
+        return "/" + creds.getTenant() + "/";
+    }   // uriRoot
     
     // Extract the BatchResult from the given RESTResponse. Could be an error.
     protected BatchResult createBatchResult(RESTResponse response) {

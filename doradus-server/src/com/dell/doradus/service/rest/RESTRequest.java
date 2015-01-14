@@ -24,9 +24,13 @@ import java.util.zip.GZIPInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.ContentType;
 import com.dell.doradus.common.HttpDefs;
+import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.service.db.Tenant;
+import com.dell.doradus.service.schema.SchemaService;
 
 /**
  * Wrapper for an HTTP request (as an {@link HttpServletRequest} and the variables, if
@@ -38,6 +42,7 @@ public class RESTRequest {
     // Request members that this object wraps:
     private final HttpServletRequest    m_request;
     private final Map<String, String>   m_variableMap;
+    private final Tenant                m_tenant;
 
     // Extracted members for easy access:
     private ContentType   m_contentTypeIn;      // from Content-Type
@@ -47,17 +52,75 @@ public class RESTRequest {
 
     /**
      * Create an object that wraps the given request parameters.
-     * 
+     *
+     * @param tenant        {@link Tenant} that defines this request's context (may be null).
      * @param request       Request as received by Servlet interface.
      * @param variableMap   Variables extracted from the REST URI (should be decoded).
      * @throws IOException 
      */
-    public RESTRequest(HttpServletRequest request, Map<String, String> variableMap) {
+    public RESTRequest(Tenant tenant, HttpServletRequest request, Map<String, String> variableMap) {
+        m_tenant = tenant;
         m_request = request;
         m_variableMap = variableMap;
         setRequestMembers();
     }   // constructor
 
+    /**
+     * Convenience method that gets the {@link ApplicationDefinition} defined by the
+     * decoded value of the "{application}" variable owned by the tenant defined for this
+     * request. If the given application name is not found, a {@link NotFoundException} is
+     * thrown so the REST API can return a 404.
+     * 
+     * @return {@link ApplicationDefinition} of the application specified by this request.
+     *         Will not be null.
+     * @throws NotFoundException if the application requested by this request is not
+     *         defined.
+     */
+    public ApplicationDefinition getAppDef() throws NotFoundException {
+        String application = getVariableDecoded("application");
+        if (Utils.isEmpty(application)) {
+            throw new RuntimeException("Mission {application} variable");
+        }
+        ApplicationDefinition appDef = SchemaService.instance().getApplication(m_tenant, application);
+        if (appDef == null) {
+            throw new NotFoundException("Unknown application: " + application);
+        }
+        return appDef;
+    }   // getAppDef
+    
+    /**
+     * Convenience method that gets the {@link TableDefinition} of defined by the decoded
+     * "{table}" variable in the current request from the given application definition. If
+     * the given table is not found, an IllegalArgumentException is thrown so the REST API
+     * can turn it into a 400 Bad Request response.
+     * 
+     * @param appDef    {@link ApplicationDefinition} of application search for a table
+     *                  whose name matches the decoded "{table}" variable.
+     * @return {@link TableDefinition} of table. Won't be null since an exception is
+     *         thrown if the table isn't found.
+     */
+    public TableDefinition getTableDef(ApplicationDefinition appDef) {
+        String table = getVariableDecoded("table");
+        if (Utils.isEmpty(table)) {
+            throw new RuntimeException("Mission {table} variable");
+        }
+        TableDefinition tableDef = appDef.getTableDef(table);
+        if (tableDef == null) {
+            throw new IllegalArgumentException("Unknown table for application '" + appDef.getAppName() + "': " + table);
+        }
+        return tableDef;
+    }   // getTableDef
+    
+    /**
+     * Get the {@link Tenant} that defines the context for this request.
+     * 
+     * @return  This request's Tenant context, which defines the application(s) to which
+     *          the request will be applied.
+     */
+    public Tenant getTenant() {
+        return m_tenant;
+    }   // getTenant
+    
     /**
      * Get the variables extracted for this REST request. For example, if the
      * {@link RESTCommand} for this request specified the URI:
@@ -194,6 +257,17 @@ public class RESTRequest {
         }
         return inStream;
     }   // getInputStream
+    
+    /**
+     * Get the value of the command header with the given name. Null is returned if no
+     * value is assigned to the given header.
+     * 
+     * @param  headerName   REST command header (case-insensitve). Example: authorization.
+     * @return              Header value or null if no such header exists.
+     */
+    public String getRequestHeader(String headerName) {
+        return m_request.getHeader(headerName);
+    }   // getRequestHeader
     
     ///// Private methods
 

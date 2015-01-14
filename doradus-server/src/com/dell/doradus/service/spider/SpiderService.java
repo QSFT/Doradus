@@ -25,7 +25,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,8 +53,6 @@ import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
-import com.dell.doradus.service.rest.RESTCommand;
-import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
 
 /**
@@ -71,15 +68,6 @@ public class SpiderService extends StorageService {
     private static final SpiderService INSTANCE = new SpiderService();
     private final ShardCache m_shardCache = new ShardCache();
 
-    // SpiderService-specific commands:
-    private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
-        // On-demand data integrity tasks for the Spider service:
-        new RESTCommand("POST   /_tasks/{application}/{table}/{task-type}/{field}           com.dell.doradus.service.spider.FixDataCmd"),
-        new RESTCommand("POST   /_tasks/{application}/{table}/{task-type}/{field}?{param}   com.dell.doradus.service.spider.FixDataCmd"),
-        new RESTCommand("DELETE   /_tasks/{application}/{table}/{task-type}                 com.dell.doradus.service.spider.StopFixDataCmd"),
-        new RESTCommand("DELETE   /_tasks/{application}/{table}/{task-type}/{field}         com.dell.doradus.service.spider.StopFixDataCmd"),
-    }); 
-    
     /**
      * Get the singleton instance of this service. The service may or may not have been
      * initialized yet.
@@ -94,7 +82,6 @@ public class SpiderService extends StorageService {
     
     @Override
     public void initService() {
-        RESTService.instance().registerRESTCommands(REST_RULES);
     }   // initService
 
     @Override
@@ -513,11 +500,12 @@ public class SpiderService extends StorageService {
     // Add an implicit table to the given application and return its new TableDefinition.
     private TableDefinition addAutoTable(ApplicationDefinition appDef, String tableName) {
         m_logger.debug("Adding implicit table '{}' to application '{}'", tableName, appDef.getAppName());
+        Tenant tenant = Tenant.getTenant(appDef);
         TableDefinition tableDef = new TableDefinition(appDef);
         tableDef.setTableName(tableName);
         appDef.addTable(tableDef);
         SchemaService.instance().defineApplication(appDef);
-        appDef = SchemaService.instance().getApplication(appDef.getAppName());
+        appDef = SchemaService.instance().getApplication(tenant, appDef.getAppName());
         return appDef.getTableDef(tableName);
     }   // addAutoTable
     

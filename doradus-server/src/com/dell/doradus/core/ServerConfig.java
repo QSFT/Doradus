@@ -190,8 +190,11 @@ public class ServerConfig {
     public int dbport = DEFAULT_DB_PORT;
     public boolean dbtls = false;
     public List<String> dbtls_cipher_suites = new ArrayList<>();
+    public String dbuser;
+    public String dbpassword;
     public int jmxport = DEFAULT_JMX_PORT;
     // Doradus keyspace properties
+    public boolean multitenant_mode = false;
     public String keyspace = DEFAULT_KS_NAME;
     // Miscellaneous Doradus server options:
     public int restport = DEFAULT_REST_PORT;

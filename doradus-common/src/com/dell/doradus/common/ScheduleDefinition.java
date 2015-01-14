@@ -59,9 +59,6 @@ public class ScheduleDefinition {
                 Utils.require(schedDef.m_appDef.getTableDef(schedDef.m_tableName) != null, "Table " + schedDef.m_tableName + " not defined for " + getName());
         	}
         },
-        RE_INDEX("re-index", "com.dell.doradus.tasks.ReIndexFieldData", new String[0]),
-        DELETE_SCALAR("delete-scalar", "com.dell.doradus.tasks.DeleteScalarFieldData", new String[0]),
-        DELETE_LINK("delete-link", "com.dell.doradus.tasks.DeleteLinkFieldData", new String[0]),
         DATA_AGING("data-aging", "com.dell.doradus.tasks.DataAger",
         		new String[] {"SpiderService", "OLAPService"}) {
         			@Override

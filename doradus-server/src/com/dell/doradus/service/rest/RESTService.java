@@ -16,8 +16,6 @@
 
 package com.dell.doradus.service.rest;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Queue;
 import java.util.SortedSet;
@@ -62,7 +60,6 @@ public class RESTService extends Service {
     private static final RESTService INSTANCE = new RESTService();
     
     private Server                  m_jettyServer;
-    private String					m_hostAddress;
     private final RESTCommandSet    m_commandSet = new RESTCommandSet();
 
     // Although it is unlike new RequestCallbacks will be added after initialization, we use
@@ -104,10 +101,6 @@ public class RESTService extends Service {
     public void initService() {
         // Server
         m_jettyServer = configureJettyServer();
-        m_hostAddress = "0.0.0.0";
-        try {
-        	m_hostAddress = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {}
         
         // Connector
         ServerConnector connector = configureConnector();
@@ -165,6 +158,9 @@ public class RESTService extends Service {
      */
     public void registerRESTCommands(Iterable<RESTCommand> restCommands) {
         for (RESTCommand cmd : restCommands) {
+            if (!cmd.isSystemCommand() && ServerConfig.getInstance().multitenant_mode) {
+                cmd.prependPathNode("{tenant}");
+            }
             m_commandSet.addCommand(cmd);
         }
     }   // registerRESTCommands
@@ -198,15 +194,6 @@ public class RESTService extends Service {
                                     Map<String, String> variableMap) {
         return m_commandSet.findMatch(method, uri, query, variableMap);
     }   // matchCommand
-    
-    /**
-     * Get this machine's local host address.
-     * 
-     * @return  Default machine IP address or "0.0.0.0" if there isn't one.
-     */
-    public String getHostAddress() {
-        return m_hostAddress;
-    }   // getHostAddress
     
     //----- Package-private methods (used by RESTServlet)
 

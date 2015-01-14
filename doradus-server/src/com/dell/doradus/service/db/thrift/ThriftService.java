@@ -72,20 +72,20 @@ public class ThriftService extends DBService {
         purgeAllConnections();
     }   // stopService
 
-    //----- Public DBService methods: Store management
-
+    //----- Public DBService methods: Tenant management
+    
     @Override
-    public void createTenant(Tenant tenant) {
+    public void createTenant(Tenant tenant, Map<String, String> options) {
         checkState();
         // Use a temporary, no-keyspace session
         String keyspace = tenant.getKeyspace();
         try (DBConn dbConn = new DBConn(null)) {
             CassandraSchemaMgr schemaMgr = new CassandraSchemaMgr(dbConn.getClientSession());
             if (!schemaMgr.keyspaceExists(keyspace)) {
-                schemaMgr.createKeyspace(keyspace);
+                schemaMgr.createKeyspace(keyspace, options);
             }
         }
-    }   // createKeyspace
+    }   // createTenant
 
     @Override
     public void dropTenant(Tenant tenant) {
@@ -98,8 +98,32 @@ public class ThriftService extends DBService {
                 schemaMgr.dropKeyspace(keyspace);
             }
         }
-    }   // dropKeyspace
+    }   // dropTenant
     
+    @Override
+    public void addUsers(Tenant tenant, Map<String, String> users) {
+        throw new RuntimeException("This method is not supported for the Thrift API");
+    }
+    
+    @Override
+    public Collection<Tenant> getTenants() {
+        checkState();
+        List<Tenant> tenantList = new ArrayList<>();
+        // Use a temporary, no-keyspace session
+        try (DBConn dbConn = new DBConn(null)) {
+            CassandraSchemaMgr schemaMgr = new CassandraSchemaMgr(dbConn.getClientSession());
+            Collection<String> keyspaceList = schemaMgr.getKeyspaces();
+            for (String keyspace : keyspaceList) {
+                if (schemaMgr.columnFamilyExists(keyspace, SchemaService.APPS_STORE_NAME)) {
+                    tenantList.add(new Tenant(keyspace));
+                }
+            }
+        }
+        return tenantList;
+    }   // getTenantMap
+    
+    //----- Public DBService methods: Store management
+
     @Override
     public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
         checkState();
@@ -129,23 +153,6 @@ public class ThriftService extends DBService {
             returnDBConnection(dbConn);
         }
     }   // deleteStoreIfPresent
-    
-    @Override
-    public Collection<Tenant> getTenants() {
-        checkState();
-        List<Tenant> tenantList = new ArrayList<>();
-        // Use a temporary, no-keyspace session
-        try (DBConn dbConn = new DBConn(null)) {
-            CassandraSchemaMgr schemaMgr = new CassandraSchemaMgr(dbConn.getClientSession());
-            Collection<String> keyspaceList = schemaMgr.getKeyspaces();
-            for (String keyspace : keyspaceList) {
-                if (schemaMgr.columnFamilyExists(keyspace, SchemaService.APPS_STORE_NAME)) {
-                    tenantList.add(new Tenant(keyspace));
-                }
-            }
-        }
-        return tenantList;
-    }   // getTenantMap
     
     //----- Public DBService methods: Updates
     
@@ -357,5 +364,5 @@ public class ThriftService extends DBService {
             m_dbKeyspaceDBConns.clear();
         }
     }   // purgeAllConnections
-    
+
 }   // class ThriftService

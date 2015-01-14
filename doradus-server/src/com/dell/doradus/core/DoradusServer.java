@@ -55,6 +55,7 @@ public final class DoradusServer {
     private static final String[] REQUIRED_SERVICES = new String[] {
         com.dell.doradus.service.db.DBService.class.getName(),
         com.dell.doradus.service.schema.SchemaService.class.getName(),
+        com.dell.doradus.service.tenant.TenantService.class.getName()
     };
     
     // List of initialized services:
@@ -85,8 +86,8 @@ public final class DoradusServer {
         new RESTCommand("DELETE /{application}/{store}          com.dell.doradus.core.DeleteObjectsCmd"),
         
         // System commands:
-        new RESTCommand("GET /_dump com.dell.doradus.core.TheadDumpCmd"),
-        new RESTCommand("GET /_logs?{params} com.dell.doradus.core.LogDumpCmd"),
+        new RESTCommand("GET /_dump com.dell.doradus.core.TheadDumpCmd", true),
+        new RESTCommand("GET /_logs?{params} com.dell.doradus.core.LogDumpCmd", true),
     });
 
     ///// Public methods

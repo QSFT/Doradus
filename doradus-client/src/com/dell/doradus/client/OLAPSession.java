@@ -71,7 +71,7 @@ public class OLAPSession extends ApplicationSession {
             // Send a POST request to "/{application}/{shard}".
             byte[] body = null;
             body = dbObjBatch.toDoc().toCompressedJSON();
-            String uri = "/" + Utils.urlEncode(m_appDef.getAppName()) +
+            String uri = uriRoot() + Utils.urlEncode(m_appDef.getAppName()) +
                          "/" + Utils.urlEncode(shard);
             RESTResponse response =
                 m_restClient.sendRequestCompressed(HttpMethod.POST, uri, ContentType.APPLICATION_JSON, body);
@@ -100,7 +100,7 @@ public class OLAPSession extends ApplicationSession {
         try {
             // Send a DELETE request to "/{application}/{shard}".
             byte[] body = Utils.toBytes(dbObjBatch.toDoc().toJSON());
-            String uri = "/" + Utils.urlEncode(m_appDef.getAppName()) +
+            String uri = uriRoot() + Utils.urlEncode(m_appDef.getAppName()) +
                          "/" + Utils.urlEncode(shard);
             RESTResponse response = 
                 m_restClient.sendRequest(HttpMethod.DELETE, uri, ContentType.APPLICATION_JSON, body);
@@ -125,7 +125,7 @@ public class OLAPSession extends ApplicationSession {
         Utils.require(!Utils.isEmpty(shard), "shard");
         try {
             // Send a DELETE request to "/{application}/_shards/{shard}"
-            String uri = "/" + Utils.urlEncode(m_appDef.getAppName()) + "/_shards/" + Utils.urlEncode(shard);
+            String uri = uriRoot() + Utils.urlEncode(m_appDef.getAppName()) + "/_shards/" + Utils.urlEncode(shard);
             RESTResponse response = m_restClient.sendRequest(HttpMethod.DELETE, uri);
             m_logger.debug("deleteShard() response: {}", response.toString());
             throwIfErrorResponse(response);
@@ -150,7 +150,7 @@ public class OLAPSession extends ApplicationSession {
         try {
             // Send a POST request to "/{application}/_shards/{shard}[?expire-date=<date>]"
             StringBuilder uri = new StringBuilder();
-            uri.append("/");
+            uri.append(uriRoot());
             uri.append(Utils.urlEncode(m_appDef.getAppName()));
             uri.append("/_shards/");
             uri.append(Utils.urlEncode(shard));
@@ -244,7 +244,7 @@ public class OLAPSession extends ApplicationSession {
         
         // Form the URI, which has the general form: GET /{application}/{table}/_aggregate?{params}
         StringBuilder uri = new StringBuilder();
-        uri.append("/");
+        uri.append(uriRoot());
         uri.append(Utils.urlEncode(m_appDef.getAppName()));
         uri.append("/");
         uri.append(Utils.urlEncode(tableDef.getTableName()));
@@ -357,7 +357,7 @@ public class OLAPSession extends ApplicationSession {
         
         // Form the URI, which has the general form: GET /{application}/{table}/_query?{params}
         StringBuilder uri = new StringBuilder();
-        uri.append("/");
+        uri.append(uriRoot());
         uri.append(Utils.urlEncode(tableDef.getAppDef().getAppName()));
         uri.append("/");
         uri.append(Utils.urlEncode(tableDef.getTableName()));

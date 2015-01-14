@@ -26,7 +26,6 @@ import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.StorageService;
-import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.ReaderCallback;
 import com.dell.doradus.service.schema.SchemaService;
 
@@ -38,12 +37,8 @@ public class DeleteObjectsCmd extends ReaderCallback {
 
     @Override
     public RESTResponse invokeStreamIn(Reader reader) {
-        String application = m_request.getVariableDecoded("application");
         String store = m_request.getVariableDecoded("store");
-        ApplicationDefinition appDef = SchemaService.instance().getApplication(application);
-        if (appDef == null) {
-            throw new NotFoundException("Unknown application: " + application);
-        }
+        ApplicationDefinition appDef = m_request.getAppDef();
         Utils.require(reader != null, "This command requires an input entity");
         
         DBObjectBatch dbObjBatch = new DBObjectBatch();

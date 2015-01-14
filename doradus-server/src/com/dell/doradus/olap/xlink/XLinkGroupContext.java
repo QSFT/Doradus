@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.olap.aggregate.mr.MFCollector;
@@ -96,8 +97,9 @@ public class XLinkGroupContext {
 		if(filter == null) filter = new AllQuery();
 		TableDefinition invTable = fieldDef.getInverseTableDef();
 		Map<MGName, Long> names = new HashMap<MGName, Long>();
+		ApplicationDefinition appDef = fieldDef.getTableDef().getAppDef();
 		for(String xshard : context.xshards) {
-			CubeSearcher searcher = context.olap.getSearcher(context.application, xshard);
+			CubeSearcher searcher = context.olap.getSearcher(appDef, xshard);
 			Result bvQuery = ResultBuilder.search(invTable, filter, searcher);
 			MFCollector collector = group.items.size() == 0 ?
 					new MFCollector.IdField(searcher, invTable) :
@@ -162,8 +164,9 @@ public class XLinkGroupContext {
 		TableDefinition invTable = fieldDef.getInverseTableDef();
 		FieldDefinition inv = fieldDef.getInverseLinkDef();
 		Map<MGName, Long> names = new HashMap<MGName, Long>();
+        ApplicationDefinition appDef = fieldDef.getTableDef().getAppDef();
 		for(String xshard : context.xshards) {
-			CubeSearcher searcher = context.olap.getSearcher(context.application, xshard);
+			CubeSearcher searcher = context.olap.getSearcher(appDef, xshard);
 			Result bvQuery = ResultBuilder.search(invTable, filter, searcher);
 			
 			MFCollector collector = group.items.size() == 0 ?

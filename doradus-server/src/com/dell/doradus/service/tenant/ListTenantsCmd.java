@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.service.schema;
-
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
+package com.dell.doradus.service.tenant;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.schema.SchemaService;
 
 /**
- * Implements REST commands: /_tenants and /_tenants/{tenant}
+ * Implements the system REST commands: /_tenants and /_tenants/{tenant}
  */
 public class ListTenantsCmd extends UNodeOutCallback {
 
@@ -36,24 +33,15 @@ public class ListTenantsCmd extends UNodeOutCallback {
     public UNode invokeUNodeOut(UNode inNode) {
         Utils.require(inNode == null, "No input entity allowed for this command");
         String tenantParam = m_request.getVariableDecoded("tenant");
-        SortedMap<Tenant, SortedSet<String>> tenantMap = new TreeMap<>();
-        for (ApplicationDefinition appDef : SchemaService.instance().getAllApplications()) {
-            Tenant tenant = Tenant.getTenant(appDef);
-            if (Utils.isEmpty(tenantParam) || tenant.getKeyspace().equals(tenantParam)) {
-                SortedSet<String> appNameSet = tenantMap.get(tenant);
-                if (appNameSet == null) {
-                    appNameSet = new TreeSet<>();
-                    tenantMap.put(tenant, appNameSet);
-                }
-                appNameSet.add(appDef.getAppName());
-            }
-        }
         UNode rootNode = UNode.createMapNode("tenants");
-        for (Tenant tenant : tenantMap.keySet()) {
+        for (Tenant tenant : DBService.instance().getTenants()) {
+            if (tenantParam != null && !tenant.getKeyspace().equals(tenantParam)) {
+                continue;
+            }
             UNode tenantNode = rootNode.addArrayNode(stripQuotes(tenant.getKeyspace()), "tenant");
-            SortedSet<String> appNameSet = tenantMap.get(tenant);
-            for (String appName : appNameSet) {
-                tenantNode.addValueNode("value", appName);
+            UNode appNode = tenantNode.addArrayNode("applications");
+            for (ApplicationDefinition appDef : SchemaService.instance().getAllApplications(tenant)) {
+                appNode.addValueNode("value", appDef.getAppName());
             }
         }
         return rootNode;

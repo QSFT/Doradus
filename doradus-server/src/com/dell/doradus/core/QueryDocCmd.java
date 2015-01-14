@@ -22,7 +22,6 @@ import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.StorageService;
-import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.schema.SchemaService;
 
@@ -35,17 +34,9 @@ public class QueryDocCmd extends UNodeOutCallback {
 
     @Override
     public UNode invokeUNodeOut(UNode inNode) {
-        String application = m_request.getVariableDecoded("application");
-        ApplicationDefinition appDef = SchemaService.instance().getApplication(application);
-        if (appDef == null) {
-            throw new NotFoundException("Unknown application: " + application);
-        }
         Utils.require(inNode != null, "This command requires an input entity");
-        
-        String table = m_request.getVariableDecoded("table");
-        TableDefinition tableDef = appDef.getTableDef(table);
-        Utils.require(tableDef != null, "Unknown table for application '%s': %s", application, table);
-        
+        ApplicationDefinition appDef = m_request.getAppDef();
+        TableDefinition tableDef = m_request.getTableDef(appDef);
         UNode rootNode = UNode.parse(m_request.getInputBody(), m_request.getInputContentType());
         StorageService storageService = SchemaService.instance().getStorageService(appDef);
         SearchResultList searchResult = storageService.objectQueryDoc(tableDef, rootNode);

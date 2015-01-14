@@ -26,8 +26,8 @@ import com.dell.doradus.common.ScheduleDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.ScheduleDefinition.SchedType;
 import com.dell.doradus.management.TaskStatus;
+import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.RESTCallback;
-import com.dell.doradus.service.schema.SchemaService;
 
 /**
  * Handle any of the following REST commands:
@@ -50,7 +50,6 @@ public class ListTasksCmd extends RESTCallback {
 		// Process request parameters
 		Map<String, String> variables = m_request.getVariables();
 		String appNamePar = variables.get("application");
-		assert appNamePar != null;
 		String tableNamePar = variables.get("table");
 		if (tableNamePar == null) tableNamePar = "*";
 		String taskTypePar = variables.get("task");
@@ -58,52 +57,51 @@ public class ListTasksCmd extends RESTCallback {
 		String taskIdPattern = tableNamePar + "/" + taskTypePar;
 		TaskMatcher taskMatcher = new TaskMatcher(appNamePar, taskIdPattern);
 		
+		ApplicationDefinition appDef = m_request.getAppDef();
+		Tenant tenant = m_request.getTenant();
+		
 		// Peek up task statuses and form the result
 		UNode response = UNode.createMapNode("tasks");
-		for (ApplicationDefinition appDef : SchemaService.instance().getAllApplications()) {
-			String appName = appDef.getAppName();
-			Map<String, ScheduleDefinition> schedDefinitions = appDef.getSchedules();
-			for(ScheduleDefinition definition : schedDefinitions.values()) {
-				SchedType taskType = definition.getType();
-				if (taskType == SchedType.APP_DEFAULT ||
-					taskType == SchedType.TABLE_DEFAULT) {
-					continue;
-				}
-				String taskName = taskType.getName();
-				String tableName = definition.getTableName();
-				if (tableName == null) {
-					tableName = "*";
-				}
-				String taskId = tableName + "/" + taskName;
-				if (!taskMatcher.match(appName, taskId)) {
-					continue;
-				}
-				UNode taskNode = response.addMapNode(appName + "/" + taskId, "task");
-				String schedule = definition.getSchedSpec();
-				if (schedule != null) {
-					taskNode.addValueNode("schedule", schedule);
-				}
-				TaskStatus status = TaskDBUtils.getTaskStatus(appName, taskId);
-				if (status != null) {
-					addStatus(taskNode, status);
-				}
+		Map<String, ScheduleDefinition> schedDefinitions = appDef.getSchedules();
+		for(ScheduleDefinition definition : schedDefinitions.values()) {
+			SchedType taskType = definition.getType();
+			if (taskType == SchedType.APP_DEFAULT ||
+				taskType == SchedType.TABLE_DEFAULT) {
+				continue;
 			}
-			
-			for (TaskId taskId : TaskDBUtils.getLiveTasks(appName)) {
-				if (!schedDefinitions.containsKey(taskId.getScheduleId())) {
-					String tableTaskId = taskId.getTaskTableId();
-					if (response.getMember(tableTaskId) == null) {
-					    UNode taskNode = response.addMapNode(tableTaskId, "task");
-					    TaskStatus status = TaskDBUtils.getTaskStatus(
-					        appName, tableTaskId.substring(appName.length() + 1));
-					    if (status != null) {
-					        addStatus(taskNode, status);
-					    }
-					}
-				}
+			String taskName = taskType.getName();
+			String tableName = definition.getTableName();
+			if (tableName == null) {
+				tableName = "*";
+			}
+			String taskId = tableName + "/" + taskName;
+			if (!taskMatcher.match(appNamePar, taskId)) {
+				continue;
+			}
+			UNode taskNode = response.addMapNode(appNamePar + "/" + taskId, "task");
+			String schedule = definition.getSchedSpec();
+			if (schedule != null) {
+				taskNode.addValueNode("schedule", schedule);
+			}
+			TaskStatus status = TaskDBUtils.getTaskStatus(tenant, appNamePar, taskId);
+			if (status != null) {
+				addStatus(taskNode, status);
 			}
 		}
 		
+		for (TaskId taskId : TaskDBUtils.getLiveTasks(tenant, appNamePar)) {
+			if (!schedDefinitions.containsKey(taskId.getScheduleId())) {
+				String tableTaskId = taskId.getTaskTableId();
+				if (response.getMember(tableTaskId) == null) {
+				    UNode taskNode = response.addMapNode(tableTaskId, "task");
+				    TaskStatus status = TaskDBUtils.getTaskStatus(
+				        tenant, appNamePar, tableTaskId.substring(appNamePar.length() + 1));
+				    if (status != null) {
+				        addStatus(taskNode, status);
+				    }
+				}
+			}
+		}
 		
 		return new RESTResponse(
 				HttpCode.OK, 

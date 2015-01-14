@@ -55,11 +55,9 @@ public class AggregationRequest {
 		}
 	}
 	
-	public AggregationRequest(Olap olap, AggregationRequestData requestData) {
+	public AggregationRequest(Olap olap, ApplicationDefinition appDef, AggregationRequestData requestData) {
 		this.olap = olap;
 		this.application = requestData.application;
-		ApplicationDefinition appDef = olap.getApplicationDefinition(requestData.application);
-		Utils.require(appDef != null, "Application " + requestData.application + " not found");
 		tableDef = appDef.getTableDef(requestData.table);
 		Utils.require(tableDef != null, "Table " + requestData.table + " not found");
 		shards = requestData.shards;

@@ -21,9 +21,7 @@ import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.MergeOptions;
-import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.RESTCallback;
-import com.dell.doradus.service.schema.SchemaService;
 
 /**
  * Handle the REST commands: POST /{application}/_shards/{shard} and
@@ -33,21 +31,16 @@ public class MergeSegmentCmd extends RESTCallback {
 
     @Override
     protected RESTResponse invoke() {
-        String application = m_request.getVariableDecoded("application");
-        ApplicationDefinition appDef = SchemaService.instance().getApplication(application);
-        if (appDef == null) {
-            throw new NotFoundException("Unknown application: " + application);
-        }
+        ApplicationDefinition appDef = m_request.getAppDef();
         Utils.require(OLAPService.class.getSimpleName().equals(appDef.getStorageService()),
-                      "Application '%s' is not an OLAP application", application);
-        
+                      "Application '%s' is not an OLAP application", appDef.getAppName());
         String shard = m_request.getVariableDecoded("shard");
         String params = m_request.getVariableDecoded("params");
         if (params == null) {
             params = "";
         }
         MergeOptions options = new MergeOptions(params);
-        OLAPService.instance().mergeShard(application, shard, options);
+        OLAPService.instance().mergeShard(appDef, shard, options);
         return new RESTResponse(HttpCode.OK);
     }   // invoke
 

@@ -16,6 +16,7 @@
 
 package com.dell.doradus.olap;
 
+import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.aggregate.AggregationRequestData;
@@ -103,11 +104,11 @@ public class OlapAggregate {
     public String getFields() { return m_fields; }
     public String getMetrics() { return m_metrics; }
     
-	public AggregationRequestData createRequestData(Olap olap, String application, String table) {
+	public AggregationRequestData createRequestData(Olap olap, ApplicationDefinition appDef, String table) {
 		AggregationRequestData requestData = new AggregationRequestData();
-		requestData.application = application;
-		requestData.shards = olap.getShardsList(application, m_shards, m_shardsRange);
-		requestData.xshards = olap.getShardsList(application, m_xshards, m_xshardsRange);
+		requestData.application = appDef.getAppName();
+		requestData.shards = olap.getShardsList(appDef, m_shards, m_shardsRange);
+		requestData.xshards = olap.getShardsList(appDef, m_xshards, m_xshardsRange);
 		requestData.table = table;
 		requestData.metrics = m_metrics;
 		requestData.flat = m_flat;

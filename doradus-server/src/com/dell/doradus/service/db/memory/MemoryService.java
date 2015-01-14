@@ -88,7 +88,7 @@ public class MemoryService extends DBService {
     @Override public void startService() { }
     @Override public void stopService() { }
 
-    @Override public void createTenant(Tenant tenant) {
+    @Override public void createTenant(Tenant tenant, Map<String, String> options) {
     	synchronized (m_sync) {
     	    String keyspace = tenant.getKeyspace();
     		if(m_Keyspaces.get(keyspace) != null) return;
@@ -105,6 +105,20 @@ public class MemoryService extends DBService {
 		}
     }
     
+    @Override public void addUsers(Tenant tenant, Map<String, String> users) {
+        throw new RuntimeException("This method is not supported for the Memory API");
+    }
+    
+    @Override public Collection<Tenant> getTenants() {
+        List<Tenant> tenants = new ArrayList<>();
+        synchronized (m_sync) {
+            for (String keyspace : m_Keyspaces.keySet()) {
+                tenants.add(new Tenant(keyspace));
+            }
+        }
+        return tenants;
+    }
+
     @Override public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
     	synchronized (m_sync) {
     		Keyspace ks = m_Keyspaces.get(tenant.getKeyspace());
@@ -123,16 +137,6 @@ public class MemoryService extends DBService {
 		}
     }
     
-    @Override public Collection<Tenant> getTenants() {
-        List<Tenant> tenants = new ArrayList<>();
-        synchronized (m_sync) {
-            for (String keyspace : m_Keyspaces.keySet()) {
-                tenants.add(new Tenant(keyspace));
-            }
-        }
-        return tenants;
-    }
-
     @Override public DBTransaction startTransaction(Tenant tenant) {
     	synchronized (m_sync) {
     		Keyspace ks = getKeyspace(tenant);

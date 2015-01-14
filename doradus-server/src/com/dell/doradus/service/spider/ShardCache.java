@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.Defs;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.Tenant;
@@ -199,7 +198,7 @@ public class ShardCache {
         }
         
         Iterator<DColumn> colIter =
-            DBService.instance().getAllColumns(Tenant.getTenant(tableDef), SpiderService.termsStoreName(tableDef), Defs.SHARDS_ROW_KEY);
+            DBService.instance().getAllColumns(Tenant.getTenant(tableDef), SpiderService.termsStoreName(tableDef), SpiderTransaction.SHARDS_ROW_KEY);
         if (colIter != null) {
             while (colIter.hasNext()) {
                 DColumn col = colIter.next();

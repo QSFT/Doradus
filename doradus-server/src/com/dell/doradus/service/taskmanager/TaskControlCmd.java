@@ -26,9 +26,18 @@ import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.ScheduleDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.common.ScheduleDefinition.SchedType;
+import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.RESTCallback;
-import com.dell.doradus.service.schema.SchemaService;
 
+/**
+ * Implements these REST commands:
+ * <pre>
+ *      PUT    /_tasks/{application}?{command}
+ *      PUT    /_tasks/{application}/{table}?{command}
+ *      PUT    /_tasks/{application}/{table}/{task}?{command}
+ *      PUT    /_tasks/{application}/{table}/{task}/{param}?{command}
+ * </pre>
+ */
 public class TaskControlCmd extends RESTCallback {
 
 	@Override
@@ -43,7 +52,6 @@ public class TaskControlCmd extends RESTCallback {
 		
 		// Process request parameters
 		String appNamePar = m_request.getVariableDecoded("application");
-		if (appNamePar == null) appNamePar = "*";
 		String tableNamePar = m_request.getVariableDecoded("table");
 		if (tableNamePar == null) tableNamePar = "*";
 		String taskTypePar = m_request.getVariableDecoded("task");
@@ -54,11 +62,13 @@ public class TaskControlCmd extends RESTCallback {
 			taskIdPattern += "/" + taskParam;
 		}
 		String command = m_request.getVariableDecoded("command");
+		Tenant tenant = m_request.getTenant();
 		
 		if (Utils.isEmpty(command)) {
 			return new RESTResponse(HttpCode.BAD_REQUEST, "Empty task command");
 		}
 
+		ApplicationDefinition appDef = m_request.getAppDef();
 		Set<String> tasksFailed = new HashSet<>();
 		
 		switch (command.toLowerCase()) {
@@ -72,40 +82,38 @@ public class TaskControlCmd extends RESTCallback {
 			break;
 		default:
 			boolean taskFound = false;
-			for (ApplicationDefinition appDef : SchemaService.instance().getAllApplications()) {
-				String appName = appDef.getAppName();
-				for(ScheduleDefinition definition : appDef.getSchedules().values()) {
-					SchedType taskType = definition.getType();
-					if (taskType == SchedType.APP_DEFAULT ||
-						taskType == SchedType.TABLE_DEFAULT) {
-						continue;
+			String appName = appNamePar;
+			for(ScheduleDefinition definition : appDef.getSchedules().values()) {
+				SchedType taskType = definition.getType();
+				if (taskType == SchedType.APP_DEFAULT ||
+					taskType == SchedType.TABLE_DEFAULT) {
+					continue;
+				}
+				String taskName = taskType.getName();
+				String tableName = definition.getTableName();
+				if (tableName == null) {
+					tableName = "*";
+				}
+				String taskId = tableName + "/" + taskName;
+				TaskMatcher taskMatcher = new TaskMatcher(appNamePar, taskIdPattern);
+				if (!taskMatcher.match(appName, taskId)) {
+					continue;
+				}
+				taskFound = true;
+				switch (command.toLowerCase()) {
+				case "start":
+					if (!tmService.startImmediately(tenant, appName, taskId)) {
+						tasksFailed.add(appName + "/" + taskId);
 					}
-					String taskName = taskType.getName();
-					String tableName = definition.getTableName();
-					if (tableName == null) {
-						tableName = "*";
-					}
-					String taskId = tableName + "/" + taskName;
-					TaskMatcher taskMatcher = new TaskMatcher(appNamePar, taskIdPattern);
-					if (!taskMatcher.match(appName, taskId)) {
-						continue;
-					}
-					taskFound = true;
-					switch (command.toLowerCase()) {
-					case "start":
-						if (!tmService.startImmediately(appName, taskId)) {
-							tasksFailed.add(appName + "/" + taskId);
-						}
-						break;
-					case "suspend":
-						tmService.suspend(appName, taskId);
-						break;
-					case "resume":
-						tmService.resume(appName, taskId);
-						break;
-					default:
-						return new RESTResponse(HttpCode.BAD_REQUEST, "Unknown command: " + command);
-					}
+					break;
+				case "suspend":
+					tmService.suspend(appName, taskId);
+					break;
+				case "resume":
+					tmService.resume(appName, taskId);
+					break;
+				default:
+					return new RESTResponse(HttpCode.BAD_REQUEST, "Unknown command: " + command);
 				}
 			}
 			if (!taskFound) {

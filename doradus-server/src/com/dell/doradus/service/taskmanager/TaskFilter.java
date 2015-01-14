@@ -22,6 +22,7 @@ package com.dell.doradus.service.taskmanager;
  * for the functions that must select some tasks for processing.
  */
 public abstract class TaskFilter {
+    // TODO: Need to add tenant to filter.
 	public final static TaskFilter NO_FILTER = new TaskFilter() {
 		@Override
 		public boolean filter(String appName, String taskId) {

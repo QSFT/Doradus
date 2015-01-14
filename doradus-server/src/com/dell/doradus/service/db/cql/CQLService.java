@@ -46,6 +46,7 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SocketOptions;
 import com.datastax.driver.core.TableMetadata;
 import com.datastax.driver.core.policies.RoundRobinPolicy;
+import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
@@ -112,17 +113,17 @@ public class CQLService extends DBService {
         }
     }   // stopService
 
-    //----- Public DBService methods: Store management
-
+    //----- Public DBService methods: Tenant management
+    
     @Override
-    public void createTenant(Tenant tenant) {
+    public void createTenant(Tenant tenant, Map<String, String> options) {
         checkState();
         String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
         KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(cqlKeyspace);
         if (ksMetadata == null) {
             try (Session session = m_cluster.connect()) {   // no-keyspace session
                 CQLSchemaManager schemaMgr = new CQLSchemaManager(session, null);
-                schemaMgr.createKeyspace(cqlKeyspace);
+                schemaMgr.createKeyspace(cqlKeyspace, options);
             }
         }
     }   // createKeyspace
@@ -145,6 +146,52 @@ public class CQLService extends DBService {
         }
     }   // dropKeyspace
     
+    @Override
+    public void addUsers(Tenant tenant, Map<String, String> users) {
+        checkState();
+        String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
+        Session session = getOrCreateKeyspaceSession(cqlKeyspace);
+        StringBuilder cql = new StringBuilder();
+        for (String userid : users.keySet()) {
+            m_logger.debug("Adding new user '{}' for keyspace {}", userid, cqlKeyspace);
+            // CREATE USER Foo WITH PASSWORD 'bar' NOSUPERUSER;
+            cql.setLength(0);
+            String password = users.get(userid);
+            cql.append("CREATE USER ");
+            cql.append(userid);
+            cql.append(" WITH PASSWORD '");
+            cql.append(password);   // TODO: escape embedded 's?
+            cql.append("' NOSUPERUSER;");
+            session.execute(cql.toString());
+            
+            // GRANT ALL PERMISSIONS ON KEYSPACE "Casey1" TO Foo;
+            cql.setLength(0);
+            cql.append("GRANT ALL PERMISSIONS ON KEYSPACE ");
+            cql.append(cqlKeyspace);
+            cql.append(" TO ");
+            cql.append(userid);
+            cql.append(";");
+            session.execute(cql.toString());
+        }
+    }   // addUsers
+    
+    @Override
+    public Collection<Tenant> getTenants() {
+        checkState();
+        List<Tenant> tenants = new ArrayList<>();
+        try (Session session = m_cluster.connect()) {
+            List<KeyspaceMetadata> keyspaceList = m_cluster.getMetadata().getKeyspaces();
+            for (KeyspaceMetadata ksMetadata : keyspaceList) {
+                if (ksMetadata.getTable(APPS_CQL_NAME) != null) {
+                    tenants.add(new Tenant(ksMetadata.getName()));
+                }
+            }
+        }
+        return tenants;
+    }   // getTenantMap
+    
+    //----- Public DBService methods: Store management
+
     @Override
     public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
         checkState();
@@ -169,21 +216,6 @@ public class CQLService extends DBService {
         }
     }   // deleteStoreIfPresent
 
-    @Override
-    public Collection<Tenant> getTenants() {
-        checkState();
-        List<Tenant> tenants = new ArrayList<>();
-        try (Session session = m_cluster.connect()) {
-            List<KeyspaceMetadata> keyspaceList = m_cluster.getMetadata().getKeyspaces();
-            for (KeyspaceMetadata ksMetadata : keyspaceList) {
-                if (ksMetadata.getTable(APPS_CQL_NAME) != null) {
-                    tenants.add(new Tenant(ksMetadata.getName()));
-                }
-            }
-        }
-        return tenants;
-    }   // getTenantMap
-    
     /**
      * Return true if column values for the given keyspace/table name are binary.
      * 
@@ -439,6 +471,11 @@ public class CQLService extends DBService {
         socketOpts.setReadTimeoutMillis(config.db_timeout_millis);
         socketOpts.setConnectTimeoutMillis(config.db_connect_retry_wait_millis);
         builder.withSocketOptions(socketOpts);
+        
+        // dbuser/dbpassword
+        if (!Utils.isEmpty(config.dbuser)) {
+            builder.withCredentials(config.dbuser, config.dbpassword);
+        }
         
         // compression
         builder.withCompression(Compression.SNAPPY);

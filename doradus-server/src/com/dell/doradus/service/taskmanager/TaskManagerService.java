@@ -44,6 +44,7 @@ import com.dell.doradus.management.TaskSettings;
 import com.dell.doradus.management.TaskStatus;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.db.DBService;
+import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
@@ -92,7 +93,7 @@ public class TaskManagerService extends Service implements ITaskManager {
         new RESTCommand("GET    /_tasks/{application}/{table}           com.dell.doradus.service.taskmanager.ListTasksCmd"),
         new RESTCommand("GET    /_tasks/{application}/{table}/{task}    com.dell.doradus.service.taskmanager.ListTasksCmd"),
         
-        new RESTCommand("PUT    /_tasks?{command}                                 com.dell.doradus.service.taskmanager.TaskControlCmd"),
+//      new RESTCommand("PUT    /_tasks?{command}                                 com.dell.doradus.service.taskmanager.TaskControlCmd"),
         new RESTCommand("PUT    /_tasks/{application}?{command}                   com.dell.doradus.service.taskmanager.TaskControlCmd"),
         new RESTCommand("PUT    /_tasks/{application}/{table}?{command}           com.dell.doradus.service.taskmanager.TaskControlCmd"),
         new RESTCommand("PUT    /_tasks/{application}/{table}/{task}?{command}    com.dell.doradus.service.taskmanager.TaskControlCmd"),
@@ -169,9 +170,11 @@ public class TaskManagerService extends Service implements ITaskManager {
 	@Override
 	public Set<String> getAppNames() throws IOException {
 		Set<String> allNames = new HashSet<String>();
-		for (ApplicationDefinition app : SchemaService.instance().getAllApplications()) {
-			allNames.add(app.getAppName());
-		}
+        for (Tenant tenant : DBService.instance().getTenants()) {
+            for (ApplicationDefinition app : SchemaService.instance().getAllApplications(tenant)) {
+                allNames.add(app.getAppName());
+            }
+        }
 		return allNames;
 	}
 
@@ -185,9 +188,9 @@ public class TaskManagerService extends Service implements ITaskManager {
 	}
 
 	@Override
-	public Map<String, TaskSettings> getAppSettings(String appName)
+	public Map<String, TaskSettings> getAppSettings(Tenant tenant, String appName)
 			throws IOException {
-		ApplicationDefinition appDef = SchemaService.instance().getApplication(appName);
+		ApplicationDefinition appDef = SchemaService.instance().getApplication(tenant, appName);
 		Map<String, TaskSettings> mapTasks = new HashMap<String, TaskSettings>();
 		
 		// Extract the info about scheduled tasks
@@ -236,8 +239,8 @@ public class TaskManagerService extends Service implements ITaskManager {
 	}
 
 	@Override
-	public TaskStatus getTaskStatus(String appName, String taskKey) {
-		return TaskDBUtils.getTaskStatus(appName, taskKey);
+	public TaskStatus getTaskStatus(Tenant tenant, String appName, String taskKey) {
+		return TaskDBUtils.getTaskStatus(tenant, appName, taskKey);
 	}
 
 	@Override
@@ -324,7 +327,7 @@ public class TaskManagerService extends Service implements ITaskManager {
 	}
 
 	@Override
-	public void updateSettings(String appName, TaskSettings settings)
+	public void updateSettings(Tenant tenant, String appName, TaskSettings settings)
 			throws IOException {
 		String scheduleName = getScheduleName(appName, settings);
 		String taskName = settings.getTaskName();
@@ -334,7 +337,7 @@ public class TaskManagerService extends Service implements ITaskManager {
 				taskName != null ? SchedType.getByName(taskIdParts[1]) :
 				settings.getTableName() == null ? SchedType.APP_DEFAULT : 
 				SchedType.TABLE_DEFAULT;
-		ApplicationDefinition oldAppDef = SchemaService.instance().getApplication(appName);
+		ApplicationDefinition oldAppDef = SchemaService.instance().getApplication(tenant, appName);
 		oldAppDef.getSchedules().remove(scheduleName);
 		if (settings.getSchedule() != null ||
 				(taskType != SchedType.APP_DEFAULT && taskType != SchedType.TABLE_DEFAULT)) {
@@ -352,18 +355,18 @@ public class TaskManagerService extends Service implements ITaskManager {
 	}
 
 	@Override
-	public TaskStatus getTaskInfo(String appName, String taskName) {
-		return TaskDBUtils.getTaskStatus(appName, taskName);
+	public TaskStatus getTaskInfo(Tenant tenant, String appName, String taskName) {
+		return TaskDBUtils.getTaskStatus(tenant, appName, taskName);
 	}
 
 	@Override
-	public void setTaskInfo(String appName, String taskName, TaskStatus status) {
-		TaskDBUtils.setTaskStatus(appName, taskName, status);
+	public void setTaskInfo(Tenant tenant, String appName, String taskName, TaskStatus status) {
+		TaskDBUtils.setTaskStatus(tenant, appName, taskName, status);
 	}
 
 	@Override
-	public boolean startImmediately(String appName, String taskId) {
-		DoradusTask task = DoradusTask.createTask(appName, taskId);
+	public boolean startImmediately(Tenant tenant, String appName, String taskId) {
+		DoradusTask task = DoradusTask.createTask(tenant, appName, taskId);
 		if (task != null) {
 			m_scheduler.launch(task);
 		}
@@ -445,14 +448,18 @@ public class TaskManagerService extends Service implements ITaskManager {
 	 */
 	private boolean interrupt(TaskFilter filter) {
 		boolean taskFound = false;
-		Map<String, Set<String>> taskNames = TaskDBUtils.getAllTaskNames();
-		for (String appName : taskNames.keySet()) {
-			for (String taskId : taskNames.get(appName)) {
-				if (filter.filter(appName, taskId)) {
-					boolean interrupted = TaskDBUtils.interruptTask(appName, taskId);
-					taskFound = taskFound || interrupted;
-				}
-			}
+		Map<String, Map<String, Set<String>>> allTaskNames = TaskDBUtils.getAllTaskNames();
+		for (String tenantName : allTaskNames.keySet()) {
+		    Tenant tenant = new Tenant(tenantName);
+		    Map<String, Set<String>> tenantTaskNames = allTaskNames.get(tenantName);
+		    for (String appName : tenantTaskNames.keySet()) {
+		        for (String taskId : tenantTaskNames.get(appName)) {
+		            if (filter.filter(appName, taskId)) {
+		                boolean interrupted = TaskDBUtils.interruptTask(tenant, appName, taskId);
+		                taskFound = taskFound || interrupted;
+		            }
+		        }
+		    }
 		}
 		return taskFound;
 	}
@@ -463,15 +470,19 @@ public class TaskManagerService extends Service implements ITaskManager {
 	 */
 	private boolean suspend(TaskFilter filter) {
 		boolean taskFound = false;
-		Map<String, Set<String>> taskNames = TaskDBUtils.getAllDefinedTasks();
-		for (String appName : taskNames.keySet()) {
-			for (String taskId : taskNames.get(appName)) {
-				if (filter.filter(appName, taskId)) {
-					TaskDBUtils.suspendTask(appName, taskId);
-					taskFound = true;
-				}
-			}
-		}
+        Map<String, Map<String, Set<String>>> allTaskNames = TaskDBUtils.getAllTaskNames();
+        for (String tenantName : allTaskNames.keySet()) {
+            Tenant tenant = new Tenant(tenantName);
+            Map<String, Set<String>> tenantTaskNames = allTaskNames.get(tenantName);
+            for (String appName : tenantTaskNames.keySet()) {
+                for (String taskId : tenantTaskNames.get(appName)) {
+                    if (filter.filter(appName, taskId)) {
+                        TaskDBUtils.suspendTask(tenant, appName, taskId);
+                        taskFound = true;
+                    }
+                }
+            }
+        }
 		return taskFound;
 	}
 	
@@ -481,15 +492,19 @@ public class TaskManagerService extends Service implements ITaskManager {
 	 */
 	private boolean resume(TaskFilter filter) {
 		boolean taskFound = false;
-		Map<String, Set<String>> taskNames = TaskDBUtils.getAllDefinedTasks();
-		for (String appName : taskNames.keySet()) {
-			for (String taskId : taskNames.get(appName)) {
-				if (filter.filter(appName, taskId)) {
-					TaskDBUtils.resumeTask(appName, taskId);
-					taskFound = true;
-				}
-			}
-		}
+        Map<String, Map<String, Set<String>>> allTaskNames = TaskDBUtils.getAllTaskNames();
+        for (String tenantName : allTaskNames.keySet()) {
+            Tenant tenant = new Tenant(tenantName);
+            Map<String, Set<String>> tenantTaskNames = allTaskNames.get(tenantName);
+            for (String appName : tenantTaskNames.keySet()) {
+                for (String taskId : tenantTaskNames.get(appName)) {
+                    if (filter.filter(appName, taskId)) {
+                        TaskDBUtils.resumeTask(tenant, appName, taskId);
+                        taskFound = true;
+                    }
+                }
+            }
+        }
 		return taskFound;
 	}
     
@@ -510,7 +525,7 @@ public class TaskManagerService extends Service implements ITaskManager {
 						continue;
 					}
 					DoradusTask task = (DoradusTask)te.getTask();
-					TaskStatus status = TaskDBUtils.getTaskStatus(task.getAppName(), task.getTaskId());
+					TaskStatus status = TaskDBUtils.getTaskStatus(task.getTenant(), task.getAppName(), task.getTaskId());
 					if (status.getLastRunState() == TaskRunState.Interrupting && te.isAlive() && !te.isStopped()) {
 						te.stop();
 					}

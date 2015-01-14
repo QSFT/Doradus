@@ -27,6 +27,7 @@ import com.dell.doradus.common.Utils;
 import com.dell.doradus.common.ScheduleDefinition.SchedType;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.management.TaskRunState;
+import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.olap.OLAPService;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.spider.SpiderService;
@@ -52,6 +53,7 @@ public abstract class DoradusTask extends Task {
 	final static String TASK_ID = "TASK_ID";
 	
 	// Parameters
+	protected Tenant    m_tenant;
 	protected String 	m_taskId;
 	protected String 	m_taskType;
 	protected ApplicationDefinition m_appDef;
@@ -69,6 +71,8 @@ public abstract class DoradusTask extends Task {
 	protected long m_scheduledStartTime;
 	
 	// Access functions
+	public Tenant getTenant() { return m_tenant; }
+	
 	public String getTaskId() { return m_taskId; }
 	
 	public String getTaskType() { return m_taskType; }
@@ -105,8 +109,8 @@ public abstract class DoradusTask extends Task {
 	
 	public boolean isSpider() { return "SpiderService".equals(m_serviceName); }
 	
-	public static DoradusTask createTask(String appName, String tableName, String taskType, String taskParam) {
-		ApplicationDefinition app = SchemaService.instance().getApplication(appName);
+	public static DoradusTask createTask(Tenant tenant, String appName, String tableName, String taskType, String taskParam) {
+		ApplicationDefinition app = SchemaService.instance().getApplication(tenant, appName);
 		if (app == null) {
 			// Application doesn't exist anymore
 			return null;
@@ -133,6 +137,7 @@ public abstract class DoradusTask extends Task {
 			if (!Utils.isEmpty(taskParam)) {
 				taskId.append("/" + taskParam);
 			}
+			task.m_tenant = tenant;
 			task.m_taskId = taskId.toString();
 			task.m_taskType = taskType;
 			task.m_appDef = app;
@@ -152,11 +157,12 @@ public abstract class DoradusTask extends Task {
 	
 	/**
 	 * Creates a DoradusTask class instance for executing.
+	 * @param tenant    Tenant in which application exists.
 	 * @param appName	Task's application name
 	 * @param taskId	Task's identifier (table/type/arguments)
 	 * @return			task created
 	 */
-	public static DoradusTask createTask(String appName, String taskId) {
+	public static DoradusTask createTask(Tenant tenant, String appName, String taskId) {
 		if (taskId == null) {
 			return null;
 		}
@@ -171,7 +177,7 @@ public abstract class DoradusTask extends Task {
 			taskParam = taskParts[2];
 		}
 		
-		return createTask(appName, tableName, taskType, taskParam);
+		return createTask(tenant, appName, tableName, taskType, taskParam);
 	}
 	
 	@Override
@@ -182,7 +188,7 @@ public abstract class DoradusTask extends Task {
 		}
 		long startTime = System.currentTimeMillis() / 60000 * 60000;  // truncated to minutes
 		
-		if (m_fails > 0 || TaskDBUtils.claim(m_appName, m_taskId, startTime)) {
+		if (m_fails > 0 || TaskDBUtils.claim(m_tenant, m_appName, m_taskId, startTime)) {
 			// Restart OR this node wins a competition
 			m_scheduledStartTime = startTime;
 			m_taskContext = ctx;

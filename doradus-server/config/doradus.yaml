@@ -26,6 +26,16 @@
 #      a dash, then a space, then the parameter name and value.
 #
 
+########## Multi-tenant options
+#
+# multitenant_mode: When this option is false, Doradus operates in single-tenant mode. All
+# applications and created and managed in the default tenant, whose name is defined by the
+# "keyspace" parameter. When multitenant_mode is true, most requests must identify a specific
+# tenant and provide credentials for that tenant. Non-tenant commands (system commands) do
+# not specify a tenant and must be validated using system credentials. Note that multi-tenant
+# mode requires the use of CQL, hence "use_cql" must be true. Default: false
+multitenant_mode: false
+
 ########## Doradus Service Parameters
 # 
 # default_services: Defines the internal Doradus services that will be started. These are in
@@ -181,6 +191,14 @@ dbtls: false
 # [X, Y, Z]), or each cipher suite can be listed on its own line, indented and prefixed with a "-".
 # The cipher suite TLS_RSA_WITH_AES_128_CBC_SHA is generally always allowed by Cassandra.
 dbtls_cipher_suites: [TLS_RSA_WITH_AES_128_CBC_SHA]
+
+# dbuser/dbpassword: If authentication/authorization is configured for Cassandra, these parameters
+# must be set to a super user that Doradus can use. When Cassandra's authenticator is set to
+# PasswordAuthorizer, it initially creates the super id/password cassandra/cassandra. A better
+# password and/or a different super user should be created for Doradus. Remember that these values
+# can be passed-in dynamically as run-time arguments. 
+dbuser: cassandra
+dbpassword: cassandra
 
 ########## Doradus REST API Parameters
 #

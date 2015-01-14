@@ -23,7 +23,6 @@ import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.StorageService;
-import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.schema.SchemaService;
 
@@ -36,15 +35,10 @@ public class QueryURICmd extends RESTCallback {
 
     @Override
     public RESTResponse invoke() {
-        String application = m_request.getVariableDecoded("application");
-        ApplicationDefinition appDef = SchemaService.instance().getApplication(application);
-        if (appDef == null) {
-            throw new NotFoundException("Unknown application: " + application);
-        }
-        
+        ApplicationDefinition appDef = m_request.getAppDef();
         String table = m_request.getVariableDecoded("table");
         TableDefinition tableDef = appDef.getTableDef(table);
-        Utils.require(tableDef != null, "Unknown table for application '%s': %s", application, table);
+        Utils.require(tableDef != null, "Unknown table for application '%s': %s", appDef.getAppName(), table);
         
         String params = m_request.getVariable("params");    // leave encoded
         StorageService storageService = SchemaService.instance().getStorageService(appDef);

@@ -72,7 +72,7 @@ public class SpiderSession extends ApplicationSession {
         try {
             // Send a POST request to "/{application}/{table}"
             byte[] body = Utils.toBytes(dbObjBatch.toDoc().toJSON());
-            String uri = "/" + Utils.urlEncode(m_appDef.getAppName()) +
+            String uri = uriRoot() + Utils.urlEncode(m_appDef.getAppName()) +
                          "/" + Utils.urlEncode(tableName);
             RESTResponse response = 
                 m_restClient.sendRequest(HttpMethod.POST, uri, ContentType.APPLICATION_JSON, body);
@@ -107,7 +107,7 @@ public class SpiderSession extends ApplicationSession {
             DBObjectBatch dbObjBatch = new DBObjectBatch();
             dbObjBatch.addObject(dbObj);
             byte[] body = Utils.toBytes(dbObjBatch.toDoc().toJSON());
-            String uri = "/" + Utils.urlEncode(m_appDef.getAppName()) +
+            String uri = uriRoot() + Utils.urlEncode(m_appDef.getAppName()) +
                          "/" + Utils.urlEncode(tableName);
             RESTResponse response = 
                 m_restClient.sendRequest(HttpMethod.POST, uri, ContentType.APPLICATION_JSON, body);
@@ -153,7 +153,7 @@ public class SpiderSession extends ApplicationSession {
         try {
             // Send a DELETE request to "/{application}/{table}"
             byte[] body = Utils.toBytes(dbObjBatch.toDoc().toJSON());
-            String uri = "/" + Utils.urlEncode(m_appDef.getAppName()) +
+            String uri = uriRoot() + Utils.urlEncode(m_appDef.getAppName()) +
                          "/" + Utils.urlEncode(tableName);
             RESTResponse response = 
                 m_restClient.sendRequest(HttpMethod.DELETE, uri, ContentType.APPLICATION_JSON, body);
@@ -275,7 +275,7 @@ public class SpiderSession extends ApplicationSession {
         
         // Form the URI, which has the general form: GET /{application}/{table}/_aggregate?{params}
         StringBuilder uri = new StringBuilder();
-        uri.append("/");
+        uri.append(uriRoot());
         uri.append(Utils.urlEncode(m_appDef.getAppName()));
         uri.append("/");
         uri.append(Utils.urlEncode(tableDef.getTableName()));
@@ -343,7 +343,7 @@ public class SpiderSession extends ApplicationSession {
         
         try {
             // Send a GET request to "/{application}/{table}/{object ID}"
-            String uri = "/" + Utils.urlEncode(m_appDef.getAppName()) +
+            String uri = uriRoot() + Utils.urlEncode(m_appDef.getAppName()) +
                          "/" + Utils.urlEncode(tableName) +
                          "/" + Utils.urlEncode(objectID);
             RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri);
@@ -419,7 +419,7 @@ public class SpiderSession extends ApplicationSession {
         
         // Form the URI, which has the general form: GET /{application}/{table}/_query?{params}
         StringBuilder uri = new StringBuilder();
-        uri.append("/");
+        uri.append(uriRoot());
         uri.append(Utils.urlEncode(tableDef.getAppDef().getAppName()));
         uri.append("/");
         uri.append(Utils.urlEncode(tableDef.getTableName()));

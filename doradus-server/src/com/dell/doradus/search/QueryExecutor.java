@@ -99,7 +99,7 @@ public class QueryExecutor {
             SearchResultList searchResultList = fieldSetCreator.create(sequence, m_skip);
             return searchResultList;
         }catch(Exception ex) {
-        	LOG.error("Search error: {}", ex);
+//        	LOG.error("Search error: {}", ex);
         	throw ex;
         	//throw new IllegalArgumentException(ex);
         }finally {

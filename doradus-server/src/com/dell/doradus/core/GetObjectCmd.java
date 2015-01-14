@@ -21,7 +21,6 @@ import com.dell.doradus.common.DBObject;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.TableDefinition;
-import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.StorageService;
 import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.RESTCallback;
@@ -35,16 +34,8 @@ public class GetObjectCmd extends RESTCallback {
 
     @Override
     public RESTResponse invoke() {
-        String application = m_request.getVariableDecoded("application");
-        ApplicationDefinition appDef = SchemaService.instance().getApplication(application);
-        if (appDef == null) {
-            throw new NotFoundException("Unknown application: " + application);
-        }
-        
-        String table = m_request.getVariableDecoded("table");
-        TableDefinition tableDef = appDef.getTableDef(table);
-        Utils.require(tableDef != null, "Unknown table for application '%s': %s", application, table);
-        
+        ApplicationDefinition appDef = m_request.getAppDef();
+        TableDefinition tableDef = m_request.getTableDef(appDef);
         String objID = m_request.getVariableDecoded("ID");
         StorageService storageService = SchemaService.instance().getStorageService(appDef);
         DBObject dbObj = storageService.getObject(tableDef, objID);

@@ -57,7 +57,7 @@ public class XQueryCount {
 	
 	private void setupDirect(XLinkContext ctx, TableDefinition tableDef, Query query) {
 		for(String xshard : ctx.xshards) {
-			CubeSearcher searcher = ctx.olap.getSearcher(ctx.application, xshard);
+			CubeSearcher searcher = ctx.olap.getSearcher(tableDef.getAppDef(), xshard);
 			Result r = ResultBuilder.search(tableDef, query, searcher);
 			IdSearcher ids = searcher.getIdSearcher(tableDef.getTableName());
 			for(int i = 0; i < r.size(); i++) {
@@ -72,7 +72,7 @@ public class XQueryCount {
 	private void setupInverse(XLinkContext ctx, TableDefinition tableDef, Query query, String field) {
 		if(query == null) query = new AllQuery();
 		for(String xshard : ctx.xshards) {
-			CubeSearcher searcher = ctx.olap.getSearcher(ctx.application, xshard);
+			CubeSearcher searcher = ctx.olap.getSearcher(tableDef.getAppDef(), xshard);
 			Result r = ResultBuilder.search(tableDef, query, searcher);
 			FieldSearcher fs = searcher.getFieldSearcher(tableDef.getTableName(), field);
 			int[] counts = new int[fs.fields()];

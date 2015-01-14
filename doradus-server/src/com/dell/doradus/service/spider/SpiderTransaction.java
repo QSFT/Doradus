@@ -28,7 +28,6 @@ import com.dell.doradus.common.DBObject;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.Defs;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.Tenant;
@@ -44,6 +43,26 @@ import com.dell.doradus.service.db.Tenant;
  * the same timestamp as previous commits.
  */
 public class SpiderTransaction {
+    /**
+     * The key of the "all objects" record that resides in each Terms table.
+     */
+    public static final String ALL_OBJECTS_ROW_KEY = "_";
+    
+    /**
+     * Key of "current shards" row in sharded table Terms tables.
+     */
+    public static final String SHARDS_ROW_KEY = "_shards";
+
+    /**
+     * Row key for the "field registry" row in the Terms table.
+     */
+    public static final String FIELD_REGISTRY_ROW_KEY = "_fields";
+    
+    /**
+     * Row key prefix for "term registry" rows in the Terms table.
+     */
+    public static final String TERMS_REGISTRY_ROW_PREFIX = "_terms";
+    
     // The keyspace and the embedded DBTransaction that holds column/row updates:
     private final Tenant m_tenant;
     private DBTransaction m_dbTran;
@@ -113,9 +132,9 @@ public class SpiderTransaction {
      * @param shardNo   Shard number if owing table is sharded.
      */
     public void addAllObjectsColumn(TableDefinition tableDef, String objID, int shardNo) {
-    	String rowKey = Defs.ALL_OBJECTS_ROW_KEY;
+    	String rowKey = ALL_OBJECTS_ROW_KEY;
     	if (shardNo > 0) {
-    		rowKey = shardNo + "/" + Defs.ALL_OBJECTS_ROW_KEY;
+    		rowKey = shardNo + "/" + ALL_OBJECTS_ROW_KEY;
     	}
         m_dbTran.addColumn(SpiderService.termsStoreName(tableDef), rowKey, objID);
     }   // addAllObjectsColumns
@@ -162,7 +181,7 @@ public class SpiderTransaction {
         }
         for (String fieldName : fieldNames) {
             if (currFieldNames.add(fieldName)) {
-                m_dbTran.addColumn(SpiderService.termsStoreName(tableDef), Defs.FIELD_REGISTRY_ROW_KEY, fieldName);
+                m_dbTran.addColumn(SpiderService.termsStoreName(tableDef), FIELD_REGISTRY_ROW_KEY, fieldName);
             }
         }
     }   // addFieldReferences
@@ -232,7 +251,7 @@ public class SpiderTransaction {
     public void addShardStart(TableDefinition tableDef, int shardNumber, Date startDate) {
         assert tableDef.isSharded() && shardNumber > 0;
         m_dbTran.addColumn(SpiderService.termsStoreName(tableDef),
-                           Defs.SHARDS_ROW_KEY,
+                           SHARDS_ROW_KEY,
                            Integer.toString(shardNumber),
                            Utils.toBytes(Long.toString(startDate.getTime())));
     }   // addShardStart
@@ -308,7 +327,7 @@ public class SpiderTransaction {
                         rowKey.append(shardNumber);
                         rowKey.append("/");
                     }
-                    rowKey.append(Defs.TERMS_REGISTRY_ROW_PREFIX);
+                    rowKey.append(TERMS_REGISTRY_ROW_PREFIX);
                     rowKey.append("/");
                     rowKey.append(fieldName);
                     m_dbTran.addColumn(SpiderService.termsStoreName(tableDef), rowKey.toString(), term);
@@ -326,9 +345,9 @@ public class SpiderTransaction {
      * @see             #addAllObjectsColumn(TableDefinition, String, int)
      */
     public void deleteAllObjectsColumn(TableDefinition tableDef, String objID, int shardNo) {
-    	String rowKey = Defs.ALL_OBJECTS_ROW_KEY;
+    	String rowKey = ALL_OBJECTS_ROW_KEY;
     	if (shardNo > 0) {
-    		rowKey = shardNo + "/" + Defs.ALL_OBJECTS_ROW_KEY;
+    		rowKey = shardNo + "/" + ALL_OBJECTS_ROW_KEY;
     	}
         m_dbTran.deleteColumn(SpiderService.termsStoreName(tableDef),
                               rowKey,

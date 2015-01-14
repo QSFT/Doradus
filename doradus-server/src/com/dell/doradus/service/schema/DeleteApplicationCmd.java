@@ -15,27 +15,23 @@
  */
 
 /**
- * Handles the REST command: DELETE /_applications/{application}/{key}
+ * Handles the REST commands: DELETE /_applications/{application} and
+ * DELETE /_applications/{application}/{key}.
  */
 package com.dell.doradus.service.schema;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.RESTResponse;
-import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.RESTCallback;
 
 public class DeleteApplicationCmd extends RESTCallback {
 
     @Override
     public RESTResponse invoke() {
-        String application = m_request.getVariableDecoded("application");
-        String key = m_request.getVariableDecoded("key");
-        ApplicationDefinition appDef = SchemaService.instance().getApplication(application);
-        if (appDef == null) {
-            throw new NotFoundException("Application not found: " + application);
-        }
-        SchemaService.instance().deleteApplication(application, key);
+        String key = m_request.getVariableDecoded("key");   // may be null
+        ApplicationDefinition appDef = m_request.getAppDef();
+        SchemaService.instance().deleteApplication(appDef, key);
         return new RESTResponse(HttpCode.OK);
     }   // invoke
 

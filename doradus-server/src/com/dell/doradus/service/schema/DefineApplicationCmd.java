@@ -16,8 +16,6 @@
 
 package com.dell.doradus.service.schema;
 
-import java.util.Map;
-
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.RESTResponse;
@@ -26,7 +24,7 @@ import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.rest.UNodeInCallback;
 
 /**
- * Handle the REST commands: POST /_applications and POST /_applications?{params}
+ * Handle the REST command: POST /_applications
  */
 public class DefineApplicationCmd extends UNodeInCallback {
 
@@ -35,8 +33,7 @@ public class DefineApplicationCmd extends UNodeInCallback {
         Utils.require(inNode != null, "This command requires an input entity");
         ApplicationDefinition appDef = new ApplicationDefinition();
         appDef.parse(inNode);
-        Map<String, String> options = Utils.parseURIQuery(m_request.getVariable("params"));
-        SchemaService.instance().defineApplication(appDef, options);
+        SchemaService.instance().defineApplication(m_request.getTenant(), appDef);
         return new RESTResponse(HttpCode.OK);
     }   // invokeUNodeIn
 

@@ -85,45 +85,6 @@ final public class Utils {
     }
 
     /**
-     * Add a properly-formatted HTTP header to the given buffer using the given name and
-     * value. This is a helper method that prevents using intermediate buffers. The chars
-     * added to the given buffer will be:
-     * <pre>
-     *      {name}: {value}\r\n
-     * </pre>
-     * 
-     * @param buffer    StringBuilder containing an HTTP envelope being built.
-     * @param name      Name of an HTTP header to add.
-     * @param value     Value of the HTTP header to add.
-     */
-    public static void addHttpHeader(StringBuilder buffer, String name, String value) {
-        buffer.append(name);
-        buffer.append(": ");
-        buffer.append(value);
-        buffer.append("\r\n");
-    }   // addHttpHeader
-    
-    /**
-     * Add a properly-formatted HTTP header to the given buffer using the given name and
-     * value. This is a helper method that prevents using intermediate buffers. The chars
-     * added to the given buffer will be:
-     * <pre>
-     *      {name}: {value}\r\n
-     * </pre>
-     * This version accept the value as an int or long.
-     * 
-     * @param buffer    StringBuilder containing an HTTP envelope being built.
-     * @param name      Name of an HTTP header to add.
-     * @param value     Numeric value of the HTTP header to add.
-     */
-    public static void addHttpHeader(StringBuilder buffer, String name, long value) {
-        buffer.append(name);
-        buffer.append(": ");
-        buffer.append(value);
-        buffer.append("\r\n");
-    }   // addHttpHeader
-    
-    /**
      * Return true if the given string contains only letters, digits, and underscores.
      *
      * @param   string  String to be tested.

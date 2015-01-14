@@ -248,50 +248,50 @@ public class StorageManager extends MBeanBase implements StorageManagerMXBean {
 	/////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////
 	
-	 public String  sendInterruptTaskCommand(String appName, String taskOrGroupKey) {
-		String jobID = consNextJobID();
-		String jobName = consJobName("interruptTaskExecution", appName, taskOrGroupKey);
-		LongJob job = getTaskManager().consInterruptJob(jobID, jobName,
-				appName, taskOrGroupKey);
-		startJob(job);
-		return jobID;
-	 }
-	 public String  sendSuspendSchedulingCommand(String appName, String taskOrGroupKey) {
-			String jobID = consNextJobID();
-			String jobName = consJobName("suspendTaskScheduling", appName, taskOrGroupKey);
-			LongJob job = getTaskManager().consSuspendJob(jobID, jobName,
-					appName, taskOrGroupKey);
-			startJob(job);
-			return jobID;
-	 }
-	 public String  sendResumeSchedulingCommand(String appName, String taskOrGroupKey) {
-			String jobID = consNextJobID();
-			String jobName = consJobName("resumeTaskScheduling", appName, taskOrGroupKey);
-			LongJob job = getTaskManager().consResumeJob(jobID, jobName,
-					appName, taskOrGroupKey);
-			startJob(job);
-			return jobID;
-	 }
-	 public String  sendUpdateSettingsCommand(String appName, TaskSettings taskOrGroupSettings) {
-			String jobID = consNextJobID();
-			String jobName = consJobName("updateTaskSettings", appName, taskOrGroupSettings == null ? "null" : taskOrGroupSettings.getKey());
-			LongJob job = getTaskManager().consUpdateJob(jobID, jobName,
-					appName, taskOrGroupSettings);
-			startJob(job);
-			return jobID;
-	 }
-	 public TaskSettings getGlobalDefaultSettings() {
-		 return getTaskManager().getGlobalDefaultSettings();
-	 }
-	 public Set<String> getAppNames() {
-		 return getTaskManager().getAppNames();
-	 }
-	 public Map<String, TaskSettings> getAppSettings(String appName) {
-		 return getTaskManager().getAppSettings(appName);
-	 }
-	 public TaskStatus getTaskStatus(String appName, String taskKey) {
-		 return getTaskManager().getTaskStatus(appName, taskKey);
-	 }
+//	 public String  sendInterruptTaskCommand(String appName, String taskOrGroupKey) {
+//		String jobID = consNextJobID();
+//		String jobName = consJobName("interruptTaskExecution", appName, taskOrGroupKey);
+//		LongJob job = getTaskManager().consInterruptJob(jobID, jobName,
+//				appName, taskOrGroupKey);
+//		startJob(job);
+//		return jobID;
+//	 }
+//	 public String  sendSuspendSchedulingCommand(String appName, String taskOrGroupKey) {
+//			String jobID = consNextJobID();
+//			String jobName = consJobName("suspendTaskScheduling", appName, taskOrGroupKey);
+//			LongJob job = getTaskManager().consSuspendJob(jobID, jobName,
+//					appName, taskOrGroupKey);
+//			startJob(job);
+//			return jobID;
+//	 }
+//	 public String  sendResumeSchedulingCommand(String appName, String taskOrGroupKey) {
+//			String jobID = consNextJobID();
+//			String jobName = consJobName("resumeTaskScheduling", appName, taskOrGroupKey);
+//			LongJob job = getTaskManager().consResumeJob(jobID, jobName,
+//					appName, taskOrGroupKey);
+//			startJob(job);
+//			return jobID;
+//	 }
+//	 public String  sendUpdateSettingsCommand(String appName, TaskSettings taskOrGroupSettings) {
+//			String jobID = consNextJobID();
+//			String jobName = consJobName("updateTaskSettings", appName, taskOrGroupSettings == null ? "null" : taskOrGroupSettings.getKey());
+//			LongJob job = getTaskManager().consUpdateJob(jobID, jobName,
+//					appName, taskOrGroupSettings);
+//			startJob(job);
+//			return jobID;
+//	 }
+//	 public TaskSettings getGlobalDefaultSettings() {
+//		 return getTaskManager().getGlobalDefaultSettings();
+//	 }
+//	 public Set<String> getAppNames() {
+//		 return getTaskManager().getAppNames();
+//	 }
+//	 public Map<String, TaskSettings> getAppSettings(String appName) {
+//		 return getTaskManager().getAppSettings(appName);
+//	 }
+//	 public TaskStatus getTaskStatus(String appName, String taskKey) {
+//		 return getTaskManager().getTaskStatus(appName, taskKey);
+//	 }
 	 
 
 	/////////////////////////////////////////////////////////////

@@ -35,7 +35,12 @@ import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.HttpDefs;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBNotAvailableException;
+import com.dell.doradus.service.db.DuplicateException;
+import com.dell.doradus.service.db.Tenant;
+import com.dell.doradus.service.db.UnauthorizedException;
+import com.dell.doradus.service.tenant.TenantService;
 
 /**
  * An HttpServlet implementation used by the {@link RESTService} to process REST requests.
@@ -71,7 +76,10 @@ public class RESTServlet extends HttpServlet {
             }
             Utils.require(cmd != null, "Request does not match a known URI: " + request.getRequestURL());
             m_logger.debug("Command: {}", cmd.toString());
-            RESTCallback callback = cmd.getNewCallback(new RESTRequest(request, variableMap));
+            
+            Tenant tenant = setTenant(cmd, request, variableMap);
+            RESTRequest restRequest = new RESTRequest(tenant, request, variableMap);
+            RESTCallback callback = cmd.getNewCallback(restRequest);
             RESTResponse restResponse = callback.invoke();
             
             if(restResponse.getCode().getCode() >= 300) {
@@ -93,6 +101,16 @@ public class RESTServlet extends HttpServlet {
         } catch (DBNotAvailableException e) {
             // 503 Service Unavailable
             RESTResponse restResponse = new RESTResponse(HttpCode.SERVICE_UNAVAILABLE, e.getMessage());
+            RESTService.instance().onRequestRejected(restResponse.getCode().toString());
+            sendResponse(response, restResponse);
+        } catch (UnauthorizedException e) {
+            // 401 Unauthorized
+            RESTResponse restResponse = new RESTResponse(HttpCode.UNAUTHORIZED, e.getMessage());
+            RESTService.instance().onRequestRejected(restResponse.getCode().toString());
+            sendResponse(response, restResponse);
+        } catch (DuplicateException e) {
+            // 409 Conflict
+            RESTResponse restResponse = new RESTResponse(HttpCode.CONFLICT, e.getMessage());
             RESTService.instance().onRequestRejected(restResponse.getCode().toString());
             sendResponse(response, restResponse);
         } catch (Throwable e) {
@@ -130,6 +148,28 @@ public class RESTServlet extends HttpServlet {
     }    // doDelete
     
     //----- Private methods
+
+    // Decide the Tenant context for this command. System commands execute with no tenant.
+    // In single-tenant mode, the Tenant is always the default keyspace.
+    private Tenant setTenant(RESTCommand cmd, HttpServletRequest request, Map<String, String> variableMap) {
+        Tenant tenant = null;
+        if (ServerConfig.getInstance().multitenant_mode) {
+            String authorizationHeader = request.getHeader("Authorization");
+            if (cmd.isSystemCommand()) {
+                // TODO: Should tenant be null for system commands?
+                tenant = TenantService.instance().validateSystemUser(authorizationHeader);
+            } else {
+                String tenantName = Utils.urlDecode(variableMap.get("tenant"));
+                if (tenantName == null) {
+                    throw new RuntimeException("Non-system RESTCommand missing 'tenant' variable: " + cmd);
+                }
+                tenant = TenantService.instance().validateTenant(tenantName, authorizationHeader);
+            }
+        } else {
+            tenant = TenantService.instance().getDefaultTenant();
+        }
+        return tenant;
+    }   // setTenant
     
     // Send the given response, which includes a response code and optionally a body
     // and/or additional response headers. If the body is non-empty, we automatically add
