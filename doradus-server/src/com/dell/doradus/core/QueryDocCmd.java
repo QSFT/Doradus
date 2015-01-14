@@ -19,10 +19,9 @@ package com.dell.doradus.core;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
-import com.dell.doradus.common.Utils;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.StorageService;
-import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.rest.UNodeInOutCallback;
 import com.dell.doradus.service.schema.SchemaService;
 
 /**
@@ -30,11 +29,10 @@ import com.dell.doradus.service.schema.SchemaService;
  * parameters are passed in an input entity. Verifies the application and table, parses
  * the input entity, and passes the query to the application's registered storage service.
  */
-public class QueryDocCmd extends UNodeOutCallback {
+public class QueryDocCmd extends UNodeInOutCallback {
 
     @Override
-    public UNode invokeUNodeOut(UNode inNode) {
-        Utils.require(inNode != null, "This command requires an input entity");
+    public UNode invokeUNodeInOut(UNode inNode) {
         ApplicationDefinition appDef = m_request.getAppDef();
         TableDefinition tableDef = m_request.getTableDef(appDef);
         UNode rootNode = UNode.parse(m_request.getInputBody(), m_request.getInputContentType());

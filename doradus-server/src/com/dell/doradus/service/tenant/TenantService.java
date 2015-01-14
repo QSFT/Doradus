@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
@@ -53,7 +54,7 @@ public class TenantService extends Service {
     // REST commands supported by the SchemaService:
     private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
         new RESTCommand("GET    /_tenants           com.dell.doradus.service.tenant.ListTenantsCmd", true),
-        new RESTCommand("GET    /_tenants/{tenant}  com.dell.doradus.service.tenant.ListTenantsCmd", true),
+        new RESTCommand("GET    /_tenants/{tenant}  com.dell.doradus.service.tenant.ListTenantCmd", true),
         new RESTCommand("POST   /_tenants           com.dell.doradus.service.tenant.DefineTenantCmd", true),
         new RESTCommand("PUT    /_tenants/{tenant}  com.dell.doradus.service.tenant.ModifyTenantCmd", true),
     });
@@ -96,6 +97,7 @@ public class TenantService extends Service {
      * @return          True if it exists and has been initialized.
      */
     public boolean tenantExists(Tenant tenant) {
+        checkServiceState();
         synchronized (m_tenantMap) {
             if (m_tenantMap.keySet().contains(tenant.getKeyspace())) {
                 return true;
@@ -109,6 +111,7 @@ public class TenantService extends Service {
      * Ensure that the default tenant exists, which requires no credentials to access.
      */
     public void createDefaultTenant() {
+        checkServiceState();
         DBService dbService = DBService.instance();
         Tenant tenant = new Tenant(ServerConfig.getInstance().keyspace);
         dbService.createTenant(tenant, null);
@@ -172,6 +175,7 @@ public class TenantService extends Service {
      * @throws UnauthorizedException
      */
     public Tenant validateSystemUser(String authorizationHeader) throws UnauthorizedException {
+        checkServiceState();
         Tenant tenant = validateSystemAuthString(authorizationHeader);
         if (tenant == null) {
             throw new UnauthorizedException("Unrecognized system user id/password");
@@ -192,6 +196,7 @@ public class TenantService extends Service {
      *                                  password is not valid.
      */
     public Tenant validateTenant(String tenantName, String userid, String password) throws UnauthorizedException {
+        checkServiceState();
         assert !Utils.isEmpty(tenantName);
         Tenant tenant = validateTenantUserPassword(tenantName, userid, password);
         if (tenant == null) {
@@ -214,6 +219,7 @@ public class TenantService extends Service {
      *                                  password is not valid.
      */
     public Tenant validateTenant(String tenantName, String authorizationHeader) throws UnauthorizedException {
+        checkServiceState();
         assert !Utils.isEmpty(tenantName);
         Tenant tenant = validateAuthString(tenantName, authorizationHeader);
         if (tenant == null) {
@@ -230,8 +236,21 @@ public class TenantService extends Service {
      *          keyspace.
      */
     public Tenant getDefaultTenant() {
+        checkServiceState();
         return new Tenant(ServerConfig.getInstance().keyspace);
     }   // getDefaultTenant
+
+    /**
+     * Get the {@link TenantDefinition} of the tenant with the given name, if it exists.
+     * 
+     * @param tenantName    Candidate tenant name.
+     * @return              Definition of tenant if it exists, otherwise null.
+     */
+    public TenantDefinition getTenantDefinition(String tenantName) {
+        checkServiceState();
+        Tenant tenant = new Tenant(tenantName);
+        return getTenantDefinition(tenant);
+    }   // getTenantDefinition
 
     //----- Private methods
 
@@ -266,9 +285,15 @@ public class TenantService extends Service {
 
     // Add a default user account for the given tenant definition.
     private void addDefaultUser(TenantDefinition tenantDef) {
-        // TODO: Choose something smarter.
-        tenantDef.getUsers().put("Doradus", "test");
+        tenantDef.getUsers().put("U" + generateRandomID(), generateRandomID());
     }   // addDefaultUser
+
+    // Generate a unique ID by choosing a positive random long value and converting into a
+    // String in the maximum radix allowed (36). Hence a value such as 1364581319703000
+    // becomes "dfpc05b00o". Note that these IDs might begin with a digit.
+    private String generateRandomID() {
+        return Long.toString(Math.abs(new Random().nextLong()), Character.MAX_RADIX);
+    }
 
     // Store the given tenant definition in the "_tenants" row of the Applications table.
     private void storeTenantDefinition(TenantDefinition tenantDef) {
@@ -333,7 +358,7 @@ public class TenantService extends Service {
     
     // Validate the given user ID and password.
     private Tenant validateTenantUserPassword(String tenantName, String userid, String password) {
-        // TODO: Probably temporary: allow system users to see access all tenants
+        // TODO: Probably temporary: allow system users to access all tenants
         if (isValidSystemCredentials(userid, password)) {
             return new Tenant(tenantName);
         }

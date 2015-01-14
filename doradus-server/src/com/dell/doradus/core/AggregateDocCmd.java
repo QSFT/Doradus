@@ -20,9 +20,8 @@ import com.dell.doradus.common.AggregateResult;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
-import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.StorageService;
-import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.rest.UNodeInOutCallback;
 import com.dell.doradus.service.schema.SchemaService;
 
 /**
@@ -31,11 +30,10 @@ import com.dell.doradus.service.schema.SchemaService;
  * table, parses the input entity, and passes the command to the application's registered
  * storage service.
  */
-public class AggregateDocCmd extends UNodeOutCallback {
+public class AggregateDocCmd extends UNodeInOutCallback {
 
     @Override
-    public UNode invokeUNodeOut(UNode inNode) {
-        Utils.require(inNode != null, "This command requires an input entity");
+    public UNode invokeUNodeInOut(UNode inNode) {
         ApplicationDefinition appDef = m_request.getAppDef();
         TableDefinition tableDef = m_request.getTableDef(appDef);
         UNode rootNode = UNode.parse(m_request.getInputBody(), m_request.getInputContentType());

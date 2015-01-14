@@ -32,8 +32,7 @@ import com.dell.doradus.service.rest.UNodeOutCallback;
 public class ShardStatisticsCmd extends UNodeOutCallback {
 
     @Override
-    public UNode invokeUNodeOut(UNode inNode) {
-        Utils.require(inNode == null, "Input message not expected for this command");
+    public UNode invokeUNodeOut() {
         ApplicationDefinition appDef = m_request.getAppDef();
         Utils.require(OLAPService.class.getSimpleName().equals(appDef.getStorageService()),
         		      "Application '%s' is not an OLAP application", appDef.getAppName());

@@ -18,26 +18,20 @@ package com.dell.doradus.service.tenant;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.UNode;
-import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.schema.SchemaService;
 
 /**
- * Implements the system REST commands: /_tenants and /_tenants/{tenant}
+ * Implements the system REST commands: /_tenants
  */
 public class ListTenantsCmd extends UNodeOutCallback {
 
     @Override
-    public UNode invokeUNodeOut(UNode inNode) {
-        Utils.require(inNode == null, "No input entity allowed for this command");
-        String tenantParam = m_request.getVariableDecoded("tenant");
+    public UNode invokeUNodeOut() {
         UNode rootNode = UNode.createMapNode("tenants");
         for (Tenant tenant : DBService.instance().getTenants()) {
-            if (tenantParam != null && !tenant.getKeyspace().equals(tenantParam)) {
-                continue;
-            }
             UNode tenantNode = rootNode.addArrayNode(stripQuotes(tenant.getKeyspace()), "tenant");
             UNode appNode = tenantNode.addArrayNode("applications");
             for (ApplicationDefinition appDef : SchemaService.instance().getAllApplications(tenant)) {

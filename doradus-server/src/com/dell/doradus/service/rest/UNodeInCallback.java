@@ -18,22 +18,24 @@ package com.dell.doradus.service.rest;
 
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.UNode;
+import com.dell.doradus.common.Utils;
 
 /**
- * Provides a {@link RESTCallback} variant interface that allows the input entity to be
- * passed as a {@link UNode} object while returning the command response as a
- * {@link RESTResponse}. The subclass must implement {@link #invokeUNodeIn(UNode)}, which
- * is called when the callback is invoked.
+ * Provides a {@link RESTCallback} variant interface for commands that expect an input
+ * entity. If no input entity is provided, an IllegalArgumentException is thrown. The
+ * subclass must implement {@link #invokeUNodeIn(UNode)}, which is passed a non-null
+ * UNode object. The method must return the desired {@link RESTResponse}.
+ * 
+ * @see UNodeOutCallback
+ * @see UNodeInOutCallback
  */
 public abstract class UNodeInCallback extends RESTCallback {
 
     // Declared "final" so subclass does not attempt to override.
     @Override
     public final RESTResponse invoke() {
-        UNode inNode = null;
-        if (m_request.getContentLength() > 0) {
-            inNode = UNode.parse(m_request.getInputBody(), m_request.getInputContentType());
-        }
+        Utils.require(m_request.getContentLength() > 0, "An input entity is required for this command");
+        UNode inNode = UNode.parse(m_request.getInputBody(), m_request.getInputContentType());
         return invokeUNodeIn(inNode);
     }   // invoke
 

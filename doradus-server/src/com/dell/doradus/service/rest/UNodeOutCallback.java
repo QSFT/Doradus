@@ -16,45 +16,39 @@
 
 package com.dell.doradus.service.rest;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.dell.doradus.common.HttpCode;
-import com.dell.doradus.common.HttpDefs;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.UNode;
-import com.dell.doradus.common.Utils;
 
 /**
- * Specializes the {@link UNodeInCallback} class to allow the REST response to be returned
- * as a {@link UNode} tree. Therefore, subclasses of this class process both the input and
- * output entities, if any, as UNode trees. This class formats the output UNode into a
- * {@link RESTResponse} using the requested output format. Subclasses must implement the
- * method {@link #invokeUNodeOut(UNode)}, which is called when the callback is
- * invoked. 
+ * Specializes the {@link RESTCallback} class for REST commands that expect no input
+ * entity but return output as a {@link UNode} tree. Since no input entity is expected,
+ * an IllegalArgumentException is thrown if one is found. The caller must implement
+ * {@link #invokeUNodeOut(UNode)}, which is called to process the command. It must either
+ * thrown an exception or return a UNode tree, which is serialized into JSON or XML as
+ * requested by the user.
+ * 
+ * @see UNodeInCallback
+ * @see UNodeInOutCallback
  */
-public abstract class UNodeOutCallback extends UNodeInCallback {
+public abstract class UNodeOutCallback extends RESTCallback {
 
     // Declared "final" so subclass does not attempt to override.
     @Override
-    public final RESTResponse invokeUNodeIn(UNode inNode) {
-        UNode outNode = invokeUNodeOut(inNode);
-        Map<String, String> headers = new HashMap<>();
-        headers.put(HttpDefs.CONTENT_TYPE, m_request.getOutputContentType().toString());
+    public final RESTResponse invoke() {
+        UNode outNode = invokeUNodeOut();
+        assert outNode != null;
         return new RESTResponse(HttpCode.OK,
-                                Utils.toBytes(outNode.toString(m_request.getOutputContentType())),
-                                headers);
+                                outNode.toString(m_request.getOutputContentType()),
+                                m_request.getOutputContentType());
     }   // invokeUNodeIn
 
     /**
-     * The subclass must implement this method, processing the REST request with the given
-     * parameters.
+     * The subclass must implement this method and throw an exception or return a UNode
+     * object.
      * 
-     * @param inNode        Root node of a UNode tree created by parsing the input entity
-     *                      with the specified content-type. If there is no input entity,
-     *                      this parameter will be null.
-     * @return              Root node of a UNode tree representing the output response.
+     * @return Root of a UNode tree representing the output response.
      */
-    public abstract UNode invokeUNodeOut(UNode inNode);
+    public abstract UNode invokeUNodeOut();
     
 }   // abstract class UNodeOutCallback

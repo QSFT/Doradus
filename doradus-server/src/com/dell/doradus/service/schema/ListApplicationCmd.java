@@ -25,7 +25,7 @@ import com.dell.doradus.service.rest.UNodeOutCallback;
 public class ListApplicationCmd extends UNodeOutCallback {
 
     @Override
-    public UNode invokeUNodeOut(UNode inNode) {
+    public UNode invokeUNodeOut() {
         return m_request.getAppDef().toDoc();
     }   // invokeUNodeOut
 

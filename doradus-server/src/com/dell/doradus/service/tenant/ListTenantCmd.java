@@ -17,23 +17,23 @@
 package com.dell.doradus.service.tenant;
 
 import com.dell.doradus.common.UNode;
-import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerConfig;
-import com.dell.doradus.service.rest.UNodeInOutCallback;
+import com.dell.doradus.service.rest.NotFoundException;
+import com.dell.doradus.service.rest.UNodeOutCallback;
 
 /**
- * Processes the system REST command: POST /_tenants.
+ * Implements the system REST command: /_tenants/{tenant}. All tenant details including
+ * user ids/passwords are returned.
  */
-public class DefineTenantCmd extends UNodeInOutCallback {
+public class ListTenantCmd extends UNodeOutCallback {
 
     @Override
-    public UNode invokeUNodeInOut(UNode inNode) {
-        Utils.require(ServerConfig.getInstance().multitenant_mode,
-                      "This command is only allowed in multi-tenant mode; see 'multitenant_mode' parameter");
-        TenantDefinition tenantDef = new TenantDefinition();
-        tenantDef.parse(inNode);
-        tenantDef = TenantService.instance().defineTenant(tenantDef);
+    public UNode invokeUNodeOut() {
+        String tenantName = m_request.getVariableDecoded("tenant");
+        TenantDefinition tenantDef = TenantService.instance().getTenantDefinition(tenantName);
+        if (tenantDef == null) {
+            throw new NotFoundException("Tenant not found: " + tenantName);
+        }
         return tenantDef.toDoc();
     }
 
-}   // class DefineTenantCmd
+}   // class ListTenantCmd
