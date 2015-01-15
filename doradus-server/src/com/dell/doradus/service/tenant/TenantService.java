@@ -128,6 +128,8 @@ public class TenantService extends Service {
      */
     public TenantDefinition defineTenant(TenantDefinition tenantDef) {
         checkServiceState();
+        Utils.require(ServerConfig.getInstance().multitenant_mode,
+                      "This command is not valid in single-tenant mode");
         String tenantName = tenantDef.getName();
         if (getTenantDef(tenantName) != null) {
             throw new DuplicateException("Tenant already exists: " + tenantName);
@@ -147,6 +149,8 @@ public class TenantService extends Service {
      */
     public TenantDefinition modifyTenant(TenantDefinition tenantDef) {
         checkServiceState();
+        Utils.require(ServerConfig.getInstance().multitenant_mode,
+                      "This command is not valid in single-tenant mode");
         // TODO
         throw new RuntimeException("Not yet implemented");
     }   // modifyTenant
@@ -158,6 +162,8 @@ public class TenantService extends Service {
      */
     public void deleteTenant(String tenantName) {
         checkServiceState();
+        Utils.require(ServerConfig.getInstance().multitenant_mode,
+                      "This command is not valid in single-tenant mode");
         // TODO
         throw new RuntimeException("Not yet implemented");
     }   // deleteTenant
@@ -176,6 +182,8 @@ public class TenantService extends Service {
      */
     public Tenant validateSystemUser(String authorizationHeader) throws UnauthorizedException {
         checkServiceState();
+        Utils.require(ServerConfig.getInstance().multitenant_mode,
+                      "This command is not valid in single-tenant mode");
         Tenant tenant = validateSystemAuthString(authorizationHeader);
         if (tenant == null) {
             throw new UnauthorizedException("Unrecognized system user id/password");
@@ -197,6 +205,8 @@ public class TenantService extends Service {
      */
     public Tenant validateTenant(String tenantName, String userid, String password) throws UnauthorizedException {
         checkServiceState();
+        Utils.require(ServerConfig.getInstance().multitenant_mode,
+                      "This command is not valid in single-tenant mode");
         assert !Utils.isEmpty(tenantName);
         Tenant tenant = validateTenantUserPassword(tenantName, userid, password);
         if (tenant == null) {
@@ -220,6 +230,8 @@ public class TenantService extends Service {
      */
     public Tenant validateTenant(String tenantName, String authorizationHeader) throws UnauthorizedException {
         checkServiceState();
+        Utils.require(ServerConfig.getInstance().multitenant_mode,
+                      "This command is not valid in single-tenant mode");
         assert !Utils.isEmpty(tenantName);
         Tenant tenant = validateAuthString(tenantName, authorizationHeader);
         if (tenant == null) {
@@ -248,6 +260,8 @@ public class TenantService extends Service {
      */
     public TenantDefinition getTenantDefinition(String tenantName) {
         checkServiceState();
+        Utils.require(ServerConfig.getInstance().multitenant_mode,
+                      "This command is not valid in single-tenant mode");
         Tenant tenant = new Tenant(tenantName);
         return getTenantDefinition(tenant);
     }   // getTenantDefinition

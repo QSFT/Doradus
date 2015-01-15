@@ -63,8 +63,9 @@ public class RESTServlet extends HttpServlet {
             long startNano = System.nanoTime();
             RESTService.instance().onNewrequest();
 
-            // Extract the query component of the request, if any, but move _api and
-            // _format parameters to the variable map if present.
+            // Extract the query component of the request, if any, but move api, format,
+            // and tenant parameters to the variable map if present. This removes them
+            // from the URI pattern for matching.
             Map<String, String> variableMap = new HashMap<String, String>();
             String query = extractQueryParam(request, variableMap);
             RESTCommand cmd = RESTService.instance().matchCommand(request.getMethod(),
@@ -77,7 +78,7 @@ public class RESTServlet extends HttpServlet {
             Utils.require(cmd != null, "Request does not match a known URI: " + request.getRequestURL());
             m_logger.debug("Command: {}", cmd.toString());
             
-            Tenant tenant = setTenant(cmd, request, variableMap);
+            Tenant tenant = getTenant(cmd, request, variableMap);
             RESTRequest restRequest = new RESTRequest(tenant, request, variableMap);
             RESTCallback callback = cmd.getNewCallback(restRequest);
             RESTResponse restResponse = callback.invoke();
@@ -149,27 +150,28 @@ public class RESTServlet extends HttpServlet {
     
     //----- Private methods
 
-    // Decide the Tenant context for this command. System commands execute with no tenant.
-    // In single-tenant mode, the Tenant is always the default keyspace.
-    private Tenant setTenant(RESTCommand cmd, HttpServletRequest request, Map<String, String> variableMap) {
+    // Decide the Tenant context for this command and multi-tenant configuration options.
+    private Tenant getTenant(RESTCommand cmd, HttpServletRequest request, Map<String, String> variableMap) {
         Tenant tenant = null;
+        String tenantName = variableMap.get("tenant");
+        String authorizationHeader = request.getHeader("Authorization");
         if (ServerConfig.getInstance().multitenant_mode) {
-            String authorizationHeader = request.getHeader("Authorization");
             if (cmd.isSystemCommand()) {
-                // TODO: Should tenant be null for system commands?
                 tenant = TenantService.instance().validateSystemUser(authorizationHeader);
             } else {
-                String tenantName = Utils.urlDecode(variableMap.get("tenant"));
-                if (tenantName == null) {
-                    throw new RuntimeException("Non-system RESTCommand missing 'tenant' variable: " + cmd);
+                if (Utils.isEmpty(tenantName)) {
+                    Utils.require(!ServerConfig.getInstance().disable_default_keyspace,
+                                  "'tenant' parameter is required for this command");
+                    tenant = TenantService.instance().getDefaultTenant();
+                } else {
+                    tenant = TenantService.instance().validateTenant(tenantName, authorizationHeader);
                 }
-                tenant = TenantService.instance().validateTenant(tenantName, authorizationHeader);
             }
         } else {
             tenant = TenantService.instance().getDefaultTenant();
         }
         return tenant;
-    }   // setTenant
+    }   // getTenant
     
     // Send the given response, which includes a response code and optionally a body
     // and/or additional response headers. If the body is non-empty, we automatically add
@@ -201,8 +203,8 @@ public class RESTServlet extends HttpServlet {
         }
     }   // sendResponse
     
-    // Extract and return the query component of the given request, but move "api=x" and
-    // "format=y", if present, to rest parameters called _api and _format.
+    // Extract and return the query component of the given request, but move "api=x",
+    // "format=y", and "tenant=z", if present, to rest parameters.
     private String extractQueryParam(HttpServletRequest request, Map<String, String> restParams) {
         String query = request.getQueryString();
         if (Utils.isEmpty(query)) {
@@ -216,17 +218,24 @@ public class RESTServlet extends HttpServlet {
         boolean bRewrite = false;
         for (String part : parts) {
             Pair<String, String> param = extractParam(part);
-            if (param.left.equalsIgnoreCase("api")) {
-                restParams.put("_api", param.right);
+            switch (param.left.toLowerCase()) {
+            case "api":
                 bRewrite = true;
-            } else if (param.left.equalsIgnoreCase("format")) {
+                restParams.put("api", param.right);
+                break;
+            case "format":
                 bRewrite = true;
                 if (param.right.equalsIgnoreCase("xml")) {
-                    restParams.put("_format", "text/xml");
+                    restParams.put("format", "text/xml");
                 } else if (param.right.equalsIgnoreCase("json")) {
-                    restParams.put("_format", "application/json");
+                    restParams.put("format", "application/json");
                 }
-            } else {
+                break;
+            case "tenant":
+                bRewrite = true;
+                restParams.put("tenant", param.right);
+                break;
+            default:
                 unusedList.add(param);
             }
         }

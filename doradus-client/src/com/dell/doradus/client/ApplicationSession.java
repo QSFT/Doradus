@@ -110,8 +110,10 @@ abstract public class ApplicationSession implements AutoCloseable {
     public ApplicationDefinition refreshSchema()  {
         try {
             // Send a GET request to "/_applications/{application}
-            String uri = uriRoot() + "_applications/" + Utils.urlEncode(m_appDef.getAppName());
-            RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri);
+            StringBuilder uri = new StringBuilder("/_applications/");
+            uri.append(Utils.urlEncode(m_appDef.getAppName()));
+            addTenantParam(uri);
+            RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri.toString());
             m_logger.debug("listApplication() response: {}", response.toString());
             throwIfErrorResponse(response);
             m_appDef.parse(getUNodeResult(response));
@@ -139,9 +141,11 @@ abstract public class ApplicationSession implements AutoCloseable {
         try {
             // Send a PUT request to "/_applications/{application}".
             byte[] body = Utils.toBytes(text);
-            String uri = uriRoot() + "_applications/" + Utils.urlEncode(m_appDef.getAppName());
+            StringBuilder uri = new StringBuilder("/_applications/");
+            uri.append(Utils.urlEncode(m_appDef.getAppName()));
+            addTenantParam(uri);
             RESTResponse response =
-                m_restClient.sendRequest(HttpMethod.PUT, uri, ContentType.APPLICATION_JSON, body);
+                m_restClient.sendRequest(HttpMethod.PUT, uri.toString(), ContentType.APPLICATION_JSON, body);
             m_logger.debug("updateSchema() response: {}", response.toString());
             throwIfErrorResponse(response);
             return true;
@@ -255,15 +259,17 @@ abstract public class ApplicationSession implements AutoCloseable {
     
     //----- Protected methods
     
-    // Return the URI root "/" or "/{tenant}/" depending on whether this application's
-    // RESTClient currently has credentials with an assigned tenant name.
-    protected String uriRoot() {
+    // If credentials have been specified, append then the query string "?tenant={tenant}"
+    // or "&tenant={tenant}" to the given URI.
+    protected void addTenantParam(StringBuilder uri) {
         Credentials creds = m_restClient.getCredentials();
-        if (creds == null || creds.getTenant() == null) {
-            return "/";
+        if (creds != null && creds.getTenant() != null) {
+            if (uri.indexOf("?") > 0) {
+                uri.append("&tenant=");
+            } else uri.append("?tenant=");
+            uri.append(creds.getTenant());
         }
-        return "/" + creds.getTenant() + "/";
-    }   // uriRoot
+    }   // addTenantParam
     
     // Extract the BatchResult from the given RESTResponse. Could be an error.
     protected BatchResult createBatchResult(RESTResponse response) {

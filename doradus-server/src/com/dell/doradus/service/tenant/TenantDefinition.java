@@ -105,7 +105,7 @@ public class TenantDefinition {
                 UNode userNode = usersNode.addMapNode(userid, "user");
                 String password = m_users.get(userid);
                 if (!Utils.isEmpty(password)) {
-                    userNode.addValueNode("password", password);
+                    userNode.addValueNode("password", password, true);
                 }
             }
         }

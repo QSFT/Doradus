@@ -262,9 +262,10 @@ public class Client implements AutoCloseable {
             body = Utils.toBytes(appDef.toDoc().toJSON());
             
             // Send a POST request to the "/_applications"
-            String uri = uriRoot() + "_applications";
+            StringBuilder uri = new StringBuilder("/_applications");
+            addTenantParam(uri);
             RESTResponse response =
-                m_restClient.sendRequest(HttpMethod.POST, uri, ContentType.APPLICATION_JSON, body);
+                m_restClient.sendRequest(HttpMethod.POST, uri.toString(), ContentType.APPLICATION_JSON, body);
             m_logger.debug("defineApplication() response: {}", response.toString());
             throwIfErrorResponse(response);
             return getAppDef(appDef.getAppName());
@@ -309,8 +310,9 @@ public class Client implements AutoCloseable {
 
         try {
             // Send a GET request to "/_applications" to list all applications.
-            String uri = uriRoot() + "_applications";
-            RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri);
+            StringBuilder uri = new StringBuilder("/_applications");
+            addTenantParam(uri);
+            RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri.toString());
             m_logger.debug("listAllApplications() response: {}", response.toString());
             throwIfErrorResponse(response);
             
@@ -341,8 +343,10 @@ public class Client implements AutoCloseable {
 
         try {
             // Send a GET request to "/_applications/{application}
-            String uri = uriRoot() + "_applications/" + Utils.urlEncode(appName);
-            RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri);
+            StringBuilder uri = new StringBuilder("/_applications/");
+            uri.append(Utils.urlEncode(appName));
+            addTenantParam(uri);
+            RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri.toString());
             m_logger.debug("listApplication() response: {}", response.toString());
             if (response.getCode() == HttpCode.NOT_FOUND) {
                 return null;
@@ -375,8 +379,12 @@ public class Client implements AutoCloseable {
         
         try {
             // Send a DELETE request to "/_applications/{application}/{key}".
-            String uri = uriRoot() + "_applications/" + Utils.urlEncode(appName) + "/" + Utils.urlEncode(key);
-            RESTResponse response = m_restClient.sendRequest(HttpMethod.DELETE, uri);
+            StringBuilder uri = new StringBuilder("/_applications/");
+            uri.append(Utils.urlEncode(appName));
+            uri.append("/");
+            uri.append(Utils.urlEncode(key));
+            addTenantParam(uri);
+            RESTResponse response = m_restClient.sendRequest(HttpMethod.DELETE, uri.toString());
             m_logger.debug("deleteApplication() response: {}", response.toString());
             if (response.getCode() != HttpCode.NOT_FOUND) {
                 // Notfound is acceptable
@@ -390,15 +398,17 @@ public class Client implements AutoCloseable {
     
     //----- Private methods
     
-    // Return the URI root "/" or "/{tenant}/" depending on whether this application's
-    // RESTClient currently has credentials with an assigned tenant name.
-    private String uriRoot() {
+    // If credentials have been specified, append then the query string "?tenant={tenant}"
+    // or "&tenant={tenant}" to the given URI.
+    private void addTenantParam(StringBuilder uri) {
         Credentials creds = m_restClient.getCredentials();
-        if (creds == null || creds.getTenant() == null) {
-            return "/";
+        if (creds != null && creds.getTenant() != null) {
+            if (uri.indexOf("?") > 0) {
+                uri.append("&tenant=");
+            } else uri.append("?tenant=");
+            uri.append(creds.getTenant());
         }
-        return "/" + creds.getTenant() + "/";
-    }   // uriRoot
+    }   // addTenantParam
     
     // Create an ApplicationSession using the given appDef. The session takes ownership of
     // the given restClient. If the open fails, the restClient is closed.

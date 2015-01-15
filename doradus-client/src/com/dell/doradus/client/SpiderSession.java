@@ -72,10 +72,13 @@ public class SpiderSession extends ApplicationSession {
         try {
             // Send a POST request to "/{application}/{table}"
             byte[] body = Utils.toBytes(dbObjBatch.toDoc().toJSON());
-            String uri = uriRoot() + Utils.urlEncode(m_appDef.getAppName()) +
-                         "/" + Utils.urlEncode(tableName);
+            StringBuilder uri = new StringBuilder("/");
+            uri.append(Utils.urlEncode(m_appDef.getAppName()));
+            uri.append("/");
+            uri.append(Utils.urlEncode(tableName));
+            addTenantParam(uri);
             RESTResponse response = 
-                m_restClient.sendRequest(HttpMethod.POST, uri, ContentType.APPLICATION_JSON, body);
+                m_restClient.sendRequest(HttpMethod.POST, uri.toString(), ContentType.APPLICATION_JSON, body);
             m_logger.debug("addBatch() response: {}", response.toString());
             return createBatchResult(response);
         } catch (Exception e) {
@@ -107,10 +110,13 @@ public class SpiderSession extends ApplicationSession {
             DBObjectBatch dbObjBatch = new DBObjectBatch();
             dbObjBatch.addObject(dbObj);
             byte[] body = Utils.toBytes(dbObjBatch.toDoc().toJSON());
-            String uri = uriRoot() + Utils.urlEncode(m_appDef.getAppName()) +
-                         "/" + Utils.urlEncode(tableName);
+            StringBuilder uri = new StringBuilder("/");
+            uri.append(Utils.urlEncode(m_appDef.getAppName()));
+            uri.append("/");
+            uri.append(Utils.urlEncode(tableName));
+            addTenantParam(uri);
             RESTResponse response = 
-                m_restClient.sendRequest(HttpMethod.POST, uri, ContentType.APPLICATION_JSON, body);
+                m_restClient.sendRequest(HttpMethod.POST, uri.toString(), ContentType.APPLICATION_JSON, body);
             m_logger.debug("addBatch() response: {}", response.toString());
             BatchResult batchResult = createBatchResult(response);
             
@@ -153,10 +159,13 @@ public class SpiderSession extends ApplicationSession {
         try {
             // Send a DELETE request to "/{application}/{table}"
             byte[] body = Utils.toBytes(dbObjBatch.toDoc().toJSON());
-            String uri = uriRoot() + Utils.urlEncode(m_appDef.getAppName()) +
-                         "/" + Utils.urlEncode(tableName);
+            StringBuilder uri = new StringBuilder("/");
+            uri.append(Utils.urlEncode(m_appDef.getAppName()));
+            uri.append("/");
+            uri.append(Utils.urlEncode(tableName));
+            addTenantParam(uri);
             RESTResponse response = 
-                m_restClient.sendRequest(HttpMethod.DELETE, uri, ContentType.APPLICATION_JSON, body);
+                m_restClient.sendRequest(HttpMethod.DELETE, uri.toString(), ContentType.APPLICATION_JSON, body);
             m_logger.debug("deleteBatch() response: {}", response.toString());
             return createBatchResult(response);
         } catch (Exception e) {
@@ -274,8 +283,7 @@ public class SpiderSession extends ApplicationSession {
                       "Table is not defined for application '%s': %s", m_appDef.getAppName(), tableName);
         
         // Form the URI, which has the general form: GET /{application}/{table}/_aggregate?{params}
-        StringBuilder uri = new StringBuilder();
-        uri.append(uriRoot());
+        StringBuilder uri = new StringBuilder("/");
         uri.append(Utils.urlEncode(m_appDef.getAppName()));
         uri.append("/");
         uri.append(Utils.urlEncode(tableDef.getTableName()));
@@ -305,6 +313,7 @@ public class SpiderSession extends ApplicationSession {
                 Utils.require(false, "Unknown parameter name: %s", name);
             }
         }
+        addTenantParam(uri);
         
         // Send the query and capture the response.
         try {
@@ -343,10 +352,14 @@ public class SpiderSession extends ApplicationSession {
         
         try {
             // Send a GET request to "/{application}/{table}/{object ID}"
-            String uri = uriRoot() + Utils.urlEncode(m_appDef.getAppName()) +
-                         "/" + Utils.urlEncode(tableName) +
-                         "/" + Utils.urlEncode(objectID);
-            RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri);
+            StringBuilder uri = new StringBuilder("/");
+            uri.append(Utils.urlEncode(m_appDef.getAppName()));
+            uri.append("/");
+            uri.append(Utils.urlEncode(tableName));
+            uri.append("/");
+            uri.append(Utils.urlEncode(objectID));
+            addTenantParam(uri);
+            RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri.toString());
             m_logger.debug("getObject() response: {}", response.toString());
             
             // If the response is not "OK", return null.
@@ -418,8 +431,7 @@ public class SpiderSession extends ApplicationSession {
         Utils.require(tableDef != null, "Unknown table: %s", tableName);
         
         // Form the URI, which has the general form: GET /{application}/{table}/_query?{params}
-        StringBuilder uri = new StringBuilder();
-        uri.append(uriRoot());
+        StringBuilder uri = new StringBuilder("/");
         uri.append(Utils.urlEncode(tableDef.getAppDef().getAppName()));
         uri.append("/");
         uri.append(Utils.urlEncode(tableDef.getTableName()));
@@ -452,6 +464,7 @@ public class SpiderSession extends ApplicationSession {
                 Utils.require(false, "Unknown parameter name: %s", name);
             }
         }
+        addTenantParam(uri);
         
         // Send the query and capture the response.
         try {

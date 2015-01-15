@@ -196,6 +196,7 @@ public class ServerConfig {
     // Doradus keyspace properties
     public boolean multitenant_mode = false;
     public String keyspace = DEFAULT_KS_NAME;
+    public boolean disable_default_keyspace = false;
     // Miscellaneous Doradus server options:
     public int restport = DEFAULT_REST_PORT;
     public String restaddr;
@@ -261,7 +262,7 @@ public class ServerConfig {
     public int olap_file_cache_size_mb = 0; // turned out to be faster without file cache
     public int olap_query_cache_size_mb = 100;
     
-    // Only CQL is now supported
+    // CQL (true) or Thrift (false) API
     public boolean use_cql = true;
     
     // Experimental: use async update statement execution

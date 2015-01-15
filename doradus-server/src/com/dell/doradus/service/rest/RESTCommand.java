@@ -101,10 +101,6 @@ public final class RESTCommand implements Comparable<RESTCommand> {
         parseRuleString(ruleString);
     }   // constructor
 
-    public void prependPathNode(String node) {
-        m_pathNodes.add(0, node);
-    }   // prependPathNode
-    
     /**
      * Indicate if this is a system command, which means it executes without a specific
      * tenant context.

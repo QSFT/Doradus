@@ -28,13 +28,23 @@
 
 ########## Multi-tenant options
 #
+# These parameters control the multi-tenant features of Doradus.
+#
+
 # multitenant_mode: When this option is false, Doradus operates in single-tenant mode. All
 # applications and created and managed in the default tenant, whose name is defined by the
 # "keyspace" parameter. When multitenant_mode is true, most requests must identify a specific
-# tenant and provide credentials for that tenant. Non-tenant commands (system commands) do
-# not specify a tenant and must be validated using system credentials. Note that multi-tenant
-# mode requires the use of CQL, hence "use_cql" must be true. Default: false
+# tenant and provide credentials for that tenant. Non-tenant commands (system commands) do not
+# specify a tenant and must be validated using system credentials. Note that multi-tenant mode
+# requires the use of CQL, hence "use_cql" must be true. Default: false
 multitenant_mode: false
+
+# disable_default_keyspace: When multitenant_mode is true, non-system commands that do not identify
+# a specific tenant are sent to the default tenant (see "keyspace" parameter). Requests to the
+# default tenant do not require credentials, hence it acts like a public "sandbox". The use of the
+# default tenant in multi-tenant mode can be disabled by setting this parameter to true. Default:
+# false.
+disable_default_keyspace: false
 
 ########## Doradus Service Parameters
 # 
@@ -89,13 +99,13 @@ storage_services:
 ########## Cassandra Keyspace Parameters
 #
 # These parameters are used for Cassandra Keyspaces created by Doradus. Each application is assigned
-# an explicit or default "tenant", which is used as the keyspace name. Applications sharing the same
-# keyspace use the same metadata ColumnFamilies. When the first application is assigned to a given
-# Keyspace, Doradus creates the Keyspace with the ks_defaults defined below. After creation,
-# Keyspace options can be modified via Cassandra-level tools. 
+# an explicit or default "tenant", which is mapped to a keyspace. These parameters are used when the
+# keyspace is first created. After creation, keyspace options can be modified via Cassandra-level
+# tools. 
 #
 
-# keyspace: Name of the default Keyspace for applications created without an explicit "tenant".
+# keyspace: Name of the keyspace for the default tenant. This keyspace is used for all applications
+# in single-tenant mode and for tenant-inspecific applications (if allowed) in multi-tenant mode.
 # Default: 'Doradus'.
 keyspace: 'Doradus'
 

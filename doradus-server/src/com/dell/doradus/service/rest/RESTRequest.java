@@ -290,8 +290,8 @@ public class RESTRequest {
     
     // Get the request's accept type, defaulting to content-type if none is specified.
     private ContentType getAcceptType() {
-        // If the _format header is present, it overrides the ACCEPT header.
-        String format = m_variableMap.get("_format");
+        // If the format header is present, it overrides the ACCEPT header.
+        String format = m_variableMap.get("format");
         if (format != null) {
             return new ContentType(format);
         }

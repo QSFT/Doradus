@@ -158,9 +158,6 @@ public class RESTService extends Service {
      */
     public void registerRESTCommands(Iterable<RESTCommand> restCommands) {
         for (RESTCommand cmd : restCommands) {
-            if (!cmd.isSystemCommand() && ServerConfig.getInstance().multitenant_mode) {
-                cmd.prependPathNode("{tenant}");
-            }
             m_commandSet.addCommand(cmd);
         }
     }   // registerRESTCommands

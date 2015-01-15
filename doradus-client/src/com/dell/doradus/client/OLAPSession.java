@@ -71,10 +71,13 @@ public class OLAPSession extends ApplicationSession {
             // Send a POST request to "/{application}/{shard}".
             byte[] body = null;
             body = dbObjBatch.toDoc().toCompressedJSON();
-            String uri = uriRoot() + Utils.urlEncode(m_appDef.getAppName()) +
-                         "/" + Utils.urlEncode(shard);
+            StringBuilder uri = new StringBuilder();
+            uri.append(Utils.urlEncode(m_appDef.getAppName()));
+            uri.append("/");
+            uri.append(Utils.urlEncode(shard));
+            addTenantParam(uri);
             RESTResponse response =
-                m_restClient.sendRequestCompressed(HttpMethod.POST, uri, ContentType.APPLICATION_JSON, body);
+                m_restClient.sendRequestCompressed(HttpMethod.POST, uri.toString(), ContentType.APPLICATION_JSON, body);
             m_logger.debug("addBatch() response: {}", response.toString());
             return createBatchResult(response);
         } catch (Exception e) {
@@ -100,10 +103,13 @@ public class OLAPSession extends ApplicationSession {
         try {
             // Send a DELETE request to "/{application}/{shard}".
             byte[] body = Utils.toBytes(dbObjBatch.toDoc().toJSON());
-            String uri = uriRoot() + Utils.urlEncode(m_appDef.getAppName()) +
-                         "/" + Utils.urlEncode(shard);
+            StringBuilder uri = new StringBuilder();
+            uri.append(Utils.urlEncode(m_appDef.getAppName()));
+            uri.append("/");
+            uri.append(Utils.urlEncode(shard));
+            addTenantParam(uri);
             RESTResponse response = 
-                m_restClient.sendRequest(HttpMethod.DELETE, uri, ContentType.APPLICATION_JSON, body);
+                m_restClient.sendRequest(HttpMethod.DELETE, uri.toString(), ContentType.APPLICATION_JSON, body);
             m_logger.debug("deleteBatch() response: {}", response.toString());
             return createBatchResult(response);
         } catch (Exception e) {
@@ -125,8 +131,12 @@ public class OLAPSession extends ApplicationSession {
         Utils.require(!Utils.isEmpty(shard), "shard");
         try {
             // Send a DELETE request to "/{application}/_shards/{shard}"
-            String uri = uriRoot() + Utils.urlEncode(m_appDef.getAppName()) + "/_shards/" + Utils.urlEncode(shard);
-            RESTResponse response = m_restClient.sendRequest(HttpMethod.DELETE, uri);
+            StringBuilder uri = new StringBuilder("/");
+            uri.append(Utils.urlEncode(m_appDef.getAppName()));
+            uri.append("/_shards/");
+            uri.append(Utils.urlEncode(shard));
+            addTenantParam(uri);
+            RESTResponse response = m_restClient.sendRequest(HttpMethod.DELETE, uri.toString());
             m_logger.debug("deleteShard() response: {}", response.toString());
             throwIfErrorResponse(response);
             return true;
@@ -149,8 +159,7 @@ public class OLAPSession extends ApplicationSession {
         Utils.require(!Utils.isEmpty(shard), "shard");
         try {
             // Send a POST request to "/{application}/_shards/{shard}[?expire-date=<date>]"
-            StringBuilder uri = new StringBuilder();
-            uri.append(uriRoot());
+            StringBuilder uri = new StringBuilder("/");
             uri.append(Utils.urlEncode(m_appDef.getAppName()));
             uri.append("/_shards/");
             uri.append(Utils.urlEncode(shard));
@@ -158,6 +167,7 @@ public class OLAPSession extends ApplicationSession {
                 uri.append("?expire-date=");
                 uri.append(Utils.urlEncode(Utils.formatDateUTC(expireDate)));
             }
+            addTenantParam(uri);
             RESTResponse response = m_restClient.sendRequest(HttpMethod.POST, uri.toString());
             m_logger.debug("mergeShard() response: {}", response.toString());
             throwIfErrorResponse(response);
@@ -243,8 +253,7 @@ public class OLAPSession extends ApplicationSession {
                       "Table is not defined for application '%s': %s", m_appDef.getAppName(), tableName);
         
         // Form the URI, which has the general form: GET /{application}/{table}/_aggregate?{params}
-        StringBuilder uri = new StringBuilder();
-        uri.append(uriRoot());
+        StringBuilder uri = new StringBuilder("/");
         uri.append(Utils.urlEncode(m_appDef.getAppName()));
         uri.append("/");
         uri.append(Utils.urlEncode(tableDef.getTableName()));
@@ -278,6 +287,7 @@ public class OLAPSession extends ApplicationSession {
                 Utils.require(false, "Unknown parameter name: %s", name);
             }
         }
+        addTenantParam(uri);
         
         // Send the query and capture the response.
         try {
@@ -356,8 +366,7 @@ public class OLAPSession extends ApplicationSession {
         Utils.require(tableDef != null, "Unknown table: %s", tableName);
         
         // Form the URI, which has the general form: GET /{application}/{table}/_query?{params}
-        StringBuilder uri = new StringBuilder();
-        uri.append(uriRoot());
+        StringBuilder uri = new StringBuilder("/");
         uri.append(Utils.urlEncode(tableDef.getAppDef().getAppName()));
         uri.append("/");
         uri.append(Utils.urlEncode(tableDef.getTableName()));
@@ -390,6 +399,7 @@ public class OLAPSession extends ApplicationSession {
                 Utils.require(false, "Unknown parameter name: %s", name);
             }
         }
+        addTenantParam(uri);
         
         // Send the query and capture the response.
         try {
