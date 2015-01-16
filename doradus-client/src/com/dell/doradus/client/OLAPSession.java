@@ -71,11 +71,10 @@ public class OLAPSession extends ApplicationSession {
             // Send a POST request to "/{application}/{shard}".
             byte[] body = null;
             body = dbObjBatch.toDoc().toCompressedJSON();
-            StringBuilder uri = new StringBuilder();
+            StringBuilder uri = new StringBuilder("/");
             uri.append(Utils.urlEncode(m_appDef.getAppName()));
             uri.append("/");
             uri.append(Utils.urlEncode(shard));
-            addTenantParam(uri);
             RESTResponse response =
                 m_restClient.sendRequestCompressed(HttpMethod.POST, uri.toString(), ContentType.APPLICATION_JSON, body);
             m_logger.debug("addBatch() response: {}", response.toString());
@@ -103,11 +102,10 @@ public class OLAPSession extends ApplicationSession {
         try {
             // Send a DELETE request to "/{application}/{shard}".
             byte[] body = Utils.toBytes(dbObjBatch.toDoc().toJSON());
-            StringBuilder uri = new StringBuilder();
+            StringBuilder uri = new StringBuilder("/");
             uri.append(Utils.urlEncode(m_appDef.getAppName()));
             uri.append("/");
             uri.append(Utils.urlEncode(shard));
-            addTenantParam(uri);
             RESTResponse response = 
                 m_restClient.sendRequest(HttpMethod.DELETE, uri.toString(), ContentType.APPLICATION_JSON, body);
             m_logger.debug("deleteBatch() response: {}", response.toString());
@@ -135,7 +133,6 @@ public class OLAPSession extends ApplicationSession {
             uri.append(Utils.urlEncode(m_appDef.getAppName()));
             uri.append("/_shards/");
             uri.append(Utils.urlEncode(shard));
-            addTenantParam(uri);
             RESTResponse response = m_restClient.sendRequest(HttpMethod.DELETE, uri.toString());
             m_logger.debug("deleteShard() response: {}", response.toString());
             throwIfErrorResponse(response);
@@ -167,7 +164,6 @@ public class OLAPSession extends ApplicationSession {
                 uri.append("?expire-date=");
                 uri.append(Utils.urlEncode(Utils.formatDateUTC(expireDate)));
             }
-            addTenantParam(uri);
             RESTResponse response = m_restClient.sendRequest(HttpMethod.POST, uri.toString());
             m_logger.debug("mergeShard() response: {}", response.toString());
             throwIfErrorResponse(response);
@@ -287,7 +283,6 @@ public class OLAPSession extends ApplicationSession {
                 Utils.require(false, "Unknown parameter name: %s", name);
             }
         }
-        addTenantParam(uri);
         
         // Send the query and capture the response.
         try {
@@ -399,7 +394,6 @@ public class OLAPSession extends ApplicationSession {
                 Utils.require(false, "Unknown parameter name: %s", name);
             }
         }
-        addTenantParam(uri);
         
         // Send the query and capture the response.
         try {

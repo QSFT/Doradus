@@ -76,7 +76,6 @@ public class SpiderSession extends ApplicationSession {
             uri.append(Utils.urlEncode(m_appDef.getAppName()));
             uri.append("/");
             uri.append(Utils.urlEncode(tableName));
-            addTenantParam(uri);
             RESTResponse response = 
                 m_restClient.sendRequest(HttpMethod.POST, uri.toString(), ContentType.APPLICATION_JSON, body);
             m_logger.debug("addBatch() response: {}", response.toString());
@@ -114,7 +113,6 @@ public class SpiderSession extends ApplicationSession {
             uri.append(Utils.urlEncode(m_appDef.getAppName()));
             uri.append("/");
             uri.append(Utils.urlEncode(tableName));
-            addTenantParam(uri);
             RESTResponse response = 
                 m_restClient.sendRequest(HttpMethod.POST, uri.toString(), ContentType.APPLICATION_JSON, body);
             m_logger.debug("addBatch() response: {}", response.toString());
@@ -163,7 +161,6 @@ public class SpiderSession extends ApplicationSession {
             uri.append(Utils.urlEncode(m_appDef.getAppName()));
             uri.append("/");
             uri.append(Utils.urlEncode(tableName));
-            addTenantParam(uri);
             RESTResponse response = 
                 m_restClient.sendRequest(HttpMethod.DELETE, uri.toString(), ContentType.APPLICATION_JSON, body);
             m_logger.debug("deleteBatch() response: {}", response.toString());
@@ -313,7 +310,6 @@ public class SpiderSession extends ApplicationSession {
                 Utils.require(false, "Unknown parameter name: %s", name);
             }
         }
-        addTenantParam(uri);
         
         // Send the query and capture the response.
         try {
@@ -358,7 +354,6 @@ public class SpiderSession extends ApplicationSession {
             uri.append(Utils.urlEncode(tableName));
             uri.append("/");
             uri.append(Utils.urlEncode(objectID));
-            addTenantParam(uri);
             RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri.toString());
             m_logger.debug("getObject() response: {}", response.toString());
             
@@ -464,7 +459,6 @@ public class SpiderSession extends ApplicationSession {
                 Utils.require(false, "Unknown parameter name: %s", name);
             }
         }
-        addTenantParam(uri);
         
         // Send the query and capture the response.
         try {

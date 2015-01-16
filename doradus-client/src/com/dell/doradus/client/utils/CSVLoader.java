@@ -758,16 +758,21 @@ public class CSVLoader {
             }
 
             try {
+                BatchResult result = null;
                 if (m_bOLAPApp) {
-                    ((OLAPSession)m_session).addBatch(m_config.shard, m_batch);
+                    result = ((OLAPSession)m_session).addBatch(m_config.shard, m_batch);
                     if (m_config.merge_all) {
                         ((OLAPSession)m_session).mergeShard(m_config.shard, null);
                     }
                 } else {
-                    BatchResult result = ((SpiderSession)m_session).addBatch(m_batchTableName, m_batch);
+                    result = ((SpiderSession)m_session).addBatch(m_batchTableName, m_batch);
+                }
+                if (result.isFailed()) {
+                    m_logger.error("Worker {}: Batch update failed: {}",
+                                  new Object[]{m_workerNo, result.getErrorMessage()});
                     for (String objectID : result.getFailedObjectIDs()) {
                         ObjectResult objResult = result.getObjectResult(objectID);
-                        m_logger.warn("Worker {}: update for object ID '{}' failed: {}",
+                        m_logger.warn("Worker {}: error for object ID '{}': {}",
                                       new Object[]{m_workerNo, objectID, objResult.getErrorMessage()});
                         Map<String, String> errorDetails = objResult.getErrorDetails();
                         for (String fieldName : errorDetails.keySet()) {

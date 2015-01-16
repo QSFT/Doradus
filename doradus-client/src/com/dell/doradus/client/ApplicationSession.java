@@ -112,7 +112,6 @@ abstract public class ApplicationSession implements AutoCloseable {
             // Send a GET request to "/_applications/{application}
             StringBuilder uri = new StringBuilder("/_applications/");
             uri.append(Utils.urlEncode(m_appDef.getAppName()));
-            addTenantParam(uri);
             RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri.toString());
             m_logger.debug("listApplication() response: {}", response.toString());
             throwIfErrorResponse(response);
@@ -143,7 +142,6 @@ abstract public class ApplicationSession implements AutoCloseable {
             byte[] body = Utils.toBytes(text);
             StringBuilder uri = new StringBuilder("/_applications/");
             uri.append(Utils.urlEncode(m_appDef.getAppName()));
-            addTenantParam(uri);
             RESTResponse response =
                 m_restClient.sendRequest(HttpMethod.PUT, uri.toString(), ContentType.APPLICATION_JSON, body);
             m_logger.debug("updateSchema() response: {}", response.toString());
@@ -258,18 +256,6 @@ abstract public class ApplicationSession implements AutoCloseable {
     public abstract QueryResult objectQuery(String tableName, Map<String, String> params);
     
     //----- Protected methods
-    
-    // If credentials have been specified, append then the query string "?tenant={tenant}"
-    // or "&tenant={tenant}" to the given URI.
-    protected void addTenantParam(StringBuilder uri) {
-        Credentials creds = m_restClient.getCredentials();
-        if (creds != null && creds.getTenant() != null) {
-            if (uri.indexOf("?") > 0) {
-                uri.append("&tenant=");
-            } else uri.append("?tenant=");
-            uri.append(creds.getTenant());
-        }
-    }   // addTenantParam
     
     // Extract the BatchResult from the given RESTResponse. Could be an error.
     protected BatchResult createBatchResult(RESTResponse response) {

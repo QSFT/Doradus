@@ -150,9 +150,8 @@ public class RESTClient implements Closeable {
      * @return  {@link Credentials} being used to authorize requests made by this
      *          RESTClient. May be null.
      */
-    public Credentials getCredentials() {
-        return m_credentials;
-    }
+    public Credentials getCredentials() { return m_credentials; }
+    
     /**
      * Get the REST API host name/IP address used for this RESTClient connection.
      * 
@@ -282,6 +281,21 @@ public class RESTClient implements Closeable {
         return m_socket == null || m_socket.isClosed();
     }   // isClosed
     
+    //----- Private methods
+    
+    // If credentials have been specified with a tenant, append then the query string
+    // "?tenant={tenant}" or "&tenant={tenant}" to the given URI.
+    private String addTenantParam(String uri) {
+        if (m_credentials != null && m_credentials.getTenant() != null) {
+            if (uri.indexOf("?") > 0) {
+                return uri + "&tenant=" + m_credentials.getTenant();
+            } else {
+                return uri + "?tenant=" + m_credentials.getTenant();
+            }
+        }
+        return uri;
+    }   // addTenantParam
+    
     // Attempt to reconnect to the Doradus server
     private void reconnect() throws IOException {
         // First ensure we're closed.
@@ -321,7 +335,7 @@ public class RESTClient implements Closeable {
         StringBuilder buffer = new StringBuilder();
         buffer.append(method.toString());
         buffer.append(" ");
-        buffer.append(uri);
+        buffer.append(addTenantParam(uri));
         buffer.append(" HTTP/1.1\r\n");
         for (String name : headers.keySet()) {
             buffer.append(name);
@@ -331,6 +345,8 @@ public class RESTClient implements Closeable {
         }
         buffer.append("\r\n");
 
+        m_logger.debug("Sending request to uri '{}'; message length={}",
+                       uri, headers.get(HttpDefs.CONTENT_LENGTH));
         return sendAndReceive(buffer.toString(), body);
     }   // sendAndReceive 
     
