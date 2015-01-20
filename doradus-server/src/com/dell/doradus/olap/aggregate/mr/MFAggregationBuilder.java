@@ -99,26 +99,31 @@ public class MFAggregationBuilder {
 	}
 	
 	public static AggregationCollector aggregate(CubeSearcher searcher, AggregationRequest request) {
-		for(AggregationRequest.Part p : request.parts) if(p.groups == null) p.groups=new ArrayList<AggregationGroup>();
+		for(AggregationRequest.Part p : request.parts) {
+			if(p.groups == null) {
+				p.groups = new ArrayList<AggregationGroup>();
+			}
+		}
+		int groupsCount = request.parts[0].groups.size();
+		int partsCount = request.parts.length;
 		
-		int groupsCount = request.parts[0].groups == null ? 0 : request.parts[0].groups.size();
-		//if(groupsCount == 0) groupsCount = 1;
-		MetricCollectorSet collectorSet = MetricCollectorFactory.create(searcher, request.metrics);
-		MetricCounterSet counterSet = MetricCounterFactory.create(searcher, request.metrics);
-		
-		Result[] filters = new Result[request.parts.length];
-		MFCollectorSet[] fieldCollectors = new MFCollectorSet[filters.length];
+		Result[] filters = new Result[partsCount];
+		MFCollectorSet[] fieldCollectors = new MFCollectorSet[partsCount];
+		MetricCollectorSet[] collectorSets = new MetricCollectorSet[partsCount];
+		MetricCounterSet[] counterSets = new MetricCounterSet[partsCount];
 		for(int i = 0; i < filters.length; i++) {
 			filters[i] = ResultBuilder.search(request.tableDef, request.parts[i].query, searcher);
 			fieldCollectors[i] = new MFCollectorSet(searcher, request.parts[i].groups, filters.length == 1); 
+			collectorSets[i] = MetricCollectorFactory.create(searcher, request.parts[i].metrics);
+			counterSets[i] = MetricCounterFactory.create(searcher, request.parts[i].metrics);
 		}
-		
 		
 		if(request.isOnlyCountStar()) {
 			Result r = filters[0];
 			for(int i = 1; i < filters.length; i++) {
 				r.or(filters[i]);
 			}
+			
 			AggregationCollector collector = new AggregationCollector(r.countSet());
 			return collector;
 		}
@@ -128,9 +133,9 @@ public class MFAggregationBuilder {
 			sets[i] = new BdLongSet(1024);
 			sets[i].enableClearBuffer();
 		}
-		MGBuilder builder = new MGBuilder(searcher, collectorSet, groupsCount);
+		MGBuilder builder = new MGBuilder(searcher, collectorSets[0], groupsCount, request.differentMetricsForPairs);
 		
-		MetricValueSet valueSet = collectorSet.get();
+		MetricValueSet valueSet = collectorSets[0].get();
 		//collect empty groups: only for top group
 		if(groupsCount > 0 && fieldCollectors[0].collectors.length > 0) {
 			fieldCollectors[0].collectors[0].collectEmptyGroups(sets[0]);
@@ -147,36 +152,31 @@ public class MFAggregationBuilder {
 			commonSet.enableClearBuffer();
 			
 			for(int doc = 0; doc < filters[0].size(); doc++) {
-				if(!filters[0].get(doc)) continue;
-				valueSet.reset();
-				counterSet.add(doc, valueSet);
-				// common part in groups
-				fieldCollectors[0].commonPartCollector.collect(doc, commonSet);
-				for(int d = 0; d < commonSet.size(); d++) {
-					long commonDoc = commonSet.get(d);
-					fieldCollectors[0].collect(commonDoc, sets);
-					builder.add(doc, sets, valueSet);
-					for(int i = 0; i < sets.length; i++) sets[i].clear();
+				for(int i = 0; i < filters.length; i++) {
+					if(!filters[i].get(doc)) continue;
+					valueSet.reset();
+					counterSets[i].add(doc, valueSet);
+					// common part in groups
+					fieldCollectors[0].commonPartCollector.collect(doc, commonSet);
+					for(int d = 0; d < commonSet.size(); d++) {
+						long commonDoc = commonSet.get(d);
+						fieldCollectors[i].collect(commonDoc, sets);
+						builder.add(doc, sets, valueSet);
+						for(int j = 0; j < sets.length; j++) sets[j].clear();
+					}
+					commonSet.clear();
 				}
-				commonSet.clear();
 			}
 		}
 		else {
 			for(int doc = 0; doc < filters[0].size(); doc++) {
-				boolean collected = false;
 				for(int i = 0; i < filters.length; i++) {
 					if(!filters[i].get(doc)) continue;
-					if(!collected) {
-						collected = true;
-						valueSet.reset();
-						counterSet.add(doc, valueSet);
-					}
-					
+					valueSet.reset();
+					counterSets[i].add(doc, valueSet);
 					fieldCollectors[i].collect(doc, sets);
-				}
-				if(collected) {
 					builder.add(doc, sets, valueSet);
-					for(int i = 0; i < sets.length; i++) sets[i].clear();
+					for(int j = 0; j < sets.length; j++) sets[j].clear();
 				}
 			}
 		}

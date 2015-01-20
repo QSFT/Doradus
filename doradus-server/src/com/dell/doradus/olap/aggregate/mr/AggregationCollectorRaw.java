@@ -13,10 +13,12 @@ public class AggregationCollectorRaw {
 	private int m_documentsCount;
 	private int m_lastAddedDoc = -1;
 	private Group m_group;
+	private boolean m_forceAdd;
 
-	public AggregationCollectorRaw(MetricCollectorSet mcs) {
+	public AggregationCollectorRaw(MetricCollectorSet mcs, boolean forceAdd) {
 		m_mcs = mcs;
 		m_group = new Group(Long.MIN_VALUE, mcs.get());
+		m_forceAdd = forceAdd;
 	}
 	
 	public int documentsCount() { return m_documentsCount; }
@@ -33,7 +35,7 @@ public class AggregationCollectorRaw {
 				m_lastAddedDoc = doc;
 			}
 		}
-		m_group.add(keys, 0, metric);
+		m_group.add(m_forceAdd ? -1 : doc, keys, 0, metric);
 	}
 	
 	public List<BdLongMap<MGName>> createNamesMap(MFCollectorSet mfc) {
@@ -71,10 +73,12 @@ public class AggregationCollectorRaw {
 		private long m_key;
 		private MetricValueSet m_value;
 		private BdLongMap<Group> m_groups;
+		private int m_lastDoc;
 		
 		Group(long key, MetricValueSet value) {
 			m_key = key;
 			m_value = value;
+			m_lastDoc = -1;
 		}
 
 		public long getKey() { return m_key; }
@@ -101,7 +105,7 @@ public class AggregationCollectorRaw {
 			return "" + m_key + "=" + m_value.toString();
 		}
 		
-		void add(BdLongSet[] keys, int index, MetricValueSet metric) {
+		void add(int doc, BdLongSet[] keys, int index, MetricValueSet metric) {
 			if(index == keys.length) return;
 			BdLongSet keySet = keys[index];
 			if(m_groups == null) m_groups = new BdLongMap<Group>(index == 0 ? 1024 : 4);
@@ -113,8 +117,11 @@ public class AggregationCollectorRaw {
 					group = new Group(key, m);
 					m_groups.put(key, group);
 				}
-				group.m_value.add(metric);
-				if(index + 1 < keys.length) group.add(keys, index + 1, metric);
+				if(doc < 0 || doc != group.m_lastDoc) {
+					group.m_value.add(metric);
+					group.m_lastDoc = doc;
+				}
+				if(index + 1 < keys.length) group.add(doc, keys, index + 1, metric);
 			}
 			if(keySet.size() == 0) {
 				long key = Long.MIN_VALUE;
@@ -124,8 +131,11 @@ public class AggregationCollectorRaw {
 					group = new Group(key, m);
 					m_groups.put(key, group);
 				}
-				group.m_value.add(metric);
-				if(index + 1 < keys.length) group.add(keys, index + 1, metric);
+				if(doc < 0 || doc != group.m_lastDoc) {
+					group.m_value.add(metric);
+					group.m_lastDoc = doc;
+				}
+				if(index + 1 < keys.length) group.add(doc, keys, index + 1, metric);
 			}
 		}
 		

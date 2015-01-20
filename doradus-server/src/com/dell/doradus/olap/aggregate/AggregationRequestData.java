@@ -24,13 +24,15 @@ public class AggregationRequestData {
 	public List<String> shards;
 	public List<String> xshards;
 	public boolean flat;
+	//if true metrics will be added for _pair.first and _pair.second; otherwise only one value will be added
+	public boolean differentMetricsForPairs;
 	
-	public String metrics;
 	public Part[] parts;
 	
 	public static class Part {
 		public String query;
 		public String field;
+		public String metrics;
 	}
 	
 }

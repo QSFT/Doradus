@@ -41,13 +41,15 @@ public class AggregationRequest {
 	public TableDefinition tableDef;
 	public List<String> shards;
 	public List<String> xshards;
-	public List<MetricExpression> metrics;
 	public Part[] parts;
 	public boolean flat;
+	//if true metrics will be added for _pair.first and _pair.second; otherwise only one value will be added
+	public boolean differentMetricsForPairs;
 	
 	public static class Part {
 		public Query query;
 		public List<AggregationGroup> groups;
+		public List<MetricExpression> metrics;
 		public AggregationGroup getSingleGroup() {
 			if(groups == null || groups.size() == 0) return null;
 			Utils.require(groups.size() == 1, "More than one group present");
@@ -62,8 +64,8 @@ public class AggregationRequest {
 		Utils.require(tableDef != null, "Table " + requestData.table + " not found");
 		shards = requestData.shards;
 		xshards = requestData.xshards;
-		metrics = AggregationQueryBuilder.BuildAggregationMetricsExpression(requestData.metrics, tableDef);
 		flat = requestData.flat;
+		differentMetricsForPairs = requestData.differentMetricsForPairs;
 		
 		parts = new AggregationRequest.Part[requestData.parts.length];
 		for(int i = 0; i < parts.length; i++) {
@@ -74,23 +76,25 @@ public class AggregationRequest {
 	    		Utils.require(groupsSet.size() == 1, "Olap does not support multiple group sets");
 				parts[i].groups = groupsSet.get(0);
 			} else parts[i].groups = new ArrayList<AggregationGroup>(0);
+			parts[i].metrics = AggregationQueryBuilder.BuildAggregationMetricsExpression(requestData.parts[i].metrics, tableDef);
 		}
 		
     	XLinkContext xcontext = new XLinkContext(requestData.application, olap, xshards, tableDef);
     	XLinkGroupContext xgroupContext = new XLinkGroupContext(xcontext);
-    	for(int i=0; i<parts.length; i++) {
+    	XLinkMetricContext xmetriccontext = new XLinkMetricContext(xcontext);
+    	for(int i = 0; i < parts.length; i++) {
 	    	xcontext.setupXLinkQuery(tableDef, parts[i].query);
 	    	for(AggregationGroup group: parts[i].groups) {
 	    		xgroupContext.setupXLinkGroup(group);
 	    	}
+	    	xmetriccontext.setupXLinkMetric(parts[i].metrics);
     	}
-    	XLinkMetricContext xmetriccontext = new XLinkMetricContext(xcontext);
-    	xmetriccontext.setupXLinkMetric(metrics);
 	}
 	
 	public boolean isOnlyCountStar() {
-		if(metrics.size() != 1) return false;
-		MetricExpression me = metrics.get(0);
+		if(parts.length > 1) return false;
+		if(parts[0].metrics.size() != 1) return false;
+		MetricExpression me = parts[0].metrics.get(0);
 		if(!(me instanceof AggregationMetric)) return false;
 		AggregationMetric am = (AggregationMetric)me;
 		if(!"COUNT".equals(am.function)) return false;
