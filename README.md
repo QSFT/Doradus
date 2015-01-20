@@ -111,8 +111,10 @@ The following are the primary Doradus resources:
   
 		https://github.com/dell-oss/Doradus/issues
     
-- **Downloads**: Source, binary, and doc download bundles will be available soon
-  from Maven Central. Stay tuned!
+- **Downloads**: Source, binary, and doc download bundles can be downloaded
+  from Maven Central by searching for "Doradus". Example:
+  
+  		http://search.maven.org/#search%7Cga%7C1%7Cdoradus
 
 #Requirements
 Doradus requires Java 1.7 or higher and Cassandra 2.x, which must be installed
