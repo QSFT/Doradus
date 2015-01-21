@@ -110,7 +110,6 @@ public class OlapAggregate {
 		requestData.shards = olap.getShardsList(appDef, m_shards, m_shardsRange);
 		requestData.xshards = olap.getShardsList(appDef, m_xshards, m_xshardsRange);
 		requestData.table = table;
-		requestData.metrics = m_metrics;
 		requestData.flat = m_flat;
 		
 		if(m_pair == null) {
@@ -118,6 +117,7 @@ public class OlapAggregate {
 			requestData.parts[0] = new AggregationRequestData.Part();
 			requestData.parts[0].query = m_query;
 			requestData.parts[0].field = m_fields;
+			requestData.parts[0].metrics = m_metrics;
 			return requestData;
 		}
 		
@@ -137,6 +137,11 @@ public class OlapAggregate {
 		if(m_fields != null) {
 			requestData.parts[0].field = m_fields.replace("_pair.first", pairs[0]).replace("_pair.second", pairs[1]);
 			requestData.parts[1].field = m_fields.replace("_pair.first", pairs[1]).replace("_pair.second", pairs[0]); 
+		}
+		if(m_metrics != null) {
+			requestData.differentMetricsForPairs = m_metrics.contains("_pair.first") || m_metrics.contains("_pair.second");
+			requestData.parts[0].metrics = m_metrics.replace("_pair.first", pairs[0]).replace("_pair.second", pairs[1]);
+			requestData.parts[1].metrics = m_metrics.replace("_pair.first", pairs[1]).replace("_pair.second", pairs[0]);
 		}
 		
 		return requestData;
