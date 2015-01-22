@@ -65,6 +65,10 @@ public class AggregationGroup {
     
     //Batch values 
     public List<Object> batch;
+    
+    //Batchex filters
+    public List<String> batchexAliases;
+    public List<Query> batchexFilters;
 
     //To case function name
     public String tocase; 

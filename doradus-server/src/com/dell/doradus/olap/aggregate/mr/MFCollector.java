@@ -43,6 +43,7 @@ import com.dell.doradus.olap.xlink.XGroups;
 import com.dell.doradus.search.aggregate.AggregationGroup;
 import com.dell.doradus.search.aggregate.AggregationGroup.SubField;
 import com.dell.doradus.search.aggregate.AggregationGroupItem;
+import com.dell.doradus.search.query.Query;
 
 public abstract class MFCollector {
 	public CubeSearcher searcher;
@@ -55,6 +56,9 @@ public abstract class MFCollector {
 	public abstract boolean requiresOrdering(); 
 
 	public static MFCollector create(CubeSearcher searcher, AggregationGroup group) {
+		if(group.batchexAliases != null) {
+			return new BatchexCollector(searcher, group.tableDef, group.batchexAliases, group.batchexFilters);
+		}
 		AggregationGroupItem last = group.items.get(group.items.size() - 1);
 		FieldDefinition fieldDef = last.fieldDef;
 		MFCollector collector = null;
@@ -520,6 +524,40 @@ public abstract class MFCollector {
 		@Override public boolean requiresOrdering() { return m_collector.requiresOrdering(); }
 	}
 
+
+	public static class BatchexCollector extends MFCollector {
+		private String[] m_aliases;
+		private Result[] m_filters;
+		
+		public BatchexCollector(CubeSearcher searcher, TableDefinition tableDef, List<String> aliases, List<Query> queries) {
+			super(searcher);
+			m_aliases = new String[queries.size()];
+			m_filters = new Result[queries.size()];
+			for(int i = 0; i < queries.size(); i++) {
+				m_aliases[i] = aliases.get(i);
+				m_filters[i] = ResultBuilder.search(tableDef, queries.get(i), searcher);
+			}
+		}
+		
+		@Override public void collect(long doc, BdLongSet values) {
+			for(int i=0; i<m_aliases.length; i++) {
+				if(m_filters[i].get((int)doc)) values.add(i);
+			}
+		}
+
+		@Override public MGName getField(long value) {
+			return new MGName(m_aliases[(int)value], new BSTR(value));
+		}
+		
+		@Override public void collectEmptyGroups(BdLongSet values) {
+			for(long l = 0; l < m_aliases.length; l++) {
+				values.add(l);
+			}
+		}
+		
+		@Override public boolean requiresOrdering() { return false; }
+	}
+	
 	
 	public static class FilteredCollector extends MFCollector
 	{

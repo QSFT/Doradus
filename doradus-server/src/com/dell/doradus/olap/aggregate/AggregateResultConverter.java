@@ -157,8 +157,9 @@ public class AggregateResultConverter {
 	}
 
 	private static String extractGroupName(String name) {
-		int idx = name.indexOf(" AS ");
-		if(idx >= 0) name = name.substring(idx + 4);
+		int idx = name.lastIndexOf(" AS ");
+		int lastClosingBracket = name.lastIndexOf(')');
+		if(idx >= 0 && (lastClosingBracket < 0 || lastClosingBracket < idx)) name = name.substring(idx + 4);
 		else if((idx = name.indexOf(".AS(")) >= 0) {
 			name = name.substring(idx + 4);
 			name = name.substring(0, name.length() - 1);

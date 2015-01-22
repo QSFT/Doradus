@@ -311,6 +311,7 @@ public class DoradusSearchQueryGrammar {
         Keyword WHERE = new Keyword("WHERE", WORD);
         Keyword TRUNCATE = new Keyword("TRUNCATE", WORD);
         Keyword BATCH = new Keyword("BATCH", WORD);
+        Keyword BATCHEX = new Keyword("BATCHEX", WORD);
 
         Keyword TOP = new Keyword("TOP", WORD);
         Keyword BOTTOM = new Keyword("BOTTOM", WORD);
@@ -521,11 +522,11 @@ public class DoradusSearchQueryGrammar {
 
         ////// General Transitive clause, used outside  ANY, ALL NONE
 
-        GrammarRule OptionalTransitiveField = new SwitchRule("OptionalTransitiveField",
-                Grammar.Rule(DOT, FieldName, DotSemantic),
-                Grammar.emptyRule
-
-        );
+        //GrammarRule OptionalTransitiveField = new SwitchRule("OptionalTransitiveField",
+        //        Grammar.Rule(DOT, FieldName, DotSemantic),
+        //        Grammar.emptyRule
+        //
+        //);
 
         GrammarRule TransitiveLimit = Grammar.Rule("TransitiveLimit",
                 LEFTPAREN, OptWhiteSpaces, Grammar.MustMatchAction, NUMBER, OptWhiteSpaces, RIGHTPAREN, Grammar.Semantic("transitiveValue")
@@ -1048,7 +1049,18 @@ public class DoradusSearchQueryGrammar {
                 Grammar.Rule(AggregationQueryTermsClause, OptWhiteSpaces, Grammar.Semantic("EOAE"))
         );
 
+
+        GrammarRule BatchexCase = new SwitchRule("BatchexCase",
+        		Query, OptWhiteSpaces, AS, OptWhiteSpaces, Term, OptWhiteSpaces
+        );
+        ListRule BatchexList = new ListRule("BatchexList",
+                BatchexCase,
+                Grammar.Rule(OptWhiteSpaces, COMMA, Grammar.SetType("NEXTBATCHEX"), OptWhiteSpaces)
+                );
+        
         GrammarRule AggregationQueryBatchClause = new SwitchRule("AggregationQueryBatchClause",
+                Grammar.Rule(BATCHEX, Grammar.SetType("BATCHEX"), Grammar.MustMatchAction, OptWhiteSpaces,
+                        LEFTPAREN, Grammar.SetType("ignore"), OptWhiteSpaces, BatchexList, OptWhiteSpaces, RIGHTPAREN, Grammar.SetType("ENDBATCHEX")),
                 Grammar.Rule(BATCH, Grammar.SetType("BATCH"), Grammar.MustMatchAction, OptWhiteSpaces,
                         LEFTPAREN, OptWhiteSpaces, AggregationQueryTruncateClause,
                         OptWhiteSpaces, COMMA, Grammar.SetType("ignore"), OptWhiteSpaces,

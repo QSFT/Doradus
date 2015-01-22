@@ -25,9 +25,6 @@ import java.util.Stack;
 
 public class SearchQueryBuilder {
 
-    //On O.Tarakanov request - do not replace group names
-    private static boolean replaceGroupMode = false;
-
     private static boolean isImmediate(String operation) {
         if (operation.equals("}") || operation.equals("]") ||
                 operation.equals(")") ||

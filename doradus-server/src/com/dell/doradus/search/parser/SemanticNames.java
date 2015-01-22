@@ -41,6 +41,9 @@ public class SemanticNames {
     public static final String UPPER = "UPPER";
     public static final String LOWER = "LOWER";
     public static final String BATCH = "BATCH";
+    public static final String BATCHEX = "BATCHEX";
+    public static final String NEXTBATCHEX = "NEXTBATCHEX";
+    public static final String ENDBATCHEX = "ENDBATCHEX";
     public static final String TRUNCATE = "TRUNCATE";
     public static final String DESC = "DESC";
     public static final String ASC = "ASC";
