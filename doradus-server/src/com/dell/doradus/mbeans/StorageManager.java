@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -33,8 +32,6 @@ import org.slf4j.LoggerFactory;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.management.LongJob;
 import com.dell.doradus.management.StorageManagerMXBean;
-import com.dell.doradus.management.TaskSettings;
-import com.dell.doradus.management.TaskStatus;
 
 /**
  * Implements the StorageManagerMXBean interface to the Cassandra database node
@@ -247,55 +244,6 @@ public class StorageManager extends MBeanBase implements StorageManagerMXBean {
 	
 	/////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////
-	
-//	 public String  sendInterruptTaskCommand(String appName, String taskOrGroupKey) {
-//		String jobID = consNextJobID();
-//		String jobName = consJobName("interruptTaskExecution", appName, taskOrGroupKey);
-//		LongJob job = getTaskManager().consInterruptJob(jobID, jobName,
-//				appName, taskOrGroupKey);
-//		startJob(job);
-//		return jobID;
-//	 }
-//	 public String  sendSuspendSchedulingCommand(String appName, String taskOrGroupKey) {
-//			String jobID = consNextJobID();
-//			String jobName = consJobName("suspendTaskScheduling", appName, taskOrGroupKey);
-//			LongJob job = getTaskManager().consSuspendJob(jobID, jobName,
-//					appName, taskOrGroupKey);
-//			startJob(job);
-//			return jobID;
-//	 }
-//	 public String  sendResumeSchedulingCommand(String appName, String taskOrGroupKey) {
-//			String jobID = consNextJobID();
-//			String jobName = consJobName("resumeTaskScheduling", appName, taskOrGroupKey);
-//			LongJob job = getTaskManager().consResumeJob(jobID, jobName,
-//					appName, taskOrGroupKey);
-//			startJob(job);
-//			return jobID;
-//	 }
-//	 public String  sendUpdateSettingsCommand(String appName, TaskSettings taskOrGroupSettings) {
-//			String jobID = consNextJobID();
-//			String jobName = consJobName("updateTaskSettings", appName, taskOrGroupSettings == null ? "null" : taskOrGroupSettings.getKey());
-//			LongJob job = getTaskManager().consUpdateJob(jobID, jobName,
-//					appName, taskOrGroupSettings);
-//			startJob(job);
-//			return jobID;
-//	 }
-//	 public TaskSettings getGlobalDefaultSettings() {
-//		 return getTaskManager().getGlobalDefaultSettings();
-//	 }
-//	 public Set<String> getAppNames() {
-//		 return getTaskManager().getAppNames();
-//	 }
-//	 public Map<String, TaskSettings> getAppSettings(String appName) {
-//		 return getTaskManager().getAppSettings(appName);
-//	 }
-//	 public TaskStatus getTaskStatus(String appName, String taskKey) {
-//		 return getTaskManager().getTaskStatus(appName, taskKey);
-//	 }
-	 
-
-	/////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////
 	private String consJobName(String opName, String... args) {
 		StringBuilder b = new StringBuilder();
 		b.append(opName + "(");
@@ -319,17 +267,6 @@ public class StorageManager extends MBeanBase implements StorageManagerMXBean {
 		return node;
 	}
 	
-	private TaskManagerAdapter getTaskManager() {
-		if (taskManager == null) {
-			synchronized (this) {
-				if (taskManager == null) {
-					taskManager = new TaskManagerAdapter();
-				}
-			}
-		}
-		return taskManager;
-	}
-
 	private synchronized void startJob(LongJob job) {
 		if (future != null && !future.isDone()) {
 			throw new IllegalStateException("Service busy. The \""
@@ -386,5 +323,4 @@ public class StorageManager extends MBeanBase implements StorageManagerMXBean {
 	private String pid;
 	private Map<String,LongJob> jobMap = new HashMap<String,LongJob>();
 	private List<String> jobList = new LinkedList<String>();
-	private TaskManagerAdapter taskManager;
 }

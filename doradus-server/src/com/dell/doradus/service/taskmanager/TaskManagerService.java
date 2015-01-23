@@ -16,89 +16,68 @@
 
 package com.dell.doradus.service.taskmanager;
 
-import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import it.sauronsoftware.cron4j.Scheduler;
-import it.sauronsoftware.cron4j.TaskCollector;
-import it.sauronsoftware.cron4j.TaskExecutor;
-import it.sauronsoftware.cron4j.TaskTable;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.dell.doradus.common.ApplicationDefinition;
-import com.dell.doradus.common.ScheduleDefinition;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.common.ScheduleDefinition.SchedType;
-import com.dell.doradus.core.ServerConfig;
-import com.dell.doradus.management.TaskRunState;
-import com.dell.doradus.management.TaskSettings;
-import com.dell.doradus.management.TaskStatus;
 import com.dell.doradus.service.Service;
+import com.dell.doradus.service.StorageService;
 import com.dell.doradus.service.db.DBService;
+import com.dell.doradus.service.db.DBTransaction;
+import com.dell.doradus.service.db.DColumn;
+import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
-import com.dell.doradus.tasks.DoradusTask;
-import com.dell.doradus.tasks.ITaskManager;
+import com.dell.doradus.service.taskmanager.TaskRecord.TaskStatus;
 
 /**
- * Background tasks service.
- * 
- * The service starts an instance of tasks scheduler to set a series of
- * timers that would start background tasks according to their time schedule.
- * Every Doradus node is allowed to perform only a limited number of tasks,
- * so in multi-node environment all the Doradus nodes would compete for
- * tasks to run.
- * 
- * The service implements an interface ITaskManager to serve as a JMX service
- * too. Doradus Console application uses this service to control background
- * tasks launching, interrupting, suspending, and so on.
+ * Provides task execution service for Doradus. If this service is enabled, it looks for
+ * tasks across all tenants and applications and executes them on schedule. Multiple
+ * Doradus nodes may be executing in a cluster, each of which may have a TaskManager
+ * service enabled. To prevent duplicate/overlapping executions of the same task, a simple
+ * "claim" algorithm is used to ensure only one Doradus instance executes any given task.
  */
-public class TaskManagerService extends Service implements ITaskManager {
-	// Default number of tasks that can be started concurrently on the node
-	public static final int MAX_NODE_TASKS = 2;
-	// Delay (in seconds) before a task will be actually started.
-	// Actually several more seconds will be wasted to cover possible errors in
-	// nodes time synchronization.
-	public static final int TASK_EXEC_DELAY = 5;
-	// Maximal number of tasks restarts in case of tasks failures
-	public static final int TASK_RESTARTS = 2;
-	// Time interval (in seconds) between consequent checks whether some task
-	// should be interrupted. 
-	public static final int CHECK_INTERRUPTING_INTERVAL = 10;
-	
-	// Task scheduler
-	Scheduler m_scheduler = new Scheduler();
-	
-	// Host Inet address
-	private String m_localHost;
+public class TaskManagerService extends Service {
+    // Tasks ColumnFamily name:
+    public static final String TASKS_STORE_NAME = "Tasks";
+    
+    // Hard-coded constants:
+    private static final int SLEEP_TIME_MILLIS = 60000;
+    private static final int CLAIM_WAIT_MILLIS = 1000;
+    private static final int MAX_TASKS = 2;
     
     // Singleton object:
     private static final TaskManagerService INSTANCE = new TaskManagerService();
     
+    // Members:
+    private Thread m_taskManager;
+    private boolean m_bShutdown;
+    private String  m_localHost;
+    
+    // Task execution management:
+    private final ExecutorService m_executor = Executors.newFixedThreadPool(MAX_TASKS);
+    private final AtomicInteger   m_currentTasks = new AtomicInteger();
+    
     // REST commands registered:
     private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
-//      new RESTCommand("GET    /_tasks                                 com.dell.doradus.service.taskmanager.ListTasksCmd"),
-        new RESTCommand("GET    /_tasks/{application}                   com.dell.doradus.service.taskmanager.ListTasksCmd"),
-        new RESTCommand("GET    /_tasks/{application}/{table}           com.dell.doradus.service.taskmanager.ListTasksCmd"),
-        new RESTCommand("GET    /_tasks/{application}/{table}/{task}    com.dell.doradus.service.taskmanager.ListTasksCmd"),
-        
-//      new RESTCommand("PUT    /_tasks?{command}                                 com.dell.doradus.service.taskmanager.TaskControlCmd"),
-        new RESTCommand("PUT    /_tasks/{application}?{command}                   com.dell.doradus.service.taskmanager.TaskControlCmd"),
-        new RESTCommand("PUT    /_tasks/{application}/{table}?{command}           com.dell.doradus.service.taskmanager.TaskControlCmd"),
-        new RESTCommand("PUT    /_tasks/{application}/{table}/{task}?{command}    com.dell.doradus.service.taskmanager.TaskControlCmd"),
-        new RESTCommand("PUT    /_tasks/{application}/{table}/{task}/{param}?{command}    com.dell.doradus.service.taskmanager.TaskControlCmd"),
+        new RESTCommand("GET /_tasks com.dell.doradus.service.taskmanager.ListTasksCmd"),
     });
+    
+    //----- Public methods
     
     /**
      * Get the singleton instance of this service. The service may or may not have been
@@ -110,428 +89,281 @@ public class TaskManagerService extends Service implements ITaskManager {
         return INSTANCE;
     }   // instance
     
-    /**
-     * Checks if the service is initialized and started
-     * @return	Initializing flag
-     */
-    public boolean isInitialized() { return getState().isRunning(); }
-    
-    public String getLocalHostAddress() { return m_localHost; }
-    
-    ///// Service methods
-    
-    /**
-     * Makes initial settings to task scheduler and registers REST commands
-     */
     @Override
-    public void initService() {
-    	// Scheduler settings
-        //m_scheduler.setTimeZone(TimeZone.getTimeZone("UTC"));
-        m_scheduler.addTaskCollector(new TaskCollector() {
-			@Override
-			public TaskTable getTasks() {
-				return TaskDBUtils.getTasksSchedule();
-			}
-        });
-        m_scheduler.addSchedulerListener(new DoradusSchedulerListener());
+    protected void initService() {
         RESTService.instance().registerRESTCommands(REST_RULES);
-    }   // initService
+    }
 
     @Override
-    public void startService() {
+    protected void startService() {
         DBService.instance().waitForFullService();
-		try {
-			m_localHost = InetAddress.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e) {
-			m_localHost = "0.0.0.0";
-		}
-		TaskDBUtils.checkUnknownTasks();
-        TaskDBUtils.checkHangedTasks();
-        m_scheduler.start();
-        startCheckTaskInterruptions();
-    }   // startService
+        m_taskManager = new Thread("Task Manager") {
+            @Override
+            public void run() {
+                manageTasks();
+            }
+        };
+        m_taskManager.start();
+    }
 
     @Override
-    public void stopService() {
-        m_logger.info("Stopping");
-        if (m_scheduler.isStarted()) {
-            m_scheduler.stop();
+    protected void stopService() {
+        if (getState().isRunning()) {
+            m_bShutdown = true;
+            m_taskManager.interrupt();
+            try {
+                m_taskManager.join();
+            } catch (InterruptedException e) {
+                // ignore
+            }
         }
     }   // stopService
-    
+
     /**
-     * Number of currently executing background tasks on this node.
-     * @return
+     * Increment the number of active tasks counted. Each call to this method must be
+     * paired with a reciprical call to {@link #decrementActiveTasks()}. 
      */
-    public int runningTasksNumber() {
-    	return m_scheduler.getExecutingTasks().length;
-    }	// runningTasksNumber
+    public void incrementActiveTasks() {
+        m_currentTasks.incrementAndGet();
+    }
 
-	@Override
-	public Set<String> getAppNames() throws IOException {
-		Set<String> allNames = new HashSet<String>();
-        for (Tenant tenant : DBService.instance().getTenants()) {
-            for (ApplicationDefinition app : SchemaService.instance().getAllApplications(tenant)) {
-                allNames.add(app.getAppName());
-            }
-        }
-		return allNames;
-	}
-
-	@Override
-	public TaskSettings getGlobalDefaultSettings() {
-		TaskSettings settings = new TaskSettings();
-		if (ServerConfig.getInstance().default_schedule != null) {
-			settings.setSchedule(ServerConfig.getInstance().default_schedule);
-		}
-		return  settings;
-	}
-
-	@Override
-	public Map<String, TaskSettings> getAppSettings(Tenant tenant, String appName)
-			throws IOException {
-		ApplicationDefinition appDef = SchemaService.instance().getApplication(tenant, appName);
-		Map<String, TaskSettings> mapTasks = new HashMap<String, TaskSettings>();
-		
-		// Extract the info about scheduled tasks
-		Map<String, ScheduleDefinition> scheduleTasks = appDef.getSchedules();
-		for(String key : scheduleTasks.keySet()) {
-			ScheduleDefinition definition = scheduleTasks.get(key);
-			SchedType taskType = definition.getType();
-			String taskName = taskType.getName();
-			String tableName = definition.getTableName();
-			if (tableName == null) {
-				tableName = "*";
-			}
-			String settingsKey = null;
-			switch (taskType) {
-			case APP_DEFAULT:
-			case TABLE_DEFAULT:
-				settingsKey = tableName + "/*";
-				break;
-			default:
-				settingsKey = tableName + "/" + taskName;
-				break;
-			}
-			TaskSettings task = TaskSettings.createByKey(settingsKey);
-			String schedule = definition.getSchedSpec();
-			if (!Utils.isEmpty(schedule)) {
-				task.setSchedule(schedule);
-			}
-			mapTasks.put(task.getKey(), task);
-		}
-		
-		// Extract info about all the other tasks
-		// Currently we don't need any information about "not manageable" tasks
-		// in the Doradus console, so excluding the next section of code.
-//		for (TaskId task : TaskDBUtils.getLiveTasks(appName)) {
-//			String key = task.getTaskTableId().substring(appName.length() + 1);
-//			if (!mapTasks.containsKey(key)) {
-//				StringBuilder settingsKey = new StringBuilder(task.getTableName() == null ? "*" : task.getTableName());
-//				settingsKey.append("/").append(task.getTaskType());
-//				if (task.getParam() != null) {
-//					settingsKey.append("/").append(task.getParam());
-//				}
-//				mapTasks.put(key, TaskSettings.createByKey(settingsKey.toString()));
-//			}
-//		}
-		return mapTasks;
-	}
-
-	@Override
-	public TaskStatus getTaskStatus(Tenant tenant, String appName, String taskKey) {
-		return TaskDBUtils.getTaskStatus(tenant, appName, taskKey);
-	}
-
-	@Override
-	public void interrupt() throws IOException {
-		interrupt(TaskFilter.NO_FILTER);
-	}
-
-	@Override
-	public void interrupt(final String finAppName) throws IOException {
-		interrupt(new TaskFilter() {
-			@Override
-			public boolean filter(String appName, String taskId) {
-				return appName.equals(finAppName);
-			}
-		});
-	}
-
-	@Override
-	public boolean interrupt(final String finAppName, final String taskKey) {
-		return interrupt(new TaskFilter() {
-			@Override
-			public boolean filter(String appName, String taskId) {
-				return new TaskMatcher(finAppName, taskKey).match(appName, taskId);
-			}
-		});
-	}
-
-	@Override
-	public void suspend() throws IOException {
-		suspend(TaskFilter.NO_FILTER);
-	}
-
-	@Override
-	public void suspend(final String finAppName) throws IOException {
-		suspend(new TaskFilter() {
-			@Override
-			public boolean filter(String appName, String taskId) {
-				return appName.equals(finAppName);
-			}
-		});
-	}
-
-	@Override
-	public void suspend(final String finAppName, final String taskKey) {
-		suspend(new TaskFilter() {
-			@Override
-			public boolean filter(String appName, String taskId) {
-				return new TaskMatcher(finAppName, taskKey).match(appName, taskId);
-			}
-		});
-	}
-
-	@Override
-	public void resume() throws IOException {
-		resume(TaskFilter.NO_FILTER);
-	}
-
-	@Override
-	public void resume(final String finAppName) throws IOException {
-		resume(new TaskFilter() {
-			@Override
-			public boolean filter(String appName, String taskId) {
-				return appName.equals(finAppName);
-			}
-		});
-	}
-
-	@Override
-	public void resume(final String finAppName, final String taskKey) {
-		resume(new TaskFilter() {
-			@Override
-			public boolean filter(String appName, String taskId) {
-				return new TaskMatcher(finAppName, taskKey).match(appName, taskId);
-			}
-		});
-	}
-
-	@Override
-	public void shutdown(boolean waitForTasksToComplete) throws IOException {
-		if (!waitForTasksToComplete) {
-			interrupt();
-		}
-		stopService();
-	}
-
-	@Override
-	public void updateSettings(Tenant tenant, String appName, TaskSettings settings)
-			throws IOException {
-		String scheduleName = getScheduleName(appName, settings);
-		String taskName = settings.getTaskName();
-		String taskId = settings.getKey();
-		String[] taskIdParts = taskId.split("/");
-		SchedType taskType = 
-				taskName != null ? SchedType.getByName(taskIdParts[1]) :
-				settings.getTableName() == null ? SchedType.APP_DEFAULT : 
-				SchedType.TABLE_DEFAULT;
-		ApplicationDefinition oldAppDef = SchemaService.instance().getApplication(tenant, appName);
-		oldAppDef.getSchedules().remove(scheduleName);
-		if (settings.getSchedule() != null ||
-				(taskType != SchedType.APP_DEFAULT && taskType != SchedType.TABLE_DEFAULT)) {
-			oldAppDef.addSchedule(new ScheduleDefinition(
-					oldAppDef, taskType,
-					settings.getSchedule(),
-					settings.getTableName()));
-		}
-		SchemaService.instance().defineApplication(oldAppDef);
-	}
-
-	@Override
-	public void startScheduling() throws IOException {
-		// Not used in current implementation
-	}
-
-	@Override
-	public TaskStatus getTaskInfo(Tenant tenant, String appName, String taskName) {
-		return TaskDBUtils.getTaskStatus(tenant, appName, taskName);
-	}
-
-	@Override
-	public void setTaskInfo(Tenant tenant, String appName, String taskName, TaskStatus status) {
-		TaskDBUtils.setTaskStatus(tenant, appName, taskName, status);
-	}
-
-	@Override
-	public boolean startImmediately(Tenant tenant, String appName, String taskId) {
-		DoradusTask task = DoradusTask.createTask(tenant, appName, taskId);
-		if (task != null) {
-			m_scheduler.launch(task);
-		}
-		return task != null;
-	}
-	
-	public void startTask(DoradusTask task) {
-		m_scheduler.launch(task);
-	}
-	
     /**
-     * Creates a name for task scheduling according to the task settings
-     * @param appName   Application name
-     * @param settings  Task settings
-     * @return          Task name for scheduling
+     * Decrement the number of active tasks counted. This method must be called after
+     * {@link #incrementActiveTasks()} is called when a task finishes, good or bad.
      */
-    public static String getScheduleName(String appName, TaskSettings settings) {
-        if(settings.isDefaultSettings()) {
-            StringBuffer scheduleName = new StringBuffer();
-            if(settings.getTableName() == null || settings.getTableName().isEmpty()) {
-                scheduleName.append("app-default");
-                scheduleName.append(TaskSettings.KEY_SEP);
-                scheduleName.append(appName);
-            }
-            else {
-                scheduleName.append("table-default");
-                scheduleName.append(TaskSettings.KEY_SEP);
-                scheduleName.append(appName);
-                scheduleName.append(TaskSettings.KEY_SEP);
-                scheduleName.append(settings.getTableName());   
-            }
-            return scheduleName.toString();
-        }
-        String taskName = settings.getKey();
-        StringBuffer scheduleName = new StringBuffer(getTaskType(taskName));
-        scheduleName.append(TaskSettings.KEY_SEP);
-        scheduleName.append(appName);
-        String tableName = settings.getTableName();
-        if( tableName != null && !tableName.isEmpty()) {
-            scheduleName.append(TaskSettings.KEY_SEP);
-            scheduleName.append(tableName);
-        }
-        else {
-            scheduleName.append(TaskSettings.KEY_SEP);
-            scheduleName.append(TaskSettings.KEY_ALL);          
-        }
-        if(taskName != null && !getTaskDeclaration(taskName).isEmpty()) {
-            scheduleName.append(TaskSettings.KEY_SEP);
-            scheduleName.append(getTaskDeclaration(taskName));          
-        }
-        return scheduleName.toString();
+    public void decrementActiveTasks() {
+        m_currentTasks.decrementAndGet();
     }
     
     /**
-     * Task name has the form table/type/params.
-     * This function extracts the task parameters part (if exist).
-     * @param taskName
-     * @return
+     * Return all {@link TaskRecord}s stored in the Tasks table for the given tenant. This
+     * provides an account of all known tasks, past and present.
+     * 
+     * @param tenant    {@link Tenant} to query.
+     * @return          Collection of TaskRecords representing all known task statuses.
      */
-    private static String getTaskDeclaration(String taskName) {
-        String[] nameParts = taskName.split("/");
-        if (nameParts.length <= 2) return "";
-        return nameParts[2];
+    public Collection<TaskRecord> getTaskRecords(Tenant tenant) {
+        checkServiceState();
+        Iterator<DRow> rowIter =
+            DBService.instance().getAllRowsAllColumns(tenant, TaskManagerService.TASKS_STORE_NAME);
+        List<TaskRecord> taskRecords = new ArrayList<>();
+        while (rowIter.hasNext()) {
+            DRow row = rowIter.next();
+            String taskID = row.getKey();
+            if (taskID.startsWith("_claim/")) {
+                continue;
+            }
+            Iterator<DColumn> colIter = row.getColumns();
+            TaskRecord taskRecord = buildTaskRecord(taskID, colIter);
+            taskRecords.add(taskRecord);
+        }
+        return taskRecords;
+    }
+
+    //----- Private methods
+
+    // Thread entrypoint when the TaskManagerService starts. Wake-up periodically and look for
+    // tasks we can run. Shutdown when told to do so.
+    private void manageTasks() {
+        setHostAddress();
+        while (!m_bShutdown) {
+            checkAllTasks();
+            try {
+                Thread.sleep(SLEEP_TIME_MILLIS);
+            } catch (InterruptedException e) {
+            }
+        }
+        m_executor.shutdown();
+    }   // manageTasks
+    
+    // Check all tenants for tasks that need execution.
+    private void checkAllTasks() {
+        for (Tenant tenant: DBService.instance().getTenants()) {
+            checkTenantTasks(tenant);
+            if (m_bShutdown) {
+                break;
+            }
+        }
+    }   // checkAllTasks
+    
+    // Check the given tenant for tasks that need execution.
+    private void checkTenantTasks(Tenant tenant) {
+        m_logger.debug("Checking tenant '{}' for needy tasks", tenant);
+        for (ApplicationDefinition appDef : SchemaService.instance().getAllApplications(tenant)) {
+            for (Task task : getAppTasks(appDef)) {
+                checkTaskForExecution(appDef, task);
+            }
+        }
+    }   // checkTenantTasks
+
+    // Check the given task to see if we should and can execute it.
+    private void checkTaskForExecution(ApplicationDefinition appDef, Task task) {
+        Tenant tenant = Tenant.getTenant(appDef);
+        m_logger.debug("Checking task '{}' in tenant '{}'", task.getTaskID(), tenant);
+        Iterator<DColumn> colIter =
+            DBService.instance().getAllColumns(tenant, TaskManagerService.TASKS_STORE_NAME, task.getTaskID());
+        TaskRecord taskRecord = null;
+        if (colIter == null) {
+            taskRecord = storeTaskRecord(tenant, task);
+        } else {
+            taskRecord = buildTaskRecord(task.getTaskID(), colIter);
+        }
+        if (taskShouldExecute(task, taskRecord) && canHandleMoreTasks()) {
+            attemptToExecuteTask(appDef, task, taskRecord);
+        }
+    }   // checkTaskForExecution
+
+    // Indicate if the given task should be executed. This is always true for a task that
+    // has never executed. It is also true if (1) the task is not already being executed,
+    // and (2) enough time has passed since its last execution that it's time to run.
+    private boolean taskShouldExecute(Task task, TaskRecord taskRecord) {
+        String taskID = taskRecord.getTaskID();
+        if (taskRecord.getStatus() == TaskStatus.NEVER_EXECUTED) {
+            m_logger.debug("Task '{}' has never executed", taskID);
+            return true;
+        }
+        if (taskRecord.getStatus() == TaskStatus.IN_PROGRESS) {
+            m_logger.debug("Task '{}' is already being executed", taskID);
+            return false;
+        }
+        
+        long startTimeMillis = taskRecord.getStartTime().getTimeInMillis();
+        long taskPeriodMillis = task.getTaskFreq().getValueInMinutes() * 60 * 1000;
+        long nowMillis = System.currentTimeMillis();
+        boolean bShouldStart = startTimeMillis + taskPeriodMillis <= nowMillis;
+        m_logger.debug("Considering task {}: Last started at {}; periodicity in millis: {}; current time: {}; next start: {}; should start: {}",
+                      new Object[]{task.getTaskID(),
+                                   Utils.formatDateUTC(startTimeMillis, Calendar.MILLISECOND),
+                                   taskPeriodMillis,
+                                   Utils.formatDateUTC(nowMillis, Calendar.MILLISECOND),
+                                   Utils.formatDateUTC(startTimeMillis + taskPeriodMillis, Calendar.MILLISECOND),
+                                   bShouldStart});
+        return bShouldStart;
+    }   // taskShouldExecute
+
+    // Indicate if we have room to execute another task.
+    private boolean canHandleMoreTasks() {
+        return m_currentTasks.get() < MAX_TASKS;
     }
     
-    /**
-     * Task name has the form table/type/params. This function extracts the task type.
-     * @param taskName
-     * @return
-     */
-    private static String getTaskType(String taskName) {
-        String[] nameParts = taskName.split("/");
-        return nameParts[1];
+    // Attempt to start the given task by creating claim and see if we win it.
+    private void attemptToExecuteTask(ApplicationDefinition appDef, Task task, TaskRecord taskRecord) {
+        Tenant tenant = Tenant.getTenant(appDef);
+        String taskID = taskRecord.getTaskID();
+        String claimID = "_claim/" + taskID;
+        long claimStamp = System.currentTimeMillis();
+        writeTaskClaim(tenant, claimID, claimStamp);
+        if (taskClaimedByUs(tenant, claimID)) {
+            startTask(appDef, task, taskRecord);
+        }
     }
-    
-	/**
-	 * Selects tasks by a given filter and interrupts them.
-	 * @param filter
-	 */
-	private boolean interrupt(TaskFilter filter) {
-		boolean taskFound = false;
-		Map<String, Map<String, Set<String>>> allTaskNames = TaskDBUtils.getAllTaskNames();
-		for (String tenantName : allTaskNames.keySet()) {
-		    Tenant tenant = new Tenant(tenantName);
-		    Map<String, Set<String>> tenantTaskNames = allTaskNames.get(tenantName);
-		    for (String appName : tenantTaskNames.keySet()) {
-		        for (String taskId : tenantTaskNames.get(appName)) {
-		            if (filter.filter(appName, taskId)) {
-		                boolean interrupted = TaskDBUtils.interruptTask(tenant, appName, taskId);
-		                taskFound = taskFound || interrupted;
-		            }
-		        }
-		    }
-		}
-		return taskFound;
-	}
-	
-	/**
-	 * Selects tasks by a given filter and suspends them.
-	 * @param filter
-	 */
-	private boolean suspend(TaskFilter filter) {
-		boolean taskFound = false;
-        Map<String, Map<String, Set<String>>> allTaskNames = TaskDBUtils.getAllTaskNames();
-        for (String tenantName : allTaskNames.keySet()) {
-            Tenant tenant = new Tenant(tenantName);
-            Map<String, Set<String>> tenantTaskNames = allTaskNames.get(tenantName);
-            for (String appName : tenantTaskNames.keySet()) {
-                for (String taskId : tenantTaskNames.get(appName)) {
-                    if (filter.filter(appName, taskId)) {
-                        TaskDBUtils.suspendTask(tenant, appName, taskId);
-                        taskFound = true;
+
+    // Execute the given task by creating a TaskExecutor for it and handing to the
+    // ExecutorService.
+    private void startTask(ApplicationDefinition appDef, Task task, TaskRecord taskRecord) {
+        try {
+            Class<? extends TaskExecutor> jobClass = task.getExecutorClass();
+            Constructor<?> noArgConstructor = jobClass.getConstructor((Class<?>[])null);
+            TaskExecutor executor = (TaskExecutor) noArgConstructor.newInstance((Object[])null);
+            executor.setParams(m_localHost, appDef, taskRecord);
+            m_executor.execute(executor);
+        } catch (Exception e) {
+            m_logger.error("Failed to start task '" + task.getTaskID() + "'", e);
+        }
+    }   // startTask
+
+    // Indicate if we won the claim to run the given task.
+    private boolean taskClaimedByUs(Tenant tenant, String claimID) {
+        waitForClaim();
+        Iterator<DColumn> colIter =
+            DBService.instance().getAllColumns(tenant, TaskManagerService.TASKS_STORE_NAME, claimID);
+        if (colIter == null) {
+            m_logger.warn("Claim record disappeared: {}", claimID);
+            return false;
+        }
+        String claimingHost = m_localHost;
+        long earliestClaim = Long.MAX_VALUE;
+        while (colIter.hasNext()) {
+            DColumn col = colIter.next();
+            try {
+                long claimStamp = Long.parseLong(col.getValue());
+                String claimHost = col.getName();
+                if (claimStamp < earliestClaim) {
+                    claimingHost = claimHost;
+                    earliestClaim = claimStamp;
+                } else if (claimStamp == earliestClaim) {
+                    // Two nodes chose the same claim stamp. Lower node name wins.
+                    if (claimHost.compareTo(claimingHost) < 0) {
+                        claimingHost = claimHost;
                     }
                 }
+            } catch (NumberFormatException e) {
+                // Ignore this column
             }
         }
-		return taskFound;
-	}
-	
-	/**
-	 * Selects tasks by a given filter and resumes them.
-	 * @param filter
-	 */
-	private boolean resume(TaskFilter filter) {
-		boolean taskFound = false;
-        Map<String, Map<String, Set<String>>> allTaskNames = TaskDBUtils.getAllTaskNames();
-        for (String tenantName : allTaskNames.keySet()) {
-            Tenant tenant = new Tenant(tenantName);
-            Map<String, Set<String>> tenantTaskNames = allTaskNames.get(tenantName);
-            for (String appName : tenantTaskNames.keySet()) {
-                for (String taskId : tenantTaskNames.get(appName)) {
-                    if (filter.filter(appName, taskId)) {
-                        TaskDBUtils.resumeTask(tenant, appName, taskId);
-                        taskFound = true;
-                    }
-                }
-            }
+        return claimingHost.equals(m_localHost) && !m_bShutdown;
+    }   // taskClaimedByUs
+
+    // Sleep the configured amount of time for other hosts to stake their claim.
+    private void waitForClaim() {
+        try {
+            Thread.sleep(CLAIM_WAIT_MILLIS);
+        } catch (InterruptedException e) {
         }
-		return taskFound;
-	}
+    }   // waitForClaim
     
-	/**
-	 * Starts a thread that periodically tests whether a running task
-	 * should be stopped. External commands (e.g. from Doradus console
-	 * or from REST interface command) may claim for interruption.
-	 */
-    private void startCheckTaskInterruptions() {
-    	long timeInterval = ServerConfig.getInstance().check_interrupting_interval;
-    	ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-    	executor.scheduleAtFixedRate(new Runnable() {
-    		@Override
-    		public void run() {
-				for (TaskExecutor te : m_scheduler.getExecutingTasks()) {
-					if (te.isStopped()) {
-						// Task was already stopped
-						continue;
-					}
-					DoradusTask task = (DoradusTask)te.getTask();
-					TaskStatus status = TaskDBUtils.getTaskStatus(task.getTenant(), task.getAppName(), task.getTaskId());
-					if (status.getLastRunState() == TaskRunState.Interrupting && te.isAlive() && !te.isStopped()) {
-						te.stop();
-					}
-				}
-    		}
-    	}, 
-    	timeInterval, timeInterval, TimeUnit.SECONDS);
-    }
-}
+    // Write a claim record to the Tasks table.
+    private void writeTaskClaim(Tenant tenant, String claimID, long claimStamp) {
+        DBTransaction dbTran = DBService.instance().startTransaction(tenant);
+        dbTran.addColumn(TaskManagerService.TASKS_STORE_NAME, claimID, m_localHost, claimStamp);
+        DBService.instance().commit(dbTran);
+    }   // writeTaskClaim
+    
+    // Create a TaskRecord from a task status row read from the Tasks table.
+    private TaskRecord buildTaskRecord(String taskID, Iterator<DColumn> colIter) {
+        TaskRecord taskRecord = new TaskRecord(taskID);
+        while (colIter.hasNext()) {
+            DColumn col = colIter.next();
+            taskRecord.setProperty(col.getName(), col.getValue());
+        }
+        return taskRecord;
+    }   // buildTaskRecord
+
+    // Create a TaskRecord for the given task and write it to the Tasks table.
+    private TaskRecord storeTaskRecord(Tenant tenant, Task task) {
+        DBTransaction dbTran = DBService.instance().startTransaction(tenant);
+        TaskRecord taskRecord = new TaskRecord(task.getTaskID());
+        Map<String, String> propMap = taskRecord.getProperties();
+        assert propMap.size() > 0 : "Need at least one property to store a row!";
+        for (String propName : propMap.keySet()) {
+            dbTran.addColumn(TaskManagerService.TASKS_STORE_NAME, task.getTaskID(), propName, propMap.get(propName));
+        }
+        DBService.instance().commit(dbTran);
+        return taskRecord;
+    }   // storeTaskRecord
+
+    // Ask the storage manager for the given application for its required tasks.
+    private List<Task> getAppTasks(ApplicationDefinition appDef) {
+        List<Task> appTasks = new ArrayList<>();
+        try {
+            StorageService service = SchemaService.instance().getStorageService(appDef);
+            Collection<Task> appTaskColl = service.getAppTasks(appDef);
+            if (appTaskColl != null) {
+                appTasks.addAll(service.getAppTasks(appDef));
+            }
+        } catch (IllegalArgumentException e) {
+            // StorageService has not been initialized; no tasks for this application.
+        }
+        return appTasks;
+    }   // getAppTasks
+
+    // Get the host address to use for task claiming.
+    private void setHostAddress() {
+        try {
+            m_localHost = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            m_localHost = "0.0.0.0";
+        }
+    }   // setHostAddress
+
+}   // class TaskManagerService

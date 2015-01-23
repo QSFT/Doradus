@@ -66,11 +66,9 @@ Doradus OLAP Database -v2.1
     <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
     <POST path="Application/_shards/shard3" />
 
-    <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
-    <echo> ~ Launch Data-aging task ~</echo>
-    <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
-    <PUT path="_tasks/Application/*/data-aging?start" />
-    <SLEEP sec="12"/>
+    <disable-output/>
+    <!-- Shard should be deleted within 1 minute -->
+    <SLEEP sec="61"/>
 
     <enable-output/>
     <echo> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>

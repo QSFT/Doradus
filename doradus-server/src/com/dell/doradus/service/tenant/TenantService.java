@@ -35,6 +35,7 @@ import com.dell.doradus.service.db.UnauthorizedException;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
+import com.dell.doradus.service.taskmanager.TaskManagerService;
 
 /**
  * Provides tenant management services such as creating new tenants, listing tenants, and
@@ -116,7 +117,7 @@ public class TenantService extends Service {
         Tenant tenant = new Tenant(ServerConfig.getInstance().keyspace);
         dbService.createTenant(tenant, null);
         dbService.createStoreIfAbsent(tenant, SchemaService.APPS_STORE_NAME, false);
-        dbService.createStoreIfAbsent(tenant, SchemaService.TASKS_STORE_NAME, false);
+        dbService.createStoreIfAbsent(tenant, TaskManagerService.TASKS_STORE_NAME, false);
     }   // createDefaultTenant
 
     /**
@@ -275,7 +276,7 @@ public class TenantService extends Service {
         dbService.createTenant(tenant, tenantDef.getOptions());
         addTenantUsers(tenantDef);
         dbService.createStoreIfAbsent(tenant, SchemaService.APPS_STORE_NAME, false);
-        dbService.createStoreIfAbsent(tenant, SchemaService.TASKS_STORE_NAME, false);
+        dbService.createStoreIfAbsent(tenant, TaskManagerService.TASKS_STORE_NAME, false);
         storeTenantDefinition(tenantDef);
     }   // defineNewTenant
 

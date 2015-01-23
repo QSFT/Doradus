@@ -16,10 +16,6 @@
 
 package com.dell.doradus.management;
 
-import java.util.Map;
-import java.util.Set;
-
-
 /**
  * Defines interface of a MXBean that implements the management operations with
  * database server (-"node") that is linked to the running <i>Doradus</i>-server instance. 

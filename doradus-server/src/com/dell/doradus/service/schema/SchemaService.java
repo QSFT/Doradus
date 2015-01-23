@@ -40,7 +40,6 @@ import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
-import com.dell.doradus.service.taskmanager.TaskDBUtils;
 import com.dell.doradus.service.tenant.TenantService;
 
 /**
@@ -49,10 +48,9 @@ import com.dell.doradus.service.tenant.TenantService;
  * appropriate storage service of the change.
  */
 public class SchemaService extends Service {
-    // Metadata ColumnFamily names:
+    // Application ColumnFamily name:
     public static final String APPS_STORE_NAME = "Applications";
-    public static final String TASKS_STORE_NAME = "Tasks";
-
+    
     // Application definition row column names:
     private static final String COLNAME_APP_SCHEMA = "_application";
     private static final String COLNAME_APP_SCHEMA_FORMAT = "_format";
@@ -258,7 +256,6 @@ public class SchemaService extends Service {
         StorageService storageService = getStorageService(appDef);
         storageService.deleteApplication(appDef);
         deleteAppProperties(appDef);
-        TaskDBUtils.deleteAppTasks(appDef);
     }   // deleteApplication
     
     //----- Private methods
@@ -351,7 +348,7 @@ public class SchemaService extends Service {
     
     // Set the given application's "Tenant" option to the given tenant's keyspace.
     private void setTenant(ApplicationDefinition appDef, Tenant tenant) {
-        appDef.setOption("Tenant", tenant.getKeyspace());
+        appDef.setOption(CommonDefs.OPT_TENANT, tenant.getKeyspace());
     }
 
     // Verify the given application's StorageService option and, if this is a schema

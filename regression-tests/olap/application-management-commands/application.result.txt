@@ -49,26 +49,11 @@
 *** Response: xml
     200 OK
     <applications>
-        <application name="Application">
-            <key>ApplicationKey</key>
-            <options>
-                <option name="StorageService">OLAPService</option>
-            </options>
-            <tables>
-                <table name="Table1">
-                    <fields>
-                        <field name="Name" type="TEXT"/>
-                    </fields>
-                </table>
-            </tables>
-            <schedules>
-                <schedule type="data-aging" value="0 0 * * *"/>
-            </schedules>
-        </application>
         <application name="Application1">
             <key>ApplicationKey1</key>
             <options>
                 <option name="StorageService">OLAPService</option>
+                <option name="aging-check-frequency">1 DAY</option>
             </options>
             <tables>
                 <table name="Table1">
@@ -77,42 +62,31 @@
                     </fields>
                 </table>
             </tables>
-            <schedules>
-                <schedule type="data-aging" value="0 0 * * *"/>
-            </schedules>
+        </application>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+                <option name="StorageService">OLAPService</option>
+                <option name="aging-check-frequency">1 DAY</option>
+            </options>
+            <tables>
+                <table name="Table1">
+                    <fields>
+                        <field name="Name" type="TEXT"/>
+                    </fields>
+                </table>
+            </tables>
         </application>
     </applications>
 *** Response: json
     200 OK
     {
        "applications":{
-          "Application":{
-             "key":"ApplicationKey",
-             "options":{
-                "StorageService":"OLAPService"
-             },
-             "tables":{
-                "Table1":{
-                   "fields":{
-                      "Name":{
-                         "type":"TEXT"
-                      }
-                   }
-                }
-             },
-             "schedules":[
-                {
-                   "schedule":{
-                      "type":"data-aging",
-                      "value":"0 0 * * *"
-                   }
-                }
-             ]
-          },
           "Application1":{
              "key":"ApplicationKey1",
              "options":{
-                "StorageService":"OLAPService"
+                "StorageService":"OLAPService",
+                "aging-check-frequency":"1 DAY"
              },
              "tables":{
                 "Table1":{
@@ -122,15 +96,23 @@
                       }
                    }
                 }
+             }
+          },
+          "Application":{
+             "key":"ApplicationKey",
+             "options":{
+                "StorageService":"OLAPService",
+                "aging-check-frequency":"1 DAY"
              },
-             "schedules":[
-                {
-                   "schedule":{
-                      "type":"data-aging",
-                      "value":"0 0 * * *"
+             "tables":{
+                "Table1":{
+                   "fields":{
+                      "Name":{
+                         "type":"TEXT"
+                      }
                    }
                 }
-             ]
+             }
           }
        }
     }
@@ -143,6 +125,7 @@
         <key>ApplicationKey</key>
         <options>
             <option name="StorageService">OLAPService</option>
+            <option name="aging-check-frequency">1 DAY</option>
         </options>
         <tables>
             <table name="Table1">
@@ -151,9 +134,6 @@
                 </fields>
             </table>
         </tables>
-        <schedules>
-            <schedule type="data-aging" value="0 0 * * *"/>
-        </schedules>
     </application>
 *** Response: json
     200 OK
@@ -161,7 +141,8 @@
        "Application":{
           "key":"ApplicationKey",
           "options":{
-             "StorageService":"OLAPService"
+             "StorageService":"OLAPService",
+             "aging-check-frequency":"1 DAY"
           },
           "tables":{
              "Table1":{
@@ -171,15 +152,7 @@
                    }
                 }
              }
-          },
-          "schedules":[
-             {
-                "schedule":{
-                   "type":"data-aging",
-                   "value":"0 0 * * *"
-                }
-             }
-          ]
+          }
        }
     }
 
@@ -259,6 +232,7 @@
         <key>ApplicationKey</key>
         <options>
             <option name="StorageService">OLAPService</option>
+            <option name="aging-check-frequency">1 DAY</option>
         </options>
         <tables>
             <table name="Table1">
@@ -268,9 +242,6 @@
                 </fields>
             </table>
         </tables>
-        <schedules>
-            <schedule type="data-aging" value="0 0 * * *"/>
-        </schedules>
     </application>
 *** Response: json
     200 OK
@@ -278,7 +249,8 @@
        "Application":{
           "key":"ApplicationKey",
           "options":{
-             "StorageService":"OLAPService"
+             "StorageService":"OLAPService",
+             "aging-check-frequency":"1 DAY"
           },
           "tables":{
              "Table1":{
@@ -291,15 +263,7 @@
                    }
                 }
              }
-          },
-          "schedules":[
-             {
-                "schedule":{
-                   "type":"data-aging",
-                   "value":"0 0 * * *"
-                }
-             }
-          ]
+          }
        }
     }
 
@@ -384,6 +348,7 @@
         <key>ApplicationKey</key>
         <options>
             <option name="StorageService">OLAPService</option>
+            <option name="aging-check-frequency">1 DAY</option>
         </options>
         <tables>
             <table name="Table1">
@@ -394,9 +359,6 @@
                 </fields>
             </table>
         </tables>
-        <schedules>
-            <schedule type="data-aging" value="0 0 * * *"/>
-        </schedules>
     </application>
 *** Response: json
     200 OK
@@ -404,7 +366,8 @@
        "Application":{
           "key":"ApplicationKey",
           "options":{
-             "StorageService":"OLAPService"
+             "StorageService":"OLAPService",
+             "aging-check-frequency":"1 DAY"
           },
           "tables":{
              "Table1":{
@@ -420,15 +383,7 @@
                    }
                 }
              }
-          },
-          "schedules":[
-             {
-                "schedule":{
-                   "type":"data-aging",
-                   "value":"0 0 * * *"
-                }
-             }
-          ]
+          }
        }
     }
 
@@ -524,8 +479,8 @@
         </tables>
     </application>
 *** Response: text
-    400 Bad Request
-    Application does not exist: WrongApplicationName
+    404 Not Found
+    Unknown application: WrongApplicationName
 
 ~~~~~~~~~~~~~~~~~~~~~~
 ~ Delete application ~
@@ -540,7 +495,7 @@
     DELETE /_applications/Wrong_Application_Name/ApplicationKey
 *** Response: text
     404 Not Found
-    Application not found: Wrong_Application_Name
+    Unknown application: Wrong_Application_Name
 
 *** Request
     DELETE /_applications/Application/ApplicationKey
@@ -570,7 +525,7 @@
     GET /_applications/Application
 *** Response: text
     404 Not Found
-    Application not found: Application
+    Unknown application: Application
 
 *** Request
     GET /Application/Table1/_query?q=*&f=_all&shards=shard
@@ -637,26 +592,11 @@
 *** Response: xml
     200 OK
     <applications>
-        <application name="Application">
-            <key>ApplicationKey</key>
-            <options>
-                <option name="StorageService">OLAPService</option>
-            </options>
-            <tables>
-                <table name="Table1">
-                    <fields>
-                        <field name="Name" type="TEXT"/>
-                    </fields>
-                </table>
-            </tables>
-            <schedules>
-                <schedule type="data-aging" value="0 0 * * *"/>
-            </schedules>
-        </application>
         <application name="Application1">
             <key>ApplicationKey1</key>
             <options>
                 <option name="StorageService">OLAPService</option>
+                <option name="aging-check-frequency">1 DAY</option>
             </options>
             <tables>
                 <table name="Table1">
@@ -665,42 +605,31 @@
                     </fields>
                 </table>
             </tables>
-            <schedules>
-                <schedule type="data-aging" value="0 0 * * *"/>
-            </schedules>
+        </application>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+                <option name="StorageService">OLAPService</option>
+                <option name="aging-check-frequency">1 DAY</option>
+            </options>
+            <tables>
+                <table name="Table1">
+                    <fields>
+                        <field name="Name" type="TEXT"/>
+                    </fields>
+                </table>
+            </tables>
         </application>
     </applications>
 *** Response: json
     200 OK
     {
        "applications":{
-          "Application":{
-             "key":"ApplicationKey",
-             "options":{
-                "StorageService":"OLAPService"
-             },
-             "tables":{
-                "Table1":{
-                   "fields":{
-                      "Name":{
-                         "type":"TEXT"
-                      }
-                   }
-                }
-             },
-             "schedules":[
-                {
-                   "schedule":{
-                      "type":"data-aging",
-                      "value":"0 0 * * *"
-                   }
-                }
-             ]
-          },
           "Application1":{
              "key":"ApplicationKey1",
              "options":{
-                "StorageService":"OLAPService"
+                "StorageService":"OLAPService",
+                "aging-check-frequency":"1 DAY"
              },
              "tables":{
                 "Table1":{
@@ -710,15 +639,23 @@
                       }
                    }
                 }
+             }
+          },
+          "Application":{
+             "key":"ApplicationKey",
+             "options":{
+                "StorageService":"OLAPService",
+                "aging-check-frequency":"1 DAY"
              },
-             "schedules":[
-                {
-                   "schedule":{
-                      "type":"data-aging",
-                      "value":"0 0 * * *"
+             "tables":{
+                "Table1":{
+                   "fields":{
+                      "Name":{
+                         "type":"TEXT"
+                      }
                    }
                 }
-             ]
+             }
           }
        }
     }
@@ -731,6 +668,7 @@
         <key>ApplicationKey</key>
         <options>
             <option name="StorageService">OLAPService</option>
+            <option name="aging-check-frequency">1 DAY</option>
         </options>
         <tables>
             <table name="Table1">
@@ -739,9 +677,6 @@
                 </fields>
             </table>
         </tables>
-        <schedules>
-            <schedule type="data-aging" value="0 0 * * *"/>
-        </schedules>
     </application>
 *** Response: json
     200 OK
@@ -749,7 +684,8 @@
        "Application":{
           "key":"ApplicationKey",
           "options":{
-             "StorageService":"OLAPService"
+             "StorageService":"OLAPService",
+             "aging-check-frequency":"1 DAY"
           },
           "tables":{
              "Table1":{
@@ -759,15 +695,7 @@
                    }
                 }
              }
-          },
-          "schedules":[
-             {
-                "schedule":{
-                   "type":"data-aging",
-                   "value":"0 0 * * *"
-                }
-             }
-          ]
+          }
        }
     }
 
@@ -853,6 +781,7 @@
         <key>ApplicationKey</key>
         <options>
             <option name="StorageService">OLAPService</option>
+            <option name="aging-check-frequency">1 DAY</option>
         </options>
         <tables>
             <table name="Table1">
@@ -862,9 +791,6 @@
                 </fields>
             </table>
         </tables>
-        <schedules>
-            <schedule type="data-aging" value="0 0 * * *"/>
-        </schedules>
     </application>
 *** Response: json
     200 OK
@@ -872,7 +798,8 @@
        "Application":{
           "key":"ApplicationKey",
           "options":{
-             "StorageService":"OLAPService"
+             "StorageService":"OLAPService",
+             "aging-check-frequency":"1 DAY"
           },
           "tables":{
              "Table1":{
@@ -885,15 +812,7 @@
                    }
                 }
              }
-          },
-          "schedules":[
-             {
-                "schedule":{
-                   "type":"data-aging",
-                   "value":"0 0 * * *"
-                }
-             }
-          ]
+          }
        }
     }
 
@@ -986,6 +905,7 @@
         <key>ApplicationKey</key>
         <options>
             <option name="StorageService">OLAPService</option>
+            <option name="aging-check-frequency">1 DAY</option>
         </options>
         <tables>
             <table name="Table1">
@@ -996,9 +916,6 @@
                 </fields>
             </table>
         </tables>
-        <schedules>
-            <schedule type="data-aging" value="0 0 * * *"/>
-        </schedules>
     </application>
 *** Response: json
     200 OK
@@ -1006,7 +923,8 @@
        "Application":{
           "key":"ApplicationKey",
           "options":{
-             "StorageService":"OLAPService"
+             "StorageService":"OLAPService",
+             "aging-check-frequency":"1 DAY"
           },
           "tables":{
              "Table1":{
@@ -1022,15 +940,7 @@
                    }
                 }
              }
-          },
-          "schedules":[
-             {
-                "schedule":{
-                   "type":"data-aging",
-                   "value":"0 0 * * *"
-                }
-             }
-          ]
+          }
        }
     }
 
@@ -1134,8 +1044,8 @@
        }
     }
 *** Response: text
-    400 Bad Request
-    Application does not exist: WrongApplicationName
+    404 Not Found
+    Unknown application: WrongApplicationName
 
 ~~~~~~~~~~~~~~~~~~~~~~
 ~ Delete application ~
@@ -1150,7 +1060,7 @@
     DELETE /_applications/Wrong_Application_Name/ApplicationKey
 *** Response: text
     404 Not Found
-    Application not found: Wrong_Application_Name
+    Unknown application: Wrong_Application_Name
 
 *** Request
     DELETE /_applications/Application/ApplicationKey
@@ -1180,7 +1090,7 @@
     GET /_applications/Application
 *** Response: text
     404 Not Found
-    Application not found: Application
+    Unknown application: Application
 
 *** Request
     GET /Application/Table1/_query?q=*&f=_all&shards=shard
@@ -1192,11 +1102,11 @@
     DELETE /_applications/Application/ApplicationKey
 *** Response: text
     404 Not Found
-    Application not found: Application
+    Unknown application: Application
 
 *** Request
     DELETE /_applications/Application1/ApplicationKey1
 *** Response: text
     404 Not Found
-    Application not found: Application1
+    Unknown application: Application1
 

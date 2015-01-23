@@ -57,7 +57,7 @@ import java.io.Reader;
  *     onObjectStart("bar") is called followed by whatever is appropriate based on the
  *     <code>...stuff...</code> inside the inner curly braces.
  * </li>
- * <li>{@link SajListener#onEndObject() and {@link SajListener#onEndArray()} are called
+ * <li>{@link SajListener#onEndObject()} and {@link SajListener#onEndArray()} are called
  *     whenever a matching '}' or ']' is found (except for the ignore-curly-braces cases
  *     described above).
  * </li>

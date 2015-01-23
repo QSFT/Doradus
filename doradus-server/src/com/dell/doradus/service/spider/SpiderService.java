@@ -17,6 +17,7 @@
 package com.dell.doradus.service.spider;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -25,6 +26,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,11 +41,9 @@ import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.FieldType;
 import com.dell.doradus.common.RetentionAge;
-import com.dell.doradus.common.ScheduleDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.common.ScheduleDefinition.SchedType;
 import com.dell.doradus.common.TableDefinition.ShardingGranularity;
 import com.dell.doradus.fieldanalyzer.FieldAnalyzer;
 import com.dell.doradus.search.SearchResultList;
@@ -54,6 +54,8 @@ import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.schema.SchemaService;
+import com.dell.doradus.service.taskmanager.Task;
+import com.dell.doradus.service.taskmanager.TaskFrequency;
 
 /**
  * The main class for the SpiderService storage service. The Spider service stores objects
@@ -118,8 +120,21 @@ public class SpiderService extends StorageService {
     public void validateSchema(ApplicationDefinition appDef) {
         checkServiceState();
         validateApplication(appDef);
-        validateSchedules(appDef);
     }   // validateSchema
+    
+    @Override
+    public Collection<Task> getAppTasks(ApplicationDefinition appDef) {
+        List<Task> appTasks = new ArrayList<>();
+        for (TableDefinition tableDef : appDef.getTableDefinitions().values()) {
+            String agingFreq = tableDef.getOption(CommonDefs.OPT_AGING_CHECK_FREQ);
+            if (agingFreq != null) {
+                Task task =
+                    new Task(appDef.getAppName(), tableDef.getTableName(), "data-aging", agingFreq, SpiderDataAger.class);
+                appTasks.add(task);
+            }
+        }
+        return appTasks;
+    }   // getAppTasks
     
     //----- StorageService object query methods
     
@@ -632,7 +647,7 @@ public class SpiderService extends StorageService {
                 assert optValue.equals(this.getClass().getSimpleName());
                 break;
                 
-            case "Tenant":
+            case CommonDefs.OPT_TENANT:
                 // Ignore
                 break;
                 
@@ -675,6 +690,7 @@ public class SpiderService extends StorageService {
 
     // Validate the given table against SpiderService-specific constraints.
     private void validateTable(TableDefinition tableDef) {
+        boolean bSawDataAging = false;
         for (String optName : tableDef.getOptionNames()) {
             String optValue = tableDef.getOption(optName);
             switch (optName) {
@@ -693,6 +709,10 @@ public class SpiderService extends StorageService {
             case CommonDefs.OPT_SHARDING_START:
                 validateTableOptionShardingStart(tableDef, optValue);
                 break;
+            case CommonDefs.OPT_AGING_CHECK_FREQ:
+                validateTableOptionAgingCheckFrequency(tableDef, optValue);
+                bSawDataAging = true;
+                break;
             default:
                 Utils.require(false, "Unknown option for SpiderService table: " + optName);
             }
@@ -701,8 +721,20 @@ public class SpiderService extends StorageService {
         for (FieldDefinition fieldDef : tableDef.getFieldDefinitions()) {
             validateField(fieldDef);
         }
+        
+        if (!bSawDataAging && tableDef.isOptionSet(CommonDefs.OPT_AGING_FIELD)) {
+            tableDef.setOption(CommonDefs.OPT_AGING_CHECK_FREQ, "1 DAY");
+        }
     }   // validateTable
     
+    // Validate the table option "aging-check-frequency"
+    private void validateTableOptionAgingCheckFrequency(TableDefinition tableDef,
+                                                        String optValue) {
+        new TaskFrequency(optValue);
+        Utils.require(tableDef.getOption(CommonDefs.OPT_AGING_FIELD) != null,
+                        "Option 'aging-check-frequency' requires option 'aging-field'");
+    }   // validateTableOptionAgingCheckFrequency
+
     // Validate the table option "aging-field".
     private void validateTableOptionAgingField(TableDefinition tableDef, String optValue) {
         FieldDefinition agingFieldDef = tableDef.getFieldDef(optValue);
@@ -795,42 +827,4 @@ public class SpiderService extends StorageService {
         }
     }   // verifyApplicationCFs
     
-    // Performs semantic schedules validation after all the structure checks,
-    // so that application definition has all its tables fully defined.
-    // Makes also necessary modifications to the schedules (adding default tasks).
-    private void validateSchedules(ApplicationDefinition appDef) {
-    	for (ScheduleDefinition schedDef : appDef.getSchedules().values()) {
-    		schedDef.validate(getClass().getSimpleName());
-    	}
-    	
-    	// Tables that have aging field and retention age defined
-    	Set<String> dataAgingTables = new HashSet<>();
-    	for (TableDefinition tabDef : appDef.getTableDefinitions().values()) {
-    		if (tabDef.isSetForAging()) {
-    			dataAgingTables.add(tabDef.getTableName());
-    		}
-    	}
-    	
-    	// Remove those tables that already have data-aging task defined  
-    	for (ScheduleDefinition schedDef : appDef.getSchedules().values()) {
-    		SchedType taskType = schedDef.getType();
-    		if (taskType == SchedType.DATA_AGING) {
-    			if (schedDef.getTableName() == null) {
-    				dataAgingTables.clear();
-    			} else {
-    				dataAgingTables.removeAll(Arrays.asList(schedDef.getTableName().split(",")));
-    			}
-    		}
-    	}
-
-    	// If there are tables that have not data-aging task defined, then
-    	// define the task for those tables.
-		if (!dataAgingTables.isEmpty()) {
-			appDef.addSchedule(
-					SchedType.DATA_AGING,
-					ScheduleDefinition.DEFAULT_AGING_SCHEDULE,
-					Utils.concatenate(dataAgingTables, ","));
-		}
-    }
-
 }   // class SpiderService

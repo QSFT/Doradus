@@ -24,8 +24,6 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import com.dell.doradus.common.ScheduleDefinition.SchedType;
-
 /**
  * Holds the definition of an application, including its options, tables, and their
  * fields.
@@ -45,10 +43,6 @@ final public class ApplicationDefinition {
     private final SortedMap<String, TableDefinition> m_tableMap =
         new TreeMap<String, TableDefinition>();
 
-    // Map of schedule definitions by task name:
-    private final Map<String, ScheduleDefinition> m_scheduleMap =
-        new HashMap<String, ScheduleDefinition>();
-    
     /**
      * Test the given string for validity as an application name. A valid application
      * name must begin with a letter and contain only letters, digits, and underscores.
@@ -145,19 +139,20 @@ final public class ApplicationDefinition {
             // "schedules"
             } else if (childName.equals("schedules")) {
                 // Should only be specified once.
-                Utils.require(m_scheduleMap.size() == 0,
-                              "'schedules' can only be specified once");
+//                Utils.require(m_scheduleMap.size() == 0,
+//                              "'schedules' can only be specified once");
                 
                 // Schedules are not uniquely (user) named, so they are just a collection.
                 Utils.require(childNode.isCollection(),
                               "'schedules' should be a collection of definitions: " + childNode);
                 for (UNode schedNode : childNode.getMemberList()) {
                     // Create a ScheduleDefinition object, parse this member, and add it to the map.
-                    ScheduleDefinition schedDef = new ScheduleDefinition(this);
-                    schedDef.parse(schedNode);
-                    Utils.require(!m_scheduleMap.containsKey(schedDef.getName()),
-                                  "Duplicate schedule defined: " + schedDef.getName());
-                    m_scheduleMap.put(schedDef.getName(), schedDef);
+//                    ScheduleDefinition schedDef = new ScheduleDefinition(this);
+//                    schedDef.parse(schedNode);
+//                    Utils.require(!m_scheduleMap.containsKey(schedDef.getName()),
+//                                  "Duplicate schedule defined: " + schedDef.getName());
+//                    m_scheduleMap.put(schedDef.getName(), schedDef);
+                    parseSchedule(schedNode);
                 }
                 
             // Unrecognized
@@ -225,16 +220,17 @@ final public class ApplicationDefinition {
     }   // getOptionNames
     
     /**
-     * Get the map of {@link ScheduleDefinition} objects for this application. This map 
-     * indexes each schedule name (see {@link ScheduleDefinition#getName()}) by the
-     * ScheduleDefinition object. This map is not copied, so the caller must only read!
+     * Get the resource path for this application.
      * 
-     * @return  Map of schedule names to {@link ScheduleDefinition} objects. The map may
-     *          be empty but not null.
+     * @return  String in the form /Tenant:{tenant}/Application:{application}
      */
-    public Map<String, ScheduleDefinition> getSchedules() {
-        return m_scheduleMap;
-    }   // getSchedules
+    public String getPath() {
+        if (!m_optionMap.containsKey(CommonDefs.OPT_TENANT)) {
+            return "/Tenant:?/Application:" + m_appName;
+        } else {
+            return "/Tenant:" + m_optionMap.get(CommonDefs.OPT_TENANT) + "/Application:" + m_appName;
+        }
+    }   // getPath
     
     /**
      * Get the StorageService option for this application. Null is returned if the option
@@ -245,25 +241,6 @@ final public class ApplicationDefinition {
     public String getStorageService() {
         return getOption(CommonDefs.OPT_STORAGE_SERVICE);
     }   // getStorageService
-    
-    /**
-     * Adds a brand new {@link ScheduleDefinition} created with the given parameters.
-     *  
-     * @param schedType
-     * @param schedSpec
-     * @param tableName
-     */
-    public void addSchedule(SchedType schedType, String schedSpec, String tableName) {
-    	addSchedule(new ScheduleDefinition(this, schedType, schedSpec, tableName));
-    }	// addSchedule
-    
-    /**
-     * Adds a given {@link ScheduleDefinition}.
-     * @param schedDef
-     */
-    public void addSchedule(ScheduleDefinition schedDef) {
-    	m_scheduleMap.put(schedDef.getName(), schedDef);
-    }	// addSchedule
     
     /**
      * Return the {@link TableDefinition} for the table with the given name or null if
@@ -307,7 +284,7 @@ final public class ApplicationDefinition {
         if (m_optionMap.size() > 0) {
             UNode optsNode = appNode.addMapNode("options");
             for (String optName : m_optionMap.keySet()) {
-                if (!optName.equals("Tenant")) {    // don't include for now
+                if (!optName.equals(CommonDefs.OPT_TENANT)) {    // don't include for now
                     // Set each option's tag name to "option" for XML's sake.
                     optsNode.addValueNode(optName, m_optionMap.get(optName), "option");
                 }
@@ -322,13 +299,6 @@ final public class ApplicationDefinition {
             }
         }
         
-        // Add schedules, if any, in an ARRAY node.
-        if (m_scheduleMap.size() > 0) {
-            UNode schedsNode = appNode.addArrayNode("schedules");
-            for (ScheduleDefinition schedDef : m_scheduleMap.values()) {
-                schedsNode.addChildNode(schedDef.toDoc());
-            }
-        }
         return appNode;
     }   // toDoc
     
@@ -423,11 +393,114 @@ final public class ApplicationDefinition {
     
     ///// Private Methods
     
+    // Support legacy <schedule> for a while. We only support application- and table-level
+    // data-aging, which we convert into application- and table-level options.
+    // TODO: Delete this when <schedule> is no longer parsed in schemas.
+    private void parseSchedule(UNode schedNode) {
+        Utils.require(schedNode.isMap(), "'schedule' definition must be a map of unique names: " + schedNode);
+        
+        String tableName = null;
+        String taskType = null;
+        String schedule = null;
+        for (String attrName : schedNode.getMemberNames()) {
+            UNode attrNode = schedNode.getMember(attrName);
+            Utils.require(attrNode.isValue(),
+                          "Schedule attribute value must be a string: " + attrNode);
+            String attrValue = attrNode.getValue();
+            switch (attrName.toLowerCase()) {
+            case "type":
+                Utils.require(taskType == null, "'type' attribute can be specified only once");
+                Utils.require(attrValue.equals("data-aging"), "Unrecognized 'type': " + attrValue);
+                taskType = attrValue;
+                break;
+
+            case "table":
+                Utils.require(tableName == null, "'table' can be specified only once");
+                tableName = attrValue;
+                break;
+                
+            case "value":
+                Utils.require(schedule == null, "'value' can be specified only once");
+                schedule = attrValue;
+                break;
+                
+            default:
+                Utils.require(false, "Unrecognized attribute: " + attrName);
+            }
+        }
+
+        Utils.require(taskType != null, "Schedule is missing 'type': " + schedNode);
+        Utils.require(schedule != null, "Schedule is missing 'value': " + schedNode);
+        String agingFreq = convertCronValue(schedule);
+        if (Utils.isEmpty(tableName)) {
+            setOption(CommonDefs.OPT_AGING_CHECK_FREQ, agingFreq);
+        } else {
+            TableDefinition tableDef = getTableDef(tableName);
+            Utils.require(tableDef != null, "Unknown table in 'schedule': " + tableName);
+            tableDef.setOption(CommonDefs.OPT_AGING_CHECK_FREQ, agingFreq);
+        }
+    }   // parseSchedule
+
+    // Convert the given cron expression into a simple frequency value such as "5 MINUTES".
+    // The cron expression has the following general format:
+    //      <minutes> <hours> <month day> <month> <week day>
+    // For now, we're only going for rough conversions. So:
+    //      "* ..."     becomes "1 MINUTE"
+    //      "5 ..."     becomes "5 MINUTES"
+    //      "0 * ..."   becomes "1 HOUR"
+    //      "0 3 ..."   becomes "3 HOURS"
+    //      "0 0 * ..." becomes "1 DAY"
+    // And so forth.
+    // TODO: Delete this when <schedule> is no longer parsed in schemas.
+    private String convertCronValue(String cronExpr) {
+        if (Utils.isEmpty(cronExpr)) {
+            return "1 DAY";
+        }
+        String[] parts = cronExpr.split(" ");
+        String minutes = convertCronPart(parts, 0);
+        String hours = convertCronPart(parts, 1);
+        String days = convertCronPart(parts, 2);
+        String months = convertCronPart(parts, 3);
+        if (!minutes.equals("0")) {
+            return minutes.equals("*") ? "1 MINUTE" : minutes + " MINUTES";
+        }
+        if (!hours.equals("0")) {
+            return hours.equals("*") ? "1 HOUR" : hours + " HOURS";
+        }
+        if (!days.equals("0")) {
+            return days.equals("*") ? "1 DAY" : days + " DAYS";
+        }
+        if (!months.equals("0")) {
+            return months.equals("*") ? "1 MONTH" : months + " MONTHS";
+        }
+        return "1 DAY"; // no idea what it was
+    }
+    
+    // Convert the given cron part to a number or "*".
+    private String convertCronPart(String[] parts, int index) {
+        if (index >= parts.length) {
+            return "*";
+        }
+        if (isAllDigits(parts[index])) {
+            return parts[index];
+        }
+        return "0";
+    }   // converCronParts
+    
+    // Return true if all chars in the string are digits.
+    private boolean isAllDigits(String str) {
+        for (int index = 0; index < str.length(); index++) {
+            if (!Utils.isDigit(str.charAt(index))) {
+                return false;
+            }
+        }
+        return true;
+    }   // isAllDigits
+
     // Make final application fix-ups and integrity checks.
     private void finalizeDefinition(Map<String, Map<String, FieldDefinition>> externalLinkMap) {
         // Verify all external link references.
         processExternalLinks(externalLinkMap);
-//        validateXLinks();
     }   // finalizeDefinition
 
     // Verify all external links found, if any, while parsing an application definition.
@@ -480,24 +553,6 @@ final public class ApplicationDefinition {
         }   // for table names
     }   // processExternalLinks
     
-    // Verify that at least one xlink in every pair uses "_ID" as the junction field.
-//    private void validateXLinks() {
-//        for (TableDefinition tableDef : m_tableMap.values()) {
-//            for (FieldDefinition fieldDef : tableDef.getFieldDefinitions()) {
-//                if (fieldDef.isXLinkField()) {
-//                    FieldDefinition inverseDef = fieldDef.getInverseLinkDef();
-//                    assert inverseDef != null;
-//                    assert inverseDef.isXLinkField();
-//                    Utils.require(fieldDef.getXLinkJunction().equals("_ID") ||
-//                                  inverseDef.getXLinkJunction().equals("_ID"),
-//                                  String.format("At least one xlink in '%s.%s/%s.%s' must use '_ID' as the junction field",
-//                                                tableDef.getTableName(), fieldDef.getName(),
-//                                                fieldDef.getLinkExtent(), fieldDef.getLinkInverse()));
-//                }
-//            }
-//        }
-//    }   // validateXLinks
-    
     /**
      * Replaces of all occurences of aliases defined with this table, by their expressions.
      * Now a simple string.replace is used. 
@@ -532,5 +587,5 @@ final public class ApplicationDefinition {
 		}
 		return str;
 	}
-    
+
 }   // class ApplicationDefinition

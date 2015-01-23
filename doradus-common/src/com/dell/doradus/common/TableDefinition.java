@@ -383,6 +383,15 @@ final public class TableDefinition {
     public ApplicationDefinition getAppDef() {
         return m_appDef;
     }   // getAppDef
+
+    /**
+     * Get the resource path for this table.
+     * 
+     * @return  String in the form {application path}/Table:{table}
+     */
+    public String getPath() {
+        return m_appDef.getPath() + "/Table:" + m_tableName;
+    }   // getPath
     
     /**
      * Get the name of the table represented by this table definition. This is the logical
@@ -918,6 +927,5 @@ final public class TableDefinition {
 	public String replaceAliaces(String str) {
 		return getAppDef().replaceAliaces(str);
 	}
-    
-    
+
 }   // class TableDefinition

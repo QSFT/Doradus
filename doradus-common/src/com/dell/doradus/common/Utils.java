@@ -635,7 +635,8 @@ final public class Utils {
      * </pre>
      * Note that Calendar.DAY_OF_MONTH is a synonym for Calendar.DATE.
      *
-     * @param   date    Date as a Calendar to be formatted.
+     * @param date      Date as a Calendar to be formatted.
+     * @param precision Calendar field value of desired precision.
      * @return          String formatted to the requested precision.
      */
     public static String formatDate(Calendar date, int precision) {

@@ -20,6 +20,7 @@ package com.dell.doradus.service;
  * Abstract root class for Doradus StorageService implementations. Defines methods that
  * must be implemented by a subclass to function as a storage service.
  */
+import java.util.Collection;
 import java.util.Map;
 
 import com.dell.doradus.common.AggregateResult;
@@ -30,6 +31,7 @@ import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.search.SearchResultList;
+import com.dell.doradus.service.taskmanager.Task;
 
 /**
  * Abstract root class for Doradus storage services. Extends the {@link Service} class
@@ -69,6 +71,19 @@ public abstract class StorageService extends Service {
      */
     public abstract void validateSchema(ApplicationDefinition appDef);
 
+    /**
+     * Return the {@link Task}s that are required for the given application, which is
+     * managed by this storage manager. Subclasses do not need to override this method if
+     * they do not require tasks: by default, the implementation returns null.
+     * 
+     * @param appDef    {@link ApplicationDefinition} managed by this storage service.
+     * @return          Collection of {@link Task}s required by the application or null
+     *                  if there are none.
+     */
+    public Collection<Task> getAppTasks(ApplicationDefinition appDef) {
+        return null;
+    }   // getAppTasks
+    
     //----- Object query methods
     
     /**

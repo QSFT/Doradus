@@ -70,9 +70,8 @@ disable_default_keyspace: false
 #
 #   com.dell.doradus.service.taskmanager.TaskManagerService
 #
-#       Provides background task management for data aging, statistics refreshing (Spider), and
-#       other scheduled tasks. Also manages on-demand tasks such as removing obsolete data (Spider).
-#       Can be disabled if background tasks are not needed for this Doradus instance.
+#       Provides background task management for data aging. Can be disabled if background tasks are
+#       not needed for this Doradus instance.
 #
 default_services:
     - com.dell.doradus.mbeans.MBeanService
@@ -370,33 +369,3 @@ olap_cf_defaults:
 # batch if it has. Larger values improve performance by reducing Cassandra round trips, but they
 # require larger API buffer sizes. The default is 10,000.
 batch_mutation_threshold: 10000
-
-
-########## Background tasks parameters
-#
-# max_node_tasks: Maximal number of tasks that can be launched concurrently on one Doradus node.
-# If there is no node that can launch a task since all the nodes are busy with max_node_tasks each,
-# then the task is skipped, and may be scheduled next time.
-# max_node_tasks: 2
-
-# task_exec_delay: Minimum interval (in seconds) between the scheduled time and actual start of the
-# task. This delay is used for Doradus nodes to synchronize and to decide which node would perform
-# the task. After this initial delay task may be delayed once more for maximum task_exec_delay
-# seconds, so actual time interval between scheduled time and actual task start time may be between
-# task_exec_delay and 2 * task_exec_delay seconds. Default value for task_exec_delay is 5.
-# task_exec_delay: 5
-
-# task_restarts: Number of attempts to restart a task if it was interrupted due to an internal error.
-# The task will not be restarted if an external error (like server node fault) occurs.
-# The default value for task_restarts is 2.
-# task_restarts: 2
-
-# check_interrupting_interval: An interval (in seconds) between consequent analysis of whether a task
-# that is executing by this node was interrupted by user request. The default value for
-# check_interrupting_interval is 10.
-# check_interrupting_interval: 10
-
-# default_schedule: Global default schedule used for all tasks for all applications and tables.
-# The value is a cron expression (example: '0 0 31 10 *'). The default is null, which means no
-# tasks are automatically scheduled.
-# default_schedule: 

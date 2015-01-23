@@ -269,7 +269,6 @@ public abstract class Service {
      * is still starting-up, it waits until it reaches running state.
      * 
      * @throws DBNotAvailableException   If the DBService is not yet running.
-
      */
     protected void checkServiceState() {
         State dbServiceState = DBService.instance().getState();

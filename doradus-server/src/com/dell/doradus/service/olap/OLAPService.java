@@ -18,6 +18,7 @@ package com.dell.doradus.service.olap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +31,6 @@ import com.dell.doradus.common.CommonDefs;
 import com.dell.doradus.common.DBObject;
 import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.FieldDefinition;
-import com.dell.doradus.common.ScheduleDefinition;
-import com.dell.doradus.common.ScheduleDefinition.SchedType;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
@@ -50,6 +49,8 @@ import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
+import com.dell.doradus.service.taskmanager.Task;
+import com.dell.doradus.service.taskmanager.TaskFrequency;
 
 /**
  * The OLAP storage service for Doradus.
@@ -118,8 +119,18 @@ public class OLAPService extends StorageService {
     @Override
     public void validateSchema(ApplicationDefinition appDef) {
         validateApplication(appDef);
-        validateSchedules(appDef);
     }   // validateSchema
+    
+    @Override
+    public Collection<Task> getAppTasks(ApplicationDefinition appDef) {
+        List<Task> appTasks = new ArrayList<>();
+        String agingFreq = appDef.getOption(CommonDefs.OPT_AGING_CHECK_FREQ);
+        if (agingFreq != null) {
+            Task task = new Task(appDef.getAppName(), null, "data-aging", agingFreq, OLAPDataAger.class);
+            appTasks.add(task);
+        }
+        return appTasks;
+    }   // getAppTasks
     
     //----- StorageService: Object query methods
     
@@ -380,6 +391,7 @@ public class OLAPService extends StorageService {
 
     // Validate the given application for OLAP constraints.
     private void validateApplication(ApplicationDefinition appDef) {
+        boolean bSawAgingFreq = false;
         for (String optName : appDef.getOptionNames()) {
             String optValue = appDef.getOption(optName);
             switch (optName) {
@@ -387,8 +399,13 @@ public class OLAPService extends StorageService {
                 assert optValue.equals(this.getClass().getSimpleName());
                 break;
                 
-            case "Tenant":
+            case CommonDefs.OPT_TENANT:
                 // Ignore
+                break;
+                
+            case CommonDefs.OPT_AGING_CHECK_FREQ:
+                new TaskFrequency(optValue);
+                bSawAgingFreq = true;
                 break;
                 
             default:
@@ -398,6 +415,10 @@ public class OLAPService extends StorageService {
 
         for (TableDefinition tableDef : appDef.getTableDefinitions().values()) {
             validateTable(tableDef);
+        }
+        
+        if (!bSawAgingFreq) {
+            appDef.setOption(CommonDefs.OPT_AGING_CHECK_FREQ, "1 DAY");
         }
     }   // validateApplication
 
@@ -424,25 +445,4 @@ public class OLAPService extends StorageService {
         }
     }   // validateField
     
-    // Validate OLAP background tasks schedules. At least one "data-aging" task
-    // should exist, no table must be defined for that task
-    private void validateSchedules(ApplicationDefinition appDef) {
-        for (ScheduleDefinition schedDef : appDef.getSchedules().values()) {
-            schedDef.validate(getClass().getSimpleName());
-        }
-
-    	boolean hasDataAgingTask = false;
-        for (ScheduleDefinition schedDef : appDef.getSchedules().values()) {
-            SchedType taskType = schedDef.getType();
-            if (taskType == SchedType.DATA_AGING) {
-                hasDataAgingTask = true;
-                break;
-            }
-        }
-        if (!hasDataAgingTask) {
-            appDef.addSchedule(SchedType.DATA_AGING,
-                               ScheduleDefinition.DEFAULT_AGING_SCHEDULE, null);
-        }
-    }
-
 }   // class OLAPService

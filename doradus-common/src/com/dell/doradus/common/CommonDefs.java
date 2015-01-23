@@ -44,7 +44,13 @@ final public class CommonDefs {
      * The application-level option that enables implicit table creation.
      */
     public static final String AUTO_TABLES = "AutoTables";
-    
+
+    /**
+     * The application- and table-level option that specifies the frequency at which the
+     * aging task should be performed.
+     */
+    public static final String OPT_AGING_CHECK_FREQ = "aging-check-frequency";
+
     /**
      * The table-level aging-field option.
      */
@@ -76,10 +82,11 @@ final public class CommonDefs {
     public static final String OPT_STORAGE_SERVICE = "StorageService";
     
     /**
-     * Maximum link field number we currently support:
+     * The application-level option that indicates the application's tenant. (See by the
+     * server and should not be explicitly declared in schemas.)
      */
-    public static final int MAX_LINK_FIELD_NO = 127;
-
+    public static final String OPT_TENANT = "Tenant";
+    
     /**
      * System fields
      */

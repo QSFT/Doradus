@@ -5,6 +5,7 @@
   <key>ApplicationKey</key>
   <options>
         <option name="StorageService">OLAPService</option>
+        <option name="aging-check-frequency">1 minute</option>
   </options>
   <tables>
     <table name="Table1">

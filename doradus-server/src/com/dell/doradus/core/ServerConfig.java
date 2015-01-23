@@ -37,7 +37,6 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import com.dell.doradus.common.ConfigurationException;
-import com.dell.doradus.service.taskmanager.TaskManagerService;
 
 /**
  * Provides the static <code>load(args)</code> method that
@@ -247,13 +246,6 @@ public class ServerConfig {
     public int db_connect_retry_wait_millis = DEFAULT_DB_CONNECT_RETRY_WAIT_MILLIS;
     public int batch_mutation_threshold = DEFAULT_BATCH_MUTATION_THRESHOLD;
 
-    // Task management parameters
-    public String default_schedule = null;  // General scheduling scheme
-    public int	  max_node_tasks = TaskManagerService.MAX_NODE_TASKS;
-    public int	  task_exec_delay = TaskManagerService.TASK_EXEC_DELAY;
-    public int    task_restarts = TaskManagerService.TASK_RESTARTS;
-	public int	  check_interrupting_interval = TaskManagerService.CHECK_INTERRUPTING_INTERVAL;
-    
     //OLAP
     public Map<String, Object> olap_cf_defaults = new HashMap<>();
     public int olap_loaded_segments = 8192;

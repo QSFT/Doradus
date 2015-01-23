@@ -136,15 +136,6 @@
 *** Response: 
     200 OK
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-~ Launch Data-aging task ~
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-*** Request
-    PUT /_tasks/Application/*/data-aging?start
-*** Response: text
-    200 OK
-    Command delivered
-
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~ Get list of Shards again ~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -2,7 +2,7 @@
     DELETE /_applications/Application/ApplicationKey
 *** Response: text
     404 Not Found
-    Application not found: Application
+    Unknown application: Application
 
 *** Request
     POST /_applications

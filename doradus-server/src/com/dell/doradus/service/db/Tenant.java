@@ -17,6 +17,7 @@
 package com.dell.doradus.service.db;
 
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.CommonDefs;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
 
@@ -35,7 +36,7 @@ public class Tenant implements Comparable<Tenant> {
      * @return          {@link Tenant} in which application resides.
      */
     public static Tenant getTenant(ApplicationDefinition appDef) {
-        String tenantName = appDef.getOption("Tenant");
+        String tenantName = appDef.getOption(CommonDefs.OPT_TENANT);
         Utils.require(!Utils.isEmpty(tenantName), "Application definition is missing 'Tenant' option: " + appDef);
         return new Tenant(tenantName);
     }   // getTenant
@@ -80,5 +81,10 @@ public class Tenant implements Comparable<Tenant> {
     public int hashCode() {
         return m_keyspace.hashCode();
     }
+    
+    @Override
+    public String toString() {
+        return m_keyspace;
+    }   // toString
     
 }   // class Tenant
