@@ -1,8 +1,12 @@
 #! /bin/sh
 #
-# -----------------------------------
+# -----------------------------------------------
 # Initscript for the Doradus server
-# -----------------------------------
+# Change DAEMON path to the script dir if different
+# Drop it under /etc/init.d 
+# Change execute permission on this file
+# Run as service: service doradusserver start|stop
+# ----------------------------------------------
 #
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="Doradus server"
