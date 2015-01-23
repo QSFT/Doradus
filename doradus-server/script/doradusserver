@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# ------------------------------------------
+# Wrapper script to start the doradus server
+# ------------------------------------------
+#
+# Change DORADUSSERVER_HOME if needed
+
+DORADUSSERVER_HOME=/home/dell/Doradus/doradus-server
+CLASSPATH=config:target/classes:target/dependency/*
+CASSANDRA_IP=10.228.23.117
+CASSANDRA_PORT=9042
+CASSANDRA_SUPERUSER_NAME=SuperDory
+CASSANDRA_SUPERUSER_PW=Alpha1
+
+
+cd $DORADUSSERVER_HOME 
+
+# exec here is important because it makes the started java process replace the script process
+# so that the process id doesn’t change 
+exec java -cp $CLASSPATH com.dell.doradus.core.DoradusServer -dbhost $CASSANDRA_IP -dbport $CASSANDRA_PORT -dbuser $CASSANDRA_SUPERUSER_NAME –dbpassword $CASSANDRA_SUPERUSER_PW

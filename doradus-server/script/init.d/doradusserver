@@ -1,0 +1,71 @@
+#! /bin/sh
+#
+# -----------------------------------
+# Initscript for the Doradus server
+# -----------------------------------
+#
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+DESC="Doradus server"
+NAME=doradusserver
+DAEMON=/home/dell/Doradus/doradus-server/script/$NAME
+DAEMON_ARGS="--options args"
+PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+# Exit if the package is not installed
+[ -x "$DAEMON" ] || exit 0
+
+# Gracefully exit if the package has been removed.
+test -x /usr/bin/java || exit 0
+
+#
+# Function that starts the daemon/service
+#
+do_start()
+{
+start-stop-daemon --start --background --quiet --pidfile $PIDFILE --make-pidfile --exec $DAEMON
+}
+
+#
+# Function that stops the daemon/service
+#
+do_stop()
+{
+start-stop-daemon --stop --retry 5 --quiet --pidfile $PIDFILE
+}
+
+
+
+case "$1" in
+  start)
+               echo -n "Starting $DESC" "$NAME"
+               do_start
+               echo "."
+               ;;
+  stop)
+               echo -n "Stopping $DESC" "$NAME"
+               do_stop
+               echo "."
+               ;;
+  status)
+               status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
+               ;;
+  restart|force-reload)
+               #
+               # If the "reload" option is implemented then remove the
+               # 'force-reload' alias
+               #
+               echo -n "Restarting $DESC" "$NAME"
+               do_stop
+               sleep 1
+               do_start
+               echo "."
+               ;;
+  *)
+               #echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload}" >&2
+               echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload}" >&2
+               exit 3
+               ;;
+esac
+
+:
