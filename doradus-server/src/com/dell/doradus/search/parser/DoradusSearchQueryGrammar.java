@@ -311,7 +311,7 @@ public class DoradusSearchQueryGrammar {
         Keyword WHERE = new Keyword("WHERE", WORD);
         Keyword TRUNCATE = new Keyword("TRUNCATE", WORD);
         Keyword BATCH = new Keyword("BATCH", WORD);
-        Keyword BATCHEX = new Keyword("BATCHEX", WORD);
+        Keyword SETS = new Keyword(SemanticNames.SETS, WORD);
 
         Keyword TOP = new Keyword("TOP", WORD);
         Keyword BOTTOM = new Keyword("BOTTOM", WORD);
@@ -1055,12 +1055,12 @@ public class DoradusSearchQueryGrammar {
         );
         ListRule BatchexList = new ListRule("BatchexList",
                 BatchexCase,
-                Grammar.Rule(OptWhiteSpaces, COMMA, Grammar.SetType("NEXTBATCHEX"), OptWhiteSpaces)
+                Grammar.Rule(OptWhiteSpaces, COMMA, Grammar.SetType(SemanticNames.NEXTSETS), OptWhiteSpaces)
                 );
         
         GrammarRule AggregationQueryBatchClause = new SwitchRule("AggregationQueryBatchClause",
-                Grammar.Rule(BATCHEX, Grammar.SetType("BATCHEX"), Grammar.MustMatchAction, OptWhiteSpaces,
-                        LEFTPAREN, Grammar.SetType("ignore"), OptWhiteSpaces, BatchexList, OptWhiteSpaces, RIGHTPAREN, Grammar.SetType("ENDBATCHEX")),
+                Grammar.Rule(SETS, Grammar.SetType(SemanticNames.SETS), Grammar.MustMatchAction, OptWhiteSpaces,
+                        LEFTPAREN, Grammar.SetType("ignore"), OptWhiteSpaces, BatchexList, OptWhiteSpaces, RIGHTPAREN, Grammar.SetType(SemanticNames.ENDSETS)),
                 Grammar.Rule(BATCH, Grammar.SetType("BATCH"), Grammar.MustMatchAction, OptWhiteSpaces,
                         LEFTPAREN, OptWhiteSpaces, AggregationQueryTruncateClause,
                         OptWhiteSpaces, COMMA, Grammar.SetType("ignore"), OptWhiteSpaces,

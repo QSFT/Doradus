@@ -772,7 +772,7 @@ public class AggregationQueryBuilder {
                     SetFilter(aggregationGroup, tableDef, item);
                     continue;
                 }
-                if (type.equals(SemanticNames.BATCHEX)) {
+                if (type.equals(SemanticNames.SETS)) {
               		Query q = DoradusQueryBuilder.Build(item.queryItems.get(0), tableDef);
                		String alias = item.item.getValue();
                		if("".equals(alias)) alias = q.toString();
@@ -1156,11 +1156,11 @@ public class AggregationQueryBuilder {
                     sublist.add(grammarItem);
                 }
             }
-            else if ("BATCHEX".equals(grammarItem.getType())) {
+            else if (SemanticNames.SETS.equals(grammarItem.getType())) {
                 i++; // skip '('
                 while(true) {
                 	Item item = new Item();
-                	item.item = new Literal("", "BATCHEX", grammarItem.getPtr());
+                	item.item = new Literal("", SemanticNames.SETS, grammarItem.getPtr());
                 	items.add(item);
                     item.queryItems = new ArrayList<ArrayList<GrammarItem>>();
                     ArrayList<GrammarItem> sublist = new ArrayList<GrammarItem>();
@@ -1170,8 +1170,8 @@ public class AggregationQueryBuilder {
                     		grammarItem = context.items.get(++i);
                     	} while("WhiteSpaces".equals(grammarItem.getType()) || "ImpliedAnd".equals(grammarItem.getValue()));
                         
-                        if ("NEXTBATCHEX".equals(grammarItem.getType()) ||
-                        	"ENDBATCHEX".equals(grammarItem.getType()) ||
+                        if (SemanticNames.NEXTSETS.equals(grammarItem.getType()) ||
+                        	SemanticNames.ENDSETS.equals(grammarItem.getType()) ||
                         	"AS".equals(grammarItem.getValue())) {
                             break;
                         }
@@ -1187,8 +1187,8 @@ public class AggregationQueryBuilder {
                     	} while("WhiteSpaces".equals(grammarItem.getType()) || "ImpliedAnd".equals(grammarItem.getValue()));
                     }
                     
-                    if ("NEXTBATCHEX".equals(grammarItem.getType())) continue;
-                   	if("ENDBATCHEX".equals(grammarItem.getType())) break;
+                    if (SemanticNames.NEXTSETS.equals(grammarItem.getType())) continue;
+                   	if(SemanticNames.ENDSETS.equals(grammarItem.getType())) break;
                 }
             } else {
                 String type = grammarItem.getType();
@@ -1210,9 +1210,9 @@ public class AggregationQueryBuilder {
                         type.equals(SemanticNames.TRUNCATE) ||
                         type.equals("endGroup") ||
                         type.equals(SemanticNames.BATCH) ||
-                        type.equals(SemanticNames.BATCHEX) ||
-                        type.equals(SemanticNames.ENDBATCHEX) ||
-                        type.equals(SemanticNames.NEXTBATCHEX) ||
+                        type.equals(SemanticNames.SETS) ||
+                        type.equals(SemanticNames.ENDSETS) ||
+                        type.equals(SemanticNames.NEXTSETS) ||
                         type.equals(SemanticNames.STOPVALUE) ||
                         type.equals(SemanticNames.ALIAS) ||
                         type.equals(SemanticNames.EXCLUDEVALUE) ||
