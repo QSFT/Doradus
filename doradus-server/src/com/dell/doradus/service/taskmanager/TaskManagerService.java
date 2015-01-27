@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -67,6 +68,7 @@ public class TaskManagerService extends Service {
     private Thread m_taskManager;
     private boolean m_bShutdown;
     private String  m_localHost;
+    private String  m_hostClaimID = UUID.randomUUID().toString();
     
     // Task execution management:
     private final ExecutorService m_executor = Executors.newFixedThreadPool(MAX_TASKS);
@@ -281,7 +283,7 @@ public class TaskManagerService extends Service {
             m_logger.warn("Claim record disappeared: {}", claimID);
             return false;
         }
-        String claimingHost = m_localHost;
+        String claimingHost = m_hostClaimID;
         long earliestClaim = Long.MAX_VALUE;
         while (colIter.hasNext()) {
             DColumn col = colIter.next();
@@ -301,7 +303,7 @@ public class TaskManagerService extends Service {
                 // Ignore this column
             }
         }
-        return claimingHost.equals(m_localHost) && !m_bShutdown;
+        return claimingHost.equals(m_hostClaimID) && !m_bShutdown;
     }   // taskClaimedByUs
 
     // Sleep the configured amount of time for other hosts to stake their claim.
@@ -315,7 +317,7 @@ public class TaskManagerService extends Service {
     // Write a claim record to the Tasks table.
     private void writeTaskClaim(Tenant tenant, String claimID, long claimStamp) {
         DBTransaction dbTran = DBService.instance().startTransaction(tenant);
-        dbTran.addColumn(TaskManagerService.TASKS_STORE_NAME, claimID, m_localHost, claimStamp);
+        dbTran.addColumn(TaskManagerService.TASKS_STORE_NAME, claimID, m_hostClaimID, claimStamp);
         DBService.instance().commit(dbTran);
     }   // writeTaskClaim
     
