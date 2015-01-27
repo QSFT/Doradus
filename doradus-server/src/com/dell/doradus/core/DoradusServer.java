@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -344,6 +345,7 @@ public final class DoradusServer {
             m_logger.warn("start: Already started -- ignoring");
             return;
         }
+        Locale.setDefault(Locale.ROOT);
         m_logger.info("Doradus Version: {}", this.getClass().getPackage().getImplementationVersion());
         hookShutdownEvent();
         startServices();

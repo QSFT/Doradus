@@ -17,6 +17,8 @@
 package com.dell.doradus.olap.aggregate;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import com.dell.doradus.search.aggregate.BinaryExpression.MetricOperation;
 
@@ -48,7 +50,13 @@ public abstract class MetricValueExpr implements IMetricValue {
 		if(val == Double.NEGATIVE_INFINITY || val == Double.POSITIVE_INFINITY) return null;
 		long lval = Math.round(val);
 		if(Math.abs(val - lval) < 0.001) return "" + lval;
-		else return new DecimalFormat("#.#########").format(getValue());
+		else {
+			DecimalFormat fmt = (DecimalFormat)NumberFormat.getInstance(Locale.ROOT);
+			fmt.applyPattern("#.#########");
+			return fmt.format(getValue());
+		}
+		//else return new DecimalFormat("#.#########").format(getValue());
+		//else return NumberFormat.getInstance(Locale.ROOT)..format(getValue());
 		//else return String.format("%.3f", getValue());
 		//else return Double.toString(val);
 	}

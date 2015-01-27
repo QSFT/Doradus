@@ -57,7 +57,12 @@ public class XType {
 	public static String toString(double value) {
 		long lval = Math.round(value);
 		if(Math.abs(value - lval) < 0.001) return "" + lval;
-		else return new DecimalFormat("#.#########").format(value);
+		//else return new DecimalFormat("#.#########").format(value);
+		else {
+			DecimalFormat fmt = (DecimalFormat)NumberFormat.getInstance(Locale.ROOT);
+			fmt.applyPattern("#.#########");
+			return fmt.format(value);
+		}
 	}
 	
 	public static String toString(Date value) {

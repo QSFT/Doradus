@@ -17,6 +17,7 @@
 package com.dell.doradus.olap.aggregate;
 
 import java.util.Date;
+import java.util.Locale;
 
 import com.dell.doradus.olap.XType;
 
@@ -52,7 +53,7 @@ public abstract class MetricValueAvg implements IMetricValue {
 		
 		@Override public String toString() {
 			if(count == 0) return null;
-			else return String.format("%.3f", getValue());
+			else return String.format(Locale.ROOT, "%.3f", getValue());
 		}
 
 	}
