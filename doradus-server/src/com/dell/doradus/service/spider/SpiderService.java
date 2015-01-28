@@ -743,6 +743,8 @@ public class SpiderService extends StorageService {
         assert agingFieldDef != null;   // Make FindBugs happy
         Utils.require(agingFieldDef.getType() == FieldType.TIMESTAMP,
                       "Aging field must be a timestamp field: " + optValue);
+        Utils.require(tableDef.getOption(CommonDefs.OPT_RETENTION_AGE) != null,
+                      "Option 'aging-field' requires option 'retention-age'");
     }   // validateTableOptionAgingField
     
     // Validate the table option "retention-age".
@@ -750,6 +752,8 @@ public class SpiderService extends StorageService {
         RetentionAge retAge = new RetentionAge(optValue); // throws if invalid format
         optValue = retAge.toString();
         tableDef.setOption(CommonDefs.OPT_RETENTION_AGE, optValue); // rewrite value
+        Utils.require(tableDef.getOption(CommonDefs.OPT_AGING_FIELD) != null,
+                      "Option 'retention-age' requires option 'aging-field'");
     }   // validateTableOptionRetentionAge
     
     // Validate the table option "sharding-field".
