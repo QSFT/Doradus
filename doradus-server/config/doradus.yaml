@@ -188,9 +188,9 @@ max_read_attempts: 7
 # max_read_attempts, and max_reconnect_attempts.
 # retry_wait_millis: 5000
 
-# dbtls: Set to true to use TLS/SSL for connections to Cassandra. This option currently only affects
-# CQL, hence use_cql must be true. When dbtls is enabled, the options keystore, keystorepassword,
-# truststore, and truststorepassword are used to initialize certificate information. Default: false.
+# dbtls: Set to true to use TLS/SSL for connections to Cassandra. This option works for both CQL
+# and Thrift. When dbtls is enabled, the options keystore and keystorepassword are used for
+# certificate information. Default: false.
 dbtls: false
 
 # dbtls_cipher_suites: Set to a list of one or more cipher suites to be used with SSL/TLS to
@@ -261,16 +261,17 @@ tls_cipher_suites:
 # clientauthentication: If true mutual client/server authentication is required. Default is false.
 # clientauthentication: false
 
-# keystore: Defines the path of the keystore file that contains the private SSL certificate used
-# when 'tls' is true. Default is system setting.
+# keystore: Defines the path of the keystore file that contains the private SSL certificate. This
+# certificate is used both Cassandra communication (dbtls: true) and the REST API (tls: true).
+# Default is system setting.
 # keystore: config/keystore
 
 # keystorepassword: Defines the password used to protect the keystore file. Default is system
 # setting.
 # keystorepassword: changeit
 
-# truststore: Defines the path name of the truststore file the trusted client certificates when
-# 'tls' and 'clientauthentication' are both true. Default is system setting.
+# truststore: Defines the path name of the truststore file that holds trusted client certificates,
+# which is used when both 'tls' and 'clientauthentication' are both true. Default is system setting.
 # truststore: config/truststore
 
 # truststorepassword: Defines the password that protects the truststore file. Default is system
