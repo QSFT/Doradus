@@ -42,8 +42,11 @@ import org.apache.cassandra.thrift.SliceRange;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TFramedTransport;
+import org.apache.thrift.transport.TSSLTransportFactory;
+import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
+import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -670,12 +673,18 @@ public class DBConn implements AutoCloseable {
         for (int attempt = 1; attempt <= dbHosts.length; attempt++) {
             try {
                 m_host = chooseHost(dbHosts);
-                m_logger.debug("Connecting to Cassandra node {}:{}", m_host, config.dbport);
-                TSocket socket = new TSocket(m_host, config.dbport, config.db_timeout_millis);
+                TSocket socket = null;
+                if (config.dbtls) {
+                    m_logger.debug("Connecting to Cassandra node {}:{} using TLS", m_host, config.dbport);
+                    socket = createTLSSocket(m_host);
+                } else {
+                    m_logger.debug("Connecting to Cassandra node {}:{}", m_host, config.dbport);
+                    socket = new TSocket(m_host, config.dbport, config.db_timeout_millis);
+                    socket.open();
+                }
                 TTransport transport = new TFramedTransport(socket);
                 TProtocol protocol = new TBinaryProtocol(transport);
                 m_client = new Cassandra.Client(protocol);
-                socket.open();
                 m_bDBOpen = true;
             } catch (Exception ex) {
                 lastException = ex;
@@ -700,6 +709,20 @@ public class DBConn implements AutoCloseable {
             throw new DBNotAvailableException("Error opening database", lastException);
         }
     }   // connect
+
+    // Create a TSocket using configured TLS/SSL options. 
+    private TSocket createTLSSocket(String host) throws TTransportException {
+        ServerConfig config = ServerConfig.getInstance();
+        String[] cipherSuites = config.dbtls_cipher_suites.toArray(new String[]{});
+        TSSLTransportParameters sslParams = new TSSLTransportParameters("SSL", cipherSuites);
+        if (!Utils.isEmpty(config.keystore)) {
+            sslParams.setKeyStore(config.keystore, config.keystorepassword);
+        }
+        if (!Utils.isEmpty(config.truststore)) {
+            sslParams.setTrustStore(config.truststore, config.truststorepassword);
+        }
+        return TSSLTransportFactory.getClientSocket(host, config.dbport, config.db_timeout_millis, sslParams);
+    }   // createTLSSocket
 
     // Choose the next Cassandra host name in the list or a random one.
     private String chooseHost(String[] dbHosts) {
