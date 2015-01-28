@@ -85,7 +85,7 @@ public abstract class TaskExecutor implements Runnable {
             execute();
             setTaskFinish();
         } catch (Throwable e) {
-            m_logger.error("Task '{}" + taskID + "' failed", e);
+            m_logger.error("Task '" + taskID + "' failed", e);
             setTaskFailed();
         } finally {
             TaskManagerService.instance().decrementActiveTasks();
