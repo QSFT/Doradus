@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jetty.io.Connection;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -226,11 +228,10 @@ public class RESTService extends Service {
     // Create, configure, and return the Jetty Server object.
     private Server configureJettyServer() {
         ServerConfig config = ServerConfig.getInstance();
-        Server server = new Server();
-        ThreadPool threadPool = server.getThreadPool();
-        if (threadPool instanceof QueuedThreadPool) {
-            ((QueuedThreadPool)threadPool).setMaxThreads(config.maxconns);
-        }
+        LinkedBlockingQueue<Runnable> taskQueue = new LinkedBlockingQueue<Runnable>(config.maxTaskQueue); 
+        QueuedThreadPool threadPool = new QueuedThreadPool(config.maxconns, config.defaultMinThreads, config.defaultIdleTimeout, 
+        		taskQueue);
+        Server server = new Server(threadPool);
         server.setStopAtShutdown(true);
         return server;
     }   // configureJettyServer

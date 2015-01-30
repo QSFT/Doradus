@@ -75,6 +75,9 @@ public class ServerConfig {
     // Default values for miscellaneous Doradus server options:
     public static final int DEFAULT_REST_PORT = 1123;
     public static final int DEFAULT_MAX_THREADS = 200;
+    public static final int DEFAULT_MIN_THREADS = 10;
+    public static final int DEFAULT_IDLE_TIMEOUT= 600000;
+    public static final int DEFAULT_TASK_QUEUE = 600;
     public static final String DEFAULT_DBTOOL_NAME = "doradus-cassandra.bat";
     public static final String DEFAULT_AGING_RECHECK = "4 hours";
     public static final boolean DEFAULT_AGGR_SEPARATE_SEARH = false;
@@ -200,6 +203,9 @@ public class ServerConfig {
     public int restport = DEFAULT_REST_PORT;
     public String restaddr;
     public int maxconns = DEFAULT_MAX_THREADS;
+    public int defaultMinThreads = DEFAULT_MIN_THREADS;
+    public int maxTaskQueue = DEFAULT_TASK_QUEUE;
+    public int defaultIdleTimeout = DEFAULT_IDLE_TIMEOUT;
     public boolean tls = false;
     public List<String> tls_cipher_suites = new ArrayList<>();
     public boolean clientauthentication = false;
