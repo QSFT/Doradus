@@ -552,31 +552,6 @@ final public class TableDefinition {
     }   // isLinkField
 
     /**
-     * Return true if the option with the given name has been defined and its value is
-     * "true".
-     * 
-     * @param  optName  Option name (case-insensitive).
-     * @return          True if the option has been defined as "true"; false if not set or
-     *                  explicitly set to something other than "true" (case-insensitive).
-     */
-    public boolean isOptionSet(String optName) {
-        String optValue = getOption(optName);
-        return optValue != null && optValue.equalsIgnoreCase("true");
-    }   // isOptionSet
-    
-    /**
-     * Checks whether the table is assigned for data aging.
-     * @return	true if data aging is properly defined for the table, false otherwise.
-     */
-    public boolean isSetForAging() {
-        if (getOption(CommonDefs.OPT_AGING_FIELD) == null || getOption(CommonDefs.OPT_RETENTION_AGE) == null) {
-            return false;
-        }
-        RetentionAge retAge = new RetentionAge(getOption(CommonDefs.OPT_RETENTION_AGE));
-        return retAge.getValue() > 0;
-    }	// isSetForAging
-    
-    /**
      * Return true if this table definition possesses a FieldDefinition with the given name
      * that defines a scalar field or if the field is undefined and therefore considered a
      * text field.

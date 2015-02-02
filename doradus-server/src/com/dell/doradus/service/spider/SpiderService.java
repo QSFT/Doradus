@@ -651,6 +651,10 @@ public class SpiderService extends StorageService {
                 // Ignore
                 break;
                 
+            case CommonDefs.OPT_AGING_CHECK_FREQ:
+                new TaskFrequency(optValue);    // default for all tables
+                break;
+                
             default:
                 throw new IllegalArgumentException("Unknown option for SpiderService application: " + optName);
             }
@@ -690,7 +694,6 @@ public class SpiderService extends StorageService {
 
     // Validate the given table against SpiderService-specific constraints.
     private void validateTable(TableDefinition tableDef) {
-        boolean bSawDataAging = false;
         for (String optName : tableDef.getOptionNames()) {
             String optValue = tableDef.getOption(optName);
             switch (optName) {
@@ -711,7 +714,6 @@ public class SpiderService extends StorageService {
                 break;
             case CommonDefs.OPT_AGING_CHECK_FREQ:
                 validateTableOptionAgingCheckFrequency(tableDef, optValue);
-                bSawDataAging = true;
                 break;
             default:
                 Utils.require(false, "Unknown option for SpiderService table: " + optName);
@@ -722,8 +724,13 @@ public class SpiderService extends StorageService {
             validateField(fieldDef);
         }
         
-        if (!bSawDataAging && tableDef.isOptionSet(CommonDefs.OPT_AGING_FIELD)) {
-            tableDef.setOption(CommonDefs.OPT_AGING_CHECK_FREQ, "1 DAY");
+        if (tableDef.getOption(CommonDefs.OPT_AGING_FIELD) != null &&
+            tableDef.getOption(CommonDefs.OPT_AGING_CHECK_FREQ) == null) {
+            String agingCheckFreq = tableDef.getAppDef().getOption(CommonDefs.OPT_AGING_CHECK_FREQ);
+            if (Utils.isEmpty(agingCheckFreq)) {
+                agingCheckFreq = "1 DAY";
+            }
+            tableDef.setOption(CommonDefs.OPT_AGING_CHECK_FREQ, agingCheckFreq);
         }
     }   // validateTable
     
