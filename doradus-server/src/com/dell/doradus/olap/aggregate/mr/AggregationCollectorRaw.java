@@ -13,12 +13,10 @@ public class AggregationCollectorRaw {
 	private int m_documentsCount;
 	private int m_lastAddedDoc = -1;
 	private Group m_group;
-	private boolean m_forceAdd;
 
-	public AggregationCollectorRaw(MetricCollectorSet mcs, boolean forceAdd) {
+	public AggregationCollectorRaw(MetricCollectorSet mcs) {
 		m_mcs = mcs;
 		m_group = new Group(Long.MIN_VALUE, mcs.get());
-		m_forceAdd = forceAdd;
 	}
 	
 	public int documentsCount() { return m_documentsCount; }
@@ -35,7 +33,7 @@ public class AggregationCollectorRaw {
 				m_lastAddedDoc = doc;
 			}
 		}
-		m_group.add(m_forceAdd ? -1 : doc, keys, 0, metric);
+		m_group.add(doc, keys, 0, metric);
 	}
 	
 	public List<BdLongMap<MGName>> createNamesMap(MFCollectorSet mfc) {

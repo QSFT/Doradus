@@ -27,8 +27,8 @@ import com.dell.doradus.search.aggregate.AggregationGroup;
 public class MGBuilder {
 	private AggregationCollectorRaw m_rawCollector;
 	
-	public MGBuilder(CubeSearcher searcher, MetricCollectorSet metricSet, int groupsCount, boolean forceAdd) {
-		m_rawCollector = new AggregationCollectorRaw(metricSet, forceAdd);
+	public MGBuilder(CubeSearcher searcher, MetricCollectorSet metricSet, int groupsCount) {
+		m_rawCollector = new AggregationCollectorRaw(metricSet);
 	}
 	
 	public void add(int doc, BdLongSet[] sets, MetricValueSet valueSet) {

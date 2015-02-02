@@ -133,7 +133,7 @@ public class MFAggregationBuilder {
 			sets[i] = new BdLongSet(1024);
 			sets[i].enableClearBuffer();
 		}
-		MGBuilder builder = new MGBuilder(searcher, collectorSets[0], groupsCount, request.differentMetricsForPairs);
+		MGBuilder builder = new MGBuilder(searcher, collectorSets[0], groupsCount);
 		
 		MetricValueSet valueSet = collectorSets[0].get();
 		//collect empty groups: only for top group
@@ -146,12 +146,13 @@ public class MFAggregationBuilder {
 		}
 		
 		boolean hasCommonPart = filters.length == 1 && fieldCollectors[0].commonPartCollector != null;
+		int count = filters[0].size(); 
 		
 		if(hasCommonPart) {
 			BdLongSet commonSet = new BdLongSet(1024);
 			commonSet.enableClearBuffer();
 			
-			for(int doc = 0; doc < filters[0].size(); doc++) {
+			for(int doc = 0; doc < count; doc++) {
 				for(int i = 0; i < filters.length; i++) {
 					if(!filters[i].get(doc)) continue;
 					valueSet.reset();
@@ -161,7 +162,8 @@ public class MFAggregationBuilder {
 					for(int d = 0; d < commonSet.size(); d++) {
 						long commonDoc = commonSet.get(d);
 						fieldCollectors[i].collect(commonDoc, sets);
-						builder.add(doc, sets, valueSet);
+						if(i > 0 && request.differentMetricsForPairs) builder.add(doc + i * count, sets, valueSet);
+						else builder.add(doc, sets, valueSet);
 						for(int j = 0; j < sets.length; j++) sets[j].clear();
 					}
 					commonSet.clear();
@@ -169,13 +171,14 @@ public class MFAggregationBuilder {
 			}
 		}
 		else {
-			for(int doc = 0; doc < filters[0].size(); doc++) {
+			for(int doc = 0; doc < count; doc++) {
 				for(int i = 0; i < filters.length; i++) {
 					if(!filters[i].get(doc)) continue;
 					valueSet.reset();
 					counterSets[i].add(doc, valueSet);
 					fieldCollectors[i].collect(doc, sets);
-					builder.add(doc, sets, valueSet);
+					if(i > 0 && request.differentMetricsForPairs) builder.add(doc + i * count, sets, valueSet);
+					else builder.add(doc, sets, valueSet);
 					for(int j = 0; j < sets.length; j++) sets[j].clear();
 				}
 			}
