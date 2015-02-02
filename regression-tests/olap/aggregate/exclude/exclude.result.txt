@@ -7192,15 +7192,7 @@
         <groups>
             <group>
                 <metric>1</metric>
-                <field name="Double.EXCLUDE(NULL)">0.022</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Double.EXCLUDE(NULL)">17900000000000</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Double.EXCLUDE(NULL)">-0.023</field>
+                <field name="Double.EXCLUDE(NULL)">-17900000000000</field>
             </group>
             <group>
                 <metric>1</metric>
@@ -7208,7 +7200,15 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Double.EXCLUDE(NULL)">-17900000000000</field>
+                <field name="Double.EXCLUDE(NULL)">-0.023</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Double.EXCLUDE(NULL)">0.022</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Double.EXCLUDE(NULL)">17900000000000</field>
             </group>
         </groups>
     </results>
@@ -7229,23 +7229,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Double.EXCLUDE(NULL)":"0.022"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Double.EXCLUDE(NULL)":"17900000000000"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Double.EXCLUDE(NULL)":"-0.023"
+                      "Double.EXCLUDE(NULL)":"-17900000000000"
                    }
                 }
              },
@@ -7261,7 +7245,23 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Double.EXCLUDE(NULL)":"-17900000000000"
+                      "Double.EXCLUDE(NULL)":"-0.023"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Double.EXCLUDE(NULL)":"0.022"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Double.EXCLUDE(NULL)":"17900000000000"
                    }
                 }
              }
@@ -7285,11 +7285,7 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Double.EXCLUDE(0.022)">17900000000000</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Double.EXCLUDE(0.022)">-0.023</field>
+                <field name="Double.EXCLUDE(0.022)">-17900000000000</field>
             </group>
             <group>
                 <metric>1</metric>
@@ -7297,7 +7293,11 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Double.EXCLUDE(0.022)">-17900000000000</field>
+                <field name="Double.EXCLUDE(0.022)">-0.023</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Double.EXCLUDE(0.022)">17900000000000</field>
             </group>
         </groups>
     </results>
@@ -7326,15 +7326,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Double.EXCLUDE(0.022)":"17900000000000"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Double.EXCLUDE(0.022)":"-0.023"
+                      "Double.EXCLUDE(0.022)":"-17900000000000"
                    }
                 }
              },
@@ -7350,7 +7342,15 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Double.EXCLUDE(0.022)":"-17900000000000"
+                      "Double.EXCLUDE(0.022)":"-0.023"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Double.EXCLUDE(0.022)":"17900000000000"
                    }
                 }
              }
@@ -7816,15 +7816,7 @@
         <groups>
             <group>
                 <metric>1</metric>
-                <field name="Float.EXCLUDE(NULL)">0.017999999</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Float.EXCLUDE(NULL)">3390</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Float.EXCLUDE(NULL)">-0.017999999</field>
+                <field name="Float.EXCLUDE(NULL)">-3000000000</field>
             </group>
             <group>
                 <metric>1</metric>
@@ -7832,7 +7824,15 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Float.EXCLUDE(NULL)">-3000000000</field>
+                <field name="Float.EXCLUDE(NULL)">-0.017999999</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Float.EXCLUDE(NULL)">0.017999999</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Float.EXCLUDE(NULL)">3390</field>
             </group>
         </groups>
     </results>
@@ -7853,23 +7853,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Float.EXCLUDE(NULL)":"0.017999999"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Float.EXCLUDE(NULL)":"3390"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Float.EXCLUDE(NULL)":"-0.017999999"
+                      "Float.EXCLUDE(NULL)":"-3000000000"
                    }
                 }
              },
@@ -7885,7 +7869,23 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Float.EXCLUDE(NULL)":"-3000000000"
+                      "Float.EXCLUDE(NULL)":"-0.017999999"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Float.EXCLUDE(NULL)":"0.017999999"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Float.EXCLUDE(NULL)":"3390"
                    }
                 }
              }
@@ -7909,11 +7909,7 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Float.EXCLUDE(0.017999999)">3390</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Float.EXCLUDE(0.017999999)">-0.017999999</field>
+                <field name="Float.EXCLUDE(0.017999999)">-3000000000</field>
             </group>
             <group>
                 <metric>1</metric>
@@ -7921,7 +7917,11 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Float.EXCLUDE(0.017999999)">-3000000000</field>
+                <field name="Float.EXCLUDE(0.017999999)">-0.017999999</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Float.EXCLUDE(0.017999999)">3390</field>
             </group>
         </groups>
     </results>
@@ -7950,15 +7950,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Float.EXCLUDE(0.017999999)":"3390"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Float.EXCLUDE(0.017999999)":"-0.017999999"
+                      "Float.EXCLUDE(0.017999999)":"-3000000000"
                    }
                 }
              },
@@ -7974,7 +7966,15 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Float.EXCLUDE(0.017999999)":"-3000000000"
+                      "Float.EXCLUDE(0.017999999)":"-0.017999999"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Float.EXCLUDE(0.017999999)":"3390"
                    }
                 }
              }
@@ -17680,15 +17680,7 @@
         <groups>
             <group>
                 <metric>1</metric>
-                <field name="Double.EXCLUDE(NULL)">0.022</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Double.EXCLUDE(NULL)">17900000000000</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Double.EXCLUDE(NULL)">-0.023</field>
+                <field name="Double.EXCLUDE(NULL)">-17900000000000</field>
             </group>
             <group>
                 <metric>1</metric>
@@ -17696,7 +17688,15 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Double.EXCLUDE(NULL)">-17900000000000</field>
+                <field name="Double.EXCLUDE(NULL)">-0.023</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Double.EXCLUDE(NULL)">0.022</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Double.EXCLUDE(NULL)">17900000000000</field>
             </group>
         </groups>
     </results>
@@ -17717,23 +17717,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Double.EXCLUDE(NULL)":"0.022"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Double.EXCLUDE(NULL)":"17900000000000"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Double.EXCLUDE(NULL)":"-0.023"
+                      "Double.EXCLUDE(NULL)":"-17900000000000"
                    }
                 }
              },
@@ -17749,7 +17733,23 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Double.EXCLUDE(NULL)":"-17900000000000"
+                      "Double.EXCLUDE(NULL)":"-0.023"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Double.EXCLUDE(NULL)":"0.022"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Double.EXCLUDE(NULL)":"17900000000000"
                    }
                 }
              }
@@ -17773,11 +17773,7 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Double.EXCLUDE(0.022)">17900000000000</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Double.EXCLUDE(0.022)">-0.023</field>
+                <field name="Double.EXCLUDE(0.022)">-17900000000000</field>
             </group>
             <group>
                 <metric>1</metric>
@@ -17785,7 +17781,11 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Double.EXCLUDE(0.022)">-17900000000000</field>
+                <field name="Double.EXCLUDE(0.022)">-0.023</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Double.EXCLUDE(0.022)">17900000000000</field>
             </group>
         </groups>
     </results>
@@ -17814,15 +17814,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Double.EXCLUDE(0.022)":"17900000000000"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Double.EXCLUDE(0.022)":"-0.023"
+                      "Double.EXCLUDE(0.022)":"-17900000000000"
                    }
                 }
              },
@@ -17838,7 +17830,15 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Double.EXCLUDE(0.022)":"-17900000000000"
+                      "Double.EXCLUDE(0.022)":"-0.023"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Double.EXCLUDE(0.022)":"17900000000000"
                    }
                 }
              }
@@ -18304,15 +18304,7 @@
         <groups>
             <group>
                 <metric>1</metric>
-                <field name="Float.EXCLUDE(NULL)">0.017999999</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Float.EXCLUDE(NULL)">3390</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Float.EXCLUDE(NULL)">-0.017999999</field>
+                <field name="Float.EXCLUDE(NULL)">-3000000000</field>
             </group>
             <group>
                 <metric>1</metric>
@@ -18320,7 +18312,15 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Float.EXCLUDE(NULL)">-3000000000</field>
+                <field name="Float.EXCLUDE(NULL)">-0.017999999</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Float.EXCLUDE(NULL)">0.017999999</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Float.EXCLUDE(NULL)">3390</field>
             </group>
         </groups>
     </results>
@@ -18341,23 +18341,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Float.EXCLUDE(NULL)":"0.017999999"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Float.EXCLUDE(NULL)":"3390"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Float.EXCLUDE(NULL)":"-0.017999999"
+                      "Float.EXCLUDE(NULL)":"-3000000000"
                    }
                 }
              },
@@ -18373,7 +18357,23 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Float.EXCLUDE(NULL)":"-3000000000"
+                      "Float.EXCLUDE(NULL)":"-0.017999999"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Float.EXCLUDE(NULL)":"0.017999999"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Float.EXCLUDE(NULL)":"3390"
                    }
                 }
              }
@@ -18397,11 +18397,7 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Float.EXCLUDE(0.017999999)">3390</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Float.EXCLUDE(0.017999999)">-0.017999999</field>
+                <field name="Float.EXCLUDE(0.017999999)">-3000000000</field>
             </group>
             <group>
                 <metric>1</metric>
@@ -18409,7 +18405,11 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Float.EXCLUDE(0.017999999)">-3000000000</field>
+                <field name="Float.EXCLUDE(0.017999999)">-0.017999999</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Float.EXCLUDE(0.017999999)">3390</field>
             </group>
         </groups>
     </results>
@@ -18438,15 +18438,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Float.EXCLUDE(0.017999999)":"3390"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Float.EXCLUDE(0.017999999)":"-0.017999999"
+                      "Float.EXCLUDE(0.017999999)":"-3000000000"
                    }
                 }
              },
@@ -18462,7 +18454,15 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Float.EXCLUDE(0.017999999)":"-3000000000"
+                      "Float.EXCLUDE(0.017999999)":"-0.017999999"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Float.EXCLUDE(0.017999999)":"3390"
                    }
                 }
              }

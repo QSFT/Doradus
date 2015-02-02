@@ -132,7 +132,7 @@ public abstract class MFCollector {
 		public FloatField(CubeSearcher searcher) { super(searcher); }
 		@Override public void collect(long doc, BdLongSet values) { values.add(doc); }
 		@Override public MGName getField(long value) {
-			return new MGName(XType.toString(Float.intBitsToFloat((int)value)), new BSTR(value));
+			return new MGName(XType.toString(Float.intBitsToFloat((int)value)), new BSTR(Float.intBitsToFloat((int)value)));
 		}
 		@Override public boolean requiresOrdering() { return false; }
 	}
@@ -142,7 +142,7 @@ public abstract class MFCollector {
 		public DoubleField(CubeSearcher searcher) { super(searcher); }
 		@Override public void collect(long doc, BdLongSet values) { values.add(doc); }
 		@Override public MGName getField(long value) {
-			return new MGName(XType.toString(Double.longBitsToDouble(value)), new BSTR(value));
+			return new MGName(XType.toString(Double.longBitsToDouble(value)), new BSTR(Double.longBitsToDouble(value)));
 		}
 		@Override public boolean requiresOrdering() { return false; }
 	}

@@ -132,8 +132,8 @@ public class SearchResult implements Comparable<SearchResult> {
 						if(str == null) sortedSet.add(new BSTR());
 						else {
 							double d = Double.parseDouble(str);
-							long l = Double.doubleToRawLongBits(d);
-							sortedSet.add(new BSTR(l));
+							//long l = Double.doubleToRawLongBits(d);
+							sortedSet.add(new BSTR(d));
 						}
 					}
 				}

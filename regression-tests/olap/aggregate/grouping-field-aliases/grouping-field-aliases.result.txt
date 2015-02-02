@@ -1669,11 +1669,7 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Float">0.017999999</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Float">339000000</field>
+                <field name="Float">-339000000</field>
             </group>
             <group>
                 <metric>1</metric>
@@ -1681,7 +1677,11 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Float">-339000000</field>
+                <field name="Float">0.017999999</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Float">339000000</field>
             </group>
         </groups>
     </results>
@@ -1710,15 +1710,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Float":"0.017999999"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Float":"339000000"
+                      "Float":"-339000000"
                    }
                 }
              },
@@ -1734,7 +1726,15 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Float":"-339000000"
+                      "Float":"0.017999999"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Float":"339000000"
                    }
                 }
              }
@@ -1866,11 +1866,7 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Double">0.022</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Double">17900000000000</field>
+                <field name="Double">-17900000000000</field>
             </group>
             <group>
                 <metric>1</metric>
@@ -1878,7 +1874,11 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Double">-17900000000000</field>
+                <field name="Double">0.022</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Double">17900000000000</field>
             </group>
         </groups>
     </results>
@@ -1907,15 +1907,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Double":"0.022"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Double":"17900000000000"
+                      "Double":"-17900000000000"
                    }
                 }
              },
@@ -1931,7 +1923,15 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Double":"-17900000000000"
+                      "Double":"0.022"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Double":"17900000000000"
                    }
                 }
              }
@@ -4394,11 +4394,7 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Float">0.017999999</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Float">339000000</field>
+                <field name="Float">-339000000</field>
             </group>
             <group>
                 <metric>1</metric>
@@ -4406,7 +4402,11 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Float">-339000000</field>
+                <field name="Float">0.017999999</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Float">339000000</field>
             </group>
         </groups>
     </results>
@@ -4435,15 +4435,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Float":"0.017999999"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Float":"339000000"
+                      "Float":"-339000000"
                    }
                 }
              },
@@ -4459,7 +4451,15 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Float":"-339000000"
+                      "Float":"0.017999999"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Float":"339000000"
                    }
                 }
              }
@@ -4591,11 +4591,7 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Double">0.022</field>
-            </group>
-            <group>
-                <metric>1</metric>
-                <field name="Double">17900000000000</field>
+                <field name="Double">-17900000000000</field>
             </group>
             <group>
                 <metric>1</metric>
@@ -4603,7 +4599,11 @@
             </group>
             <group>
                 <metric>1</metric>
-                <field name="Double">-17900000000000</field>
+                <field name="Double">0.022</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Double">17900000000000</field>
             </group>
         </groups>
     </results>
@@ -4632,15 +4632,7 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Double":"0.022"
-                   }
-                }
-             },
-             {
-                "group":{
-                   "metric":"1",
-                   "field":{
-                      "Double":"17900000000000"
+                      "Double":"-17900000000000"
                    }
                 }
              },
@@ -4656,7 +4648,15 @@
                 "group":{
                    "metric":"1",
                    "field":{
-                      "Double":"-17900000000000"
+                      "Double":"0.022"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Double":"17900000000000"
                    }
                 }
              }

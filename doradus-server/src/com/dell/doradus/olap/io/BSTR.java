@@ -55,8 +55,15 @@ public class BSTR implements Comparable<BSTR>  {
         buffer = bytes;
         length = buffer.length;
     }
+
+    public BSTR(double value) {
+    	this(value < 0 ? -Double.doubleToLongBits(-value) : Double.doubleToLongBits(value));
+    }
+    
     
     public BSTR(long value) {
+    	//keep sort order
+    	value = value >= 0 ? value + Long.MIN_VALUE : value - Long.MIN_VALUE; 
     	length = 8;
     	buffer = new byte[8];
     	buffer[7] = (byte)value;
