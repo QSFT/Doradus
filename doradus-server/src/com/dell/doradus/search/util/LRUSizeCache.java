@@ -52,7 +52,7 @@ public class LRUSizeCache<K, T> {
 				oldValue.value = value;
 				m_currentSize -= oldValue.size;
 				m_currentSize += size;
-				log.warn("Updating existing data in the cache: might be an error: {}, {}->{}",
+				log.debug("Updating existing data in the cache: might be an error: {}, {}->{}",
 						new Object[] { key, oldValue.size, size});
 			} else {
 				m_currentSize += size;
@@ -60,7 +60,7 @@ public class LRUSizeCache<K, T> {
 			}
 			if(m_currentSize > m_totalSize) {
 				if(m_map.size() <= m_capacity) {
-					log.warn("Cannot store capacity={} because the size limit is exceeded; currently: {}",
+					log.debug("Cannot store capacity={} because the size limit is exceeded; currently: {}",
 							m_capacity, m_map.size());
 				}
 				Iterator<Map.Entry<K, ValueAndSize<T>>> iterator = m_map.entrySet().iterator();

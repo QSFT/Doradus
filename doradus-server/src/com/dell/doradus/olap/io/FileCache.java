@@ -25,7 +25,7 @@ public class FileCache {
     public FileCache() {
 		int cacheSize = ServerConfig.getInstance().olap_file_cache_size_mb;  
 		if(cacheSize > 0) {
-			m_chunkCache = new LRUSizeCache<String, byte[]>(cacheSize, cacheSize * 1024L * 1024L);
+			m_chunkCache = new LRUSizeCache<String, byte[]>(0, cacheSize * 1024L * 1024L);
 		}
     }
 

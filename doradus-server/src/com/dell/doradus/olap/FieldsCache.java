@@ -22,7 +22,7 @@ public class FieldsCache {
 	private LRUSizeCache<String, Object> m_FieldsCache;
 	
 	public FieldsCache(long totalSizeInBytes) {
-		m_FieldsCache = new LRUSizeCache<String, Object>(1024 * 1024, totalSizeInBytes);
+		m_FieldsCache = new LRUSizeCache<String, Object>(0, totalSizeInBytes);
 	}
 	
 	public Object get(String key) {
