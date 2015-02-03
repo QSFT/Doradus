@@ -43,6 +43,7 @@ import com.dell.doradus.olap.io.FileDeletedException;
 import com.dell.doradus.olap.io.VDirectory;
 import com.dell.doradus.olap.merge.MergeResult;
 import com.dell.doradus.olap.merge.Merger;
+import com.dell.doradus.olap.search.MetricsInSearch;
 import com.dell.doradus.olap.search.Searcher;
 import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.SegmentStats;
@@ -246,6 +247,11 @@ public class Olap {
 			int sz = result.results.size();
 			result.results = new ArrayList<SearchResult>(result.results.subList(Math.min(olapQuery.getSkip(), sz), sz));
 		}
+		//metrics in query
+		if(olapQuery.getMetrics() != null) {
+			MetricsInSearch.addMetricsInSearch(this, tableDef, result, olapQuery);
+		}
+		
 		return result;
 	}
 

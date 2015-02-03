@@ -99,6 +99,16 @@ public class OlapAggregate {
     	m_pair = pair;
         checkDefaults();
     }
+
+    public void setShards(String shards, String shardsRange) {
+    	m_shards = shards;
+    	m_shardsRange = shardsRange;
+    }
+
+    public void setXShards(String xshards, String xshardsRange) {
+    	m_xshards = xshards;
+    	m_xshardsRange = xshardsRange;
+    }
     
     public String getQuery() { return m_query; }
     public String getFields() { return m_fields; }

@@ -28,18 +28,20 @@ import com.dell.doradus.core.ServerConfig;
  * provides methods that allow parameters to be parsed from a query URI or UNode document.
  */
 public class OlapQuery {
-    private String  m_query;                // &q parameter
-    private int     m_pageSize = -1;        // &s parameter
-    private int     m_skip = 0;        		// &k parameter
-    private String  m_fields;               // &f parameter
-    private String  m_sortOrder;            // &o parameter
+    private String m_query;					// &q parameter
+    private int    m_pageSize = -1;			// &s parameter
+    private int    m_skip = 0;        		// &k parameter
+    private String m_fields;				// &f parameter
+    private String m_sortOrder;				// &o parameter
     private String m_shards;   				// &shards parameter
     private String m_shardsRange;			// &range parameter
     private String m_pair;					// &pair parameter
     private String m_xshards;  				// &xshards parameter
     private String m_xshardsRange;			// &xrange parameter
-    private String  m_continueAt;			// &e parameter
-    private String  m_continueAfter;		// &g parameter
+    private String m_continueAt;			// &e parameter
+    private String m_continueAfter;			// &g parameter
+    private String m_metrics;				// &m parameter
+    private String m_originalQuery;			// m_query before fixQueryParameter
     
     /**
      * Create an OlapQuery with query parameters extracted from the given "search" UNode.
@@ -61,6 +63,7 @@ public class OlapQuery {
         m_xshardsRange = parsedQuery.get("x-shards-range");
         m_continueAt = parsedQuery.get("continue-at");
         m_continueAfter = parsedQuery.get("continue-after");
+        m_metrics = parsedQuery.get("metric");
         parsedQuery.checkInvalidParameters();
         checkDefaults();
     }
@@ -90,6 +93,7 @@ public class OlapQuery {
         m_xshardsRange = parsedQuery.get("xrange");
         m_continueAt = parsedQuery.get("e");
         m_continueAfter = parsedQuery.get("g");
+        m_metrics = parsedQuery.get("m");
         parsedQuery.checkInvalidParameters();
         checkDefaults();
     }
@@ -108,6 +112,7 @@ public class OlapQuery {
     	if(m_pair == null) return;
     	if(m_query == null) return;
 		if(!m_query.contains("_pair.")) return;
+    	m_originalQuery = m_query;
     	
 		String[] pairs = Utils.split(m_pair, ',').toArray(new String[2]);
 		if(pairs.length != 2) throw new IllegalArgumentException("pair must contain two fields");
@@ -125,6 +130,13 @@ public class OlapQuery {
     public String getSortOrder() { return m_sortOrder; }
     public String getContinueAt() { return m_continueAt; }
     public String getContinueAfter() { return m_continueAfter; }
+    public String getMetrics() { return m_metrics; }
+    public String getShards() { return m_shards; }
+    public String getShardsRange() { return m_shardsRange; }
+    public String getXShards() { return m_xshards; }
+    public String getXShardsRange() { return m_xshardsRange; }
+    public String getPair() { return m_pair; }
+    public String getOriginalQuery() { return m_originalQuery == null ? m_query : m_originalQuery; }
     
     public List<String> getShards(ApplicationDefinition appDef, Olap olap) {
     	return olap.getShardsList(appDef, m_shards, m_shardsRange);
