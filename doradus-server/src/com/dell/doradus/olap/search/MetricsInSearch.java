@@ -51,7 +51,6 @@ public class MetricsInSearch {
 		aggregate.setXShards(olapQuery.getXShards(), olapQuery.getXShardsRange());
 		AggregationResult aresult = olap.aggregate(tableDef.getAppDef(), tableDef.getTableName(), aggregate);
 		AggregateResult r = AggregateResultConverter.create(aresult, aggregate);
-		System.out.println("A: " + r.toDoc());
 		for(AggGroupSet groupSet: r.getGroupsets()) {
 			HashMap<String, String> values = new HashMap<String, String>();
 			String metricName = groupSet.getMetricParam();
