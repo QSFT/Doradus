@@ -130,9 +130,15 @@ public abstract class MFCollector {
 	public static class FloatField extends MFCollector
 	{
 		public FloatField(CubeSearcher searcher) { super(searcher); }
-		@Override public void collect(long doc, BdLongSet values) { values.add(doc); }
+		// floatToIntBits flips sort order of negative numbers, so we fix it
+		@Override public void collect(long doc, BdLongSet values) {
+			if(doc < 0) doc = - (doc & Integer.MAX_VALUE);
+			values.add(doc);
+		}
 		@Override public MGName getField(long value) {
-			return new MGName(XType.toString(Float.intBitsToFloat((int)value)), new BSTR(Float.intBitsToFloat((int)value)));
+			if(value < 0) value = (-value) | Integer.MIN_VALUE;
+			float fval = Float.intBitsToFloat((int)value);
+			return new MGName(XType.toString(fval), new BSTR(fval));
 		}
 		@Override public boolean requiresOrdering() { return false; }
 	}
@@ -140,9 +146,15 @@ public abstract class MFCollector {
 	public static class DoubleField extends MFCollector
 	{
 		public DoubleField(CubeSearcher searcher) { super(searcher); }
-		@Override public void collect(long doc, BdLongSet values) { values.add(doc); }
+		// doubleToLongBits flips sort order of negative numbers, so we fix it
+		@Override public void collect(long doc, BdLongSet values) {
+			if(doc < 0) doc = - (doc & Long.MAX_VALUE);
+			values.add(doc);
+		}
 		@Override public MGName getField(long value) {
-			return new MGName(XType.toString(Double.longBitsToDouble(value)), new BSTR(Double.longBitsToDouble(value)));
+			if(value < 0) value = (-value) | Long.MIN_VALUE;
+			double dval = Double.longBitsToDouble(value);
+			return new MGName(XType.toString(dval), new BSTR(dval));
 		}
 		@Override public boolean requiresOrdering() { return false; }
 	}

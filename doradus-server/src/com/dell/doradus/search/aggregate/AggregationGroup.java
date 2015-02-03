@@ -16,6 +16,7 @@
 
 package com.dell.doradus.search.aggregate;
 
+import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.search.parser.AggregationQueryBuilder;
 import com.dell.doradus.search.query.Query;
@@ -86,6 +87,10 @@ public class AggregationGroup {
     public List<AggregationGroupItem> items; // = new ArrayList<AggregationGroupItem>();
     
     public AggregationGroup(TableDefinition tableDef) { this.tableDef = tableDef; }
+    
+    public FieldDefinition getLastField() {
+    	return items == null || items.size() == 0 ? null : items.get(items.size() - 1).fieldDef;
+    }
     
     public static List<AggregationGroup> GetAggregationGroupsList(String input, TableDefinition tableDef)  {
         return AggregationQueryBuilder.Build(input, tableDef);

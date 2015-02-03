@@ -49,7 +49,7 @@ public class SearchResultComparer {
 		
 		List<AggregationGroup> aggGroups = new ArrayList<AggregationGroup>(orders.length);
 		for(SortOrder order: orders) { aggGroups.add(order.getAggregationGroup()); }
-		MFCollectorSet collectorSet = new MFCollectorSet(searcher, aggGroups, false); 
+		MFCollectorSet collectorSet = new MFCollectorSet(searcher, aggGroups, false);
 		
 		HeapList<SortKey> heap = new HeapList<SortKey>(size);
 		SortKey cur = null;
