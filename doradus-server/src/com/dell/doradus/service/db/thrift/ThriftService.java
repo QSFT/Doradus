@@ -333,12 +333,13 @@ public class ThriftService extends DBService {
 
     // Initialize the DBConnection pool by creating the first connection to Cassandra.
     private void initializeDBConnections() {
-        while (true) {
-            try {
-                // Create and toss a no-keyspace connection.
-                DBConn dbConn = new DBConn(null);
-                dbConn.close();
-                break;
+        boolean bSuccess = false;
+        while (!bSuccess) {
+            // Create a no-keyspace connection and fetch all keyspaces to prove that the
+            // cluster is really ready.
+            try (DBConn dbConn = new DBConn(null)) {
+                new CassandraSchemaMgr(dbConn.getClientSession()).getKeyspaces();
+                bSuccess = true;
             } catch (DBNotAvailableException ex) {
                 m_logger.info("Database is not reachable. Waiting to retry");
                 try {

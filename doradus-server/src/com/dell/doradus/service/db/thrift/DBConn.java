@@ -705,7 +705,7 @@ public class DBConn implements AutoCloseable {
         } else {
             // All connect attempts failed.
             m_bFailed = true;
-            m_logger.error("Could not connect to Cassandra", lastException);
+            m_logger.error("Could not connect to Cassandra [host=" + m_host + "]", lastException);
             throw new DBNotAvailableException("Error opening database", lastException);
         }
     }   // connect
