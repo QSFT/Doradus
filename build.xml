@@ -121,7 +121,7 @@
 			<url url="http://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/3.0.1/javax.servlet-api-3.0.1.jar"/> 
 		</get>
 		<get dest="${server.lib.dir}">
-			<url url="http://repo1.maven.org/maven2/org/eclipse/jetty/aggregate/jetty-all/9.0.6.v20130930/jetty-all-9.0.6.v20130930.jar"/> 
+			<url url="http://repo1.maven.org/maven2/org/eclipse/jetty/aggregate/jetty-all/9.2.7.v20150116/jetty-all-9.2.7.v20150116.jar"/> 
 		</get>
 		<get dest="${server.lib.dir}">
 			<url url="http://repo1.maven.org/maven2/org/apache/thrift/libthrift/0.9.1/libthrift-0.9.1.jar"/>
