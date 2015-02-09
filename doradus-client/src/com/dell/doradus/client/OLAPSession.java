@@ -16,7 +16,10 @@
 
 package com.dell.doradus.client;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import com.dell.doradus.common.AggregateResult;
@@ -141,6 +144,62 @@ public class OLAPSession extends ApplicationSession {
             throw new RuntimeException(e);
         }
     }   // deleteShard
+    
+    /**
+     * Get a list of all shard names owned by this application. If there are no shards
+     * with data yet, an empty collection is returned.
+     * 
+     * @return  Collection of shard names, possibly empty.
+     */
+    public Collection<String> getShardNames() {
+        List<String> shardNames = new ArrayList<>();
+        try {
+            // Send a GET request to "/{application}/_shards"
+            StringBuilder uri = new StringBuilder("/");
+            uri.append(Utils.urlEncode(m_appDef.getAppName()));
+            uri.append("/_shards");
+            RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri.toString());
+            m_logger.debug("mergeShard() response: {}", response.toString());
+            throwIfErrorResponse(response);
+            
+            // Response should be UNode tree in the form /Results/{application}/shards
+            // where "shards" is an array of shard names.
+            UNode rootNode = getUNodeResult(response);
+            UNode appNode = rootNode.getMember(m_appDef.getAppName());
+            UNode shardsNode = appNode.getMember("shards");
+            for (UNode shardNode : shardsNode.getMemberList()) {
+                shardNames.add(shardNode.getValue());
+            }
+            return shardNames;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }   // getShardNames
+    
+    /**
+     * Get statistics for the given shard name. Since the response to this command is
+     * subject to change, the command result is parsed into a UNode, and the root object
+     * is returned. An exception is thrown if the given shard name does not exist or does
+     * not have any data.
+     *  
+     * @param shardName Name of a shard to query.
+     * @return          Root {@link UNode} of the parsed result.
+     */
+    public UNode getShardStats(String shardName) {
+        try {
+            // Send a GET request to "/{application}/_shards/{shard}"
+            StringBuilder uri = new StringBuilder("/");
+            uri.append(Utils.urlEncode(m_appDef.getAppName()));
+            uri.append("/_shards/");
+            uri.append(shardName);
+            RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri.toString());
+            m_logger.debug("mergeShard() response: {}", response.toString());
+            throwIfErrorResponse(response);
+            return getUNodeResult(response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }   // getShardStats
     
     /**
      * Request a merge of the OLAP shard with the given name belonging to this session's
