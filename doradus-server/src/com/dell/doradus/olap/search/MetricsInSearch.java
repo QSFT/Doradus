@@ -34,7 +34,6 @@ public class MetricsInSearch {
 	public static void addMetricsInSearch(Olap olap, TableDefinition tableDef, SearchResultList result, OlapQuery olapQuery) {
 		if(olapQuery.getMetrics() == null) return;
 		if(result.results.size() == 0) return;
-		//List<MetricExpression> metrics = AggregationQueryBuilder.BuildAggregationMetricsExpression(metric, tableDef);
 		StringBuilder ids = new StringBuilder();
 		for(SearchResult r: result.results) {
 			ids.append("'");

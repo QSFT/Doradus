@@ -1245,8 +1245,15 @@ public class DoradusSearchQueryGrammar {
                 Grammar.emptyRule
         );
 
+
+        GrammarRule OptionalMetricAlias = new SwitchRule(SwitchRule.First, "OptionalMetricAlias",
+                Grammar.Rule(Grammar.WhiteSpaces,  AS, Grammar.DropLexem,
+                        Grammar.WhiteSpaces, Term, Grammar.SetType("ALIAS_NAME") ) ,
+                Grammar.emptyRule
+        );
+        
         GrammarRule AggregationMetricQueryTerm = Grammar.Rule("AggregationMetricQueryTerm",
-                AggregationMetricQuery, Grammar.InputPointer, Grammar.Semantic("endMetric"), OptWhiteSpaces, AggregationMetricExpressionContinue);
+                AggregationMetricQuery, OptionalMetricAlias, Grammar.InputPointer, Grammar.Semantic("endMetric"), OptWhiteSpaces, AggregationMetricExpressionContinue);
 
         AggregationMetricExpression.body = Grammar.asRule(
                 Grammar.Rule(OptWhiteSpaces, LEFTPAREN, Grammar.SetType("op"), OptWhiteSpaces, AggregationMetricExpression, OptWhiteSpaces, RIGHTPAREN, Grammar.SetType("op"), AggregationMetricExpressionContinue ),

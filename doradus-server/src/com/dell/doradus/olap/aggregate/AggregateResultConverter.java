@@ -38,7 +38,7 @@ public class AggregateResultConverter {
 		
 		int metricsCount = result.summary.metricSet.values.length;
 		
-		List<String> metricValues = splitOuter(aggregate.getMetrics(), ',');
+		List<String> metricValues = parseMetrics(aggregate.getMetrics());
 		Utils.require(metricValues.size() == metricsCount, "Unexpected metrics count");
 		
 		if(metricsCount == 1 && aggregate.getFields() == null) {
@@ -71,6 +71,19 @@ public class AggregateResultConverter {
 		
 		return aggResult;
 	}
+	
+	
+    private static List<String> parseMetrics(String metrics) {
+		List<String> metricValues = splitOuter(metrics, ',');
+		for(int i = 0; i<metricValues.size(); i++) {
+			String mv = metricValues.get(i);
+			int asIndex = mv.lastIndexOf("AS");
+			if(asIndex < 0) continue;
+			mv = mv.substring(asIndex + 2).trim();
+			metricValues.set(i, mv);
+		}
+		return metricValues;
+    }
 	
 	// Split the given string at sepChr occurrences outside of parens/quotes.
     private static List<String> splitOuter(String str, char sepChr) {
