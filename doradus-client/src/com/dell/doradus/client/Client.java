@@ -365,21 +365,22 @@ public class Client implements AutoCloseable {
      * An exception is thrown if an error occurs.
      * 
      * @param appName   Name of existing application to delete.
-     * @param key       Name of key of application to delete. Can be null if the
-     *                  application has no key.
+     * @param key       Key of application to delete. Can be null if the application has
+     *                  no key.
      * @return          True if the application was deleted or already deleted.
      */
     public boolean deleteApplication(String appName, String key) {
         Utils.require(!m_restClient.isClosed(), "Client has been closed");
         Utils.require(appName != null && appName.length() > 0, "appName");
-        Utils.require(key != null && key.length() > 0, "key");
         
         try {
             // Send a DELETE request to "/_applications/{application}/{key}".
             StringBuilder uri = new StringBuilder("/_applications/");
             uri.append(Utils.urlEncode(appName));
-            uri.append("/");
-            uri.append(Utils.urlEncode(key));
+            if (!Utils.isEmpty(key)) {
+                uri.append("/");
+                uri.append(Utils.urlEncode(key));
+            }
             RESTResponse response = m_restClient.sendRequest(HttpMethod.DELETE, uri.toString());
             m_logger.debug("deleteApplication() response: {}", response.toString());
             if (response.getCode() != HttpCode.NOT_FOUND) {
