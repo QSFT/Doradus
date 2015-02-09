@@ -56,10 +56,13 @@ public abstract class MFCollector {
 	public abstract boolean requiresOrdering(); 
 
 	public static MFCollector create(CubeSearcher searcher, AggregationGroup group) {
+		return create(searcher, group, 0, group.items.size());
+	}
+	public static MFCollector create(CubeSearcher searcher, AggregationGroup group, int start, int end) {
 		if(group.batchexAliases != null) {
 			return new BatchexCollector(searcher, group.tableDef, group.batchexAliases, group.batchexFilters);
 		}
-		AggregationGroupItem last = group.items.get(group.items.size() - 1);
+		AggregationGroupItem last = group.items.get(end - 1);
 		FieldDefinition fieldDef = last.fieldDef;
 		MFCollector collector = null;
 		if(NumSearcher.isNumericType(fieldDef.getType())) collector = new EndNumField(searcher, fieldDef, group);
@@ -79,7 +82,7 @@ public abstract class MFCollector {
 			collector = new IdField(searcher, last.tableDef);
 		} else throw new IllegalArgumentException("Invalid field in aggregation group: " + last.name);
 		
-		for(int i = group.items.size() - 2; i >= 0; i--) {
+		for(int i = end - 2; i >= start; i--) {
 			AggregationGroupItem item = group.items.get(i);
 			Result filter = null;
 			if(item.query != null) filter = ResultBuilder.search(item.tableDef, item.query, searcher);

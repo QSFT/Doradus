@@ -43,17 +43,6 @@ public class MetricCounterFactory {
 		return counterSet;
 	}
 
-	/*
-	public static MetricCounterSet create(CubeSearcher searcher, List<AggregationMetric> metrics) {
-		MetricCounterSet counterSet = new MetricCounterSet();
-		counterSet.counters = new MetricCounter[metrics.size()];
-		for(int i = 0; i < metrics.size(); i++) {
-			counterSet.counters[i] = create(searcher, metrics.get(i));
-		}
-		return counterSet;
-	}
-	*/
-	
 	public static MetricCounter create(CubeSearcher searcher, MetricExpression metric) {
 		if(metric instanceof AggregationMetric) {
 			return create(searcher, (AggregationMetric)metric);
@@ -86,6 +75,12 @@ public class MetricCounterFactory {
 		return counter;
 	}
 
+	public static MetricCounter createPartial(CubeSearcher searcher, AggregationMetric metric, int start) {
+		if(metric.items == null || metric.items.size() == 0) throw new RuntimeException("Count-star metric cannot be overlapped");
+		if(metric.filter != null)  throw new RuntimeException("Metric with global filter cannot be overlapped");
+		return create(searcher, metric, start);
+	}
+	
 	private static MetricCounter create(CubeSearcher searcher, AggregationMetric metric, int index) {
 		AggregationGroupItem item = metric.items.get(index);
 		Result filter = null;

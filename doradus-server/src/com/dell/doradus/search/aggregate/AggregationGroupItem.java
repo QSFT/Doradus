@@ -40,4 +40,11 @@ public class AggregationGroupItem {
 
     //temporary placeholder for XLink handling. TODO: remove from here
     public Object xlinkContext;
+    
+    @Override public boolean equals(Object obj) {
+    	AggregationGroupItem item = (AggregationGroupItem)obj;
+    	String q1 = query != null ? query.toString() : "";
+    	String q2 = item.query != null ? item.query.toString() : "";
+    	return name.equals(item.name) && q1.equals(q2);
+    };
 }

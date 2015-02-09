@@ -16,7 +16,6 @@
 
 package com.dell.doradus.olap.aggregate.mr;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -35,17 +34,13 @@ public class MFCollectorSet {
 	public MFCollector commonPartCollector;
 	
 	public MFCollectorSet(CubeSearcher searcher, List<AggregationGroup> groups, boolean allowCommonPart) {
+		int commonIndex = 0;
 		// common parts in groups
-		if(allowCommonPart) {
-			AggregationGroup commonGroup = getCommonPart(groups);
-			if(commonGroup != null) {
-				commonPartCollector = MFCollector.create(searcher, commonGroup);
-				groups = removeCommonPart(groups, commonGroup);
-			}
-		}
+		if(allowCommonPart) commonIndex = getCommonPart(groups);
+		if(commonIndex > 0) commonPartCollector = MFCollector.create(searcher, groups.get(0), 0, commonIndex);
 		collectors = new MFCollector[groups.size()];
 		for(int i = 0; i < collectors.length; i++) {
-			collectors[i] = MFCollector.create(searcher, groups.get(i));
+			collectors[i] = MFCollector.create(searcher, groups.get(i), commonIndex, groups.get(i).items.size());
 		}
 	}
 	
@@ -59,66 +54,37 @@ public class MFCollectorSet {
 	
 
 	// Support for common paths in groups
-	private AggregationGroup getCommonPart(List<AggregationGroup> groups) {
-		if(groups.size() < 2) return null;
+	private int getCommonPart(List<AggregationGroup> groups) {
+		if(groups.size() < 2) return 0;
+		
 		for(int i = 0; i < groups.size(); i++) {
-			if(groups.get(i).filter != null) return null;
+			if(groups.get(i).filter != null) return 0;
 		}
+		
 		int itemsCount = groups.get(0).items.size() - 1;
 		for(int i = 1; i < groups.size(); i++) {
 			itemsCount = Math.min(itemsCount, groups.get(i).items.size() - 1);
 		}
-		if(itemsCount <= 0) return null;
+		if(itemsCount <= 0) return 0;
 		
-		List<AggregationGroupItem> list = new ArrayList<AggregationGroupItem>();
-		for(int itemIndex = 0; itemIndex < itemsCount; itemIndex++) {
+		int itemIndex = 0;
+		for(; itemIndex < itemsCount; itemIndex++) {
+			boolean eq = true;
 			AggregationGroupItem item = groups.get(0).items.get(itemIndex);
-			String itemInfo = item.name;
-			if(item.query != null) itemInfo += "-" + item.query.toString();
-			for(int i = 1; i<groups.size(); i++) {
+			if(item.xlinkContext != null) break;
+			for(int i = 1; i < groups.size(); i++) {
 				AggregationGroupItem item2 = groups.get(i).items.get(itemIndex);
-				String itemInfo2 = item2.name;
-				if(item2.query != null) itemInfo += "-" + item2.query.toString();
-				
-				if(!itemInfo.equals(itemInfo2)) {
-					item = null;
+				if(!item.equals(item2) || item.xlinkContext != null) {
+					eq = false;
 					break;
 				}
 			}
-			if(item == null) break;
-			list.add(item);
+			if(!eq) break;
 		}
-		
-		if(list.size() == 0) return null;
-		
-		AggregationGroup group = new AggregationGroup(groups.get(0).tableDef);
-		group.items = list;
-		LOG.info("Found common path for groups: " + group.items.get(0).name + "..., total " + group.items.size());
-		return group;
-	}
-	
-	private List<AggregationGroup> removeCommonPart(List<AggregationGroup> groups, AggregationGroup commonPart) {
-		int parts = commonPart.items.size();
-		List<AggregationGroup> newgroups = new ArrayList<AggregationGroup>(groups.size());
-		for(int i = 0; i < groups.size(); i++) {
-			AggregationGroup group = groups.get(i);
-			List<AggregationGroupItem> newitems = group.items.subList(parts, group.items.size());
-			AggregationGroup newgroup = new AggregationGroup(newitems.get(0).tableDef);
-			newgroup.items = newitems;
-			newgroup.batch = group.batch;
-			newgroup.exclude = group.exclude;
-			newgroup.include = group.include;
-			newgroup.name = group.name;
-			newgroup.selection = group.selection;
-			newgroup.selectionValue = group.selectionValue;
-			newgroup.stopWords = group.stopWords;
-			newgroup.subField = group.subField;
-			newgroup.timeZone = group.timeZone;
-			newgroup.tocase = group.tocase;
-			newgroup.truncate = group.truncate;
-			newgroups.add(newgroup);
+		if(itemIndex > 0) {
+			LOG.info("Found common path for groups: " + itemIndex);
 		}
-		return newgroups;
+		return itemIndex;
 	}
 	
 }
