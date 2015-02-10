@@ -9,7 +9,7 @@ graph-based data model, advanced indexing and search features, and a REST API.
 The Doradus query language (DQL) extends Lucene full-text queries with graph
 navigation features such as link paths, quantifiers, and transitive searches.
 
-New! Doradus can be run in an OpenShift cartridge. See [this Wiki note](https://github.com/dell-oss/Doradus/wiki#openshift-cartridge) and the [doradus-openshift-quickstart](https://github.com/dell-oss/doradus-openshift-quickstart) Github project.
+New! Doradus can be run in an OpenShift cartridge. See [this Wiki note](https://github.com/dell-oss/Doradus/wiki#openshift-cartridge) and the [doradus-openshift-cartridge](https://github.com/TraDuong1/openshift-origin-cartridge-doradus) Github project.
 
 
 #Architecture
