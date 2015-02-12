@@ -349,6 +349,9 @@ olap_query_cache_size_mb: 100
 # field. It does not affect shards loaded in memory. 0 means they are not cached (default).
 olap_file_cache_size_mb: 0
 
+# Number of threads to use by shard merging algorithm. 0 means merging is single-threaded.   
+olap_merge_threads: 0
+
 # olap_cf_defaults: Options used to create the OLAP ColumnFamily. This CF is only created when the
 # server is first started for a new database. If these options are changed, an existing OLAP CF is
 # not modified to match. See Cassandra and Doradus Administration documentation for details about

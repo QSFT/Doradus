@@ -259,6 +259,7 @@ public class ServerConfig {
     public int olap_cache_size_mb = 100;
     public int olap_file_cache_size_mb = 0; // turned out to be faster without file cache
     public int olap_query_cache_size_mb = 100;
+    public int olap_merge_threads = 0;
     
     // CQL (true) or Thrift (false) API
     public boolean use_cql = true;

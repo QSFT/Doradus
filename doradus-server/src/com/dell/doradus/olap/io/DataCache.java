@@ -26,6 +26,7 @@ public class DataCache {
 	private StorageHelper m_helper;
 	private List<FileInfo> m_cachedInfos = null;
 	private List<FileData> m_cachedData = null;
+	private Object m_syncRoot = new Object();
 	
 	public DataCache(String storeName, String row, StorageHelper helper) {
 		m_storeName = storeName;
@@ -34,18 +35,22 @@ public class DataCache {
 	}
 
 	public void addInfo(FileInfo info) {
-		if(m_cachedInfos == null) m_cachedInfos = new ArrayList<FileInfo>(m_maxCachedColumns); 
-		m_cachedInfos.add(info);
-		if(m_cachedInfos.size() >= m_maxCachedColumns) {
-			flushCachedInfos();
+		synchronized(m_syncRoot) {
+			if(m_cachedInfos == null) m_cachedInfos = new ArrayList<FileInfo>(m_maxCachedColumns); 
+			m_cachedInfos.add(info);
+			if(m_cachedInfos.size() >= m_maxCachedColumns) {
+				flushCachedInfos();
+			}
 		}
 	}
 
 	public void addData(FileInfo info, byte[] data) {
-		if(m_cachedData == null) m_cachedData = new ArrayList<FileData>(m_maxCachedColumns); 
-		m_cachedData.add(new FileData(info, data));
-		if(m_cachedData.size() >= m_maxCachedColumns) {
-			flushCachedData();
+		synchronized(m_syncRoot) {
+			if(m_cachedData == null) m_cachedData = new ArrayList<FileData>(m_maxCachedColumns); 
+			m_cachedData.add(new FileData(info, data));
+			if(m_cachedData.size() >= m_maxCachedColumns) {
+				flushCachedData();
+			}
 		}
 	}
 	
@@ -73,7 +78,6 @@ public class DataCache {
 			list.add(cv);
 		}
 		m_helper.writeFileChunks(m_storeName, m_row + "/_share", list);
-		//m_helper.write(m_storeName, m_row + "/_share", list);
 		m_cachedData.clear();
 	}
 	

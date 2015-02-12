@@ -18,6 +18,7 @@ package com.dell.doradus.olap.io;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,8 @@ public class VDirectory {
 	private String m_name;
 	private String m_row;
 	private DataCache m_dataCache;
-	private Map<String, FileInfo> filesMap;
+	private Map<String, FileInfo> m_filesMap;
+	private Object m_syncRoot = new Object();
 	
 	public VDirectory(Tenant tenant, String storeName) {
 		m_parent = null;
@@ -87,30 +89,19 @@ public class VDirectory {
 		return result;
 	}
 	
-	public List<FileInfo> listFiles() {
-		String prefix = "File/";
-		List<ColumnValue> list = m_helper.get(m_storeName, m_row, prefix);
-		List<FileInfo> result = new ArrayList<FileInfo>(list.size());
-		for(ColumnValue v : list) {
-			result.add(new FileInfo(v.columnName, v.getString()));
-		}
-		return result;
-	}
-
 	public boolean directoryExists(String name) {
 		byte[] b = m_helper.getValue(m_storeName, m_row, "Directory/" + name);
 		return b != null;
 	}
 
 	public boolean fileExists(String file) {
-		byte[] b = m_helper.getValue(m_storeName, m_row, "File/" + file);
-		return b != null;
+		return getFileInfo(file) != null;
 	}
 	
 	public long totalLength(boolean recursive) {
-		List<FileInfo> list = listFiles();
+		// load file infos
 		long totalLength = 0;
-		for(FileInfo f : list) totalLength += f.getLength();
+		for(FileInfo f : listFiles()) totalLength += f.getLength();
 		if(recursive) {
 			for(String child : listDirectories()) {
 				totalLength += getDirectory(child).totalLength(recursive);
@@ -120,9 +111,11 @@ public class VDirectory {
 	}
 	
 	public void create() {
-		if(m_parent == null) return;
-		m_dataCache.flush();
-		m_helper.write(m_storeName, m_parent.m_row, "Directory/" + m_name, new byte[0]); 
+		synchronized(this) {
+			if(m_parent == null) return;
+			m_dataCache.flush();
+			m_helper.write(m_storeName, m_parent.m_row, "Directory/" + m_name, new byte[0]);
+		}
 	}
 	
 	public void delete() {
@@ -130,7 +123,8 @@ public class VDirectory {
 			m_helper.deleteCF(m_storeName);
 			m_logger.info("Deleted CF {}", m_storeName);
 		} else {
-			List<FileInfo> childFiles = listFiles();
+			getFileInfo(null);
+			Collection<FileInfo> childFiles = listFiles();
 			//first, detach directory from parent to make delete transactional
 			m_helper.delete(m_storeName, m_parent.m_row, "Directory/" + m_name);
 			for(FileInfo child : childFiles) {
@@ -145,20 +139,35 @@ public class VDirectory {
 			
 			m_helper.delete(m_storeName, m_row);
 			m_logger.debug("Deleted {}", m_row);
+			
+			synchronized (m_syncRoot) {
+				m_filesMap.clear();
+			}
 		}
 	}
 
 	
 	// ************** FILES ************** //
-	public FileInfo getFileInfo(String file) {
-		if(filesMap == null) {
-			filesMap = new HashMap<>();
-			List<FileInfo> allFiles = listFiles();
-			for(FileInfo fi: allFiles) {
-				filesMap.put(fi.getName(), fi);
-			}
+	private void loadFiles() {
+		m_filesMap = new HashMap<String, FileInfo>();
+		List<ColumnValue> list = m_helper.get(m_storeName, m_row, "File/");
+		for(ColumnValue v : list) {
+			FileInfo fi = new FileInfo(v.columnName, v.getString());
+			m_filesMap.put(fi.getName(), fi); 
 		}
-		return filesMap.get(file);
+	}
+	
+	public Collection<FileInfo> listFiles() {
+		synchronized(m_syncRoot) {
+			if(m_filesMap == null) loadFiles();
+			return m_filesMap.values();
+		}
+	}
+	public FileInfo getFileInfo(String file) {
+		synchronized(m_syncRoot) {
+			if(m_filesMap == null) loadFiles();
+			return m_filesMap.get(file);
+		}
 	}
 	
 	public long fileLength(String file) {

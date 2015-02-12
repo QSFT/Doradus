@@ -16,9 +16,14 @@
 
 package com.dell.doradus.olap.merge;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +32,7 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.FieldType;
 import com.dell.doradus.common.TableDefinition;
+import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.olap.io.VDirectory;
 import com.dell.doradus.olap.store.FieldSearcher;
 import com.dell.doradus.olap.store.FieldWriter;
@@ -45,16 +51,20 @@ import com.dell.doradus.utilities.Timer;
 
 public class Merger {
     private static Logger LOG = LoggerFactory.getLogger("Olap.Merger");
+    private static ExecutorService executor = ServerConfig.getInstance().olap_merge_threads == 0 ? null :
+    		Executors.newFixedThreadPool(ServerConfig.getInstance().olap_merge_threads);
     
     private ApplicationDefinition appDef;
     private List<VDirectory> sources;
     private VDirectory destination;
     private SegmentStats stats;
     private Map<String, Remap> remaps = new HashMap<String, Remap>();
+    private Object m_syncRoot = new Object();
 	
 	public static void mergeApplication(ApplicationDefinition appDef, List<VDirectory> sources, VDirectory destination) {
 		Merger m = new Merger(appDef, sources, destination);
-		m.mergeApplication();
+		if(executor != null) m.mergeApplicationWithThreadPool();
+		else m.mergeApplication();
 	}
 
 	public Merger(ApplicationDefinition appDef, List<VDirectory> sources, VDirectory destination) {
@@ -62,6 +72,48 @@ public class Merger {
 		this.sources = sources;
 		this.destination = destination;
 	}
+
+	public void mergeApplicationWithThreadPool() {
+		try {
+			Timer timer = new Timer();
+			LOG.debug("Merging application {}", appDef.getAppName());
+			stats = new SegmentStats();
+			List<Future<?>> futures = new ArrayList<>();
+			for(TableDefinition tableDef : appDef.getTableDefinitions().values()) {
+				final TableDefinition fTableDef = tableDef;
+				final String table = tableDef.getTableName();
+				futures.add(executor.submit(new Runnable() {
+					@Override public void run() {
+						LOG.debug("   Merging {}", table);
+						mergeDocs(fTableDef);
+					}}));
+			}
+			for(Future<?> f: futures) f.get();
+			futures.clear();
+			for(TableDefinition tableDef : appDef.getTableDefinitions().values()) {
+				LOG.debug("   Merging fields of table {}", tableDef.getTableName());
+				for(FieldDefinition fieldDef : tableDef.getFieldDefinitions()) {
+					final FieldDefinition fFieldDef = fieldDef;
+					futures.add(executor.submit(new Runnable() {
+						@Override public void run() {
+							LOG.debug("      Merging {}/{} ({})", new Object[] {fFieldDef.getTableName(), fFieldDef.getName(), fFieldDef.getType()});
+							mergeField(fFieldDef);
+						}}));
+				}
+			}
+			for(Future<?> f: futures) f.get();
+			futures.clear();
+			stats.totalStoreSize = destination.totalLength(false);
+			stats.save(destination);
+			LOG.debug("Application {} merged in {}", appDef.getAppName(), timer);
+		}catch(ExecutionException ee) {
+			throw new RuntimeException(ee);
+		}catch(InterruptedException ee) {
+			throw new RuntimeException(ee);
+		}
+	}
+	
+	
 	
 	public void mergeApplication() {
 		Timer timer = new Timer();
@@ -112,9 +164,11 @@ public class Merger {
         }
         
         remap.shrink();
-        remaps.put(table, remap);
         id_writer.close();
-        stats.addTable(table, id_writer.size());
+        synchronized (m_syncRoot) {
+            stats.addTable(table, id_writer.size());
+            remaps.put(table, remap);
+		}
     }
     
 	private void mergeField(FieldDefinition fieldDef) {
@@ -134,6 +188,7 @@ public class Merger {
 		String table = fieldDef.getTableName();
 		String field = fieldDef.getName();
 		Remap remap = remaps.get(table);
+		if(remap.dstSize() == 0) return;
 		
         if(fieldDef.isCollection()) {
             NumWriterMV num_writer = new NumWriterMV(remap.dstSize());
@@ -171,7 +226,9 @@ public class Merger {
             }
             
             num_writer.close(destination, table, field);
-            stats.addNumField(fieldDef, num_writer);
+            synchronized (m_syncRoot) {
+                stats.addNumField(fieldDef, num_writer);
+    		}
         }
         
     }
@@ -179,7 +236,10 @@ public class Merger {
     private void mergeTextField(FieldDefinition fieldDef) {
 		String table = fieldDef.getTableName();
 		String field = fieldDef.getName();
+        Remap docRemap = remaps.get(table);
+		if(docRemap.dstSize() == 0) return;
 		Remap valRemap = new Remap(sources.size());
+		
 		{
 	        ValueWriter value_writer = new ValueWriter(destination, table, field);
 	        
@@ -202,8 +262,6 @@ public class Merger {
 	        value_writer.close();
 		}
 		
-        Remap docRemap = remaps.get(table);
-        
         if(fieldDef.isCollection()) {
 	        FieldWriter field_writer = new FieldWriter(docRemap.dstSize());
 	        
@@ -223,7 +281,9 @@ public class Merger {
 	        }
 	        
 	        field_writer.close(destination, table, field);
-	        stats.addTextField(fieldDef, field_writer);
+            synchronized (this) {
+    	        stats.addTextField(fieldDef, field_writer);
+    		}
         }
         else {
 	        FieldWriterSV field_writer = new FieldWriterSV(docRemap.dstSize());
@@ -240,7 +300,9 @@ public class Merger {
             }
 	        
 	        field_writer.close(destination, table, field);
-	        stats.addTextField(fieldDef, field_writer);
+            synchronized (this) {
+    	        stats.addTextField(fieldDef, field_writer);
+    		}
         }
     }
 
@@ -251,6 +313,7 @@ public class Merger {
 		
         Remap docRemap = remaps.get(table);
         Remap valRemap = remaps.get(fieldDef.getLinkExtent());
+		if(docRemap.dstSize() == 0 || valRemap.dstSize() == 0) return;
 
         //all links are multi-valued because of referential integrity and idempotent updates
         //if(fieldDef.isCollection())
@@ -273,27 +336,10 @@ public class Merger {
 	        }
 	        
 	        field_writer.close(destination, table, link);
-	        stats.addLinkField(fieldDef, field_writer);
+            synchronized (this) {
+    	        stats.addLinkField(fieldDef, field_writer);
+    		}
         }
-        /*
-        else {
-	        FieldWriterSV field_writer = new FieldWriterSV(docRemap.dstSize());
-	        
-            for(int i = 0; i < sources.size(); i++) {
-            	FieldSearcher field_searcher = new FieldSearcher(sources.get(i), table, link);
-            	for(int j = 0; j < docRemap.size(i); j++) {
-            		int doc = docRemap.get(i, j);
-            		if(doc < 0) continue;
-            		int d = field_searcher.sv_get(j);
-            		if(d < 0) continue;
-            		field_writer.set(doc, valRemap.get(i, d));
-            	}
-            }
-	        
-	        field_writer.close(destination, table, link);
-	        stats.addTextField(fieldDef, field_writer);
-        }
-        */
     }
 
 }
