@@ -40,7 +40,7 @@ public class XAnnotations
         return null;
     }
 
-    static public IXTypeReflector getXTypeReflector(Class type)
+    static public IXTypeReflector getXTypeReflector(Class<?> type)
     {
         for (Annotation annotation : type.getAnnotations()) {
             if (annotation instanceof IXTypeReflector)

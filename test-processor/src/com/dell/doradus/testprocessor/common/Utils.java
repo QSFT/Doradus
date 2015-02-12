@@ -71,7 +71,7 @@ public class Utils
         }
     }
     
-    static public Object convert(String value, Class tgtType)
+    static public Object convert(String value, Class<?> tgtType)
     throws Exception
     {
         try {

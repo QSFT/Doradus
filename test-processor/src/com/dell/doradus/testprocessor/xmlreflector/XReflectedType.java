@@ -29,13 +29,13 @@ public class XReflectedType implements IXReflectedUnit
     private String          m_name;
     private boolean         m_isLibrary;
     private boolean         m_isFinal;
-    private Class           m_type;
+    private Class<?>        m_type;
     private XReflectedType  m_outerXType;
-    private Constructor     m_defaultConstructor;
+    private Constructor<?>  m_defaultConstructor;
     private String          m_defaultConstructorHeader;
     private Object          m_instance;
 
-    public XReflectedType(XMLReflector xmlReflector, Class type, XReflectedType outerXType)
+    public XReflectedType(XMLReflector xmlReflector, Class<?> type, XReflectedType outerXType)
     throws Exception
     {
         m_xmlReflector = xmlReflector;
@@ -58,7 +58,7 @@ public class XReflectedType implements IXReflectedUnit
     public String  getName()             { return m_name;  }
     public void    setName(String value) { m_name = value; }
     public boolean isLibrary()           { return m_isLibrary; }
-    public Class   getType()             { return m_type; }
+    public Class<?>   getType()          { return m_type; }
     public Object  getInstance()         { return m_instance; }
 
     public void enter()
@@ -121,7 +121,7 @@ public class XReflectedType implements IXReflectedUnit
     private void pushReflectedNestedTypes()
     throws Exception
     {
-        for (Class nestedType : m_type.getClasses())
+        for (Class<?> nestedType : m_type.getClasses())
         {
             IXTypeReflector annotation = XAnnotations.getXTypeReflector(nestedType);
             if (annotation == null) continue;
@@ -143,13 +143,13 @@ public class XReflectedType implements IXReflectedUnit
         }
     }
 
-    private Constructor findDefaultConstructor()
+    private Constructor<?> findDefaultConstructor()
     throws Exception
     {
         try {
-            Class[] parmTypes;
+            Class<?>[] parmTypes;
 
-            Constructor<?>[] constructors = m_type.getConstructors();
+            //Constructor<?>[] constructors = m_type.getConstructors();
 
             if (m_outerXType == null ||
                 m_outerXType.getInstance() == null ||

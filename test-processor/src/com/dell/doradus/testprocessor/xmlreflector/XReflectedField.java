@@ -28,7 +28,7 @@ public class XReflectedField implements IXReflectedUnit
     private boolean         m_trim;
     private boolean         m_expand;
     private Field           m_field;
-	private Class           m_fieldType;
+	private Class<?>           m_fieldType;
     private XReflectedType  m_xtype;
 
     public XReflectedField(XMLReflector xmlReflector, Field field, XReflectedType xtype)
@@ -55,6 +55,7 @@ public class XReflectedField implements IXReflectedUnit
 
     public String getName()             { return m_name;  }
     public void   setName(String value) { m_name = value; }
+    public boolean isRequired() { return m_required; }
 
     public void enter() {
         // Do nothing

@@ -20,8 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-import com.dell.doradus.testprocessor.common.Utils;
-
 public class Differ
 {
     private boolean m_ignoreWhiteSpace;

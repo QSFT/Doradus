@@ -19,7 +19,6 @@ package com.dell.doradus.testprocessor;
 import com.dell.doradus.testprocessor.common.*;
 
 import java.io.PrintWriter;
-import java.util.Date;
 
 public class Log
 {

@@ -28,7 +28,7 @@ public class XReflectedSetter implements IXReflectedUnit
     private boolean         m_trim;
     private boolean         m_expand;
     private Method          m_method;
-    private Class           m_setterType;
+    private Class<?>           m_setterType;
     private XReflectedType  m_xtype;
 
     public XReflectedSetter(XMLReflector xmlReflector, Method method, XReflectedType xtype)
@@ -44,7 +44,7 @@ public class XReflectedSetter implements IXReflectedUnit
             throw new Exception(msg);
         }
 
-        Class[] parmTypes = method.getParameterTypes();
+        Class<?>[] parmTypes = method.getParameterTypes();
         if (parmTypes.length != 1) {
             String msg = "The \""
                     + xtype.getType().getName() + "." + method.getName()
@@ -63,6 +63,7 @@ public class XReflectedSetter implements IXReflectedUnit
 
     public String getName()             { return m_name;  }
     public void   setName(String value) { m_name = value; }
+    public boolean isRequired() { return m_required; }
 
     public void enter() {
         // Do nothing

@@ -99,7 +99,7 @@ public class XMLReflector
     	return path.getParent().toString();
     }
 
-    public void include(Class type)
+    public void include(Class<?> type)
     throws Exception
     {
         IXTypeReflector annotation = XAnnotations.getXTypeReflector(type);
@@ -120,7 +120,7 @@ public class XMLReflector
     {
         try {
             JarFile jarFile = new JarFile(pathToJar);
-            Enumeration e = jarFile.entries();
+            Enumeration<?> e = jarFile.entries();
             URL[] urls = { new URL("jar:file:" + pathToJar + "!/") };
             URLClassLoader classLoader = URLClassLoader.newInstance(urls);
 
@@ -155,7 +155,7 @@ public class XMLReflector
                     }
                 }
 
-                Class type = classLoader.loadClass(shortestName);
+                Class<?> type = classLoader.loadClass(shortestName);
                 include(type);
 
                 classNames.remove(shortestNameIndex);

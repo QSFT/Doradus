@@ -18,8 +18,6 @@ package com.dell.doradus.testprocessor.config;
 
 import com.dell.doradus.testprocessor.Config;
 import com.dell.doradus.testprocessor.TestSuiteInfo;
-import com.dell.doradus.testprocessor.common.FileUtils;
-import com.dell.doradus.testprocessor.common.Utils;
 import com.dell.doradus.testprocessor.xmlreflector.*;
 import org.w3c.dom.Node;
 
@@ -179,7 +177,7 @@ public class ConfigReflector
                     m_excludeSection.openDir(value);
                 }
 
-                private String m_reason = "";
+                //private String m_reason = "";
                 @IXSetterReflector(name="reason")
                 public void setReason(String value) {
                     m_excludeSection.setDirReason(value);

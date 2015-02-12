@@ -20,8 +20,6 @@ import com.dell.doradus.testprocessor.common.FileUtils;
 import com.dell.doradus.testprocessor.common.XmlUtils;
 
 import java.io.File;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
 
 public class Reporter
 {

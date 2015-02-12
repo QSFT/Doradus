@@ -44,7 +44,7 @@ public class Data
     {
         workingDir = System.getProperty("user.dir");
         
-        Class dataClass = Data.class;
+        Class<?> dataClass = Data.class;
         ClassLoader loader = dataClass.getClassLoader();
         URL configURL = loader.getResource("config.xml");
         if (configURL == null) {

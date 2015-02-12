@@ -20,12 +20,6 @@ import com.dell.doradus.testprocessor.common.*;
 import com.dell.doradus.testprocessor.config.ConfigReflector;
 import com.dell.doradus.testprocessor.xmlreflector.*;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
 public class Config
 {
     static public String        logFilePath          = null;

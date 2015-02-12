@@ -16,8 +16,6 @@
 
 package com.dell.doradus.testprocessor.config;
 
-import com.dell.doradus.testprocessor.TestDirInfo;
-import com.dell.doradus.testprocessor.TestInfo;
 import com.dell.doradus.testprocessor.TestSuiteInfo;
 import com.dell.doradus.testprocessor.common.FileUtils;
 import com.dell.doradus.testprocessor.common.StringUtils;

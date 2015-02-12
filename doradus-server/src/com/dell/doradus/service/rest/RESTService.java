@@ -21,7 +21,6 @@ import java.util.Queue;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jetty.io.Connection;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -33,7 +32,6 @@ import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.eclipse.jetty.util.thread.ThreadPool;
 
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;

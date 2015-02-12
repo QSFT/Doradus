@@ -17,14 +17,11 @@
 package com.dell.doradus.testprocessor;
 
 import com.dell.doradus.testprocessor.common.*;
-import com.dell.doradus.testprocessor.diff.*;
 
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Program
 {
