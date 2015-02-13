@@ -34,7 +34,7 @@ import com.dell.doradus.service.rest.RESTCallback;
 public class OlappCmd extends RESTCallback {
 
     @Override
-    protected RESTResponse invoke() {
+    public RESTResponse invoke() {
         String params = m_request.getVariable("params");
         Map<String, String> parameters = null;
         if (Utils.isEmpty(params)) {

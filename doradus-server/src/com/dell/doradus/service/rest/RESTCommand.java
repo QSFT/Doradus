@@ -368,8 +368,8 @@ public final class RESTCommand implements Comparable<RESTCommand> {
     // value to a component. If a match is made and the component is a variable, the
     // variable value is extracted and added to the given map.
     private static boolean matches(String value, String component, Map<String, String> variableMap) {
-        if (component.length() == 0) {
-            return value.length() == 0;
+        if (Utils.isEmpty(component)) {
+            return Utils.isEmpty(value);
         }
         if (component.charAt(0) == '{') {
             // The component is a variable, so it always matches.
@@ -377,7 +377,7 @@ public final class RESTCommand implements Comparable<RESTCommand> {
             variableMap.put(varName, value);
             return true;
         }
-        return value.equals(component);
+        return component.equals(value);
     }   // matches
     
     // Compare the given nodes and return -1 if the first node should appear first, 1 if

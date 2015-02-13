@@ -62,6 +62,6 @@ public abstract class RESTCallback {
      * @return The REST command response to be returned to the client, encapsulated in a
      *         {@link RESTResponse}.
      */
-    protected abstract RESTResponse invoke();
+    public abstract RESTResponse invoke();
 
 }   // abstract class RESTCallback

@@ -33,7 +33,7 @@ import com.dell.doradus.service.schema.SchemaService;
 public class AggregateURICmd extends RESTCallback {
 
     @Override
-    protected RESTResponse invoke() {
+    public RESTResponse invoke() {
         ApplicationDefinition appDef = m_request.getAppDef();
         TableDefinition tableDef = m_request.getTableDef(appDef);
         String params = m_request.getVariable("params");    // leave encoded

@@ -1,0 +1,116 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.dell.doradus</groupId>
+	<artifactId>doradus</artifactId>
+	<version>2.2.0</version>
+	<packaging>pom</packaging>	
+ 	<name>doradus-parent</name>
+  	<description> REST service that extends a Cassandra NoSQL database with a graph-based data model, advanced indexing and search features, and a REST API.</description>
+  	<url>https://github.com/dell-oss/Doradus</url>
+   	
+<distributionManagement>
+  <snapshotRepository>
+    <id>ossrh</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+  </snapshotRepository>
+  <repository>
+    <id>ossrh</id>
+    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+  </repository>
+</distributionManagement>	
+
+	<properties>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>	
+
+	<modules>
+		<module>doradus-common</module>
+		<module>doradus-server</module>
+		<module>doradus-client</module>
+	</modules>
+<build>
+  <plugins>
+	<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-compiler-plugin</artifactId>
+		<version>2.5.1</version>
+		<configuration>
+			<source>${maven.compiler.source}</source>
+			<target>${maven.compiler.source}</target>
+			<compilerArgument>-Xlint:all</compilerArgument>
+			<showWarnings>true</showWarnings>
+			<showDeprecation>true</showDeprecation>
+		</configuration>
+	</plugin>
+ 
+   <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-gpg-plugin</artifactId>
+      <version>1.5</version>
+      <executions>
+        <execution>
+          <id>sign-artifacts</id>
+          <phase>verify</phase>
+          <goals>
+            <goal>sign</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-source-plugin</artifactId>
+      <version>2.2.1</version>
+      <executions>
+        <execution>
+          <id>attach-sources</id>
+          <goals>
+            <goal>jar-no-fork</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-javadoc-plugin</artifactId>
+      <version>2.9.1</version>
+      <executions>
+        <execution>
+          <id>attach-javadocs</id>
+          <goals>
+            <goal>jar</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+  
+  </plugins>
+  </build>
+ 
+    <scm>
+    <connection>scm:git:git://github.com/dell-oss/Doradus.git</connection>
+    <developerConnection>scm:git:git@github.com:dell-oss/Doradus.git</developerConnection>
+    <url>https://github.com/dell-oss/Doradus</url>
+    <tag>doradus-2.2.0</tag>
+  </scm>
+  <developers>
+    <developer>
+      <name>Dell Common Engineering</name>
+      <organization>dell-oss</organization>
+    </developer>
+  </developers>  
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+      <url>https://github.com/dell-oss/Doradus/blob/master/LICENSE.txt</url>
+      <distribution>repo</distribution>
+      <comments>Apache License Version 2.0</comments>
+    </license>
+  </licenses>	
+</project>

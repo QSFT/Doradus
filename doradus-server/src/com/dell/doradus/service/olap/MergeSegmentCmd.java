@@ -30,7 +30,7 @@ import com.dell.doradus.service.rest.RESTCallback;
 public class MergeSegmentCmd extends RESTCallback {
 
     @Override
-    protected RESTResponse invoke() {
+    public RESTResponse invoke() {
         ApplicationDefinition appDef = m_request.getAppDef();
         Utils.require(OLAPService.class.getSimpleName().equals(appDef.getStorageService()),
                       "Application '%s' is not an OLAP application", appDef.getAppName());
