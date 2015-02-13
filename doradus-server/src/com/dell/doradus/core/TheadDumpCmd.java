@@ -32,7 +32,7 @@ import com.dell.doradus.service.rest.RESTCallback;
 public class TheadDumpCmd extends RESTCallback {
 
     @Override
-    protected RESTResponse invoke() {
+    public RESTResponse invoke() {
         StringBuilder dump = new StringBuilder();
         dump.append("Doradus Thread Dump @ ");
         dump.append(Utils.formatDate(System.currentTimeMillis()));

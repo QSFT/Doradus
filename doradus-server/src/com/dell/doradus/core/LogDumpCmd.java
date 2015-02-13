@@ -30,7 +30,7 @@ import com.dell.doradus.utilities.MemoryAppender;
  */
 public class LogDumpCmd extends RESTCallback {
 
-    @Override protected RESTResponse invoke() {
+    @Override public RESTResponse invoke() {
         String params = m_request.getVariableDecoded("params");
         Map<String, String> paramMap = Utils.parseURIQuery(params);
         String level = paramMap.get("level");

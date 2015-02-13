@@ -29,7 +29,7 @@ import com.dell.doradus.service.rest.RESTCallback;
 public class DeleteTenantCmd extends RESTCallback {
 
     @Override
-    protected RESTResponse invoke() {
+    public RESTResponse invoke() {
         Utils.require(ServerConfig.getInstance().multitenant_mode,
                       "This command is only allowed in multi-tenant mode; see 'multitenant_mode' parameter");
         String tenantParam = m_request.getVariableDecoded("tenant");
