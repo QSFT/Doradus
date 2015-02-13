@@ -129,10 +129,13 @@ public class FieldSetCreator {
         for(String f: scalarFields) {
             if(f.equals(CommonDefs.ID_FIELD)) continue;
             else if(f.equals("*")) {
-                for(String field: entity.getAllFields()) {
-                    String value = entity.get(field);
-                    if(value != null) result.scalars.put(field, value);
-                }
+            	Iterable<String> allFields = entity.getAllFields();
+            	if(allFields != null) {
+	                for(String field: allFields) {
+	                    String value = entity.get(field);
+	                    if(value != null) result.scalars.put(field, value);
+	                }
+            	}
             }else {
                 String v = entity.get(f);
                 if(v != null) result.scalars.put(f, v);
