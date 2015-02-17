@@ -51,7 +51,7 @@ import com.dell.doradus.service.tenant.TenantService;
 public class RESTServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
-
+    
     //----- Inherited methods from HttpServlet
     
     /**
@@ -76,7 +76,6 @@ public class RESTServlet extends HttpServlet {
                 throw new NotFoundException("Request does not match a known URI: " + request.getRequestURL());
             }
             Utils.require(cmd != null, "Request does not match a known URI: " + request.getRequestURL());
-            m_logger.debug("Command: {}", cmd.toString());
             
             Tenant tenant = getTenant(cmd, request, variableMap);
             RESTRequest restRequest = new RESTRequest(tenant, request, variableMap);
@@ -89,34 +88,46 @@ public class RESTServlet extends HttpServlet {
                 RESTService.instance().onRequestSuccess(startNano);
             }
             sendResponse(response, restResponse);
+            m_logger.debug("Elapsed time: {} millis; request={}",
+                           (float)(System.nanoTime() - startNano)/1000000, getFullURI(request));
         } catch (IllegalArgumentException e) {
             // 400 Bad Request
             RESTResponse restResponse = new RESTResponse(HttpCode.BAD_REQUEST, e.getMessage());
+            m_logger.info("Returning client error: {}; request: {}",
+                          restResponse.toString(), getFullURI(request));
             RESTService.instance().onRequestRejected(restResponse.getCode().toString());
             sendResponse(response, restResponse);
         } catch (NotFoundException e) {
             // 404 Not Found
             RESTResponse restResponse = new RESTResponse(HttpCode.NOT_FOUND, e.getMessage());
+            m_logger.info("Returning client error: {}; request: {}",
+                          restResponse.toString(), getFullURI(request));
             RESTService.instance().onRequestRejected(restResponse.getCode().toString());
             sendResponse(response, restResponse);
         } catch (DBNotAvailableException e) {
             // 503 Service Unavailable
             RESTResponse restResponse = new RESTResponse(HttpCode.SERVICE_UNAVAILABLE, e.getMessage());
+            m_logger.info("Returning service error: {}; request: {}",
+                          restResponse.toString(), getFullURI(request));
             RESTService.instance().onRequestRejected(restResponse.getCode().toString());
             sendResponse(response, restResponse);
         } catch (UnauthorizedException e) {
             // 401 Unauthorized
             RESTResponse restResponse = new RESTResponse(HttpCode.UNAUTHORIZED, e.getMessage());
+            m_logger.info("Returning client error: {}; request: {}",
+                          restResponse.toString(), getFullURI(request));
             RESTService.instance().onRequestRejected(restResponse.getCode().toString());
             sendResponse(response, restResponse);
         } catch (DuplicateException e) {
             // 409 Conflict
             RESTResponse restResponse = new RESTResponse(HttpCode.CONFLICT, e.getMessage());
+            m_logger.info("Returning client error: {}; request: {}",
+                          restResponse.toString(), getFullURI(request));
             RESTService.instance().onRequestRejected(restResponse.getCode().toString());
             sendResponse(response, restResponse);
         } catch (Throwable e) {
             // 500 Internal Error: include a stack trace and report in log.
-            m_logger.error("Unexpected exception handling request", e);
+            m_logger.error("Unexpected exception handling request: " + getFullURI(request), e);
             String stackTrace = Utils.getStackTrace(e);
             RESTResponse restResponse = new RESTResponse(HttpCode.INTERNAL_ERROR, stackTrace);
             RESTService.instance().onRequestFailed(e);
@@ -271,5 +282,18 @@ public class RESTServlet extends HttpServlet {
         }
         return Pair.create(paramName, paramValue);
     }   // extractParam
+    
+    // Reconstruct the entire URI from the given request.
+    private String getFullURI(HttpServletRequest request) {
+        StringBuilder buffer = new StringBuilder(request.getMethod());
+        buffer.append(" ");
+        buffer.append(request.getRequestURI());
+        String queryParam = request.getQueryString();
+        if (!Utils.isEmpty(queryParam)) {
+            buffer.append("?");
+            buffer.append(queryParam);
+        }
+        return buffer.toString();
+    }   // getFullURI
     
 }   // class RESTServlet

@@ -79,7 +79,7 @@ public class RESTRequest {
     public ApplicationDefinition getAppDef() throws NotFoundException {
         String application = getVariableDecoded("application");
         if (Utils.isEmpty(application)) {
-            throw new RuntimeException("Mission {application} variable");
+            throw new RuntimeException("Missing {application} variable");
         }
         ApplicationDefinition appDef = SchemaService.instance().getApplication(m_tenant, application);
         if (appDef == null) {
@@ -102,7 +102,7 @@ public class RESTRequest {
     public TableDefinition getTableDef(ApplicationDefinition appDef) {
         String table = getVariableDecoded("table");
         if (Utils.isEmpty(table)) {
-            throw new RuntimeException("Mission {table} variable");
+            throw new RuntimeException("Missing {table} variable");
         }
         TableDefinition tableDef = appDef.getTableDef(table);
         if (tableDef == null) {
@@ -212,6 +212,7 @@ public class RESTRequest {
         return m_contentTypeOut;
     }   // getOutputContentType
     
+
     /**
      * Get the input entity (body) of this REST request as a string. If no input entity
      * was provided, an empty string is returned. If an input entity exists and is
@@ -228,7 +229,7 @@ public class RESTRequest {
             try {
                 return Utils.toString(Utils.decompressGZIP(m_requestEntity));
             } catch (IOException e) {
-                throw new IllegalArgumentException("Error decompressing input (malformed?)", e);
+                throw new IllegalArgumentException("Error decompressing input: " + e.toString());
             }
         }
     }   // getInputBody
@@ -252,7 +253,7 @@ public class RESTRequest {
             try {
                 inStream = new GZIPInputStream(bis);
             } catch (IOException e) {
-                throw new IllegalArgumentException("Error decompressing input (malformed?)", e);
+                throw new IllegalArgumentException("Error decompressing input: " + e.toString());
             }
         }
         return inStream;
@@ -327,6 +328,7 @@ public class RESTRequest {
             return new byte[0];
         }
 
+        int totalBytesRead = 0;
         try {
             byte[] byteBuffer = new byte[bytesLeft];
             try (InputStream inputStream = m_request.getInputStream()) {
@@ -335,11 +337,15 @@ public class RESTRequest {
                 while ((bytesRead = inputStream.read(byteBuffer, offset, bytesLeft)) > 0) {
                     offset += bytesRead;
                     bytesLeft -= bytesRead;
+                    totalBytesRead += bytesRead;
                 }
             }
             return byteBuffer;
         } catch (IOException e) {
-            throw new RuntimeException("Error reading from input request", e);
+            String errMsg =
+                String.format("Error reading from input request; expected %d bytes; only read %d bytes",
+                              m_request.getContentLength(), totalBytesRead);
+            throw new RuntimeException(errMsg, e);
         }
     }   // readRequestBody
     
