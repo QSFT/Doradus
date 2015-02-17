@@ -181,6 +181,7 @@ public class HelloSpider {
         System.out.println("A sample Spider database application called 'HelloSpider' is created by");
         System.out.println("connecting to the Doradus database with the given host name and port number.");
         System.out.println("Some sample objects are inserted into a table called 'Movies'.");
+        System.exit(1);
     }
     
 }   // class HelloSpider
