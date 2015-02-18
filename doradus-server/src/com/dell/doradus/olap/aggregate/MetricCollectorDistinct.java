@@ -16,13 +16,11 @@
 
 package com.dell.doradus.olap.aggregate;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.olap.collections.BdLongSet;
+import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.IdSearcher;
 import com.dell.doradus.olap.store.ValueSearcher;
@@ -50,7 +48,7 @@ public class MetricCollectorDistinct implements IMetricCollectorWithContext {
 			for(int i = 0; i < longValues.size(); i++) {
 				long l = longValues.get(i);
 				if(l >= 0) {
-					String text = vs.getValue((int)l).toString();
+					BSTR text = new BSTR(vs.getValue((int)l));
 					values.add(text);
 				}
 			}
@@ -63,17 +61,19 @@ public class MetricCollectorDistinct implements IMetricCollectorWithContext {
 	public static class Id extends MetricCollectorDistinct {
 		@Override public IMetricValue convert(IMetricValue value) {
 			MetricValueDistinct m = (MetricValueDistinct)value;
+			BdLongSet longValues = m.getLongValues();
 			Set<Object> values = m.getValues();
-			if(values.size() == 0) return m; 
-			List<Long> longValues = new ArrayList<Long>(values.size());
-			for(Object v: values) if(v instanceof Long) longValues.add((Long)v);
-			Collections.sort(longValues);
-			values.clear();
+			if(longValues.size() == 0) return m;
+			longValues.sort();
 			IdSearcher ids = searcher.getIdSearcher(fieldDef.getLinkExtent());
-			for(Long v: longValues) {
-				String text = ids.getId(v.intValue()).toString();
-				values.add(text);
+			for(int i = 0; i < longValues.size(); i++) {
+				long l = longValues.get(i);
+				if(l >= 0) {
+					BSTR text = new BSTR(ids.getId((int)l));
+					values.add(text);
+				}
 			}
+			longValues.clear();
 			return value;
 		}
 	}		
