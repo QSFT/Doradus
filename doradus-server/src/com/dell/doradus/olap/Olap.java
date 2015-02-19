@@ -60,7 +60,8 @@ import com.dell.doradus.search.query.Query;
 import com.dell.doradus.search.util.LRUCache;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.Tenant;
-import com.dell.doradus.service.olap.OLAPService;
+import com.dell.doradus.service.schema.SchemaService;
+import com.dell.doradus.service.tenant.TenantService;
 import com.dell.doradus.utilities.Timer;
 
 
@@ -135,10 +136,12 @@ public class Olap {
 	}
 	
 	/**
-	 * @deprecated This method only works in single-tenant mode.
+	 * If tenant is null then default tenant is used.
 	 */
-	public ApplicationDefinition getApplicationDefinition(String applicationName) {
-	    return OLAPService.instance().getOLAPApplication(applicationName);
+	public ApplicationDefinition getApplicationDefinition(Tenant tenant, String applicationName) {
+		if(tenant == null) tenant = TenantService.instance().getDefaultTenant();
+		ApplicationDefinition appDef = SchemaService.instance().getApplication(tenant, applicationName);
+		return appDef;
 	}
 	
 	public void deleteApplication(ApplicationDefinition appDef) {

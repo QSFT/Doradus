@@ -34,7 +34,8 @@ public final class Utf8Encoder {
     	ByteBuffer bb = ByteBuffer.wrap(buffer);
     	value.getChars(0,  value.length(), charArray, 0);
     	CharBuffer cb = CharBuffer.wrap(charArray, 0, value.length());
-    	utf8_encoder.encode(cb, bb, false);
+    	utf8_encoder.encode(cb, bb, true);
+    	utf8_encoder.flush(bb);
     	int length = bb.position();
     	return length;
     }
@@ -44,9 +45,9 @@ public final class Utf8Encoder {
     	ByteBuffer bb = ByteBuffer.wrap(buffer, 0, length);
     	if(charArray.length < length) charArray = new char[length * 2];
     	CharBuffer cb = CharBuffer.wrap(charArray);
-    	utf8_decoder.decode(bb, cb, false);
+    	utf8_decoder.decode(bb, cb, true);
+    	utf8_decoder.flush(cb);
     	return new String(charArray, 0, cb.position());
     }
-    
     
 }
