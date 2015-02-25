@@ -1654,6 +1654,29 @@ final public class Utils {
     }  // parseURIQuery
 
     /**
+     * Concatenate and encode the given name/value pairs into a valid URI query string.
+     * This method is the complement of {@link #parseURIQuery(String)}.
+     * 
+     * @param uriParams Unencoded name/value pairs.    
+     * @return          URI query in the form {name 1}={value 1}&...&{name}={value n}.
+     */
+    public static String joinURIQuery(Map<String, String> uriParams) {
+        StringBuilder buffer = new StringBuilder();
+        for (String name : uriParams.keySet()) {
+            String value = uriParams.get(name);
+            if (buffer.length() > 0) {
+                buffer.append("&");
+            }
+            buffer.append(Utils.urlEncode(name));
+            if (!Utils.isEmpty(value)) {
+                buffer.append("=");
+                buffer.append(Utils.urlEncode(value));
+            }
+        }
+        return buffer.toString();
+    }   // joinURIQuery 
+    
+    /**
      * Indicate if the given string starts with the given prefix. This is a more compact
      * way of writing string.regionMatches(true, 0, prefix, 0, prefix.length()).
      *

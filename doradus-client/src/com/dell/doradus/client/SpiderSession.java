@@ -521,7 +521,7 @@ public class SpiderSession extends ApplicationSession {
     
     //----- Private methods
 
-    // Throw if this session's AppDef is not for an OLAP app.
+    // Throw if this session's AppDef is not for a Spider app.
     private void verifyApplication() {
         String ss = m_appDef.getStorageService();
         if (Utils.isEmpty(ss) || !ss.startsWith("Spider")) {

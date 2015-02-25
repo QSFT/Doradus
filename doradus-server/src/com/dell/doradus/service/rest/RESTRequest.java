@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.ContentType;
 import com.dell.doradus.common.HttpDefs;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.db.Tenant;
@@ -258,6 +259,15 @@ public class RESTRequest {
         }
         return inStream;
     }   // getInputStream
+    
+    /**
+     * Return the {@link HttpMethod} corresponding to the method used for this request.
+     * 
+     * @return Value such as {@link HttpMethod#GET}.
+     */
+    public HttpMethod getMethod() {
+        return HttpMethod.methodFromString(m_request.getMethod());
+    }   // getMethod
     
     /**
      * Get the value of the command header with the given name. Null is returned if no
