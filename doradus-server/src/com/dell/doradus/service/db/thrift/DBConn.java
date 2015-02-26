@@ -653,7 +653,7 @@ public class DBConn implements AutoCloseable {
                 
                 // Experience suggests that even for timeout exceptions, the connection
                 // may be bad, so we attempt to reconnect. If this fails, it will throw
-                // an IOException, which we pass to the caller.
+                // an DBNotAvailableException, which we pass to the caller.
                 reconnect(ex);
             }
         }
@@ -820,7 +820,7 @@ public class DBConn implements AutoCloseable {
     // Attempt to reconnect this connection to Cassandra due to the given exception.
     // Because Cassandra could be very busy, if the reconnect fails, we will retry multiple
     // times, waiting a little longer between each attempt. If all retries fail, we throw
-    // an IOException and leave the Thrift connection null.
+    // an DBNotAvailableException and leave the Thrift connection null.
     private void reconnect(Exception reconnectEx) {
         // Log the exception as a warning.
         m_logger.warn("Reconnecting to Cassandra due to error", reconnectEx);
@@ -837,7 +837,7 @@ public class DBConn implements AutoCloseable {
                 // Abort if all retries failed.
                 if (attempt >= ServerConfig.getInstance().max_reconnect_attempts) {
                     m_logger.error("All reconnect attempts failed; abandoning reconnect", ex);
-                    throw new RuntimeException("All reconnect attempts failed; abandoning reconnect", ex);
+                    throw new DBNotAvailableException("All reconnect attempts failed", ex);
                 }
                 m_logger.warn("Reconnect attempt #" + attempt + " failed", ex);
                 try {
@@ -889,7 +889,7 @@ public class DBConn implements AutoCloseable {
                     // ignore
                 }
                 
-                // Reconnect since the connection may be bad. This throws an IOException
+                // Reconnect since the connection may be bad. This throws an DBNotAvailableException
                 // if unsuccessful.
                 reconnect(ex);
             }

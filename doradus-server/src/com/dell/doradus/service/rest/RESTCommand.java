@@ -373,8 +373,10 @@ public final class RESTCommand implements Comparable<RESTCommand> {
         }
         if (component.charAt(0) == '{') {
             // The component is a variable, so it always matches.
-            String varName = getVariableName(component);
-            variableMap.put(varName, value);
+            if (!Utils.isEmpty(value)) {
+                String varName = getVariableName(component);
+                variableMap.put(varName, value);
+            }
             return true;
         }
         return component.equals(value);

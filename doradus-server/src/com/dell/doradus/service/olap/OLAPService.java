@@ -118,11 +118,13 @@ public class OLAPService extends StorageService {
     
     @Override
     public void validateSchema(ApplicationDefinition appDef) {
+        checkServiceState();
         validateApplication(appDef);
     }   // validateSchema
     
     @Override
     public Collection<Task> getAppTasks(ApplicationDefinition appDef) {
+        checkServiceState();
         List<Task> appTasks = new ArrayList<>();
         String agingFreq = appDef.getOption(CommonDefs.OPT_AGING_CHECK_FREQ);
         if (agingFreq != null) {
@@ -255,23 +257,6 @@ public class OLAPService extends StorageService {
         return appDefs;
     }   // getAllOLAPApplications
     
-    /**
-     * Get the {@link ApplicationDefinition} for the given OLAP application. An exception
-     * is thrown if the application does not exist or is not an OLAP application.
-     * 
-     * @param applicationName   Name of an OLAP application.
-     * @return                  {@link ApplicationDefinition} for the given OLAP application
-     * @deprecated This method only works for the default tenant and hence only in
-     *             single-tenant mode.
-     */
-    public ApplicationDefinition getOLAPApplication(String applicationName) {
-        ApplicationDefinition appDef = SchemaService.instance().getApplication(applicationName);
-        Utils.require(appDef != null, "Application '%s' does not exist", applicationName);
-        Utils.require(OLAPService.class.getSimpleName().equals(appDef.getStorageService()),
-                      "Application '%s' is not an OLAP application", applicationName);
-        return appDef;
-    }   // getOLAPApplication
-
     /**
      * Get the internal {@link Olap} object; for internal/direct access only. Waits for the
      * database to be opened and OLAP to be fully initialized.

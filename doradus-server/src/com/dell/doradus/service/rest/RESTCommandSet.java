@@ -45,6 +45,10 @@ public class RESTCommandSet {
     // does the work of sorting commands in the proper sequence.
     private final Map<String, SortedSet<RESTCommand>> m_cmdMap = new HashMap<>();
 
+    // When this is true, new commands are not allowed. This allows us to search the
+    // command set without a lock after it's built.
+    private boolean m_bCmdSetIsFrozen;
+    
     /**
      * Create a new REST command set with no commands.
      */
@@ -58,6 +62,9 @@ public class RESTCommandSet {
      */
     public void addCommand(RESTCommand command) {
         assert command != null;
+        if (m_bCmdSetIsFrozen) {
+            throw new RuntimeException("New commands cannot be added: command set is frozen");
+        }
         
         // Get or create the map for this command's HTTP method.
         synchronized (m_cmdMap) {
@@ -81,6 +88,18 @@ public class RESTCommandSet {
     }   // clear
     
     /**
+     * Freeze or unfreeze the command set. This should be called after the command set has
+     * been frozen so that findMatch() does not need to acquire a lock, thus single-
+     * threading command searching. If this is called with "true", subsequent calls to
+     * {@link #addCommand(RESTCommand)} will throw an exception.
+     *  
+     * @param bFreeze   True to freeze the command set. 
+     */
+    public void freezeCommandSet(boolean bFreeze) {
+        m_bCmdSetIsFrozen = bFreeze;
+    }   // freezeCommandSet
+    
+    /**
      * Attempt to find a command that matches the given parameters. If a match is found,
      * parameters are extracted and added to the given parameter map. If no match is found.
      * null is returned and the given variableMap is left unmodified.
@@ -98,26 +117,24 @@ public class RESTCommandSet {
                                  String                query, 
                                  Map<String, String>   variableMap) {
         // Find the sorted command set for the given HTTP method.
-        synchronized (m_cmdMap) {
-            SortedSet<RESTCommand> cmdSet = m_cmdMap.get(method.toUpperCase());
-            if (cmdSet == null) {
-                return null;
+        SortedSet<RESTCommand> cmdSet = m_cmdMap.get(method.toUpperCase());
+        if (cmdSet == null) {
+            return null;
+        }
+        
+        // Split uri into a list of non-empty nodes.
+        List<String> pathNodeList = new ArrayList<>();
+        String[] pathNodes = uri.split("/");
+        for (String pathNode : pathNodes) {
+            if (pathNode.length() > 0) {
+                pathNodeList.add(pathNode);
             }
-            
-            // Split uri into a list of non-empty nodes.
-            List<String> pathNodeList = new ArrayList<>();
-            String[] pathNodes = uri.split("/");
-            for (String pathNode : pathNodes) {
-                if (pathNode.length() > 0) {
-                    pathNodeList.add(pathNode);
-                }
-            }
-            
-            // Attempt to match commands in this set in order.
-            for (RESTCommand cmd : cmdSet) {
-                if (cmd.matchesURL(method, pathNodeList, query, variableMap)) {
-                    return cmd;
-                }
+        }
+        
+        // Attempt to match commands in this set in order.
+        for (RESTCommand cmd : cmdSet) {
+            if (cmd.matchesURL(method, pathNodeList, query, variableMap)) {
+                return cmd;
             }
         }
         return null;

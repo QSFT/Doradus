@@ -114,6 +114,7 @@ public class RESTService extends Service {
     // Begin servicing REST requests.
     @Override
     public void startService() {
+        m_commandSet.freezeCommandSet(true);
         displayCommandSet();
         try {
             m_jettyServer.start();
