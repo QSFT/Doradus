@@ -16,6 +16,9 @@
 
 package com.dell.doradus.olap;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.olap.io.FileInfo;
 import com.dell.doradus.olap.io.VDirectory;
@@ -41,7 +44,9 @@ public class OlapStatistics {
 		long total_fields_count = 0;
 		
 		//long total
-		for(FileInfo file: dir.listFiles()) {
+		ArrayList<FileInfo> files = new ArrayList<>(dir.listFiles());
+		Collections.sort(files);
+		for(FileInfo file: files) {
 			UNode fileNode = fnode.addMapNode("file");
 			fileNode.addValueNode("name", file.getName(), true);
 			long cl = dir.compressedLength(file);

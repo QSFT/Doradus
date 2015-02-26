@@ -32,6 +32,8 @@ import com.dell.doradus.olap.io.VDirectory;
 public class OlapBatch {
 	public List<OlapDocument> documents = new ArrayList<OlapDocument>();
 	
+	public List<OlapDocument> getDocuments() { return documents; }
+	
 	// SajListener to parse JSON directly into OlapBatch/OlapDocument objects. Example JSON
 	// structure we expect:
     //    {"batch": {

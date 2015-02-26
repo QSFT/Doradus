@@ -1,6 +1,6 @@
 package com.dell.doradus.olap.io;
 
-public class FileInfo {
+public class FileInfo implements Comparable<FileInfo> {
 	private String m_name;
 	private boolean m_uncompressed;
 	private boolean m_sharesRow;
@@ -36,5 +36,9 @@ public class FileInfo {
 	public String asString() {
 		String result = String.format("%s%s%d", m_uncompressed ? "u" : "", m_sharesRow ? "s" : "", m_length);
 		return result;
+	}
+
+	@Override public int compareTo(FileInfo other) {
+		return m_name.compareTo(other.m_name);
 	}
 }
