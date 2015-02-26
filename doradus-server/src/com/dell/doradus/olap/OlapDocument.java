@@ -49,4 +49,7 @@ public class OlapDocument {
 		this.deleted = deleted;
 		return this;
 	}
+	
+	public String getTable() { return table; }
+	public String getId() { return id; }
 }
