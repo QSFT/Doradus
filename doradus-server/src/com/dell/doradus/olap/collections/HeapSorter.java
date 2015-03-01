@@ -3,37 +3,40 @@ package com.dell.doradus.olap.collections;
 
 public class HeapSorter {
 	
-	public static void sort(ILongComparer comparator, long[] buffer, int offset, int length) {
+	public static void sort(IIntComparer comparator, int[] buffer, int offset, int length) {
 		// heapify the array
 		for(int i = 1; i < length; i++) {
-			upHeap(comparator, buffer, offset - 1, i + 1);
+			upHeap(comparator, buffer, offset, i);
 		}
 		// sort heap
 		for(int i = length - 1; i > 0; i--) {
-			long node = buffer[offset + i];
+			int node = buffer[offset + i];
 			buffer[offset + i] = buffer[offset];
 			buffer[offset] = node;
-			downHeap(comparator, buffer, offset - 1, i);
+			downHeap(comparator, buffer, offset, i);
 		}
 	}
 	
-	private static void upHeap(ILongComparer comparator, long[] buffer, int start, int index) {
-        long node = buffer[start + index];
+	
+	private static void upHeap(IIntComparer comparator, int[] buffer, int start, int index) {
+		start--; // use 1-based indexing
+		index++;
+        int node = buffer[start + index];
         int j = (index >> 1);
         while (j > 0 && comparator.compare(node, buffer[start + j]) > 0)
         {
-        	// shift parent node down
-        	buffer[start + index] = buffer[start + j];
+        	buffer[start + index] = buffer[start + j]; // shift parent node down
             index = j;
             j = (index >> 1);
         }
-        buffer[start + index] = node; // install saved node
+        buffer[start + index] = node; // insert the node
 		
 	}
 	
-	private static void downHeap(ILongComparer comparator, long[] buffer, int start, int length) {
+	private static void downHeap(IIntComparer comparator, int[] buffer, int start, int length) {
+		start--; // use 1-based indexing
         int i = 1;
-        long node = buffer[start + i]; // save top node
+        int node = buffer[start + i];
         int j = i << 1; 
         int k = j + 1;
         // find smaller child
@@ -50,7 +53,7 @@ public class HeapSorter {
                 j = k;
             }
         }
-        buffer[start + i] = node; // install saved node
+        buffer[start + i] = node; // insert the node
 	}
 	
 }

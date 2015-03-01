@@ -16,6 +16,8 @@
 
 package com.dell.doradus.olap.store;
 
+import java.util.Arrays;
+
 
 public class LongList {
 	private long[] m_array;
@@ -49,6 +51,12 @@ public class LongList {
 	}
 	
 	public long[] getArray() { return m_array; }
+	
+	public void clear() { m_position = 0; }
+	
+	public void sort() {
+		Arrays.sort(m_array, 0, m_position);
+	}
 	
 	public void shrinkToSize() {
 		long[] array = new long[m_position];

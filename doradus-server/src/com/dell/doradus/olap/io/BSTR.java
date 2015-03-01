@@ -56,6 +56,13 @@ public class BSTR implements Comparable<BSTR>  {
         length = buffer.length;
     }
 
+    public BSTR(byte[] bytes, int offset, int length)
+    {
+        buffer = new byte[length];
+        System.arraycopy(bytes, offset, buffer, 0, length);
+        this.length = buffer.length;
+    }
+    
     public BSTR(double value) {
     	this(value < 0 ? -Double.doubleToLongBits(-value) : Double.doubleToLongBits(value));
     }

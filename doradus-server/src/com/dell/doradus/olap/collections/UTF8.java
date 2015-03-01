@@ -28,7 +28,8 @@ public final class UTF8 {
     private final CharsetDecoder utf8_decoder = Utils.UTF8_CHARSET.newDecoder();
 
     public static void toLower(char[] src, int srcOffset, int srcLength) {
-    	for(int i = 0; i < srcLength; i++) {
+    	int end = srcOffset + srcLength;
+    	for(int i = srcOffset; i < end; i++) {
     		char c = src[i];
     		if(c < 0x80) {
     			 if(c >= 'A' && c <= 'Z') c += 32;

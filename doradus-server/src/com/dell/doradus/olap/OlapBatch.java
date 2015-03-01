@@ -34,6 +34,8 @@ public class OlapBatch {
 	
 	public List<OlapDocument> getDocuments() { return documents; }
 	
+	public int size() { return documents.size(); }
+	
 	// SajListener to parse JSON directly into OlapBatch/OlapDocument objects. Example JSON
 	// structure we expect:
     //    {"batch": {

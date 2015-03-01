@@ -14,6 +14,12 @@ public class ArrayOperations {
 		System.arraycopy(src, srcOffset, dst, dstOffset, length);
 	}
 	
+	public static byte[] realloc(byte[] buffer, int newlength) {
+		byte[] newbuffer = new byte[newlength];
+		if(buffer != null && buffer.length > 0) copy(buffer, 0, newbuffer, 0, buffer.length);
+		return newbuffer;
+	}
+	
 	public static int compare(byte[] src, int srcOffset, int srcLength, byte[] dst, int dstOffset, int dstLength) {
 		int length = srcLength < dstLength ? srcLength : dstLength;
 		int c = compare(src, srcOffset, dst, dstOffset, length);
@@ -63,6 +69,12 @@ public class ArrayOperations {
 		System.arraycopy(src, srcOffset, dst, dstOffset, length);
 	}
 	
+	public static char[] realloc(char[] buffer, int newlength) {
+		char[] newbuffer = new char[newlength];
+		if(buffer != null && buffer.length > 0) copy(buffer, 0, newbuffer, 0, buffer.length);
+		return newbuffer;
+	}
+	
 	public static int compare(char[] src, int srcOffset, int srcLength, char[] dst, int dstOffset, int dstLength) {
 		int length = srcLength < dstLength ? srcLength : dstLength;
 		int c = compare(src, srcOffset, dst, dstOffset, length);
@@ -106,6 +118,12 @@ public class ArrayOperations {
 	
 	public static void copy(int[] src, int srcOffset, int[] dst, int dstOffset, int length) {
 		System.arraycopy(src, srcOffset, dst, dstOffset, length);
+	}
+
+	public static int[] realloc(int[] buffer, int newlength) {
+		int[] newbuffer = new int[newlength];
+		if(buffer != null && buffer.length > 0) copy(buffer, 0, newbuffer, 0, buffer.length);
+		return newbuffer;
 	}
 	
 	public static int compare(int[] src, int srcOffset, int srcLength, int[] dst, int dstOffset, int dstLength) {
@@ -152,6 +170,12 @@ public class ArrayOperations {
 		System.arraycopy(src, srcOffset, dst, dstOffset, length);
 	}
 
+	public static long[] realloc(long[] buffer, int newlength) {
+		long[] newbuffer = new long[newlength];
+		if(buffer != null && buffer.length > 0) copy(buffer, 0, newbuffer, 0, buffer.length);
+		return newbuffer;
+	}
+	
 	public static int compare(long[] src, int srcOffset, int srcLength, long[] dst, int dstOffset, int dstLength) {
 		int length = srcLength < dstLength ? srcLength : dstLength;
 		int c = compare(src, srcOffset, dst, dstOffset, length);

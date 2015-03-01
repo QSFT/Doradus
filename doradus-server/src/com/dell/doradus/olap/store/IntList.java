@@ -16,6 +16,8 @@
 
 package com.dell.doradus.olap.store;
 
+import java.util.Arrays;
+
 
 public class IntList {
 	private int[] m_array;
@@ -39,12 +41,21 @@ public class IntList {
 	}
 	
 	public void set(int index, int value) { m_array[index] = value; }
-	
+
 	public int size() { return m_position; }
+	public void setLength(int length) { m_position = length; }
 
 	public void set(IntIterator iter) {
 		iter.setup(m_array, 0, m_position);
 	}
+	
+	public int[] getArray() { return m_array; }
+	
+	public void sort() {
+		Arrays.sort(m_array, 0, m_position);
+	}
+	
+	public void clear() { m_position = 0; }
 	
 	private void resize() {
 		int[] array = new int[m_array.length * 2];

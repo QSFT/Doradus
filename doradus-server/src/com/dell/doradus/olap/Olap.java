@@ -39,6 +39,7 @@ import com.dell.doradus.olap.aggregate.AggregationResult;
 import com.dell.doradus.olap.aggregate.DuplicationDetection;
 import com.dell.doradus.olap.aggregate.mr.MFAggregationBuilder;
 import com.dell.doradus.olap.builder.SegmentBuilder;
+import com.dell.doradus.olap.builder2.OlapBatch2;
 import com.dell.doradus.olap.io.FileDeletedException;
 import com.dell.doradus.olap.io.VDirectory;
 import com.dell.doradus.olap.merge.MergeResult;
@@ -213,6 +214,22 @@ public class Olap {
 	    segmentDir.create();
 	    LOG.debug("add {} objects to {}/{} in {}", new Object[] { batch.getObjectCount(), appDef.getAppName(), shard, t} );
 	    return guid;
+	}
+
+	public String addSegment(ApplicationDefinition appDef, String shard, OlapBatch2 batch) {
+		return addSegment(appDef, shard, batch, true);
+	}
+
+	public String addSegment(ApplicationDefinition appDef, String shard, OlapBatch2 batch, boolean overwrite) {
+		Timer t = new Timer();
+		VDirectory shardDir = getRoot(appDef).getDirectoryCreate(shard);
+		String prefix = overwrite ? "" : ".before.";
+		String guid = prefix + Long.toString(System.currentTimeMillis(), 32) + "-" + UUID.randomUUID().toString();
+		VDirectory segmentDir = shardDir.getDirectory(guid);
+		batch.flushSegment(appDef, segmentDir);
+		segmentDir.create();
+		LOG.debug("add {} objects to {}/{} in {}", new Object[] { batch.size(), appDef.getAppName(), shard, t} );
+		return guid;
 	}
 	
 	public AggregationResult aggregate(ApplicationDefinition appDef, String table, OlapAggregate olapAggregate) {
