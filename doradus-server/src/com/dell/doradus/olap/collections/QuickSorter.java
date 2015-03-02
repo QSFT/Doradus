@@ -22,7 +22,7 @@ public class QuickSorter {
 			return;
 		}
 
-		if(depth >= 20) {
+		if(depth >= 50) {
 			HeapSorter.sort(comparator, buffer, offset, length);
 			return;
 		}
@@ -40,14 +40,14 @@ public class QuickSorter {
 		probe[3] = buffer[start + 3 * length / 4];
 		probe[4] = buffer[end - 1];
 		insertionSort(comparator, probe, 0, 5);
-		int median = probe[2];
+		int pivot = probe[2];
 		
 		while(true) {
-			while(start_low < start_hi && comparator.compare(buffer[start_low], median) <= 0) start_low++;
-			while(start_low < start_hi && comparator.compare(buffer[start_hi - 1], median) >= 0) start_hi--;
+			while(start_low < start_hi && comparator.compare(buffer[start_low], pivot) <= 0) start_low++;
+			while(start_low < start_hi && comparator.compare(buffer[start_hi - 1], pivot) >= 0) start_hi--;
 			if(start_low == start_hi) {
-				while(start_low > start && comparator.compare(buffer[start_low - 1], median) == 0) start_low--;
-				while(start_hi < end && comparator.compare(buffer[start_hi], median) == 0) start_hi++;
+				while(start_low > start && comparator.compare(buffer[start_low - 1], pivot) == 0) start_low--;
+				while(start_hi < end && comparator.compare(buffer[start_hi], pivot) == 0) start_hi++;
 				break;
 			}
 			swap(buffer, start_low, start_hi - 1);
