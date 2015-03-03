@@ -54,7 +54,7 @@ public final class UTF8 {
     
     public int decode(byte[] src, int srcOffset, int srcLength, char[] dst, int dstOffset) {
     	for(int i = 0; i < srcLength; i++) {
-    		if(src[srcOffset + i] > 0x80) {
+    		if(src[srcOffset + i] < 0) {
     			int len = decodeInternal(src, srcOffset + i, srcLength - i, dst, dstOffset + i);
     			return i + len;
     		} else {
@@ -70,17 +70,17 @@ public final class UTF8 {
     	utf8_encoder.reset();
     	utf8_encoder.encode(cb, bb, true);
     	utf8_encoder.flush(bb);
-    	int length = bb.position();
+    	int length = bb.position() - srcOffset;
     	return length;
     }
     
     private int decodeInternal(byte[] src, int srcOffset, int srcLength, char[] dst, int dstOffset) {
     	ByteBuffer bb = ByteBuffer.wrap(src, srcOffset, srcLength);
-    	CharBuffer cb = CharBuffer.wrap(dst);
+    	CharBuffer cb = CharBuffer.wrap(dst, dstOffset, dst.length - dstOffset);
     	utf8_decoder.reset();
     	utf8_decoder.decode(bb, cb, true);
     	utf8_decoder.flush(cb);
-    	int length = cb.position();
+    	int length = cb.position() - dstOffset;
     	return length;
     }
     
