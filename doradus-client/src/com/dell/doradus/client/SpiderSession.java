@@ -72,7 +72,8 @@ public class SpiderSession extends ApplicationSession {
         try {
             // Send a POST request to "/{application}/{table}"
             byte[] body = Utils.toBytes(dbObjBatch.toDoc().toJSON());
-            StringBuilder uri = new StringBuilder("/");
+            StringBuilder uri = Utils.isEmpty(m_restClient.getApiPrefix()) ? new StringBuilder() : new StringBuilder("/" + m_restClient.getApiPrefix());          			
+            uri.append("/");
             uri.append(Utils.urlEncode(m_appDef.getAppName()));
             uri.append("/");
             uri.append(Utils.urlEncode(tableName));
@@ -109,7 +110,8 @@ public class SpiderSession extends ApplicationSession {
             DBObjectBatch dbObjBatch = new DBObjectBatch();
             dbObjBatch.addObject(dbObj);
             byte[] body = Utils.toBytes(dbObjBatch.toDoc().toJSON());
-            StringBuilder uri = new StringBuilder("/");
+            StringBuilder uri = Utils.isEmpty(m_restClient.getApiPrefix()) ? new StringBuilder() : new StringBuilder("/" + m_restClient.getApiPrefix());          			
+            uri.append("/");
             uri.append(Utils.urlEncode(m_appDef.getAppName()));
             uri.append("/");
             uri.append(Utils.urlEncode(tableName));
@@ -157,7 +159,8 @@ public class SpiderSession extends ApplicationSession {
         try {
             // Send a DELETE request to "/{application}/{table}"
             byte[] body = Utils.toBytes(dbObjBatch.toDoc().toJSON());
-            StringBuilder uri = new StringBuilder("/");
+            StringBuilder uri = Utils.isEmpty(m_restClient.getApiPrefix()) ? new StringBuilder() : new StringBuilder("/" + m_restClient.getApiPrefix());          			
+            uri.append("/");        
             uri.append(Utils.urlEncode(m_appDef.getAppName()));
             uri.append("/");
             uri.append(Utils.urlEncode(tableName));
@@ -280,7 +283,8 @@ public class SpiderSession extends ApplicationSession {
                       "Table is not defined for application '%s': %s", m_appDef.getAppName(), tableName);
         
         // Form the URI, which has the general form: GET /{application}/{table}/_aggregate?{params}
-        StringBuilder uri = new StringBuilder("/");
+        StringBuilder uri = Utils.isEmpty(m_restClient.getApiPrefix()) ? new StringBuilder() : new StringBuilder("/" + m_restClient.getApiPrefix());          			
+        uri.append("/");
         uri.append(Utils.urlEncode(m_appDef.getAppName()));
         uri.append("/");
         uri.append(Utils.urlEncode(tableDef.getTableName()));
@@ -348,7 +352,8 @@ public class SpiderSession extends ApplicationSession {
         
         try {
             // Send a GET request to "/{application}/{table}/{object ID}"
-            StringBuilder uri = new StringBuilder("/");
+            StringBuilder uri = Utils.isEmpty(m_restClient.getApiPrefix()) ? new StringBuilder() : new StringBuilder("/" + m_restClient.getApiPrefix());          			
+            uri.append("/");
             uri.append(Utils.urlEncode(m_appDef.getAppName()));
             uri.append("/");
             uri.append(Utils.urlEncode(tableName));
@@ -426,7 +431,8 @@ public class SpiderSession extends ApplicationSession {
         Utils.require(tableDef != null, "Unknown table: %s", tableName);
         
         // Form the URI, which has the general form: GET /{application}/{table}/_query?{params}
-        StringBuilder uri = new StringBuilder("/");
+        StringBuilder uri = Utils.isEmpty(m_restClient.getApiPrefix()) ? new StringBuilder() : new StringBuilder("/" + m_restClient.getApiPrefix());          			
+        uri.append("/");
         uri.append(Utils.urlEncode(tableDef.getAppDef().getAppName()));
         uri.append("/");
         uri.append(Utils.urlEncode(tableDef.getTableName()));

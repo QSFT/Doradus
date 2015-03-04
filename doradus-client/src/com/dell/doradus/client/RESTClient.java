@@ -64,6 +64,7 @@ public class RESTClient implements Closeable {
     // Members the reflect the Doradus server we're talking to:
     private final String            m_host;
     private final int               m_port;
+    private final String 			m_apiPrefix;
     private Socket                  m_socket;
     private InputStream             m_inStream;
     private OutputStream            m_outStream;
@@ -88,6 +89,25 @@ public class RESTClient implements Closeable {
         this(null, host, port);
     }   // constructor
     
+    public RESTClient(String host, int port, String apiPrefix) {
+        this(null, host, port, apiPrefix);
+    }  
+    
+    public RESTClient(SSLTransportParameters sslParams, String host, int port, String apiPrefix) {
+        m_sslParams = sslParams;
+        m_host      = host;
+        m_port      = port;
+        m_apiPrefix   = apiPrefix;
+        // Open a socket to the specified server, throwing an exception if it won't open
+        // and capture the input/output streams.
+        try {
+            createSocket();
+            m_inStream  = m_socket.getInputStream();
+            m_outStream = m_socket.getOutputStream();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }   	
+    }
     /**
      * Create a RESTClient by opening a connection to the specified host and port,
      * optionally using TLS/SSL.
@@ -101,6 +121,7 @@ public class RESTClient implements Closeable {
         m_sslParams = sslParams;
         m_host      = host;
         m_port      = port;
+        m_apiPrefix = "";
         
         // Open a socket to the specified server, throwing an exception if it won't open
         // and capture the input/output streams.
@@ -121,10 +142,11 @@ public class RESTClient implements Closeable {
      * @param restClient    RESTClient object to copy.
      */
     public RESTClient(RESTClient restClient) {
-        this(restClient.m_sslParams, restClient.m_host, restClient.m_port);
+        this(restClient.m_sslParams, restClient.m_host, restClient.m_port, restClient.m_apiPrefix);
         setAcceptType(restClient.m_acceptFormat);
         setCompression(restClient.m_bCompress);
         setCredentials(restClient.m_credentials);
+        
     }   // constructor
     
     /**
@@ -166,6 +188,8 @@ public class RESTClient implements Closeable {
      */
     public int getPort() { return m_port; }
 
+    public String getApiPrefix() { return m_apiPrefix; }
+    
     /**
      * Set the "accept" type used in requests to the given value. This value is used for
      * all requests until it is changed.

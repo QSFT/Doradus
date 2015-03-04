@@ -70,6 +70,8 @@ public class Client implements AutoCloseable {
     private final SSLTransportParameters    m_sslParams;
     private final RESTClient                m_restClient;
 
+    private final String                    m_apiPrefix;
+    
     private final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
 
     //----- Client session methods
@@ -90,6 +92,27 @@ public class Client implements AutoCloseable {
         m_host = host;
         m_port = port;
         m_restClient = new RESTClient(m_sslParams, m_host, m_port);
+        m_apiPrefix = "";
+    }   // constructor
+    
+    /**
+     * Create a new Client that will communicate with the Doradus server using the given
+     * REST API host and port. With this constructor, an unsecure (HTTP) connection is
+     * created. An exception is thrown if the server is not available at the given host
+     * and port or if it doesn't allow unsecured connection.
+     * 
+     * @param host  Doradus REST API host name or IP address.
+     * @param port  Doradus REST API port number.
+     * @param apiPrefix  Doradus REST API prefix.
+     */
+    public Client(String host, int port, String apiPrefix) {
+        Utils.require(!Utils.isEmpty(host), "host");
+        
+        m_sslParams = null;
+        m_host = host;
+        m_port = port;
+        m_restClient = new RESTClient(m_sslParams, m_host, m_port, apiPrefix);
+        m_apiPrefix = apiPrefix;
     }   // constructor
 
     /**
@@ -113,6 +136,7 @@ public class Client implements AutoCloseable {
         m_port = port;
         m_sslParams = sslParams;
         m_restClient = new RESTClient(m_sslParams, m_host, m_port);
+        m_apiPrefix = "";
     }   // constructor
     
     /**
@@ -130,6 +154,7 @@ public class Client implements AutoCloseable {
     	m_sslParams = restClient.getSSLParams();
     	m_host = restClient.getHost();
     	m_port = restClient.getPort();
+        m_apiPrefix = restClient.getApiPrefix();
     }	// constructor
     
     /**
@@ -262,9 +287,11 @@ public class Client implements AutoCloseable {
             body = Utils.toBytes(appDef.toDoc().toJSON());
             
             // Send a POST request to the "/_applications"
-            String uri = "/_applications";
+            StringBuilder uri = Utils.isEmpty(m_apiPrefix) ? new StringBuilder() : new StringBuilder("/" + m_apiPrefix);          			
+            uri.append("/_applications/");
+            
             RESTResponse response =
-                m_restClient.sendRequest(HttpMethod.POST, uri, ContentType.APPLICATION_JSON, body);
+                m_restClient.sendRequest(HttpMethod.POST, uri.toString(), ContentType.APPLICATION_JSON, body);
             m_logger.debug("defineApplication() response: {}", response.toString());
             throwIfErrorResponse(response);
             return getAppDef(appDef.getAppName());
@@ -309,8 +336,10 @@ public class Client implements AutoCloseable {
 
         try {
             // Send a GET request to "/_applications" to list all applications.
-            String uri = "/_applications";
-            RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri);
+            StringBuilder uri = Utils.isEmpty(m_apiPrefix) ? new StringBuilder() : new StringBuilder("/" + m_apiPrefix);          			
+            uri.append("/_applications/");
+            
+            RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri.toString());
             m_logger.debug("listAllApplications() response: {}", response.toString());
             throwIfErrorResponse(response);
             
@@ -341,7 +370,8 @@ public class Client implements AutoCloseable {
 
         try {
             // Send a GET request to "/_applications/{application}
-            StringBuilder uri = new StringBuilder("/_applications/");
+            StringBuilder uri = Utils.isEmpty(m_apiPrefix) ? new StringBuilder() : new StringBuilder("/" + m_apiPrefix);          			
+            uri.append("/_applications/");
             uri.append(Utils.urlEncode(appName));
             RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri.toString());
             m_logger.debug("listApplication() response: {}", response.toString());
@@ -375,7 +405,8 @@ public class Client implements AutoCloseable {
         
         try {
             // Send a DELETE request to "/_applications/{application}/{key}".
-            StringBuilder uri = new StringBuilder("/_applications/");
+            StringBuilder uri = Utils.isEmpty(m_apiPrefix) ? new StringBuilder() : new StringBuilder("/" + m_apiPrefix);          			
+            uri.append("/_applications/");
             uri.append(Utils.urlEncode(appName));
             if (!Utils.isEmpty(key)) {
                 uri.append("/");
