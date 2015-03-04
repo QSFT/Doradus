@@ -24,7 +24,6 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.olap.builder2.OlapBatch2.OlapDocument2;
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.io.VDirectory;
 import com.dell.doradus.olap.store.SegmentStats;

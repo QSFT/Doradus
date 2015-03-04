@@ -24,6 +24,7 @@ public class StringList implements IIntComparer {
 	}
 	
 	public int add(String value) {
+		if(value == null) value = "";
 		int index = m_lengthPosition / 2;
 		int length = value.length();
 		ensureCapacity(length);
@@ -32,6 +33,18 @@ public class StringList implements IIntComparer {
 		m_lengths[m_lengthPosition++] = m_bufferPosition;
 		m_bufferPosition += length;
 		return index;
+	}
+	
+	public void set(int index, String value) {
+		int lengthPosition = index * 2;
+		if(lengthPosition < 0 || lengthPosition > m_lengthPosition - 2) throw new RuntimeException("Invalid Index");
+		if(value == null) value = "";
+		int length = value.length();
+		ensureCapacity(length);
+		ArrayOperations.copy(value, m_buffer, m_bufferPosition);
+		m_lengths[lengthPosition++] = length;
+		m_lengths[lengthPosition++] = m_bufferPosition;
+		m_bufferPosition += length;
 	}
 	
 	public String get(int index) {

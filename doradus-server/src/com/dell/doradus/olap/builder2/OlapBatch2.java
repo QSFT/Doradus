@@ -16,12 +16,13 @@
 
 package com.dell.doradus.olap.builder2;
 
+import java.io.Reader;
 import java.util.Iterator;
 
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.IDGenerator;
-import com.dell.doradus.olap.builder2.OlapBatch2.OlapDocument2;
 import com.dell.doradus.olap.collections.strings.StringList;
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.io.VDirectory;
@@ -38,18 +39,24 @@ public class OlapBatch2 implements Iterable<OlapDocument2> {
 		m_docOffsets = new IntList(64);
 	}
 	
+	public static OlapBatch2 parseJSON(String text) { return BatchBuilder.parseJSON(text); }
+	public static OlapBatch2 parseJSON(Reader reader) { return BatchBuilder.parseJSON(reader); }
+    public static OlapBatch2 fromUNode(UNode rootNode) { return BatchBuilder.fromUNode(rootNode); }
+	
+	
+	public OlapDocument2 addDoc() { return addDoc(null, null); }
 	public OlapDocument2 addDoc(String table, String id) {
 	    if(id == null) id = Utils.base64FromBinary(IDGenerator.nextID());
 	    m_docOffsets.add(m_data.size());
 		m_data.add(table);
 		m_data.add(id);
 		m_deleted.add(0);
-		return new OlapDocument2(size() - 1);
+		return new OlapDocument2(new InternalOlapDocument2(size() - 1));
 	}
 	
 	public int size() { return m_docOffsets.size(); }
 	
-	public OlapDocument2 get(int index) { return new OlapDocument2(index); }
+	public OlapDocument2 get(int index) { return new OlapDocument2(new InternalOlapDocument2(index)); }
 	
 	@Override public Iterator<OlapDocument2> iterator() { return new DocIterator(); }
 	
@@ -61,26 +68,26 @@ public class OlapBatch2 implements Iterable<OlapDocument2> {
 	}
 
 	
-	public class OlapDocument2 {
+	protected class InternalOlapDocument2 {
 		private int m_index;
 		private int m_offset;
 		
-		OlapDocument2(int index) { m_index = index; m_offset = m_docOffsets.get(m_index); }
+		InternalOlapDocument2(int index) { m_index = index; m_offset = m_docOffsets.get(m_index); }
 		
-		public OlapDocument2 addField(String field, String value) {
-			if(m_index < size() - 1) throw new RuntimeException("Cannot update document that is already added");
-			if(value == null) return this;
+		public void addField(String field, String value) {
+			if(m_index < size() - 1) throw new RuntimeException("Fields can be added only to the last added document");
+			if(value == null) return;
 			m_data.add(field);
 			m_data.add(value);
-			return this;
 		}
 		
-		private int data(int field) {
-			return m_offset + field * 2;
-		}
+		private int data(int field) { return m_offset + field * 2; }
 		
 		public String getTable() { return m_data.get(data(0)); }
 		public String getId() { return m_data.get(data(0) + 1); }
+		public void setTable(String table) { m_data.set(data(0), table); }
+		public void setId(String id) { m_data.set(data(0) + 1, id); }
+		
 		public boolean isDeleted() { return m_deleted == null ? false : m_deleted.get(m_index) == 1; }
 		public int getFieldsCount() {
 			if(m_index == size() - 1) return (m_data.size() - m_docOffsets.get(m_index) - 2) / 2;
@@ -93,10 +100,7 @@ public class OlapBatch2 implements Iterable<OlapDocument2> {
 		public BSTR getFieldValueBinary(int field) { return m_data.getBinary(data(field + 1) + 1); } 
 		public BSTR getFieldValueBinaryLowercase(int field) { return m_data.getBinaryLowercase(data(field + 1) + 1); } 
 		
-		public OlapDocument2 setDeleted(boolean deleted) {
-			m_deleted.set(m_index, deleted ? 1 : 0);
-			return this;
-		}
+		public void setDeleted(boolean deleted) { m_deleted.set(m_index, deleted ? 1 : 0); }
 		
 	}
 
