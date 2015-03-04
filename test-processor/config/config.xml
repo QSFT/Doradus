@@ -20,7 +20,7 @@ limitations under the License.
     <output-enabled>true</output-enabled>
     <response-format>xml</response-format>
 	
-	<DEFINE name="tests.root" value="/Users/traduong/Doradus/Doradus/oss-workspace/regression-tests"/>	
+	<DEFINE name="tests.root" value="c:\doradus\oss-workspace\regression-tests"/>	
 
     <test-suite root="${tests.root}">
         <include>
