@@ -91,8 +91,18 @@ public class RESTClient implements Closeable {
     
     public RESTClient(String host, int port, String apiPrefix) {
         this(null, host, port, apiPrefix);
-    }  
+    } 
     
+    /**
+     * Create a RESTClient by opening a connection to the specified host and port,
+     * optionally using TLS/SSL.
+     *  
+     * @param sslParams {@link SSLTransportParameters} needed to use TLS/SSL for this
+     *                  connection. Can be null to request a non-secured connection.
+     * @param host      Host name or IP address to use.
+     * @param port      Port number to use.
+     * @param apiPrefix Rest API prefix.
+     */    
     public RESTClient(SSLTransportParameters sslParams, String host, int port, String apiPrefix) {
         m_sslParams = sslParams;
         m_host      = host;

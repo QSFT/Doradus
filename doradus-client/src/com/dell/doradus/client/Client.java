@@ -97,13 +97,14 @@ public class Client implements AutoCloseable {
     
     /**
      * Create a new Client that will communicate with the Doradus server using the given
-     * REST API host and port. With this constructor, an unsecure (HTTP) connection is
+     * REST API host, port and prefix as part of REST API URLs will begin with, for example /_api. 
+     * With this constructor, an unsecure (HTTP) connection is
      * created. An exception is thrown if the server is not available at the given host
      * and port or if it doesn't allow unsecured connection.
      * 
      * @param host  Doradus REST API host name or IP address.
      * @param port  Doradus REST API port number.
-     * @param apiPrefix  Doradus REST API prefix.
+     * @param apiPrefix  Doradus REST API prefix
      */
     public Client(String host, int port, String apiPrefix) {
         Utils.require(!Utils.isEmpty(host), "host");
@@ -287,7 +288,7 @@ public class Client implements AutoCloseable {
             body = Utils.toBytes(appDef.toDoc().toJSON());
             
             // Send a POST request to the "/_applications"
-            StringBuilder uri = Utils.isEmpty(m_apiPrefix) ? new StringBuilder() : new StringBuilder("/" + m_apiPrefix);          			
+            StringBuilder uri = new StringBuilder(Utils.isEmpty(m_apiPrefix) ? "" : "/" + m_apiPrefix);          			
             uri.append("/_applications/");
             
             RESTResponse response =
@@ -336,7 +337,7 @@ public class Client implements AutoCloseable {
 
         try {
             // Send a GET request to "/_applications" to list all applications.
-            StringBuilder uri = Utils.isEmpty(m_apiPrefix) ? new StringBuilder() : new StringBuilder("/" + m_apiPrefix);          			
+        	StringBuilder uri = new StringBuilder(Utils.isEmpty(m_apiPrefix) ? "" : "/" + m_apiPrefix);          			
             uri.append("/_applications/");
             
             RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri.toString());
@@ -370,7 +371,7 @@ public class Client implements AutoCloseable {
 
         try {
             // Send a GET request to "/_applications/{application}
-            StringBuilder uri = Utils.isEmpty(m_apiPrefix) ? new StringBuilder() : new StringBuilder("/" + m_apiPrefix);          			
+            StringBuilder uri = new StringBuilder(Utils.isEmpty(m_apiPrefix) ? "" : "/" + m_apiPrefix);          			
             uri.append("/_applications/");
             uri.append(Utils.urlEncode(appName));
             RESTResponse response = m_restClient.sendRequest(HttpMethod.GET, uri.toString());
@@ -405,7 +406,7 @@ public class Client implements AutoCloseable {
         
         try {
             // Send a DELETE request to "/_applications/{application}/{key}".
-            StringBuilder uri = Utils.isEmpty(m_apiPrefix) ? new StringBuilder() : new StringBuilder("/" + m_apiPrefix);          			
+            StringBuilder uri = new StringBuilder(Utils.isEmpty(m_apiPrefix) ? "" : "/" + m_apiPrefix);          			
             uri.append("/_applications/");
             uri.append(Utils.urlEncode(appName));
             if (!Utils.isEmpty(key)) {
