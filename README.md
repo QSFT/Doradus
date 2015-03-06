@@ -1,16 +1,36 @@
 #Doradus at Strata 2015
-If you need an excuse to visit sunny California in February, come learn about Doradus at [Strata+Hadoop World 2015](http://strataconf.com/big-data-conference-ca-2015/), which takes place February 17-20, 2015 in San Jose, CA. I'll be describing Doradus at this session: [One Billion Objects in 2GB: Big Data Analytics on Small Clusters with Doradus OLAP](http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/38276). Love to see you there!
+Doradus was presented at [Strata+Hadoop World 2015](http://strataconf.com/big-data-conference-ca-2015/) in San Jose, CA. Slides for the session, titled *[One Billion Objects in 2GB: Big Data Analytics on Small Clusters with Doradus OLAP](http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/38276)*, can be found here: [http://www.slideshare.net/randyguck/strata-presentation-doradus](http://www.slideshare.net/randyguck/strata-presentation-doradus). Be sure to check out the slide notes, which provide extra details.
 
-\- Randy
+#What's New?
+We're putting the finishing touches on the new v2.3 release. This release contains many new features: here's a summary of some of them:
 
+- **OpenShift Support**: Doradus can be run in an OpenShift cartridge. See [this Wiki note](https://github.com/dell-oss/Doradus/wiki#openshift-cartridge) and the [doradus-openshift-cartridge](https://github.com/TraDuong1/openshift-origin-cartridge-doradus) Github project.
+
+- **OLAP multi-threaded merging**: OLAP can now use multiple threads to merge shards. In doradus.yaml, `olap_merge_threads` specifies the number of threads to use. This feature can significantly speed-up the shard merge time.
+
+- **Faster OLAP updates**: A new indexing algorithm is used for loading OLAP batches, yielding a 20-50% improvement in data load time. This improvement is amplified when loading larger batches.
+
+- **Multiple sort fields**: Object queries for both Spider and OLAP applications can now use multiple sort fields. Example: `&o=LastName DESC,FirstName ASC`.
+
+- **Aggregate query improvements**: New aggregate query features have been added for both Spider and OLAP applications. For example, both support new `FIRST` and `LAST` grouping functions. OLAP applications can use a new `SETS` function for creating arbitrary grouping sets. `INCLUDE` and `EXCLUDE` can now be combined in grouping expressions. Several other improvements have also been made.
+
+- **OLAP metric computations in object queries**: Object queries for OLAP applications can now compute metric functions for each perspective object using the metric parameter: `&m`.
+
+- **Optional application key**: The application `key` property is now optional and can be excluded in schema definitions.
+
+- **Data aging check frequency**: For both OLAP and Spider applications, the frequency of the background data aging task is now controlled by the `data-check-frequency` option. The `schedules` section is no longer used in schemas.
+
+- **Other Simplifications**: Other minor Spider and OLAP features have been removed. (We're always thinking about unused/marginal features to remove to keep the code simpler.)
+
+Many other enhancements and changes have been also been made for v2.3. See the *Recent Changes* sections in the Wiki pages or PDF documents.
+
+The next sections provide an overview of Doradus, its architecture, and its features.
+	
 #Overview
 Doradus is a REST service that extends a Cassandra NoSQL database with a
 graph-based data model, advanced indexing and search features, and a REST API.
 The Doradus query language (DQL) extends Lucene full-text queries with graph
 navigation features such as link paths, quantifiers, and transitive searches.
-
-New! Doradus can be run in an OpenShift cartridge. See [this Wiki note](https://github.com/dell-oss/Doradus/wiki#openshift-cartridge) and the [doradus-openshift-cartridge](https://github.com/TraDuong1/openshift-origin-cartridge-doradus) Github project.
-
 
 #Architecture
 Doradus is a pure Java application that can run as a daemon, Windows service, or
@@ -22,7 +42,7 @@ multiple Cassandra instances. Doradus currently accesses Cassandra nodes using
 either the Thrift API or CQL.
 
 #Storage Services
-A Doradus database cluster can host multiple tenants, called *applications*.
+A Doradus database cluster can host multiple schemas, called *applications*.
 Each application chooses a *storage service* to manage its data. Doradus offers
 two storage services, which offer different storage and performance features to
 benefit different types of applications.
@@ -40,7 +60,7 @@ Query speed is very fast, typically millions of objects per second.
 The Doradus Spider service is best suited for unstructured/semi-structured data
 or data that is highly mutable: document stores, message graphs, directories,
 etc. It uses indexing techniques such as trie trees to support fully-inverted
-tables. Spider offers fine-grained updates, persistent statistical queries,
+tables. Spider offers fine-grained updates, immediate indexing,
 table-level sharding, and other features that benefit full text applications.
    
 #Data Model and Query Language
@@ -121,32 +141,36 @@ Doradus requires Java 1.7 or higher and Cassandra 2.x, which must be installed
 separately.
 
 #Building Doradus
-The project contains both Ant and Maven build scripts, which will download
-required jar files and build the client, common, and server components. See
-NOTICE.txt for a list of third party libraries used.
+The project contains both Ant and Maven build scripts, which download
+required jar files and build the client, common, and server components. (See
+NOTICE.txt for a list of third party libraries used.) To build Doradus using
+Ant, cd to the root `Doradus` folder and simply enter `ant`. To build using
+Maven, cd to the root `Doradus` folder use enter the following commands:
+
+	mvn clean install -DskipTests=true -Dgpg.skip=true Dmaven.javadoc.skip=true
+	mvn dependency:copy-dependencies
+
+The two build approaches create slightly different directories. Under the
+`doradus-client`, `doradus-common`, and `doradus-server` folders, the Ant build
+creates jar files in `lib` folders whereas Maven uses `target` folders. Also,
+the Maven build includes version numbers in the Doradus jar files names whereas
+the Ant build does not. Choose whichever build technique you're familiar with.
 
 #Starting the Server
-Cassandra should be running when the Doradus server is running. Doradus connects
-to the server(s) defined in doradus.yaml "dbhost" option. If Cassandra is not
-running when the server starts, it will try connecting every 5 seconds until
-successful. In the mean time, REST requests that require the database connection
-will receive a 503 response.
 
-Simple script for starting Doradus: Assuming the following file structure:
-
-```
-   ./Doradus/config/
-      doradus.yaml
-      log4j.properties
-   ./Doradus/lib/
-      # doradus.jar and dependent jar files
-```
-
-From a folder such as `./Doradus/bin`, create a script with a command line such as
-this:
+The server resides in the `doradus-server` folder. Under this folder is the
+`config` folder containing the `doradus.yaml` file. An easy way to start Doradus
+is to create a script within `doradus-server/bin`. If you built Doradus using
+Ant, the a command line such as the following:
 
     java -cp "../lib/*:../config/*" com.dell.doradus.core.DoradusServer
-    
+
+If you built Doradus using Maven, use a command line such as the following:
+
+	java -cp "../config:../target/classes:../target/dependency/*" com.dell.doradus.core.DoradusServer
+
+Both examples assume Linux or MacOSX. Adjust accordingly for Windows.
+
 Append command line arguments prefixed with a "-" to override doradus.yaml file
 options. For example, doradus.yaml defines `restport: 1123`, which sets the REST
 API listening port number. To override this to 5711, add the command line
@@ -154,6 +178,11 @@ argument:
 
     java -cp "../lib/*:../config/*" com.dell.doradus.core.DoradusServer -restport 5711
     
+Doradus connects to the server(s) defined in doradus.yaml `dbhost` option. If
+Cassandra is not running when the server starts, it will try connecting every 5
+seconds until successful. In the mean time, REST requests that require the 
+database connection will receive a 503 response.
+
 See the [Doradus Administration document](https://github.com/dell-oss/Doradus/blob/master/docs/Doradus%20Administration.pdf) for more information about configuration
 and execution options.
 
