@@ -41,7 +41,7 @@
                 <field name="_shard">shard</field>
             </doc>
             <doc>
-                <field name="Double">800.0</field>
+                <field name="Double">0.0077</field>
                 <field name="Float">30000.0</field>
                 <field name="Int">100000</field>
                 <field name="Title">Title 7</field>
@@ -100,7 +100,7 @@
              },
              {
                 "doc":{
-                   "Double":"800.0",
+                   "Double":"0.0077",
                    "Float":"30000.0",
                    "Int":"100000",
                    "Title":"Title 7",

@@ -7,6 +7,8 @@ import java.util.Set;
 import com.dell.doradus.common.JSONAnnie;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.olap.OlapBatch;
+import com.dell.doradus.olap.OlapDocument;
 
 public class BatchBuilder {
 	// SajListener to parse JSON directly into OlapBatch/OlapDocument objects. Example JSON
@@ -47,8 +49,8 @@ public class BatchBuilder {
     //     }}
 	//
 	static class Listener implements JSONAnnie.SajListener {
-	    OlapBatch2 result = new OlapBatch2();
-	    OlapDocument2 document;
+	    OlapBatch result = new OlapBatch();
+	    OlapDocument document;
 	    String field;
 	    Set<String> values = new HashSet<String>();
 	    int level = 0;   // 0=batch object, 1=docs array, 2=doc object, 3+=field object
@@ -138,29 +140,29 @@ public class BatchBuilder {
     }   // class Listener
 	
 	// Uses SajListener to parse text directly into an OlapBatch
-	public static OlapBatch2 parseJSON(String text) {
+	public static OlapBatch parseJSON(String text) {
 	    Listener listener = new Listener();
 	    new JSONAnnie(text).parse(listener);
 	    return listener.result;
 	}
 	
 	// Uses SajListener to parse data from a Reader into an OlapBatch 
-	public static OlapBatch2 parseJSON(Reader reader) {
+	public static OlapBatch parseJSON(Reader reader) {
 	    Listener listener = new Listener();
 	    new JSONAnnie(reader).parse(listener);
 	    return listener.result;
 	}
 	
-    public static OlapBatch2 fromUNode(UNode rootNode) {
+    public static OlapBatch fromUNode(UNode rootNode) {
         Utils.require(rootNode.getName().equals("batch"),
                       "Root node must be 'batch': " + rootNode.getName());
-        OlapBatch2 batch = new OlapBatch2();
+        OlapBatch batch = new OlapBatch();
         UNode docsNode = rootNode.getMember("docs");
         Utils.require(docsNode != null, "'batch' node requires child 'docs' node");
         for (UNode docNode : docsNode.getMemberList()) {
             // Get "doc" node and its _ID and _table values.
             Utils.require(docNode.getName().equals("doc"), "'doc' node expected: " + docNode.getName());
-            OlapDocument2 document = batch.addDoc();
+            OlapDocument document = batch.addDoc();
             for (UNode fieldNode : docNode.getMemberList()) {
                 addFieldValues(document, fieldNode);
             }
@@ -169,7 +171,7 @@ public class BatchBuilder {
         return batch;
     }   // fromUNode
 
-    private static void addFieldValues(OlapDocument2 document, UNode fieldNode) {
+    private static void addFieldValues(OlapDocument document, UNode fieldNode) {
         String fieldName = fieldNode.getName();
         Utils.require(fieldName != null, "'field' node missing 'name' value:" + fieldNode.getName());
         if (fieldNode.isValue()) {
@@ -198,7 +200,7 @@ public class BatchBuilder {
         }
     }   // addFieldValues
 
-    private static void addFieldValue(OlapDocument2 document, String fieldName, String value) {
+    private static void addFieldValue(OlapDocument document, String fieldName, String value) {
         if (fieldName.equals("_ID")) {
             document.setId(value);
         } else if (fieldName.equals("_table")) {

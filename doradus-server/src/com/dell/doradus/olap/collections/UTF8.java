@@ -70,7 +70,7 @@ public final class UTF8 {
     	utf8_encoder.reset();
     	utf8_encoder.encode(cb, bb, true);
     	utf8_encoder.flush(bb);
-    	int length = bb.position() - srcOffset;
+    	int length = bb.position() - dstOffset;
     	return length;
     }
     

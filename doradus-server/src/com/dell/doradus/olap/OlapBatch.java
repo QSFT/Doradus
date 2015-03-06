@@ -17,248 +17,108 @@
 package com.dell.doradus.olap;
 
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Iterator;
 
 import com.dell.doradus.common.ApplicationDefinition;
-import com.dell.doradus.common.JSONAnnie;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.olap.builder.SegmentBuilder;
+import com.dell.doradus.core.IDGenerator;
+import com.dell.doradus.olap.builder2.BatchBuilder;
+import com.dell.doradus.olap.builder2.SegmentBuilder2;
+import com.dell.doradus.olap.collections.strings.StringList;
+import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.io.VDirectory;
+import com.dell.doradus.olap.store.IntList;
 
-public class OlapBatch {
-	public List<OlapDocument> documents = new ArrayList<OlapDocument>();
-	
-	public List<OlapDocument> getDocuments() { return documents; }
-	
-	public int size() { return documents.size(); }
-	
-	// SajListener to parse JSON directly into OlapBatch/OlapDocument objects. Example JSON
-	// structure we expect:
-    //    {"batch": {
-    //        "docs": [
-    //           {"doc": {
-    //              "_ID": "sassafras",
-    //              "_table": "Books",
-    //              "ISBN": "978-0061673733",
-    //              "Address": {
-    //                 "City": "Aliso Viejo",
-    //                 "State": "CA",
-    //                 "Zipcode": 92656
-    //              },
-    //              "Children": {"add": [123, 456]},
-    //              "Tags": {"add": ["Biography", "Philosophy"]}
-    //           }},
-    //           {"doc": {
-    //              ...
-    //           }}
-    //        ]
-    //     }}
-	//
-	//
-	// update Nov. 19, 2013: to delete object, specify
-    //    {"batch": {
-    //        "docs": [
-    //           {"doc": {
-    //              "_ID": "sassafras",
-    //              "_table": "Books",
-    //              "_deleted": "true"
-    //           }},
-    //           {"doc": {
-    //              ...
-    //           }}
-    //        ]
-    //     }}
-	//
-	static class Listener implements JSONAnnie.SajListener {
-	    OlapBatch result = new OlapBatch();
-	    OlapDocument document;
-	    String field;
-	    Set<String> values = new HashSet<String>();
-	    int level = 0;   // 0=batch object, 1=docs array, 2=doc object, 3+=field object
-	    boolean bInArray = false;
+public class OlapBatch implements Iterable<OlapDocument> {
+	private StringList m_data;
+	private IntList m_deleted;
+	private IntList m_docOffsets;
 
-        @Override
-        public void onStartObject(String name) {
-            switch (level) {
-            case 0:     // outer batch level 
-                Utils.require(name.equals("batch"), "Root node must be 'batch': " + name);
-                level++;
-                break;
-            case 1:     // docs level: should have been array
-                Utils.require(false, "'docs' array expected: " + name);
-                break;
-            case 2:     // doc object
-                Utils.require(name.equals("doc"), "'doc' object expected: " + name);
-                document = new OlapDocument(); 
-                result.documents.add(document);
-                level++;
-                break;
-            default:     // outer or nested field
-                field = name;
-                level++;
-                break;
-            }
-        }   // onStartObject
-
-        @Override
-        public void onEndObject() {
-            level--;
-        }   // onEndObject
-
-        @Override
-        public void onStartArray(String name) {
-            if (level == 1) {
-                // Should be "docs" array.
-                Utils.require(name.equals("docs"), "'docs' array expected: " + name);
-                level++;
-            } else if (level >= 3) {
-                // Must be "add" node for MV field.
-                Utils.require(name.equals("add"), "Unrecognized array start: " + name);
-                values.clear();
-                level++;
-                bInArray = true;
-            } else {
-                // Level is 0 (batch) or 2 (doc), where an array is unexpected
-                Utils.require(false, "Unexpected array start: " + name);
-            }
-        }   // onStartArray
-
-        @Override
-        public void onEndArray() {
-            level--;
-            bInArray = false;
-            if (level >= 3) {
-                // Just finished "add" array for an MV field.
-                for (String value : values) {
-                    addValue(field, value);
-                }
-            }
-        }   // onEndArray
-
-        @Override
-        public void onValue(String name, String value) {
-            // Values only expected for fields (level >= 3)
-            Utils.require(level >= 3, "Unrecognized element: %s", name);
-            
-            // Add value to current SV field
-            if (bInArray) {
-                values.add(value);
-            } else {
-                addValue(name, value);
-            }
-        }   // onValue
-        
-        private void addValue(String fieldName, String value) {
-            if (fieldName.equals("_ID")) {
-                document.id = value;
-            } else if (fieldName.equals("_table")) {
-                document.table = value;
-            } else if (fieldName.equals("_deleted")) {
-                document.deleted = "true".equals(value);
-            } else {
-                List<String> values = document.fields.get(fieldName);
-                if (values == null) {
-                    values = new ArrayList<String>(1);
-                    document.fields.put(fieldName, values);
-                }
-                values.add(value);
-            }
-        }   // addValue
-    }   // class Listener
-	
-	// Uses SajListener to parse text directly into an OlapBatch
-	public static OlapBatch parseJSON(String text) {
-	    Listener listener = new Listener();
-	    new JSONAnnie(text).parse(listener);
-	    return listener.result;
+	public OlapBatch() {
+		m_data = new StringList();
+		m_deleted = new IntList(64);
+		m_docOffsets = new IntList(64);
 	}
 	
-	// Uses SajListener to parse data from a Reader into an OlapBatch 
-	public static OlapBatch parseJSON(Reader reader) {
-	    Listener listener = new Listener();
-	    new JSONAnnie(reader).parse(listener);
-	    return listener.result;
-	}
+	public static OlapBatch parseJSON(String text) { return BatchBuilder.parseJSON(text); }
+	public static OlapBatch parseJSON(Reader reader) { return BatchBuilder.parseJSON(reader); }
+    public static OlapBatch fromUNode(UNode rootNode) { return BatchBuilder.fromUNode(rootNode); }
 	
+	
+	public OlapDocument addDoc() { return addDoc(null, null); }
 	public OlapDocument addDoc(String table, String id) {
-		OlapDocument doc = new OlapDocument(table, id);
-		documents.add(doc);
-		return doc;
+	    if(id == null) id = Utils.base64FromBinary(IDGenerator.nextID());
+	    m_docOffsets.add(m_data.size());
+		m_data.add(table);
+		m_data.add(id);
+		m_deleted.add(0);
+		return new OlapDocument(new InternalOlapDocument2(size() - 1));
 	}
+	
+	public void clear() {
+		m_data.clear();
+		m_deleted.clear();
+		m_docOffsets.clear();
+	}
+	public int size() { return m_docOffsets.size(); }
+	
+	public OlapDocument get(int index) { return new OlapDocument(new InternalOlapDocument2(index)); }
+	
+	
+	@Override public Iterator<OlapDocument> iterator() { return new DocIterator(); }
+	
 	
 	public void flushSegment(ApplicationDefinition application, VDirectory directory) {
-		SegmentBuilder builder = new SegmentBuilder(application);
+		SegmentBuilder2 builder = new SegmentBuilder2(application);
 		builder.add(this);
 		builder.flush(directory);
 	}
+
 	
-    public static OlapBatch fromUNode(UNode rootNode) {
-        Utils.require(rootNode.getName().equals("batch"),
-                      "Root node must be 'batch': " + rootNode.getName());
-        OlapBatch batch = new OlapBatch();
-        UNode docsNode = rootNode.getMember("docs");
-        Utils.require(docsNode != null, "'batch' node requires child 'docs' node");
-        for (UNode docNode : docsNode.getMemberList()) {
-            // Get "doc" node and its _ID and _table values.
-            Utils.require(docNode.getName().equals("doc"), "'doc' node expected: " + docNode.getName());
-            OlapDocument document = new OlapDocument();
-            for (UNode fieldNode : docNode.getMemberList()) {
-                addFieldValues(document, fieldNode);
-            }
-            Utils.require(document.table != null, "'doc' node missing '_table' value");
-            batch.documents.add(document);
-        }
-        return batch;
-    }   // fromUNode
+	class InternalOlapDocument2 {
+		private int m_index;
+		private int m_offset;
+		
+		InternalOlapDocument2(int index) { setIndex(index); }
+		
+		public void addField(String field, String value) {
+			if(m_index < size() - 1) throw new RuntimeException("Fields can be added only to the last added document");
+			if(value == null) return;
+			m_data.add(field);
+			m_data.add(value);
+		}
+		
+		private int data(int field) { return m_offset + field * 2; }
+		
+		public String getTable() { return m_data.get(data(0)); }
+		public String getId() { return m_data.get(data(0) + 1); }
+		public void setTable(String table) { m_data.set(data(0), table); }
+		public void setId(String id) { m_data.set(data(0) + 1, id); }
+		
+		public boolean isDeleted() { return m_deleted == null ? false : m_deleted.get(m_index) == 1; }
+		public int getFieldsCount() {
+			if(m_index == size() - 1) return (m_data.size() - m_docOffsets.get(m_index) - 2) / 2;
+			else return (m_docOffsets.get(m_index + 1) - m_docOffsets.get(m_index) - 2) / 2;
+		}
+		public String getFieldName(int field) { return m_data.get(data(field + 1)); } 
+		public String getFieldValue(int field) { return m_data.get(data(field + 1) + 1); } 
+		
+		public BSTR getIdBinary() { return m_data.getBinary(data(0) + 1); }
+		public BSTR getFieldValueBinary(int field) { return m_data.getBinary(data(field + 1) + 1); } 
+		public BSTR getFieldValueBinaryLowercase(int field) { return m_data.getBinaryLowercase(data(field + 1) + 1); } 
+		
+		public void setDeleted(boolean deleted) { m_deleted.set(m_index, deleted ? 1 : 0); }
+		public void setIndex(int index) {  m_index = index; m_offset = m_docOffsets.get(m_index); }
+		
+	}
 
-    private static void addFieldValues(OlapDocument document, UNode fieldNode) {
-        String fieldName = fieldNode.getName();
-        Utils.require(fieldName != null, "'field' node missing 'name' value:" + fieldNode.getName());
-        if (fieldNode.isValue()) {
-            // Simple field value
-            addFieldValue(document, fieldName, fieldNode.getValue());
-        } else if (fieldNode.isArray()) {
-            // ["value 1", "value 2", ...]
-            for (UNode valueNode : fieldNode.getMemberList()) {
-                Utils.require(valueNode.isValue(), "Value expected: " + valueNode);
-                addFieldValue(document, fieldName, valueNode.getValue());
-            }
-        } else {
-            // Field's value is MAP.
-            for (UNode childNode : fieldNode.getMemberList()) {
-                if (childNode.getName().equals("add") && !childNode.isValue()) {
-                    // "add": ["value 1", "value 2", ...]
-                    for (UNode valueNode : childNode.getMemberList()) {
-                        Utils.require(valueNode.isValue(), "Value expected: " + valueNode);
-                        addFieldValue(document, fieldName, valueNode.getValue());
-                    }
-                } else {
-                    // Must be a nested field.
-                    addFieldValues(document, childNode);
-                }
-            }
-        }
-    }   // addFieldValues
+	public class DocIterator implements Iterator<OlapDocument> {
+		private int m_next;
+		@Override public boolean hasNext() { return m_next < size(); }
+		@Override public OlapDocument next() { return get(m_next++); }
+		@Override public void remove() { throw new RuntimeException("Not Implemented"); }
+		
+	}
 
-    private static void addFieldValue(OlapDocument document, String fieldName, String value) {
-        if (fieldName.equals("_ID")) {
-            document.id = value;
-        } else if (fieldName.equals("_table")) {
-            document.table = value;
-        } else if (fieldName.equals("_deleted")) {
-            document.deleted = "true".equals(value);
-        } else {
-            List<String> values = document.fields.get(fieldName);
-            if (values == null) {
-                values = new ArrayList<String>(1);
-                document.fields.put(fieldName, values);
-            }
-            values.add(value);
-        }
-    }   // addFieldValue
-    
 }

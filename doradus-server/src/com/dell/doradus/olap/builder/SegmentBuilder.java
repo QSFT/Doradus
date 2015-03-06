@@ -18,12 +18,9 @@ package com.dell.doradus.olap.builder;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.dell.doradus.common.ApplicationDefinition;
-import com.dell.doradus.common.DBObject;
-import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
@@ -46,17 +43,11 @@ public class SegmentBuilder {
 	}
 
 	public void add(OlapBatch batch) {
-		for(OlapDocument doc : batch.documents) {
+		for(OlapDocument doc : batch) {
 			add(doc);
 		}
 	}
 
-	public void add(DBObjectBatch dbObjBatch) {
-	    for(DBObject dbObj : dbObjBatch.getObjects()) {
-	        add(dbObj);
-	    }
-	}
-	
     public void flush(VDirectory dir) {
 		SegmentStats stats = new SegmentStats();
 		for(TableBuilder b : tables.values()) {
@@ -120,103 +111,74 @@ public class SegmentBuilder {
 	}
 
 	private void add(OlapDocument document) {
-		if (document.id == null) {
-		    document.id = Utils.base64FromBinary(IDGenerator.nextID());
+		if (document.getId() == null) {
+		    document.setId(Utils.base64FromBinary(IDGenerator.nextID()));
 		}
-		TableDefinition tableDef = application.getTableDef(document.table);
-		Utils.require(tableDef != null, "Table '" + document.table + "' does not exist");
+		TableDefinition tableDef = application.getTableDef(document.getTable());
+		Utils.require(tableDef != null, "Table '" + document.getTable() + "' does not exist");
 		TableBuilder b = getTable(tableDef);
-		Doc doc = b.addDoc(document.id);
-		if(document.deleted) doc.deleted = true;
-		for(FieldDefinition field : tableDef.getFieldDefinitions()) {
-			add(b, doc, field, document.fields.get(field.getName()));
+		Doc doc = b.addDoc(document.getId());
+		if(document.isDeleted()) doc.deleted = true;
+		for(int i = 0; i < document.getFieldsCount(); i++) {
+			String fieldName = document.getFieldName(i);
+			String fieldValue = document.getFieldValue(i);
+			FieldDefinition field = tableDef.getFieldDef(fieldName);
+			add(b, doc, field, fieldValue);
 		}
 	}
 	
-	private void add(DBObject dbObj) {
-	    if (Utils.isEmpty(dbObj.getObjectID())) {
-	        dbObj.setObjectID(Utils.base64FromBinary(IDGenerator.nextID()));
-	    }
-	    String tableName = dbObj.getTableName();
-	    Utils.require(!Utils.isEmpty(tableName), "Object is missing '_table' definition");
-	    TableDefinition tableDef = application.getTableDef(tableName);
-	    Utils.require(tableDef != null, "Unknown table for application '%s': %s", application.getAppName(), tableName);
-	    TableBuilder b = getTable(tableDef);
-	    Doc doc = b.addDoc(dbObj.getObjectID());
-	    if(dbObj.isDeleted()) doc.deleted = true;
-	    for(FieldDefinition field : tableDef.getFieldDefinitions()) {
-	        add(b, doc, field, dbObj.getFieldValues(field.getName()));
-	    }
-	}
-	
-	private void add(TableBuilder b, Doc doc, FieldDefinition field, List<String> f) {
-	    if(f == null || f.size() == 0) return;
+	private void add(TableBuilder b, Doc doc, FieldDefinition field, String fv) {
+	    if(fv == null) return;
 	    switch(field.getType()) {
 	    case BOOLEAN:
-			for(String fv: f) {
-		        boolean bvalue = "true".equalsIgnoreCase(fv);
-		        b.addNum(doc, field.getName(), bvalue ? 1 : 0);
-			}
+	        boolean bvalue = "true".equalsIgnoreCase(fv);
+	        b.addNum(doc, field.getName(), bvalue ? 1 : 0);
 	        break;
 	    case INTEGER:
 	        try {
-				for(String fv: f) {
-					b.addNum(doc, field.getName(), Integer.parseInt(fv));
-				}
+	        	b.addNum(doc, field.getName(), Integer.parseInt(fv));
 	        } catch (NumberFormatException e) {
-	            throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + f.get(0), e);
+	            throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + fv, e);
 	        }
 	        break;
 	    case LONG:
 	        try {
-				for(String fv: f) {
-					b.addNum(doc, field.getName(), Long.parseLong(fv));
-				}
+				b.addNum(doc, field.getName(), Long.parseLong(fv));
 	        } catch (NumberFormatException e) {
-	            throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + f.get(0), e);
+	            throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + fv, e);
 	        }
 	        break;
         case DOUBLE:
             try {
-    			for(String fv: f) {
-	                double val = Double.parseDouble(fv);
-	                long lval = Double.doubleToRawLongBits(val);
-	                b.addNum(doc, field.getName(), lval);
-    			}
+                double val = Double.parseDouble(fv);
+                long lval = Double.doubleToRawLongBits(val);
+                b.addNum(doc, field.getName(), lval);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + f.get(0), e);
+                throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + fv, e);
             }
             break;
         case FLOAT:
             try {
-    			for(String fv: f) {
-	                float val = Float.parseFloat(fv);
-	                int ival = Float.floatToRawIntBits(val);
-	                b.addNum(doc, field.getName(), ival);
-    			}
+                float val = Float.parseFloat(fv);
+                int ival = Float.floatToRawIntBits(val);
+                b.addNum(doc, field.getName(), ival);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + f.get(0), e);
+                throw new IllegalArgumentException("Invalid format for field '" + field.getName() + "': " + fv, e);
             }
             break;
 	    case LINK:
 	        TableBuilder b2 = getTable(field.getInverseTableDef());
-	        for(String id : f) {
-	            Doc linkedDoc = b2.addDoc(id);
-	            b.addLink(doc, field.getName(), linkedDoc);
-	            b2.addLink(linkedDoc, field.getLinkInverse(), doc);
-	        }
+            Doc linkedDoc = b2.addDoc(fv);
+            b.addLink(doc, field.getName(), linkedDoc);
+            b2.addLink(linkedDoc, field.getLinkInverse(), doc);
 	        break;
 	    case TEXT:
 	    case BINARY:
-	        for(String term : f) {
-	            b.addTerm(doc, field.getName(), term);
-	        }
+            b.addTerm(doc, field.getName(), fv);
 	        break;
 	    case TIMESTAMP:
-			for(String fv: f) {
-		        Date dvalue = Utils.dateFromString(fv);
-		        b.addNum(doc, field.getName(), dvalue.getTime());
-			}
+	        Date dvalue = Utils.dateFromString(fv);
+	        b.addNum(doc, field.getName(), dvalue.getTime());
 	        break;
 	    default: throw new IllegalArgumentException("Unknown Olap type " + field.getType().toString());
 	    }

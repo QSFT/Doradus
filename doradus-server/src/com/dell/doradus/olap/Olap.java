@@ -38,8 +38,7 @@ import com.dell.doradus.olap.aggregate.AggregationRequestData;
 import com.dell.doradus.olap.aggregate.AggregationResult;
 import com.dell.doradus.olap.aggregate.DuplicationDetection;
 import com.dell.doradus.olap.aggregate.mr.MFAggregationBuilder;
-import com.dell.doradus.olap.builder.SegmentBuilder;
-import com.dell.doradus.olap.builder2.OlapBatch2;
+import com.dell.doradus.olap.builder2.SegmentBuilder2;
 import com.dell.doradus.olap.io.FileDeletedException;
 import com.dell.doradus.olap.io.VDirectory;
 import com.dell.doradus.olap.merge.MergeResult;
@@ -194,7 +193,7 @@ public class Olap {
 		VDirectory segmentDir = shardDir.getDirectory(guid);
 		batch.flushSegment(appDef, segmentDir);
 		segmentDir.create();
-		LOG.debug("add {} objects to {}/{} in {}", new Object[] { batch.documents.size(), appDef.getAppName(), shard, t} );
+		LOG.debug("add {} objects to {}/{} in {}", new Object[] { batch.size(), appDef.getAppName(), shard, t} );
 		return guid;
 	}
 
@@ -208,7 +207,7 @@ public class Olap {
 		String prefix = overwrite ? "" : ".before.";
 	    String guid = prefix + Long.toString(System.currentTimeMillis(), 32) + "-" + UUID.randomUUID().toString();
 	    VDirectory segmentDir = shardDir.getDirectory(guid);
-        SegmentBuilder builder = new SegmentBuilder(appDef);
+        SegmentBuilder2 builder = new SegmentBuilder2(appDef);
         builder.add(batch);
         builder.flush(segmentDir);
 	    segmentDir.create();
@@ -216,22 +215,6 @@ public class Olap {
 	    return guid;
 	}
 
-	public String addSegment(ApplicationDefinition appDef, String shard, OlapBatch2 batch) {
-		return addSegment(appDef, shard, batch, true);
-	}
-
-	public String addSegment(ApplicationDefinition appDef, String shard, OlapBatch2 batch, boolean overwrite) {
-		Timer t = new Timer();
-		VDirectory shardDir = getRoot(appDef).getDirectoryCreate(shard);
-		String prefix = overwrite ? "" : ".before.";
-		String guid = prefix + Long.toString(System.currentTimeMillis(), 32) + "-" + UUID.randomUUID().toString();
-		VDirectory segmentDir = shardDir.getDirectory(guid);
-		batch.flushSegment(appDef, segmentDir);
-		segmentDir.create();
-		LOG.debug("add {} objects to {}/{} in {}", new Object[] { batch.size(), appDef.getAppName(), shard, t} );
-		return guid;
-	}
-	
 	public AggregationResult aggregate(ApplicationDefinition appDef, String table, OlapAggregate olapAggregate) {
 		AggregationRequestData requestData = olapAggregate.createRequestData(this, appDef, table);
 		AggregationRequest aggregationRequest = new AggregationRequest(this, appDef, requestData);

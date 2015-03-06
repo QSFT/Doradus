@@ -14,6 +14,7 @@ public class StringList implements IIntComparer {
 	private UTF8 m_utf8;
 	private BSTR m_temp;
 	private BSTR m_temp_lowercase;
+	private char[] m_temp_for_lowercase;
 	
 	public StringList() {
 		m_buffer = new char[65536];
@@ -21,6 +22,12 @@ public class StringList implements IIntComparer {
 		m_utf8 = new UTF8();
 		m_temp = new BSTR(1024);
 		m_temp_lowercase = new BSTR(1024);
+		m_temp_for_lowercase = new char[1024];
+	}
+	
+	public void clear() {
+		m_bufferPosition = 0;
+		m_lengthPosition = 0;
 	}
 	
 	public int add(String value) {
@@ -54,13 +61,6 @@ public class StringList implements IIntComparer {
 		return new String(m_buffer, xpos, xlen);
 	}
 
-	public void toLowercase(int index) {
-		index *= 2;
-		int xlen = m_lengths[index];
-		int xpos = m_lengths[index + 1];
-		UTF8.toLower(m_buffer, xpos, xlen);
-	}
-	
 	public BSTR getBinary(int index) {
 		index *= 2;
 		int xlen = m_lengths[index];
@@ -74,9 +74,15 @@ public class StringList implements IIntComparer {
 		index *= 2;
 		int xlen = m_lengths[index];
 		int xpos = m_lengths[index + 1];
-		UTF8.toLower(m_buffer, xpos, xlen);
+		
+		if(m_temp_for_lowercase == null || m_temp_for_lowercase.length < xlen) {
+			m_temp_for_lowercase = new char[xlen * 2];
+		}
+		ArrayOperations.copy(m_buffer, xpos, m_temp_for_lowercase, 0, xlen);
+		UTF8.toLower(m_temp_for_lowercase, 0, xlen);
 		m_temp_lowercase.assertLength(xlen * 4);
-		m_temp_lowercase.length = m_utf8.encode(m_buffer, xpos, xlen, m_temp_lowercase.buffer, 0);
+		m_temp_lowercase.length = m_utf8.encode(m_temp_for_lowercase, 0, xlen, m_temp_lowercase.buffer, 0);
+		
 		return m_temp_lowercase;
 	}
 	
