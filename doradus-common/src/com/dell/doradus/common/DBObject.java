@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -94,7 +96,7 @@ final public class DBObject {
     private static final String _DELETED = "_deleted";
     
     // Members:
-    private final Map<String, List<String>> m_valueMap = new HashMap<>();
+    private final Map<String, List<String>> m_valueMap = new LinkedHashMap<>();
     private final Map<String, List<String>> m_valueRemoveMap = new HashMap<>();
     
     /**
@@ -142,7 +144,7 @@ final public class DBObject {
      * @see    #getUpdatedFieldNames()
      */
     public Set<String> getFieldNames() {
-        HashSet<String> result = new HashSet<>(m_valueMap.keySet());
+        HashSet<String> result = new LinkedHashSet<>(m_valueMap.keySet());
         return result;
     }   // getFieldNames
     
@@ -580,7 +582,7 @@ final public class DBObject {
 
     // Parse an "add" update to a field.
     private void parseFieldAdd(String fieldName, UNode addNode) {
-        Set<String> addValueSet = new HashSet<>();
+        Set<String> addValueSet = new LinkedHashSet<>();
         for (UNode valueNode : addNode.getMemberList()) {
             Utils.require(valueNode.isValue() && valueNode.getName().equals("value"),
                           "Value expected for 'add' element: " + valueNode);
@@ -591,7 +593,7 @@ final public class DBObject {
 
     // Parse an "add" update to a field.
     private void parseFieldRemove(String fieldName, UNode addNode) {
-        Set<String> removeValueSet = new HashSet<>();
+        Set<String> removeValueSet = new LinkedHashSet<>();
         for (UNode valueNode : addNode.getMemberList()) {
             Utils.require(valueNode.isValue() && valueNode.getName().equals("value"),
                           "Value expected for 'remove' element: " + valueNode);

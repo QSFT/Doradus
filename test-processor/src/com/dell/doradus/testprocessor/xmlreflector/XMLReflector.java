@@ -160,6 +160,7 @@ public class XMLReflector
 
                 classNames.remove(shortestNameIndex);
             }
+            jarFile.close();
         }
         catch(Exception ex) {
             String msg = "Failed to include .jar file \"" + pathToJar + "\"";

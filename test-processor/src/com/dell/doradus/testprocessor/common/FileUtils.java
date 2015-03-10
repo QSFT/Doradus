@@ -77,6 +77,7 @@ public class FileUtils
         while((line = reader.readLine()) != null)
             result.append(line).append("\r\n");
 
+        reader.close();
         return result.toString();
     }
     
