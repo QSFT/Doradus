@@ -147,7 +147,7 @@ NOTICE.txt for a list of third party libraries used.) To build Doradus using
 Ant, cd to the root `Doradus` folder and simply enter `ant`. To build using
 Maven, cd to the root `Doradus` folder use enter the following commands:
 
-	mvn clean install -DskipTests=true -Dgpg.skip=true Dmaven.javadoc.skip=true
+	mvn clean install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
 	mvn dependency:copy-dependencies
 
 The two build approaches create slightly different directories. Under the
