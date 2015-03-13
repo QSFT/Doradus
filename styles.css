@@ -7,6 +7,13 @@ body {
 body {
   background-color: #111117;
 }
+
+@media (max-width: 600px) {
+  body {
+    font-size: 10px;
+  }
+}
+
 .doradus {
   position: absolute;
   left: 50%;
@@ -14,18 +21,18 @@ body {
   transform: translate(-50%, -50%);
   text-align: center;
   color: #fff;
-  font-family: 'Lato';
+  font-family: 'Lato', sans-serif;
 }
 .doradus h1 {
-  font-size: 100px;
+  font-size: 5em;
   font-weight: 100;
   margin-top: 0;
 }
 .doradus aside {
-  margin: 25px 0;
-  font-size: 25px;
+  margin: 1.4em 0;
+  font-size: 1.4em;
   font-weight: 300;
-  line-height: 40px;
+  line-height: 2em;
 }
 .doradus a {
   display: inline-block;
@@ -36,7 +43,7 @@ body {
   padding: 20px 35px;
   margin: 15px;
   color: #fff;
-  font-size: 25px;
+  font-size: 1.4em;
   font-family: 'Lato';
   font-weight: 100;
 }
