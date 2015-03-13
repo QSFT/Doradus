@@ -1,1 +1,33 @@
-My Page
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <link href='http://fonts.googleapis.com/css?family=Lato:100,300,400' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="galaxy">
+      <div class="cloud">
+        <div class="cluster" id="cluster">
+        </div>
+      </div>
+    </div>
+    <div class="over"></div><img src="bg_mask.png" class="mask"/>
+    <div class="doradus">
+      <h1>Doradus</h1>
+      <aside>Doradus is a REST service that extends a Cassandra NoSQL database with a graph-based data model, advanced indexing and search features, and a REST API.</aside>
+      <a href="https://github.com/dell-oss/Doradus/wiki">Get Started</a>
+    </div>
+    <script>
+      (function() {
+        var starsFragment = document.createDocumentFragment();
+        for (var i = 0; i < 600; i++) {
+          var star = document.createElement('div');
+          star.classList.add('star');
+          starsFragment.appendChild(star);
+        }
+        document.getElementById('cluster').appendChild(starsFragment);
+      }());
+    </script>
+  </body>
+</html>
