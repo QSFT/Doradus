@@ -2,11 +2,15 @@ package com.dell.doradus.olap.io;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import com.dell.doradus.common.Utils;
 
 public class DataCache {
 	private static int m_maxCachedColumns = 200;
+	private List<Future<?>> m_futures = new ArrayList<>();
+	
 	
 	private static class FileData {
 		private FileInfo m_fileInfo;
@@ -54,9 +58,28 @@ public class DataCache {
 		}
 	}
 	
+	public void addPendingCompression(Future<?> future) {
+		synchronized(m_syncRoot) {
+			m_futures.add(future);
+		}
+	}
+	
 	public void flush() {
+		flushPendingCompressions();
 		flushCachedData();
 		flushCachedInfos();
+	}
+	
+	private void flushPendingCompressions() {
+		if(m_futures.size() == 0) return;
+		try {
+    		for(Future<?> f: m_futures) f.get();
+    		m_futures.clear();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	private void flushCachedInfos() {

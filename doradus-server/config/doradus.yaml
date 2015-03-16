@@ -351,6 +351,8 @@ olap_file_cache_size_mb: 0
 
 # Number of threads to use by shard merging algorithm. 0 means merging is single-threaded.   
 olap_merge_threads: 0
+# Number of threads to use for compression. 0 means it is single-threaded.   
+olap_compression_threads: 0
 
 # olap_cf_defaults: Options used to create the OLAP ColumnFamily. This CF is only created when the
 # server is first started for a new database. If these options are changed, an existing OLAP CF is

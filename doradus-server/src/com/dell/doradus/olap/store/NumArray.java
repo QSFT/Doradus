@@ -140,7 +140,7 @@ public class NumArray {
 	public long cacheSize()
 	{
 		long size = 16;
-		if(m_bitArray != null) size += m_bitArray.getBuffer().length * 4;
+		if(m_bitArray != null) size += m_bitArray.getBuffer().length;
 		if(m_byteArray != null) size += m_byteArray.length * 1;
 		if(m_shortArray != null) size += m_shortArray.length * 2;
 		if(m_intArray != null) size += m_intArray.length * 4;
