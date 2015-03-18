@@ -70,15 +70,10 @@ final public class ApplicationDefinition {
      * application name and its child nodes are definitions such as "key", "options",
      * "fields", etc. An exception is thrown if the definition contains an error.
      *  
-     * @param appNode   Root of a UNode tree that defines an application. The node must be
-     *                  a MAP whose name is the application name.
+     * @param appNode   Root of a UNode tree that defines an application.
      */
     public void parse(UNode appNode) {
         assert appNode != null;
-        
-        // Root object must be a MAP.
-        Utils.require(appNode.isMap(),
-                      "'application' definition must be a map of unique names: " + appNode);
         
         // Verify application name and save it.
         Utils.require(isValidName(appNode.getName()),
