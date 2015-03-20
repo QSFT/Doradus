@@ -106,6 +106,9 @@ public class ServerConfig {
     // Map of ColumnFamily default options
     public Map<String, Object> cf_defaults = new HashMap<>();
     
+    //Doradus WebServer
+    public boolean load_webserver = false;
+    public String webserver_class;      
 
     /**
      * WARN: The configuration singleton must be already initialized before to call this method (see: <code>load()</code>).

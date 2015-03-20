@@ -16,15 +16,37 @@
 
 package com.dell.doradus.search.parser;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+
 import com.dell.doradus.common.CommonDefs;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.FieldType;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.search.aggregate.AggregationGroupItem;
-import com.dell.doradus.search.query.*;
-
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.dell.doradus.search.query.AllQuery;
+import com.dell.doradus.search.query.AndQuery;
+import com.dell.doradus.search.query.BinaryQuery;
+import com.dell.doradus.search.query.DatePartBinaryQuery;
+import com.dell.doradus.search.query.FieldCountQuery;
+import com.dell.doradus.search.query.FieldCountRangeQuery;
+import com.dell.doradus.search.query.IdQuery;
+import com.dell.doradus.search.query.LinkCountQuery;
+import com.dell.doradus.search.query.LinkCountRangeQuery;
+import com.dell.doradus.search.query.LinkIdQuery;
+import com.dell.doradus.search.query.LinkQuery;
+import com.dell.doradus.search.query.MVSBinaryQuery;
+import com.dell.doradus.search.query.NoneQuery;
+import com.dell.doradus.search.query.NotQuery;
+import com.dell.doradus.search.query.OrQuery;
+import com.dell.doradus.search.query.Query;
+import com.dell.doradus.search.query.RangeQuery;
+import com.dell.doradus.search.query.TransitiveLinkQuery;
 
 public class QueryUtils {
 

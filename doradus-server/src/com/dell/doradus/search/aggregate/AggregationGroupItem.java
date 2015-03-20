@@ -16,11 +16,11 @@
 
 package com.dell.doradus.search.aggregate;
 
+import java.util.List;
+
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.search.query.Query;
-
-import java.util.List;
 
 public class AggregationGroupItem {
    public boolean  isLink;

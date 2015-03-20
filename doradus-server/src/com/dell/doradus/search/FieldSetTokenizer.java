@@ -17,12 +17,14 @@
 package com.dell.doradus.search;
 
 
-import com.dell.doradus.common.FieldDefinition;
-import com.dell.doradus.common.TableDefinition;
-import com.dell.doradus.search.parser.*;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dell.doradus.common.FieldDefinition;
+import com.dell.doradus.common.TableDefinition;
+import com.dell.doradus.search.parser.AggregationQueryBuilder;
+import com.dell.doradus.search.parser.FieldSetItem;
+import com.dell.doradus.search.parser.FieldSetQueryBuilder;
 
 class FieldSetTokenizer {
     public String text;

@@ -16,29 +16,16 @@
 
 package com.dell.doradus.service.rest;
 
+import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Queue;
 import java.util.SortedSet;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import org.eclipse.jetty.io.Connection;
-import org.eclipse.jetty.server.HttpConfiguration;
-import org.eclipse.jetty.server.HttpConnectionFactory;
-import org.eclipse.jetty.server.SecureRequestCustomizer;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.servlet.ServletHandler;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;
 
 /**
- * The Jetty-based REST Service for Doradus. This singleton class creates and runs an
- * instance of the Jetty server. It maintains a mapping from REST requests to callbacks
+ * The REST Service for Doradus. This singleton class creates and runs an
+ * instance of the Web server. It maintains a mapping from REST requests to callbacks
  * that handle each command via {@link #registerRESTCommands(Iterable)}. The servlet
  * that examines each request calls {@link #matchCommand(String, String, String, Map)} to
  * find the appropriate callback for each request, if one exists.
@@ -55,35 +42,14 @@ public class RESTService extends Service {
         void onRequestRejected(String reason);
         void onRequestFailed(Throwable e);
     }   // interface RequestCallback
-    
-    private static final int SOCKET_TIMEOUT_MILLIS = 60 * 1000 * 5;  // 5 minutes
+	
     private static final RESTService INSTANCE = new RESTService();
     
-    private Server                  m_jettyServer;
+    private WebServer				m_webservice;
+ 
+    
     private final RESTCommandSet    m_commandSet = new RESTCommandSet();
 
-    // Although it is unlike new RequestCallbacks will be added after initialization, we use
-    // a ConcurrentLinkedQueue so we don't have to serialize onXxx requests.
-    private final Queue<RequestCallback> m_requestCallbacks = new ConcurrentLinkedQueue<>();
-    
-    // Private Connection.Listener used to invoke connection opens and closes. Registered
-    // as an MBean with Jetty's Connector.
-    private class ConnListener implements Connection.Listener {
-        @Override
-        public void onOpened(Connection arg0) {
-            for (RequestCallback callback : m_requestCallbacks) {
-                callback.onConnectionOpened();
-            }
-        }
-        
-        @Override
-        public void onClosed(Connection arg0) {
-            for (RequestCallback callback : m_requestCallbacks) {
-                callback.onConnectionClosed();
-            }
-        }   // onClosed
-    }   // class ConnListener
-    
     /**
      * Get the singleton instance of this service. The service may or may not have been
      * initialized yet.
@@ -96,19 +62,20 @@ public class RESTService extends Service {
 
     //----- Inherited Service methods
     
-    // Initialize the Jetty server so it's ready to run.
+    // Initialize WebService so it's ready to run.
     @Override
     public void initService() {
-        // Server
-        m_jettyServer = configureJettyServer();
-        
-        // Connector
-        ServerConnector connector = configureConnector();
-        m_jettyServer.addConnector(connector);
-        
-        // Handler
-        ServletHandler handler = configureHandler();
-        m_jettyServer.setHandler(handler);
+    	boolean loadWebServer = ServerConfig.getInstance().load_webserver;
+    	if (loadWebServer) {
+	    	try {
+			    Class<Service> serviceClass = (Class<Service>) Class.forName(ServerConfig.getInstance().webserver_class);
+		        Method instanceMethod = serviceClass.getMethod("instance", (Class<?>[])null);
+		        m_webservice = (WebServer)instanceMethod.invoke(null, (Object[])null);
+		        m_webservice.init(RESTServlet.class.getName());
+		    } catch (Exception e) {
+		        throw new RuntimeException("Error initializing WebServer: " + ServerConfig.getInstance().webserver_class, e);
+		    }
+    	}
     }   // initService
 
     // Begin servicing REST requests.
@@ -117,9 +84,11 @@ public class RESTService extends Service {
         m_commandSet.freezeCommandSet(true);
         displayCommandSet();
         try {
-            m_jettyServer.start();
+           	if (m_webservice != null) {
+           		m_webservice.start();
+           	}
         } catch (Exception e) {
-            throw new RuntimeException("Failed to start Jetty", e);
+            throw new RuntimeException("Failed to start WebService", e);
         }
     }   // startService
 
@@ -127,15 +96,14 @@ public class RESTService extends Service {
     @Override
     public void stopService() {
         try {
-            m_jettyServer.stop();
-            m_jettyServer.join();
-        } catch (InterruptedException e) {
-            // Ignore
+           	if (m_webservice != null) {
+           		m_webservice.stop();
+           	}
         } catch (Exception e) {
-            m_logger.warn("Jetty stop failed", e);
+            m_logger.warn("WebService stop failed", e);
         }
         m_commandSet.clear();
-        m_requestCallbacks.clear();
+
     }   // stopService
 
     //----- RESTService public methods
@@ -147,7 +115,9 @@ public class RESTService extends Service {
      * @param callback  {@link RequestCallback} object.
      */
     public void registerRequestCallback(RequestCallback callback) {
-        m_requestCallbacks.add(callback);
+       	if (m_webservice != null) {
+       		m_webservice.registerRequestCallback(callback);
+       	}
     }   // registerRequestCallback
     
     /**
@@ -196,92 +166,34 @@ public class RESTService extends Service {
     //----- Package-private methods (used by RESTServlet)
 
     void onNewrequest() {
-        for (RequestCallback callback : m_requestCallbacks) {
-            callback.onNewRequest();
-        }
-    }   // onNewRequest
+    	if (m_webservice != null) {
+    		m_webservice.notifyNewRequest(); 
+    	}
+    } 
     
     void onRequestSuccess(long startTimeNanos) {
-        for (RequestCallback callback : m_requestCallbacks) {
-            callback.onRequestSucceeded(startTimeNanos);
-        }
-    }   // onRequestSuccess
+       	if (m_webservice != null) {
+       		m_webservice.notifyRequestSuccess(startTimeNanos);
+       	}
+    }   
     
     void onRequestRejected(String reason) {
-        for (RequestCallback callback : m_requestCallbacks) {
-            callback.onRequestRejected(reason);
-        }
-    }   // onRequestRejected
+       	if (m_webservice != null) {
+       		m_webservice.notifyRequestRejected(reason);
+       	}
+    }   
     
     void onRequestFailed(Throwable e) {
-        for (RequestCallback callback : m_requestCallbacks) {
-            callback.onRequestFailed(e);
-        }
-    }   // onRequestFailed
+       	if (m_webservice != null) {
+       		m_webservice.notifyRequestFailed(e);
+       	}
+    } 
     
     //----- Private methods
     
     // Singleton construction only
     private RESTService() {}
-    
-    // Create, configure, and return the Jetty Server object.
-    private Server configureJettyServer() {
-        ServerConfig config = ServerConfig.getInstance();
-        LinkedBlockingQueue<Runnable> taskQueue = new LinkedBlockingQueue<Runnable>(config.maxTaskQueue); 
-        QueuedThreadPool threadPool = new QueuedThreadPool(config.maxconns, config.defaultMinThreads, config.defaultIdleTimeout, 
-        		taskQueue);
-        Server server = new Server(threadPool);
-        server.setStopAtShutdown(true);
-        return server;
-    }   // configureJettyServer
-    
-    // Create, configure, and return the ServerConnector object.
-    private ServerConnector configureConnector() {
-        ServerConfig config = ServerConfig.getInstance();
-        ServerConnector connector = null;
-        if (config.tls) {
-            connector = createSSLConnector();
-        } else {
-            // Unsecured connector
-            connector = new ServerConnector(m_jettyServer);
-        }
-        if (config.restaddr != null) {
-            connector.setHost(config.restaddr);
-        }
-        connector.setPort(config.restport);
-        connector.setIdleTimeout(SOCKET_TIMEOUT_MILLIS);
-        connector.addBean(new ConnListener());  // invokes registered callbacks, if any
-        return connector;
-    }   // configureConnector
-    
-    // Create, configure, and return the ServletHandler object.
-    private ServletHandler configureHandler() {
-        ServletHandler handler = new ServletHandler();
-        handler.addServletWithMapping(RESTServlet.class, "/*");
-        return handler;
-    }   // configureHandler
-
-    // Create a Jetty ServerConnector configured to use TLS/SSL.
-    private ServerConnector createSSLConnector() {
-        ServerConfig config = ServerConfig.getInstance();
-        
-        SslContextFactory sslContextFactory = new SslContextFactory();
-        sslContextFactory.setKeyStorePath(config.keystore);
-        sslContextFactory.setKeyStorePassword(config.keystorepassword);
-        sslContextFactory.setTrustStorePath(config.truststore);
-        sslContextFactory.setTrustStorePassword(config.truststorepassword);
-        sslContextFactory.setNeedClientAuth(config.clientauthentication);
-        sslContextFactory.setIncludeCipherSuites(config.tls_cipher_suites.toArray(new String[]{}));
-
-        HttpConfiguration http_config = new HttpConfiguration();
-        http_config.setSecureScheme("https");
-        HttpConfiguration https_config = new HttpConfiguration(http_config);
-        https_config.addCustomizer(new SecureRequestCustomizer());
-        SslConnectionFactory sslConnFactory = new SslConnectionFactory(sslContextFactory, "http/1.1");
-        HttpConnectionFactory httpConnFactory = new HttpConnectionFactory(https_config);
-        ServerConnector sslConnector = new ServerConnector(m_jettyServer, sslConnFactory, httpConnFactory);
-        return sslConnector;
-    }   // createSSLConnector
+   
 
     // If DEBUG logging is enabled, log all REST commands in sorted order.
     private void displayCommandSet() {

@@ -16,11 +16,11 @@
 
 package com.dell.doradus.search.parser;
 
-import com.dell.doradus.common.CommonDefs;
-import com.dell.doradus.search.parser.grammar.GrammarItem;
-
 import java.util.ArrayList;
 import java.util.Stack;
+
+import com.dell.doradus.common.CommonDefs;
+import com.dell.doradus.search.parser.grammar.GrammarItem;
 
 public class FieldSetQueryBuilder {
 

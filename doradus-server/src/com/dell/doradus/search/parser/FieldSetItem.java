@@ -16,10 +16,10 @@
 
 package com.dell.doradus.search.parser;
 
-import com.dell.doradus.search.parser.grammar.GrammarItem;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dell.doradus.search.parser.grammar.GrammarItem;
 
 public class FieldSetItem {
 

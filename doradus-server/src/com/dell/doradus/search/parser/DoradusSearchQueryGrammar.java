@@ -16,11 +16,23 @@
 
 package com.dell.doradus.search.parser;
 
-import com.dell.doradus.search.parser.grammar.*;
-
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+
+import com.dell.doradus.search.parser.grammar.CharacterRule;
+import com.dell.doradus.search.parser.grammar.Context;
+import com.dell.doradus.search.parser.grammar.Grammar;
+import com.dell.doradus.search.parser.grammar.GrammarItem;
+import com.dell.doradus.search.parser.grammar.GrammarRule;
+import com.dell.doradus.search.parser.grammar.GrammarToken;
+import com.dell.doradus.search.parser.grammar.Keyword;
+import com.dell.doradus.search.parser.grammar.ListRule;
+import com.dell.doradus.search.parser.grammar.Semantic;
+import com.dell.doradus.search.parser.grammar.SequenceRule;
+import com.dell.doradus.search.parser.grammar.StringToken;
+import com.dell.doradus.search.parser.grammar.SwitchRule;
+import com.dell.doradus.search.parser.grammar.Token;
 
 public class DoradusSearchQueryGrammar {
 

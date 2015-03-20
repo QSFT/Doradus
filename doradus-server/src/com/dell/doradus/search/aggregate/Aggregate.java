@@ -32,13 +32,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.common.AggregateResult;
+import com.dell.doradus.common.AggregateResult.AggGroupSet;
+import com.dell.doradus.common.AggregateResult.IAggGroupList;
 import com.dell.doradus.common.CommonDefs;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.FieldType;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.common.AggregateResult.*;
 import com.dell.doradus.core.ObjectID;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.search.QueryExecutor;

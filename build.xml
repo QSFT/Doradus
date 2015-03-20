@@ -20,10 +20,10 @@
 	</target>
     <!-- ============================================================================== -->
     <!-- ==============================================================================	-->
-	<target name="Build" depends="ServerJar,ClientJar,ClientDoc">
+	<target name="Build" depends="JettyWebServerJar,ClientJar,ClientDoc">
 	</target>
 	
-	<target name="Cleanup" depends="CommonCleanup,ServerCleanup,ClientCleanup,ClientDocCleanup">
+	<target name="Cleanup" depends="CommonCleanup,ServerCleanup,JettyWebServerCleanup,ClientCleanup,ClientDocCleanup">
 	</target>
 	
     <!-- ============================================================================== -->
@@ -97,7 +97,64 @@
         <delete dir="${common.bin.dir}" failonerror="false"/>
         <delete dir="${common.lib.dir}" failonerror="false"/>
 	</target>
+	
+    <!-- ============================================================================== -->
+    <!--                            Doradus JettyWebServer                                      -->
+	<!-- Public Targets:																-->
+	<!--   JettyWebServerLoadLibs - load third party libraries to the ${jettywebserver.lib.dir}			-->
+	<!--   JettyWebServerCompile  - compile to ${jettywebserver.bin.dir}								-->
+	<!--   JettyWebServerJar      - create the ${jettywebserver.lib.dir}/${jettywebserver.jar.file}				-->
+	<!--   JettyWebServerCleanup  - delete ${jettywebserver.bin.dir} and ${jettywebserver.lib.dir}				-->
+    <!-- ==============================================================================	-->
+    <property name="jettywebserver.dir"      location="${doradus.dir}/doradus-jetty"/>
+    <property name="jettywebserver.bin.dir"  location="${jettywebserver.dir}/bin"/>
+	<property name="jettywebserver.config.dir" location="${jettywebserver.dir}/config" />	 
+    <property name="jettywebserver.lib.dir"  location="${jettywebserver.dir}/lib"/>
+    <property name="jettywebserver.src.dir"  location="${jettywebserver.dir}/src"/>
+    <property name="jettywebserver.jar.file" value="doradus-jetty.jar"/>
+	
+	<target name="JettyWebServerLoadLibs" depends="_setProxy">
+        <delete dir="${jettywebserver.lib.dir}" failonerror="false"/>
+        <mkdir  dir="${jettywebserver.lib.dir}"/>
+		
+		<get dest="${jettywebserver.lib.dir}">
+			<url url="http://repo1.maven.org/maven2/org/eclipse/jetty/aggregate/jetty-all/9.2.7.v20150116/jetty-all-9.2.7.v20150116.jar"/> 
+		</get>			
+	</target>
+	
+	<target name="JettyWebServerCompile" depends="ServerJar,JettyWebServerLoadLibs">
+		<delete dir="${jettywebserver.bin.dir}" failonerror="false"/>
+        <mkdir  dir="${jettywebserver.bin.dir}"/>
 
+        <javac srcdir="${jettywebserver.src.dir}"
+              destdir="${jettywebserver.bin.dir}"
+              verbose="yes" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
+            <classpath>
+                <fileset dir="${jettywebserver.lib.dir}" includes="**/*.jar" />
+                <fileset dir="${server.lib.dir}" includes="**/*.jar" />
+            </classpath>
+        </javac>
+	</target>
+	
+	<target name="JettyWebServerJar" depends="JettyWebServerCompile">
+        <jar jarfile="${jettywebserver.lib.dir}/${jettywebserver.jar.file}">
+            <fileset dir="${jettywebserver.bin.dir}" includes="**/*.class"/>
+            <manifest>
+                <attribute name="Implementation-Title"   value="Doradus JettyWebServer" />
+                <attribute name="Implementation-Version" value="${doradus.version}" />
+                <attribute name="Implementation-Vendor"  value="DELL Inc." />
+                <attribute name="Javac-Target"           value="${ant.build.javac.target}" />
+            </manifest>
+        </jar>
+		<copy todir="${server.lib.dir}">
+			<fileset dir="${jettywebserver.lib.dir}"/>
+		</copy>						
+	</target>
+	
+	<target name="JettyWebServerCleanup">
+        <delete dir="${jettywebserver.bin.dir}" failonerror="false"/>
+        <delete dir="${jettywebserver.lib.dir}" failonerror="false"/>
+	</target>
     <!-- ============================================================================== -->
     <!--                            Doradus Server                                      -->
 	<!-- Public Targets:																-->
@@ -119,10 +176,7 @@
 		
 		<get dest="${server.lib.dir}">
 			<url url="http://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/3.0.1/javax.servlet-api-3.0.1.jar"/> 
-		</get>
-		<get dest="${server.lib.dir}">
-			<url url="http://repo1.maven.org/maven2/org/eclipse/jetty/aggregate/jetty-all/9.2.7.v20150116/jetty-all-9.2.7.v20150116.jar"/> 
-		</get>
+		</get>			
 		<get dest="${server.lib.dir}">
 			<url url="http://repo1.maven.org/maven2/org/apache/thrift/libthrift/0.9.1/libthrift-0.9.1.jar"/>
 		</get>

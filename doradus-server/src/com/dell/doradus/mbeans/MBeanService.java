@@ -18,6 +18,7 @@ package com.dell.doradus.mbeans;
 
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.rest.RESTService;
+import com.dell.doradus.service.rest.RESTService.RequestCallback;
 
 /**
  * Wraps the {@link MBeanProvider} class as a {@link Service} so it can be optionally
@@ -31,7 +32,7 @@ final public class MBeanService extends Service {
 
     // RESTService.Requestcallback implementation used to monitor requests. Registered
     // with the RESTService only if the MBeanService is started.
-    private static class ConnectionMonitor implements RESTService.RequestCallback {
+    private static class ConnectionMonitor implements RequestCallback {
         @Override
         public void onConnectionOpened() {
             if (INSTANCE.getState().isRunning()) {

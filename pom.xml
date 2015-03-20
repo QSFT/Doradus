@@ -31,6 +31,7 @@
 	<modules>
 		<module>doradus-common</module>
 		<module>doradus-server</module>
+		<module>doradus-jetty</module>	
 		<module>doradus-client</module>
 	</modules>
 <build>
@@ -97,7 +98,7 @@
     <connection>scm:git:git://github.com/dell-oss/Doradus.git</connection>
     <developerConnection>scm:git:git@github.com:dell-oss/Doradus.git</developerConnection>
     <url>https://github.com/dell-oss/Doradus</url>
-    <tag>doradus-2.2.0</tag>
+    <tag>doradus-2.3.0</tag>
   </scm>
   <developers>
     <developer>
