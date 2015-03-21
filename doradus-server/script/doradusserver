@@ -6,8 +6,8 @@
 #
 # Change DORADUSSERVER_HOME if needed
 
-DORADUSSERVER_HOME=/home/dell/Doradus/doradus-server
-CLASSPATH=config:target/classes:target/dependency/*
+DORADUSSERVER_HOME=/home/dell/Doradus/doradus-jetty
+CLASSPATH=../doradus-server/config:target/classes:target/dependency/*
 CASSANDRA_IP=10.228.23.117
 CASSANDRA_PORT=9042
 CASSANDRA_SUPERUSER_NAME=SuperDory

@@ -43,7 +43,7 @@
 		<configuration>
 			<source>${maven.compiler.source}</source>
 			<target>${maven.compiler.source}</target>
-			<compilerArgument>-Xlint:all</compilerArgument>
+			<compilerArgs>-Xlint:all</compilerArgs>
 			<showWarnings>true</showWarnings>
 			<showDeprecation>true</showDeprecation>
 		</configuration>
