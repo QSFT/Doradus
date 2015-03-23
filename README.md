@@ -2,27 +2,46 @@
 Doradus was presented at [Strata+Hadoop World 2015](http://strataconf.com/big-data-conference-ca-2015/) in San Jose, CA. Slides for the session, titled *[One Billion Objects in 2GB: Big Data Analytics on Small Clusters with Doradus OLAP](http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/38276)*, can be found here: [http://www.slideshare.net/randyguck/strata-presentation-doradus](http://www.slideshare.net/randyguck/strata-presentation-doradus). Be sure to check out the slide notes, which provide extra details.
 
 #What's New?
-We're putting the finishing touches on the new v2.3 release. This release contains many new features: here's a summary of some of them:
+The v2.3 release is now available! This release contains many new features: here's a summary of some of them:
 
 - **OpenShift Support**: Doradus can be run in an OpenShift cartridge. See [this Wiki note](https://github.com/dell-oss/Doradus/wiki#openshift-cartridge) and the [doradus-openshift-cartridge](https://github.com/TraDuong1/openshift-origin-cartridge-doradus) Github project.
 
-- **OLAP multi-threaded merging**: OLAP can now use multiple threads to merge shards. In doradus.yaml, `olap_merge_threads` specifies the number of threads to use. This feature can significantly speed-up the shard merge time.
+- **Multi-tenant features**: Doradus can now run in *multi-tenant* mode, in which each *tenant*
+  is mapped to a Cassandra keyspace. Each tenant's data is physically isolated, and each tenant
+  can request its own replication factor. Expect more features to support multi-tenant operation
+  in coming releases.
 
-- **Faster OLAP updates**: A new indexing algorithm is used for loading OLAP batches, yielding a 20-50% improvement in data load time. This improvement is amplified when loading larger batches.
+- **OLAP multi-threaded merging**: OLAP can now use multiple threads to merge shards. In
+  doradus.yaml, `olap_merge_threads` specifies the number of threads to use. Another new option,
+  `olap_compression_threads`, can be used to speed-up compression before data segments are
+  written to Cassandra. These two features can significantly speed-up shard merging time.
 
-- **Multiple sort fields**: Object queries for both Spider and OLAP applications can now use multiple sort fields. Example: `&o=LastName DESC,FirstName ASC`.
+- **Faster OLAP updates**: A new indexing algorithm is used for loading OLAP batches, yielding a
+  20-50% improvement in data load time. This improvement is amplified when loading larger batches.
 
-- **Aggregate query improvements**: New aggregate query features have been added for both Spider and OLAP applications. For example, both support new `FIRST` and `LAST` grouping functions. OLAP applications can use a new `SETS` function for creating arbitrary grouping sets. `INCLUDE` and `EXCLUDE` can now be combined in grouping expressions. Several other improvements have also been made.
+- **Multiple sort fields**: Object queries for both Spider and OLAP applications can now use
+  multiple sort fields. Example: `&o=LastName DESC,FirstName ASC`.
 
-- **OLAP metric computations in object queries**: Object queries for OLAP applications can now compute metric functions for each perspective object using the metric parameter: `&m`.
+- **Aggregate query improvements**: New aggregate query features have been added for both Spider
+  and OLAP applications. For example, both support new `FIRST` and `LAST` grouping functions. OLAP
+  applications can use a new `SETS` function for creating arbitrary grouping sets. `INCLUDE` and
+  `EXCLUDE` can now be combined in grouping expressions. Several other improvements have also been
+  made.
 
-- **Optional application key**: The application `key` property is now optional and can be excluded in schema definitions.
+- **OLAP metric computations in object queries**: Object queries for OLAP applications can now
+  compute metric functions for each perspective object using the metric parameter: `&m`.
 
-- **Data aging check frequency**: For both OLAP and Spider applications, the frequency of the background data aging task is now controlled by the `data-check-frequency` option. The `schedules` section is no longer used in schemas.
+- **Optional application key**: The application `key` property is now optional and can be excluded
+  in schema definitions.
 
-- **Other Simplifications**: Other minor Spider and OLAP features have been removed. (We're always thinking about unused/marginal features to remove to keep the code simpler.)
+- **Data aging check frequency**: For both OLAP and Spider applications, the frequency of the
+  background data aging task is now controlled by the `data-check-frequency` option. The
+  `schedules` section is no longer used in schemas.
 
-Many other enhancements and changes have been also been made for v2.3. See the *Recent Changes* sections in the Wiki pages or PDF documents.
+- **Other Simplifications**: Other minor Spider and OLAP features have been removed. (We're always
+  thinking about unused/marginal features to remove to keep the code simpler.)
+
+Many other enhancements and changes have been also been made for v2.3. See the **Recent Changes** sections in the Wiki pages or PDF documents.
 
 The next sections provide an overview of Doradus, its architecture, and its features.
 	
