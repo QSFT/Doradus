@@ -28,13 +28,8 @@ public class IntSet {
 	public IntSet(IIntComparer comparer, int capacity) {
 		m_comparer = comparer;
 		m_size = 0;
-		m_capacity = capacity;
+		m_capacity = NumericUtils.nextPowerOfTwo(capacity);
 		m_mask = capacity * 2 - 1;
-		if((m_mask & (capacity * 2)) != 0) {
-			capacity = Integer.highestOneBit(capacity) * 2;
-			m_mask = capacity * 2 - 1;
-			if((m_mask & (capacity * 2)) != 0) throw new RuntimeException("Capacity should be power of two");
-		}
 		m_values = new int[capacity];
 		m_hashes = new int[capacity];
 		reindex();

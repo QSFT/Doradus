@@ -26,6 +26,7 @@ public class FileInfo implements Comparable<FileInfo> {
 	public String getName() { return m_name; }
 	public long getLength() { return m_length; }
 	public boolean getUncompressed() { return m_uncompressed; }
+	public boolean isCompressed() { return !m_uncompressed; }
 	public boolean getSharesRow() { return m_sharesRow; }
 	
 	public void setName(String name) { m_name = name; }

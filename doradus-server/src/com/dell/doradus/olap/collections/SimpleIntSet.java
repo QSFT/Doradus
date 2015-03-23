@@ -24,13 +24,8 @@ public class SimpleIntSet {
 	
 	public SimpleIntSet(int capacity) {
 		m_size = 0;
-		m_capacity = capacity;
+		m_capacity = NumericUtils.nextPowerOfTwo(capacity);
 		m_mask = capacity * 2 - 1;
-		if((m_mask & (capacity * 2)) != 0) {
-			capacity = Integer.highestOneBit(capacity) * 2;
-			m_mask = capacity * 2 - 1;
-			if((m_mask & (capacity * 2)) != 0) throw new RuntimeException("Capacity should be power of two");
-		}
 		m_indexes = new int[m_capacity * 2];
 		for(int i = 0; i < m_indexes.length; i++) m_indexes[i] = -1;
 	}

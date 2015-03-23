@@ -28,12 +28,8 @@ public class BdLongSet {
 	
 	public BdLongSet(int capacity) {
 		m_size = 0;
+		capacity = NumericUtils.nextPowerOfTwo(capacity);
 		m_mask = capacity * 2 - 1;
-		if((m_mask & (capacity * 2)) != 0) {
-			capacity = Integer.highestOneBit(capacity) * 2;
-			m_mask = capacity * 2 - 1;
-			if((m_mask & (capacity * 2)) != 0) throw new RuntimeException("Capacity should be power of two");
-		}
 		m_values = new long[capacity];
 		m_indexBuffer = new int[capacity * 2];
 		for(int i = 0; i < m_indexBuffer.length; i++) m_indexBuffer[i] = -1;

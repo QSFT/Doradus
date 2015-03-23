@@ -115,6 +115,7 @@ public class VDirectory {
 			if(m_parent == null) return;
 			m_dataCache.flush();
 			m_helper.write(m_storeName, m_parent.m_row, "Directory/" + m_name, new byte[0]);
+			m_filesMap = null;
 		}
 	}
 	
@@ -235,11 +236,17 @@ public class VDirectory {
 	
 	public void deleteFile(String name) {
 		FileInfo fi = getFileInfo(name);
+		if(fi == null) return;
 		if(fi.getSharesRow()) {
 			m_helper.delete(m_storeName, m_row + "/_share", name + "/0");
 		} else {
 			m_helper.delete(m_storeName, m_row + "/" + name);
 		}
+		m_helper.delete(m_storeName, m_row, "File/" + name);
+		synchronized(m_syncRoot) {
+			if(m_filesMap != null) m_filesMap.remove(name);
+		}
+		
 	}
 	
 }
