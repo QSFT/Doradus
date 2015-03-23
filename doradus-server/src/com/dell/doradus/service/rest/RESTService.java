@@ -68,7 +68,7 @@ public class RESTService extends Service {
     	boolean loadWebServer = ServerConfig.getInstance().load_webserver;
     	if (loadWebServer) {
 	    	try {
-			    Class<Service> serviceClass = (Class<Service>) Class.forName(ServerConfig.getInstance().webserver_class);
+			    Class<?> serviceClass = Class.forName(ServerConfig.getInstance().webserver_class);
 		        Method instanceMethod = serviceClass.getMethod("instance", (Class<?>[])null);
 		        m_webservice = (WebServer)instanceMethod.invoke(null, (Object[])null);
 		        m_webservice.init(RESTServlet.class.getName());
