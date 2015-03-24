@@ -1,8 +1,20 @@
 #Doradus at Strata 2015
-Doradus was presented at [Strata+Hadoop World 2015](http://strataconf.com/big-data-conference-ca-2015/) in San Jose, CA. Slides for the session, titled *[One Billion Objects in 2GB: Big Data Analytics on Small Clusters with Doradus OLAP](http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/38276)*, can be found here: [http://www.slideshare.net/randyguck/strata-presentation-doradus](http://www.slideshare.net/randyguck/strata-presentation-doradus). Be sure to check out the slide notes, which provide extra details.
+Doradus was presented at [Strata+Hadoop World 2015](http://strataconf.com/big-data-conference-ca-2015/) in San Jose, CA. Slides for the session, titled *[One Billion Objects in 2GB: Big Data Analytics on Small Clusters with Doradus OLAP](http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/38276)*, can be found here: [http://www.slideshare.net/randyguck/strata-presentation-doradus](http://www.slideshare.net/randyguck/strata-presentation-doradus). Be sure to check out the slide notes, which provide extra details. If you attended the conference or have an
+O'Reilly acccount, you can watch the video of the session [here](http://player.oreilly.com/videos/9781491924143).
+
+#What is Doradus?
+New to Doradus? There's a quick overview in this wiki page:
+[Doradus Overview](https://github.com/dell-oss/Doradus/wiki/Overview). The Wiki pages also have
+detailed information on these key topics:
+[Doradus OLAP](https://github.com/dell-oss/Doradus/wiki/Doradus%20OLAP%20Databases),
+[Doradus Spider](https://github.com/dell-oss/Doradus/wiki/Doradus-Spider-Databases), and
+[Doradus Administration](https://github.com/dell-oss/Doradus/wiki/Doradus-Administration). If you
+like nice big PDF files, see the [docs](https://github.com/dell-oss/Doradus/tree/master/docs)
+folder. Keep reading to find out what's new and tips for downloading, building, and running
+Doradus.
 
 #What's New?
-The v2.3 release is now available! This release contains many new features: here's a summary of some of them:
+The v2.3 release is now available! This release contains many new features. Here's a summary of some of them:
 
 - **OpenShift Support**: Doradus can be run in an OpenShift cartridge. See [this Wiki note](https://github.com/dell-oss/Doradus/wiki#openshift-cartridge) and the [doradus-openshift-cartridge](https://github.com/TraDuong1/openshift-origin-cartridge-doradus) Github project.
 
@@ -43,177 +55,132 @@ The v2.3 release is now available! This release contains many new features: here
 
 Many other enhancements and changes have been also been made for v2.3. See the **Recent Changes** sections in the Wiki pages or PDF documents.
 
-The next sections provide an overview of Doradus, its architecture, and its features.
-	
-#Overview
-Doradus is a REST service that extends a Cassandra NoSQL database with a
-graph-based data model, advanced indexing and search features, and a REST API.
-The Doradus query language (DQL) extends Lucene full-text queries with graph
-navigation features such as link paths, quantifiers, and transitive searches.
+#What's Even Newer?
+Immediately after finishing-up the v2.3 relesase, we restructured the project tree a
+little for two reasons:
 
-#Architecture
-Doradus is a pure Java application that can run as a daemon, Windows service, or
-console application. The REST API is provided by an embedded Jetty server. Each
-instance is a pure "peer"; multiple instances can access the same Cassandra
-cluster. A common practice is to run one Doradus and one Cassandra instance on
-each node. Each Doradus instance can be configured to rotate requests through
-multiple Cassandra instances. Doradus currently accesses Cassandra nodes using
-either the Thrift API or CQL.
-
-#Storage Services
-A Doradus database cluster can host multiple schemas, called *applications*.
-Each application chooses a *storage service* to manage its data. Doradus offers
-two storage services, which offer different storage and performance features to
-benefit different types of applications.
-
-##OLAP Service
-The Doradus OLAP storage service is best suited for structured, immutable or
-semi-mutable data such as time-oriented data: log records, events, messages,
-etc. It offers very dense space storage and high-performance analytical queries.
-Application data is partitioned into cubes called *shards*, which are typically
-time-based (e.g., one day's data per shard). Field values are stored as arrays
-that are compressed, loaded and scanned in memory, and cached on an LRU basis.
-Query speed is very fast, typically millions of objects per second.
-
-##Spider Service
-The Doradus Spider service is best suited for unstructured/semi-structured data
-or data that is highly mutable: document stores, message graphs, directories,
-etc. It uses indexing techniques such as trie trees to support fully-inverted
-tables. Spider offers fine-grained updates, immediate indexing,
-table-level sharding, and other features that benefit full text applications.
+1. We reorganized the folder structure to more closely follow the Maven [Standard Directory
+   Layout](https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html).
+   So, for example, `.yaml` and `.properties` files reside in a `resources` folder instead of a
+   `config` folder.
    
-#Data Model and Query Language
-Doradus uses an object/graph model. Each application has its own schema, which
-defines its tables. The accessible unit of a table is an *object*, which has a
-unique *ID*. Objects can have *scalar fields*, such as text and integers, and
-*link fields*, which form bidirectional relationships between objects. Doradus
-ensures referential integrity of relationships. Doradus OLAP requires all tables
-and fields to be predefined in the schema. Doradus Spider allows
-dynamically-added tables and dynamically-defined fields per object.
-
-The Doradus query language (DQL) supports Lucene-like full text clauses such as
-*terms*, *phrases*, and *ranges*. Using link fields, DQL also supports *path
-expressions*, which can use *quantifiers*, *filters*, and *transitive* searches.
-DQL can be used in *object queries*, which return matching objects, and
-*aggregate queries*, which perform metric calculations on selected objects,
-optionally grouped with an arbitrary number of levels.
-
-Both OLAP and Spider offer automatic data aging.
-
-Doradus is designed to leverage the advantages of NoSQL technology. It supports
-idempotent (repeatable) updates, dynamic expansion, automatic load balancing,
-automatic failover, and more.
+2. We separated out the embedded Jetty server into its own folder. This allows the core Doradus
+   server to run within other web servers such as Tomcat while avoiding jar file conflicts.
 
 #Doradus Components
 Doradus consists of following components:
 
-- **doradus-server**: This is the Doradus server, normally compiled as
-  doradus.jar. It reads config/doradus.yaml for configuration options. The
-  server provides a REST API, which supports XML and JSON messages, and a JMX
-  API for monitoring and administrative commands.
+- **doradus-server**: This is the core Doradus server, normally compiled as doradus.jar.
+  It reads doradus.yaml for configuration options.
   
-- **doradus-common**: This module consists of common classes used by both the
-  client and server modules. It is normally compiled as doradus-common.jar.
+- **doradus-common**: This module consists of common classes used by both the client and server
+  modules. It is normally compiled as doradus-common.jar.
   
-- **doradus-client**: This is an optional module that allows Java clients to
-  access a Doradus server using plain old Java objects (POJOs). It hides the
-  REST API and provides basic features for connecting/reconnecting, connection
-  pools, message compression, and exception handling. Requests and results are
-  passed as simple Java classes.
+- **doradus-client**: This is an optional module that allows Java clients to access a Doradus
+  server using plain old Java objects (POJOs). It hides the REST API and provides basic features
+  for connecting/reconnecting, connection pools, message compression, and exception handling.
+  Requests and results are passed as simple Java classes.
 
-- **regression-tests**: This folder tree contains regression tests. The tests
-  are processed by the test-processor. We add new tests as new features are
-  implemented and when bugs are found.
-
-- **test-processor**: This module is the regression test processor, which
-  executes the tests defined in the regression-tests folder. The main config
-  file is in ./config/config.xml. The test processor's main() is located in
-  com.dell.doradus.testprocessor.Program.java. See the note later on running
-  regression tests.
+- **doradus-jetty**: This module embeds the [Jetty](http://eclipse.org/jetty/) web server,
+  allowing Doradus to run as a standalone process. By moving Jetty dependencies to this project,
+  Doradus can be used with other web servers without conflicts.
   
-#Resources
-The following are the primary Doradus resources:
+- **regression-tests**: This folder tree contains regression tests. The tests are processed by
+  the test-processor. We add new tests as new features are implemented and when bugs are found.
 
-- **Source code**: Source code can be downloaded from this Github project:
-
-		https://github.com/dell-oss/Doradus
-       
-- **Documentation**: The Ant script (build.xml) creates Java docs for the
-  doradus-client module, placed in the folder ./doradus-client/docs. A set of
-  PDF files describing various aspects of Doradus can be found in the following
-  folder:
-
-		https://github.com/dell-oss/Doradus/docs
-    
-- **Issues**: Please feel free to post bug reports and feature enhancements in
-  the Github Issues area:
+- **test-processor**: This module is the regression test processor, which executes the tests
+  defined in the regression-tests folder. The main config file is in ./config/config.xml. The
+  test processor's main() is located in com.dell.doradus.testprocessor.Program.java. See the note
+  later on running regression tests.
   
-		https://github.com/dell-oss/Doradus/issues
-    
-- **Downloads**: Source, binary, and doc download bundles can be downloaded
-  from Maven Central by searching for "Doradus". Example:
-  
-  		http://search.maven.org/#search%7Cga%7C1%7Cdoradus
-
 #Requirements
-Doradus requires Java 1.7 or higher and Cassandra 2.x, which must be installed
-separately.
+Doradus requires Java 1.7 or higher and Cassandra 2.x.
 
-#Building Doradus
-The project contains both Ant and Maven build scripts, which download
-required jar files and build the client, common, and server components. (See
-NOTICE.txt for a list of third party libraries used.) To build Doradus using
-Ant, cd to the root `Doradus` folder and simply enter `ant`. To build using
-Maven, cd to the root `Doradus` folder use enter the following commands:
+#Installing Cassandra
+You can use an existing Cassandra installation or download and Cassandra on your own. Any 2.x
+release should work, though we've tested Doradus the most with 2.0.x. Or if you like, you can use
+the following script in the root folder:
 
-	mvn clean install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
-	mvn dependency:copy-dependencies
+	cassandra.sh
 
-The two build approaches create slightly different directories. Under the
-`doradus-client`, `doradus-common`, and `doradus-server` folders, the Ant build
-creates jar files in `lib` folders whereas Maven uses `target` folders. Also,
-the Maven build includes version numbers in the Doradus jar files names whereas
-the Ant build does not. Choose whichever build technique you're familiar with.
+This script downloads, installs, and starts Cassandra in folders relative to the current
+directory using default options.
 
-#Starting the Server
+#Building and Running With Maven
+Doradus supports Maven and Ant builds, though each places binaries and config files in slightly
+different directory structures. To build using Maven, from the root folder enter:
 
-The server resides in the `doradus-server` folder. Under this folder is the
-`config` folder containing the `doradus.yaml` file. An easy way to start Doradus
-is to create a script within `doradus-server/bin`. If you built Doradus using
-Ant, the a command line such as the following:
+	mvn clean install dependency:copy-dependencies -Dgpg.skip=true
 
-    java -cp "../lib/*:../config/*" com.dell.doradus.core.DoradusServer
+Then, from the `doradus-jetty` folder enter:
 
-If you built Doradus using Maven, use a command line such as the following:
+	java -cp ../doradus-server/target:target/classes:target/dependency/* com.dell.doradus.core.DoradusServer
 
-	java -cp "../config:../target/classes:../target/dependency/*" com.dell.doradus.core.DoradusServer
+#Building and Running With Ant
+To build Doradus using Ant, just enter `ant` from the root directory. Then, from the
+`doradus-server` folder enter:
 
-Both examples assume Linux or MacOSX. Adjust accordingly for Windows.
+	java -cp ./lib/*:./config/* com.dell.doradus.core.DoradusServer
 
-Append command line arguments prefixed with a "-" to override doradus.yaml file
-options. For example, doradus.yaml defines `restport: 1123`, which sets the REST
-API listening port number. To override this to 5711, add the command line
+#Configuring Doradus
+
+All default configuration comes from the `doradus.yaml` file. You can edit it directly or
+override parameters in command line arguments by prefixing each parameter name with a '-' and
+specifying the parameter value next. For example, doradus.yaml defines `restport: 1123`, which
+sets the REST API listening port number. To override this to 5711, add the command line
 argument:
 
-    java -cp "../lib/*:../config/*" com.dell.doradus.core.DoradusServer -restport 5711
+    java -cp ... com.dell.doradus.core.DoradusServer -restport 5711
     
-Doradus connects to the server(s) defined in doradus.yaml `dbhost` option. If
-Cassandra is not running when the server starts, it will try connecting every 5
-seconds until successful. In the mean time, REST requests that require the 
-database connection will receive a 503 response.
+When Doradus runs, it connects to the server(s) defined in doradus.yaml `dbhost` option. If
+Cassandra is not running when the server starts, it will try connecting every 5 seconds until
+successful. In the mean time, REST requests that require the database connection will receive a
+503 response.
 
-See the [Doradus Administration document](https://github.com/dell-oss/Doradus/blob/master/docs/Doradus%20Administration.pdf) for more information about configuration
-and execution options.
+See the [Doradus Administration](https://github.com/dell-oss/Doradus/blob/master/docs/Doradus%20Administration.pdf) documentation for more information about configurating and running Doradus.
 
 #Accessing Doradus
-A browser can be used to access most Doradus REST API commands. For example, to
-list applications that have been defined:
+A browser can be used to access Doradus REST API commands. For example, to list applications that
+have been defined:
 
     http://localhost:1123/_applications
     
-The Doradus Client library can be used to access a Doradus server by a Java
-application. The library hides the REST API, making access a little easier. See
-the Java docs in the folder ./doradus-client/doc for more information.
+To create a minimal application (managed by Doradus Spider by default), use the following REST
+command and example XML message:
+
+	POST /_applications
+	<application name="Stuff"/>
+	
+(Of course, the command should set `content-type` to `text/xml`.)
+This creates a Spider-managed application called `Stuff`. Since the application's `AutoTables`
+option defaults to `true`, new tables are created automatically as they are referenced. Since
+Spider supports dynamically-added fields, you can immediately create a new table and add some
+objects to it with the following POST command and message. We'll use JSON for this example
+(set `content-type` to `application/json` for this example):
+
+	POST /Stuff/Messages
+	{"batch": {
+		"docs": [
+			{"doc": {
+				"Subject": "Here's a subject",
+				"Body": "Here a body"
+			}},
+			{"doc": {
+				"Subject": "Here's another subject",
+				"Body": "Here's another body"
+			}}
+		]
+	}}
+
+This command creates a new table called `Messages` and adds two new objects. The `Subject` and
+`Body` fields are indexed as full text fields, and each object is assigned a default `_ID`. You
+can fetch all objects in the table using this REST command:
+
+	GET /Stuff/Message/_query?q=*
+
+You can a browser or your favorite HTTP library to send REST commands. Alternatively, Java
+applications can use the Doradus Client library to hide the REST API and use plain old Java
+objects (POJOs). See the `doradus-client` Java docs for more information.
 
 #Running Regression Tests
 
@@ -261,11 +228,41 @@ to run only test `bd.010.SPIDER` in the `bugs` directory only:
 		</include>
 	</test-suite>
 
-#Known Issues
-- With Doradus OLAP, currently there is no coordination between Doradus
-  instances to serialize *merge* commands to the same shard. For now, user
-  applications should send all *merge* requests to the same Doradus instance.
+#Resources
+The following are the primary Doradus resources:
 
+- **Source code**: Source code can be downloaded here, from this Github project:
+
+		https://github.com/dell-oss/Doradus
+       
+- **Documentation**: Our Github project includes extensive Wiki pages for Doradus OLAP, Spider,
+  and Administration. Alternatively, you'll find complete PDF versions of the same information
+  from the following folder:
+
+		https://github.com/dell-oss/Doradus/docs
+    
+- **Issues**: Please feel free to post bug reports and feature enhancements in the Github Issues
+  area:
+  
+		https://github.com/dell-oss/Doradus/issues
+    
+- **Downloads**: Source, binary, and Java doc bundles can be downloaded from Maven Central by
+  searching for `Doradus`. Example:
+  
+  		http://search.maven.org/#search%7Cga%7C1%7Cdoradus
+
+#Known Issues
+- With Doradus OLAP, currently there is no coordination between Doradus instances to serialize
+  *merge* commands to the same shard. For now, user applications should send all *merge* requests
+  to the same Doradus instance.
+
+- Currently, Doradus Spider uses a very simplistic query execution strategy. (That means we have
+  not implemented any kind of cost-based query optimization.) Instead, it naively executes clauses
+  in left-to-right order. This means you'll generally get better query performance by specifying
+  your most *selective* clause first. For example, in the query expression `A >= foo AND B = bar`,
+  the second clause is more selective, meaning it (probably) selects fewer objects. If the first
+  clause selects a lot of objects, the query will generally execute faster if you reverse the
+  clauses: `B = bar AND A >= foo`.
  
 #License
 Doradus is available under the Apache License Version 2.0. See LICENSE.txt or
