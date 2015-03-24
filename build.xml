@@ -47,7 +47,7 @@
     <property name="common.dir"      location="${doradus.dir}/doradus-common"/>
     <property name="common.bin.dir"  location="${common.dir}/bin"/>
     <property name="common.lib.dir"  location="${common.dir}/lib"/>
-    <property name="common.src.dir"  location="${common.dir}/src"/>
+    <property name="common.src.dir"  location="${common.dir}/src/main/java"/>
     <property name="common.jar.file" value="doradus-common.jar"/>
 	
 	<target name="CommonLoadLibs" depends="_setProxy">
@@ -110,7 +110,7 @@
     <property name="jettywebserver.bin.dir"  location="${jettywebserver.dir}/bin"/>
 	<property name="jettywebserver.config.dir" location="${jettywebserver.dir}/config" />	 
     <property name="jettywebserver.lib.dir"  location="${jettywebserver.dir}/lib"/>
-    <property name="jettywebserver.src.dir"  location="${jettywebserver.dir}/src"/>
+    <property name="jettywebserver.src.dir"  location="${jettywebserver.dir}/src/main/java"/>
     <property name="jettywebserver.jar.file" value="doradus-jetty.jar"/>
 	
 	<target name="JettyWebServerLoadLibs" depends="_setProxy">
@@ -167,7 +167,7 @@
     <property name="server.bin.dir"    location="${server.dir}/bin" />
     <property name="server.config.dir" location="${server.dir}/config" />
     <property name="server.lib.dir"    location="${server.dir}/lib" />
-    <property name="server.src.dir"    location="${server.dir}/src" />
+    <property name="server.src.dir"    location="${server.dir}/src/main/java" />
     <property name="server.jar.file"   value="doradus.jar" />
 
 	<target name="ServerLoadLibs" depends="_setProxy">
@@ -209,7 +209,8 @@
 	<target name="ServerCompile" depends="CommonJar,ServerLoadLibs">
         <delete dir="${server.bin.dir}" failonerror="false"/>
         <mkdir  dir="${server.bin.dir}"/>
-		
+        <mkdir  dir="${server.config.dir}"/>
+        	
         <javac srcdir="${server.src.dir}"
               destdir="${server.bin.dir}"
               verbose="yes" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
@@ -234,6 +235,9 @@
         </jar>
 		<copy todir="${server.lib.dir}">
 			<fileset dir="${common.lib.dir}"/>
+		</copy>
+		<copy todir="${server.config.dir}">
+			<fileset dir="${server.dir}/src/main/resources"/>
 		</copy>
 	</target>
 	
@@ -316,7 +320,7 @@
     <property name="client.bin.dir"    location="${client.dir}/bin" />
     <property name="client.config.dir" location="${client.dir}/config" />
     <property name="client.lib.dir"    location="${client.dir}/lib" />
-    <property name="client.src.dir"    location="${client.dir}/src" />
+    <property name="client.src.dir"    location="${client.dir}/src/main/java" />
     <property name="client.jar.file"   value="doradus-client.jar" />
 	
 	<target name="ClientLoadLibs" depends="_setProxy">
@@ -425,7 +429,7 @@
     <property name="test-processor.bin.dir"    location="${test-processor.dir}/bin" />
     <property name="test-processor.config.dir" location="${test-processor.dir}/config" />
     <property name="test-processor.lib.dir"    location="${test-processor.dir}/lib" />
-    <property name="test-processor.src.dir"    location="${test-processor.dir}/src" />
+    <property name="test-processor.src.dir"    location="${test-processor.dir}/src/main/java" />
     <property name="test-processor.jar.file"   value="test-processor.jar" />
 	
 	<target name="TestProcessorLoadLibs" depends="_setProxy">
@@ -488,25 +492,3 @@
 	</target>
 	
 </project>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

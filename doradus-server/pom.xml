@@ -20,10 +20,6 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 	</properties>	
 
-	<build>
-		<sourceDirectory>${basedir}/src</sourceDirectory>
-	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>com.dell.doradus</groupId>

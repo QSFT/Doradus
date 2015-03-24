@@ -3,4 +3,4 @@
 
 mvn clean install dependency:copy-dependencies -Dgpg.skip=true -Dmaven.javadoc.skip=true
 cd doradus-jetty
-java -cp ../doradus-server/config:target/classes:target/dependency/* com.dell.doradus.core.DoradusServer
+java -cp ../doradus-server/target:target/classes:target/dependency/* com.dell.doradus.core.DoradusServer
