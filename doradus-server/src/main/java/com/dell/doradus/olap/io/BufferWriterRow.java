@@ -16,37 +16,17 @@
 
 package com.dell.doradus.olap.io;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-import com.dell.doradus.core.ServerConfig;
 
 public class BufferWriterRow implements IBufferWriter {
-	private static Object m_staticSyncRoot = new Object();
-    private static ExecutorService m_executor;
-    
 	private StorageHelper m_helper;
 	private String m_app;
 	private String m_row;
     private DataCache m_dataCache;
+    private Object m_syncRoot = new Object();
     
     private FileInfo m_info;
     
     public BufferWriterRow(DataCache dataCache, StorageHelper helper, String app, String row, String name) {
-		int threads = ServerConfig.getInstance().olap_compression_threads;
-		if(threads > 0) {
-	    	synchronized(m_staticSyncRoot) {
-	    		if(m_executor == null) {
-	    			m_executor = new ThreadPoolExecutor(
-	    					threads, threads, 0L, TimeUnit.MILLISECONDS,
-	    					new ArrayBlockingQueue<Runnable>(threads),
-	    					new ThreadPoolExecutor.CallerRunsPolicy());
-	    		}
-	    	}
-		}
     	m_dataCache = dataCache;
     	m_helper = helper;
     	m_app = app;
@@ -56,22 +36,20 @@ public class BufferWriterRow implements IBufferWriter {
     }
     
     @Override public void writeBuffer(int bufferNumber, byte[] buffer, int length) {
-    	if(bufferNumber == 0) {
+    	if(bufferNumber == 0 && length < buffer.length) {
     		if(length < 512) m_info.setUncompressed(true);
-    		if(length < 65536) m_info.setSharesRow(true);
+    		if(length < 65536 && !m_info.getSingleRow()) m_info.setSharesRow(true);
     	}
 
-    	if(m_executor != null && !m_info.getUncompressed() && !m_info.getSharesRow()) {
+    	if(m_dataCache.isMultithreaded() && m_info.isCompressed()) {
     		final int finalBufferNumber = bufferNumber;
     		final byte[] buf = new byte[length];
     		System.arraycopy(buffer, 0, buf, 0, length);
-    		Future<?> f = m_executor.submit(new Runnable(){
+    		m_dataCache.addRunnable(new Runnable() {
 				@Override public void run() {
 			    	write(finalBufferNumber, buf);
 				}
     		});
-    		//m_futures.add(f);
-    		m_dataCache.addPendingCompression(f);
     		return;
     	}
     	
@@ -85,16 +63,20 @@ public class BufferWriterRow implements IBufferWriter {
 	}
     
     private void write(int bufferNumber, byte[] buf) {
-    	if(!m_info.getUncompressed()) {
-			buf = Compressor.compress(buf);
+    	if(m_info.isCompressed()) buf = Compressor.compress(buf);
+    	synchronized(m_syncRoot) {
+    		m_info.setCompressedLength(m_info.getCompressedLength() + buf.length);
     	}
-    	m_info.setCompressedLength(m_info.getCompressedLength() + buf.length);
+    	
+    	if(m_info.getUncompressed()) {
+    		m_dataCache.addData(m_info, buf, bufferNumber);
+    		return;
+    	}
     	
     	if(m_info.getSingleRow()) {
     		m_helper.writeFileChunk(m_app, m_row, "Data/" + m_info.getName() + "/" + bufferNumber, buf);
     	} else if(m_info.getSharesRow()) {
-    		//m_helper.writeFileChunk(m_app, m_row + "/_share", m_info.getName() + "/" + bufferNumber, buf);
-    		m_dataCache.addData(m_info, buf);
+    		m_helper.writeFileChunk(m_app, m_row + "/_share", m_info.getName() + "/" + bufferNumber, buf);
     	} else {
     		m_helper.writeFileChunk(m_app, m_row + "/" + m_info.getName(), "" + bufferNumber, buf);
     	}
@@ -104,13 +86,6 @@ public class BufferWriterRow implements IBufferWriter {
     @Override public void close(long length) {
     	m_info.setLength(length);
     	m_dataCache.addInfo(m_info);
-    	//if(m_info.getSingleRow()) {
-    	//	m_dataCache.addInfo(m_info);
-    	//} else if(m_info.getSharesRow()) {
-    	//	m_dataCache.addInfo(m_info);
-    	//} else {
-        //	m_helper.write(m_app, m_row, "File/" + m_info.getName(), Utils.toBytes(m_info.asString()));
-    	//}
 	}
 
 }

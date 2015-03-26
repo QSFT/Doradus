@@ -18,27 +18,36 @@ package com.dell.doradus.olap.io;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.core.ServerConfig;
 
 public class DataCache {
 	private static int m_maxCachedColumns = 200;
-	private List<Future<?>> m_futures = new ArrayList<>();
+	private Object m_staticSyncRoot = new Object();
+    private static ExecutorService m_executor;
 	
 	
 	private static class FileData {
 		private FileInfo m_fileInfo;
 		private byte[] m_data;
+		private int m_bufferNumber;
 		
-		public FileData(FileInfo fileInfo, byte[] data) {
+		public FileData(FileInfo fileInfo, byte[] data, int bufferNumber) {
 			m_fileInfo = fileInfo;
 			m_data = data;
+			m_bufferNumber = bufferNumber;
 		}
 		
 		public FileInfo getInfo() { return m_fileInfo; }
 		public byte[] getData() { return m_data; }
+		public int getBufferNumber() { return m_bufferNumber; }
 	}
 	
 	private String m_storeName;
@@ -47,13 +56,29 @@ public class DataCache {
 	private List<FileInfo> m_cachedInfos = null;
 	private List<FileData> m_cachedData = null;
 	private Object m_syncRoot = new Object();
+	private List<Future<?>> m_futures = new ArrayList<>();
 	
 	public DataCache(String storeName, String row, StorageHelper helper) {
+		int threads = ServerConfig.getInstance().olap_compression_threads;
+		if(threads > 0) {
+	    	synchronized(m_staticSyncRoot) {
+	    		if(m_executor == null) {
+	    			m_executor = new ThreadPoolExecutor(
+	    					threads, threads, 0L, TimeUnit.MILLISECONDS,
+	    					new ArrayBlockingQueue<Runnable>(threads),
+	    					new ThreadPoolExecutor.CallerRunsPolicy());
+	    		}
+	    	}
+		}
+		
+		
 		m_storeName = storeName;
 		m_row = row;
 		m_helper = helper;
 	}
 
+	public boolean isMultithreaded() { return m_executor != null; }
+	
 	public void addInfo(FileInfo info) {
 		synchronized(m_syncRoot) {
 			if(m_cachedInfos == null) m_cachedInfos = new ArrayList<FileInfo>(m_maxCachedColumns); 
@@ -64,29 +89,33 @@ public class DataCache {
 		}
 	}
 
-	public void addData(FileInfo info, byte[] data) {
+	public void addData(FileInfo info, byte[] data, int bufferNumber) {
 		synchronized(m_syncRoot) {
 			if(m_cachedData == null) m_cachedData = new ArrayList<FileData>(m_maxCachedColumns); 
-			m_cachedData.add(new FileData(info, data));
+			m_cachedData.add(new FileData(info, data, bufferNumber));
 			if(m_cachedData.size() >= m_maxCachedColumns) {
 				flushCachedData();
 			}
 		}
 	}
 	
-	public void addPendingCompression(Future<?> future) {
+	public void addRunnable(Runnable runnable) {
+		Future<?> future = m_executor.submit(runnable);
 		synchronized(m_syncRoot) {
 			m_futures.add(future);
+			if(m_futures.size() > m_maxCachedColumns) {
+				flushPendingTasks();
+			}
 		}
 	}
 	
 	public void flush() {
-		flushPendingCompressions();
+		flushPendingTasks();
 		flushCachedData();
 		flushCachedInfos();
 	}
 	
-	private void flushPendingCompressions() {
+	private void flushPendingTasks() {
 		if(m_futures.size() == 0) return;
 		try {
     		for(Future<?> f: m_futures) f.get();
@@ -113,10 +142,21 @@ public class DataCache {
 		if(m_cachedData == null || m_cachedData.size() == 0) return;
 		List<ColumnValue> list = new ArrayList<ColumnValue>(m_cachedData.size());
 		for(FileData d: m_cachedData) {
-			ColumnValue cv = new ColumnValue(d.getInfo().getName() + "/0", d.getData());
+			FileInfo fi = d.getInfo();
+			if(fi.getSingleRow()) continue;
+			if(!fi.getSharesRow()) throw new RuntimeException("Not supported");
+			ColumnValue cv = new ColumnValue(fi.getName() + "/" + d.getBufferNumber(), d.getData());
 			list.add(cv);
 		}
 		m_helper.writeFileChunks(m_storeName, m_row + "/_share", list);
+		list.clear();
+		for(FileData d: m_cachedData) {
+			FileInfo fi = d.getInfo();
+			if(!fi.getSingleRow()) continue;
+			ColumnValue cv = new ColumnValue("Data/" + fi.getName() + "/" + d.getBufferNumber(), d.getData());
+			list.add(cv);
+		}
+		m_helper.writeFileChunks(m_storeName, m_row, list);
 		m_cachedData.clear();
 	}
 	

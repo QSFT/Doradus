@@ -291,7 +291,8 @@ public class OLAPService extends StorageService {
             return OlapStatistics.getFileData(searcher, file);
         }
         String sort = paramMap.get("sort");
-        return OlapStatistics.getStatistics(searcher, sort);
+        boolean memStats = !"false".equals(paramMap.get("mem"));
+        return OlapStatistics.getStatistics(searcher, sort, memStats);
     }   // getStats
     
     /**

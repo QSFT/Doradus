@@ -33,7 +33,7 @@ import com.dell.doradus.olap.store.ValueSearcher;
 
 public class OlapStatistics {
 	
-	public static UNode getStatistics(CubeSearcher searcher, String sort) {
+	public static UNode getStatistics(CubeSearcher searcher, String sort, boolean memoryStats) {
 		//searcher.get
 		UNode unode = UNode.createMapNode("statistics");
 		UNode fnode = unode.addArrayNode("files");
@@ -73,6 +73,8 @@ public class OlapStatistics {
 		fnode.addValueNode("files", fmt(total_files), true);
 		fnode.addValueNode("cmp", fmt(total_cl), true);
 		fnode.addValueNode("unc", fmt(total_ul), true);
+		
+		if(!memoryStats) return unode;
 		
 		SegmentStats stats = searcher.getStats();
 		UNode tablesNode = unode.addArrayNode("tables");
