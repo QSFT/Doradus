@@ -111,10 +111,18 @@ public class VDirectory {
 	}
 	
 	public void create() {
-		synchronized(this) {
+		synchronized(m_syncRoot) {
 			if(m_parent == null) return;
 			m_dataCache.flush();
 			m_helper.write(m_storeName, m_parent.m_row, "Directory/" + m_name, new byte[0]);
+			m_filesMap = null;
+		}
+	}
+	
+	public void refresh() {
+		synchronized(m_syncRoot) {
+			if(m_parent == null) return;
+			m_dataCache.flush();
 			m_filesMap = null;
 		}
 	}
@@ -124,16 +132,20 @@ public class VDirectory {
 			m_helper.deleteCF(m_storeName);
 			m_logger.info("Deleted CF {}", m_storeName);
 		} else {
-			getFileInfo(null);
 			Collection<FileInfo> childFiles = listFiles();
 			//first, detach directory from parent to make delete transactional
 			m_helper.delete(m_storeName, m_parent.m_row, "Directory/" + m_name);
+			boolean hasSharesRow = false;
 			for(FileInfo child : childFiles) {
-				if(!child.getSharesRow()) {
+				if(child.getSingleRow()) {
+					continue;
+				} else if(child.getSharesRow()) {
+					hasSharesRow = true; 
+				} else {
 					m_helper.delete(m_storeName, m_row + "/" + child.getName());
 				}
 			}
-			m_helper.delete(m_storeName, m_row + "/_share");
+			if(hasSharesRow) m_helper.delete(m_storeName, m_row + "/_share");
 			
 			List<String> childDirs = listDirectories();
 			for(String child : childDirs) getDirectory(child).delete();
@@ -178,12 +190,16 @@ public class VDirectory {
 	}
 
 	public long compressedLength(FileInfo file) {
+		long compressedLength = file.getCompressedLength();
+		if(compressedLength > 0) return compressedLength;
 		if(file.getUncompressed()) return file.getLength();
-		long compressedLength = 0;
+		compressedLength = 0;
 		int i = 0;
 		byte[] val = null;
 		while(true) {
-			if(file.getSharesRow()) {
+			if(file.getSingleRow()) {
+				val = m_helper.getValue(m_storeName, m_row, "Data/" + file.getName() + "/" + i);
+			} else if(file.getSharesRow()) {
 				val = m_helper.getValue(m_storeName, m_row + "/_share", file.getName() + "/" + i);
 			} else {
 				val = m_helper.getValue(m_storeName, m_row + "/" + file.getName(), "" + i);
@@ -237,7 +253,9 @@ public class VDirectory {
 	public void deleteFile(String name) {
 		FileInfo fi = getFileInfo(name);
 		if(fi == null) return;
-		if(fi.getSharesRow()) {
+		if(fi.getSingleRow()) {
+			m_helper.delete(m_storeName, m_row, "Data/" + name + "/0");
+		} else if(fi.getSharesRow()) {
 			m_helper.delete(m_storeName, m_row + "/_share", name + "/0");
 		} else {
 			m_helper.delete(m_storeName, m_row + "/" + name);

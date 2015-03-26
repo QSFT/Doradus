@@ -72,5 +72,34 @@ public class BitPacker {
 			output[i] = value & mask;
 		}
 	}
+	
+	public static void set(long value, long[] output, int start, int bits, int pos) {
+		if(bits == 64) {
+			output[start + pos] = value;
+			return;
+		}
+		int index = start + (pos * bits) / 64;
+		int offset = (pos * bits) % 64;
+		long mask = NumericUtils.mask(bits);
+		value &= mask;
+		output[index] |= (value << offset);
+		if(offset + bits > 64) {
+			index++;
+			output[index] |= (value >>> (64 - offset));
+		}
+	}
+	
 
+	public static long get(long[] input, int start, int bits, int pos) {
+		if(bits == 64) return input[start + pos];
+		int index = start + (pos * bits) / 64;
+		int offset = (pos * bits) % 64;
+		long mask = NumericUtils.mask(bits);
+		long value = (input[index] >>> offset);
+		if(offset + bits > 64) {
+			index++;
+			value |= input[index] << (64 - offset);
+		}
+		return value & mask;
+	}
 }

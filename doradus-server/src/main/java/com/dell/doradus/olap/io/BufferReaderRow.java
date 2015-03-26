@@ -31,7 +31,9 @@ public class BufferReaderRow implements IBufferReader {
     
 	@Override public byte[] readBuffer(int bufferNumber) {
 		byte[] buffer = null;
-		if(m_info.getSharesRow()) {
+		if(m_info.getSingleRow()) {
+			buffer = m_helper.readFileChunk(m_app, m_row, "Data/" + m_info.getName() + "/" + bufferNumber);
+		} else if(m_info.getSharesRow()) {
 			buffer = m_helper.readFileChunk(m_app, m_row + "/_share", m_info.getName() + "/" + bufferNumber);
 		} else {
 			buffer = m_helper.readFileChunk(m_app, m_row + "/" + m_info.getName(), "" + bufferNumber);

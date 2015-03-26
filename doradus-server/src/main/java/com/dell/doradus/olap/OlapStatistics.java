@@ -18,6 +18,7 @@ package com.dell.doradus.olap;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.olap.io.FileInfo;
@@ -32,7 +33,7 @@ import com.dell.doradus.olap.store.ValueSearcher;
 
 public class OlapStatistics {
 	
-	public static UNode getStatistics(CubeSearcher searcher) {
+	public static UNode getStatistics(CubeSearcher searcher, String sort) {
 		//searcher.get
 		UNode unode = UNode.createMapNode("statistics");
 		UNode fnode = unode.addArrayNode("files");
@@ -45,7 +46,19 @@ public class OlapStatistics {
 		
 		//long total
 		ArrayList<FileInfo> files = new ArrayList<>(dir.listFiles());
-		Collections.sort(files);
+		if(sort == null || "name".equals(sort)) {
+			Collections.sort(files);
+		} else if("cmp".equals(sort)) {
+			Collections.sort(files, new Comparator<FileInfo>(){
+				@Override public int compare(FileInfo x, FileInfo y) {
+					return Long.compare(x.getCompressedLength(), y.getCompressedLength());
+				}});
+		} else if("unc".equals(sort)) {
+			Collections.sort(files, new Comparator<FileInfo>(){
+				@Override public int compare(FileInfo x, FileInfo y) {
+					return Long.compare(x.getLength(), y.getLength());
+				}});
+		}
 		for(FileInfo file: files) {
 			UNode fileNode = fnode.addMapNode("file");
 			fileNode.addValueNode("name", file.getName(), true);

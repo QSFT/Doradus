@@ -22,7 +22,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 
 public class BufferWriterRow implements IBufferWriter {
@@ -33,7 +32,6 @@ public class BufferWriterRow implements IBufferWriter {
 	private String m_app;
 	private String m_row;
     private DataCache m_dataCache;
-    //private List<Future<?>> m_futures = new ArrayList<>();
     
     private FileInfo m_info;
     
@@ -54,6 +52,7 @@ public class BufferWriterRow implements IBufferWriter {
     	m_app = app;
     	m_row = row;
     	m_info = new FileInfo(name);
+    	m_info.setSingleRow(true);
     }
     
     @Override public void writeBuffer(int bufferNumber, byte[] buffer, int length) {
@@ -89,7 +88,12 @@ public class BufferWriterRow implements IBufferWriter {
     	if(!m_info.getUncompressed()) {
 			buf = Compressor.compress(buf);
     	}
-    	if(m_info.getSharesRow()) {
+    	m_info.setCompressedLength(m_info.getCompressedLength() + buf.length);
+    	
+    	if(m_info.getSingleRow()) {
+    		m_helper.writeFileChunk(m_app, m_row, "Data/" + m_info.getName() + "/" + bufferNumber, buf);
+    	} else if(m_info.getSharesRow()) {
+    		//m_helper.writeFileChunk(m_app, m_row + "/_share", m_info.getName() + "/" + bufferNumber, buf);
     		m_dataCache.addData(m_info, buf);
     	} else {
     		m_helper.writeFileChunk(m_app, m_row + "/" + m_info.getName(), "" + bufferNumber, buf);
@@ -99,22 +103,13 @@ public class BufferWriterRow implements IBufferWriter {
 	
     @Override public void close(long length) {
     	m_info.setLength(length);
-    	if(m_info.getSharesRow()) {
-    		m_dataCache.addInfo(m_info);
-    	} else {
-        	m_helper.write(m_app, m_row, "File/" + m_info.getName(), Utils.toBytes(m_info.asString()));
-    	}
-    	
-    	//if(m_executor != null) {
-		//	try {
-	    //		for(Future<?> f: m_futures) {
-		//				f.get();
-	    //		}
-		//	} catch (InterruptedException e) {
-		//		throw new RuntimeException(e);
-		//	} catch (ExecutionException e) {
-		//		throw new RuntimeException(e);
-		//	}
+    	m_dataCache.addInfo(m_info);
+    	//if(m_info.getSingleRow()) {
+    	//	m_dataCache.addInfo(m_info);
+    	//} else if(m_info.getSharesRow()) {
+    	//	m_dataCache.addInfo(m_info);
+    	//} else {
+        //	m_helper.write(m_app, m_row, "File/" + m_info.getName(), Utils.toBytes(m_info.asString()));
     	//}
 	}
 

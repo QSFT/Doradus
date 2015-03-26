@@ -42,6 +42,7 @@ import com.dell.doradus.olap.OlapStatistics;
 import com.dell.doradus.olap.Olapp;
 import com.dell.doradus.olap.aggregate.AggregateResultConverter;
 import com.dell.doradus.olap.aggregate.AggregationResult;
+import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.SegmentStats;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.StorageService;
@@ -282,15 +283,16 @@ public class OLAPService extends StorageService {
         return m_olap.getStats(appDef, shard);
     }   // getStats 
 
-    public UNode getStatistics(ApplicationDefinition appDef, String shard) {
+    public UNode getStatistics(ApplicationDefinition appDef, String shard, Map<String, String> paramMap) {
         checkServiceState();
-        return OlapStatistics.getStatistics(m_olap.getSearcher(appDef, shard));
+        CubeSearcher searcher = m_olap.getSearcher(appDef, shard);
+        String file = paramMap.get("file");
+        if(file != null) {
+            return OlapStatistics.getFileData(searcher, file);
+        }
+        String sort = paramMap.get("sort");
+        return OlapStatistics.getStatistics(searcher, sort);
     }   // getStats
-    
-    public UNode getStatisticsFileData(ApplicationDefinition appDef, String shard, String file) {
-        checkServiceState();
-        return OlapStatistics.getFileData(m_olap.getSearcher(appDef, shard), file);
-    }   // getStats 
     
     /**
      * List the names of all shards for the given OLAP application.

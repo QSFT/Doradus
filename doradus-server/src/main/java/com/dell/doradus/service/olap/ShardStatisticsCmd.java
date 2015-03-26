@@ -37,17 +37,10 @@ public class ShardStatisticsCmd extends UNodeOutCallback {
         Utils.require(OLAPService.class.getSimpleName().equals(appDef.getStorageService()),
         		      "Application '%s' is not an OLAP application", appDef.getAppName());
         String shard = m_request.getVariableDecoded("shard");
-        
         String params = m_request.getVariableDecoded("params");
         Map<String, String> paramMap = Utils.parseURIQuery(params);
-        String file = paramMap.get("file");
-        if(file != null) {
-            UNode stats = OLAPService.instance().getStatisticsFileData(appDef, shard, file);
-            return stats;
-        } else {
-	        UNode stats = OLAPService.instance().getStatistics(appDef, shard);
-	        return stats;
-        }
+        UNode stats = OLAPService.instance().getStatistics(appDef, shard, paramMap);
+	    return stats;
     }
 
 } 
