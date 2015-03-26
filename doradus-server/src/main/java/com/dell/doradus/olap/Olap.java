@@ -38,7 +38,7 @@ import com.dell.doradus.olap.aggregate.AggregationRequestData;
 import com.dell.doradus.olap.aggregate.AggregationResult;
 import com.dell.doradus.olap.aggregate.DuplicationDetection;
 import com.dell.doradus.olap.aggregate.mr.MFAggregationBuilder;
-import com.dell.doradus.olap.builder2.SegmentBuilder2;
+import com.dell.doradus.olap.builder.SegmentBuilder;
 import com.dell.doradus.olap.io.FileDeletedException;
 import com.dell.doradus.olap.io.VDirectory;
 import com.dell.doradus.olap.merge.MergeResult;
@@ -207,7 +207,7 @@ public class Olap {
 		String prefix = overwrite ? "" : ".before.";
 	    String guid = prefix + Long.toString(System.currentTimeMillis(), 32) + "-" + UUID.randomUUID().toString();
 	    VDirectory segmentDir = shardDir.getDirectory(guid);
-        SegmentBuilder2 builder = new SegmentBuilder2(appDef);
+        SegmentBuilder builder = new SegmentBuilder(appDef);
         builder.add(batch);
         builder.flush(segmentDir);
 	    segmentDir.create();

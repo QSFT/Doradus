@@ -23,8 +23,8 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.IDGenerator;
-import com.dell.doradus.olap.builder2.BatchBuilder;
-import com.dell.doradus.olap.builder2.SegmentBuilder2;
+import com.dell.doradus.olap.builder.BatchBuilder;
+import com.dell.doradus.olap.builder.SegmentBuilder;
 import com.dell.doradus.olap.collections.strings.StringList;
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.io.VDirectory;
@@ -70,7 +70,7 @@ public class OlapBatch implements Iterable<OlapDocument> {
 	
 	
 	public void flushSegment(ApplicationDefinition application, VDirectory directory) {
-		SegmentBuilder2 builder = new SegmentBuilder2(application);
+		SegmentBuilder builder = new SegmentBuilder(application);
 		builder.add(this);
 		builder.flush(directory);
 	}

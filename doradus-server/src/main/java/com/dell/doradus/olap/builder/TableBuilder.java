@@ -19,77 +19,130 @@ package com.dell.doradus.olap.builder;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.dell.doradus.common.FieldDefinition;
+import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.olap.io.BSTR;
-import com.dell.doradus.olap.io.Utf8Encoder;
+import com.dell.doradus.olap.io.VDirectory;
+import com.dell.doradus.olap.store.FieldWriter;
+import com.dell.doradus.olap.store.FieldWriterSV;
+import com.dell.doradus.olap.store.IdWriter;
+import com.dell.doradus.olap.store.NumWriter;
+import com.dell.doradus.olap.store.NumWriterMV;
+import com.dell.doradus.olap.store.SegmentStats;
+import com.dell.doradus.olap.store.ValueWriter;
 
 public class TableBuilder {
-	public static enum FType {
-		NUMERIC,
-		TEXT,
-		LINK
-	}
+	private IdsBuilder m_ids = new IdsBuilder();
+	private Map<String, NumsBuilder> m_nums = new HashMap<>();
+	private Map<String, ValuesBuilder> m_values = new HashMap<>();
+	private Map<String, TextFieldBuilder> m_fields = new HashMap<>();
+	private Map<String, LinkFieldBuilder> m_links = new HashMap<>();
 	
-	public String table;
-	public IdBuilder documents = new IdBuilder();
-	public Map<String, Integer> fieldIndexMap = new HashMap<String, Integer>();
-	public FieldBuilder[] fieldBuilders;
-	public FType[] fieldTypes;
-	public String[] fieldNames;
-	public int fieldsCount;
-	
-	private BSTR bstr = new BSTR();
-	private BSTR orig = new BSTR();
-	private Utf8Encoder encoder = new Utf8Encoder();
-	
-	public TableBuilder(String tableName, int fieldsCount) {
-		this.table = tableName;
-		this.fieldsCount = fieldsCount;
-		this.fieldBuilders = new FieldBuilder[fieldsCount];  
-		this.fieldTypes = new FType[fieldsCount];  
-		this.fieldNames = new String[fieldsCount];  
+	public TableBuilder() {
+		m_ids = new IdsBuilder();
 	}
 
-	public Doc addDoc(String id) {
-		bstr.set(encoder, id);
-		return documents.add(bstr, fieldsCount);
+	public IdsBuilder getIds() { return m_ids; }
+	
+	public int addDoc(BSTR id) {
+		return m_ids.add(id);
 	}
 	
-	private int getFieldIndex(String field) {
-		Integer findex = fieldIndexMap.get(field);
-		if(findex == null) {
-			findex = new Integer(fieldIndexMap.size());
-			fieldIndexMap.put(field, findex);
+	public void setDeleted(int doc) {
+		m_ids.setDeleted(doc, true);
+	}
+	
+	public void addNum(int doc, String field, long value) {
+		NumsBuilder b = m_nums.get(field);
+		if(b == null) {
+			b = new NumsBuilder(m_ids);
+			m_nums.put(field, b);
 		}
-		return findex.intValue(); 
+		b.add(doc, value);
 	}
 	
-	public void addNum(Doc doc, String field, long value) {
-		int fieldIndex = getFieldIndex(field);
-		fieldTypes[fieldIndex] = FType.NUMERIC;
-		fieldNames[fieldIndex] = field;
+	public void addTerm(int doc, String field, BSTR term, BSTR orig) {
+		ValuesBuilder b = m_values.get(field);
+		if(b == null) {
+			b = new ValuesBuilder();
+			m_values.put(field, b);
+		}
+		int fld = b.addTerm(term, orig);
 		
-		doc.addNumField(fieldIndex, value);
+		TextFieldBuilder t = m_fields.get(field);
+		if(t == null) {
+			t = new TextFieldBuilder(m_ids, b);
+			m_fields.put(field, t);
+		}
+		t.add(doc, fld);
 	}
 
-	public void addTerm(Doc doc, String field, String term) {
-		int fieldIndex = getFieldIndex(field);
-		fieldTypes[fieldIndex] = FType.TEXT;
-		fieldNames[fieldIndex] = field;
+	public void addLink(int doc, String field, IdsBuilder linked, int linkedDoc) {
+		LinkFieldBuilder b = m_links.get(field);
+		if(b == null) {
+			b = new LinkFieldBuilder(m_ids, linked);
+			m_links.put(field, b);
+		}
+		b.add(doc, linkedDoc);
+	}
+	
+	public void flush(VDirectory dir, SegmentStats stats, TableDefinition tableDef) {
+		// flush ids
+		String table = tableDef.getTableName();
+		IdWriter id_writer = new IdWriter(dir, table);
+		m_ids.flush(id_writer);
+		id_writer.close();
+		int docs_count = id_writer.size();
+		stats.addTable(table, docs_count);
+		// flush num fields
+		for(String field: m_nums.keySet()) {
+			FieldDefinition fieldDef = tableDef.getFieldDef(field);
+			if(fieldDef.isCollection()) {
+				NumWriterMV num_writer = new NumWriterMV(docs_count);
+				m_nums.get(field).flush(num_writer);
+				num_writer.close(dir, table, field);
+				stats.addNumField(fieldDef, num_writer);
+			} else {
+				NumWriter num_writer = new NumWriter(docs_count);
+				m_nums.get(field).flush(num_writer);
+				num_writer.close(dir, table, field);
+				stats.addNumField(fieldDef, num_writer);
+			}
+		}
+		//flush text field values
+		for(String field: m_values.keySet()) {
+			ValueWriter term_writer = new ValueWriter(dir, table, field);
+			m_values.get(field).flush(term_writer);
+			term_writer.close();
+		}
+		//flush text fields
+		for(String field: m_fields.keySet()) {
+			FieldDefinition fieldDef = tableDef.getFieldDef(field);
+			if(fieldDef.isCollection()) {
+				FieldWriter field_writer = new FieldWriter(docs_count);
+				m_fields.get(field).flush(field_writer);
+				field_writer.close(dir, table, field);
+				stats.addTextField(fieldDef, field_writer);
+			} else {
+				FieldWriterSV field_writer = new FieldWriterSV(docs_count);
+				m_fields.get(field).flush(field_writer);
+				field_writer.close(dir, table, field);
+				stats.addTextField(fieldDef, field_writer);
+			}
+		}
 		
-		FieldBuilder b = fieldBuilders[fieldIndex];
-		if(b == null) b = fieldBuilders[fieldIndex] = new FieldBuilder(field);
-		orig.set(encoder, term);
-		bstr.set(encoder, term.toLowerCase());
-		Term t = b.add(bstr, orig);
-		doc.addTextField(fieldIndex, t);
 	}
 
-	public void addLink(Doc doc, String field, Doc linkedDoc) {
-		int fieldIndex = getFieldIndex(field);
-		fieldTypes[fieldIndex] = FType.LINK;
-		fieldNames[fieldIndex] = field;
-		
-		doc.addLinkField(fieldIndex, linkedDoc);
+	public void flushLinks(VDirectory dir, SegmentStats stats, TableDefinition tableDef) {
+		String table = tableDef.getTableName();
+		int docs_count = stats.getTable(table).documents;
+		for(String field: m_links.keySet()) {
+			FieldDefinition fieldDef = tableDef.getFieldDef(field);
+			FieldWriter field_writer = new FieldWriter(docs_count);
+			m_links.get(field).flush(field_writer);
+			field_writer.close(dir, table, field);
+			stats.addLinkField(fieldDef, field_writer);
+		}
 	}
-
+	
 }

@@ -14,37 +14,46 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.olap.builder2;
+package com.dell.doradus.olap.builder;
 
 import java.util.Arrays;
 
-import com.dell.doradus.olap.store.FieldWriter;
 import com.dell.doradus.olap.store.IntList;
+import com.dell.doradus.olap.store.LongList;
+import com.dell.doradus.olap.store.NumWriter;
+import com.dell.doradus.olap.store.NumWriterMV;
 
-public class LinkFieldBuilder {
+public class NumsBuilder {
 	private IdsBuilder m_ids;
-	private IdsBuilder m_links;
 	private IntList m_docs;
-	private IntList m_values;
+	private LongList m_values;
 	
-	public LinkFieldBuilder(IdsBuilder ids, IdsBuilder links) {
+	public NumsBuilder(IdsBuilder ids) {
 		m_ids = ids;
-		m_links = links;
 		m_docs = new IntList(64);
-		m_values = new IntList(64);
+		m_values = new LongList(64);
 	}
 	
-	public void add(int doc, int val) {
+	public void add(int doc, long value) {
 		m_docs.add(doc);
-		m_values.add(val);
+		m_values.add(value);
 	}
 
 	public int size() {	return m_docs.size(); }
 
 	
-	public void flush(FieldWriter writer) {
+	public void flush(NumWriter writer) {
+		for(int i = 0; i < size(); i++) {
+			int id = m_docs.get(i);
+			int doc = m_ids.doc(id);
+			long val = m_values.get(i); 
+			writer.add(doc, val);
+		}
+	}
+
+	public void flush(NumWriterMV writer) {
 		int docs = writer.getDocsCount();
-		int[] values = new int[size()];
+		long[] values = new long[size()];
 		int[] offsets = new int[docs + 1];
 		for(int i = 0; i < size(); i++) {
 			int doc = m_ids.doc(m_docs.get(i));
@@ -55,8 +64,7 @@ public class LinkFieldBuilder {
 		}
 		for(int i = 0; i < size(); i++) {
 			int doc = m_ids.doc(m_docs.get(i));
-			int linkeddoc = m_links.doc(m_values.get(i));
-			values[offsets[doc]] = linkeddoc;
+			values[offsets[doc]] = m_values.get(i);
 			offsets[doc]++;
 		}
 		for(int i = 0; i < docs; i++) {

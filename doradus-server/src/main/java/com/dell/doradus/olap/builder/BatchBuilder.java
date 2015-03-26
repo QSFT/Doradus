@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.olap.builder2;
+package com.dell.doradus.olap.builder;
 
 import java.io.Reader;
 import java.util.HashSet;
