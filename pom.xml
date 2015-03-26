@@ -78,18 +78,22 @@
       </executions>
     </plugin>
     <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-javadoc-plugin</artifactId>
-      <version>2.9.1</version>
-      <executions>
-        <execution>
-          <id>attach-javadocs</id>
-          <goals>
-            <goal>jar</goal>
-          </goals>
-        </execution>
-      </executions>
-    </plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.2</version>
+        <executions>
+          <execution>
+            <id>javadoc-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <includeDependencySources>true</includeDependencySources>            
+           </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
   
   </plugins>
   </build>
