@@ -16,40 +16,14 @@
 
 package com.dell.doradus.olap.search;
 
-import java.util.ArrayList;
-
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.search.FieldSet;
 import com.dell.doradus.search.SearchResultList;
-import com.dell.doradus.search.aggregate.AggregationGroup;
-import com.dell.doradus.search.aggregate.AggregationMetric;
 import com.dell.doradus.search.aggregate.SortOrder;
-import com.dell.doradus.search.parser.AggregationQueryBuilder;
-import com.dell.doradus.search.parser.DoradusQueryBuilder;
 import com.dell.doradus.search.query.Query;
 
 public class Searcher {
-	
-	
-	// for unit tests
-	public static SearchResultList search(CubeSearcher searcher, TableDefinition tableDef, String query, String fields, int size, SortOrder[] sortOrders) {
-    	Query qu = DoradusQueryBuilder.Build(query, tableDef);
-    	FieldSet fieldSet = new FieldSet(tableDef, fields);
-    	Result documents = ResultBuilder.search(tableDef, qu, searcher);
-		SearchResultList list = SearchResultBuilder.build(searcher, documents, fieldSet, size, sortOrders);
-		return list;
-	}
-
-	
-	// for unit tests
-	public static GroupResult aggregate(CubeSearcher searcher, TableDefinition tableDef, String query, String fields, String metric) {
-    	Query qu = DoradusQueryBuilder.Build(query, tableDef);
-    	Result documents = ResultBuilder.search(tableDef, qu, searcher);
-    	ArrayList<ArrayList<AggregationGroup>> groupsSet = AggregationGroup.GetAggregationList(fields, tableDef);
-    	AggregationMetric aggMetric = AggregationQueryBuilder.BuildAggregationMetric(metric, tableDef);
-    	return AggregationBuilder.aggregate(searcher, documents, groupsSet.get(0).get(0), aggMetric);
-	}
 	
 	
 	public static SearchResultList search(CubeSearcher searcher, TableDefinition tableDef, Query query, FieldSet fieldSet, int size, SortOrder[] sortOrders) {
@@ -57,12 +31,5 @@ public class Searcher {
 		SearchResultList list = SearchResultBuilder.build(searcher, documents, fieldSet, size, sortOrders);
 		return list;
 	}
-
-	
-	//public static GroupResult aggregate(CubeSearcher searcher, TableDefinition tableDef, Query query, AggregationGroup group, AggregationMetric metric) {
-    //	Result documents = ResultBuilder.search(tableDef, query, searcher);
-    //	GroupResult r = AggregationBuilder.aggregate(searcher, documents, group, metric);
-    //	return r;
-	//}
 	
 }
