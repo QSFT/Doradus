@@ -40,4 +40,6 @@ public class MetricValueSum implements IMetricValue {
 	
 	@Override public String toString() { return "" + metric; }
 
+	@Override public IMetricValue newInstance() { return new MetricValueSum(); }
+	@Override public IMetricValue convert(MetricCollector collector) { return this; }
 }

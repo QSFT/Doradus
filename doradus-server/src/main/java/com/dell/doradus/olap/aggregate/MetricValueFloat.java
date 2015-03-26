@@ -16,22 +16,27 @@
 
 package com.dell.doradus.olap.aggregate;
 
+
 public abstract class MetricValueFloat {
 	
 	public static class Sum extends MetricValueDouble.Sum {
 		@Override public void add(long value) { add(Float.intBitsToFloat((int)value)); }
+		@Override public IMetricValue newInstance() { return new Sum(); }
 	}
 	
 	public static class Min extends MetricValueDouble.Min {
 		@Override public void add(long value) { add(Float.intBitsToFloat((int)value)); }
+		@Override public IMetricValue newInstance() { return new Min(); }
 	}
 	
 	public static class Max extends MetricValueDouble.Max {
 		@Override public void add(long value) { add(Float.intBitsToFloat((int)value)); }
+		@Override public IMetricValue newInstance() { return new Max(); }
 	}
 	
 	public static class Avg extends MetricValueDouble.Avg {
 		@Override public void add(long value) { add(Float.intBitsToFloat((int)value)); }
+		@Override public IMetricValue newInstance() { return new Avg(); }
 	}
 	
 }

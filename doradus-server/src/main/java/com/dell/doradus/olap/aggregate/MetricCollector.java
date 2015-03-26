@@ -19,6 +19,19 @@ package com.dell.doradus.olap.aggregate;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.olap.store.CubeSearcher;
 
-public interface IMetricCollectorWithContext extends IMetricCollector {
-	public abstract void setContext(CubeSearcher searcher, FieldDefinition fieldDefinition);
+public class MetricCollector {
+	private IMetricValue m_value;
+	private CubeSearcher m_searcher;
+	private FieldDefinition m_fieldDef;
+	
+	public MetricCollector(IMetricValue value, CubeSearcher searcher, FieldDefinition fieldDef) {
+		m_value = value;
+		m_searcher = searcher;
+		m_fieldDef = fieldDef;
+	}
+	
+	public CubeSearcher getSearcher() { return m_searcher; }
+	public FieldDefinition getFieldDefinition() { return m_fieldDef; }
+	public IMetricValue get() { return m_value.newInstance(); }
+	public IMetricValue convert(IMetricValue value) { return value.convert(this); }
 }

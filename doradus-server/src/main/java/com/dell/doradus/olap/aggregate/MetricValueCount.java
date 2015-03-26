@@ -16,6 +16,7 @@
 
 package com.dell.doradus.olap.aggregate;
 
+
 public class MetricValueCount implements IMetricValue {
 	public long metric;
 
@@ -28,8 +29,9 @@ public class MetricValueCount implements IMetricValue {
 	}
 
 	@Override public boolean isDegenerate() { return false; } 
-	
 	@Override public void reset() { metric = 0; }
+	@Override public IMetricValue newInstance() { return new MetricValueCount(); }
+	@Override public IMetricValue convert(MetricCollector collector) { return this; }
 
 	@Override public void add(IMetricValue value) {
 		MetricValueCount m = (MetricValueCount)value;

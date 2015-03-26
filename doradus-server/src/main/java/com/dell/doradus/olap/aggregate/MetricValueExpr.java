@@ -95,6 +95,20 @@ public abstract class MetricValueExpr implements IMetricValue {
 			first.add(b.first);
 			second.add(b.second);
 		}
+		
+		@Override public IMetricValue newInstance() {
+			Binary b = new Binary();
+			b.operator = operator;
+			b.first = first.newInstance();
+			b.second = second.newInstance();
+			return b;
+		}
+		@Override public IMetricValue convert(MetricCollector collector) {
+			first = first.convert(collector);
+			second = second.convert(collector);
+			return this;
+		}
+		
 	}
 	
 	public static class Constant extends MetricValueExpr {
@@ -109,6 +123,9 @@ public abstract class MetricValueExpr implements IMetricValue {
 		@Override public void add(long value) { }
 
 		@Override public void add(IMetricValue value) { }
+		
+		@Override public IMetricValue newInstance() { return this; }
+		@Override public IMetricValue convert(MetricCollector collector) { return this; }
 	}
 	
 }

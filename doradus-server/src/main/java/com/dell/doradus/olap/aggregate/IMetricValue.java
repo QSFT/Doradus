@@ -21,4 +21,7 @@ public interface IMetricValue extends Comparable<IMetricValue> {
 	public void add(long value);
 	public void add(IMetricValue value);
 	public boolean isDegenerate();
+	public IMetricValue newInstance();
+	public IMetricValue convert(MetricCollector collector);
 }
+

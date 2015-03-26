@@ -16,6 +16,11 @@
 
 package com.dell.doradus.olap.aggregate;
 
+import com.dell.doradus.common.FieldDefinition;
+import com.dell.doradus.olap.store.CubeSearcher;
+import com.dell.doradus.olap.store.IdSearcher;
+import com.dell.doradus.olap.store.ValueSearcher;
+
 public abstract class MetricValueText implements IMetricValue {
 	public String value;
 	
@@ -38,12 +43,72 @@ public abstract class MetricValueText implements IMetricValue {
 			Min t = (Min)o;
 			if(value == null || this.compareTo(t) > 0) value = t.value;
 		}
+		@Override public IMetricValue newInstance() { return new Min(); }
+		@Override public IMetricValue convert(MetricCollector collector) { return this; }
 	}
 	public static class Max extends MetricValueText {
 		@Override public void add(IMetricValue o) {
 			Max t = (Max)o;
 			if(value == null || this.compareTo(t) < 0) value = t.value;
 		}
+		@Override public IMetricValue newInstance() { return new Max(); }
+		@Override public IMetricValue convert(MetricCollector collector) { return this; }
+	}
+	
+	public static class MinText extends MetricValueMin.MinNum {
+		@Override public IMetricValue newInstance() { return new MinText(); }
+		@Override public IMetricValue convert(MetricCollector collector) {
+			CubeSearcher searcher = collector.getSearcher();
+			FieldDefinition fieldDef = collector.getFieldDefinition();
+			MetricValueText.Min txt = new MetricValueText.Min();
+			if(metric != Long.MAX_VALUE) {
+				ValueSearcher vs = searcher.getValueSearcher(fieldDef.getTableName(), fieldDef.getName()); 
+				txt.value = vs.getValue((int)metric).toString();
+			}
+			return txt;
+		}
+	}
+	
+	public static class MaxText extends MetricValueMax.MaxNum {
+		@Override public IMetricValue newInstance() { return new MaxText(); }
+		@Override public IMetricValue convert(MetricCollector collector) {
+			CubeSearcher searcher = collector.getSearcher();
+			FieldDefinition fieldDef = collector.getFieldDefinition();
+			MetricValueText.Max txt = new MetricValueText.Max();
+			if(metric != Long.MIN_VALUE) {
+				ValueSearcher vs = searcher.getValueSearcher(fieldDef.getTableName(), fieldDef.getName()); 
+				txt.value = vs.getValue((int)metric).toString();
+			}
+			return txt;
+		}
 	}
 
+	public static class MinLink extends MetricValueMin.MinNum {
+		@Override public IMetricValue newInstance() { return new MinLink(); }
+		@Override public IMetricValue convert(MetricCollector collector) {
+			CubeSearcher searcher = collector.getSearcher();
+			FieldDefinition fieldDef = collector.getFieldDefinition();
+			MetricValueText.Min txt = new MetricValueText.Min();
+			if(metric != Long.MAX_VALUE) {
+				IdSearcher ids = searcher.getIdSearcher(fieldDef.getLinkExtent());
+				txt.value = ids.getId((int)metric).toString();
+			}
+			return txt;
+		}
+	}
+	
+	public static class MaxLink extends MetricValueMax.MaxNum {
+		@Override public IMetricValue newInstance() { return new MaxLink(); }
+		@Override public IMetricValue convert(MetricCollector collector) {
+			CubeSearcher searcher = collector.getSearcher();
+			FieldDefinition fieldDef = collector.getFieldDefinition();
+			MetricValueText.Max txt = new MetricValueText.Max();
+			if(metric != Long.MIN_VALUE) {
+				IdSearcher ids = searcher.getIdSearcher(fieldDef.getLinkExtent());
+				txt.value = ids.getId((int)metric).toString();
+			}
+			return txt;
+		}
+	}
+	
 }

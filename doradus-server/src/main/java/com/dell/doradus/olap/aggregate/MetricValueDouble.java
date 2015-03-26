@@ -29,6 +29,8 @@ public abstract class MetricValueDouble {
 		}
 		public void add(double value) { metric += value; }
 		@Override public void add(long value) { metric += Double.longBitsToDouble(value); }
+		@Override public IMetricValue newInstance() { return new Sum(); }
+		@Override public IMetricValue convert(MetricCollector collector) { return this; }
 	}
 	
 	
@@ -43,6 +45,8 @@ public abstract class MetricValueDouble {
 		}
 		public void add(double value) { if(metric > value) metric = value; }
 		@Override public void add(long value) { add(Double.longBitsToDouble(value)); }
+		@Override public IMetricValue newInstance() { return new Min(); }
+		@Override public IMetricValue convert(MetricCollector collector) { return this; }
 	}
 
 	public static class Max extends MetricValueExpr {
@@ -56,13 +60,15 @@ public abstract class MetricValueDouble {
 		}
 		public void add(double value) { if(metric < value) metric = value; }
 		@Override public void add(long value) { add(Double.longBitsToDouble(value)); }
+		@Override public IMetricValue newInstance() { return new Max(); }
+		@Override public IMetricValue convert(MetricCollector collector) { return this; }
 	}
 	
 	public static class Avg extends MetricValueExpr {
 		public int count;
 		public double metric;
 
-		public double getValue() { return count == 0 ? Double.NEGATIVE_INFINITY : (double)metric / count; }
+		@Override public double getValue() { return count == 0 ? Double.NEGATIVE_INFINITY : (double)metric / count; }
 		
 		@Override public void reset() { 
 			count = 0;
@@ -81,7 +87,8 @@ public abstract class MetricValueDouble {
 		}
 		
 		@Override public void add(long value) { add(Double.longBitsToDouble(value)); }
-		
+		@Override public IMetricValue newInstance() { return new Avg(); }
+		@Override public IMetricValue convert(MetricCollector collector) { return this; }
 	}
 	
 }

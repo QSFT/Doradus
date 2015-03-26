@@ -27,7 +27,7 @@ public abstract class MetricValueAvg implements IMetricValue {
 
 	public double getValue() { return count == 0 ? Double.NEGATIVE_INFINITY : (double)metric / count; }
 	
-	@Override public boolean isDegenerate() { return count == 0; } 
+	@Override public boolean isDegenerate() { return count == 0; }
 	
 	@Override public int compareTo(IMetricValue o) {
 		MetricValueAvg other = (MetricValueAvg)o;
@@ -46,6 +46,10 @@ public abstract class MetricValueAvg implements IMetricValue {
 	}
 	
 	public static class AvgNum extends MetricValueAvg {
+		
+		@Override public IMetricValue newInstance() { return new AvgNum(); }
+		@Override public IMetricValue convert(MetricCollector collector) { return this; }
+		
 		@Override public void add(long value) {
 			count++;
 			metric += value;
@@ -59,6 +63,10 @@ public abstract class MetricValueAvg implements IMetricValue {
 	}
 
 	public static class AvgDate extends MetricValueAvg {
+		
+		@Override public IMetricValue newInstance() { return new AvgDate(); }
+		@Override public IMetricValue convert(MetricCollector collector) { return this; }
+		
 		@Override public void add(long value) {
 			if(value == 0) return;
 			count++;

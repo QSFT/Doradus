@@ -49,6 +49,9 @@ public abstract class MetricValueMax implements IMetricValue {
 			if(metric == Long.MIN_VALUE) return null;
 			else return "" + metric;
 		}
+		@Override public IMetricValue newInstance() { return new MaxNum(); }
+		@Override public IMetricValue convert(MetricCollector collector) { return this; }
+		
 	}
 	
 	public static class MaxDate extends MetricValueMax {
@@ -60,7 +63,8 @@ public abstract class MetricValueMax implements IMetricValue {
 			if(metric == Long.MIN_VALUE) return null;
 			else return XType.toString(new Date(metric));
 		}
-
+		@Override public IMetricValue newInstance() { return new MaxDate(); }
+		@Override public IMetricValue convert(MetricCollector collector) { return this; }
 	}
 	
 	public static class MaxBoolean extends MetricValueMax {
@@ -72,6 +76,9 @@ public abstract class MetricValueMax implements IMetricValue {
 			if(metric == Long.MIN_VALUE) return null;
 			else return XType.toString(metric > 0);
 		}
+		
+		@Override public IMetricValue newInstance() { return new MaxBoolean(); }
+		@Override public IMetricValue convert(MetricCollector collector) { return this; }
 
 	}
 	

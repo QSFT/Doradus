@@ -22,8 +22,8 @@ import java.util.List;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
-import com.dell.doradus.olap.aggregate.IMetricCollector;
 import com.dell.doradus.olap.aggregate.IMetricValue;
+import com.dell.doradus.olap.aggregate.MetricCollector;
 import com.dell.doradus.olap.aggregate.MetricCollectorFactory;
 import com.dell.doradus.olap.aggregate.MetricCounter;
 import com.dell.doradus.olap.aggregate.MetricCounterFactory;
@@ -121,7 +121,7 @@ public class XLinkMetricContext {
 			CubeSearcher searcher = context.olap.getSearcher(appDef, xshard);
 			Result bvQuery = ResultBuilder.search(invTable, filter, searcher);
 			MetricCounter metricCounter = MetricCounterFactory.create(searcher, metric);
-			IMetricCollector metricCollector = MetricCollectorFactory.create(searcher, metric);
+			MetricCollector metricCollector = MetricCollectorFactory.create(searcher, metric);
 			IdSearcher ids = searcher.getIdSearcher(invTable.getTableName());
 			int docsCount = ids.size();
 			for(int doc = 0; doc < docsCount; doc++) {
@@ -142,7 +142,7 @@ public class XLinkMetricContext {
 			CubeSearcher searcher = context.olap.getSearcher(appDef, xshard);
 			Result bvQuery = ResultBuilder.search(invTable, filter, searcher);
 			MetricCounter metricCounter = MetricCounterFactory.create(searcher, metric);
-			IMetricCollector metricCollector = MetricCollectorFactory.create(searcher, metric);
+			MetricCollector metricCollector = MetricCollectorFactory.create(searcher, metric);
 			FieldSearcher fs = searcher.getFieldSearcher(inv.getTableName(), inv.getXLinkJunction());
 			IntIterator iter = new IntIterator();
 			int docsCount = fs.size();

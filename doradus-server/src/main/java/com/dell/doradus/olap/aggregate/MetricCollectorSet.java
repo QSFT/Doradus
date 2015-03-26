@@ -18,7 +18,7 @@ package com.dell.doradus.olap.aggregate;
 
 
 public class MetricCollectorSet {
-	public IMetricCollector[] collectors;
+	public MetricCollector[] collectors;
 	
 	public MetricCollectorSet() {}
 	
