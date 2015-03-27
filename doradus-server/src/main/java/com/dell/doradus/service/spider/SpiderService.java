@@ -220,6 +220,7 @@ public class SpiderService extends StorageService {
         
         if (tableDef == null && appDef.allowsAutoTables()) {
             tableDef = addAutoTable(appDef, tableName);
+            assert tableDef != null;
         }
         
         BatchObjectUpdater batchUpdater = new BatchObjectUpdater(tableDef);
@@ -519,7 +520,7 @@ public class SpiderService extends StorageService {
         TableDefinition tableDef = new TableDefinition(appDef);
         tableDef.setTableName(tableName);
         appDef.addTable(tableDef);
-        SchemaService.instance().defineApplication(appDef);
+        SchemaService.instance().defineApplication(tenant, appDef);
         appDef = SchemaService.instance().getApplication(tenant, appDef.getAppName());
         return appDef.getTableDef(tableName);
     }   // addAutoTable
