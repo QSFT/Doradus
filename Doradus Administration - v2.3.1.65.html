@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Securing the Cassandra JMX Protocol</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.56.html">Cassandra Configuration and Operation</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.60.html">Cassandra Configuration Files</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.63.html">Cassandra Security Options</a> : Securing the Cassandra JMX Protocol</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_4"><a name="pID0E0XC0HA">Securing the Cassandra JMX Protocol</a></div>
+      <div class="Normal"><a name="pID0E0WC0HA">Cassandra supports the Java Management Extensions (JMX) protocol for monitoring and controlling Cassandra processes. JMX can be secured with authorization and/or encryption, however, JMX security is disabled in the </a><span class="Code_char">{cassandra_home}/bin/cassandra.bat</span> file that is included with Doradus. The common JMX options are defined in the JAVA_OPTS environment variable as shown below:</div>
+      <div class="Code"><a name="pID0E0VC0HA">REM ***** JAVA options *****</a></div>
+      <div class="Code"><a name="pID0E0UC0HA">set JAVA_OPTS=-ea^</a></div>
+      <div class="Code"><a name="pID0E0TC0HA"> ...</a></div>
+      <div class="Code"><a name="pID0E0SC0HA"> -Dcom.sun.management.jmxremote.</a><span style="font-weight: bold">port</span>=7199^</div>
+      <div class="Code"><a name="pID0E0RC0HA"> -Dcom.sun.management.jmxremote.</a><span style="font-weight: bold">ssl</span>=false^</div>
+      <div class="Code"><a name="pID0E0QC0HA"> -Dcom.sun.management.jmxremote.</a><span style="font-weight: bold">authenticate</span>=false^</div>
+      <div class="Code"><a name="pID0E0PC0HA"> ...</a></div>
+      <div class="Normal"><a name="pID0E0OC0HA">These options are summarized below:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char" style="font-weight: bold"><a name="pID0E0NC0HA">port</a></span>: This sets the port number that the remote JMX clients must use. As shown, port 7199 is the default used for Cassandra.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char" style="font-weight: bold"><a name="pID0E0MC0HA">ssl</a></span>: When set to true, this option requires remote clients to use SSL (TLS) to connect to the JMX port. When SSL is enabled, additional options are available to require remote clients to have a client-side certificate.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char" style="font-weight: bold"><a name="pID0E0LC0HA">authenticate</a></span>: When set to true, this option requires remote clients to provide a user ID and password in order to connection. Additional parameters are required to define allowed user IDs and passwords and the locations of the corresponding files.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0KC0HA">Because JMX is a standard and external documentation is available for securing JMX, details for using SSL and/or authentication are not covered here. See for example the following:</a></div>
+      <div class="Normal" style="text-indent: 18pt"><span class="Hyperlink"><a href="http://docs.oracle.com/javase/6/docs/technotes/guides/management/agent.html" target="external_window" name="pID0E0JC0HA">http://docs.oracle.com/javase/6/docs/technotes/guides/management/agent.html</a></span></div>
+      <div class="Normal"><a name="pID0E0IC0HA">Though not shown above, here is another useful option: On multi-homed systems, the define </a><span class="Code_char">java.rmi.server.hostname</span> can be set to cause JMX to bind to a specific IP address instead of the default one. For example:</div>
+      <div class="Code"><a name="pID0E0HC0HA">set JAVA_OPTS=-D</a><span class="Code_char">java.rmi.server.hostname</span>=10.1.82.121^</div>
+      <div class="Code"><a name="pID0E0GC0HA">...</a></div>
+      <div class="Normal"><a name="pID0E0FC0HA">This causes the JMX port to bind to address 10.1.82.121.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

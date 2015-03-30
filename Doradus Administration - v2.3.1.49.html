@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Doradus REST API Parameters</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.34.html">Doradus Configuration and Operation</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.36.html">Doradus Configuration Files</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.43.html">Configuration Parameters in doradus.yaml</a> : Doradus REST API Parameters</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_4"><a name="pID0E0DH0HA">Doradus REST API Parameters</a></div>
+      <div class="Normal"><a name="pID0E0CH0HA">These parameters configure the Doradus REST API.</a></div>
+      <div class="Code"><a name="pID0E0BH0HA">restaddr: 0.0.0.0</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0AH0HA">By default, the Doradus REST API binds to address 0.0.0.0, which means it accepts connections directed to any of the host’s IP addresses (including “localhost”). Change this value if you want the REST API to accept connections on a specific IP address instead.</a></div>
+      <div class="Code"><a name="pID0E06G0HA">restport: 1123</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E05G0HA">This is the REST port that Doradus listens to. Change this to accept REST API connections on a different port.</a></div>
+      <div class="Code"><a name="pID0E04G0HA">maxconns: 200</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E03G0HA">This is parameter is used to configure the maximum threads that the internal Jetty server allows. More than this number of connections may be received, but this value controls the maximum number of parallel REST commands that may be in progress at one time.</a></div>
+      <div class="Code"><a name="pID0E02G0HA">tls: false</a></div>
+      <div class="Code"><a name="pID0E01G0HA">tls_cipher_suites:</a></div>
+      <div class="Code"><a name="pID0E0ZG0HA">   - TLS_DHE_DSS_WITH_3DES_EDE_CBC_SHA</a></div>
+      <div class="Code"><a name="pID0E0YG0HA">   ...</a></div>
+      <div class="Code"><a name="pID0E0XG0HA">clientauthentication: false</a></div>
+      <div class="Code"><a name="pID0E0WG0HA">keystore: config/keystore</a></div>
+      <div class="Code"><a name="pID0E0VG0HA">keystorepassword: changeit</a></div>
+      <div class="Code"><a name="pID0E0UG0HA">truststore: config/truststore</a></div>
+      <div class="Code"><a name="pID0E0TG0HA">truststorepassword: password</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0SG0HA">As described in the section </a><span style="font-weight: bold"><a href="javascript:WWHClickedPopup('Doradus', 'Doradus%20Administration%20-%20v2.3.1.38.html', '');" title="Doradus Security Options">5.2.2</a></span><span style="font-weight: bold"> </span><a href="javascript:WWHClickedPopup('Doradus', 'Doradus%20Administration%20-%20v2.3.1.38.html', '');" title="Doradus Security Options">Doradus Security Options</a>, these parameters should be set to configure TLS/SSL for the Doradus REST API and to restrict connections to authenticated clients.</div>
+      <div class="Code"><a name="pID0E0RG0HA">max_request_size: 52428800</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0QG0HA">This parameter determines the maximum size of an input requested that is accepted. Requests larger than this are rejected and the socket is closed. The default is 50MB.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Multi-tenant Mode Parameters</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.34.html">Doradus Configuration and Operation</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.36.html">Doradus Configuration Files</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.43.html">Configuration Parameters in doradus.yaml</a> : Multi-tenant Mode Parameters</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_4"><a name="pID0E0OJ0HA">Multi-tenant Mode Parameters</a></div>
+      <div class="Normal"><a name="pID0E0NJ0HA">See the section Multi-Tenant Configuration for details on configuring and operating Doradus single- and multi-tenant modes. Below is a reference of the parameters that affect multi-tenant operation:</a></div>
+      <div class="Code"><a name="pID0E0MJ0HA">multitenant_mode: false</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0LJ0HA">This parameter controls whether Doradus operates in single-tenant mode (false) or multi-tenant mode (true).</a></div>
+      <div class="Code"><a name="pID0E0KJ0HA">disable_default_keyspace: false</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0JJ0HA">When Doradus is operating in multi-tenant mode, this parameter controls whether access to the default tenant is allowed.</a></div>
+      <div class="Code"><a name="pID0E0IJ0HA">keyspace: Doradus</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0HJ0HA">This parameter defines the name of the default tenant.</a></div>
+      <div class="Code"><a name="pID0E0GJ0HA">ks_defaults:</a></div>
+      <div class="Code"><a name="pID0E0FJ0HA">    - strategy_class: SimpleStrategy</a></div>
+      <div class="Code"><a name="pID0E0EJ0HA">    - strategy_options:</a></div>
+      <div class="Code"><a name="pID0E0DJ0HA">        - replication_factor: "1"</a></div>
+      <div class="Code"><a name="pID0E0CJ0HA">    - durable_writes: true</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0BJ0HA">This parameter group is used when creating both the default tenant and new tenants in multi-tenant mode.</a></div>
+      <div class="Normal"><a name="pID0E0AJ0HA">Note that when multi-tenant mode is enabled, </a><span class="Code_char">use_cql</span> must be set to <span class="Code_char">true</span>, and <span class="Code_char">dbuser</span> and <span class="Code_char">dbpassword</span> must be set to the credentials for a Cassandra super user account. These parameters are described later.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

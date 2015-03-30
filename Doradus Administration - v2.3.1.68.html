@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Other Cassandra Configuration Options</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.56.html">Cassandra Configuration and Operation</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.60.html">Cassandra Configuration Files</a> : Other Cassandra Configuration Options</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E3HA">Other Cassandra Configuration Options</a></div>
+      <div class="Normal"><a name="pID0E2HA">In addition to the options described in this section, there are other options in the </a><span class="Code_char">cassandra.yaml</span> file that you might want to change in certain circumstances. Here a list of the most common options:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E1HA">concurrent_reads</a></span>: This value controls how many outstanding read operations are allowed at once. A recommended value is 16 times the number of data disks used.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0EZHA">concurrent_writes</a></span>: This value controls how many outstanding write operations are allowed at once. A recommended value is 8 times the number of cores present on the machine.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0EYHA">The next option is common to both the Thrift and CQL APIs:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="color: #000000; font-family: &quot;Museo Sans For Dell Regular&quot;; font-size: 11pt">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0EXHA">rpc_address</a></span><span class="Code_char" style="color: #000000; font-family: &quot;Museo Sans For Dell Regular&quot;; font-size: 11pt">: This value controls the address(es) to which Cassandra binds when listening for client connections. The same value is used to control both the Thrift and CQL APIs. The value </span><span class="Code_char">localhost</span><span class="Code_char" style="color: #000000; font-family: &quot;Museo Sans For Dell Regular&quot;; font-size: 11pt"> will allow only local connections. A specific IP address can be used, or the address </span><span class="Code_char">0.0.0.0</span><span class="Code_char" style="color: #000000; font-family: &quot;Museo Sans For Dell Regular&quot;; font-size: 11pt"> can be used to cause Cassandra to accept connections on all network interfaces.</span></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><span class="Code_char" style="color: #000000; font-family: &quot;Museo Sans For Dell Regular&quot;; font-size: 11pt"><a name="pID0EWHA">The next options are specific to the Thrift API:</a></span></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="color: #000000; font-family: &quot;Museo Sans For Dell Regular&quot;; font-size: 11pt">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0EVHA">start_rpc</a></span><span class="Code_char" style="color: #000000; font-family: &quot;Museo Sans For Dell Regular&quot;; font-size: 11pt">: When </span><span class="Code_char">true</span><span class="Code_char" style="color: #000000; font-family: &quot;Museo Sans For Dell Regular&quot;; font-size: 11pt">, this option causes Cassandra to initialize the Thrift API.</span></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0EUHA">rpc_port</a></span>: This is the Thrift API port that applications such as Doradus connect to. You can change it from its default of <span class="Code_char">9160</span>, but it should be the same on all nodes. (And you must configure Doradus to know what port to use.)</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0ETHA">thrift_framed_transport_size_in_mb</a></span>: This value controls the maximum size of a Thrift message that Cassandra will accept. The default (16MB) is often too small for Doradus applications that use “batch updates”. A good idea is to increase this to 160MB.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0ESHA">The next options are specific to the CQL API:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0ERHA">start_native_transport</a></span>: When this option is <span class="Code_char">true</span>, Cassandra initializes the CQL API. </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0EQHA">native_transport_port</a></span>: This is the CQL API port that applications such as Doradus connect to. You can change it from its default of <span class="Code_char">9042</span>, but it should be the same on all nodes. If you configure Doradus to use the CQL API, its configuration must match this value.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

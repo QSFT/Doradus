@@ -1,0 +1,22 @@
+function FileData_Pairs(x)
+{
+x.t("installed","managed");
+x.t("http://commons.apache.org/proper/commons-daemon/procrun.html","information");
+x.t("doradus","installed");
+x.t("doradus","windows");
+x.t("doradus","running");
+x.t("installing","running");
+x.t("daemon","component");
+x.t("component","http://commons.apache.org/proper/commons-daemon/procrun.html");
+x.t("managed","service");
+x.t("windows","doradus");
+x.t("windows","service");
+x.t("running","doradus");
+x.t("service","installing");
+x.t("service","windows");
+x.t("service","running");
+x.t("service","using");
+x.t("using","apache");
+x.t("apache","commons");
+x.t("commons","daemon");
+}

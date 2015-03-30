@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Securing the Cassandra API</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.56.html">Cassandra Configuration and Operation</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.60.html">Cassandra Configuration Files</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.63.html">Cassandra Security Options</a> : Securing the Cassandra API</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_4"><a name="pID0E0KD0HA">Securing the Cassandra API</a></div>
+      <div class="Normal"><a name="pID0E0JD0HA">Either the Cassandra Thrift or CQL API can be used by Doradus. By default, both APIs use an unencrypted connection and allow any process to connect and authenticate. To prevent unauthorized applications from directly accessing Cassandra, you can enable TLS.</a></div>
+      <div class="Normal"><a name="pID0E0ID0HA">The general steps for enabling TLS are described below:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0HD0HA">In the </a><span class="Code_char">cassandra.yaml</span> file on each Cassandra node: enable TLS by setting <span class="Code_char">enabled</span> to <span class="Code_char">true</span> under <span class="Code_char">client_encryption_options</span>. Require client authentication by setting <span class="Code_char">require_client_auth</span> to <span class="Code_char">true</span>. When client authentication is enabled, the <span class="Code_char">truststore</span> and <span class="Code_char">truststore_password</span> options must also be set. Finally, <span class="Code_char">cipher_suites</span> should be set to one or more cipher suites that are accessible to the JRE. An example of the required settings is shown below:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0GD0HA">client_encryption_options:</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0FD0HA">    enabled: true</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ED0HA">    keystore: ../conf/.keystore</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0DD0HA">    keystore_password: cassandra</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0CD0HA">    require_client_auth: true</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0BD0HA">    truststore: conf/.truststore</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0AD0HA">    truststore_password: cassandra</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E06C0HA">    cipher_suites: [TLS_RSA_WITH_AES_128_CBC_SHA]</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E05C0HA">Create a certificate that will be used by Doradus and add it to the Cassandra truststore on each node.</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E04C0HA">In the doradus.yaml file for each Doradus instance: enable TLS by setting </a><span class="Code_char">dbtls</span> to <span class="Code_char">true</span>. Finally, set <span class="Code_char">dbtls_cipher_suites</span> to the same cipher(s) defined for Cassandra. An example of these settings is shown below:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03C0HA">dbtls: true</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E02C0HA">dbtls_cipher_suites: [TLS_RSA_WITH_AES_128_CBC_SHA]</a></div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">4.	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><a name="pID0E01C0HA">Add the certificate created in step 2 to the keystore for each Doradus instance. This requires that the </a><span class="Code_char">keystore</span> and <span class="Code_char">keystorepassword</span> in each doradus.yaml file is also set.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0ZC0HA">More information about enabling TLS and creating certificates can be found in documentation such as the following:</a></div>
+      <div class="Normal" style="margin-left: 18pt"><span class="Hyperlink"><a href="http://www.datastax.com/documentation/cassandra/2.0/cassandra/security/secureSSLClientToNode_t.html" target="external_window" name="pID0E0YC0HA">http://www.datastax.com/documentation/cassandra/2.0/cassandra/security/secureSSLClientToNode_t.html</a></span></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

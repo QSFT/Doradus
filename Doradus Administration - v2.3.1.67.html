@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Configuring Cassandra for Clusters</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.56.html">Cassandra Configuration and Operation</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.60.html">Cassandra Configuration Files</a> : Configuring Cassandra for Clusters</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0PB0HA">Configuring Cassandra for Clusters</a></div>
+      <div class="Normal"><a name="pID0E0OB0HA">By default, Cassandra assumes that it is operating as a stand-alone node. It must be configured to operate in a cluster. The following </a><span class="Code_char">cassandra.yaml</span> options affect a node’s participation in a cluster:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0NB0HA">cluster_name</a></span>: All nodes in the cluster must have the same name, which differentiates the cluster from other nodes that might be working in the same network or even on the same machine. The default name is “Test Cluster”, so you should change this to something else like “Doradus Cluster”.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0MB0HA">initial_token</a></span>: This value defines the beginning range of key values for which the node will be the primary owner. It is not set by default, and it <span style="font-style: italic">may</span> be valid to leave it unset when configuring a new node. However, for a “balanced” cluster, you will need to set this value for each node.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0LB0HA">seeds</a></span>: Seeds are IP addresses of neighboring nodes that this node can contact using the gossip protocol. The addresses provide only an initial set: after a node is running, it will memorize the addresses of other nodes in the network and contact them when necessary. The seeds are therefore necessary for the initial execution of a new node. Cassandra provides a generalized “seed provider” interface, but the built-in “simple seed provider” is sufficient for most situations.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0KB0HA">listen_address</a></span>: This is the IP address that tells other nodes what IP address to use to communicate to this node. To participate in a cluster, you must change this from its default of “localhost”. A host name can be used but is not recommended. The “any address” 0.0.0.0 will not work. You should use a static IP address visible to all other nodes. If the machine is multi-homed, a non-externally visible address (192.x or 10.x) is a good choice.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0JB0HA">partitioner</a></span>: Beginning with the Cassandra 1.2 release, the default for this parameter is now <span class="Code_char">Murmur3Partitioner</span>. This random partitioning algorithm is more efficient than the older <span class="Code_char">RandomPartitioner</span> scheme, although the two are incompatible. All nodes in the cluster should use the same partitioning scheme. If you upgrade from an older Cassandra release, you’ll need to ensure this parameter matches your existing value.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0IB0HA">For more details on Cassandra configuration options, see </a><span class="Hyperlink"><a href="http://wiki.apache.org/cassandra/Operations" target="external_window">http://wiki.apache.org/cassandra/Operations</a></span>. The Wiki site also has information on topics such as:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0HB0HA">Adding new nodes to an existing cluster</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0GB0HA">Migrating from the older to newer random partitioning scheme</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><a name="pID0E0FB0HA">Recovering a node that has died</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><a name="pID0E0EB0HA">Removing a node from the cluster</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><a name="pID0E0DB0HA">Changing a cluster’s replication factor</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><a name="pID0E0CB0HA">Deploying larger clusters within multiple </a><span style="font-style: italic">racks</span> (cabinets) and even <span style="font-style: italic">data centers</span></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0BB0HA">In addition to the Wiki site, there are several online sources and books on Cassandra configuration such as:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="color: #000000">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0AB0HA">The Cassandra web site </a><span class="Hyperlink"><a href="http://cassandra.apache.org/" target="external_window">http://cassandra.apache.org/</a></span> and especially the Operations page: <span class="Hyperlink"><a href="http://wiki.apache.org/cassandra/Operations" target="external_window">http://wiki.apache.org/cassandra/Operations</a></span></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E6HA">The Planet Cassandra user community site: </a><span class="Hyperlink"><a href="http://planetcassandra.org/" target="external_window">http://planetcassandra.org/</a></span></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E5HA">The Datastax web site </a><span class="Hyperlink"><a href="http://www.datastax.com/" target="external_window">http://www.datastax.com/</a></span> and its online documents.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="color: #000000">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E4HA">Books such as </a><span class="Hyperlink" style="font-style: italic"><a href="http://www.amazon.com/Cassandra-Definitive-Guide-Eben-Hewitt/dp/1449390412/ref=sr_1_1?s=books&amp;ie=UTF8&amp;qid=1345667699&amp;sr=1-1&amp;keywords=cassandra+database" target="external_window">Cassandra: The Definitive Guide</a></span> and <span class="Hyperlink" style="font-style: italic"><a href="http://www.amazon.com/Cassandra-Performance-Cookbook-Edward-Capriolo/dp/1849515123/ref=sr_1_2?s=books&amp;ie=UTF8&amp;qid=1345667699&amp;sr=1-2&amp;keywords=cassandra+database" target="external_window">Cassandra High Performance Cookbook</a></span></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

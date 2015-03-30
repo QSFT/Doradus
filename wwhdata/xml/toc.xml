@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WebWorksHelpTOC version="5.0" xmlns="urn:WebWorks-Help-TOC-Schema">
+  <i t="Overview" l="1">
+    <i t="Recent Changes" l="2" />
+  </i>
+  <i t="Installing and Running Doradus" l="3">
+    <i t="Downloading Cassandra" l="4" />
+    <i t="Downloading Doradus" l="5" />
+    <i t="Running Doradus Stand-Alone" l="6" />
+    <i t="Running Doradus as a Windows Service" l="7" />
+    <i t="Running Doradus as a Daemon" l="8" />
+    <i t="Embedding Doradus In Another Application" l="9" />
+  </i>
+  <i t="Deployment Guidelines" l="10">
+    <i t="Basic Architecture" l="11" />
+    <i t="Minimal Configuration" l="12" />
+    <i t="Two Node Configuration" l="13" />
+    <i t="Expanding the Cluster" l="14" />
+    <i t="Multi-Data Center Deployments" l="15" />
+    <i t="Hardware Recommendations" l="16" />
+    <i t="Security Considerations" l="17">
+      <i t="Protocols" l="18" />
+      <i t="Configuration and Data Files" l="19" />
+      <i t="Best Practices" l="20" />
+    </i>
+  </i>
+  <i t="Multi-Tenant Configuration" l="21">
+    <i t="Tenant Mapping to Cassandra" l="22" />
+    <i t="Single-Tenant Operation" l="23" />
+    <i t="Multi-Tenant Operation" l="24" />
+    <i t="Managing Tenants" l="25">
+      <i t="Creating a New Tenant" l="26" />
+      <i t="List All Tenants" l="27" />
+      <i t="List Tenant" l="28" />
+      <i t="Modify Tenant" l="29" />
+      <i t="Delete Tenant" l="30" />
+    </i>
+    <i t="Application Commands in Multi-Tenant Mode" l="31" />
+    <i t="System Commands in Multi-Tenant Mode" l="32" />
+  </i>
+  <i t="Doradus Configuration and Operation" l="33">
+    <i t="Runtime Memory" l="34" />
+    <i t="Doradus Configuration Files" l="35">
+      <i t="Setting Doradus Logging Options" l="36" />
+      <i t="Doradus Security Options" l="37">
+        <i t="Securing the Doradus REST API" l="38" />
+        <i t="Securing the Doradus JMX API" l="39" />
+        <i t="Using a Secured CQL API" l="40" />
+      </i>
+      <i t="Configuring Doradus for Clusters" l="41" />
+      <i t="Configuration Parameters in doradus.yaml" l="42">
+        <i t="Multi-tenant Mode Parameters" l="43" />
+        <i t="Default Services Parameter" l="44" />
+        <i t="Storage Services Parameter" l="45" />
+        <i t="Cassandra ColumnFamily Parameters" l="46" />
+        <i t="Cassandra Connection Parameters" l="47" />
+        <i t="Doradus REST API Parameters" l="48" />
+        <i t="Doradus Query Parameters" l="49" />
+        <i t="OLAP Parameters" l="50" />
+        <i t="Spider Parameters" l="51" />
+      </i>
+    </i>
+    <i t="Managing Doradus via JMX" l="52">
+      <i t="ServerMonitor" l="53" />
+      <i t="StorageManager" l="54" />
+    </i>
+  </i>
+  <i t="Cassandra Configuration and Operation" l="55">
+    <i t="Cassandra Script Files" l="56">
+      <i t="Setting Cassandra Runtime Memory" l="57" />
+      <i t="Disabling Assertions" l="58" />
+    </i>
+    <i t="Cassandra Configuration Files" l="59">
+      <i t="Setting Cassandra Logging Options" l="60" />
+      <i t="Setting Cassandra Data File Locations" l="61" />
+      <i t="Cassandra Security Options" l="62">
+        <i t="Securing the Cassandra API" l="63" />
+        <i t="Securing the Cassandra JMX Protocol" l="64" />
+        <i t="Securing the Cassandra Gossip Protocol" l="65" />
+      </i>
+      <i t="Configuring Cassandra for Clusters" l="66" />
+      <i t="Other Cassandra Configuration Options" l="67" />
+    </i>
+    <i t="Monitoring Cassandra" l="68" />
+  </i>
+</WebWorksHelpTOC>

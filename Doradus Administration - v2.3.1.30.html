@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Modify Tenant</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.22.html">Multi-Tenant Configuration</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.26.html">Managing Tenants</a> : Modify Tenant</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0GN0HA">Modify Tenant</a></div>
+      <div class="Normal"><a name="pID0E0FN0HA">An existing tenant can be modified via the following REST command:</a></div>
+      <div class="Code"><a name="pID0E0EN0HA">PUT /_tenants/{tenant}</a></div>
+      <div class="Normal"><a name="pID0E0DN0HA">Where {tenant} is the tenant name. Currently, the only changed allowed are modifications to the tenant’s users: New users can be added and the password of existing users can be modified. The command must include an XML or JSON document with the same format used to create a tenant. Example:</a></div>
+      <div class="Code"><a name="pID0E0CN0HA">&lt;tenant&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0BN0HA">&lt;users&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0AN0HA">&lt;user name="Katniss" password="MockingJay"/&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E06M0HA">&lt;user name="Rumpleteazer" password="Mongojerrie"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E05M0HA">&lt;/users&gt;</a></div>
+      <div class="Code"><a name="pID0E04M0HA">&lt;/tenant&gt;</a></div>
+      <div class="Normal"><a name="pID0E03M0HA">In this example, the password for user </a><span class="Code_char">Katniss</span> is modified and a new user <span class="Code_char">Rumpleteazer</span> is added.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

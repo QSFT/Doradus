@@ -1,0 +1,25 @@
+function FileData_Pairs(x)
+{
+x.t("available","apache");
+x.t("instructions","downloading");
+x.t("doradus","works");
+x.t("doradus","downloading");
+x.t("cassandra","available");
+x.t("cassandra","instructions");
+x.t("cassandra","installing");
+x.t("cassandra","web");
+x.t("cassandra","downloading");
+x.t("installing","running");
+x.t("2.0.x","branch");
+x.t("web","site");
+x.t("http://cassandra.apache.org/","doradus");
+x.t("works","2.0");
+x.t("running","doradus");
+x.t("site","http://cassandra.apache.org/");
+x.t("tested","2.0.x");
+x.t("downloading","cassandra");
+x.t("2.0","versions");
+x.t("apache","cassandra");
+x.t("versions","higher");
+x.t("higher","tested");
+}
