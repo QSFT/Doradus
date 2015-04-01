@@ -14,36 +14,28 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.core;
+package com.dell.doradus.service.spider;
 
+import com.dell.doradus.common.AggregateResult;
 import com.dell.doradus.common.ApplicationDefinition;
-import com.dell.doradus.common.DBObject;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.TableDefinition;
-import com.dell.doradus.service.StorageService;
-import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.RESTCallback;
-import com.dell.doradus.service.schema.SchemaService;
 
 /**
- * Implements the REST command: GET /{application}/{table}/{ID}. Verifies the application
- * and table and passes the command to the application's registered storage service.
+ * Implements the REST command: GET /{application}/{table}/_aggregate?{params}.
  */
-public class GetObjectCmd extends RESTCallback {
+public class AggregateURICmd extends RESTCallback {
 
     @Override
     public RESTResponse invoke() {
         ApplicationDefinition appDef = m_request.getAppDef();
         TableDefinition tableDef = m_request.getTableDef(appDef);
-        String objID = m_request.getVariableDecoded("ID");
-        StorageService storageService = SchemaService.instance().getStorageService(appDef);
-        DBObject dbObj = storageService.getObject(tableDef, objID);
-        if (dbObj == null) {
-            throw new NotFoundException("No object found with ID: " + objID);
-        }
-        String body = dbObj.toGroupedDoc(tableDef).toString(m_request.getOutputContentType());
+        String params = m_request.getVariable("params");    // leave encoded
+        AggregateResult aggResult = SpiderService.instance().aggregateQueryURI(tableDef, params);
+        String body = aggResult.toDoc().toString(m_request.getOutputContentType());
         return new RESTResponse(HttpCode.OK, body, m_request.getOutputContentType());
     }   // invoke
 
-}   // class GetObjectCmd
+}   // class AggregateURICmd 

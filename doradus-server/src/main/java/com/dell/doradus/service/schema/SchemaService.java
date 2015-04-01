@@ -79,7 +79,7 @@ public class SchemaService extends Service {
      * been initialized yet.
      * 
      * @return  The singleton instance of the StorageService.
-     */
+     */ 
     public static SchemaService instance() {
         return INSTANCE;
     } // instance
@@ -87,7 +87,7 @@ public class SchemaService extends Service {
     // Called once before startService. 
     @Override
     public void initService() {
-        RESTService.instance().registerRESTCommands(REST_RULES);
+        RESTService.instance().registerGlobalCommands(REST_RULES);
     }   // initService
 
     // Wait for the DB service to be up and check application schemas.
@@ -266,12 +266,13 @@ public class SchemaService extends Service {
     // Check to see if the storage manager is active for each application.
     private void checkAppStores() {
         m_logger.info("The following tenants and applications are defined:");
-        int totalApps = 0;
+        int totalTenants = 0;
         for (Tenant tenant : DBService.instance().getTenants()) {
+            totalTenants++;
             m_logger.info("   Tenant: {}", tenant.getKeyspace());
             Collection<ApplicationDefinition> apps = findAllApplications(tenant);
             if (apps.size() == 0) {
-                m_logger.info("      <none>");
+                m_logger.info("      <no applications>");
             }
             for (ApplicationDefinition appDef : findAllApplications(tenant)) {
                 String appName = appDef.getAppName();
@@ -284,10 +285,9 @@ public class SchemaService extends Service {
                                     appDef.getAppName(), ssName);
                 }
             }
-            totalApps += apps.size();
         }
-        if (totalApps == 0) {
-            m_logger.info("   <none>");
+        if (totalTenants == 0) {
+            m_logger.info("   <no tenants>");
         }
     }   // checkAppStores
     

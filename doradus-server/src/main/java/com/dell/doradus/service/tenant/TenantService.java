@@ -77,7 +77,7 @@ public class TenantService extends Service {
         if (ServerConfig.getInstance().multitenant_mode && !ServerConfig.getInstance().use_cql) {
             throw new RuntimeException("Multitenant_mode currently requires use_cql=true");
         }
-        RESTService.instance().registerRESTCommands(REST_RULES);
+        RESTService.instance().registerGlobalCommands(REST_RULES);
     }
 
     @Override
@@ -88,25 +88,21 @@ public class TenantService extends Service {
     @Override
     protected void stopService() { }
 
-    //----- TenantService services
+    //----- Tenant management methods
 
     /**
-     * Indicate if the given tenant exists. This means it's keyspace exists and, for
-     * non-default tenants, a tenant definition exists.
+     * Get the {@link TenantDefinition} of the tenant with the given name, if it exists.
      * 
-     * @param tenant    Tenant to test.
-     * @return          True if it exists and has been initialized.
+     * @param tenantName    Candidate tenant name.
+     * @return              Definition of tenant if it exists, otherwise null.
      */
-    public boolean tenantExists(Tenant tenant) {
+    public TenantDefinition getTenantDefinition(String tenantName) {
         checkServiceState();
-        synchronized (m_tenantMap) {
-            if (m_tenantMap.keySet().contains(tenant.getKeyspace())) {
-                return true;
-            }
-            refreshTenantMap();
-            return m_tenantMap.keySet().contains(tenant.getKeyspace());
-        }
-    }   // tenantExists
+        Utils.require(ServerConfig.getInstance().multitenant_mode,
+                      "This command is not valid in single-tenant mode");
+        Tenant tenant = new Tenant(tenantName);
+        return getTenantDefinition(tenant);
+    }   // getTenantDefinition
 
     /**
      * Ensure that the default tenant exists, which requires no credentials to access.
@@ -166,80 +162,75 @@ public class TenantService extends Service {
         Utils.require(ServerConfig.getInstance().multitenant_mode,
                       "This command is not valid in single-tenant mode");
         // TODO
+        // Be sure to delete from tenant map.
         throw new RuntimeException("Not yet implemented");
     }   // deleteTenant
+
+    //----- Tenant authorization
     
     /**
-     * Validate that the given authorization header contains a valid userid/password of a
-     * system user. The given authorization string must be the value of an "Authorization"
-     * header in the format "Basic xxx" where xxx is the base64-encoded value of
-     * "userid:password" (including the colon). If the user ID/password are not valid
-     * system credentials, a {@link UnauthorizedException} exception is thrown. If the
-     * user ID/password are valid, the default tenant is returned.
+     * Indicate if the given tenant exists. This means it's keyspace exists and, for
+     * non-default tenants, a tenant definition exists.
      * 
-     * @param  authorizationHeader      Value from "Authorization" header or null.
-     * @return
-     * @throws UnauthorizedException
+     * @param tenant    Tenant to test.
+     * @return          True if it exists and has been initialized.
      */
-    public Tenant validateSystemUser(String authorizationHeader) throws UnauthorizedException {
+    public boolean tenantExists(Tenant tenant) {
         checkServiceState();
-        Utils.require(ServerConfig.getInstance().multitenant_mode,
-                      "This command is not valid in single-tenant mode");
-        Tenant tenant = validateSystemAuthString(authorizationHeader);
-        if (tenant == null) {
-            throw new UnauthorizedException("Unrecognized system user id/password");
+        synchronized (m_tenantMap) {
+            if (m_tenantMap.keySet().contains(tenant.getKeyspace())) {
+                return true;
+            }
+            refreshTenantMap();
+            return m_tenantMap.keySet().contains(tenant.getKeyspace());
         }
-        return tenant;
-    }   // validateSystemUser
+    }   // tenantExists
 
     /**
-     * Validate access to the given tenant name using the given user ID and password. If
-     * the tenant name is unknown or the user ID/password is not valid for the tenant, an
-     * {@link UnauthorizedException} exception is thrown.
-     *  
-     * @param  tenantName               Name of a tenant.  
-     * @param  userid                   Candidate user ID.
-     * @param  password                 Candidate user password. 
-     * @return                          {@link Tenant} that represents specified tenant.
-     * @throws UnauthorizedException    If the tenant name is unknown or the user ID or
-     *                                  password is not valid.
+     * Return true if the given tenant is the default tenant.
+     * 
+     * @param   tenant  Candidate {@link Tenant}.
+     * @return          True if the tenant's name matches the configured default tenant.
      */
-    public Tenant validateTenant(String tenantName, String userid, String password) throws UnauthorizedException {
-        checkServiceState();
-        Utils.require(ServerConfig.getInstance().multitenant_mode,
-                      "This command is not valid in single-tenant mode");
-        assert !Utils.isEmpty(tenantName);
-        Tenant tenant = validateTenantUserPassword(tenantName, userid, password);
-        if (tenant == null) {
-            throw new UnauthorizedException("Unrecognized tenant user id/password");
-        }
-        return tenant;
-    }   // validateTenant
+    public boolean isDefaultTenant(Tenant tenant) {
+        return tenant.getKeyspace().equals(ServerConfig.getInstance().keyspace);
+    }
     
     /**
-     * Validate access to the given tenant name. The given authorization string must be
-     * the value of an "Authorization" header in the format "Basic xxx" where xxx is the
-     * base64-encoded value of "userid:password" (including the colon). If the tenant name
-     * is unknown or the user ID/password is not valid for the tenant, an
-     * {@link UnauthorizedException} exception is thrown.
-     *  
-     * @param  tenantName               Name of a tenant.
-     * @param  authorizationHeader      Value from "Authorization" header or null.
-     * @return                          {@link Tenant} that represents specified tenant.
-     * @throws UnauthorizedException    If the tenant name is unknown or the userid or
-     *                                  password is not valid.
+     * Verify that the given tenant can be accessed using the given Authorization header
+     * and command privilege. isPrivCommand should be true if the request is accessing a
+     * privileged command. This method throws an {@link UnauthorizedException} if the
+     * given credentials are invalid for the tenant and type of command privilege being
+     * requested.
+     * 
+     * @param tenant        {@link Tenant} being accessed.
+     * @param authHeader    Value of Authorization header, if any.
+     * @param isPrivCommand True if a privileged command is being accessed.
+     * @throws              UnauthorizedException if the given credentials are missing or
+     *                      invalid for the given request.
      */
-    public Tenant validateTenant(String tenantName, String authorizationHeader) throws UnauthorizedException {
-        checkServiceState();
-        Utils.require(ServerConfig.getInstance().multitenant_mode,
-                      "This command is not valid in single-tenant mode");
-        assert !Utils.isEmpty(tenantName);
-        Tenant tenant = validateAuthString(tenantName, authorizationHeader);
-        if (tenant == null) {
-            throw new UnauthorizedException("Unrecognized tenant user id/password");
+    public void validateTenantAccess(Tenant tenant, String authHeader, boolean isPrivCommand)
+            throws UnauthorizedException {
+        if (ServerConfig.getInstance().multitenant_mode) {
+            if (isPrivCommand) {
+                if (!isValidSystemAuthString(authHeader)) {
+                    throw new UnauthorizedException("Unrecognized system user id/password");
+                }
+            } else if (isDefaultTenant(tenant)) {
+                if (ServerConfig.getInstance().disable_default_keyspace) {
+                    throw new UnauthorizedException("Access to the default tenant is disabled");
+                } else {
+                    // All credentials are allowed for non-priv commands to default tenant
+                }
+            } else {
+                if (!isValidTenantAuthString(tenant.getKeyspace(), authHeader)) {
+                    throw new UnauthorizedException("Unrecognized system user id/password");
+                }
+            }
+        } else if (!isDefaultTenant(tenant)) {
+            throw new UnauthorizedException("This command is not valid in single-tenant mode");
         }
-        return tenant;
-    }   // validateTenant
+    }   // validateTenantAccess
     
     /**
      * Return a {@link Tenant} that represents the default keyspace. This method performs
@@ -252,20 +243,6 @@ public class TenantService extends Service {
         checkServiceState();
         return new Tenant(ServerConfig.getInstance().keyspace);
     }   // getDefaultTenant
-
-    /**
-     * Get the {@link TenantDefinition} of the tenant with the given name, if it exists.
-     * 
-     * @param tenantName    Candidate tenant name.
-     * @return              Definition of tenant if it exists, otherwise null.
-     */
-    public TenantDefinition getTenantDefinition(String tenantName) {
-        checkServiceState();
-        Utils.require(ServerConfig.getInstance().multitenant_mode,
-                      "This command is not valid in single-tenant mode");
-        Tenant tenant = new Tenant(tenantName);
-        return getTenantDefinition(tenant);
-    }   // getTenantDefinition
 
     //----- Private methods
 
@@ -320,75 +297,71 @@ public class TenantService extends Service {
     }   // storeTenantDefinition
 
     // Validate the given Authorization header string as a system user.  
-    private Tenant validateSystemAuthString(String authString) {
-        Tenant tenant = null;
+    private boolean isValidSystemAuthString(String authString) {
         if (Utils.isEmpty(authString)) {
             m_logger.debug("Validation failed for system user: no Authorization header");
+            return false;
         } else if (!authString.toLowerCase().startsWith("basic ")) {
             m_logger.debug("Validation failed for system user: unknown/unsupported authorization type: {}",
                            authString);
+            return false;
         } else {
             String decoded = Utils.base64ToString(authString.substring("basic ".length()));
             int inx = decoded.indexOf(':');
             String userid = inx < 0 ? decoded : decoded.substring(0, inx);
             String password = inx < 0 ? "" : decoded.substring(inx + 1);
-            tenant = validateSystemUserPassword(userid, password);
+            return isValidSystemUserPassword(userid, password);
         }
-        return tenant;
-    }   // validateSystemAuthString
+    }   // isValidSystemAuthString
     
     // Validate the given Authorization header string.  
-    private Tenant validateAuthString(String tenantName, String authString) {
-        Tenant tenant = null;
+    private boolean isValidTenantAuthString(String tenantName, String authString) {
         if (Utils.isEmpty(authString)) {
             m_logger.debug("Validation failed for tenant '{}': no Authorization header", tenantName);
+            return false;
         } else if (!authString.toLowerCase().startsWith("basic ")) {
             m_logger.debug("Validation failed for tenant '{}': unknown/unsupported authorization type: {}",
                            tenantName, authString);
+            return false;
         } else {
             String decoded = Utils.base64ToString(authString.substring("basic ".length()));
             int inx = decoded.indexOf(':');
             String userid = inx < 0 ? decoded : decoded.substring(0, inx);
             String password = inx < 0 ? "" : decoded.substring(inx + 1);
-            tenant = validateTenantUserPassword(tenantName, userid, password);
+            return isValidTenantUserPassword(tenantName, userid, password);
         }
-        return tenant;
-    }   // validateAuthString
+    }   // isValidTenantAuthString
     
     // Validate the given system user ID and password.
-    private Tenant validateSystemUserPassword(String userid, String password) {
-        if (isValidSystemCredentials(userid, password)) {
-            return getDefaultTenant();
+    private boolean isValidSystemUserPassword(String userid, String password) {
+        if (!isValidSystemCredentials(userid, password)) {
+            m_logger.debug("Validation failed for system user: invalid userid/password");
+            return false;
         }
-        m_logger.debug("Validation failed for system user: invalid userid/password");
-        return null;
-    }   // validateSystemUserPassword
+        return true;
+    }   // isValidSystemUserPassword
     
     // Return true if the given userid/password are valid system credentials.
     private boolean isValidSystemCredentials(String userid, String password) {
-        // TODO: For now, use dbuser and dbpassword to access the default keyspace.
         return userid.equals(ServerConfig.getInstance().dbuser) &&
                password.equals(ServerConfig.getInstance().dbpassword);
     }   // isValidSystemCredentials
     
     // Validate the given user ID and password.
-    private Tenant validateTenantUserPassword(String tenantName, String userid, String password) {
-        // TODO: Probably temporary: allow system users to access all tenants
-        if (isValidSystemCredentials(userid, password)) {
-            return new Tenant(tenantName);
+    private boolean isValidTenantUserPassword(String tenantName, String userid, String password) {
+        if (!isValidSystemCredentials(userid, password)) {
+            TenantDefinition tenantDef = getTenantDef(tenantName);
+            if (tenantDef == null) {
+                m_logger.debug("Validation failed for tenant '{}': unknown tenant", tenantName);
+                return false;
+            } else if (!tenantDef.getUsers().containsKey(userid) ||
+                       !tenantDef.getUsers().get(userid).equals(password)) {
+                m_logger.debug("Validation failed for tenant '{}': invalid userid/password", tenantName);
+                return false;
+            }
         }
-        TenantDefinition tenantDef = getTenantDef(tenantName);
-        if (tenantDef == null) {
-            m_logger.debug("Validation failed for tenant '{}': unknown tenant", tenantName);
-            return null;
-        }
-        if (!tenantDef.getUsers().containsKey(userid) ||
-            !tenantDef.getUsers().get(userid).equals(password)) {
-            m_logger.debug("Validation failed for tenant '{}': invalid userid/password", tenantName);
-            return null;
-        }
-        return new Tenant(tenantDef.getName());
-    }   // validateTenantUserPassword
+        return true;
+    }   // isValidTenantUserPassword
 
     // Get the TenantDefinition for the given tenant. Use the cached tenant map but
     // refresh it if the tenant is unknown. If it's stil unknown, return null. 

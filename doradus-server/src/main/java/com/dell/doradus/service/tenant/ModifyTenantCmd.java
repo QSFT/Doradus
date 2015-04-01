@@ -32,14 +32,10 @@ public class ModifyTenantCmd extends UNodeInOutCallback {
         Utils.require(ServerConfig.getInstance().multitenant_mode,
                       "This command is only allowed in multi-tenant mode; see 'multitenant_mode' parameter");
         String tenantParam = m_request.getVariableDecoded("tenant");
-        assert tenantParam != null;
-        
-        // Ensure current user is authorized for this tenant.
-        String authorizationHeader = m_request.getRequestHeader("Authorization");
-        TenantService.instance().validateTenant(tenantParam, authorizationHeader);
-        
         TenantDefinition tenantDef = new TenantDefinition();
         tenantDef.parse(inNode);
+        Utils.require(tenantDef.getName().equals(tenantParam),
+                      "Cannot change tenant name: " + tenantDef.getName());
         tenantDef = TenantService.instance().modifyTenant(tenantDef);
         return tenantDef.toDoc();
     }

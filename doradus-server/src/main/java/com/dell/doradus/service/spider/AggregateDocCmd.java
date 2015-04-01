@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.core;
+package com.dell.doradus.service.spider;
 
 import com.dell.doradus.common.AggregateResult;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
-import com.dell.doradus.service.StorageService;
 import com.dell.doradus.service.rest.UNodeInOutCallback;
-import com.dell.doradus.service.schema.SchemaService;
 
 /**
  * Implements the REST commands: GET or PUT /{application}/{table}/_aggregate. The
- * aggregate query parameters are passed in an input entity. Verifies the application and
- * table, parses the input entity, and passes the command to the application's registered
- * storage service.
+ * aggregate query parameters are passed in an input entity.
  */
 public class AggregateDocCmd extends UNodeInOutCallback {
 
@@ -37,8 +33,7 @@ public class AggregateDocCmd extends UNodeInOutCallback {
         ApplicationDefinition appDef = m_request.getAppDef();
         TableDefinition tableDef = m_request.getTableDef(appDef);
         UNode rootNode = UNode.parse(m_request.getInputBody(), m_request.getInputContentType());
-        StorageService storageService = SchemaService.instance().getStorageService(appDef);
-        AggregateResult aggResult = storageService.aggregateQueryDoc(tableDef, rootNode);
+        AggregateResult aggResult = SpiderService.instance().aggregateQueryDoc(tableDef, rootNode);
         return aggResult.toDoc();
     }   // invokeUNodeOut
 

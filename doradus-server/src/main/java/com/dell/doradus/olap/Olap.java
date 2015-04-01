@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.common.ApplicationDefinition;
-import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
@@ -38,7 +37,6 @@ import com.dell.doradus.olap.aggregate.AggregationRequestData;
 import com.dell.doradus.olap.aggregate.AggregationResult;
 import com.dell.doradus.olap.aggregate.DuplicationDetection;
 import com.dell.doradus.olap.aggregate.mr.MFAggregationBuilder;
-import com.dell.doradus.olap.builder.SegmentBuilder;
 import com.dell.doradus.olap.io.FileDeletedException;
 import com.dell.doradus.olap.io.VDirectory;
 import com.dell.doradus.olap.merge.MergeResult;
@@ -195,24 +193,6 @@ public class Olap {
 		segmentDir.create();
 		LOG.debug("add {} objects to {}/{} in {}", new Object[] { batch.size(), appDef.getAppName(), shard, t} );
 		return guid;
-	}
-
-	public String addSegment(ApplicationDefinition appDef, String shard, DBObjectBatch batch) {
-		return addSegment(appDef, shard, batch, true);
-	}
-	
-	public String addSegment(ApplicationDefinition appDef, String shard, DBObjectBatch batch, boolean overwrite) {
-	    Timer t = new Timer();
-	    VDirectory shardDir = getRoot(appDef).getDirectoryCreate(shard);
-		String prefix = overwrite ? "" : ".before.";
-	    String guid = prefix + Long.toString(System.currentTimeMillis(), 32) + "-" + UUID.randomUUID().toString();
-	    VDirectory segmentDir = shardDir.getDirectory(guid);
-        SegmentBuilder builder = new SegmentBuilder(appDef);
-        builder.add(batch);
-        builder.flush(segmentDir);
-	    segmentDir.create();
-	    LOG.debug("add {} objects to {}/{} in {}", new Object[] { batch.getObjectCount(), appDef.getAppName(), shard, t} );
-	    return guid;
 	}
 
 	public AggregationResult aggregate(ApplicationDefinition appDef, String table, OlapAggregate olapAggregate) {

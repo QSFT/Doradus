@@ -14,48 +14,58 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.core;
+package com.dell.doradus.service.olap;
 
 import java.io.Reader;
 import java.util.Map;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.BatchResult;
-import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.service.StorageService;
+import com.dell.doradus.olap.OlapBatch;
 import com.dell.doradus.service.rest.ReaderCallback;
-import com.dell.doradus.service.schema.SchemaService;
+import com.dell.doradus.service.rest.UNodeInCallback;
 
 /**
- * Implements the REST commands: PUT /{application}/{store} and
- * PUT /{application}/{store}?{params}. Verifies the given application and passes the
- * command to its registered storage service.
+ * Implements the REST command: POST /{application}/{shard}[?{params}].
  */
-public class UpdateObjectsCmd extends ReaderCallback {
+// TODO: Switch back to ReaderCallback when OlapBatch.parseJSON is fixed
+public class AddObjectsCmd extends UNodeInCallback /*ReaderCallback*/ {
 
     @Override
+    public RESTResponse invokeUNodeIn(UNode inNode) {
+      String shard = m_request.getVariableDecoded("shard");
+      ApplicationDefinition appDef = m_request.getAppDef();
+      
+      OlapBatch batch = OlapBatch.fromUNode(inNode);
+      Map<String, String> paramMap = Utils.parseURIQuery(m_request.getVariable("params"));
+      BatchResult batchResult = OLAPService.instance().addBatch(appDef, shard, batch, paramMap);
+      UNode outNode = batchResult.toDoc();
+      String body = outNode.toString(m_request.getOutputContentType());
+      return new RESTResponse(HttpCode.CREATED, body, m_request.getOutputContentType());
+    }
+
+//    @Override
     public RESTResponse invokeStreamIn(Reader reader) {
         Utils.require(reader != null, "This command requires an input entity");
+        String shard = m_request.getVariableDecoded("shard");
         ApplicationDefinition appDef = m_request.getAppDef();
-        String store = m_request.getVariableDecoded("store");
         
-        DBObjectBatch dbObjBatch = new DBObjectBatch();
+        OlapBatch batch = null;
         if (m_request.getInputContentType().isJSON()) {
-            dbObjBatch.parseJSON(reader);
+            batch = OlapBatch.parseJSON(reader);
         } else {
             UNode rootNode = UNode.parse(reader, m_request.getInputContentType());
-            dbObjBatch.parse(rootNode);
+            batch = OlapBatch.fromUNode(rootNode);
         }
 
         Map<String, String> paramMap = Utils.parseURIQuery(m_request.getVariable("params"));
-        StorageService storageService = SchemaService.instance().getStorageService(appDef);
-        BatchResult batchResult = storageService.updateBatch(appDef, store, dbObjBatch, paramMap);
+        BatchResult batchResult = OLAPService.instance().addBatch(appDef, shard, batch, paramMap);
         String body = batchResult.toDoc().toString(m_request.getOutputContentType());
-        return new RESTResponse(HttpCode.OK, body, m_request.getOutputContentType());
+        return new RESTResponse(HttpCode.CREATED, body, m_request.getOutputContentType());
     }   // invokeStreamIn
 
-}   // class UpdateObjectsCmd
+}   // class AddObjectsCmd

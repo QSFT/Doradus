@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.core;
+package com.dell.doradus.service.spider;
 
 import java.io.Reader;
-import java.util.Map;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.BatchResult;
@@ -26,21 +25,18 @@ import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.service.StorageService;
 import com.dell.doradus.service.rest.ReaderCallback;
-import com.dell.doradus.service.schema.SchemaService;
 
 /**
- * Implements the REST command: POST /{application}/{store}[?{params}. Verifies the given
- * application and passes the command to its registered storage service.
+ * Implements the REST command: POST /{application}/{table}.
  */
 public class AddObjectsCmd extends ReaderCallback {
 
     @Override
     public RESTResponse invokeStreamIn(Reader reader) {
         Utils.require(reader != null, "This command requires an input entity");
-        String store = m_request.getVariableDecoded("store");
         ApplicationDefinition appDef = m_request.getAppDef();
+        String table = m_request.getVariableDecoded("table");
         
         DBObjectBatch dbObjBatch = new DBObjectBatch();
         if (m_request.getInputContentType().isJSON()) {
@@ -50,9 +46,7 @@ public class AddObjectsCmd extends ReaderCallback {
             dbObjBatch.parse(rootNode);
         }
 
-        Map<String, String> paramMap = Utils.parseURIQuery(m_request.getVariable("params"));
-        StorageService storageService = SchemaService.instance().getStorageService(appDef);
-        BatchResult batchResult = storageService.addBatch(appDef, store, dbObjBatch, paramMap);
+        BatchResult batchResult = SpiderService.instance().addBatch(appDef, table, dbObjBatch);
         String body = batchResult.toDoc().toString(m_request.getOutputContentType());
         return new RESTResponse(HttpCode.CREATED, body, m_request.getOutputContentType());
     }   // invokeStreamIn

@@ -31,15 +31,16 @@ import org.apache.cassandra.utils.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.HttpDefs;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBNotAvailableException;
 import com.dell.doradus.service.db.DuplicateException;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.db.UnauthorizedException;
+import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.tenant.TenantService;
 
 /**
@@ -62,27 +63,8 @@ public class RESTServlet extends HttpServlet {
         try {
             long startNano = System.nanoTime();
             RESTService.instance().onNewrequest();
-
-            // Extract the query component of the request, if any, but move api, format,
-            // and tenant parameters to the variable map if present. This removes them
-            // from the URI pattern for matching.
-            Map<String, String> variableMap = new HashMap<String, String>();
-            String query = extractQueryParam(request, variableMap);
-            RESTCommand cmd = RESTService.instance().matchCommand(request.getMethod(),
-                                                                  request.getRequestURI(),
-                                                                  query,
-                                                                  variableMap);
-            if (cmd == null) {
-                throw new NotFoundException("Request does not match a known URI: " + request.getRequestURL());
-            }
-            Utils.require(cmd != null, "Request does not match a known URI: " + request.getRequestURL());
-            
-            Tenant tenant = getTenant(cmd, request, variableMap);
-            RESTRequest restRequest = new RESTRequest(tenant, request, variableMap);
-            RESTCallback callback = cmd.getNewCallback(restRequest);
-            RESTResponse restResponse = callback.invoke();
-            
-            if(restResponse.getCode().getCode() >= 300) {
+            RESTResponse restResponse = validateAndExecuteRequest(request);
+            if (restResponse.getCode().getCode() >= 300) {
                 RESTService.instance().onRequestRejected(restResponse.getCode().toString());
             } else {
                 RESTService.instance().onRequestSuccess(startNano);
@@ -161,29 +143,55 @@ public class RESTServlet extends HttpServlet {
     
     //----- Private methods
 
-    // Decide the Tenant context for this command and multi-tenant configuration options.
-    private Tenant getTenant(RESTCommand cmd, HttpServletRequest request, Map<String, String> variableMap) {
-        Tenant tenant = null;
-        String tenantName = variableMap.get("tenant");
-        String authorizationHeader = request.getHeader("Authorization");
-        if (ServerConfig.getInstance().multitenant_mode) {
-            if (cmd.isSystemCommand()) {
-                tenant = TenantService.instance().validateSystemUser(authorizationHeader);
-            } else {
-                if (Utils.isEmpty(tenantName)) {
-                    Utils.require(!ServerConfig.getInstance().disable_default_keyspace,
-                                  "'tenant' parameter is required for this command");
-                    tenant = TenantService.instance().getDefaultTenant();
-                } else {
-                    tenant = TenantService.instance().validateTenant(tenantName, authorizationHeader);
-                }
-            }
-        } else {
-            tenant = TenantService.instance().getDefaultTenant();
+    // Execute the given request and return a RESTResponse or throw an appropriate error.
+    private RESTResponse validateAndExecuteRequest(HttpServletRequest request) {
+        Map<String, String> variableMap = new HashMap<String, String>();
+        String query = extractQueryParam(request, variableMap);
+        Tenant tenant = getTenant(variableMap);
+        String uri = request.getRequestURI();
+        ApplicationDefinition appDef = getApplication(uri, tenant);
+        
+        RESTCommand cmd = RESTService.instance().matchCommand(appDef, request.getMethod(), uri, query, variableMap);
+        if (cmd == null) {
+            throw new NotFoundException("Request does not match a known URI: " + request.getRequestURL());
         }
-        return tenant;
-    }   // getTenant
+        validateTenantAccess(request, tenant, cmd);
+        
+        RESTRequest restRequest = new RESTRequest(tenant, appDef, request, variableMap);
+        RESTCallback callback = cmd.getNewCallback(restRequest);
+        return callback.invoke();
+    }
     
+    // Get the definition of the referenced application or null if there is none.
+    private ApplicationDefinition getApplication(String uri, Tenant tenant) {
+        if (uri.length() < 2 || uri.startsWith("/_")) {
+            return null;    // Non-application request
+        }
+        String[] pathNodes = uri.substring(1).split("/");
+        String appName = Utils.urlDecode(pathNodes[0]);
+        ApplicationDefinition appDef = SchemaService.instance().getApplication(tenant, appName);
+        if (appDef == null) {
+            throw new NotFoundException("Unknown application: " + appName);
+        }
+        return appDef;
+    }
+    
+    // Decide the Tenant context for this command and multi-tenant configuration options.
+    private Tenant getTenant(Map<String, String> variableMap) {
+        String tenantName = variableMap.get("tenant");
+        if (Utils.isEmpty(tenantName)) {
+            return TenantService.instance().getDefaultTenant();
+        } else {
+            return new Tenant(tenantName);    // might not exist
+        }
+    }
+
+    // Extract Authorization header, if any, and validate this command for the given tenant.
+    private void validateTenantAccess(HttpServletRequest request, Tenant tenant, RESTCommand cmd) {
+        String authHeader = request.getHeader("Authorization");
+        TenantService.instance().validateTenantAccess(tenant, authHeader, cmd.isPrivileged());
+    }
+
     // Send the given response, which includes a response code and optionally a body
     // and/or additional response headers. If the body is non-empty, we automatically add
     // the Content-Length and a Content-Type of Text/plain.

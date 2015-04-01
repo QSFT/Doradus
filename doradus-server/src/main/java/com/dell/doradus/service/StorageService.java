@@ -21,29 +21,16 @@ package com.dell.doradus.service;
  * must be implemented by a subclass to function as a storage service.
  */
 import java.util.Collection;
-import java.util.Map;
 
-import com.dell.doradus.common.AggregateResult;
 import com.dell.doradus.common.ApplicationDefinition;
-import com.dell.doradus.common.BatchResult;
-import com.dell.doradus.common.DBObject;
-import com.dell.doradus.common.DBObjectBatch;
-import com.dell.doradus.common.TableDefinition;
-import com.dell.doradus.common.UNode;
-import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.taskmanager.Task;
 
 /**
  * Abstract root class for Doradus storage services. Extends the {@link Service} class
- * with methods that subclasses must have to operate as a storage service. Methods are
- * provided for schema management, object queries, and object updates. The DoradusServer
- * determines which storage service manages each application and routes
- * application-specific REST commands command to the appropriate service.
+ * with methods that subclasses must have to operate as a storage service.
  */
 public abstract class StorageService extends Service {
 
-    //----- Schema update methods
-    
     /**
      * Delete all service-specific storage for the given application.
      * 
@@ -84,128 +71,4 @@ public abstract class StorageService extends Service {
         return null;
     }   // getAppTasks
     
-    //----- Object query methods
-    
-    /**
-     * Get all field values for the object in the given table with the given ID. If no
-     * such object is found, null is returned.
-     * 
-     * @param tableDef  {@link TableDefinition} to which object should belong.
-     * @param objID     ID of object to find.
-     * @return          {@link DBObject} containing all scalar and link field values for
-     *                  the given object if found, otherwise null.
-     */
-    public abstract DBObject getObject(TableDefinition tableDef, String objID);
-    
-    /**
-     * Perform an object query on the given table using the given URI parameters. The URI
-     * parameters come after the "?" in a query URI and should be encoded. Example:
-     * <pre>
-     *      .../_query?q=Foo:bar+Name:(John+Smith)&f=_ID
-     * </pre>
-     * In this example, params should be passed as "Foo:bar+Name:(John+Smith)&f=_ID".  
-     * 
-     * @param tableDef  {@link TableDefinition} of table to query.
-     * @param params    Query parameters in URI format as described above.
-     * @return          Object query results as a {@link SearchResultList} object.
-     */
-    public abstract SearchResultList objectQueryURI(TableDefinition tableDef, String params);
-    
-    /**
-     * Perform an object query on the given table passing query parameters as a UNode tree.
-     * The parameters should be parsed from an XML or JSON entity, passing the root object
-     * of the tree.  
-     * 
-     * @param tableDef  {@link TableDefinition} of table to query.
-     * @param rootNode  Root {@link UNode} of parsed query parameters.
-     * @return          Object query results as a {@link SearchResultList} object.
-     */
-    public abstract SearchResultList objectQueryDoc(TableDefinition tableDef, UNode rootNode);
-    
-    /**
-     * Perform an aggregate query on the given table using the given URI parameters. The
-     * URI parameters come after the "?" in a query URI and should be encoded. Example:
-     * <pre>
-     *      .../_aggregate?m=COUNT(*)&q=Foo:bar
-     * </pre>
-     * In this example, params should be passed as "m=COUNT(*)&q=Foo:bar".
-     * 
-     * @param tableDef  {@link TableDefinition} of table to query.
-     * @param params    Query parameters in URI format as described above.
-     * @return          Aggregate query results as an {@link AggregateResult} object. 
-     */
-    public abstract AggregateResult aggregateQueryURI(TableDefinition tableDef, String params);
-    
-    /**
-     * Perform an aggregate query on the given table passing parameters as a UNode tree.
-     * The parameters should be parsed from an XML or JSON entity, passing the root object
-     * of the tree.  
-     * 
-     * @param tableDef  {@link TableDefinition} of table to query.
-     * @param rootNode  Root {@link UNode} of parsed query parameters.
-     * @return          Aggregate query results as an {@link AggregateResult} object. 
-     */
-    public abstract AggregateResult aggregateQueryDoc(TableDefinition tableDef, UNode rootNode);
-    
-    //----- Object update methods
-    
-    /**
-     * Add the given batch of objects to the given store belonging to the given
-     * application.
-     * 
-     * @param appDef    {@link ApplicationDefinition} of application to update.
-     * @param storeName Name of store to which objects should be added.
-     * @param batch     {@link DBObjectBatch} of objects to add.
-     * @return          {@link BatchResult} representing the results of the update.
-     */
-    public abstract BatchResult addBatch(ApplicationDefinition appDef, String storeName, DBObjectBatch batch);
-    
-    /**
-     * Add the given batch of objects to the given store belonging to the given
-     * application using the given options.
-     * 
-     * @param appDef    {@link ApplicationDefinition} of application to update.
-     * @param storeName Name of store to which objects should be added.
-     * @param batch     {@link DBObjectBatch} of objects to add.
-     * @param options   Optional map of batch options. Options are service-specific.
-     * @return          {@link BatchResult} representing the results of the update.
-     */
-    public abstract BatchResult addBatch(ApplicationDefinition appDef, String storeName,
-                                         DBObjectBatch batch, Map<String, String> options);
-    
-    /**
-     * Delete the given set of objects from the given store belonging to the given
-     * application.
-     * 
-     * @param appDef    {@link ApplicationDefinition} of application to update.
-     * @param storeName Name of store in which objects should be deleted.
-     * @param batch     {@link DBObjectBatch} of objects to delete.
-     * @return          {@link BatchResult} representing the results of the delete.
-     */
-    public abstract BatchResult deleteBatch(ApplicationDefinition appDef, String storeName, DBObjectBatch batch);
-    
-    /**
-     * Update the given store belonging to the given application with the given batch of
-     * objects. The semantics of updates are defined by the storage service.
-     * 
-     * @param appDef    {@link ApplicationDefinition} of application to update.
-     * @param storeName Name of store in which objects should be updated.
-     * @param batch     {@link DBObjectBatch} of objects to update.
-     * @return          {@link BatchResult} representing the results of the update.
-     */
-    public abstract BatchResult updateBatch(ApplicationDefinition appDef, String storeName, DBObjectBatch batch);
-    
-    /**
-     * Update the given store belonging to the given application with the given batch of
-     * objects and options. The semantics of updates are defined by the storage service.
-     * 
-     * @param appDef    {@link ApplicationDefinition} of application to update.
-     * @param storeName Name of store in which objects should be updated.
-     * @param batch     {@link DBObjectBatch} of objects to update.
-     * @param options   Optional list of batch options. Options are service-specific.
-     * @return          {@link BatchResult} representing the results of the update.
-     */
-    public abstract BatchResult updateBatch(ApplicationDefinition appDef, String storeName,
-                                            DBObjectBatch batch, Map<String, String> options);
-
 }   // class StorageService

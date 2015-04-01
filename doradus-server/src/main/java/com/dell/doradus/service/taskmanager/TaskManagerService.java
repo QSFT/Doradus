@@ -93,7 +93,7 @@ public class TaskManagerService extends Service {
     
     @Override
     protected void initService() {
-        RESTService.instance().registerRESTCommands(REST_RULES);
+        RESTService.instance().registerGlobalCommands(REST_RULES);
     }
 
     @Override

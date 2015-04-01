@@ -14,31 +14,32 @@
  * limitations under the License.
  */
 
-/**
- * Handles the REST commands: DELETE /_applications/{application} and
- * DELETE /_applications/{application}/{key}.
- */
-package com.dell.doradus.service.schema;
+package com.dell.doradus.service.spider;
 
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.DBObject;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.RESTResponse;
+import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.RESTCallback;
 
-public class DeleteApplicationCmd extends RESTCallback {
+/**
+ * Implements the REST command: GET /{application}/{table}/{ID}.
+ */
+public class GetObjectCmd extends RESTCallback {
 
     @Override
     public RESTResponse invoke() {
-        String appName = m_request.getVariableDecoded("application");
-        ApplicationDefinition appDef =
-            SchemaService.instance().getApplication(m_request.getTenant(), appName);
-        if (appDef == null) {
-            throw new NotFoundException("Unknown application: " + appName);
+        ApplicationDefinition appDef = m_request.getAppDef();
+        TableDefinition tableDef = m_request.getTableDef(appDef);
+        String objID = m_request.getVariableDecoded("ID");
+        DBObject dbObj = SpiderService.instance().getObject(tableDef, objID);
+        if (dbObj == null) {
+            throw new NotFoundException("No object found with ID: " + objID);
         }
-        String key = m_request.getVariableDecoded("key");   // may be null
-        SchemaService.instance().deleteApplication(appDef, key);
-        return new RESTResponse(HttpCode.OK);
+        String body = dbObj.toGroupedDoc(tableDef).toString(m_request.getOutputContentType());
+        return new RESTResponse(HttpCode.OK, body, m_request.getOutputContentType());
     }   // invoke
 
-}   // class DeleteApplicationCmd
+}   // class GetObjectCmd

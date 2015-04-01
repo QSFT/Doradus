@@ -21,6 +21,7 @@ import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.UNodeInCallback;
 
 /**
@@ -31,13 +32,19 @@ public class ModifyApplicationCmd extends UNodeInCallback {
     @Override
     public RESTResponse invokeUNodeIn(UNode inNode) {
         Utils.require(inNode != null, "This command requires an input entity");
-        ApplicationDefinition currAppDef = m_request.getAppDef();
+        String appName = m_request.getVariableDecoded("application");
+        ApplicationDefinition currAppDef =
+            SchemaService.instance().getApplication(m_request.getTenant(), appName);
+        if (currAppDef == null) {
+            throw new NotFoundException("Unknown application: " + appName);
+        }
+        
         ApplicationDefinition newAppDef = new ApplicationDefinition();
         newAppDef.parse(inNode);
         Utils.require(newAppDef.getAppName().equals(currAppDef.getAppName()),
                       "Application name cannot be changed: %s", newAppDef.getAppName());
         
-        SchemaService.instance().defineApplication(newAppDef);
+        SchemaService.instance().defineApplication(m_request.getTenant(), newAppDef);
         return new RESTResponse(HttpCode.OK);
     }   // invokeUNodeIn
 

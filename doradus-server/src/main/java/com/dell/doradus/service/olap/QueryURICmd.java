@@ -14,35 +14,26 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.core;
+package com.dell.doradus.service.olap;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.TableDefinition;
-import com.dell.doradus.common.Utils;
 import com.dell.doradus.search.SearchResultList;
-import com.dell.doradus.service.StorageService;
 import com.dell.doradus.service.rest.RESTCallback;
-import com.dell.doradus.service.schema.SchemaService;
 
 /**
- * Implements the REST command: GET /{application}/{table}/_query?{params}. Verifies the
- * application and table and passes the command to the application's registered storage
- * service.
+ * Implements the REST command: GET /{application}/{table}/_query?{params}.
  */
 public class QueryURICmd extends RESTCallback {
 
     @Override
     public RESTResponse invoke() {
         ApplicationDefinition appDef = m_request.getAppDef();
-        String table = m_request.getVariableDecoded("table");
-        TableDefinition tableDef = appDef.getTableDef(table);
-        Utils.require(tableDef != null, "Unknown table for application '%s': %s", appDef.getAppName(), table);
-        
+        TableDefinition tableDef = m_request.getTableDef(appDef);
         String params = m_request.getVariable("params");    // leave encoded
-        StorageService storageService = SchemaService.instance().getStorageService(appDef);
-        SearchResultList searchResult = storageService.objectQueryURI(tableDef, params);
+        SearchResultList searchResult = OLAPService.instance().objectQueryURI(tableDef, params);
         String body = searchResult.toDoc().toString(m_request.getOutputContentType());
         return new RESTResponse(HttpCode.OK, body, m_request.getOutputContentType());
     }   // invoke

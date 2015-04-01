@@ -17,6 +17,8 @@
 package com.dell.doradus.search.builder;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.dell.doradus.core.ObjectID;
@@ -26,6 +28,7 @@ import com.dell.doradus.search.aggregate.Entity;
 import com.dell.doradus.search.filter.Filter;
 import com.dell.doradus.search.query.IdQuery;
 import com.dell.doradus.search.query.Query;
+import com.dell.doradus.service.spider.SpiderHelper;
 
 public class BuilderId extends SearchBuilder {
     
@@ -33,6 +36,11 @@ public class BuilderId extends SearchBuilder {
 		IdQuery qu = (IdQuery)query;
         ArrayList<ObjectID> ids = new ArrayList<ObjectID>(1);
         ids.add(IDHelper.createID(qu.id));
+        List<String> fields = new ArrayList<String>(1);
+        fields.add("_ID");
+        Map<ObjectID, Map<String, String>> result = SpiderHelper.getScalarValues(m_table, ids, fields);
+        ids.clear();
+        ids.addAll(result.keySet());
         return create(ids, null);
 	}
 	

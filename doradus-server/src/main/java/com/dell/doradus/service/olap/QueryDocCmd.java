@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.core;
+package com.dell.doradus.service.olap;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.search.SearchResultList;
-import com.dell.doradus.service.StorageService;
 import com.dell.doradus.service.rest.UNodeInOutCallback;
-import com.dell.doradus.service.schema.SchemaService;
 
 /**
  * Implements the REST commands: GET or PUT /{application}/{table}/_query. The query
- * parameters are passed in an input entity. Verifies the application and table, parses
- * the input entity, and passes the query to the application's registered storage service.
+ * parameters are passed in an input entity.
  */
 public class QueryDocCmd extends UNodeInOutCallback {
 
@@ -36,8 +33,7 @@ public class QueryDocCmd extends UNodeInOutCallback {
         ApplicationDefinition appDef = m_request.getAppDef();
         TableDefinition tableDef = m_request.getTableDef(appDef);
         UNode rootNode = UNode.parse(m_request.getInputBody(), m_request.getInputContentType());
-        StorageService storageService = SchemaService.instance().getStorageService(appDef);
-        SearchResultList searchResult = storageService.objectQueryDoc(tableDef, rootNode);
+        SearchResultList searchResult = OLAPService.instance().objectQueryDoc(tableDef, rootNode);
         return searchResult.toDoc();
     }   // invokeUNodeOut
 
