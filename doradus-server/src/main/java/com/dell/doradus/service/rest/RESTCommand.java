@@ -51,6 +51,9 @@ import com.dell.doradus.common.Utils;
  * <p>
  * RESTCommand implements the {@link Comparable} interface, using a {@link #compareTo(RESTCommand)}
  * method that sorts commands in the proper evaluation sequence.
+ * <p>
+ * A RESTCommand can be registered as "privileged", which means it requires system
+ * credentials to execute.
  */
 public final class RESTCommand implements Comparable<RESTCommand> {
     // Components of a REST command:
@@ -58,7 +61,7 @@ public final class RESTCommand implements Comparable<RESTCommand> {
     private List<String>         m_pathNodes;       // Value for path nodes
     private String               m_query;           // Value for <query>
     private Class<RESTCallback>  m_callbackClass;   // Callback class for this command
-    private boolean              m_bSystemCmd;      // true for non-tenant commands.
+    private final boolean        m_bPrivileged;     // Privileged command when true  
     
     /**
      * Creates a RESTCommand from a "REST rule", which includes the HTTP method, URI, and
@@ -77,39 +80,28 @@ public final class RESTCommand implements Comparable<RESTCommand> {
      * zero-argument constructor. Using that constructor, an instance of the given command
      * class is created and used to process requests to the specified REST command.
      * <p>
-     * This constructor creates a non-system command, which means it is executed in the
-     * context of a specific tenant.
+     * This constructor creates a RESTCommand that represents a non-privileged command.
      * 
      * @param ruleString    REST request and command callback class in the form "method
      *                      URI callback".
      */
     public RESTCommand(String ruleString) {
-        m_bSystemCmd = false;
-        parseRuleString(ruleString);
-    }   // constructor
-    
-    /**
-     * Same as {@link #RESTCommand(String)} but optionally marks this command as a system
-     * command, which means it is not executed in the context of a tenant.
-     * 
-     * @param ruleString        REST request and command callback class in the form
-     *                          "method URI callback".
-     * @param bSystemCommand    If true, marks this object as a non-system command.
-     */
-    public RESTCommand(String ruleString, boolean bSystemCommand) {
-        m_bSystemCmd = bSystemCommand;
+        m_bPrivileged = false;
         parseRuleString(ruleString);
     }   // constructor
 
     /**
-     * Indicate if this is a system command, which means it executes without a specific
-     * tenant context.
+     * Same as {@link #RESTCommand(String)} except that the command is marked as privileged
+     * if bPrivileged is true.
      * 
-     * @return  True if this is a system command.
+     * @param ruleString    REST request and command callback class in the form "method
+     *                      URI callback".
+     * @param bPrivileged   True to create object as a privileged command.
      */
-    public boolean isSystemCommand() {
-        return m_bSystemCmd;
-    }   // isSystemCommand
+    public RESTCommand(String ruleString, boolean bPrivileged) {
+        m_bPrivileged = bPrivileged;
+        parseRuleString(ruleString);
+    }   // constructor
     
     /**
      * Return true if this object matches the given URI components. If it does, any
@@ -186,6 +178,16 @@ public final class RESTCommand implements Comparable<RESTCommand> {
         return diff;
     }   // compareTo
 
+    /**
+     * Return true if this command is considered privileged and therefore may require
+     * special credentials.
+     * 
+     * @return  True if this is a privileged command.
+     */
+    public boolean isPrivileged() {
+        return m_bPrivileged;
+    }   // isPrivileged
+    
     /**
      * Returns a string representation of this RESTCommand in the form:
      * <pre>

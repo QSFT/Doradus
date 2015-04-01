@@ -14,33 +14,38 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.core;
+package com.dell.doradus.service.spider;
 
-import com.dell.doradus.common.AggregateResult;
+import java.io.Reader;
+
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.BatchResult;
+import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.TableDefinition;
-import com.dell.doradus.service.StorageService;
-import com.dell.doradus.service.rest.RESTCallback;
-import com.dell.doradus.service.schema.SchemaService;
+import com.dell.doradus.common.UNode;
+import com.dell.doradus.common.Utils;
+import com.dell.doradus.service.rest.ReaderCallback;
 
 /**
- * Implements the REST command: GET /{application}/{table}/_aggregate?{params}. Verifies
- * the application and table and passes the command to the application's registered
- * storage service.
+ * Implements the REST command: DELETE /{application}/{table}.
  */
-public class AggregateURICmd extends RESTCallback {
+public class DeleteObjectsCmd extends ReaderCallback {
 
     @Override
-    public RESTResponse invoke() {
+    public RESTResponse invokeStreamIn(Reader reader) {
         ApplicationDefinition appDef = m_request.getAppDef();
         TableDefinition tableDef = m_request.getTableDef(appDef);
-        String params = m_request.getVariable("params");    // leave encoded
-        StorageService storageService = SchemaService.instance().getStorageService(appDef);
-        AggregateResult aggResult = storageService.aggregateQueryURI(tableDef, params);
-        String body = aggResult.toDoc().toString(m_request.getOutputContentType());
-        return new RESTResponse(HttpCode.OK, body, m_request.getOutputContentType());
-    }   // invoke
+        Utils.require(reader != null, "This command requires an input entity");
+        
+        DBObjectBatch dbObjBatch = new DBObjectBatch();
+        UNode rootNode = UNode.parse(reader, m_request.getInputContentType());
+        dbObjBatch.parse(rootNode);
 
-}   // class AggregateURICmd 
+        BatchResult batchResult = SpiderService.instance().deleteBatch(tableDef, dbObjBatch);
+        String body = batchResult.toDoc().toString(m_request.getOutputContentType());
+        return new RESTResponse(HttpCode.OK, body, m_request.getOutputContentType());
+    }   // invokeStreamIn
+
+}   // class DeleteObjectsCmd

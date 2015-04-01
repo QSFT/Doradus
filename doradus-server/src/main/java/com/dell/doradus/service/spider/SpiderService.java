@@ -53,6 +53,8 @@ import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
+import com.dell.doradus.service.rest.RESTCommand;
+import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.taskmanager.Task;
 import com.dell.doradus.service.taskmanager.TaskFrequency;
@@ -70,6 +72,23 @@ public class SpiderService extends StorageService {
     private static final SpiderService INSTANCE = new SpiderService();
     private final ShardCache m_shardCache = new ShardCache();
 
+    // REST commands supported by the the Spider service:
+    private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
+        // Object retrieval:
+        new RESTCommand("GET    /{application}/{table}/{ID}                 com.dell.doradus.service.spider.GetObjectCmd"),
+        new RESTCommand("GET    /{application}/{table}/_query?{params}      com.dell.doradus.service.spider.QueryURICmd"),
+        new RESTCommand("GET    /{application}/{table}/_query               com.dell.doradus.service.spider.QueryDocCmd"),
+        new RESTCommand("PUT    /{application}/{table}/_query               com.dell.doradus.service.spider.QueryDocCmd"),
+        new RESTCommand("GET    /{application}/{table}/_aggregate?{params}  com.dell.doradus.service.spider.AggregateURICmd"),
+        new RESTCommand("GET    /{application}/{table}/_aggregate           com.dell.doradus.service.spider.AggregateDocCmd"),
+        new RESTCommand("PUT    /{application}/{table}/_aggregate           com.dell.doradus.service.spider.AggregateDocCmd"),
+        
+        // Object updates:
+        new RESTCommand("POST   /{application}/{table}          com.dell.doradus.service.spider.AddObjectsCmd"),
+        new RESTCommand("PUT    /{application}/{table}          com.dell.doradus.service.spider.UpdateObjectsCmd"),
+        new RESTCommand("DELETE /{application}/{table}          com.dell.doradus.service.spider.DeleteObjectsCmd"),
+    });
+
     /**
      * Get the singleton instance of this service. The service may or may not have been
      * initialized yet.
@@ -84,6 +103,7 @@ public class SpiderService extends StorageService {
     
     @Override
     public void initService() {
+        RESTService.instance().registerApplicationCommands(REST_RULES, this);
     }   // initService
 
     @Override
@@ -136,7 +156,7 @@ public class SpiderService extends StorageService {
         return appTasks;
     }   // getAppTasks
     
-    //----- StorageService object query methods
+    //----- Object query methods
     
     /**
      * Get all scalar and link fields for the object in the given table with the given ID.
@@ -146,7 +166,6 @@ public class SpiderService extends StorageService {
      * @return          {@link DBObject} containing all object scalar and link fields, or
      *                  null if there is no such object.
      */
-    @Override
     public DBObject getObject(TableDefinition tableDef, String objID) {
         checkServiceState();
         String storeName = objectsStoreName(tableDef);
@@ -160,19 +179,46 @@ public class SpiderService extends StorageService {
         return dbObj;
     }   // getObject
     
-    @Override
+    /**
+     * Perform an object query on the given table using query parameters encoded as a URI
+     * query parameter. Example:
+     * <pre>
+     *      q=Size%3E3+AND+Name:smith&size=50
+     * </pre>
+     * 
+     * @param tableDef  {@link TableDefinition} of table to query.
+     * @param uriQuery  URI-encoded query parameters.
+     * @return          {@link SearchResultList} containing search results.
+     */
     public SearchResultList objectQueryURI(TableDefinition tableDef, String uriQuery) {
         checkServiceState();
         return new ObjectQuery(tableDef, uriQuery).query();
     }   // objectQueryURI
     
-    @Override
+    /**
+     * Perform an object query on the given table using query parameters parsed into a
+     * UNode tree.
+     * 
+     * @param tableDef  {@link TableDefinition} of table to query.
+     * @param rootNode  Root {@link UNode} of an object query parameter document.
+     * @return          {@link SearchResultList} containing search results.
+     */
     public SearchResultList objectQueryDoc(TableDefinition tableDef, UNode rootNode) {
         checkServiceState();
         return new ObjectQuery(tableDef, rootNode).query();
     }   // objectQueryDoc    
 
-    @Override
+    /**
+     * Perform an aggregate query on the given table using query parameters encoded as a
+     * URI query parameter. Example:
+     * <pre>
+     *      q=Size%3E3+AND+Name:smith&m=COUNT(*)
+     * </pre>
+     * 
+     * @param tableDef  {@link TableDefinition} of table to query.
+     * @param uriQuery  URI-encoded query parameters.
+     * @return          {@link AggregateResult} containing search results.
+     */
     public AggregateResult aggregateQueryURI(TableDefinition tableDef, String uriQuery) {
         checkServiceState();
         Aggregate aggregate = new Aggregate(tableDef);
@@ -185,7 +231,14 @@ public class SpiderService extends StorageService {
         return aggregate.getResult();
     }   // aggregateQuery
     
-    @Override
+    /**
+     * Perform an aggregate query on the given table using query parameters parsed into a
+     * UNode tree.
+     * 
+     * @param tableDef  {@link TableDefinition} of table to query.
+     * @param rootNode  Root {@link UNode} of an aggregate query parameter document.
+     * @return          {@link AggregateResult} containing search results.
+     */
     public AggregateResult aggregateQueryDoc(TableDefinition tableDef, UNode rootNode) {
         checkServiceState();
         Aggregate aggregate = new Aggregate(tableDef);
@@ -200,23 +253,24 @@ public class SpiderService extends StorageService {
     
     //----- StorageService object update methods
     
-    // Add and/or update a batch of objects. For a Spider application, the store name must
-    // be a table name.
-    @Override
+    /**
+     * Add or update a batch of updates for the given application and table. If the
+     * application's autotables option is true and the given table doesn't exist, it is
+     * created automatically. When an object in the batch is assigned an ID that is
+     * already used, the corresponding object is updated. This preserves idempotent
+     * semantics: performing the same add twice is safe as long as IDs are explicitly
+     * assigned. Objects that aren't given explicit IDs are assigned default IDs. 
+     * 
+     * @param appDef    {@link ApplicationDefinition} of application to update.
+     * @param tableName Name of table to add objects to.
+     * @param batch     {@link DBObjectBatch} containing new or updated objects.
+     * @return          {@link BatchResult} indicating results of update.
+     */
     public BatchResult addBatch(ApplicationDefinition appDef, String tableName, DBObjectBatch batch) {
-        return addBatch(appDef, tableName, batch, null);
-    }   // addBatch
-    
-    // Add and/or update a batch of objects. For a Spider application, the store name must
-    // be a table name.
-    @Override
-    public BatchResult addBatch(ApplicationDefinition appDef, String tableName,
-                                DBObjectBatch batch, Map<String, String> options) {
         checkServiceState();
         TableDefinition tableDef = appDef.getTableDef(tableName);
         Utils.require(tableDef != null || appDef.allowsAutoTables(),
                       "Unknown table for application '%s': %s", appDef.getAppName(), tableName);
-        Utils.require(options == null || options.size() == 0, "No parameters expected");
         
         if (tableDef == null && appDef.allowsAutoTables()) {
             tableDef = addAutoTable(appDef, tableName);
@@ -227,14 +281,17 @@ public class SpiderService extends StorageService {
         return batchUpdater.addBatch(batch);
     }   // addBatch
 
-    // Delete a batch of objects. For a Spider application, the store name must be a table
-    // name, and (for now) all objects in the batch must belong to that table.
-    @Override
-    public BatchResult deleteBatch(ApplicationDefinition appDef, String tableName, DBObjectBatch batch) {
+    /**
+     * Delete a batch of objects from the given table. All objects must have an ID
+     * assigned. Deleting an already-deleted object is a no-op.
+     * 
+     * @param tableDef  Table containing objects to be deleted.
+     * @param batch     {@link DBObjectBatch} defining objects to be deleted. Only the
+     *                  _ID field of each DBObject is used.
+     * @return          {@link BatchResult} indicating results of the delete.
+     */
+    public BatchResult deleteBatch(TableDefinition tableDef, DBObjectBatch batch) {
         checkServiceState();
-        TableDefinition tableDef = appDef.getTableDef(tableName);
-        Utils.require(tableDef != null, "Unknown table for application '%s': %s", appDef.getAppName(), tableName);
-        
         Set<String> objIDSet = new HashSet<>();
         for (DBObject dbObj : batch.getObjects()) {
             Utils.require(!Utils.isEmpty(dbObj.getObjectID()), "All objects must have _ID defined");
@@ -244,19 +301,6 @@ public class SpiderService extends StorageService {
         return batchUpdater.deleteBatch(objIDSet);
     }   // deleteBatch
 
-    // Same as addBatch()
-    @Override
-    public BatchResult updateBatch(ApplicationDefinition appDef, String storeName, DBObjectBatch batch) {
-        return addBatch(appDef, storeName, batch, null);
-    }   // updateBatch
-    
-    // Same as addBatch()
-    @Override
-    public BatchResult updateBatch(ApplicationDefinition appDef, String storeName,
-                                   DBObjectBatch batch, Map<String, String> paramMap) {
-        return addBatch(appDef, storeName, batch, paramMap);
-    }   // updateBatch
-    
     //----- SpiderService-specific public static methods
     
     /**

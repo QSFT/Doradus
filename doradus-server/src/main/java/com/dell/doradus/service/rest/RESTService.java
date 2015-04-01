@@ -17,11 +17,15 @@
 package com.dell.doradus.service.rest;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Map;
-import java.util.SortedSet;
 
+
+import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;
+import com.dell.doradus.service.StorageService;
+import com.dell.doradus.service.schema.SchemaService;
 
 /**
  * The REST Service for Doradus. This singleton class creates and runs an
@@ -44,11 +48,8 @@ public class RESTService extends Service {
     }   // interface RequestCallback
 	
     private static final RESTService INSTANCE = new RESTService();
-    
-    private WebServer				m_webservice;
- 
-    
-    private final RESTCommandSet    m_commandSet = new RESTCommandSet();
+    private WebServer m_webservice;
+    private final RESTCommandSet m_commandSet = new RESTCommandSet();
 
     /**
      * Get the singleton instance of this service. The service may or may not have been
@@ -121,17 +122,64 @@ public class RESTService extends Service {
     }   // registerRequestCallback
     
     /**
-     * Register the given {@link RESTCommand}s. An exception is thrown if any of the
-     * commands are considered a duplicate of another registered REST command.
-     * 
+     * Register the given {@link RESTCommand}s as global commands. All such commands are
+     * registered and recognized at global level. This method throws an exception if any
+     * command is a duplicate of another global RESTCommand.
+     *
      * @param restCommands  {@link RESTCommand}s to be registered. Any collection type
      *                      can be passed, for example.
      */
-    public void registerRESTCommands(Iterable<RESTCommand> restCommands) {
-        for (RESTCommand cmd : restCommands) {
-            m_commandSet.addCommand(cmd);
-        }
-    }   // registerRESTCommands
+    public void registerGlobalCommands(Iterable<RESTCommand> restCommands) {
+        m_commandSet.addCommands(null, restCommands);
+    }
+    
+    /**
+     * Register the given {@link RESTCommand}s as application commands belonging to the
+     * given storage service. Only commands whose URI begins with "/{application}/" are
+     * actually registered as application commands; all others are registered as system
+     * (global) commands. Application commands are recognized and routed to the storage
+     * service for the actual application name passed for each invocation.
+     * <p>
+     * This method throws an exception if any command is a duplicate of another
+     * RESTCommand registered for the same scope.
+     *
+     * @param restCommands  {@link RESTCommand}s to be registered. Any collection type
+     *                      can be passed, for example.
+     * @param service       {@link StorageService} that owns the given commands.
+     */
+    public void registerApplicationCommands(Iterable<RESTCommand> restCommands, StorageService service) {
+        assert service != null;
+        m_commandSet.addCommands(service.getClass().getSimpleName(), restCommands);
+    }
+    
+    /**
+     * Register the given {@link RESTCommand}s as application commands belonging to the
+     * given storage service, which extends the given parent storage service. Only
+     * commands whose URI begins with "/{application}/" are registered as application
+     * commands; all others are registered as system (global) commands.
+     * <p>
+     * This method allows a storage service to extend the commands of another storage
+     * service. An application command is first routed to the storage service declared as
+     * the owner of that application. However, if no matching command is registered for
+     * that storage service, the parent service is then searched. This happens recursively
+     * so that a hierarchy of storage services can be defined.
+     * <p>
+     * This method throws an exception if any command is a duplicate of another
+     * RESTCommand registered for the same owner.
+     *
+     * @param restCommands  {@link RESTCommand}s to be registered. Any collection type
+     *                      can be passed, for example.
+     * @param service       {@link StorageService} that owns the given commands.
+     * @param parentService Parent {@link StorageService} that the given service extends
+     *                      with new commands.
+     */
+    public void registerApplicationCommands(Iterable<RESTCommand> restCommands,
+                                            StorageService service,
+                                            StorageService parentService) {
+        assert service != null;
+        m_commandSet.setParent(service.getClass().getSimpleName(), parentService.getClass().getSimpleName());
+        m_commandSet.addCommands(service.getClass().getSimpleName(), restCommands);
+    }
     
     /**
      * See if the given REST request matches any registered commands. If it does, return
@@ -151,6 +199,8 @@ public class RESTService extends Service {
      *      query=Tarantula+Nebula%2A
      * </pre>
      * 
+     * @param appDef        {@link ApplicationDefinition} of applicaiton that provides
+     *                      context for command, if any. Null for system commands.
      * @param method        HTTP method (case-insensitive: GET, PUT).
      * @param uri           Request URI (case-sensitive: "/Magellan/Stars/_query")
      * @param query         Optional query parameter (case-sensitive: "q=Tarantula+Nebula%2A").
@@ -158,9 +208,14 @@ public class RESTService extends Service {
      *                      the actual values passed, not decoded (see above).
      * @return              The {@link RESTCommand} if a match was found, otherwise null.
      */
-    public RESTCommand matchCommand(String method, String uri, String query,
-                                    Map<String, String> variableMap) {
-        return m_commandSet.findMatch(method, uri, query, variableMap);
+    public RESTCommand matchCommand(ApplicationDefinition appDef, String method, String uri,
+                                    String query, Map<String, String> variableMap) {
+        String cmdOwner = null;
+        if (appDef != null) {
+            StorageService ss = SchemaService.instance().getStorageService(appDef);
+            cmdOwner = ss.getClass().getSimpleName();
+        }
+        return m_commandSet.findMatch(cmdOwner, method, uri, query, variableMap);
     }   // matchCommand
     
     //----- Package-private methods (used by RESTServlet)
@@ -199,11 +254,9 @@ public class RESTService extends Service {
     private void displayCommandSet() {
         if (m_logger.isDebugEnabled()) {
             m_logger.debug("Registered REST Commands:");
-            Map<String, SortedSet<RESTCommand>> commandMap = m_commandSet.getCommands();
-            for (String method : commandMap.keySet()) {
-                for (RESTCommand cmd : commandMap.get(method)) {
-                    m_logger.debug(cmd.toString());
-                }
+            Collection<String> commands = m_commandSet.getCommands();
+            for (String command : commands) {
+                m_logger.debug(command);
             }
         }
     }   // displayCommandSet

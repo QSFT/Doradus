@@ -220,7 +220,7 @@ public class BatchBuilder {
         if (fieldName.equals("_ID")) {
             document.setId(value);
         } else if (fieldName.equals("_table")) {
-            document.setId(value);
+            document.setTable(value);
         } else if (fieldName.equals("_deleted")) {
             document.setDeleted("true".equals(value));
         } else {

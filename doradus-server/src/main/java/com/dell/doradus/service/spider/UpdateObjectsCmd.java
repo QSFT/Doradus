@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.core;
+package com.dell.doradus.service.spider;
 
 import java.io.Reader;
 
@@ -25,30 +25,30 @@ import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.service.StorageService;
 import com.dell.doradus.service.rest.ReaderCallback;
-import com.dell.doradus.service.schema.SchemaService;
 
 /**
- * Implements the REST command: DELETE /{application}/{store}. Verifies the given application
- * and passes the command to its registered storage service.
+ * Implements the REST commands: PUT /{application}/{table}.
  */
-public class DeleteObjectsCmd extends ReaderCallback {
+public class UpdateObjectsCmd extends ReaderCallback {
 
     @Override
     public RESTResponse invokeStreamIn(Reader reader) {
-        String store = m_request.getVariableDecoded("store");
-        ApplicationDefinition appDef = m_request.getAppDef();
         Utils.require(reader != null, "This command requires an input entity");
+        ApplicationDefinition appDef = m_request.getAppDef();
+        String table = m_request.getVariableDecoded("table");
         
         DBObjectBatch dbObjBatch = new DBObjectBatch();
-        UNode rootNode = UNode.parse(reader, m_request.getInputContentType());
-        dbObjBatch.parse(rootNode);
+        if (m_request.getInputContentType().isJSON()) {
+            dbObjBatch.parseJSON(reader);
+        } else {
+            UNode rootNode = UNode.parse(reader, m_request.getInputContentType());
+            dbObjBatch.parse(rootNode);
+        }
 
-        StorageService storageService = SchemaService.instance().getStorageService(appDef);
-        BatchResult batchResult = storageService.deleteBatch(appDef, store, dbObjBatch);
+        BatchResult batchResult = SpiderService.instance().addBatch(appDef, table, dbObjBatch);
         String body = batchResult.toDoc().toString(m_request.getOutputContentType());
         return new RESTResponse(HttpCode.OK, body, m_request.getOutputContentType());
     }   // invokeStreamIn
 
-}   // class DeleteObjectsCmd
+}   // class UpdateObjectsCmd

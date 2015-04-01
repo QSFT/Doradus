@@ -68,25 +68,8 @@ public final class DoradusServer {
     // List of all started services (the ones we must call "stop" on):
     private final List<Service> m_startedServices = new ArrayList<>();
     
-    // Common REST commands supported directly by the DoradusServer:
+    // System commands supported directly by the DoradusServer:
     private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
-        // Object retrieval supported by all storage services:
-        new RESTCommand("GET    /{application}/{table}/{ID}                 com.dell.doradus.core.GetObjectCmd"),
-        new RESTCommand("GET    /{application}/{table}/_query?{params}      com.dell.doradus.core.QueryURICmd"),
-        new RESTCommand("GET    /{application}/{table}/_query               com.dell.doradus.core.QueryDocCmd"),
-        new RESTCommand("PUT    /{application}/{table}/_query               com.dell.doradus.core.QueryDocCmd"),
-        new RESTCommand("GET    /{application}/{table}/_aggregate?{params}  com.dell.doradus.core.AggregateURICmd"),
-        new RESTCommand("GET    /{application}/{table}/_aggregate           com.dell.doradus.core.AggregateDocCmd"),
-        new RESTCommand("PUT    /{application}/{table}/_aggregate           com.dell.doradus.core.AggregateDocCmd"),
-        
-        // Object updates supported by all storage services:
-        new RESTCommand("POST   /{application}/{store}          com.dell.doradus.core.AddObjectsCmd"),
-        new RESTCommand("POST   /{application}/{store}?{params} com.dell.doradus.core.AddObjectsCmd"),
-        new RESTCommand("PUT    /{application}/{store}          com.dell.doradus.core.UpdateObjectsCmd"),
-        new RESTCommand("PUT    /{application}/{store}?{params} com.dell.doradus.core.UpdateObjectsCmd"),
-        new RESTCommand("DELETE /{application}/{store}          com.dell.doradus.core.DeleteObjectsCmd"),
-        
-        // System commands:
         new RESTCommand("GET /_dump com.dell.doradus.core.TheadDumpCmd", true),
         new RESTCommand("GET /_logs?{params} com.dell.doradus.core.LogDumpCmd", true),
     });
@@ -259,7 +242,7 @@ public final class DoradusServer {
         m_logger.info("Initializing embedded mode");
         initConfig(args);
         initEmbeddedServices(services);
-        RESTService.instance().registerRESTCommands(REST_RULES);
+        RESTService.instance().registerGlobalCommands(REST_RULES);
         m_bInitialized = true;
     }   // initEmbedded
     
@@ -282,7 +265,7 @@ public final class DoradusServer {
         m_logger.info("Initializing standalone mode");
         initConfig(args);
         initStandaAloneServices();
-        RESTService.instance().registerRESTCommands(REST_RULES);
+        RESTService.instance().registerGlobalCommands(REST_RULES);
         m_bInitialized = true;
     }   // initStandAlone
     

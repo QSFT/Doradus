@@ -28,8 +28,6 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.BatchResult;
 import com.dell.doradus.common.BatchResult.Status;
 import com.dell.doradus.common.CommonDefs;
-import com.dell.doradus.common.DBObject;
-import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
@@ -37,6 +35,7 @@ import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.MergeOptions;
 import com.dell.doradus.olap.Olap;
 import com.dell.doradus.olap.OlapAggregate;
+import com.dell.doradus.olap.OlapBatch;
 import com.dell.doradus.olap.OlapQuery;
 import com.dell.doradus.olap.OlapStatistics;
 import com.dell.doradus.olap.Olapp;
@@ -63,6 +62,21 @@ public class OLAPService extends StorageService {
 
     // OLAPService-specific commands
     private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[]{
+        // Object retrieval:
+        new RESTCommand("GET    /{application}/{table}/_query?{params}      com.dell.doradus.service.olap.QueryURICmd"),
+        new RESTCommand("GET    /{application}/{table}/_query               com.dell.doradus.service.olap.QueryDocCmd"),
+        new RESTCommand("PUT    /{application}/{table}/_query               com.dell.doradus.service.olap.QueryDocCmd"),
+        new RESTCommand("GET    /{application}/{table}/_aggregate?{params}  com.dell.doradus.service.olap.AggregateURICmd"),
+        new RESTCommand("GET    /{application}/{table}/_aggregate           com.dell.doradus.service.olap.AggregateDocCmd"),
+        new RESTCommand("PUT    /{application}/{table}/_aggregate           com.dell.doradus.service.olap.AggregateDocCmd"),
+        
+        // Object updates:
+        new RESTCommand("POST   /{application}/{shard}                      com.dell.doradus.service.olap.AddObjectsCmd"),
+        new RESTCommand("POST   /{application}/{shard}?{params}             com.dell.doradus.service.olap.AddObjectsCmd"),
+        new RESTCommand("PUT    /{application}/{shard}                      com.dell.doradus.service.olap.AddObjectsCmd"),
+        new RESTCommand("PUT    /{application}/{shard}?{params}             com.dell.doradus.service.olap.AddObjectsCmd"),
+        
+        // Shard management:
         new RESTCommand("POST   /{application}/_shards/{shard}              com.dell.doradus.service.olap.MergeSegmentCmd"),
         new RESTCommand("POST   /{application}/_shards/{shard}?{params}     com.dell.doradus.service.olap.MergeSegmentCmd"),
         new RESTCommand("DELETE /{application}/_shards/{shard}              com.dell.doradus.service.olap.DeleteSegmentCmd"),
@@ -88,7 +102,7 @@ public class OLAPService extends StorageService {
 
     @Override
     public void initService() {
-        RESTService.instance().registerRESTCommands(REST_RULES);
+        RESTService.instance().registerApplicationCommands(REST_RULES, this);
     }   // initService
     
     @Override
@@ -135,28 +149,50 @@ public class OLAPService extends StorageService {
         return appTasks;
     }   // getAppTasks
     
-    //----- StorageService: Object query methods
+    //----- Object query methods
     
-    @Override
-    public DBObject getObject(TableDefinition tableDef, String objID) {
-        throw new IllegalArgumentException("OLAP applications do not support this command");
-    }
-    
-    @Override
+    /**
+     * Perform an object query on the given table using query parameters encoded as a URI
+     * query parameter. Example:
+     * <pre>
+     *      q=Size%3E3+AND+Name:smith&shards=Fox,Charlie
+     * </pre>
+     * 
+     * @param tableDef  {@link TableDefinition} of table to query.
+     * @param uriQuery  URI-encoded query parameters.
+     * @return          {@link SearchResultList} containing search results.
+     */
     public SearchResultList objectQueryURI(TableDefinition tableDef, String uriQuery) {
         checkServiceState();
         OlapQuery olapQuery = new OlapQuery(uriQuery);
         return m_olap.search(tableDef.getAppDef(), tableDef.getTableName(), olapQuery);
     }   // objectQueryURI
     
-    @Override
+    /**
+     * Perform an object query on the given table using query parameters parsed into a
+     * UNode tree.
+     * 
+     * @param tableDef  {@link TableDefinition} of table to query.
+     * @param rootNode  Root {@link UNode} of an object query parameter document.
+     * @return          {@link SearchResultList} containing search results.
+     */
     public SearchResultList objectQueryDoc(TableDefinition tableDef, UNode rootNode) {
         checkServiceState();
         OlapQuery olapQuery = new OlapQuery(rootNode);
         return m_olap.search(tableDef.getAppDef(), tableDef.getTableName(), olapQuery);
     }   // objectQueryDoc
     
-    @Override
+    /**
+     * Perform an aggregate query on the given table using query parameters encoded as a
+     * URI query parameter. Example:
+     * <pre>
+     *      q=Size%3E3+AND+Name:smith&shards=Fox,Charlie&m=COUNT(*)
+     * </pre>
+     * 
+     * @param tableDef  {@link TableDefinition} of table to query.
+     * @param uriQuery  URI-encoded query parameters.
+     * @return          {@link AggregateResult} containing search results.
+     */
     public AggregateResult aggregateQueryURI(TableDefinition tableDef, String uriQuery) {
         checkServiceState();
         OlapAggregate request = new OlapAggregate(uriQuery);
@@ -164,7 +200,14 @@ public class OLAPService extends StorageService {
         return AggregateResultConverter.create(result, request);
     }
     
-    @Override
+    /**
+     * Perform an aggregate query on the given table using query parameters parsed into a
+     * UNode tree.
+     * 
+     * @param tableDef  {@link TableDefinition} of table to query.
+     * @param rootNode  Root {@link UNode} of an aggregate query parameter document.
+     * @return          {@link AggregateResult} containing search results.
+     */
     public AggregateResult aggregateQueryDoc(TableDefinition tableDef, UNode rootNode) {
         checkServiceState();
         OlapAggregate request = new OlapAggregate(rootNode);
@@ -174,16 +217,35 @@ public class OLAPService extends StorageService {
     
     //----- StorageService: Object update methods
 
-    // Store name is a shard name for OLAP.
-    
-    @Override
-    public BatchResult addBatch(ApplicationDefinition appDef, String shardName, DBObjectBatch batch) {
+    /**
+     * Add a batch of updates for the given application to the given shard. Objects can
+     * new, updated, or deleted.
+     * 
+     * @param appDef    {@link ApplicationDefinition} of application to update.
+     * @param shardName Shard to add batch to.
+     * @param batch     {@link OlapBatch} containing object updates.
+     * @return          {@link BatchResult} indicating results of update.
+     */
+    public BatchResult addBatch(ApplicationDefinition appDef, String shardName, OlapBatch batch) {
         return addBatch(appDef, shardName, batch, null);
     }   // addBatch
     
-    @Override
+    /**
+     * Same as {@link #addBatch(ApplicationDefinition, String, OlapBatch)} but allows
+     * batch options to be passed. Currently, the only option supported is "overwrite",
+     * which must be true or false. The default is true, which means field values for
+     * existing objects are replaced. When overwrite is set to false, existing field
+     * values are not overwritten with the values in this batch.
+     * 
+     * @param appDef    {@link ApplicationDefinition} of application to update.
+     * @param shardName Shard to add batch to.
+     * @param batch     {@link OlapBatch} containing object updates.
+     * @param options   Map of option key/value pairs. Currently, only "overwrite" is
+     *                  supported and must be true/false. 
+     * @return          {@link BatchResult} indicating results of update.
+     */
     public BatchResult addBatch(ApplicationDefinition appDef, String shardName,
-                                DBObjectBatch batch, Map<String, String> options) {
+                                OlapBatch batch, Map<String, String> options) {
         checkServiceState();
         String guid = m_olap.addSegment(appDef, shardName, batch, getOverwriteOption(options));
         BatchResult result = new BatchResult();
@@ -191,26 +253,6 @@ public class OLAPService extends StorageService {
         result.setComment("GUID=" + guid);
         return result;
     }   // addBatch
-
-    @Override
-    public BatchResult updateBatch(ApplicationDefinition appDef, String shardName, DBObjectBatch batch) {
-        return addBatch(appDef, shardName, batch, null);
-    }   // updateBatch
-    
-    @Override
-    public BatchResult updateBatch(ApplicationDefinition appDef, String shardName,
-                                   DBObjectBatch batch, Map<String, String> options) {
-        return addBatch(appDef, shardName, batch, options);
-    }   // updateBatch
-
-    @Override
-    public BatchResult deleteBatch(ApplicationDefinition appDef, String storeName, DBObjectBatch batch) {
-        // Just add "_deleted" flag to all objects.
-        for (DBObject dbObj : batch.getObjects()) {
-            dbObj.setDeleted(true);
-        }
-        return addBatch(appDef, storeName, batch, null);
-    }   // deleteBatch
 
     //----- OLAPService-specific public methods
 
@@ -282,7 +324,16 @@ public class OLAPService extends StorageService {
         checkServiceState();
         return m_olap.getStats(appDef, shard);
     }   // getStats 
-
+    
+    /**
+     * Get detailed shard statistics for the given shard. This command is mostly used for
+     * development and diagnostics.
+     *   
+     * @param appDef    {@link ApplicationDefinition} of application to query.
+     * @param shard     Name of shard to query.
+     * @param paramMap  Map of statistic option key/value pairs.
+     * @return          Root of statistics information as a {@link UNode} tree. 
+     */
     public UNode getStatistics(ApplicationDefinition appDef, String shard, Map<String, String> paramMap) {
         checkServiceState();
         CubeSearcher searcher = m_olap.getSearcher(appDef, shard);
