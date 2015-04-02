@@ -20,11 +20,18 @@ import com.dell.doradus.olap.collections.BitPacker;
 import com.dell.doradus.olap.collections.NumericUtils;
 import com.dell.doradus.olap.io.VOutputStream;
 
+
+/**
+ * first byte in each chunk is state:
+ * 		1 - bits packing
+ * 		2 - vint
+ *		3 - single value
+ */
+
 public class CompressedNumWriter {
 	private VOutputStream m_output;
 	private long[] m_array;
 	private long[] m_packed;
-	private int[] m_r;
 	private long[] m_temp;
 	private int m_position;
 	
@@ -33,7 +40,6 @@ public class CompressedNumWriter {
 		m_array = new long[chunkSize];
 		m_packed = new long[chunkSize];
 		m_temp = new long[chunkSize];
-		m_r = new int[65];
 		m_output.writeVInt(chunkSize);
 	}
 	
@@ -48,6 +54,7 @@ public class CompressedNumWriter {
 
 	public void flush() {
 		int count = m_position;
+		m_position = 0;
 		if(count == 0) return;
 
 		//Offset by min value
@@ -59,8 +66,18 @@ public class CompressedNumWriter {
 			if(minValue > value) minValue = value;
 			if(maxValue < value) maxValue = value;
 		}
+		
 		long range = maxValue - minValue;
 		if(range < 0) minValue = 0; // range is too big
+		
+		//check for single value
+		if(range == 0) {
+			m_output.writeByte((byte)3);
+			m_output.writeVInt(count);
+			m_output.writeVLong(minValue);
+			return;
+		}
+		
 		if(minValue != 0) {
 			for(int i = 0; i < count; i++) {
 				m_array[i] -= minValue;
@@ -69,7 +86,7 @@ public class CompressedNumWriter {
 		
 		//Get GCD - Greatest Common Divisor or all values
 		long gcd = 0;
-		if(range > 0) { // if range = 0 then all values are the same
+		if(range > 0) {
 			for(int i = 0; i < count; i++) {
 				long value = m_array[i];
 				gcd = NumericUtils.gcd(value, gcd);
@@ -107,89 +124,50 @@ public class CompressedNumWriter {
 			}
 		}
 
-		int bits = NumericUtils.bits(range);
-		int maxbits = bits * count;
-		//System.out.println("Bits packing: " + (maxbits + 7) / 8 + " bytes at " + bits + " bits");
-
 		//check for run-length encoding
 		boolean runlength = false;
-		long newrange = range + 1;
 		if(range > 0) {
-			int rl_count = 0;
-			long lastValue = -1;
-			long repeats = 0;
-			for(int i = 0; i < count; i++) {
-				long value = m_array[i];
-				if(value == lastValue) {
-					repeats++;
-					continue;
-				}
-				
-				if(repeats > 2) {
-					m_temp[rl_count++] = 0;
-					m_temp[rl_count++] = lastValue;
-					m_temp[rl_count++] = repeats;
-					if(newrange < repeats) newrange = repeats;
-				} else {
-					while(repeats > 0) {
-						m_temp[rl_count++] = lastValue + 1;
-						repeats--;
-					}
-				}
-				lastValue = value;
-				repeats = 1;
+			long newrange = range + 1;
+			int src_pos = 0;
+			int dst_pos = 0;
+            int repeats = 1;
+			while(src_pos < count) {
+			    long value = m_array[src_pos];
+			    repeats = 1;
+			    while(src_pos + repeats < count && m_array[src_pos + repeats] == value) repeats++;
+			    if(repeats >= 16) {
+                    m_temp[dst_pos++] = 0;
+                    m_temp[dst_pos++] = repeats;
+                    m_temp[dst_pos++] = value;
+                    if(newrange < repeats) newrange = repeats;
+                    src_pos += repeats;
+                    continue;
+			    }
+                m_temp[dst_pos++] = value + 1;
+                src_pos++;
 			}
 			
-			if(repeats > 2) {
-				m_temp[rl_count++] = 0;
-				m_temp[rl_count++] = lastValue;
-				m_temp[rl_count++] = repeats;
-				if(newrange < repeats) newrange = repeats;
-			} else {
-				while(repeats > 0) {
-					m_temp[rl_count++] = lastValue + 1;
-					repeats--;
-				}
-			}
 			
-			if(rl_count * 8 / 7 < count) {
+            int est_count = (count * BitPacker.bits(range) + 63) / 64;
+            int new_est_count = (count * BitPacker.bits(newrange) + 63) / 64;
+			
+            if(new_est_count < est_count) {
+			    System.out.println("RUNLEN: " + count + "( " + range + ") => " + dst_pos + "( " + newrange + ")");
 				runlength = true;
-				System.out.println("Runlength from " + count + " to " + rl_count);
-				System.arraycopy(m_temp, 0, m_array, 0, rl_count);
-				count = rl_count;
+				System.arraycopy(m_temp, 0, m_array, 0, dst_pos);
+				count = dst_pos;
 				range = newrange;
+				est_count = new_est_count;
 			}
 		}
-		
-		//check for outliers:
-		int outlier_bits = -1;
-		if(range > 0) {
-			for(int i = 0; i < m_r.length; i++) m_r[i] = 0;
-			for(int i = 0; i < count; i++) {
-				long value = m_array[i];
-				int c = 64 - Long.numberOfLeadingZeros(value);
-				m_r[c]++;
-			}
-			for(int i = 1; i <= bits; i++) m_r[i] += m_r[i-1];
-			
-			for(int i = 0; i < bits; i++) {
-				int curbits = (i + 1) * count + (count - m_r[i]) * (bits - i);
-				if(curbits < maxbits) {
-					outlier_bits = i;
-					maxbits = curbits;
-				}
-			}
-		}
-		
-		boolean outliers = outlier_bits != -1;
-		int packed_bytes = (maxbits + 7) / 8;
-		//outliers = false;
-		//if(outliers) System.out.println("Outliers: " + packed_bytes + " bytes at " + outlier_bits + " bits");
-		
+
+		int bits = BitPacker.bits(range);
+
 		//check if vint encoding is more efficient
 		boolean vint = false;
 		
 		if(bits > 8) {
+	        int packed_bytes = ((count * bits + 63) / 64) * 8;
 			int bytes = 0;
 			for(int i = 0; i < count; i++) {
 				long value = m_array[i];
@@ -202,13 +180,10 @@ public class CompressedNumWriter {
 			if(bytes < packed_bytes) {
 				vint = true;
 			}
-			
-			//if(vint) System.out.println("VInt packing: " + bytes);
 		}
-		
-		
-		// 1 - bits packing; 2 - bits packing with outliers; 3 - vint
-		int state = vint ? 3 : outliers ? 2 : 1;
+
+		// 1 - bits packing; 3 - vint
+		int state = vint ? 2 : 1;
 		m_output.writeByte((byte)state);
 		m_output.writeVInt(count);
 		m_output.writeVLong(minValue);
@@ -220,44 +195,18 @@ public class CompressedNumWriter {
 			for(int i = 0; i < count; i++) {
 				m_output.writeVLong(m_array[i]);
 			}
-		} else if(outliers) {
-			m_output.writeByte((byte)bits);
-			m_output.writeByte((byte)outlier_bits);
-			//Write outliers
-			int outliers_count = 0;
-			long mask = NumericUtils.mask(outlier_bits);
-			for(int i = 0; i < count; i++) {
-				long value = m_array[i];
-				if(value > mask) {
-					m_temp[outliers_count++] = value >> outlier_bits;
-				}
-			}
-			m_output.writeVInt(outliers_count);
-			int packedSize = BitPacker.pack(m_temp, m_packed, outliers_count, bits - outlier_bits);
-			for(int i = 0; i < packedSize; i++) {
-				m_output.writeLong(m_packed[i]);
-			}
-			//Write main array
-			for(int i = 0; i < count; i++) {
-				long value = m_array[i];
-				if(value > mask) {
-					m_array[i] = value & mask | (1L << outlier_bits);
-				} else {
-					m_array[i] = value & mask | (1L << outlier_bits);
-				}
-			}
-			packedSize = BitPacker.pack(m_array, m_packed, count, outlier_bits + 1);
-			for(int i = 0; i < packedSize; i++) {
-				m_output.writeLong(m_packed[i]);
-			}
 		} else {
-			m_output.writeByte((byte)bits);
-			int packedSize = BitPacker.pack(m_array, m_packed, count, bits);
-			for(int i = 0; i < packedSize; i++) {
-				m_output.writeLong(m_packed[i]);
-			}
+			writePacked(m_array, count, bits);
 		}		
-		m_position = 0;
 	}
 
+	
+	private void writePacked(long[] array, int count, int bits) {
+		m_output.writeVInt(count);
+		m_output.writeByte((byte)bits);
+		int packedSize = BitPacker.pack(array, m_packed, count, bits);
+		for(int i = 0; i < packedSize; i++) {
+		    m_output.writeLong(m_packed[i]);
+		}
+	}
 }

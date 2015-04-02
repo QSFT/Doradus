@@ -64,6 +64,7 @@ public class IntList {
 	}
 	
 	public void shrinkToSize() {
+	    if(m_position == m_array.length) return;
 		int[] array = new int[m_position];
 		for(int i = 0; i < m_position; i++) array[i] = m_array[i];
 		m_array = array;

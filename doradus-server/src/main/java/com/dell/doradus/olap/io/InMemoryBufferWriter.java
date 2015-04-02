@@ -21,6 +21,7 @@ import java.util.List;
 
 public class InMemoryBufferWriter implements IBufferWriter {
     private List<byte[]> m_buffers = new ArrayList<>();
+    private long m_length;
     
     public InMemoryBufferWriter() {}
     
@@ -32,8 +33,15 @@ public class InMemoryBufferWriter implements IBufferWriter {
     	m_buffers.add(buf);
 	}
     
-    @Override public void close(long length) {}
+    @Override public void close(long length) { m_length = length; }
 
     public List<byte[]> getData() { return m_buffers; }
-    
+    public long getLength() { return m_length; }
+    public long getCompressedLength() {
+        long length = 0;
+        for(byte[] buffer: m_buffers) {
+            length += buffer.length;
+        }
+        return length;
+    }
 }

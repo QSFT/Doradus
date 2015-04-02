@@ -19,6 +19,8 @@ package com.dell.doradus.olap.collections;
 // stores numbers in a bit array using minimal number of bits.
 public class BitPacker {
 	
+    public static int bits(long maxValue) { return NumericUtils.bits(maxValue); }
+    
 	public static int pack(long[] input, long[] output, int count, int bits) {
 		if(bits == 64) {
 			for(int i = 0; i < count; i++) { output[i] = input[i]; }

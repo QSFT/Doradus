@@ -43,6 +43,52 @@ public class NumArray {
 		}
 	}
 	
+	
+	public NumArray(long[] values) {
+	    long min = 0;
+	    long max = 0;
+	    for(int i = 0; i < values.length; i++) {
+	        if(min > values[i]) min = values[i];
+	        if(max < values[i]) max = values[i];
+	    }
+	    
+	    m_bits = 0;
+        m_size = values.length;
+        if(max <= 1 && min >= 0) { // BitVector
+            m_bits = 1;
+            m_bitArray = new BitVector(m_size);
+            for(int i = 0; i < m_size; i++) {
+                if(values[i] != 0) m_bitArray.set(i);
+                else m_bitArray.clear(i);
+            }
+        }
+        else if(max <= Byte.MAX_VALUE && min >= Byte.MIN_VALUE) { // 1 byte
+            m_bits = 8;
+            m_byteArray = new byte[m_size]; 
+            for(int i = 0; i < m_size; i++) {
+                m_byteArray[i] = (byte)values[i];
+            }
+        }
+        else if(max <= Short.MAX_VALUE && min >= Short.MIN_VALUE) { // 2 bytes
+            m_bits = 16;
+            m_shortArray = new short[m_size]; 
+            for(int i = 0; i < m_size; i++) {
+                m_shortArray[i] = (short)values[i];
+            }
+        }
+        else if(max <= Integer.MAX_VALUE && min >= Integer.MIN_VALUE) { // 4 bytes
+            m_bits = 32;
+            m_intArray = new int[m_size]; 
+            for(int i = 0; i < m_size; i++) {
+                m_intArray[i] = (int)values[i];
+            }
+        }
+        else { // 8 bytes
+            m_bits = 64;
+            m_longArray = values; 
+        }
+	}
+	
 	public int size() { return m_size; }
 	
 	public long get(int index) {
