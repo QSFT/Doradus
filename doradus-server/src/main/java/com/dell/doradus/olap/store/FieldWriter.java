@@ -56,41 +56,81 @@ public class FieldWriter {
 	}
 	
 	public void close(VDirectory dir, String table, String field) {
-		if(m_isSingleValued) {
-			VOutputStream out_doc = dir.create(table + "." + field + ".doc");
-			out_doc.writeVInt(m_len.length);
-			int start = 0;
-			for(int i = 0; i < m_len.length; i++) {
-				int len = m_len[i];
-				if(len == 0) out_doc.writeVInt(0);
-				else {
-					for(int j = 0; j < len; j++) {
-						out_doc.writeVInt(m_doc.get(start++) + 1);
-					}
-				}
-			}
-			out_doc.close();
-			if(start != m_doc.size()) throw new RuntimeException("FieldWriter: inconsistency in sv mode");
-		}else {
-			VOutputStream out_doc = dir.create(table + "." + field + ".doc");
-			VOutputStream out_pos = dir.create(table + "." + field + ".pos");
-			out_pos.writeVInt(m_len.length);
-			out_doc.writeVInt(m_doc.size());
-			int start = 0;
-			for(int i = 0; i < m_len.length; i++) {
-				int len = m_len[i];
-				out_pos.writeVInt(len);
-				int doc = 0;
-				for(int  j = 0; j < len; j++) {
-					int next_doc = m_doc.get(start++);
-					out_doc.writeVInt(next_doc - doc);
-					doc = next_doc;
-				}
-			}
-			out_doc.close();
-			out_pos.close();
-			if(start != m_doc.size()) throw new RuntimeException("FieldWriter: inconsistency in mv mode");
+		VOutputStream out_freq = dir.create(table + "." + field + ".freq");
+		out_freq.writeVInt(m_docsCount);
+		VOutputStream out_fdoc = dir.create(table + "." + field + ".fdoc");
+		CompressedNumWriter w_freq = new CompressedNumWriter(out_freq, 16 * 1024);
+		CompressedNumWriter w_fdoc = new CompressedNumWriter(out_fdoc, 16 * 1024);
+
+		VOutputStream out_ndoc = null;
+		CompressedNumWriter w_ndoc = null;
+		if(!m_isSingleValued) {
+			out_ndoc = dir.create(table + "." + field + ".ndoc");
+			w_ndoc = new CompressedNumWriter(out_ndoc, 16 * 1024);
 		}
+
+		int pos = 0;
+		for(int i = 0; i < m_len.length; i++) {
+			int len = m_len[i];
+			w_freq.add(len);
+			if(len > 0) {
+				int doc = m_doc.get(pos++);
+				w_fdoc.add(doc);
+				for(int j = 1; j < len; j++) {
+					int nextdoc = m_doc.get(pos++);
+					w_ndoc.add(nextdoc - doc);
+					doc = nextdoc;
+				}
+			}
+		}
+		if(pos != m_doc.size()) throw new RuntimeException("Inconsistency in FieldWriter");
+		
+		w_freq.close();
+		w_fdoc.close();
+		out_freq.close();
+		out_fdoc.close();
+		if(w_ndoc != null) {
+			w_ndoc.close();
+			out_ndoc.close();
+		}
+		
+		/*
+        if(m_isSingleValued) {
+            VOutputStream out_doc = dir.create(table + "." + field + ".doc");
+            out_doc.writeVInt(m_len.length);
+            int start = 0;
+            for(int i = 0; i < m_len.length; i++) {
+                int len = m_len[i];
+                if(len == 0) out_doc.writeVInt(0);
+                else {
+                    for(int j = 0; j < len; j++) {
+                        out_doc.writeVInt(m_doc.get(start++) + 1);
+                    }
+                }
+            }
+            out_doc.close();
+            if(start != m_doc.size()) throw new RuntimeException("FieldWriter: inconsistency in sv mode");
+        }else {
+            VOutputStream out_doc = dir.create(table + "." + field + ".doc");
+            VOutputStream out_pos = dir.create(table + "." + field + ".pos");
+            out_pos.writeVInt(m_len.length);
+            out_doc.writeVInt(m_doc.size());
+            int start = 0;
+            for(int i = 0; i < m_len.length; i++) {
+                int len = m_len[i];
+                out_pos.writeVInt(len);
+                int doc = 0;
+                for(int  j = 0; j < len; j++) {
+                    int next_doc = m_doc.get(start++);
+                    out_doc.writeVInt(next_doc - doc);
+                    doc = next_doc;
+                }
+            }
+            out_doc.close();
+            out_pos.close();
+            if(start != m_doc.size()) throw new RuntimeException("FieldWriter: inconsistency in mv mode");
+        }            
+        */
 	}
 
 }

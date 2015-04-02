@@ -42,6 +42,29 @@ public class NumWriter {
 	}
 	
 	public void close(VDirectory dir, String table, String field) {
+	    if(m_values.length == 0) return;
+        int setCount = m_mask.bitsSet();
+        if(setCount == 0) return;
+	    
+        VOutputStream out_freq = dir.create(table + "." + field + ".num.freq");
+        out_freq.writeVInt(m_values.length);
+        VOutputStream out_fdoc = dir.create(table + "." + field + ".num.fdoc");
+        CompressedNumWriter w_freq = new CompressedNumWriter(out_freq, 16 * 1024);
+        CompressedNumWriter w_fdoc = new CompressedNumWriter(out_fdoc, 16 * 1024);
+        for(int i = 0; i < m_values.length; i++) {
+            if(!m_mask.get(i)) {
+                w_freq.add(0);
+            } else {
+                w_freq.add(1);
+                w_fdoc.add(m_values[i]);
+            }
+        }
+        w_freq.close();
+        w_fdoc.close();
+        out_freq.close();
+        out_fdoc.close();
+
+        /*
 		int setCount = m_mask.bitsSet();
 		if(setCount == 0) return;
 		else if(setCount != m_values.length) {
@@ -93,6 +116,7 @@ public class NumWriter {
 			}
 		}
 		stream.close();
+		*/
 	}
 
 }

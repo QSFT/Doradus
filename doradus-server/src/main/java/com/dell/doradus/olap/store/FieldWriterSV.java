@@ -41,12 +41,34 @@ public class FieldWriterSV {
 	
 	public void close(VDirectory dir, String table, String field) {
 		if(m_maxTerm == -1) return;
-		VOutputStream out_doc = dir.create(table + "." + field + ".doc");
-		out_doc.writeVInt(m_docsCount);
+		VOutputStream out_freq = dir.create(table + "." + field + ".freq");
+        out_freq.writeVInt(m_docsCount);
+		VOutputStream out_fdoc = dir.create(table + "." + field + ".fdoc");
+		CompressedNumWriter w_freq = new CompressedNumWriter(out_freq, 16 * 1024);
+		CompressedNumWriter w_fdoc = new CompressedNumWriter(out_fdoc, 16 * 1024);
 		for(int i = 0; i < m_docs.length; i++) {
-			out_doc.writeVInt(m_docs[i] + 1);
+			int doc = m_docs[i];
+			if(doc == -1) {
+				w_freq.add(0);
+			} else {
+				w_freq.add(1);
+				w_fdoc.add(doc);
+			}
 		}
-		out_doc.close();
+		w_freq.close();
+		w_fdoc.close();
+		out_freq.close();
+		out_fdoc.close();
+		
+		/*
+        if(m_maxTerm == -1) return;
+        VOutputStream out_doc = dir.create(table + "." + field + ".doc");
+        out_doc.writeVInt(m_docsCount);
+        for(int i = 0; i < m_docs.length; i++) {
+            out_doc.writeVInt(m_docs[i] + 1);
+        }
+        out_doc.close();
+        */
 	}
 
 }

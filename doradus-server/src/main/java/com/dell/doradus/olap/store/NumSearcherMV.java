@@ -37,6 +37,84 @@ public class NumSearcherMV {
 	private long m_max = Long.MIN_VALUE;
 	
 	public NumSearcherMV(VDirectory dir, String table, String field) {
+        // new packed arrays
+        if(dir.fileExists(table + "." + field + ".num.freq")) {
+            VInputStream in_freq = dir.open(table + "." + field + ".num.freq"); 
+            m_documents = in_freq.readVInt();
+            VInputStream in_fdoc = dir.open(table + "." + field + ".num.fdoc");
+            CompressedNumReader r_freq = new CompressedNumReader(in_freq);
+            CompressedNumReader r_fdoc = new CompressedNumReader(in_fdoc);
+            CompressedNumReader r_ndoc = null;
+            m_bSingleValued = true;
+            
+            if(dir.fileExists(table + "." + field + ".num.ndoc")) {
+                VInputStream in_ndoc = dir.open(table + "." + field + ".num.ndoc"); 
+                r_ndoc = new CompressedNumReader(in_ndoc);
+                m_bSingleValued = false;
+            }
+
+            if(m_bSingleValued) {
+                LongList docs = new LongList(m_documents);
+                m_mask = new BitVector(m_documents);
+                int pos = 0;
+                while(!r_freq.isEnd()) {
+                    int freq = (int)r_freq.get();
+                    if(freq == 0) {
+                        m_mask.clear(pos++);
+                        docs.add(0);
+                    }
+                    else if(freq > 1) throw new RuntimeException("Invalid data in SV num");
+                    else {
+                        m_mask.set(pos++);
+                        long val = r_fdoc.get();
+                        docs.add(val);
+                        if(m_min > val) m_min = val;
+                        if(m_max < val) m_max = val;
+                        if(val > 0 && m_min_pos > val) m_min_pos = val;
+                    }
+                }
+                if(pos != m_documents) throw new RuntimeException("Inconsistency in NumSearcher: count");
+                if(docs.size() != m_documents) throw new RuntimeException("Inconsistency in NumSearcher: count (2)");
+                if(!r_fdoc.isEnd()) throw new RuntimeException("Inconsistency in NumSearcher: fdoc");
+                docs.shrinkToSize();
+                m_values = new NumArray(docs.getArray());
+            } else {
+                LongList docs = new LongList(m_documents);
+                IntList poss = new IntList(m_documents + 1);
+                while(!r_freq.isEnd()) {
+                    int freq = (int)r_freq.get();
+                    poss.add(docs.size());
+                    if(freq == 0) continue;
+                    long val = r_fdoc.get();
+                    docs.add(val);
+                    for(int j = 1; j < freq; j++) {
+                        val += r_ndoc.get(); 
+                        docs.add(val);
+                    }
+                }
+                poss.add(docs.size());
+                if(poss.size() != m_documents + 1) throw new RuntimeException("Inconsistency in NumSearcher: count");
+                if(!r_fdoc.isEnd()) throw new RuntimeException("Inconsistency in NumSearcher: fdoc");
+                if(!r_fdoc.isEnd()) throw new RuntimeException("Inconsistency in NumSearcher: fdoc");
+                if(!r_ndoc.isEnd()) throw new RuntimeException("Inconsistency in NumSearcher: ndoc");
+                docs.shrinkToSize();
+                poss.shrinkToSize();
+                m_values = new NumArray(docs.getArray());
+                m_positions = poss.getArray();
+            }
+            
+            for(int i = 0; i < m_values.size(); i++) {
+                long val = m_values.get(i);
+                if(m_min > val) m_min = val;
+                if(m_max < val) m_max = val;
+                if(val > 0 && m_min_pos > val) m_min_pos = val;
+            }
+            
+            return;
+        }
+        
+        // OLD VERSION
+        
 		if(!dir.fileExists(table + "." + field + ".dat")) return;
 		VInputStream stream = dir.open(table + "." + field + ".dat");
 		int size = stream.readVInt();

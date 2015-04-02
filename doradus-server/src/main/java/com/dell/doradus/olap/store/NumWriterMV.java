@@ -21,9 +21,8 @@ import com.dell.doradus.olap.io.VOutputStream;
 
 public class NumWriterMV {
 	private LongList m_doc = new LongList(1024);
-	private IntList m_pos;
+	private int[] m_len;
 	private boolean m_isSingleValued = true;
-	private BitVector m_mask;
 	
 	public long min = Long.MAX_VALUE;
 	public long max = Long.MIN_VALUE;
@@ -37,8 +36,7 @@ public class NumWriterMV {
 	
 	public NumWriterMV(int docsCount) {
 		m_docsCount = docsCount;
-		m_pos = new IntList(docsCount + 1);
-		m_mask = new BitVector(docsCount);
+		m_len = new int[docsCount];
 	}
 	
 	public int getDocListSize() { return m_doc.size(); }
@@ -52,18 +50,13 @@ public class NumWriterMV {
 	public void add(int doc, long num) {
 		if(m_lastDoc == doc && m_lastNum == num) return;
 		if(m_lastDoc > doc) throw new RuntimeException("Invalid doc order");
-		m_mask.set(doc);
 		if(m_maxNum < num) m_maxNum = num;
 		if(m_lastDoc == doc) {
 			m_isSingleValued = false;
 			if(m_lastNum > num) throw new RuntimeException("Invalid number order");
-		} else {
-			while(m_lastDoc < doc) {
-				m_pos.add(m_doc.size());
-				m_lastDoc++;
-			}
-		}
+		} else m_lastDoc = doc; 
 		m_doc.add(num);
+		m_len[doc]++;
 		m_lastNum = num;
 		
 		if(min > num) min = num;
@@ -72,10 +65,45 @@ public class NumWriterMV {
 	}
 	
 	public void close(VDirectory dir, String table, String field) {
+        VOutputStream out_freq = dir.create(table + "." + field + ".num.freq");
+        out_freq.writeVInt(m_docsCount);
+        VOutputStream out_fdoc = dir.create(table + "." + field + ".num.fdoc");
+        CompressedNumWriter w_freq = new CompressedNumWriter(out_freq, 16 * 1024);
+        CompressedNumWriter w_fdoc = new CompressedNumWriter(out_fdoc, 16 * 1024);
+
+        VOutputStream out_ndoc = null;
+        CompressedNumWriter w_ndoc = null;
+        if(!m_isSingleValued) {
+            out_ndoc = dir.create(table + "." + field + ".num.ndoc");
+            w_ndoc = new CompressedNumWriter(out_ndoc, 16 * 1024);
+        }
+
+        int pos = 0;
+        for(int i = 0; i < m_len.length; i++) {
+            int len = m_len[i];
+            w_freq.add(len);
+            if(len > 0) {
+                long num = m_doc.get(pos++);
+                w_fdoc.add(num);
+                for(int j = 1; j < len; j++) {
+                    long nextnum = m_doc.get(pos++);
+                    w_ndoc.add(nextnum - num);
+                    num = nextnum;
+                }
+            }
+        }
+        if(pos != m_doc.size()) throw new RuntimeException("Inconsistency in FieldWriter");
+        
+        w_freq.close();
+        w_fdoc.close();
+        out_freq.close();
+        out_fdoc.close();
+        if(w_ndoc != null) {
+            w_ndoc.close();
+            out_ndoc.close();
+        }
 		
-		while(m_pos.size() != m_docsCount + 1) m_pos.add(m_doc.size());
-		if(min_pos > max) min_pos = 0;
-		
+		/*
 		if(m_isSingleValued) {
 			int setCount = m_mask.bitsSet();
 			if(setCount == 0) return;
@@ -113,7 +141,7 @@ public class NumWriterMV {
 			}
 			out_pos.close();
 		}
-		
+		*/
 	}
 
 }

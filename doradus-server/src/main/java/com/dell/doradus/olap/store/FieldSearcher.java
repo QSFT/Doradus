@@ -29,6 +29,69 @@ public class FieldSearcher {
 	private int[] m_positions;
 	
 	public FieldSearcher(VDirectory dir, String table, String field) {
+		// new packed arrays
+		if(dir.fileExists(table + "." + field + ".freq")) {
+			VInputStream in_freq = dir.open(table + "." + field + ".freq");
+			m_documents = in_freq.readVInt();
+			VInputStream in_fdoc = dir.open(table + "." + field + ".fdoc");
+			CompressedNumReader r_freq = new CompressedNumReader(in_freq);
+			CompressedNumReader r_fdoc = new CompressedNumReader(in_fdoc);
+			CompressedNumReader r_ndoc = null;
+			m_bSingleValued = true;
+			
+			if(dir.fileExists(table + "." + field + ".ndoc")) {
+				VInputStream in_ndoc = dir.open(table + "." + field + ".ndoc"); 
+				r_ndoc = new CompressedNumReader(in_ndoc);
+				m_bSingleValued = false;
+			}
+
+			if(m_bSingleValued) {
+			    IntList docs = new IntList(m_documents);
+				while(!r_freq.isEnd()) {
+					int freq = (int)r_freq.get();
+					if(freq == 0) docs.add(-1);
+					else if(freq > 1) throw new RuntimeException("Invalid data in SV field");
+					else {
+						int doc = (int)r_fdoc.get();
+						docs.add(doc);
+						if(m_fields < doc + 1) m_fields = doc + 1;
+					}
+				}
+                if(docs.size() != m_documents) throw new RuntimeException("Inconsistency in FieldSearcher: count");
+				if(!r_fdoc.isEnd()) throw new RuntimeException("Inconsistency in FieldSearcher: fdoc");
+                docs.shrinkToSize();
+                m_docterms = docs.getArray();
+			} else {
+				IntList docs = new IntList(m_documents);
+                IntList poss = new IntList(m_documents + 1);
+				while(!r_freq.isEnd()) {
+					int freq = (int)r_freq.get();
+					poss.add(docs.size());
+					if(freq == 0) continue;
+					int doc = (int)r_fdoc.get();
+					docs.add(doc);
+					if(m_fields < doc + 1) m_fields = doc + 1;
+					for(int j = 1; j < freq; j++) {
+						doc += (int)r_ndoc.get(); 
+						docs.add(doc);
+						if(m_fields < doc + 1) m_fields = doc + 1;
+					}
+				}
+                poss.add(docs.size());
+				if(poss.size() != m_documents + 1) throw new RuntimeException("Inconsistency in FieldSearcher: count");
+				if(!r_fdoc.isEnd()) throw new RuntimeException("Inconsistency in FieldSearcher: fdoc");
+				if(!r_ndoc.isEnd()) throw new RuntimeException("Inconsistency in FieldSearcher: ndoc");
+				docs.shrinkToSize();
+				m_docterms = docs.getArray();
+				poss.shrinkToSize();
+				m_positions = poss.getArray();
+				m_documents = m_positions.length - 1;
+			}
+			return;
+		}
+		
+		// OLD VERSION
+		
 		if(!dir.fileExists(table + "." + field + ".doc")) return;
 		
 		if(dir.fileExists(table + "." + field + ".pos")) {
