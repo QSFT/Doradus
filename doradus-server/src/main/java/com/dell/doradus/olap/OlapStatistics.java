@@ -46,6 +46,12 @@ public class OlapStatistics {
 		
 		//long total
 		ArrayList<FileInfo> files = new ArrayList<>(dir.listFiles());
+		for(FileInfo file: files) {
+		    if(file.getCompressedLength() == 0) {
+		        file.setCompressedLength(dir.compressedLength(file));
+		    }
+		}
+		
 		if(sort == null || "name".equals(sort)) {
 			Collections.sort(files);
 		} else if("cmp".equals(sort)) {
@@ -62,7 +68,7 @@ public class OlapStatistics {
 		for(FileInfo file: files) {
 			UNode fileNode = fnode.addMapNode("file");
 			fileNode.addValueNode("name", file.getName(), true);
-			long cl = dir.compressedLength(file);
+			long cl = file.getCompressedLength();
 			long ul = file.getLength();
 			fileNode.addValueNode("cmp", fmt(cl), true);
 			fileNode.addValueNode("unc", fmt(ul), true);

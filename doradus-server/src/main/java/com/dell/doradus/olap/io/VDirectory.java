@@ -193,6 +193,7 @@ public class VDirectory {
 		long compressedLength = file.getCompressedLength();
 		if(compressedLength > 0) return compressedLength;
 		if(file.getUncompressed()) return file.getLength();
+        if(file.getLength() == 0) return 0;
 		compressedLength = 0;
 		int i = 0;
 		byte[] val = null;
