@@ -32,7 +32,6 @@ import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.FieldSearcher;
 import com.dell.doradus.olap.store.IdSearcher;
-import com.dell.doradus.olap.store.NumSearcher;
 import com.dell.doradus.olap.store.NumSearcherMV;
 import com.dell.doradus.olap.store.ValueSearcher;
 import com.dell.doradus.olap.xlink.XLinkContext;
@@ -206,7 +205,7 @@ public class ResultBuilder {
 					field_searcher.fillDocs(vr, r);
 				}
 				else throw new IllegalArgumentException(bq.operation + " is not supported");
-			} else if(NumSearcher.isNumericType(f.getType())) {
+			} else if(NumSearcherMV.isNumericType(f.getType())) {
 				if(value == null) {
 					NumSearcherMV num_searcher = searcher.getNumSearcher(tableDef.getTableName(), field);
 					num_searcher.fillNull(r);
@@ -221,7 +220,7 @@ public class ResultBuilder {
 				if(!bq.operation.equals(BinaryQuery.EQUALS)) throw new IllegalArgumentException("Contains is not supported for numeric types");
 				if(value.indexOf('*') >= 0 ||value.indexOf('?') >= 0) throw new IllegalArgumentException("Wildcard search not supported for numeric types");
 				NumSearcherMV num_searcher = searcher.getNumSearcher(tableDef.getTableName(), field);
-				num_searcher.fill(NumSearcher.parse(value, f.getType()), r);
+				num_searcher.fill(NumSearcherMV.parse(value, f.getType()), r);
 			} else throw new IllegalArgumentException("Field type '" + f.getType() + "' not supported");
 		} else if(query instanceof MVSBinaryQuery) {
 			MVSBinaryQuery mvs = (MVSBinaryQuery)query;
@@ -339,7 +338,7 @@ public class ResultBuilder {
 					}
 				}
 				else throw new IllegalArgumentException(bq.operation + " is not supported");
-			} else if(NumSearcher.isNumericType(f.getType())) {
+			} else if(NumSearcherMV.isNumericType(f.getType())) {
 				if(value == null) {
 					NumSearcherMV num_searcher = searcher.getNumSearcher(tableDef.getTableName(), field);
 					num_searcher.fillNull(r);
@@ -423,11 +422,11 @@ public class ResultBuilder {
 				}
 				FieldSearcher field_searcher = searcher.getFieldSearcher(tableDef.getTableName(), field);
 				field_searcher.fill(term_min, term_max, r);
-			} else if(NumSearcher.isNumericType(f.getType())) {
+			} else if(NumSearcherMV.isNumericType(f.getType())) {
 				long min = Long.MIN_VALUE;
 				long max = Long.MAX_VALUE;
-				if(rq.min != null) min = NumSearcher.parse(rq.min, f.getType());
-				if(rq.max != null) max = NumSearcher.parse(rq.max, f.getType());
+				if(rq.min != null) min = NumSearcherMV.parse(rq.min, f.getType());
+				if(rq.max != null) max = NumSearcherMV.parse(rq.max, f.getType());
 				if(!rq.minInclusive) min++;
 				if(rq.maxInclusive) max++;
 				NumSearcherMV num_searcher = searcher.getNumSearcher(tableDef.getTableName(), field);
@@ -589,7 +588,7 @@ public class ResultBuilder {
 			FieldCountQuery q = (FieldCountQuery)query;
 			FieldDefinition f = tableDef.getFieldDef(q.field);
 			Utils.require(f != null, q.field + " not found in " + tableDef.getTableName());
-			if(NumSearcher.isNumericType(f.getType())) {
+			if(NumSearcherMV.isNumericType(f.getType())) {
 				NumSearcherMV num_searcher = searcher.getNumSearcher(f.getTableName(), f.getName());
 				num_searcher.fillCount(q.count, q.count + 1, r);
 			}
@@ -605,7 +604,7 @@ public class ResultBuilder {
 			int max = q.range.max == null ? Integer.MAX_VALUE : Integer.parseInt(q.range.max);
 			if(!q.range.minInclusive) min++;
 			if(q.range.maxInclusive) max++;
-			if(NumSearcher.isNumericType(f.getType())) {
+			if(NumSearcherMV.isNumericType(f.getType())) {
 				NumSearcherMV num_searcher = searcher.getNumSearcher(f.getTableName(), f.getName());
 				num_searcher.fillCount(min, max, r);
 			}

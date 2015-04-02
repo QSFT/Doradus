@@ -21,7 +21,7 @@ import java.util.List;
 import com.dell.doradus.olap.search.Result;
 import com.dell.doradus.olap.search.ResultBuilder;
 import com.dell.doradus.olap.store.CubeSearcher;
-import com.dell.doradus.olap.store.NumSearcher;
+import com.dell.doradus.olap.store.NumSearcherMV;
 import com.dell.doradus.olap.xlink.DirectXLinkMetricCounter;
 import com.dell.doradus.olap.xlink.InverseXLinkMetricCounter;
 import com.dell.doradus.olap.xlink.XMetrics;
@@ -88,7 +88,7 @@ public class MetricCounterFactory {
 			filter = ResultBuilder.search(item.tableDef, item.query, searcher);
 		}
 		if(index == metric.items.size() - 1) {
-			if(NumSearcher.isNumericType(item.fieldDef.getType())) {
+			if(NumSearcherMV.isNumericType(item.fieldDef.getType())) {
 				if("MINCOUNT".equals(metric.function) || "MAXCOUNT".equals(metric.function)) {
 					return new MetricCounter.NumCount(item.fieldDef, searcher);
 				}

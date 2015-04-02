@@ -28,7 +28,6 @@ import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.FieldSearcher;
 import com.dell.doradus.olap.store.IdSearcher;
 import com.dell.doradus.olap.store.IntIterator;
-import com.dell.doradus.olap.store.NumSearcher;
 import com.dell.doradus.olap.store.NumSearcherMV;
 import com.dell.doradus.olap.store.ValueSearcher;
 import com.dell.doradus.search.FieldSet;
@@ -124,7 +123,7 @@ public class SearchResultBuilder {
 					value += fvs.get(table, field, iter.get(i));
 				}
 				sr.scalars.put(field, value);
-			} else if(NumSearcher.isNumericType(type)) {
+			} else if(NumSearcherMV.isNumericType(type)) {
 				NumSearcherMV num_searcher = searcher.getNumSearcher(table, field);
 				if(num_searcher.isNull(document)) continue;
 				String value = "";
@@ -132,7 +131,7 @@ public class SearchResultBuilder {
 				if(size == 0) continue;
 				for(int i = 0; i < size; i++) {
 					if(value.length() > 0) value += "\uFFFE";
-					value += NumSearcher.format(num_searcher.get(document, i), type);
+					value += NumSearcherMV.format(num_searcher.get(document, i), type);
 				}
 				sr.scalars.put(field, value);
 			} else throw new IllegalArgumentException("Invalid type: " + type + " for field " + field);

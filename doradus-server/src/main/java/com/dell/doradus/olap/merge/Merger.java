@@ -39,7 +39,6 @@ import com.dell.doradus.olap.store.FieldWriter;
 import com.dell.doradus.olap.store.FieldWriterSV;
 import com.dell.doradus.olap.store.IdReader;
 import com.dell.doradus.olap.store.IdWriter;
-import com.dell.doradus.olap.store.NumSearcher;
 import com.dell.doradus.olap.store.NumSearcherMV;
 import com.dell.doradus.olap.store.NumWriter;
 import com.dell.doradus.olap.store.NumWriterMV;
@@ -176,7 +175,7 @@ public class Merger {
 			mergeTextField(fieldDef);
 		} else if(fieldDef.isLinkField()) {
 			mergeLinkField(fieldDef);
-		} else if(NumSearcher.isNumericType(fieldDef.getType())) {
+		} else if(NumSearcherMV.isNumericType(fieldDef.getType())) {
 			mergeNumField(fieldDef);
 		} else if(fieldDef.isGroupField() || fieldDef.isXLinkField()) {
 			// do nothing

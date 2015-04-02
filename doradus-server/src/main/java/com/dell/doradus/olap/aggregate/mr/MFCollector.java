@@ -34,7 +34,6 @@ import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.FieldSearcher;
 import com.dell.doradus.olap.store.IdSearcher;
 import com.dell.doradus.olap.store.IntIterator;
-import com.dell.doradus.olap.store.NumSearcher;
 import com.dell.doradus.olap.store.NumSearcherMV;
 import com.dell.doradus.olap.store.ValueSearcher;
 import com.dell.doradus.olap.xlink.DirectXLinkCollector;
@@ -65,7 +64,7 @@ public abstract class MFCollector {
 		AggregationGroupItem last = group.items.get(end - 1);
 		FieldDefinition fieldDef = last.fieldDef;
 		MFCollector collector = null;
-		if(NumSearcher.isNumericType(fieldDef.getType())) collector = new EndNumField(searcher, fieldDef, group);
+		if(NumSearcherMV.isNumericType(fieldDef.getType())) collector = new EndNumField(searcher, fieldDef, group);
 		else if(fieldDef.isLinkField()) {
 			Result filter = null;
 			if(last.query != null) filter = ResultBuilder.search(last.tableDef, last.query, searcher);
