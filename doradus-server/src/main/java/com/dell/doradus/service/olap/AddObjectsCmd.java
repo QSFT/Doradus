@@ -26,7 +26,6 @@ import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.OlapBatch;
-import com.dell.doradus.service.rest.ReaderCallback;
 import com.dell.doradus.service.rest.UNodeInCallback;
 
 /**
