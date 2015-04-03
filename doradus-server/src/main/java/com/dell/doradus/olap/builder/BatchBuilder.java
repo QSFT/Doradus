@@ -79,8 +79,9 @@ public class BatchBuilder {
                 Utils.require(name.equals("batch"), "Root node must be 'batch': " + name);
                 level++;
                 break;
-            case 1:     // docs level: should have been array
-                Utils.require(false, "'docs' array expected: " + name);
+            case 1:     // docs level: can be an object with one "doc" child
+                Utils.require(name.equals("docs"), "'docs' array expected: " + name);
+                level++;
                 break;
             case 2:     // doc object
                 Utils.require(name.equals("doc"), "'doc' object expected: " + name);

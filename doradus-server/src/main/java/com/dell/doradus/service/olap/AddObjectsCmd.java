@@ -26,28 +26,14 @@ import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.OlapBatch;
-import com.dell.doradus.service.rest.UNodeInCallback;
+import com.dell.doradus.service.rest.ReaderCallback;
 
 /**
  * Implements the REST command: POST /{application}/{shard}[?{params}].
  */
 // TODO: Switch back to ReaderCallback when OlapBatch.parseJSON is fixed
-public class AddObjectsCmd extends UNodeInCallback /*ReaderCallback*/ {
+public class AddObjectsCmd extends ReaderCallback {
 
-    @Override
-    public RESTResponse invokeUNodeIn(UNode inNode) {
-      String shard = m_request.getVariableDecoded("shard");
-      ApplicationDefinition appDef = m_request.getAppDef();
-      
-      OlapBatch batch = OlapBatch.fromUNode(inNode);
-      Map<String, String> paramMap = Utils.parseURIQuery(m_request.getVariable("params"));
-      BatchResult batchResult = OLAPService.instance().addBatch(appDef, shard, batch, paramMap);
-      UNode outNode = batchResult.toDoc();
-      String body = outNode.toString(m_request.getOutputContentType());
-      return new RESTResponse(HttpCode.CREATED, body, m_request.getOutputContentType());
-    }
-
-//    @Override
     public RESTResponse invokeStreamIn(Reader reader) {
         Utils.require(reader != null, "This command requires an input entity");
         String shard = m_request.getVariableDecoded("shard");
