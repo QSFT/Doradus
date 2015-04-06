@@ -219,11 +219,14 @@ public class CSVLoader {
         display("   -id <name>          Column name of ID field. Default is: {}", CSVConfig.DEFAULT_ID_FIELD);
         display("   -increment_ts [T|F] True to increment timestamp fields 1 day per batch. Default is: {}", CSVConfig.DEFAULT_INCREMENT_TS);
         display("   -merge_all [T|F]    (OLAP only): true to merge after every batch. Default is: {}", CSVConfig.DEFAULT_MERGE_ALL);
+        display("   -password <pw>      Password for tenant. Default is: {}", CSVConfig.DEFAULT_PASSWORD);
         display("   -port <port>        Doradus server port. Default is: {}", CSVConfig.DEFAULT_PORT);
         display("   -root <folder>      Root folder of CSV files. Default is: {}", CSVConfig.DEFAULT_ROOT);
-        display("   -schema <file>      Name of application schema file. Default is: {}", CSVConfig.DEFAULT_SCHEMA);
+        display("   -schema <file>      Name of application schema file. Default is: <app name>.xml");
         display("   -skip_undef [T|F]   True to skip fields not declared in the schema. Default is: {}", CSVConfig.DEFAULT_SKIP_UNDEF);
         display("   -shard <name>       (OLAP only): Name of shard to load. Default is: {}", CSVConfig.DEFAULT_SHARD);
+        display("   -tenant <name>      Name of tenant to use. Default is: {}", CSVConfig.DEFAULT_TENANT);
+        display("   -user <ID>          User ID for tenant. Default is: {}", CSVConfig.DEFAULT_USER);
         display("   -workers <#>        # of worker threads. Default is: {}", CSVConfig.DEFAULT_WORKERS);
         display("To use TLS:");
         display("   -tls [T|F]               True to enable TLS/SSL. Default is: {}", CSVConfig.DEFAULT_TLS);
@@ -327,7 +330,7 @@ public class CSVLoader {
     // Load schema contents from m_config.schema file.
     private String getSchema() {
         if (Utils.isEmpty(m_config.schema)) {
-            m_config.schema = m_config.app + ".xml";
+            m_config.schema = m_config.root + m_config.app + ".xml";
         }
         File schemaFile = new File(m_config.schema);
         if (!schemaFile.exists()) {
@@ -419,11 +422,8 @@ public class CSVLoader {
     
     // Open Doradus database, setting m_client.
     private void openDatabase() {
-        if (m_config.tls) {
-            m_client = new Client(m_config.host, m_config.port, m_config.getTLSParams());
-        } else {
-            m_client = new Client(m_config.host, m_config.port);
-        }
+        m_client = new Client(m_config.host, m_config.port, m_config.getTLSParams());
+        m_client.setCredentials(m_config.getCredentials());
     }   // openDatabase
 
     // Parse args into CSVConfig object.
@@ -645,6 +645,7 @@ public class CSVLoader {
                            new Object[]{m_workerNo, m_config.host, m_config.port});
             Client client = new Client(m_config.host, m_config.port, m_config.getTLSParams());
             client.setCompression(m_config.compress);
+            client.setCredentials(m_config.getCredentials());
             try {
                 m_session = client.openApplication(m_config.app);
             } catch (Exception e) {

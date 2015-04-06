@@ -18,7 +18,9 @@ package com.dell.doradus.client.utils;
 
 import java.lang.reflect.Field;
 
+import com.dell.doradus.client.Credentials;
 import com.dell.doradus.client.SSLTransportParameters;
+import com.dell.doradus.common.Utils;
 
 /**
  * Holds configuration parameters for the CSVLoader and CSVDumper apps. The singleton
@@ -36,11 +38,14 @@ public class CSVConfig {
     public static final boolean DEFAULT_INCREMENT_TS    = false;
     public static final boolean DEFAULT_MERGE_ALL       = false;
     public static final boolean DEFAULT_OPTIMIZE        = false;
+    public static final String  DEFAULT_PASSWORD        = null;
     public static final int     DEFAULT_PORT            = 1123;
     public static final String  DEFAULT_ROOT            = ".";
-    public static final String  DEFAULT_SCHEMA          = "BIM.xml";
+    public static final String  DEFAULT_SCHEMA          = null;
     public static final boolean DEFAULT_SKIP_UNDEF      = false;
     public static final String  DEFAULT_SHARD           = "s1";
+    public static final String  DEFAULT_TENANT          = null;
+    public static final String  DEFAULT_USER            = null;
     public static final int     DEFAULT_WORKERS         = 3;
     
     // TLS defaults:
@@ -61,14 +66,17 @@ public class CSVConfig {
     public String   keystorepassword    = DEFAULT_KEYSTORE_PW;
     public boolean  merge_all           = DEFAULT_MERGE_ALL;
     public boolean  optimize            = DEFAULT_OPTIMIZE;
+    public String   password            = DEFAULT_PASSWORD;
     public int      port                = DEFAULT_PORT;
     public String   root                = DEFAULT_ROOT;
     public String   schema              = DEFAULT_SCHEMA;
     public boolean  skip_undef          = DEFAULT_SKIP_UNDEF;
     public String   shard               = DEFAULT_SHARD;
+    public String   tenant              = DEFAULT_TENANT;
     public boolean  tls                 = DEFAULT_TLS;
     public String   truststore          = DEFAULT_TRUSTSTORE;
     public String   truststorepassword  = DEFAULT_TRUSTSTORE_PW;
+    public String   user                = DEFAULT_USER;
     public int      workers             = DEFAULT_WORKERS;
 
     // TLS parameters if used:
@@ -104,6 +112,19 @@ public class CSVConfig {
            throw new IllegalArgumentException("Invalid value for '" + name + "': " + value);
         }
     }   // set
+    
+    /**
+     * Return a Credentials object if either tenant or user is set (or both). If neither
+     * is set, null is returned.
+     * 
+     * @return  Credentials to use with Client or null if there are no credentials to set.
+     */
+    public Credentials getCredentials() {
+        if (!Utils.isEmpty(tenant) || !Utils.isEmpty(user)) {
+            return new Credentials(tenant, user, password);
+        }
+        return null;
+    }
     
     /**
      * If the 'tls' option is true, return the TLS parameters packaged in an 
