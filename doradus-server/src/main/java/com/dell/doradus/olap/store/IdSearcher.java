@@ -41,6 +41,8 @@ public class IdSearcher {
 		if(tableStats == null) return;
 		String table = tableStats.name;
 		m_size = tableStats.documents;
+        m_bstr.length = -1;
+        if(!dir.fileExists(table + "._id")) return;
 		m_stream_id = dir.open(table + "._id");
 		m_stream_id.seek(0); // to read first chunk in-mem 
 		m_idx_ids = new BSTR[(m_size + IdWriter.SPAN - 1) / IdWriter.SPAN];
@@ -52,7 +54,6 @@ public class IdSearcher {
 			m_idx_ids[i] = new BSTR(m_bstr);
 			last_offset = m_idx_offsets[i] = last_offset + stream_idx.readVLong();
 		}
-		m_bstr.length = -1;
 	}
 	
 	public int size() { return m_size; }

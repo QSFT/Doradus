@@ -33,12 +33,10 @@ public class IdWriter {
 	public IdWriter(VDirectory dir, String table) {
 		m_dir = dir;
 		m_table = table;
-		m_stream_id = dir.create(table + "._id");
-		m_stream_idx = dir.create(table + ".idx");
 		m_documents = 0;
 		m_last.length = -1;
 	}
-	
+
 	public int add(BSTR id) {
 		if(!BSTR.isEqual(m_last, id)) {
 			flush();
@@ -51,9 +49,15 @@ public class IdWriter {
 		if(m_last.length != -1 && !BSTR.isEqual(id,  m_last)) throw new RuntimeException("Wrong canceled ID specified");
 		m_last.length = -1;
 	}
-	
+
 	private void flush() {
 		if(m_last.length < 0) return;
+		
+		if(m_stream_id == null) {
+	        m_stream_id = m_dir.create(m_table + "._id");
+	        m_stream_idx = m_dir.create(m_table + ".idx");
+		}
+		
 		if(m_documents % SPAN == 0) {
 			m_stream_idx.write(m_last);
 			long new_position = m_stream_id.position();
@@ -76,8 +80,10 @@ public class IdWriter {
 	
 	public void close() {
 		flush();
-		m_stream_id.close();
-		m_stream_idx.close();
+		if(m_stream_id != null) {
+    		m_stream_id.close();
+    		m_stream_idx.close();
+		}
 	}
 	
 }

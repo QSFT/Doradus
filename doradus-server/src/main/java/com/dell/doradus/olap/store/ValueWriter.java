@@ -22,6 +22,9 @@ import com.dell.doradus.olap.io.VOutputStream;
 
 public class ValueWriter {
 	public static int SPAN = 1024;
+	private VDirectory m_dir;
+	private String m_table;
+	private String m_field;
 	private VOutputStream m_stream_term;
 	private VOutputStream m_stream_orig;
 	private VOutputStream m_stream_term_idx;
@@ -33,16 +36,23 @@ public class ValueWriter {
 	private long m_last_orig_position = 0;
 	
 	public ValueWriter(VDirectory dir, String table, String field) {
-		m_stream_term = dir.create(table + "." + field + ".term");
-		m_stream_orig = dir.create(table + "." + field + ".orig");
-		m_stream_term_idx = dir.create(table + "." + field + ".term.idx");
-		m_stream_orig_idx = dir.create(table + "." + field + ".orig.idx");
+	    m_dir = dir;
+	    m_table = table;
+	    m_field = field;
 		m_terms = 0;
 		m_last.length = -1;
 	}
 	
 	public int add(BSTR term, BSTR orig) {
 		if(BSTR.isEqual(m_last, term)) return m_terms - 1;
+		
+		if(m_stream_term == null) {
+	        m_stream_term = m_dir.create(m_table + "." + m_field + ".term");
+	        m_stream_orig = m_dir.create(m_table + "." + m_field + ".orig");
+	        m_stream_term_idx = m_dir.create(m_table + "." + m_field + ".term.idx");
+	        m_stream_orig_idx = m_dir.create(m_table + "." + m_field + ".orig.idx");
+		}
+		
 		if(m_terms % SPAN == 0) {
 			m_stream_term_idx.write(term);
 			long new_term_position = m_stream_term.position();
@@ -63,10 +73,12 @@ public class ValueWriter {
 	public int size() { return m_terms; }
 	
 	public void close() {
-		m_stream_term.close();
-		m_stream_orig.close();
-		m_stream_term_idx.close();
-		m_stream_orig_idx.close();
+	    if(m_stream_term != null) {
+    		m_stream_term.close();
+    		m_stream_orig.close();
+    		m_stream_term_idx.close();
+    		m_stream_orig_idx.close();
+	    }
 	}
 	
 }
