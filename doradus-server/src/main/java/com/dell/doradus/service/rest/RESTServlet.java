@@ -148,7 +148,7 @@ public class RESTServlet extends HttpServlet {
         Map<String, String> variableMap = new HashMap<String, String>();
         String query = extractQueryParam(request, variableMap);
         Tenant tenant = getTenant(variableMap);
-        String uri = request.getRequestURI();
+        String uri = request.getPathInfo();
         ApplicationDefinition appDef = getApplication(uri, tenant);
         
         RESTCommand cmd = RESTService.instance().matchCommand(appDef, request.getMethod(), uri, query, variableMap);
