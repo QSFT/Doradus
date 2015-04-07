@@ -17,7 +17,11 @@
 package com.dell.doradus.olap.builder;
 
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.dell.doradus.common.JSONAnnie;
@@ -66,84 +70,140 @@ public class BatchBuilder {
 	//
 	static class Listener implements JSONAnnie.SajListener {
 	    OlapBatch result = new OlapBatch();
-	    OlapDocument document;
-	    String field;
+        // Name keys use dotted notation; e.g. _ID=[sassafras], Address.City=[Aliso Viejo],
+        Map<String, List<String>> valueMap = new HashMap<>();
+        List<String> fieldStack = new ArrayList<>();
 	    Set<String> values = new HashSet<String>();
+        StringBuilder buffer = new StringBuilder();
 	    int level = 0;   // 0=batch object, 1=docs array, 2=doc object, 3+=field object
-	    boolean bInArray = false;
 
         @Override
         public void onStartObject(String name) {
             switch (level) {
             case 0:     // outer batch level 
                 Utils.require(name.equals("batch"), "Root node must be 'batch': " + name);
-                level++;
                 break;
             case 1:     // docs level: can be an object with one "doc" child
                 Utils.require(name.equals("docs"), "'docs' array expected: " + name);
-                level++;
                 break;
             case 2:     // doc object
                 Utils.require(name.equals("doc"), "'doc' object expected: " + name);
-                document = result.addDoc(); 
-                level++;
+                valueMap.clear();
+                fieldStack.clear();
                 break;
             default:     // outer or nested field
-                field = name;
-                level++;
-                break;
+                fieldStack.add(name);
             }
+            level++;
         }   // onStartObject
 
         @Override
         public void onEndObject() {
-            level--;
+            if (fieldStack.size() > 0) {
+                fieldStack.remove(fieldStack.size() - 1);
+            }
+            if (--level == 2) {
+                buildObject();    // just finished a "doc" object
+            }
         }   // onEndObject
 
         @Override
         public void onStartArray(String name) {
-            if (level == 1) {
-                // Should be "docs" array.
-                Utils.require(name.equals("docs"), "'docs' array expected: " + name);
-                level++;
-            } else if (level >= 3) {
-                // Must be "add" node for MV field.
-                Utils.require(name.equals("add"), "Unrecognized array start: " + name);
-                values.clear();
-                level++;
-                bInArray = true;
-            } else {
-                // Level is 0 (batch) or 2 (doc), where an array is unexpected
+            switch (level) {
+            case 0:
+            case 2:     // An array is unexpected for "batch" or "doc"
                 Utils.require(false, "Unexpected array start: " + name);
+            case 1:     // Should be "docs" array.
+                Utils.require(name.equals("docs"), "'docs' array expected: " + name);
+                break;
+            default:    // outer or nested field.
+                fieldStack.add(name);
             }
+            level++;
         }   // onStartArray
 
         @Override
         public void onEndArray() {
-            level--;
-            bInArray = false;
-            if (level >= 3) {
-                // Just finished "add" array for an MV field.
-                for (String value : values) {
-                    addValue(field, value);
-                }
+            if (fieldStack.size() > 0) {
+                fieldStack.remove(fieldStack.size() - 1);
             }
+            level--;
         }   // onEndArray
 
         @Override
         public void onValue(String name, String value) {
-            // Values only expected for fields (level >= 3)
-            Utils.require(level >= 3, "Unrecognized element: %s", name);
-            
-            // Add value to current SV field
-            if (bInArray) {
-                values.add(value);
-            } else {
-                addValue(name, value);
-            }
+            // Values are only expected within field elements (level >= 3)
+            Utils.require(level >= 3, "Unexpected recognized element: %s", name);
+            saveValue(name, value);
         }   // onValue
         
-        private void addValue(String fieldName, String value) {
+        // Save a leaf-level value
+        private void saveValue(String name, String value) {
+            String dottedName = getDottedName(name);
+            List<String> values = valueMap.get(dottedName);
+            if (values == null) {
+                values = new ArrayList<String>(1);
+                valueMap.put(dottedName, values);
+            }
+            values.add(value);
+        }   // saveValue
+        
+        // Turn parent node names, if any, into a dotted string and append name.
+        private String getDottedName(String name) {
+            buffer.setLength(0);
+            for (String parentName : fieldStack) {
+                buffer.append(parentName);
+                buffer.append(".");
+            }
+            buffer.append(name);
+            return buffer.toString();
+        }   // getDottedName
+        
+        // Create a DBObject for the just-parsed 'doc' element and add to batch.
+        private void buildObject() {
+            OlapDocument document = result.addDoc();
+            for (String dottedName : valueMap.keySet()) {
+                List<String> values = valueMap.get(dottedName);
+                String[] names = dottedName.split("\\.");
+                if (names.length == 1) {
+                    addValues(document, names[0], values);
+                } else {
+                    addValue(document, names, 0, values);
+                }
+            }
+        }   // buildObject
+        
+        // Possible name structures we expect:
+        //      field.add.value or field.remove.value
+        //      group.field
+        //      group.field.add.value
+        //      group1.group2.field
+        //      group1.group2.field.add.value
+        //      ...
+        private void addValue(OlapDocument document, String[] names, int inx, List<String> values) {
+            String fieldName = names[inx];
+            if ((names.length - inx) == 3 &&
+                 names[inx + 2].equals("value") &&
+                 names[inx + 1].equals("add")) {
+                // field.add.value
+                addValues(document, fieldName, values);
+            } else if ((names.length - inx) > 1) {
+                // group.field...: recurse to inx + 1.
+                addValue(document, names, inx + 1, values);
+            } else {
+                // field
+                addValues(document, fieldName, values);
+            }
+        }   // addValue
+        
+        private void addValues(OlapDocument document, String fieldName, Iterable<String> values) {
+            for (String value : values) {
+                addValue(document, fieldName, value);
+            }
+        }   // addValues
+        
+        private void addValue(OlapDocument document, String fieldName, String value) {
+            if (Utils.isEmpty(value)) return;
             if (fieldName.equals("_ID")) {
                 document.setId(value);
             } else if (fieldName.equals("_table")) {

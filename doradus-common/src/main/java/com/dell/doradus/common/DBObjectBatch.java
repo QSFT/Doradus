@@ -76,7 +76,6 @@ public class DBObjectBatch {
                 break;
             case 1:     // docs level: can be an object with one "doc" child
                 Utils.require(name.equals("docs"), "'docs' array expected: " + name);
-                level++;
                 break;
             case 2:     // doc object
                 Utils.require(name.equals("doc"), "'doc' object expected: " + name);
