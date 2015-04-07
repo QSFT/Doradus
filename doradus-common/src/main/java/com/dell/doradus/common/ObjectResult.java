@@ -80,9 +80,9 @@ public class ObjectResult {
      * @param docNode   Root UNode of an ObjectResult definition.
      */
     public ObjectResult(UNode docNode) {
-        // Root node must be a MAP called "doc".
-        Utils.require(docNode.isMap() && docNode.getName().equals("doc"),
-                      "Root node must be a map called 'doc': " + docNode);
+        // Root node must called "doc".
+        Utils.require(docNode.getName().equals("doc"),
+                      "Root node must be called 'doc': " + docNode);
         for (String childName : docNode.getMemberNames()) {
             // Child node must be a simple value
             UNode childNode = docNode.getMember(childName);

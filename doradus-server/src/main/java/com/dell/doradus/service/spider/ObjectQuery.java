@@ -59,10 +59,10 @@ public class ObjectQuery {
         assert tableDef != null;
         assert searchNode != null;
         
-        // Root object Should be a "map" called "search".
+        // Root object should be called "search".
         m_tableDef = tableDef;
-        Utils.require(searchNode.isMap() && searchNode.getName().equals("search"),
-                      "Root node should be a map called 'search': " + searchNode);
+        Utils.require(searchNode.getName().equals("search"),
+                      "Root node should be called 'search': " + searchNode);
 
         // Parse child nodes.
         for (UNode childNode : searchNode.getMemberList()) {

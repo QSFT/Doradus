@@ -43,16 +43,12 @@ public class TenantDefinition {
      */
     public void parse(UNode tenantNode) {
         assert tenantNode != null;
-        
-        // Root object must be a MAP.
-        Utils.require(tenantNode.isMap(), "'tenant' definition must be a map of unique names: " + tenantNode);
         m_name = tenantNode.getName();
         
         for (String childName : tenantNode.getMemberNames()) {
             UNode childNode = tenantNode.getMember(childName);
             switch (childNode.getName()) {
             case "options":
-                Utils.require(childNode.isMap(), "'options' value must be a map of unique names: " + childNode);
                 for (String optName : childNode.getMemberNames()) {
                     UNode optNode = childNode.getMember(optName);
                     Utils.require(optNode.isValue(), "'option' must be a value: " + optNode);
@@ -61,7 +57,6 @@ public class TenantDefinition {
                 break;
 
             case "users":
-                Utils.require(childNode.isMap(), "'users' value must be a map of unique names: " + childNode);
                 for (UNode userNode : childNode.getMemberList()) {
                     parseUser(userNode);
                 }
@@ -122,7 +117,6 @@ public class TenantDefinition {
     
     // Parse the given "user" node in a Tenant definition
     private void parseUser(UNode userNode) {
-        Utils.require(userNode.isMap(), "User node should be a map of unique values: " + userNode);
         String userID = userNode.getName();
         String password = null;
         for (String childName : userNode.getMemberNames()) {

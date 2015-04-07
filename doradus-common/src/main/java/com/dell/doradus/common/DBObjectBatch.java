@@ -221,10 +221,9 @@ public class DBObjectBatch {
     public void parse(UNode rootNode) {
         assert rootNode != null;
         
-        // Ensure root node is a MAP named "batch".
+        // Ensure root node is named "batch".
         Utils.require(rootNode.getName().equals("batch"),
                       "'batch' expected: " + rootNode.getName());
-        Utils.require(rootNode.isMap(), "'batch' node must be a map of unique names");
 
         // Parse child nodes.
         for (String memberName : rootNode.getMemberNames()) {
@@ -232,8 +231,8 @@ public class DBObjectBatch {
             if (childNode.getName().equals("docs")) {
                 Utils.require(childNode.isCollection(), "'docs' must be a collection: " + childNode);
                 for (UNode docNode : childNode.getMemberList()) {
-                    Utils.require(docNode.getName().equals("doc") && docNode.isMap(),
-                                  "'doc' map node expected as child of 'docs': " + docNode);
+                    Utils.require(docNode.getName().equals("doc"),
+                                  "'doc' node expected as child of 'docs': " + docNode);
                     addObject(new DBObject()).parse(docNode);
                 }
             } else {

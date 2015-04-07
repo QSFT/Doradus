@@ -573,7 +573,6 @@ public class Aggregate {
 	}
 	
 	public void parseParameters(UNode rootNode) {
-        Utils.require(rootNode.isMap(), "Root node must be a map: " + rootNode);
         Utils.require(rootNode.getName().equals("aggregate-search"), "Root node must be 'aggregate-search': " + rootNode);
         StringBuilder uriQuery = new StringBuilder();
         for (String childName : rootNode.getMemberNames()) {

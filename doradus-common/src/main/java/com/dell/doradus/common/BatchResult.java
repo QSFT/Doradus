@@ -65,14 +65,14 @@ public class BatchResult {
 
     /**
      * Create a BatchResult object from the UNode tree rooted at the given node. The node
-     * must be a map called "batch-result".
+     * must be called "batch-result".
      * 
      * @param rootNode  Root node of UNode tree describing a BatchResult.
      */
     public BatchResult(UNode rootNode) {
-        // Root node must be a MAP called "batch-result".
-        Utils.require(rootNode.isMap() && rootNode.getName().equals("batch-result"),
-                      "Root node must be a map called 'batch-result': " + rootNode);
+        // Root node must be called "batch-result".
+        Utils.require(rootNode.getName().equals("batch-result"),
+                      "Root node must be called 'batch-result': " + rootNode);
         for (String childName : rootNode.getMemberNames()) {
             UNode childNode = rootNode.getMember(childName);
             if (childName.equals("docs")) {

@@ -162,10 +162,6 @@ final public class TableDefinition {
         assert m_optionMap.isEmpty();
         assert m_tableName == null;
         
-        // Node must be a map or a VALUE with a name only (empty table def).
-        Utils.require(tableNode.isMap() || (tableNode.isValue() && Utils.isEmpty(tableNode.getValue())),
-                      "'table' definition must be a map of unique names: " + tableNode);
-        
         // Verify table name and save it.
         Utils.require(isValidTableName(tableNode.getName()),
                       "Invalid table name: " + tableNode.getName());
@@ -178,10 +174,6 @@ final public class TableDefinition {
             
             // "fields"
             if (childName.equals("fields")) {
-                // Value must be a map.
-                Utils.require(childNode.isMap(),
-                              "'fields' must be a map of unique names: " + childNode);
-                
                 // Process field definitions.
                 for (String fieldName : childNode.getMemberNames()) {
                     // Create a FieldDefinition and parse the node's value into it.
@@ -201,10 +193,6 @@ final public class TableDefinition {
                 
             // "options"
             } else if (childName.equals("options")) {
-                // Value should be a map.
-                Utils.require(childNode.isMap(),
-                              "'options' must be a map of unique names: " + childNode);
-                
                 // Examine each option.
                 for (String optName : childNode.getMemberNames()) {
                     // Each option must be a simple value and specified only once.
@@ -220,10 +208,6 @@ final public class TableDefinition {
                 
             // "aliases"
             } else if (childName.equals("aliases")) {
-                // Value should be a map.
-                Utils.require(childNode.isMap(),
-                              "'aliases' must be a map of unique names: " + childNode);
-                
                 // Parse and add each AliasDefinition.
                 for (String aliasName : childNode.getMemberNames()) {
                     AliasDefinition aliasDef = new AliasDefinition(m_tableName);

@@ -435,7 +435,6 @@ final public class DBObject {
     public DBObject parse(UNode docNode) {
         Utils.require(docNode != null, "docNode");
         Utils.require(docNode.getName().equals("doc"), "'doc' node expected: %s", docNode.getName());
-        Utils.require(docNode.isMap(), "'doc' node must be a map of unique names: %s", docNode);
         
         for (String fieldName : docNode.getMemberNames()) {
             UNode fieldValue = docNode.getMember(fieldName);

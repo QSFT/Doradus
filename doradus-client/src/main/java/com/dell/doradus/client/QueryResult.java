@@ -82,8 +82,6 @@ public class QueryResult {
         m_errMsg = "";
         
         // Query result outer object should be "results".
-        Utils.require(rootNode.isMap(),
-                      "Root node should be a map: " + rootNode);
         Utils.require(rootNode.getName().equals("results"),
                       "Root node should be 'results': " + rootNode.getName());
 
@@ -97,8 +95,6 @@ public class QueryResult {
                     // Each member should be a 'doc' object.
                     Utils.require(docNode.getName().equals("doc"),
                                   "Children of 'docs' node should be 'doc': " + docNode.getName());
-                    Utils.require(docNode.isMap(),
-                                  "'doc' node should be a map: " + docNode);
                     
                     // Parse the array elements into a DBObject and add to the outer result lsit.
                     m_outerObjectList.add(parseObject(m_tableDef, docNode));
@@ -198,7 +194,7 @@ public class QueryResult {
     
     // Parse the given "doc" UNode, which contains the field name/value pairs for an object
     // returned in a query result, and return a DBObject from those fields. The given
-    // UNode must be a map coming from one of two places. Using JSON as the example:
+    // UNode come from one of two places. Using JSON as the example:
     // 
     //      {"doc": {
     //          "_ID": "987",
@@ -294,8 +290,6 @@ public class QueryResult {
             // Ensure this element is "doc" node.
             Utils.require(childNode.getName().equals("doc"),
                           "link field array values should be 'doc' objects: " + childNode);
-            Utils.require(childNode.isMap(),
-                          "link field 'doc' object should be a map: " + childNode);
             
             // Recurse and build a DBObject from the doc node.
             DBObject linkedObject = parseObject(extentTableDef, childNode);

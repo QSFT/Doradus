@@ -62,10 +62,6 @@ final public class AliasDefinition {
     public void parse(UNode aliasNode) {
         assert aliasNode != null;
         
-        // Node must be a map.
-        Utils.require(aliasNode.isMap(),
-                      "'alias' definition must be a map of unique names: " + aliasNode);
-        
         // Ensure the alias name is valid and save it.
         setName(aliasNode.getName());
         

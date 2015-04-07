@@ -350,7 +350,6 @@ public class AggregateResult {
         // Parse the given (explicit) groupset node. 
         private void parse(UNode groupsetNode) {
             assert groupsetNode.getName().equals("groupset");
-            Utils.require(groupsetNode.isMap(), "Map expected: " + groupsetNode);
             for (UNode childNode : groupsetNode.getMemberList()) {
                 parseOption(childNode);
             }
@@ -581,7 +580,6 @@ public class AggregateResult {
         private void parse(UNode groupNode) {
             Utils.require(groupNode.getName().equals("group"),
                           "'group' expected: " + groupNode.getName());
-            Utils.require(groupNode.isMap(), "Map expected: " + groupNode);
             for (String childName : groupNode.getMemberNames()) {
                 UNode childNode = groupNode.getMember(childName);
                 
@@ -761,8 +759,6 @@ public class AggregateResult {
         // Root must be a "results" node.
         Utils.require("results".equals(resultsNode.getName()),
                       "'results' expected: " + resultsNode.getName());
-        Utils.require(resultsNode.isMap(),
-                      "Map node expected: " + resultsNode);
         
         // Parse "groupsets" first if present.
         UNode groupsetsNode = resultsNode.getMember("groupsets");
@@ -771,8 +767,6 @@ public class AggregateResult {
                 // Children should only be "groupset" Map.
                 Utils.require(groupsetNode.getName().equals("groupset"),
                               "'groupset' expected: " + groupsetNode);
-                Utils.require(groupsetNode.isMap(),
-                              "Map expected: " + groupsetNode);
                 
                 // Add an AggGroupSet child and parse child nodes into it.
                 AggGroupSet groupset = addGroupSet();
@@ -791,7 +785,6 @@ public class AggregateResult {
             
             // aggregate
             if (childName.equals("aggregate")) {
-                Utils.require(childNode.isMap(), "Map node expected: " + childNode);
                 for (String paramName : childNode.getMemberNames()) {
                     UNode paramNode = childNode.getMember(paramName);
                     Utils.require(paramNode.isValue(), "Value node expected: " + paramNode);

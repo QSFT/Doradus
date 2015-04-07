@@ -82,10 +82,6 @@ final public class FieldDefinition {
     public void parse(UNode fieldNode) {
         assert fieldNode != null;
         
-        // Node must be a map or a VALUE with a name only (empty table def).
-        Utils.require(fieldNode.isMap() || (fieldNode.isValue() && Utils.isEmpty(fieldNode.getValue())),
-                      "'field' definition must be a map of unique names: " + fieldNode);
-        
         // Verify the field name and save it.
         Utils.require(isValidFieldName(fieldNode.getName()),
                       "Invalid field name: " + fieldNode.getName());
@@ -154,9 +150,7 @@ final public class FieldDefinition {
                 Utils.require(m_type == null || m_type == FieldType.GROUP,
                               "Only group fields can have nested elements: " + m_name);
                 
-                // Value must be an map.
-                Utils.require(childNode.isMap(),
-                              "Value of 'fields' must be map of unique names: " + childNode);
+                // Value can only be specified once.
                 Utils.require(nestedFieldsNode == null,
                               "'fields' can only be specified once: " + m_name);
 

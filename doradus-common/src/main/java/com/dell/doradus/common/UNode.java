@@ -387,7 +387,6 @@ final public class UNode {
         
         // Parse the root element and ensure it elligible as a map.
         UNode rootNode = parseXMLElement(rootElem);
-        assert rootNode.isMap() : "Root node must be a map of unique names: " + rootNode.getName();
         return rootNode;
     }   // parseXML
     

@@ -101,10 +101,6 @@ final public class ApplicationDefinition {
                 
             // "options"
             } else if (childName.equals("options")) {
-                // Value must be a map.
-                Utils.require(childNode.isMap(),
-                              "'options' value must be a map of unique names: " + childNode);
-                
                 // Each name in the map is an option name.
                 for (String optName : childNode.getMemberNames()) {
                     // Option must be a value.
@@ -116,11 +112,9 @@ final public class ApplicationDefinition {
                 
             // "tables"
             } else if (childName.equals("tables")) {
-                // Should be specified only once and must be a map.
+                // Should be specified only once.
                 Utils.require(m_tableMap.size() == 0,
                               "'tables' can be specified only once");
-                Utils.require(childNode.isMap(),
-                              "'tables' value must be a map of unique names: " + childNode);
                 
                 // Parse the table definitions, adding them to this app def and building
                 // the external link map as we go.
@@ -133,20 +127,7 @@ final public class ApplicationDefinition {
                 
             // "schedules"
             } else if (childName.equals("schedules")) {
-                // Should only be specified once.
-//                Utils.require(m_scheduleMap.size() == 0,
-//                              "'schedules' can only be specified once");
-                
-                // Schedules are not uniquely (user) named, so they are just a collection.
-                Utils.require(childNode.isCollection(),
-                              "'schedules' should be a collection of definitions: " + childNode);
                 for (UNode schedNode : childNode.getMemberList()) {
-                    // Create a ScheduleDefinition object, parse this member, and add it to the map.
-//                    ScheduleDefinition schedDef = new ScheduleDefinition(this);
-//                    schedDef.parse(schedNode);
-//                    Utils.require(!m_scheduleMap.containsKey(schedDef.getName()),
-//                                  "Duplicate schedule defined: " + schedDef.getName());
-//                    m_scheduleMap.put(schedDef.getName(), schedDef);
                     parseSchedule(schedNode);
                 }
                 
@@ -392,8 +373,6 @@ final public class ApplicationDefinition {
     // data-aging, which we convert into application- and table-level options.
     // TODO: Delete this when <schedule> is no longer parsed in schemas.
     private void parseSchedule(UNode schedNode) {
-        Utils.require(schedNode.isMap(), "'schedule' definition must be a map of unique names: " + schedNode);
-        
         String tableName = null;
         String taskType = null;
         String schedule = null;
