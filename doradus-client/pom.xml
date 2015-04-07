@@ -9,10 +9,8 @@
 	</parent>
 	
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.dell.doradus</groupId>
 	<artifactId>doradus-client</artifactId>
 	<packaging>jar</packaging>
-	<version>2.3.0</version>
     <name>doradus-client</name>
 
 	<properties>

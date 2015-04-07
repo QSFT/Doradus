@@ -9,11 +9,9 @@
 	</parent>
 	
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.dell.doradus</groupId>
 	<artifactId>doradus-common</artifactId>
 	<packaging>jar</packaging>
-	<version>2.3.0</version>
-    <name>doradus-common</name>
+   <name>doradus-common</name>
 
 	<properties>
 		<maven.compiler.source>1.7</maven.compiler.source>

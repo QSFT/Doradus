@@ -9,10 +9,8 @@
 	</parent>
 	
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.dell.doradus</groupId>
 	<artifactId>doradus-jetty</artifactId>
 	<packaging>jar</packaging>
-	<version>2.3.0</version>
     <name>doradus-jetty</name>
 
 	<properties>

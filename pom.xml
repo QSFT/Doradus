@@ -11,16 +11,16 @@
   	<description> REST service that extends a Cassandra NoSQL database with a graph-based data model, advanced indexing and search features, and a REST API.</description>
   	<url>https://github.com/dell-oss/Doradus</url>
    	
-<distributionManagement>
-  <snapshotRepository>
-    <id>ossrh</id>
-    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-  </snapshotRepository>
-  <repository>
-    <id>ossrh</id>
-    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-  </repository>
-</distributionManagement>	
+	<distributionManagement>
+	  <snapshotRepository>
+	    <id>ossrh</id>
+	    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+	  </snapshotRepository>
+	  <repository>
+	    <id>ossrh</id>
+	    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+	  </repository>
+	</distributionManagement>	
 
 	<properties>
 		<maven.compiler.source>1.7</maven.compiler.source>
@@ -31,8 +31,8 @@
 	<modules>
 		<module>doradus-common</module>
 		<module>doradus-server</module>
-		<module>doradus-jetty</module>	
 		<module>doradus-client</module>
+		<module>doradus-jetty</module>			
 	</modules>
 <build>
   <plugins>
