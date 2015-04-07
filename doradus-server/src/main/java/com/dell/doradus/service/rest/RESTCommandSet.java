@@ -86,16 +86,18 @@ public class RESTCommandSet {
         if (m_bCmdSetIsFrozen) {
             throw new RuntimeException("New commands cannot be added: command set is frozen");
         }
-        String ownerKey = Utils.isEmpty(commandOwner) ? SYSTEM_OWNER : commandOwner;
         
         // Get or create the map for this command's HTTP method.
         synchronized (m_cmdMap) {
-            Map<String, SortedSet<RESTCommand>> ownerCmdSet = m_cmdMap.get(ownerKey);
-            if (ownerCmdSet == null) {
-                ownerCmdSet = new HashMap<>();
-                m_cmdMap.put(ownerKey, ownerCmdSet);
-            }
             for (RESTCommand command : commands) {
+                List<String> pathList = command.getPath();  
+                String cmdOwner = (pathList.size() > 0 && pathList.get(0).equals("{application}")) ? commandOwner : SYSTEM_OWNER;
+                String ownerKey = Utils.isEmpty(cmdOwner) ? SYSTEM_OWNER : cmdOwner;
+                Map<String, SortedSet<RESTCommand>> ownerCmdSet = m_cmdMap.get(ownerKey);
+                if (ownerCmdSet == null) {
+                    ownerCmdSet = new HashMap<>();
+                    m_cmdMap.put(ownerKey, ownerCmdSet);
+                }
                 SortedSet<RESTCommand> cmdSet = ownerCmdSet.get(command.getMethod());
                 if (cmdSet == null) {
                     cmdSet = new TreeSet<RESTCommand>();
