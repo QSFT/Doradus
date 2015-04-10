@@ -79,6 +79,9 @@ public class TaskManagerService extends Service {
         new RESTCommand("GET /_tasks com.dell.doradus.service.taskmanager.ListTasksCmd"),
     });
     
+    // Singleton creation only
+    private TaskManagerService() {}
+    
     //----- Public methods
     
     /**
