@@ -333,18 +333,19 @@ final public class Utils {
     }   // compressGZIP
 
     /**
-     * Join together the Strings in the given collection into a single string with values
-     * separated by the given string. An empty collection returns an empty String. A
-     * collection with a single value returns the same value. Otherwise, each value is
-     * concatenated in the iteration order of the collection with the separation string
-     * added between values (but not before the first value or after the last value).
+     * Join together the objects in the given collection into a single string with values
+     * separated by the given separator. An empty collection returns an empty String. A
+     * collection with a single object returns the toString() of the given object.
+     * Otherwise, the toString() value of each object is concatenated in iteration order
+     * with the given separation string added between values (but not before the first
+     * value or after the last value).
      *
-     * @param values    A Collection of Strings.
+     * @param values    A Collection of objects.
      * @param sepStr    Separator string to use between values.
      * @return          The Strings concatenated together with the given separate string
      *                  between values.
      */
-    public static String concatenate(Collection<String> values, String sepStr) {
+    public static <T> String concatenate(Collection<T> values, String sepStr) {
         assert values != null;
         assert sepStr != null;
 
@@ -356,13 +357,13 @@ final public class Utils {
         // This handles any size >= 1.
         StringBuilder buffer = new StringBuilder();
         boolean bFirst = true;
-        for (String value : values) {
+        for (T value : values) {
             if (bFirst) {
                 bFirst = false;
             } else {
                 buffer.append(sepStr);
             }
-            buffer.append(value);
+            buffer.append(value.toString());
         }
         return buffer.toString();
     }   // concatenate
