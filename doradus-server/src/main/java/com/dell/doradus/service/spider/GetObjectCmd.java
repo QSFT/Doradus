@@ -18,19 +18,18 @@ package com.dell.doradus.service.spider;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.DBObject;
-import com.dell.doradus.common.HttpCode;
-import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.TableDefinition;
+import com.dell.doradus.common.UNode;
 import com.dell.doradus.service.rest.NotFoundException;
-import com.dell.doradus.service.rest.RESTCallback;
+import com.dell.doradus.service.rest.UNodeOutCallback;
 
 /**
  * Implements the REST command: GET /{application}/{table}/{ID}.
  */
-public class GetObjectCmd extends RESTCallback {
+public class GetObjectCmd extends UNodeOutCallback {
 
     @Override
-    public RESTResponse invoke() {
+    public UNode invokeUNodeOut() {
         ApplicationDefinition appDef = m_request.getAppDef();
         TableDefinition tableDef = m_request.getTableDef(appDef);
         String objID = m_request.getVariableDecoded("ID");
@@ -38,8 +37,7 @@ public class GetObjectCmd extends RESTCallback {
         if (dbObj == null) {
             throw new NotFoundException("No object found with ID: " + objID);
         }
-        String body = dbObj.toGroupedDoc(tableDef).toString(m_request.getOutputContentType());
-        return new RESTResponse(HttpCode.OK, body, m_request.getOutputContentType());
+        return dbObj.toGroupedDoc(tableDef);
     }   // invoke
 
 }   // class GetObjectCmd

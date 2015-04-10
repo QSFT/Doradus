@@ -16,26 +16,22 @@
 
 package com.dell.doradus.service.spider;
 
-import com.dell.doradus.common.AggregateResult;
 import com.dell.doradus.common.ApplicationDefinition;
-import com.dell.doradus.common.HttpCode;
-import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.TableDefinition;
-import com.dell.doradus.service.rest.RESTCallback;
+import com.dell.doradus.common.UNode;
+import com.dell.doradus.service.rest.UNodeOutCallback;
 
 /**
  * Implements the REST command: GET /{application}/{table}/_aggregate?{params}.
  */
-public class AggregateURICmd extends RESTCallback {
+public class AggregateURICmd extends UNodeOutCallback {
 
     @Override
-    public RESTResponse invoke() {
+    public UNode invokeUNodeOut() {
         ApplicationDefinition appDef = m_request.getAppDef();
         TableDefinition tableDef = m_request.getTableDef(appDef);
         String params = m_request.getVariable("params");    // leave encoded
-        AggregateResult aggResult = SpiderService.instance().aggregateQueryURI(tableDef, params);
-        String body = aggResult.toDoc().toString(m_request.getOutputContentType());
-        return new RESTResponse(HttpCode.OK, body, m_request.getOutputContentType());
+        return SpiderService.instance().aggregateQueryURI(tableDef, params).toDoc();
     }   // invoke
 
 }   // class AggregateURICmd 
