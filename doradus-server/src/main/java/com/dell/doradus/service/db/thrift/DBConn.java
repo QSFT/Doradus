@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import org.apache.cassandra.thrift.Cassandra;
@@ -70,7 +69,6 @@ public class DBConn implements AutoCloseable {
     private Cassandra.Client m_client;
     private boolean m_bDBOpen;
     private boolean m_bFailed;
-    private String m_host;      // last host used for this DBConn
     private String m_keyspace;
 
     //----- Public static constants and methods
@@ -88,19 +86,63 @@ public class DBConn implements AutoCloseable {
     //----- DBConn: Connection management
 
     /**
-     * Create a new DBConn connected to one Cassandra node. If the first connection
-     * attempt fails, an attempt is made to connect to another node in cluster. This is
-     * repeated until a connection is made or all configured nodes have been tried. If no
-     * connection was made, a {@link DBNotAvailableException} is thrown. If a connection
-     * is successfully made, and keyspace is not null, the connection is assigned to the
-     * given keyspace. Otherwise, this connection is a no-keyspace session.
+     * Create a new DBConn that will connect to the given keyspace. No connection is
+     * attempted until {@link #connect(String)} is called. If the given keyspace is null
+     * or empty, this DBConn will create a no-keyspace session.
      * 
-     * @param keyspace  Name of keyspace to set connection to or null to create a
+     * @param keyspace  Name of keyspace to set connection to or null to for a
      *                  no-keyspace session.
      */
     public DBConn(String keyspace) {
-        connect(keyspace);
+        m_keyspace = keyspace;
     }   // constructor
+
+    /**
+     * Attempt to connect to the given Cassandra host name or IP address. If a connection
+     * cannot be made, a {@link DBNotAvailableException} is thrown that wraps the
+     * Cassandra exception. If a connection is made and a keyspace was configured, the
+     * session is set to the configured keyspace. However, if the keyspace cannot be used,
+     * a RuntimeException is thrown.
+     * 
+     * @param  dbhost                   Name or address of Cassandra host to connect to.
+     * @throws DBNotAvailableException  If the given host is not reachable.
+     * @throws RuntimeException         If a keyspace was configured but cannot be used.
+     */
+    public void connect(String dbhost) throws DBNotAvailableException, RuntimeException {
+        assert !m_bDBOpen;
+        ServerConfig config = ServerConfig.getInstance();
+        
+        // Attempt to open the requested dbhost.
+        try {
+            TSocket socket = null;
+            if (config.dbtls) {
+                m_logger.debug("Connecting to Cassandra node {}:{} using TLS", dbhost, config.dbport);
+                socket = createTLSSocket(dbhost);
+            } else {
+                m_logger.debug("Connecting to Cassandra node {}:{}", dbhost, config.dbport);
+                socket = new TSocket(dbhost, config.dbport, config.db_timeout_millis);
+                socket.open();
+            }
+            TTransport transport = new TFramedTransport(socket);
+            TProtocol protocol = new TBinaryProtocol(transport);
+            m_client = new Cassandra.Client(protocol);
+        } catch (Exception e) {
+            throw new DBNotAvailableException(e);
+        }
+        
+        // Success. Set keyspace if requested.
+        if (!Utils.isEmpty(m_keyspace)) {
+            try {
+                m_client.set_keyspace(m_keyspace);
+            } catch (Exception e) {
+                // This can't be retried, so we throw a RuntimeException
+                m_logger.error("Cannot use Keyspace '" + m_keyspace + "'", e);
+                throw new RuntimeException(e);
+            }
+        }
+        m_bDBOpen = true;
+        m_bFailed = false;
+    }   // connect
 
     /**
      * Get the keyspace with which this connected was created. This will be null for a
@@ -152,6 +194,15 @@ public class DBConn implements AutoCloseable {
         return m_bFailed;
     }   // isFailed
 
+    /**
+     * Indicate if this connection is open, meaning a successful connection to Cassandra
+     * was made.
+     * 
+     * @return  True if this connection is open.
+     */
+    public boolean isOpen() {
+        return m_bDBOpen;
+    }
     //----- DBConn: Schema requests
     
     /**
@@ -660,57 +711,6 @@ public class DBConn implements AutoCloseable {
         }
     }   // commitMutations
 
-    // Create a Thrift client interface and connect to a Cassandra database node. If this
-    // connection has been connected before, we attempt to skip the same node in case it
-    // has gone dead. If the DoradusCluster is configured with N nodes, we will attempt to
-    // connect N times, once per node, until we get a successful connection. However,
-    // there is no wait/retry logic as there is in reconnect(). If a keyspace is given, we
-    // attempt to assign the session to the keyspace.
-    private void connect(String keyspace) {
-        assert !m_bDBOpen;
-        ServerConfig config = ServerConfig.getInstance();
-        Exception lastException = null;
-        String[] dbHosts = config.dbhost.split(",");
-        for (int attempt = 1; attempt <= dbHosts.length; attempt++) {
-            try {
-                m_host = chooseHost(dbHosts);
-                TSocket socket = null;
-                if (config.dbtls) {
-                    m_logger.debug("Connecting to Cassandra node {}:{} using TLS", m_host, config.dbport);
-                    socket = createTLSSocket(m_host);
-                } else {
-                    m_logger.debug("Connecting to Cassandra node {}:{}", m_host, config.dbport);
-                    socket = new TSocket(m_host, config.dbport, config.db_timeout_millis);
-                    socket.open();
-                }
-                TTransport transport = new TFramedTransport(socket);
-                TProtocol protocol = new TBinaryProtocol(transport);
-                m_client = new Cassandra.Client(protocol);
-                m_bDBOpen = true;
-            } catch (Exception ex) {
-                lastException = ex;
-            }
-        }
-
-        if (m_bDBOpen) {
-            m_bFailed = false;
-            if (!Utils.isEmpty(keyspace)) {
-                try {
-                    m_client.set_keyspace(keyspace);
-                    m_keyspace = keyspace;
-                } catch (Exception e) {
-                    m_logger.error("Cannot use Keyspace '" + keyspace + "'", e);
-                    throw new RuntimeException(e);
-                }
-            }
-        } else {
-            // All connect attempts failed.
-            m_bFailed = true;
-            m_logger.error("Could not connect to Cassandra [host=" + m_host + "]", lastException);
-            throw new DBNotAvailableException("Error opening database", lastException);
-        }
-    }   // connect
-
     // Create a TSocket using configured TLS/SSL options. 
     private TSocket createTLSSocket(String host) throws TTransportException {
         ServerConfig config = ServerConfig.getInstance();
@@ -725,22 +725,6 @@ public class DBConn implements AutoCloseable {
         return TSSLTransportFactory.getClientSocket(host, config.dbport, config.db_timeout_millis, sslParams);
     }   // createTLSSocket
 
-    // Choose the next Cassandra host name in the list or a random one.
-    private String chooseHost(String[] dbHosts) {
-        if (dbHosts.length == 1) {
-            return dbHosts[0];
-        }
-        if (!Utils.isEmpty(m_host)) {
-            for (int index = 0; index < dbHosts.length; index++) {
-                if (dbHosts[index].equals(m_host)) {
-                    return dbHosts[(++index) % dbHosts.length];
-                }
-            }
-        }
-        // No prior host: choose random host.
-        return dbHosts[new Random().nextInt(dbHosts.length)];
-    }   // chooseHost
-    
     // Get a single column from the given row and CF.
     private DColumn fetchColumn(ColumnParent colPar, byte[] rowKey, byte[] colName) {
     	ColumnPath colPath = new ColumnPath();
@@ -831,8 +815,8 @@ public class DBConn implements AutoCloseable {
         for (int attempt = 1; !bSuccess; attempt++) {
             try {
                 close();
-                connect(m_keyspace);
-                m_logger.debug("Reconnected to Cassandra node: {}", m_host);
+                ThriftService.instance().connectDBConn(this);
+                m_logger.debug("Reconnected successful");
                 bSuccess = true;
             } catch (Exception ex) {
                 // Abort if all retries failed.

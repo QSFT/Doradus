@@ -269,6 +269,8 @@ public class TenantService extends Service {
                     // All credentials are allowed for non-priv commands to default tenant
                 }
             } else {
+                // From here on, the DB connection must be established.
+                checkServiceState();
                 if (!isValidTenantUserAccess(tenant.getKeyspace(), userid, password, cmd.getMethod())) {
                     throw new UnauthorizedException("Invalid tenant credentials or insufficient permission");
                 }
@@ -286,7 +288,7 @@ public class TenantService extends Service {
      *          keyspace.
      */
     public Tenant getDefaultTenant() {
-        checkServiceState();
+        // No checkServiceState() required because no DB access is needed.
         return new Tenant(ServerConfig.getInstance().keyspace);
     }   // getDefaultTenant
 

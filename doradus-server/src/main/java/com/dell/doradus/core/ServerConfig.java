@@ -90,7 +90,7 @@ public class ServerConfig {
     public static final int DEFAULT_DBESOPTIONS_INITIAL_LINK_BUFFER_DIMENSION = 1000;
     public static final int DEFAULT_DBESOPTIONS_INITIAL_SCALAR_BUFFER = 30;
 	// Default Thrift timeout and retry values (not advertised in getUsage):
-    public static final int DEFAULT_DB_TIMEOUT_MILLIS = 60000;
+    public static final int DEFAULT_DB_TIMEOUT_MILLIS = 5000;
     public static final int DEFAULT_MAX_COMMIT_ATTEMPTS = 10;
     public static final int DEFAULT_MAX_READ_ATTEMPTS = 3;
     public static final int DEFAULT_RETRY_WAIT_MILLIS = 5000;
@@ -192,6 +192,7 @@ public class ServerConfig {
     public List<String> default_services = new ArrayList<>();
     public List<String> storage_services = new ArrayList<>();
     public String dbhost = DEFAULT_DB_HOST;
+    public String secondary_dbhost = null;
     public int dbport = DEFAULT_DB_PORT;
     public boolean dbtls = false;
     public List<String> dbtls_cipher_suites = new ArrayList<>();
@@ -248,6 +249,7 @@ public class ServerConfig {
 
     // Thrift timeout and retry values (see documentation in YAML file):
     public int db_timeout_millis = DEFAULT_DB_TIMEOUT_MILLIS;
+    public int primary_host_recheck_millis = 60000;
     public int max_commit_attempts = DEFAULT_MAX_COMMIT_ATTEMPTS;
     public int max_read_attempts = DEFAULT_MAX_READ_ATTEMPTS;
     public int retry_wait_millis = DEFAULT_RETRY_WAIT_MILLIS;

@@ -146,6 +146,14 @@ cf_defaults:
 # round-robin basis. Default: 'localhost'.
 dbhost: localhost
 
+# secondary_dbhost: When the Thrift API is used, this is a comma-separated list of secondary hosts
+# that can be used if all primary hosts are unreachable. Under normal conditions, dbhost should
+# define "network near" Cassandra nodes, and connections are rotated through those nodes. But one or
+# more secondary nodes can be given in secondary_dbhost as a fallback. As new connections are used,
+# Doradus periodically checks to see if any primary nodes are available and automatically switches
+# back to them when possible. Default: null (unused).
+# secondary_dbhost: 
+
 # use_cql: If this is false, the Thrift API is used for communicating with Cassandra. If true the
 # CQL API is used. Note that Thrift and CQL use different port numbers (see dbport below).
 # Default: true
@@ -162,8 +170,8 @@ dbport: 9160
 jmxport: 7199
 
 # db_timeout_millis: Database timeout in milliseconds. This time is used both when connecting to
-# Cassandra and when performing read/write operations. Default: 60 seconds.
-# db_timeout_millis: 60000
+# Cassandra and when performing read/write operations. Default: 10 seconds.
+# db_timeout_millis: 10000
 
 # db_connect_retry_wait_millis: Database initial connection retry wait in milliseconds. If the
 # initial connection to Cassandra times-out (see db_timeout_millis), Doradus waits this amount of

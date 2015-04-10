@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Random;
 
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
@@ -40,6 +41,12 @@ import com.dell.doradus.service.tenant.UserDefinition;
 public class ThriftService extends DBService {
     private static final ThriftService INSTANCE = new ThriftService();
 
+    // Members to handle rotation host selection:
+    private final Object m_lastHostLock = new Object();
+    private String       m_lastHost;
+    private boolean      m_bUseSecondaryHosts;
+    private long         m_lastPrimaryHostCheckTimeMillis;
+    
     // Keyspace names to DBConn queue:
     private final Map<String, Queue<DBConn>> m_dbKeyspaceDBConns = new HashMap<>();
     
@@ -80,7 +87,7 @@ public class ThriftService extends DBService {
         checkState();
         // Use a temporary, no-keyspace session
         String keyspace = tenant.getKeyspace();
-        try (DBConn dbConn = new DBConn(null)) {
+        try (DBConn dbConn = createAndConnectConn(null)) {
             CassandraSchemaMgr schemaMgr = new CassandraSchemaMgr(dbConn.getClientSession());
             if (!schemaMgr.keyspaceExists(keyspace)) {
                 schemaMgr.createKeyspace(keyspace, options);
@@ -93,7 +100,7 @@ public class ThriftService extends DBService {
         checkState();
         // Use a temporary, no-keyspace session
         String keyspace = tenant.getKeyspace();
-        try (DBConn dbConn = new DBConn(null)) {
+        try (DBConn dbConn = createAndConnectConn(null)) {
             CassandraSchemaMgr schemaMgr = new CassandraSchemaMgr(dbConn.getClientSession());
             if (!schemaMgr.keyspaceExists(keyspace)) {
                 schemaMgr.dropKeyspace(keyspace);
@@ -111,7 +118,7 @@ public class ThriftService extends DBService {
         checkState();
         List<Tenant> tenantList = new ArrayList<>();
         // Use a temporary, no-keyspace session
-        try (DBConn dbConn = new DBConn(null)) {
+        try (DBConn dbConn = createAndConnectConn(null)) {
             CassandraSchemaMgr schemaMgr = new CassandraSchemaMgr(dbConn.getClientSession());
             Collection<String> keyspaceList = schemaMgr.getKeyspaces();
             for (String keyspace : keyspaceList) {
@@ -291,7 +298,7 @@ public class ThriftService extends DBService {
             if (dbQueue.size() > 0) {
                 dbConn = dbQueue.poll();
             } else {
-                dbConn = new DBConn(keyspace);
+                dbConn = createAndConnectConn(keyspace);
             }
         }
         return dbConn;
@@ -316,7 +323,96 @@ public class ThriftService extends DBService {
         }
     }   // returnDBConnection
 
+    // Connect the given DBConn to an available Cassandra node. Initially, primary hosts
+    // configured in "dbhost" are tried. As long as one of them is available, new calls
+    // to this method cycle through the primary hosts. If no primary hosts are reachable
+    // and secondary hosts are configured in "secondary_dbhost", those are tried. If a
+    // secondary host is reached, subsequent calls to this method rotate through those
+    // hosts until primary_host_recheck_millis is reached, at which time we try primary
+    // hosts again. If neither any primary nor secondary hosts can be reached, a
+    // DBNotAvailableException is thrown. If a connection is made but the DBConn's
+    // configured keyspace is not available, a RuntimeException is thrown.
+    void connectDBConn(DBConn dbConn) throws DBNotAvailableException, RuntimeException {
+        // If we're using failover hosts, see if it's time to try primary hosts again.
+        if (m_bUseSecondaryHosts &&
+            (System.currentTimeMillis() - m_lastPrimaryHostCheckTimeMillis) > ServerConfig.getInstance().primary_host_recheck_millis) {
+            m_bUseSecondaryHosts = false;
+        }
+        
+        // Try all primary hosts first if possible.
+        DBNotAvailableException lastException = null;
+        if (!m_bUseSecondaryHosts) {
+            String[] dbHosts = ServerConfig.getInstance().dbhost.split(",");
+            for (int attempt = 1; attempt <= dbHosts.length; attempt++) {
+                try {
+                    dbConn.connect(chooseHost(dbHosts));
+                } catch (DBNotAvailableException ex) {
+                    lastException = ex;
+                } catch (RuntimeException ex) {
+                    throw ex;   // bad keyspace; abort connection attempts
+                }
+            }
+            m_lastPrimaryHostCheckTimeMillis = System.currentTimeMillis();
+        }
+        
+        // Try secondary hosts if needed and if configured.
+        if (!dbConn.isOpen() && !Utils.isEmpty(ServerConfig.getInstance().secondary_dbhost)) {
+            if (!m_bUseSecondaryHosts) {
+                m_logger.info("All connections to 'dbhost' failed; trying 'secondary_dbhost'");
+            }
+            String[] dbHosts = ServerConfig.getInstance().secondary_dbhost.split(",");
+            for (int attempt = 1; attempt <= dbHosts.length; attempt++) {
+                try {
+                    dbConn.connect(chooseHost(dbHosts));
+                } catch (DBNotAvailableException e) {
+                    lastException = e;
+                } catch (RuntimeException ex) {
+                    throw ex;   // bad keyspace; abort connection attempts
+                }
+            }
+            if (dbConn.isOpen()) {
+                m_bUseSecondaryHosts = true; // stick with secondary hosts for now.
+            }
+        }
+        
+        if (!dbConn.isOpen()) {
+            m_logger.error("All Thrift connection attempts failed.", lastException);
+            throw lastException;
+        }
+    }   // connectDBConn
+    
     //----- Private methods
+    
+    // Create a new DBConn object and connect it to an available Cassandra node. If
+    // keyspace is non-null, create a session to the given keyspace. Throw a
+    // DBNotAvailableException if no connection is possible. Throw a RuntimeException ifa
+    // the given keyspace does not exist.
+    private DBConn createAndConnectConn(String keyspace) throws DBNotAvailableException, RuntimeException {
+        DBConn dbConn = new DBConn(keyspace);
+        connectDBConn(dbConn);
+        return dbConn;
+    }   // createAndConnectConn
+    
+    // Choose the next Cassandra host name in the list or a random one.
+    private String chooseHost(String[] dbHosts) {
+        String host = null;
+        synchronized (m_lastHostLock) {
+            if (dbHosts.length == 1) {
+                host = dbHosts[0];
+            } else if (!Utils.isEmpty(m_lastHost)) {
+                for (int index = 0; host == null && index < dbHosts.length; index++) {
+                    if (dbHosts[index].equals(m_lastHost)) {
+                        host = dbHosts[(++index) % dbHosts.length];
+                    }
+                }
+            }
+            if (host == null) {
+                host = dbHosts[new Random().nextInt(dbHosts.length)];
+            }
+            m_lastHost = host;
+        }
+        return host;
+    }   // chooseHost
     
     // Add/return the given DBConnection to the keyspace/connection list map.
     private void returnGoodConnection(DBConn dbConn) {
@@ -338,7 +434,7 @@ public class ThriftService extends DBService {
         while (!bSuccess) {
             // Create a no-keyspace connection and fetch all keyspaces to prove that the
             // cluster is really ready.
-            try (DBConn dbConn = new DBConn(null)) {
+            try (DBConn dbConn = createAndConnectConn(null)) {
                 new CassandraSchemaMgr(dbConn.getClientSession()).getKeyspaces();
                 bSuccess = true;
             } catch (DBNotAvailableException ex) {
