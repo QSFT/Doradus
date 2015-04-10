@@ -16,11 +16,13 @@
 
 package com.dell.doradus.service.tenant;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
@@ -36,6 +38,7 @@ import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.taskmanager.TaskManagerService;
+import com.dell.doradus.service.tenant.UserDefinition.Permission;
 
 /**
  * Provides tenant management services such as creating new tenants, listing tenants, and
@@ -49,7 +52,7 @@ public class TenantService extends Service {
     private static final String TENANT_ROW_KEY = "_tenant";
     private static final String TENANT_DEF_COL_NAME = "Definition";
     
-    // Tenant name (keyspace) to TenantDefinition map:
+    // Tenant name (keyspace) to TenantDefinition cache:
     private final Map<String, TenantDefinition> m_tenantMap = new HashMap<>();
     
     // REST commands supported by the SchemaService:
@@ -60,6 +63,24 @@ public class TenantService extends Service {
         new RESTCommand("PUT    /_tenants/{tenant}  com.dell.doradus.service.tenant.ModifyTenantCmd", true),
     });
 
+    // Singleton creation only.
+    private TenantService() {};
+
+    /**
+     * Simple interface used for filtered searching for a {@link TenantDefinition}.
+     * 
+     * @see TenantService#searchForTenant(TenantFilter)
+     */
+    public interface TenantFilter {
+        /**
+         * Indicate if the given TenantDefinition should be returned.
+         * 
+         * @param tenantDef Candidate {@link TenantDefinition}.
+         * @return          True if the tenant definition should be returned.
+         */
+        boolean selectTenant(TenantDefinition tenantDef);
+    }
+    
     //----- Service methods
     
     /**
@@ -166,6 +187,32 @@ public class TenantService extends Service {
         throw new RuntimeException("Not yet implemented");
     }   // deleteTenant
 
+    /**
+     * Search for the first {@link TenantDefinition} that is selected by the given filter.
+     * This method first searches for cached TenantDefinitions, which have been recently
+     * used. However, if the filter does not select any of these, the tenant cache is
+     * refreshed and searched again. This ensures performant access to recently used
+     * tenants without missing any just-created tenants. 
+     *  
+     * @param   filter  {@link TenantFilter} that decides selection criteria.
+     * @return          First {@link TenantDefinition} selected by the filter or null if
+     *                  the search exhausts all known tenants without a selection.
+     */
+    public TenantDefinition searchForTenant(TenantFilter filter) {
+        checkServiceState();
+        synchronized (m_tenantMap) {
+            for (int attempt = 1; attempt <= 2; attempt++) {
+                for (TenantDefinition tenantDef : m_tenantMap.values()) {
+                    if (filter.selectTenant(tenantDef)) {
+                        return tenantDef;
+                    }
+                }
+                refreshTenantMap();
+            }
+        }
+        return null;
+    }   // searchForTenant
+    
     //----- Tenant authorization
     
     /**
@@ -197,23 +244,23 @@ public class TenantService extends Service {
     }
     
     /**
-     * Verify that the given tenant can be accessed using the given Authorization header
-     * and command privilege. isPrivCommand should be true if the request is accessing a
-     * privileged command. This method throws an {@link UnauthorizedException} if the
-     * given credentials are invalid for the tenant and type of command privilege being
-     * requested.
+     * Verify that the given tenant and RESTCommand can be accessed using by the user
+     * represented by the given userID and password. A {@link UnauthorizedException} is
+     * thrown if the given credentials are invalid for the given tenant/command or if the
+     * user has insufficient rights for the command being accessed.
      * 
      * @param tenant        {@link Tenant} being accessed.
-     * @param authHeader    Value of Authorization header, if any.
-     * @param isPrivCommand True if a privileged command is being accessed.
-     * @throws              UnauthorizedException if the given credentials are missing or
-     *                      invalid for the given request.
+     * @param userid        User ID of caller. May be null.
+     * @param password      Password of caller. May be null.
+     * @param cmd           {@link RESTCommand} being invoked.
+     * @throws              UnauthorizedException if the given credentials are invalid or
+     *                      have insufficient rights for the given tenant and command.
      */
-    public void validateTenantAccess(Tenant tenant, String authHeader, boolean isPrivCommand)
+    public void validateTenantAuthorization(Tenant tenant, String userid, String password, RESTCommand cmd)
             throws UnauthorizedException {
         if (ServerConfig.getInstance().multitenant_mode) {
-            if (isPrivCommand) {
-                if (!isValidSystemAuthString(authHeader)) {
+            if (cmd.isPrivileged()) {
+                if (!isValidSystemCredentials(userid, password)) {
                     throw new UnauthorizedException("Unrecognized system user id/password");
                 }
             } else if (isDefaultTenant(tenant)) {
@@ -223,14 +270,14 @@ public class TenantService extends Service {
                     // All credentials are allowed for non-priv commands to default tenant
                 }
             } else {
-                if (!isValidTenantAuthString(tenant.getKeyspace(), authHeader)) {
-                    throw new UnauthorizedException("Unrecognized system user id/password");
+                if (!isValidTenantUserAccess(tenant.getKeyspace(), userid, password, cmd.getMethod())) {
+                    throw new UnauthorizedException("Invalid tenant credentials or insufficient permission");
                 }
             }
         } else if (!isDefaultTenant(tenant)) {
             throw new UnauthorizedException("This command is not valid in single-tenant mode");
         }
-    }   // validateTenantAccess
+    }   // validateTenantAuthorization
     
     /**
      * Return a {@link Tenant} that represents the default keyspace. This method performs
@@ -260,24 +307,26 @@ public class TenantService extends Service {
     // Add all users in the given tenant definition to Cassandra and authorize them to use
     // the corresponding keyspace.
     private void addTenantUsers(TenantDefinition tenantDef) {
-        if (tenantDef.getUsers().size() == 0) {
+        if (tenantDef.userCount() == 0) {
             addDefaultUser(tenantDef);
         }
         // Prefix all user IDs with the "{tenant}_"
         String tenantName = tenantDef.getName();
         Tenant tenant = new Tenant(tenantName);
-        Map<String, String> definedUsers = tenantDef.getUsers();
-        Map<String,String> tenantUserMap = new HashMap<>();
-        for (String user : definedUsers.keySet()) {
-            String newUserID = tenantName + "_" + user;
-            tenantUserMap.put(newUserID, definedUsers.get(user));
+        List<UserDefinition> dbUserList = new ArrayList<UserDefinition>();
+        for (UserDefinition userDef : tenantDef.getUsers().values()) {
+            String newUserID = tenantName + "_" + userDef.getID();
+            UserDefinition dbUserDef = userDef.makeCopy(newUserID);
+            dbUserList.add(dbUserDef);
         }
-        DBService.instance().addUsers(tenant, tenantUserMap);
+        DBService.instance().addUsers(tenant, dbUserList);
     }   // addTenantUsers
 
     // Add a default user account for the given tenant definition.
     private void addDefaultUser(TenantDefinition tenantDef) {
-        tenantDef.getUsers().put("U" + generateRandomID(), generateRandomID());
+        UserDefinition userDef = new UserDefinition("U" + generateRandomID());
+        userDef.setPassword(generateRandomID());
+        tenantDef.addUser(userDef);
     }   // addDefaultUser
 
     // Generate a unique ID by choosing a positive random long value and converting into a
@@ -296,51 +345,6 @@ public class TenantService extends Service {
         DBService.instance().commit(dbTran);
     }   // storeTenantDefinition
 
-    // Validate the given Authorization header string as a system user.  
-    private boolean isValidSystemAuthString(String authString) {
-        if (Utils.isEmpty(authString)) {
-            m_logger.debug("Validation failed for system user: no Authorization header");
-            return false;
-        } else if (!authString.toLowerCase().startsWith("basic ")) {
-            m_logger.debug("Validation failed for system user: unknown/unsupported authorization type: {}",
-                           authString);
-            return false;
-        } else {
-            String decoded = Utils.base64ToString(authString.substring("basic ".length()));
-            int inx = decoded.indexOf(':');
-            String userid = inx < 0 ? decoded : decoded.substring(0, inx);
-            String password = inx < 0 ? "" : decoded.substring(inx + 1);
-            return isValidSystemUserPassword(userid, password);
-        }
-    }   // isValidSystemAuthString
-    
-    // Validate the given Authorization header string.  
-    private boolean isValidTenantAuthString(String tenantName, String authString) {
-        if (Utils.isEmpty(authString)) {
-            m_logger.debug("Validation failed for tenant '{}': no Authorization header", tenantName);
-            return false;
-        } else if (!authString.toLowerCase().startsWith("basic ")) {
-            m_logger.debug("Validation failed for tenant '{}': unknown/unsupported authorization type: {}",
-                           tenantName, authString);
-            return false;
-        } else {
-            String decoded = Utils.base64ToString(authString.substring("basic ".length()));
-            int inx = decoded.indexOf(':');
-            String userid = inx < 0 ? decoded : decoded.substring(0, inx);
-            String password = inx < 0 ? "" : decoded.substring(inx + 1);
-            return isValidTenantUserPassword(tenantName, userid, password);
-        }
-    }   // isValidTenantAuthString
-    
-    // Validate the given system user ID and password.
-    private boolean isValidSystemUserPassword(String userid, String password) {
-        if (!isValidSystemCredentials(userid, password)) {
-            m_logger.debug("Validation failed for system user: invalid userid/password");
-            return false;
-        }
-        return true;
-    }   // isValidSystemUserPassword
-    
     // Return true if the given userid/password are valid system credentials.
     private boolean isValidSystemCredentials(String userid, String password) {
         return userid.equals(ServerConfig.getInstance().dbuser) &&
@@ -348,23 +352,42 @@ public class TenantService extends Service {
     }   // isValidSystemCredentials
     
     // Validate the given user ID and password.
-    private boolean isValidTenantUserPassword(String tenantName, String userid, String password) {
-        if (!isValidSystemCredentials(userid, password)) {
-            TenantDefinition tenantDef = getTenantDef(tenantName);
-            if (tenantDef == null) {
-                m_logger.debug("Validation failed for tenant '{}': unknown tenant", tenantName);
-                return false;
-            } else if (!tenantDef.getUsers().containsKey(userid) ||
-                       !tenantDef.getUsers().get(userid).equals(password)) {
-                m_logger.debug("Validation failed for tenant '{}': invalid userid/password", tenantName);
-                return false;
+    private boolean isValidTenantUserAccess(String tenantName, String userid, String password, String method) {
+        if (isValidSystemCredentials(userid, password)) {
+            return true;
+        }
+        TenantDefinition tenantDef = getTenantDef(tenantName);
+        if (tenantDef != null) {
+            UserDefinition userDef = tenantDef.getUser(userid);
+            if (userDef != null && userDef.getPassword().equals(password)) {
+                return isValidUserAccess(userDef, method);
             }
         }
-        return true;
-    }   // isValidTenantUserPassword
+        return false;
+    }   // isValidTenantUserAccess
+
+    // Validate user's permission vs. the given access method.
+    private boolean isValidUserAccess(UserDefinition userDef, String method) {
+        Set<Permission> permList = userDef.getPermissions();
+        if (permList.size() == 0 || permList.contains(Permission.ALL)) {
+            return true;    // No defined permissions == ALL
+        }
+        
+        switch (method.toUpperCase()) {
+        case "GET":
+            return permList.contains(Permission.READ);
+        case "POST":
+            return permList.contains(Permission.APPEND) || permList.contains(Permission.UPDATE);
+        case "DELETE":
+        case "PUT":
+            return permList.contains(Permission.UPDATE);
+        default:
+            throw new RuntimeException("Unexpected 'method': " + method);
+        }
+    }   // isValidUserAccess
 
     // Get the TenantDefinition for the given tenant. Use the cached tenant map but
-    // refresh it if the tenant is unknown. If it's stil unknown, return null. 
+    // refresh it if the tenant is unknown. If it's still unknown, return null. 
     private TenantDefinition getTenantDef(String tenantName) {
         TenantDefinition tenantDef = null;
         synchronized (m_tenantMap) {

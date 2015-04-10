@@ -45,6 +45,7 @@ import com.datastax.driver.core.SSLOptions;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SocketOptions;
 import com.datastax.driver.core.TableMetadata;
+import com.datastax.driver.core.exceptions.InvalidQueryException;
 import com.datastax.driver.core.policies.RoundRobinPolicy;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
@@ -56,6 +57,7 @@ import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.db.cql.CQLStatementCache.Query;
 import com.dell.doradus.service.db.cql.CQLStatementCache.Update;
 import com.dell.doradus.service.schema.SchemaService;
+import com.dell.doradus.service.tenant.UserDefinition;
 
 /**
  * Implements the DBService interface using the CQL API to communicate with Cassandra. A
@@ -147,29 +149,42 @@ public class CQLService extends DBService {
     }   // dropKeyspace
     
     @Override
-    public void addUsers(Tenant tenant, Map<String, String> users) {
+    public void addUsers(Tenant tenant, Iterable<UserDefinition> users) {
         checkState();
         String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
         Session session = getOrCreateKeyspaceSession(cqlKeyspace);
         StringBuilder cql = new StringBuilder();
-        for (String userid : users.keySet()) {
-            m_logger.debug("Adding new user '{}' for keyspace {}", userid, cqlKeyspace);
+        for (UserDefinition userDef : users) {
+            String userID = userDef.getID();
+            String password = userDef.getPassword();
+            
+            m_logger.debug("Adding new user '{}' for keyspace {}", userID, cqlKeyspace);
             // CREATE USER Foo WITH PASSWORD 'bar' NOSUPERUSER;
             cql.setLength(0);
-            String password = users.get(userid);
             cql.append("CREATE USER ");
-            cql.append(userid);
+            cql.append(userID);
             cql.append(" WITH PASSWORD '");
             cql.append(password);   // TODO: escape embedded 's?
             cql.append("' NOSUPERUSER;");
-            session.execute(cql.toString());
+            try {
+                session.execute(cql.toString());
+            } catch (InvalidQueryException e) {
+                String errMsg = e.getLocalizedMessage();
+                if (errMsg.contains("already exists")) {
+                    m_logger.warn("User {} already exists; skipping permission assignment", userID);
+                    continue;
+                } else {
+                    throw new RuntimeException("Error creating user: " + userID, e);
+                }
+            }
             
+            // TODO: Map user permissions to Cassandra permissions 
             // GRANT ALL PERMISSIONS ON KEYSPACE "Casey1" TO Foo;
             cql.setLength(0);
             cql.append("GRANT ALL PERMISSIONS ON KEYSPACE ");
             cql.append(cqlKeyspace);
             cql.append(" TO ");
-            cql.append(userid);
+            cql.append(userID);
             cql.append(";");
             session.execute(cql.toString());
         }

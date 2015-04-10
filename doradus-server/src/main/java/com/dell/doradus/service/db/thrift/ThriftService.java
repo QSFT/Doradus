@@ -35,6 +35,7 @@ import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.schema.SchemaService;
+import com.dell.doradus.service.tenant.UserDefinition;
 
 public class ThriftService extends DBService {
     private static final ThriftService INSTANCE = new ThriftService();
@@ -101,7 +102,7 @@ public class ThriftService extends DBService {
     }   // dropTenant
     
     @Override
-    public void addUsers(Tenant tenant, Map<String, String> users) {
+    public void addUsers(Tenant tenant, Iterable<UserDefinition> users) {
         throw new RuntimeException("This method is not supported for the Thrift API");
     }
     

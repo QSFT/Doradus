@@ -24,6 +24,7 @@ import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.db.cql.CQLService;
 import com.dell.doradus.service.db.thrift.ThriftService;
+import com.dell.doradus.service.tenant.UserDefinition;
 
 /**
  * Provides methods that access the physical database. This is currently Cassandra but
@@ -73,13 +74,13 @@ public abstract class DBService extends Service {
     public abstract void dropTenant(Tenant tenant);
     
     /**
-     * Add the given map of user ids/passwords to the database and authorize them to
-     * access the given tenant.
+     * Add the given list of users to the database with the defined permissions for the
+     * given tenant.
      * 
      * @param tenant    {@link Tenant} to add users for.
-     * @param users     Map of user ids/passwords to add and authorize for the tenant.
+     * @param users     List of {@link UserDefinition} to add.
      */
-    public abstract void addUsers(Tenant tenant, Map<String, String> users);
+    public abstract void addUsers(Tenant tenant, Iterable<UserDefinition> users);
     
     /**
      * Get a list of all known {@link Tenant}s.

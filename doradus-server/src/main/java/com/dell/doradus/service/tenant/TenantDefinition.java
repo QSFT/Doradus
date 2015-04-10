@@ -16,68 +16,114 @@
 
 package com.dell.doradus.service.tenant;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.service.db.Tenant;
 
 public class TenantDefinition {
     // Members:
-    private String                    m_name;
-    private final Map<String, String> m_users = new HashMap<>();
-    private final Map<String, String> m_options = new HashMap<>();
+    private String m_name;
+    private final Map<String, UserDefinition> m_users = new HashMap<>();
+    private final Map<String, String> m_options = new HashMap<>();      // system-defined
+    private final Map<String, String> m_properties = new HashMap<>();   // application-defined
 
-    public void setName(String tenantName) {
-        m_name = tenantName;
-    }   // setName
+    /**
+     * Create a new TenantDefinition with all null/empty values.
+     */
+    public TenantDefinition() {}
+    
+    //----- Getters
+
+    /**
+     * Return a {@link Tenant} object that corresponds to this tenant definition's name.
+     * If the no tenant name has been defined yet, a RuntimeException is thrown. This is a
+     * convenience method for {@link Tenant#Tenant(String)}.
+     * 
+     * @return  A Tenant object that corresponds to this tenant definition's name.
+     */
+    public Tenant getTenant() {
+        if (Utils.isEmpty(m_name)) {
+            throw new RuntimeException("No tenant name defined");
+        }
+        return new Tenant(m_name);
+    }
     
     /**
-     * Parse the tenant definition rooted at given UNode tree and update this object to
-     * match. The root node is the "tenant" object, so its name is the tenant name and its
-     * child nodes are tenant definitions such as "users" and "options". An exception is
-     * thrown if the definition contains an error.
-     *  
-     * @param tenantNode    Root of a UNode tree that defines a tenant. The node must be a
-     *                      MAP whose name is the tenantname.
+     * Get the tenant's name. The tenant name is the same as the keyspace created for the
+     * tenant.
+     * 
+     * @return  Tenant name, if assigned.
      */
-    public void parse(UNode tenantNode) {
-        assert tenantNode != null;
-        m_name = tenantNode.getName();
-        
-        for (String childName : tenantNode.getMemberNames()) {
-            UNode childNode = tenantNode.getMember(childName);
-            switch (childNode.getName()) {
-            case "options":
-                for (String optName : childNode.getMemberNames()) {
-                    UNode optNode = childNode.getMember(optName);
-                    Utils.require(optNode.isValue(), "'option' must be a value: " + optNode);
-                    m_options.put(optNode.getName(), optNode.getValue());
-                }
-                break;
-
-            case "users":
-                for (UNode userNode : childNode.getMemberList()) {
-                    parseUser(userNode);
-                }
-                break;
-                
-            default:
-                Utils.require(false, "Unknown tenant property: " + childNode);
-            }
-        }            
-    }   // parse
-
     public String getName() {
         return m_name;
     }
     
+    /**
+     * Get this tenant definition's options, if any. Options are system-defined such as
+     * settings for the tenant's keyspace. 
+     * 
+     * @return  Tenant definition options as key/value pairs. The map is read-only and
+     *          may be empty but will not be null.
+     */
     public Map<String, String> getOptions() {
-        return m_options;
+        return Collections.unmodifiableMap(m_options);
     }
     
-    public Map<String, String> getUsers() {
-        return m_users;
+    /**
+     * Search for a {@link UserDefinition} belonging to this tenant definition with the
+     * give user ID.
+     * 
+     * @param userid    User ID (login name) of user to search for.
+     * @return          {@link UserDefinition} of user if defined for this tenant,
+     *                  otherwise null.
+     */
+    public UserDefinition getUser(String userid) {
+        return m_users.get(userid);
+    }
+
+    /**
+     * Get the map of {@link UserDefinition}s keyed by user ID defined for this tenant.
+     * 
+     * @return  Map of user IDs to {@link UserDefinition}s. The map will be read-only
+     *          and may be empty but will not be null.
+     */
+    public Map<String, UserDefinition> getUsers() {
+        return Collections.unmodifiableMap(m_users);
+    }
+    
+    /**
+     * The number of {@link UserDefinition}s currently defined for this tenant.
+     * 
+     * @return  Count of {@link UserDefinition}s currently defined.
+     */
+    public int userCount() {
+        return m_users.size();
+    }
+
+    /**
+     * Get the value of the property with the given name if defined. Compared to options,
+     * which are system-defined, options are application-defined.
+     * 
+     * @param  propName Name of a property.
+     * @return          Property value or null if the property is not defined.
+     */
+    public String getProperty(String propName) {
+        return m_properties.get(propName);
+    }
+
+    /**
+     * Get the properties defined for this tenant definition as a key value map. Compared
+     * to options, which are system-defined, options are application-defined.
+     *  
+     * @return  Defined properties as a key/value map. The map will be unmodifiable and
+     *          may be empty but will not be null.
+     */
+    public Map<String, String> getProperties() {
+        return Collections.unmodifiableMap(m_properties);
     }
     
     /**
@@ -90,18 +136,20 @@ public class TenantDefinition {
         UNode tenantNode = UNode.createMapNode(m_name, "tenant");
         if (m_options.size() > 0) {
             UNode optsNode = tenantNode.addMapNode("options");
-            for (String optName : m_options.keySet()) {
-                optsNode.addValueNode(optName, m_options.get(optName), "option");
+            for (Map.Entry<String, String> mapEntry : m_options.entrySet()) {
+                optsNode.addValueNode(mapEntry.getKey(), mapEntry.getValue(), "option");
+            }
+        }
+        if (m_properties.size() > 0) {
+            UNode propsNode = tenantNode.addMapNode("properties");
+            for (Map.Entry<String, String> mapEntry : m_properties.entrySet()) {
+                propsNode.addValueNode(mapEntry.getKey(), mapEntry.getValue(), "property");
             }
         }
         if (m_users.size() > 0) {
             UNode usersNode = tenantNode.addMapNode("users");
-            for (String userid : m_users.keySet()) {
-                UNode userNode = usersNode.addMapNode(userid, "user");
-                String password = m_users.get(userid);
-                if (!Utils.isEmpty(password)) {
-                    userNode.addValueNode("password", password, true);
-                }
+            for (UserDefinition userDef : m_users.values()) {
+                usersNode.addChildNode(userDef.toDoc());
             }
         }
         return tenantNode;
@@ -112,27 +160,82 @@ public class TenantDefinition {
     public String toString() {
         return "Tenant: " + m_name;
     }
+
+    //----- Setters
     
-    //----- Private methods
+    /**
+     * Set the tenant name of this tenant definition. The existing name, if any, is
+     * overwritten.
+     * 
+     * @param tenantName    New name for tenant.
+     */
+    public void setName(String tenantName) {
+        m_name = tenantName;
+    }   // setName
     
-    // Parse the given "user" node in a Tenant definition
-    private void parseUser(UNode userNode) {
-        String userID = userNode.getName();
-        String password = null;
-        for (String childName : userNode.getMemberNames()) {
-            UNode childNode = userNode.getMember(childName);
+    /**
+     * Add the given {@link UserDefinition} to this tenant definition's list of defined
+     * users. If a user with the given name already exists, an InvalidArgumentException is
+     * thrown.
+     * 
+     * @param userDef   New {@link UserDefinition} to add to this tenant definition.
+     */
+    public void addUser(UserDefinition userDef) {
+        String userID = userDef.getID();
+        Utils.require(!Utils.isEmpty(userID), "User ID must be set");
+        Utils.require(!m_users.containsKey(userID), "Duplicate user ID: " + userID);
+        m_users.put(userID, userDef);
+    }
+    
+    /**
+     * Set the given property. If the property was previously defined, the value is
+     * overwritten.
+     * 
+     * @param name  Property name.
+     * @param value New property value.
+     */
+    public void setProperty(String name, String value) {
+        m_properties.put(name, value);
+    }
+
+    /**
+     * Parse the tenant definition rooted at given UNode tree and update this object to
+     * match. The root node is the "tenant" object, so its name is the tenant name and its
+     * child nodes are tenant definitions such as "users" and "options". An exception is
+     * thrown if the definition contains an error.
+     *  
+     * @param tenantNode    Root of a UNode tree that defines a tenant.
+     */
+    public void parse(UNode tenantNode) {
+        assert tenantNode != null;
+        m_name = tenantNode.getName();
+        
+        for (String childName : tenantNode.getMemberNames()) {
+            UNode childNode = tenantNode.getMember(childName);
             switch (childNode.getName()) {
-            case "password":
-                Utils.require(childNode.isValue(), "'password' must be a simple value: " + childNode);
-                password = childNode.getValue();
+            case "options":
+                for (UNode optNode : childNode.getMemberList()) {
+                    Utils.require(optNode.isValue(), "'option' must be a value: " + optNode);
+                    m_options.put(optNode.getName(), optNode.getValue());
+                }
                 break;
-                
+            case "users":
+                for (UNode userNode : childNode.getMemberList()) {
+                    UserDefinition userDef = new UserDefinition();
+                    userDef.parse(userNode);
+                    m_users.put(userDef.getID(), userDef);
+                }
+                break;
+            case "properties":
+                for (UNode propNode : childNode.getMemberList()) {
+                    Utils.require(propNode.isValue(), "'property' must be a value: " + propNode);
+                    m_properties.put(propNode.getName(), propNode.getValue());
+                }
+                break;
             default:
-                Utils.require(false, "Unknown 'user' property: " + childNode);
+                Utils.require(false, "Unknown tenant property: " + childNode);
             }
-        }
-        Utils.require(!Utils.isEmpty(password), "Password cannot be empty; user=" + userID);
-        m_users.put(userID, password);
-    }   // parseUser
-    
+        }            
+    }   // parse
+
 }   // class TenantDefinition

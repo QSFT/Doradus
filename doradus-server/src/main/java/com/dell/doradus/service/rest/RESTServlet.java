@@ -188,8 +188,27 @@ public class RESTServlet extends HttpServlet {
 
     // Extract Authorization header, if any, and validate this command for the given tenant.
     private void validateTenantAccess(HttpServletRequest request, Tenant tenant, RESTCommand cmd) {
-        String authHeader = request.getHeader("Authorization");
-        TenantService.instance().validateTenantAccess(tenant, authHeader, cmd.isPrivileged());
+        String authString = request.getHeader("Authorization");
+        StringBuilder userID = new StringBuilder();
+        StringBuilder password = new StringBuilder();
+        decodeAuthorizationHeader(authString, userID, password);
+        TenantService.instance().validateTenantAuthorization(tenant, userID.toString(), password.toString(), cmd);
+    }
+
+    // Decode the given Authorization header value into its user/password components.
+    private void decodeAuthorizationHeader(String authString, StringBuilder userID, StringBuilder password) {
+        userID.setLength(0);
+        password.setLength(0);
+        if (!Utils.isEmpty(authString) && authString.toLowerCase().startsWith("basic ")) {
+            String decoded = Utils.base64ToString(authString.substring("basic ".length()));
+            int inx = decoded.indexOf(':');
+            if (inx < 0) {
+                userID.append(decoded);
+            } else {
+                userID.append(decoded.substring(0, inx));
+                password.append(decoded.substring(inx + 1));
+            }
+        }
     }
 
     // Send the given response, which includes a response code and optionally a body

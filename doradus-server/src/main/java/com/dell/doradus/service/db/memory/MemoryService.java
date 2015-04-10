@@ -31,6 +31,7 @@ import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
+import com.dell.doradus.service.tenant.UserDefinition;
 
 public class MemoryService extends DBService {
 	public static class Row implements DRow {
@@ -105,7 +106,7 @@ public class MemoryService extends DBService {
 		}
     }
     
-    @Override public void addUsers(Tenant tenant, Map<String, String> users) {
+    @Override public void addUsers(Tenant tenant, Iterable<UserDefinition> users) {
         throw new RuntimeException("This method is not supported for the Memory API");
     }
     
