@@ -121,8 +121,7 @@ public class TenantService extends Service {
         checkServiceState();
         Utils.require(ServerConfig.getInstance().multitenant_mode,
                       "This command is not valid in single-tenant mode");
-        Tenant tenant = new Tenant(tenantName);
-        return getTenantDefinition(tenant);
+        return searchTenantDef(tenantName);
     }   // getTenantDefinition
 
     /**
@@ -149,13 +148,13 @@ public class TenantService extends Service {
         Utils.require(ServerConfig.getInstance().multitenant_mode,
                       "This command is not valid in single-tenant mode");
         String tenantName = tenantDef.getName();
-        if (getTenantDef(tenantName) != null) {
+        if (searchTenantDef(tenantName) != null) {
             throw new DuplicateException("Tenant already exists: " + tenantName);
         }
         Utils.require(!tenantName.equals(ServerConfig.getInstance().keyspace),
                       "Cannot create a tenant with the default keyspace name: " + tenantName);
         defineNewTenant(tenantDef);
-        return getTenantDef(tenantName);
+        return searchTenantDef(tenantName);
     }   // defineTenant
 
     /**
@@ -356,7 +355,7 @@ public class TenantService extends Service {
         if (isValidSystemCredentials(userid, password)) {
             return true;
         }
-        TenantDefinition tenantDef = getTenantDef(tenantName);
+        TenantDefinition tenantDef = searchTenantDef(tenantName);
         if (tenantDef != null) {
             UserDefinition userDef = tenantDef.getUser(userid);
             if (userDef != null && userDef.getPassword().equals(password)) {
@@ -388,7 +387,7 @@ public class TenantService extends Service {
 
     // Get the TenantDefinition for the given tenant. Use the cached tenant map but
     // refresh it if the tenant is unknown. If it's still unknown, return null. 
-    private TenantDefinition getTenantDef(String tenantName) {
+    private TenantDefinition searchTenantDef(String tenantName) {
         TenantDefinition tenantDef = null;
         synchronized (m_tenantMap) {
             tenantDef = m_tenantMap.get(tenantName);
@@ -398,7 +397,7 @@ public class TenantService extends Service {
             }
         }
         return tenantDef;
-    }   // getTenantInfo
+    }   // searchTenantDef
 
     // Refresh the tenant name-to-definition map.
     private void refreshTenantMap() {
@@ -410,7 +409,7 @@ public class TenantService extends Service {
                     tenantDef = new TenantDefinition();
                     tenantDef.setName(tenant.getKeyspace());
                 } else {
-                    tenantDef = getTenantDefinition(tenant);
+                    tenantDef = loadTenantDefinition(tenant);
                 }
                 if (tenantDef != null) {
                     m_tenantMap.put(tenant.getKeyspace(), tenantDef);
@@ -419,8 +418,8 @@ public class TenantService extends Service {
         }
     }   // refreshTenantMap
 
-    // Get the TenantDefinition for the given tenant from the database.
-    private TenantDefinition getTenantDefinition(Tenant tenant) {
+    // Load a TenantDefinition from the Applications table.
+    private TenantDefinition loadTenantDefinition(Tenant tenant) {
         DColumn tenantDefCol =
             DBService.instance().getColumn(tenant, SchemaService.APPS_STORE_NAME, TENANT_ROW_KEY, TENANT_DEF_COL_NAME);
         if (tenantDefCol == null) {
@@ -435,6 +434,6 @@ public class TenantService extends Service {
             return null;
         }
         return tenantDef;
-    }   // queryTenantDefinition
+    }   // loadTenantDefinition
 
 }   // class TenantService
