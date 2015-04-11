@@ -3388,15 +3388,183 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>3</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>300.0</value>
+                    <value>5.0E28</value>
+                    <value>8.0E-13</value>
+                </field>
+                <field name="Float">
+                    <value>-300.0</value>
+                    <value>0.0010000000474974513</value>
+                    <value>0.00800000037997961</value>
+                    <value>5.0E8</value>
+                </field>
+                <field name="Integer">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                    <value>Silver</value>
+                    <value>Three</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1984-01-01 00:00:00</value>
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"3",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "300.0",
+                      "5.0E28",
+                      "8.0E-13"
+                   ],
+                   "Float":[
+                      "-300.0",
+                      "0.0010000000474974513",
+                      "0.00800000037997961",
+                      "5.0E8"
+                   ],
+                   "Integer":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One",
+                      "Silver",
+                      "Three"
+                   ],
+                   "Timestamp":[
+                      "1984-01-01 00:00:00",
+                      "1994-01-01 00:00:00",
+                      "2001-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3405,15 +3573,75 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>3</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">True</field>
+                <field name="Double">5.0E13</field>
+                <field name="Float">0.003000000026077032</field>
+                <field name="Integer">2000000</field>
+                <field name="Long">19999</field>
+                <field name="Text">OPUS</field>
+                <field name="Timestamp">2009-01-01 00:00:00</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">False</field>
+                <field name="Double">-1.5E9</field>
+                <field name="Float">-0.0010000000474974513</field>
+                <field name="Integer">-1230000</field>
+                <field name="Long">-900000</field>
+                <field name="Text">LIST</field>
+                <field name="Timestamp">2014-01-01 00:00:00</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"3",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":"True",
+                   "Double":"5.0E13",
+                   "Float":"0.003000000026077032",
+                   "Integer":"2000000",
+                   "Long":"19999",
+                   "Text":"OPUS",
+                   "Timestamp":"2009-01-01 00:00:00",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":"False",
+                   "Double":"-1.5E9",
+                   "Float":"-0.0010000000474974513",
+                   "Integer":"-1230000",
+                   "Long":"-900000",
+                   "Text":"LIST",
+                   "Timestamp":"2014-01-01 00:00:00",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3428,15 +3656,27 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3445,15 +3685,65 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">True</field>
+                <field name="Double">5.0E13</field>
+                <field name="Float">0.003000000026077032</field>
+                <field name="Integer">2000000</field>
+                <field name="Long">19999</field>
+                <field name="Text">OPUS</field>
+                <field name="Timestamp">2009-01-01 00:00:00</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">False</field>
+                <field name="Double">-1.5E9</field>
+                <field name="Float">-0.0010000000474974513</field>
+                <field name="Integer">-1230000</field>
+                <field name="Long">-900000</field>
+                <field name="Text">LIST</field>
+                <field name="Timestamp">2014-01-01 00:00:00</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":"True",
+                   "Double":"5.0E13",
+                   "Float":"0.003000000026077032",
+                   "Integer":"2000000",
+                   "Long":"19999",
+                   "Text":"OPUS",
+                   "Timestamp":"2009-01-01 00:00:00",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":"False",
+                   "Double":"-1.5E9",
+                   "Float":"-0.0010000000474974513",
+                   "Integer":"-1230000",
+                   "Long":"-900000",
+                   "Text":"LIST",
+                   "Timestamp":"2014-01-01 00:00:00",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3482,15 +3772,27 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3499,15 +3801,65 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">True</field>
+                <field name="Double">5.0E13</field>
+                <field name="Float">0.003000000026077032</field>
+                <field name="Integer">2000000</field>
+                <field name="Long">19999</field>
+                <field name="Text">OPUS</field>
+                <field name="Timestamp">2009-01-01 00:00:00</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">False</field>
+                <field name="Double">-1.5E9</field>
+                <field name="Float">-0.0010000000474974513</field>
+                <field name="Integer">-1230000</field>
+                <field name="Long">-900000</field>
+                <field name="Text">LIST</field>
+                <field name="Timestamp">2014-01-01 00:00:00</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":"True",
+                   "Double":"5.0E13",
+                   "Float":"0.003000000026077032",
+                   "Integer":"2000000",
+                   "Long":"19999",
+                   "Text":"OPUS",
+                   "Timestamp":"2009-01-01 00:00:00",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":"False",
+                   "Double":"-1.5E9",
+                   "Float":"-0.0010000000474974513",
+                   "Integer":"-1230000",
+                   "Long":"-900000",
+                   "Text":"LIST",
+                   "Timestamp":"2014-01-01 00:00:00",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3536,15 +3888,27 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3553,15 +3917,65 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">True</field>
+                <field name="Double">5.0E13</field>
+                <field name="Float">0.003000000026077032</field>
+                <field name="Integer">2000000</field>
+                <field name="Long">19999</field>
+                <field name="Text">OPUS</field>
+                <field name="Timestamp">2009-01-01 00:00:00</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">False</field>
+                <field name="Double">-1.5E9</field>
+                <field name="Float">-0.0010000000474974513</field>
+                <field name="Integer">-1230000</field>
+                <field name="Long">-900000</field>
+                <field name="Text">LIST</field>
+                <field name="Timestamp">2014-01-01 00:00:00</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":"True",
+                   "Double":"5.0E13",
+                   "Float":"0.003000000026077032",
+                   "Integer":"2000000",
+                   "Long":"19999",
+                   "Text":"OPUS",
+                   "Timestamp":"2009-01-01 00:00:00",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":"False",
+                   "Double":"-1.5E9",
+                   "Float":"-0.0010000000474974513",
+                   "Integer":"-1230000",
+                   "Long":"-900000",
+                   "Text":"LIST",
+                   "Timestamp":"2014-01-01 00:00:00",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3590,15 +4004,27 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3607,15 +4033,65 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">True</field>
+                <field name="Double">5.0E13</field>
+                <field name="Float">0.003000000026077032</field>
+                <field name="Integer">2000000</field>
+                <field name="Long">19999</field>
+                <field name="Text">OPUS</field>
+                <field name="Timestamp">2009-01-01 00:00:00</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">False</field>
+                <field name="Double">-1.5E9</field>
+                <field name="Float">-0.0010000000474974513</field>
+                <field name="Integer">-1230000</field>
+                <field name="Long">-900000</field>
+                <field name="Text">LIST</field>
+                <field name="Timestamp">2014-01-01 00:00:00</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":"True",
+                   "Double":"5.0E13",
+                   "Float":"0.003000000026077032",
+                   "Integer":"2000000",
+                   "Long":"19999",
+                   "Text":"OPUS",
+                   "Timestamp":"2009-01-01 00:00:00",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":"False",
+                   "Double":"-1.5E9",
+                   "Float":"-0.0010000000474974513",
+                   "Integer":"-1230000",
+                   "Long":"-900000",
+                   "Text":"LIST",
+                   "Timestamp":"2014-01-01 00:00:00",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3644,15 +4120,27 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3661,15 +4149,65 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">True</field>
+                <field name="Double">5.0E13</field>
+                <field name="Float">0.003000000026077032</field>
+                <field name="Integer">2000000</field>
+                <field name="Long">19999</field>
+                <field name="Text">OPUS</field>
+                <field name="Timestamp">2009-01-01 00:00:00</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">False</field>
+                <field name="Double">-1.5E9</field>
+                <field name="Float">-0.0010000000474974513</field>
+                <field name="Integer">-1230000</field>
+                <field name="Long">-900000</field>
+                <field name="Text">LIST</field>
+                <field name="Timestamp">2014-01-01 00:00:00</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":"True",
+                   "Double":"5.0E13",
+                   "Float":"0.003000000026077032",
+                   "Integer":"2000000",
+                   "Long":"19999",
+                   "Text":"OPUS",
+                   "Timestamp":"2009-01-01 00:00:00",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":"False",
+                   "Double":"-1.5E9",
+                   "Float":"-0.0010000000474974513",
+                   "Integer":"-1230000",
+                   "Long":"-900000",
+                   "Text":"LIST",
+                   "Timestamp":"2014-01-01 00:00:00",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3698,15 +4236,27 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3715,15 +4265,65 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">True</field>
+                <field name="Double">5.0E13</field>
+                <field name="Float">0.003000000026077032</field>
+                <field name="Integer">2000000</field>
+                <field name="Long">19999</field>
+                <field name="Text">OPUS</field>
+                <field name="Timestamp">2009-01-01 00:00:00</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">False</field>
+                <field name="Double">-1.5E9</field>
+                <field name="Float">-0.0010000000474974513</field>
+                <field name="Integer">-1230000</field>
+                <field name="Long">-900000</field>
+                <field name="Text">LIST</field>
+                <field name="Timestamp">2014-01-01 00:00:00</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":"True",
+                   "Double":"5.0E13",
+                   "Float":"0.003000000026077032",
+                   "Integer":"2000000",
+                   "Long":"19999",
+                   "Text":"OPUS",
+                   "Timestamp":"2009-01-01 00:00:00",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":"False",
+                   "Double":"-1.5E9",
+                   "Float":"-0.0010000000474974513",
+                   "Integer":"-1230000",
+                   "Long":"-900000",
+                   "Text":"LIST",
+                   "Timestamp":"2014-01-01 00:00:00",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3752,15 +4352,27 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3769,15 +4381,65 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">True</field>
+                <field name="Double">5.0E13</field>
+                <field name="Float">0.003000000026077032</field>
+                <field name="Integer">2000000</field>
+                <field name="Long">19999</field>
+                <field name="Text">OPUS</field>
+                <field name="Timestamp">2009-01-01 00:00:00</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">False</field>
+                <field name="Double">-1.5E9</field>
+                <field name="Float">-0.0010000000474974513</field>
+                <field name="Integer">-1230000</field>
+                <field name="Long">-900000</field>
+                <field name="Text">LIST</field>
+                <field name="Timestamp">2014-01-01 00:00:00</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":"True",
+                   "Double":"5.0E13",
+                   "Float":"0.003000000026077032",
+                   "Integer":"2000000",
+                   "Long":"19999",
+                   "Text":"OPUS",
+                   "Timestamp":"2009-01-01 00:00:00",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":"False",
+                   "Double":"-1.5E9",
+                   "Float":"-0.0010000000474974513",
+                   "Integer":"-1230000",
+                   "Long":"-900000",
+                   "Text":"LIST",
+                   "Timestamp":"2014-01-01 00:00:00",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3809,15 +4471,27 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3826,15 +4500,173 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>300.0</value>
+                    <value>5.0E28</value>
+                    <value>8.0E-13</value>
+                </field>
+                <field name="Float">
+                    <value>-300.0</value>
+                    <value>0.0010000000474974513</value>
+                    <value>0.00800000037997961</value>
+                    <value>5.0E8</value>
+                </field>
+                <field name="Integer">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                    <value>Silver</value>
+                    <value>Three</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1984-01-01 00:00:00</value>
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "300.0",
+                      "5.0E28",
+                      "8.0E-13"
+                   ],
+                   "Float":[
+                      "-300.0",
+                      "0.0010000000474974513",
+                      "0.00800000037997961",
+                      "5.0E8"
+                   ],
+                   "Integer":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One",
+                      "Silver",
+                      "Three"
+                   ],
+                   "Timestamp":[
+                      "1984-01-01 00:00:00",
+                      "1994-01-01 00:00:00",
+                      "2001-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3843,15 +4675,83 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3880,15 +4780,27 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3897,15 +4809,173 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>300.0</value>
+                    <value>5.0E28</value>
+                    <value>8.0E-13</value>
+                </field>
+                <field name="Float">
+                    <value>-300.0</value>
+                    <value>0.0010000000474974513</value>
+                    <value>0.00800000037997961</value>
+                    <value>5.0E8</value>
+                </field>
+                <field name="Integer">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                    <value>Silver</value>
+                    <value>Three</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1984-01-01 00:00:00</value>
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "300.0",
+                      "5.0E28",
+                      "8.0E-13"
+                   ],
+                   "Float":[
+                      "-300.0",
+                      "0.0010000000474974513",
+                      "0.00800000037997961",
+                      "5.0E8"
+                   ],
+                   "Integer":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One",
+                      "Silver",
+                      "Three"
+                   ],
+                   "Timestamp":[
+                      "1984-01-01 00:00:00",
+                      "1994-01-01 00:00:00",
+                      "2001-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3914,15 +4984,83 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3951,15 +5089,27 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3968,15 +5118,173 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>300.0</value>
+                    <value>5.0E28</value>
+                    <value>8.0E-13</value>
+                </field>
+                <field name="Float">
+                    <value>-300.0</value>
+                    <value>0.0010000000474974513</value>
+                    <value>0.00800000037997961</value>
+                    <value>5.0E8</value>
+                </field>
+                <field name="Integer">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                    <value>Silver</value>
+                    <value>Three</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1984-01-01 00:00:00</value>
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "300.0",
+                      "5.0E28",
+                      "8.0E-13"
+                   ],
+                   "Float":[
+                      "-300.0",
+                      "0.0010000000474974513",
+                      "0.00800000037997961",
+                      "5.0E8"
+                   ],
+                   "Integer":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One",
+                      "Silver",
+                      "Three"
+                   ],
+                   "Timestamp":[
+                      "1984-01-01 00:00:00",
+                      "1994-01-01 00:00:00",
+                      "2001-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -3985,15 +5293,83 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -4022,15 +5398,27 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -4039,15 +5427,173 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>300.0</value>
+                    <value>5.0E28</value>
+                    <value>8.0E-13</value>
+                </field>
+                <field name="Float">
+                    <value>-300.0</value>
+                    <value>0.0010000000474974513</value>
+                    <value>0.00800000037997961</value>
+                    <value>5.0E8</value>
+                </field>
+                <field name="Integer">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                    <value>Silver</value>
+                    <value>Three</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1984-01-01 00:00:00</value>
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "300.0",
+                      "5.0E28",
+                      "8.0E-13"
+                   ],
+                   "Float":[
+                      "-300.0",
+                      "0.0010000000474974513",
+                      "0.00800000037997961",
+                      "5.0E8"
+                   ],
+                   "Integer":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One",
+                      "Silver",
+                      "Three"
+                   ],
+                   "Timestamp":[
+                      "1984-01-01 00:00:00",
+                      "1994-01-01 00:00:00",
+                      "2001-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -4056,15 +5602,83 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -4093,15 +5707,27 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -4110,15 +5736,173 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>300.0</value>
+                    <value>5.0E28</value>
+                    <value>8.0E-13</value>
+                </field>
+                <field name="Float">
+                    <value>-300.0</value>
+                    <value>0.0010000000474974513</value>
+                    <value>0.00800000037997961</value>
+                    <value>5.0E8</value>
+                </field>
+                <field name="Integer">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                    <value>Silver</value>
+                    <value>Three</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1984-01-01 00:00:00</value>
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "300.0",
+                      "5.0E28",
+                      "8.0E-13"
+                   ],
+                   "Float":[
+                      "-300.0",
+                      "0.0010000000474974513",
+                      "0.00800000037997961",
+                      "5.0E8"
+                   ],
+                   "Integer":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One",
+                      "Silver",
+                      "Three"
+                   ],
+                   "Timestamp":[
+                      "1984-01-01 00:00:00",
+                      "1994-01-01 00:00:00",
+                      "2001-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -4127,15 +5911,83 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -4164,15 +6016,27 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -4181,15 +6045,173 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>300.0</value>
+                    <value>5.0E28</value>
+                    <value>8.0E-13</value>
+                </field>
+                <field name="Float">
+                    <value>-300.0</value>
+                    <value>0.0010000000474974513</value>
+                    <value>0.00800000037997961</value>
+                    <value>5.0E8</value>
+                </field>
+                <field name="Integer">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                    <value>Silver</value>
+                    <value>Three</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1984-01-01 00:00:00</value>
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "300.0",
+                      "5.0E28",
+                      "8.0E-13"
+                   ],
+                   "Float":[
+                      "-300.0",
+                      "0.0010000000474974513",
+                      "0.00800000037997961",
+                      "5.0E8"
+                   ],
+                   "Integer":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One",
+                      "Silver",
+                      "Three"
+                   ],
+                   "Timestamp":[
+                      "1984-01-01 00:00:00",
+                      "1994-01-01 00:00:00",
+                      "2001-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -4215,15 +6237,173 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>300.0</value>
+                    <value>5.0E28</value>
+                    <value>8.0E-13</value>
+                </field>
+                <field name="Float">
+                    <value>-300.0</value>
+                    <value>0.0010000000474974513</value>
+                    <value>0.00800000037997961</value>
+                    <value>5.0E8</value>
+                </field>
+                <field name="Integer">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                    <value>Silver</value>
+                    <value>Three</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1984-01-01 00:00:00</value>
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "300.0",
+                      "5.0E28",
+                      "8.0E-13"
+                   ],
+                   "Float":[
+                      "-300.0",
+                      "0.0010000000474974513",
+                      "0.00800000037997961",
+                      "5.0E8"
+                   ],
+                   "Integer":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One",
+                      "Silver",
+                      "Three"
+                   ],
+                   "Timestamp":[
+                      "1984-01-01 00:00:00",
+                      "1994-01-01 00:00:00",
+                      "2001-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -4252,15 +6432,27 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -4269,15 +6461,173 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>300.0</value>
+                    <value>5.0E28</value>
+                    <value>8.0E-13</value>
+                </field>
+                <field name="Float">
+                    <value>-300.0</value>
+                    <value>0.0010000000474974513</value>
+                    <value>0.00800000037997961</value>
+                    <value>5.0E8</value>
+                </field>
+                <field name="Integer">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>-45</value>
+                    <value>1</value>
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                    <value>Silver</value>
+                    <value>Three</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1984-01-01 00:00:00</value>
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2001-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "300.0",
+                      "5.0E28",
+                      "8.0E-13"
+                   ],
+                   "Float":[
+                      "-300.0",
+                      "0.0010000000474974513",
+                      "0.00800000037997961",
+                      "5.0E8"
+                   ],
+                   "Integer":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "-45",
+                      "1",
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One",
+                      "Silver",
+                      "Three"
+                   ],
+                   "Timestamp":[
+                      "1984-01-01 00:00:00",
+                      "1994-01-01 00:00:00",
+                      "2001-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 
@@ -4286,15 +6636,83 @@
 *** Response: xml
     200 OK
     <results>
-        <totalobjects>0</totalobjects>
-        <docs/>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="Boolean">
+                    <value>False</value>
+                    <value>True</value>
+                </field>
+                <field name="Double">
+                    <value>-0.001</value>
+                    <value>-300.0</value>
+                </field>
+                <field name="Float">
+                    <value>0.0010000000474974513</value>
+                    <value>300.0</value>
+                </field>
+                <field name="Integer">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Long">
+                    <value>100</value>
+                    <value>60444</value>
+                </field>
+                <field name="Text">
+                    <value>Abs</value>
+                    <value>One</value>
+                </field>
+                <field name="Timestamp">
+                    <value>1994-01-01 00:00:00</value>
+                    <value>2014-01-01 00:00:00</value>
+                </field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
     </results>
 *** Response: json
     200 OK
     {
        "results":{
-          "totalobjects":"0",
-          "docs":[]
+          "totalobjects":"1",
+          "docs":[
+             {
+                "doc":{
+                   "Boolean":[
+                      "False",
+                      "True"
+                   ],
+                   "Double":[
+                      "-0.001",
+                      "-300.0"
+                   ],
+                   "Float":[
+                      "0.0010000000474974513",
+                      "300.0"
+                   ],
+                   "Integer":[
+                      "100",
+                      "60444"
+                   ],
+                   "Long":[
+                      "100",
+                      "60444"
+                   ],
+                   "Text":[
+                      "Abs",
+                      "One"
+                   ],
+                   "Timestamp":[
+                      "1994-01-01 00:00:00",
+                      "2014-01-01 00:00:00"
+                   ],
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             }
+          ]
        }
     }
 

@@ -146,13 +146,6 @@
 	    </field>
           </doc>
           <doc _table="MV" _ID="1003" >
-            <field name="Long"></field>
-            <field name="Integer"></field>
-            <field name="Float"></field>
-            <field name="Double"></field>
-            <field name="Text"></field>
-            <field name="Boolean"></field>
-            <field name="Timestamp"></field>
           </doc>
           <doc _table="SV" _ID="1001" >
             <field name="Long">19999</field>
@@ -173,13 +166,6 @@
             <field name="Timestamp">2014</field>
           </doc>
           <doc _table="SV" _ID="1003" >
-            <field name="Long"></field>
-            <field name="Integer"></field>
-            <field name="Float"></field>
-            <field name="Double"></field>
-            <field name="Text"></field>
-            <field name="Boolean"></field>
-            <field name="Timestamp"></field>
           </doc>
         </docs>
       </batch>

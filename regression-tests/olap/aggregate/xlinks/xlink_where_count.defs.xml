@@ -70,13 +70,6 @@
     </doc>
     <doc _table="Mailboxes" _ID="2001" >
 	<field name="Title"></field>
-	<field name="Mailboxm">
-	    <add>
-		<value>1001</value>
-		<value>1002</value>
-		<value>1003</value>
-	    </add>
-	</field>
 	<field name="Message">
 	    <add>
 		<value></value>
@@ -85,11 +78,6 @@
     </doc>
     <doc _table="Mailboxes" _ID="2002" >
 	<field name="Title"></field>
-	<field name="Mailboxm">
-	    <add>
-		<value>1002</value>
-	    </add>
-	</field>
 	<field name="Message">
 	    <add>
 		<value>1004</value>
@@ -98,11 +86,6 @@
     </doc>
     <doc _table="Mailboxes" _ID="2003" >
 	<field name="Title"></field>
-	<field name="Mailboxm">
-	    <add>
-		<value>1002</value>
-	    </add>
-	</field>
 	<field name="Message">
 	    <add>
 		<value></value>
@@ -111,19 +94,9 @@
     </doc>
     <doc _table="Persons" _ID="1001" >
 	<field name="Body">Root 1</field>
-	<field name="Mailboxp">
-	    <add>
-		<value>2001</value>
-	    </add>
-	</field>
     </doc>
     <doc _table="Persons" _ID="1002" >
 	<field name="Body">Root 2</field>
-	<field name="Mailboxp">
-	    <add>
-		<value>2002</value>
-	    </add>
-	</field>
     </doc>
   </docs>
 </batch>

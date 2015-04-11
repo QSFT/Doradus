@@ -1832,12 +1832,6 @@
                                      "FileName":"File_11",
                                      "_ID":"3011"
                                   }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_12",
-                                     "_ID":"3012"
-                                  }
                                }
                             ]
                          }
@@ -1996,12 +1990,6 @@
                                   "doc":{
                                      "FileName":"File_11",
                                      "_ID":"3011"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_12",
-                                     "_ID":"3012"
                                   }
                                }
                             ]
@@ -2163,12 +2151,6 @@
                                   "doc":{
                                      "FileName":"File_11",
                                      "_ID":"3011"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_12",
-                                     "_ID":"3012"
                                   }
                                }
                             ]
@@ -2329,12 +2311,6 @@
                                      "FileName":"File_11",
                                      "_ID":"3011"
                                   }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_12",
-                                     "_ID":"3012"
-                                  }
                                }
                             ]
                          }
@@ -2468,26 +2444,6 @@
                    "Folder":[
                       {
                          "doc":{
-                            "FolderName":"Folder_C_1",
-                            "_ID":"2003",
-                            "File":[
-                               {
-                                  "doc":{
-                                     "FileName":"File_5",
-                                     "_ID":"3005"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_6",
-                                     "_ID":"3006"
-                                  }
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "doc":{
                             "FolderName":"Folder_C_2",
                             "_ID":"2006",
                             "File":[
@@ -2495,12 +2451,6 @@
                                   "doc":{
                                      "FileName":"File_11",
                                      "_ID":"3011"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_12",
-                                     "_ID":"3012"
                                   }
                                }
                             ]
@@ -2633,26 +2583,6 @@
                    "Folder":[
                       {
                          "doc":{
-                            "FolderName":"Folder_C_1",
-                            "_ID":"2003",
-                            "File":[
-                               {
-                                  "doc":{
-                                     "FileName":"File_5",
-                                     "_ID":"3005"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_6",
-                                     "_ID":"3006"
-                                  }
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "doc":{
                             "FolderName":"Folder_C_2",
                             "_ID":"2006",
                             "File":[
@@ -2660,12 +2590,6 @@
                                   "doc":{
                                      "FileName":"File_11",
                                      "_ID":"3011"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_12",
-                                     "_ID":"3012"
                                   }
                                }
                             ]
@@ -2800,26 +2724,6 @@
                    "Folder":[
                       {
                          "doc":{
-                            "FolderName":"Folder_C_1",
-                            "_ID":"2003",
-                            "File":[
-                               {
-                                  "doc":{
-                                     "FileName":"File_5",
-                                     "_ID":"3005"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_6",
-                                     "_ID":"3006"
-                                  }
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "doc":{
                             "FolderName":"Folder_C_2",
                             "_ID":"2006",
                             "File":[
@@ -2827,12 +2731,6 @@
                                   "doc":{
                                      "FileName":"File_11",
                                      "_ID":"3011"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_12",
-                                     "_ID":"3012"
                                   }
                                }
                             ]
@@ -2965,26 +2863,6 @@
                    "Folder":[
                       {
                          "doc":{
-                            "FolderName":"Folder_C_1",
-                            "_ID":"2003",
-                            "File":[
-                               {
-                                  "doc":{
-                                     "FileName":"File_5",
-                                     "_ID":"3005"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_6",
-                                     "_ID":"3006"
-                                  }
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "doc":{
                             "FolderName":"Folder_C_2",
                             "_ID":"2006",
                             "File":[
@@ -2992,12 +2870,6 @@
                                   "doc":{
                                      "FileName":"File_11",
                                      "_ID":"3011"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_12",
-                                     "_ID":"3012"
                                   }
                                }
                             ]
@@ -3024,57 +2896,8 @@
     200 OK
     {
        "results":{
-          "totalobjects":"3",
+          "totalobjects":"2",
           "docs":[
-             {
-                "doc":{
-                   "DiskName":"Disk_A",
-                   "_ID":"1001",
-                   "_shard":"shard",
-                   "Folder":[
-                      {
-                         "doc":{
-                            "FolderName":"Folder_A_1",
-                            "_ID":"2001",
-                            "File":[
-                               {
-                                  "doc":{
-                                     "FileName":"File_1",
-                                     "_ID":"3001"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_2",
-                                     "_ID":"3002"
-                                  }
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "doc":{
-                            "FolderName":"Folder_A_2",
-                            "_ID":"2004",
-                            "File":[
-                               {
-                                  "doc":{
-                                     "FileName":"File_7",
-                                     "_ID":"3007"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_8",
-                                     "_ID":"3008"
-                                  }
-                               }
-                            ]
-                         }
-                      }
-                   ]
-                }
-             },
              {
                 "doc":{
                    "DiskName":"Disk_B",
@@ -3132,26 +2955,6 @@
                    "Folder":[
                       {
                          "doc":{
-                            "FolderName":"Folder_C_1",
-                            "_ID":"2003",
-                            "File":[
-                               {
-                                  "doc":{
-                                     "FileName":"File_5",
-                                     "_ID":"3005"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_6",
-                                     "_ID":"3006"
-                                  }
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "doc":{
                             "FolderName":"Folder_C_2",
                             "_ID":"2006",
                             "File":[
@@ -3159,12 +2962,6 @@
                                   "doc":{
                                      "FileName":"File_11",
                                      "_ID":"3011"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_12",
-                                     "_ID":"3012"
                                   }
                                }
                             ]
@@ -3189,57 +2986,8 @@
     200 OK
     {
        "results":{
-          "totalobjects":"3",
+          "totalobjects":"2",
           "docs":[
-             {
-                "doc":{
-                   "DiskName":"Disk_A",
-                   "_ID":"1001",
-                   "_shard":"shard",
-                   "Folder":[
-                      {
-                         "doc":{
-                            "FolderName":"Folder_A_1",
-                            "_ID":"2001",
-                            "File":[
-                               {
-                                  "doc":{
-                                     "FileName":"File_1",
-                                     "_ID":"3001"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_2",
-                                     "_ID":"3002"
-                                  }
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "doc":{
-                            "FolderName":"Folder_A_2",
-                            "_ID":"2004",
-                            "File":[
-                               {
-                                  "doc":{
-                                     "FileName":"File_7",
-                                     "_ID":"3007"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_8",
-                                     "_ID":"3008"
-                                  }
-                               }
-                            ]
-                         }
-                      }
-                   ]
-                }
-             },
              {
                 "doc":{
                    "DiskName":"Disk_B",
@@ -3297,26 +3045,6 @@
                    "Folder":[
                       {
                          "doc":{
-                            "FolderName":"Folder_C_1",
-                            "_ID":"2003",
-                            "File":[
-                               {
-                                  "doc":{
-                                     "FileName":"File_5",
-                                     "_ID":"3005"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_6",
-                                     "_ID":"3006"
-                                  }
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "doc":{
                             "FolderName":"Folder_C_2",
                             "_ID":"2006",
                             "File":[
@@ -3324,12 +3052,6 @@
                                   "doc":{
                                      "FileName":"File_11",
                                      "_ID":"3011"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_12",
-                                     "_ID":"3012"
                                   }
                                }
                             ]
@@ -3360,51 +3082,9 @@
           "docs":[
              {
                 "doc":{
-                   "DiskName":"Disk_A",
                    "_ID":"1001",
                    "_shard":"shard",
-                   "Folder":[
-                      {
-                         "doc":{
-                            "FolderName":"Folder_A_1",
-                            "_ID":"2001",
-                            "File":[
-                               {
-                                  "doc":{
-                                     "FileName":"File_1",
-                                     "_ID":"3001"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_2",
-                                     "_ID":"3002"
-                                  }
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "doc":{
-                            "FolderName":"Folder_A_2",
-                            "_ID":"2004",
-                            "File":[
-                               {
-                                  "doc":{
-                                     "FileName":"File_7",
-                                     "_ID":"3007"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_8",
-                                     "_ID":"3008"
-                                  }
-                               }
-                            ]
-                         }
-                      }
-                   ]
+                   "Folder":[]
                 }
              },
              {
@@ -3464,26 +3144,6 @@
                    "Folder":[
                       {
                          "doc":{
-                            "FolderName":"Folder_C_1",
-                            "_ID":"2003",
-                            "File":[
-                               {
-                                  "doc":{
-                                     "FileName":"File_5",
-                                     "_ID":"3005"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_6",
-                                     "_ID":"3006"
-                                  }
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "doc":{
                             "FolderName":"Folder_C_2",
                             "_ID":"2006",
                             "File":[
@@ -3491,12 +3151,6 @@
                                   "doc":{
                                      "FileName":"File_11",
                                      "_ID":"3011"
-                                  }
-                               },
-                               {
-                                  "doc":{
-                                     "FileName":"File_12",
-                                     "_ID":"3012"
                                   }
                                }
                             ]

@@ -94,7 +94,7 @@
             <field name="FirstName">Konstantin</field>
             <field name="LastName">Gud</field>
             <field name="Messages">2001</field>
-            <field name="DirectReport">
+            <field name="DirectReports">
 		<add>
 		    <value>1002</value>
 		</add>
