@@ -585,6 +585,7 @@ public class SpiderService extends StorageService {
     private DBObject createObject(TableDefinition tableDef, String objID, Iterator<DColumn> colIter) {
         DBObject dbObj = new DBObject();
         dbObj.setObjectID(objID);
+        dbObj.setTableName(tableDef.getTableName());
         while (colIter.hasNext()) {
             DColumn col = colIter.next();
             Pair<String, String> linkCol = extractLinkValue(tableDef, col.getName());
