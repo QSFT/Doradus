@@ -22,11 +22,12 @@ public class BitPacker {
     public static int bits(long maxValue) { return NumericUtils.bits(maxValue); }
     
 	public static int pack(long[] input, long[] output, int count, int bits) {
+	    if(bits == 0) return 0;
 		if(bits == 64) {
 			for(int i = 0; i < count; i++) { output[i] = input[i]; }
 			return count;
 		}
-		for(int i = 0; i < count; i++) { output[i] = 0; }
+		for(int i = 0; i < output.length; i++) { output[i] = 0; }
 		int index = 0;
 		int offset = 0;
 		long mask = NumericUtils.mask(bits);
@@ -93,6 +94,7 @@ public class BitPacker {
 	
 
 	public static long get(long[] input, int start, int bits, int pos) {
+	    if(bits == 0) return 0;
 		if(bits == 64) return input[start + pos];
 		int index = start + (pos * bits) / 64;
 		int offset = (pos * bits) % 64;

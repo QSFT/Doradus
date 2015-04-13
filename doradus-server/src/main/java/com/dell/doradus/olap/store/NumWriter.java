@@ -53,45 +53,7 @@ public class NumWriter {
 		int size = m_values.length;
 		if(size == 0) return;
 		VOutputStream stream = dir.create(table + "." + field + ".dat");
-		stream.writeVInt(size);
-		if(max <= 1 && min >= 0) { // BitVector
-			bits = 1;
-			stream.writeByte(bits);
-			BitVector bv = new BitVector(size);
-			for(int i = 0; i < size; i++) {
-				if(m_values[i] != 0) bv.set(i);
-				else bv.clear(i);
-			}
-			stream.write(bv.getBuffer(), 0, bv.getBuffer().length);
-		}
-		else if(max <= Byte.MAX_VALUE && min >= Byte.MIN_VALUE) { // 1 byte
-			bits = 8;
-			stream.writeByte(bits);
-			for(int i = 0; i < size; i++) {
-				stream.writeByte((byte)m_values[i]);
-			}
-		}
-		else if(max <= Short.MAX_VALUE && min >= Short.MIN_VALUE) { // 2 bytes
-			bits = 16;
-			stream.writeByte(bits);
-			for(int i = 0; i < size; i++) {
-				stream.writeShort((short)m_values[i]);
-			}
-		}
-		else if(max <= Integer.MAX_VALUE && min >= Integer.MIN_VALUE) { // 4 bytes
-			bits = 32;
-			stream.writeByte(bits);
-			for(int i = 0; i < size; i++) {
-				stream.writeInt((int)m_values[i]);
-			}
-		}
-		else { // 8 bytes
-			bits = 64;
-			stream.writeByte(bits);
-			for(int i = 0; i < size; i++) {
-				stream.writeLong((long)m_values[i]);
-			}
-		}
+        bits = NumArray.writeArray(m_values, min, max, stream);
 		stream.close();
 	}
 

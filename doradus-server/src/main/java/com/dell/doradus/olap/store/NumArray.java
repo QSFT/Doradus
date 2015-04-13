@@ -122,7 +122,8 @@ public class NumArray {
 			input.read(m_bitArray.getBuffer(), 0, m_bitArray.getBuffer().length);  
 			break; 
 		case 8 :
-			for(int i = 0; i < m_size; i++) m_byteArray[i] = (byte)input.readByte();
+		    input.read(m_byteArray, 0, m_size);
+			//for(int i = 0; i < m_size; i++) m_byteArray[i] = (byte)input.readByte();
 			break;
 		case 16 :
 			for(int i = 0; i < m_size; i++) m_shortArray[i] = input.readShort();

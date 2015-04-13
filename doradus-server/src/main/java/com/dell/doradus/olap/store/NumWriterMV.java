@@ -20,8 +20,8 @@ import com.dell.doradus.olap.io.VDirectory;
 import com.dell.doradus.olap.io.VOutputStream;
 
 public class NumWriterMV {
-	private LongList m_doc = new LongList(1024);
-	private IntList m_pos;
+	private LongList m_doc;
+	private int[] m_len;
 	private boolean m_isSingleValued = true;
 	private BitVector m_mask;
 	
@@ -37,7 +37,8 @@ public class NumWriterMV {
 	
 	public NumWriterMV(int docsCount) {
 		m_docsCount = docsCount;
-		m_pos = new IntList(docsCount + 1);
+		m_doc = new LongList(docsCount);
+		m_len = new int[docsCount];
 		m_mask = new BitVector(docsCount);
 	}
 	
@@ -58,11 +59,9 @@ public class NumWriterMV {
 			m_isSingleValued = false;
 			if(m_lastNum > num) throw new RuntimeException("Invalid number order");
 		} else {
-			while(m_lastDoc < doc) {
-				m_pos.add(m_doc.size());
-				m_lastDoc++;
-			}
+		    m_lastDoc = doc;
 		}
+		m_len[doc]++;
 		m_doc.add(num);
 		m_lastNum = num;
 		
@@ -72,8 +71,6 @@ public class NumWriterMV {
 	}
 	
 	public void close(VDirectory dir, String table, String field) {
-		
-		while(m_pos.size() != m_docsCount + 1) m_pos.add(m_doc.size());
 		if(min_pos > max) min_pos = 0;
 		
 		if(m_isSingleValued) {
@@ -86,11 +83,12 @@ public class NumWriterMV {
 			}
 			
 			long[] values = new long[m_docsCount];
+			int pos = 0;
 			for(int i = 0; i < m_docsCount; i++) {
 				if(!m_mask.get(i)) continue;
-				values[i] = m_doc.get(m_pos.get(i));
+				values[i] = m_doc.get(pos++);
 			}
-			
+			if(pos != m_doc.size()) throw new RuntimeException("Inconsistency in NumWriterMV");
 			int size = values.length;
 			if(size == 0) return;
 			VOutputStream stream = dir.create(table + "." + field + ".dat");
@@ -105,11 +103,9 @@ public class NumWriterMV {
 			}
 			bits = NumArray.writeArray(values, min, max, out_dat);
 			
-			out_pos.writeVInt(m_pos.size() - 1);
-			for(int i = 1; i < m_pos.size(); i++) {
-				int start = m_pos.get(i - 1);
-				int end = m_pos.get(i);
-				out_pos.writeVInt(end - start);
+			out_pos.writeVInt(m_docsCount);
+			for(int i = 0; i < m_docsCount; i++) {
+				out_pos.writeVInt(m_len[i]);
 			}
 			out_pos.close();
 		}
