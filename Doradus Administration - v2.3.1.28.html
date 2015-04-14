@@ -30,39 +30,39 @@
       <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.22.html">Multi-Tenant Configuration</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.26.html">Managing Tenants</a> : List All Tenants</div>
     <hr align="left" />
     <blockquote>
-      <div class="Heading_3"><a name="pID0E0QO0HA">List All Tenants</a></div>
-      <div class="Normal"><a name="pID0E0PO0HA">This command lists all existing tenants:</a></div>
-      <div class="Code"><a name="pID0E0OO0HA">GET /_tenants</a></div>
-      <div class="Normal"><a name="pID0E0NO0HA">This command returns each tenant’s name and the list of applications owned by each tenant. An example response in XML is shown below:</a></div>
-      <div class="Code"><a name="pID0E0MO0HA">&lt;tenants&gt;</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E0LO0HA">&lt;tenant&nbsp;name="Doradus"&gt;</a></div>
+      <div class="Heading_3"><a name="pID0E0WO0HA">List All Tenants</a></div>
+      <div class="Normal"><a name="pID0E0VO0HA">This command lists all existing tenants:</a></div>
+      <div class="Code"><a name="pID0E0UO0HA">GET /_tenants</a></div>
+      <div class="Normal"><a name="pID0E0TO0HA">This command returns each tenant’s name and the list of applications owned by each tenant. An example response in XML is shown below:</a></div>
+      <div class="Code"><a name="pID0E0SO0HA">&lt;tenants&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0RO0HA">&lt;tenant&nbsp;name="Doradus"&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QO0HA">&lt;applications&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0PO0HA">&lt;value&gt;SmokeTest&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0OO0HA">&lt;value&gt;App_Default&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NO0HA">&lt;/applications&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0MO0HA">&lt;/tenant&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0LO0HA">&lt;tenant&nbsp;name="Bibliotecha"&gt;</a></div>
       <div class="Code" style="margin-left: 54pt"><a name="pID0E0KO0HA">&lt;applications&gt;</a></div>
-      <div class="Code" style="margin-left: 72pt"><a name="pID0E0JO0HA">&lt;value&gt;SmokeTest&lt;/value&gt;</a></div>
-      <div class="Code" style="margin-left: 72pt"><a name="pID0E0IO0HA">&lt;value&gt;App_Default&lt;/value&gt;</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0HO0HA">&lt;/applications&gt;</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E0GO0HA">&lt;/tenant&gt;</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E0FO0HA">&lt;tenant&nbsp;name="Bibliotecha"&gt;</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0EO0HA">&lt;applications&gt;</a></div>
-      <div class="Code" style="margin-left: 72pt"><a name="pID0E0DO0HA">&lt;value&gt;App_Biblio&lt;/value&gt;</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0CO0HA">&lt;/applications&gt;</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E0BO0HA">&lt;/tenant&gt;</a></div>
-      <div class="Code"><a name="pID0E0AO0HA">&lt;/tenants&gt;</a></div>
-      <div class="Normal"><a name="pID0E06N0HA">As with all REST commands, a JSON response can be requested by adding </a><span class="Code_char">?format=json</span> to the URI. Example:</div>
-      <div class="Code"><a name="pID0E05N0HA">GET /_tenants?format=json</a></div>
-      <div class="Normal"><a name="pID0E04N0HA">Which returns:</a></div>
-      <div class="Code"><a name="pID0E03N0HA">{"tenants": {</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E02N0HA">"Doradus": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0JO0HA">&lt;value&gt;App_Biblio&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0IO0HA">&lt;/applications&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0HO0HA">&lt;/tenant&gt;</a></div>
+      <div class="Code"><a name="pID0E0GO0HA">&lt;/tenants&gt;</a></div>
+      <div class="Normal"><a name="pID0E0FO0HA">As with all REST commands, a JSON response can be requested by adding </a><span class="Code_char">?format=json</span> to the URI. Example:</div>
+      <div class="Code"><a name="pID0E0EO0HA">GET /_tenants?format=json</a></div>
+      <div class="Normal"><a name="pID0E0DO0HA">Which returns:</a></div>
+      <div class="Code"><a name="pID0E0CO0HA">{"tenants": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0BO0HA">"Doradus": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0AO0HA">"applications": [</a></div>
+      <div class="Code" style="margin-left: 61.2pt"><a name="pID0E06N0HA">"SmokeTest",</a></div>
+      <div class="Code" style="margin-left: 61.2pt"><a name="pID0E05N0HA">"App_Default"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E04N0HA">]</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E03N0HA">},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E02N0HA">"Bibliotecha": {</a></div>
       <div class="Code" style="margin-left: 54pt"><a name="pID0E01N0HA">"applications": [</a></div>
-      <div class="Code" style="margin-left: 61.2pt"><a name="pID0E0ZN0HA">"SmokeTest",</a></div>
-      <div class="Code" style="margin-left: 61.2pt"><a name="pID0E0YN0HA">"App_Default"</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XN0HA">]</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E0WN0HA">},</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E0VN0HA">"Bibliotecha": {</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0UN0HA">"applications": [</a></div>
-      <div class="Code" style="margin-left: 61.2pt"><a name="pID0E0TN0HA">"App_Biblio"</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SN0HA">]</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E0RN0HA">}</a></div>
-      <div class="Code"><a name="pID0E0QN0HA">}}</a></div>
+      <div class="Code" style="margin-left: 61.2pt"><a name="pID0E0ZN0HA">"App_Biblio"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0YN0HA">]</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0XN0HA">}</a></div>
+      <div class="Code"><a name="pID0E0WN0HA">}}</a></div>
       <script type="text/javascript" language="JavaScript1.2">
         <!--
           // Clear related topics

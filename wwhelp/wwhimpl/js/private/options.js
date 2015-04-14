@@ -49,7 +49,7 @@ function  WWHJavaScriptSettings_TOC_Object()
 
 function  WWHJavaScriptSettings_Index_Object()
 {
-  this.mbShow = true;
+  this.mbShow = false;
 
   this.mFontStyle = "font-family: Verdana, Arial, Helvetica, sans-serif ; font-size: 8pt";
 

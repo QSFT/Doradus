@@ -30,15 +30,15 @@
       <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.04.html">Installing and Running Doradus</a> : Running Doradus Stand-Alone</div>
     <hr align="left" />
     <blockquote>
-      <div class="Heading_2"><a name="pID0E0WU0HA">Running Doradus Stand-Alone</a></div>
-      <div class="Normal"><a name="pID0E0VU0HA">Java 1.7 is required to run Doradus. It can be run as a stand-alone console application with a command executed in the </a><span class="Code_char">{doradus_home}</span> directory such as this:</div>
-      <div class="Code"><a name="pID0E0UU0HA">java -cp ./config:target/classes:target/dependency/* com.dell.doradus.core.DoradusServer</a></div>
-      <div class="Normal"><a name="pID0E0TU0HA">The files </a><span class="Code_char">doradus.yaml</span> and <span class="Code_char">log4j.properties</span> normally reside in the folder <span class="Code_char">./config</span>; another location can be set with the JVM defines <span class="Code_char">-Ddoradus.config</span> and <span class="Code_char">-Dlog4j.configuration</span> respectively. Example:</div>
-      <div class="Code"><a name="pID0E0SU0HA">java -Dlog4j.configuration=file:/Doradus/mylog4j.properties \<br />	-Ddoradus.config=file:/Doradus/mydoradus.yaml \<br />	...</a></div>
-      <div class="Normal"><a name="pID0E0RU0HA">Most </a><span class="Code_char">doradus.yaml</span> parameters can be overridden with command line arguments by prepending a "-" to the parameter name. For example, <span class="Code_char">doradus.yaml</span> defines <span class="Code_char">restport: 1123</span>, which sets the REST API listening port number. To override this to 5711, add the command line argument:</div>
-      <div class="Code"><a name="pID0E0QU0HA">java ... </a><span style="font-weight: bold">-restport 5711</span></div>
-      <div class="Normal"><a name="pID0E0PU0HA">For list value parameters, separate the values with commas and no spaces immediately after the argument name.  For example:</a></div>
-      <div class="Code"><a name="pID0E0OU0HA">-tls_cipher_suites TLS_ECDH_RSA_WITH_AES_128_CBC_SHA,TLS_ECDH_RSA_WITH_AES_256_CBC_SHA</a></div>
+      <div class="Heading_2"><a name="pID0E05U0HA">Running Doradus Stand-Alone</a></div>
+      <div class="Normal"><a name="pID0E04U0HA">Java 1.7 is required to run Doradus. It can be run as a stand-alone console application with a command executed in the </a><span class="Code_char">{doradus_home}</span> directory such as this:</div>
+      <div class="Code"><a name="pID0E03U0HA">java -cp ./config:target/classes:target/dependency/* com.dell.doradus.core.DoradusServer</a></div>
+      <div class="Normal"><a name="pID0E02U0HA">The files </a><span class="Code_char">doradus.yaml</span> and <span class="Code_char">log4j.properties</span> normally reside in the folder <span class="Code_char">./config</span>; another location can be set with the JVM defines <span class="Code_char">-Ddoradus.config</span> and <span class="Code_char">-Dlog4j.configuration</span> respectively. Example:</div>
+      <div class="Code"><a name="pID0E01U0HA">java -Dlog4j.configuration=file:/Doradus/mylog4j.properties \<br />	-Ddoradus.config=file:/Doradus/mydoradus.yaml \<br />	...</a></div>
+      <div class="Normal"><a name="pID0E0ZU0HA">Most </a><span class="Code_char">doradus.yaml</span> parameters can be overridden with command line arguments by prepending a "-" to the parameter name. For example, <span class="Code_char">doradus.yaml</span> defines <span class="Code_char">restport: 1123</span>, which sets the REST API listening port number. To override this to 5711, add the command line argument:</div>
+      <div class="Code"><a name="pID0E0YU0HA">java ... </a><span style="font-weight: bold">-restport 5711</span></div>
+      <div class="Normal"><a name="pID0E0XU0HA">For list value parameters, separate the values with commas and no spaces immediately after the argument name.  For example:</a></div>
+      <div class="Code"><a name="pID0E0WU0HA">-tls_cipher_suites TLS_ECDH_RSA_WITH_AES_128_CBC_SHA,TLS_ECDH_RSA_WITH_AES_256_CBC_SHA</a></div>
       <script type="text/javascript" language="JavaScript1.2">
         <!--
           // Clear related topics

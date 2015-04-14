@@ -30,8 +30,8 @@
       <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.34.html">Doradus Configuration and Operation</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.36.html">Doradus Configuration Files</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.38.html">Doradus Security Options</a> : Securing the Doradus REST API</div>
     <hr align="left" />
     <blockquote>
-      <div class="Heading_4"><a name="pID0E0CL0HA">Securing the Doradus REST API</a></div>
-      <div class="Normal"><a name="pID0E0BL0HA">By default, the Doradus REST API uses unencrypted HTTP. Because Doradus provides no application-level security, any process that connect to the Doradus REST port is allowed to perform all schema, update, and query commands. The REST API can be secured by enabling TLS (SSL), which encrypts all traffic and uses mutual authentication to restrict access to specific clients. Optionally, client authentication can be enabled to restrict connections to only those whose certificates have been registered at the server. The process for securing the REST port with TLS is defined below:</a></div>
+      <div class="Heading_4"><a name="pID0E0GL0HA">Securing the Doradus REST API</a></div>
+      <div class="Normal"><a name="pID0E0FL0HA">By default, the Doradus REST API uses unencrypted HTTP. Because Doradus provides no application-level security, any process that connect to the Doradus REST port is allowed to perform all schema, update, and query commands. The REST API can be secured by enabling TLS (SSL), which encrypts all traffic and uses mutual authentication to restrict access to specific clients. Optionally, client authentication can be enabled to restrict connections to only those whose certificates have been registered at the server. The process for securing the REST port with TLS is defined below:</a></div>
       <div class="List_Paragraph_outer" style="margin-left: 18pt">
         <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
           <tr style="vertical-align: baseline">
@@ -39,12 +39,12 @@
               <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">1)	</div>
             </td>
             <td width="100%">
-              <div class="List_Paragraph_inner"><a name="pID0E0AL0HA">Enable TLS by setting the </a><span class="Code_char">tls</span> parameter in the <span class="Code_char">doradus.yaml</span> file to true. Example:</div>
+              <div class="List_Paragraph_inner"><a name="pID0E0EL0HA">Enable TLS by setting the </a><span class="Code_char">tls</span> parameter in the <span class="Code_char">doradus.yaml</span> file to true. Example:</div>
             </td>
           </tr>
         </table>
       </div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E06K0HA">tls: true</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0DL0HA">tls: true</a></div>
       <div class="List_Paragraph_outer" style="margin-left: 18pt">
         <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
           <tr style="vertical-align: baseline">
@@ -52,12 +52,12 @@
               <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">2)	</div>
             </td>
             <td width="100%">
-              <div class="List_Paragraph_inner"><a name="pID0E05K0HA">Create a certificate for use by the Doradus server and store it in a keystore file. You can use the </a><span class="Code_char">keytool</span> utility included with the JRE. An overview of the process to create a self-signed certificate is outline here:</div>
+              <div class="List_Paragraph_inner"><a name="pID0E0CL0HA">Create a certificate for use by the Doradus server and store it in a keystore file. You can use the </a><span class="Code_char">keytool</span> utility included with the JRE. An overview of the process to create a self-signed certificate is outline here:</div>
             </td>
           </tr>
         </table>
       </div>
-      <div class="Normal" style="margin-left: 54pt"><span class="Hyperlink" style="font-size: 10pt"><a href="http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#CreateKeystore" target="external_window" name="pID0E04K0HA">http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#CreateKeystore</a></span></div>
+      <div class="Normal" style="margin-left: 54pt"><span class="Hyperlink" style="font-size: 10pt"><a href="http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#CreateKeystore" target="external_window" name="pID0E0BL0HA">http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#CreateKeystore</a></span></div>
       <div class="List_Paragraph_outer" style="margin-left: 18pt">
         <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
           <tr style="vertical-align: baseline">
@@ -65,13 +65,13 @@
               <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">3)	</div>
             </td>
             <td width="100%">
-              <div class="List_Paragraph_inner"><a name="pID0E03K0HA">Set the </a><span class="Code_char">keystore</span> parameter in the <span class="Code_char">doradus.yaml</span> file to the location of the <span style="font-weight: bold">keystore</span> file, and set the <span class="Code_char">keystorepassword</span> parameter to the file’s password. Example:</div>
+              <div class="List_Paragraph_inner"><a name="pID0E0AL0HA">Set the </a><span class="Code_char">keystore</span> parameter in the <span class="Code_char">doradus.yaml</span> file to the location of the <span style="font-weight: bold">keystore</span> file, and set the <span class="Code_char">keystorepassword</span> parameter to the file’s password. Example:</div>
             </td>
           </tr>
         </table>
       </div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E02K0HA">keystore: config/keystore</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E01K0HA">keystorepassword: mykspassword</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E06K0HA">keystore: config/keystore</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E05K0HA">keystorepassword: mykspassword</a></div>
       <div class="List_Paragraph_outer" style="margin-left: 18pt">
         <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
           <tr style="vertical-align: baseline">
@@ -79,13 +79,13 @@
               <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">4)	</div>
             </td>
             <td width="100%">
-              <div class="List_Paragraph_inner"><a name="pID0E0ZK0HA">If client authentication will be used, create a certificate for each client application and import them into a </a><span style="font-weight: bold">truststore</span> file. (See the same article referenced above.) Set the <span class="Code_char">truststore</span> parameter in the <span class="Code_char">doradus.yaml</span> file to the location of the keystore file, and set the <span class="Code_char">truststorepassword</span> parameter to the file’s password. Example:</div>
+              <div class="List_Paragraph_inner"><a name="pID0E04K0HA">If client authentication will be used, create a certificate for each client application and import them into a </a><span style="font-weight: bold">truststore</span> file. (See the same article referenced above.) Set the <span class="Code_char">truststore</span> parameter in the <span class="Code_char">doradus.yaml</span> file to the location of the keystore file, and set the <span class="Code_char">truststorepassword</span> parameter to the file’s password. Example:</div>
             </td>
           </tr>
         </table>
       </div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0YK0HA">truststore: config/truststore</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XK0HA">truststorepassword: mytspassword</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03K0HA">truststore: config/truststore</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E02K0HA">truststorepassword: mytspassword</a></div>
       <div class="List_Paragraph_outer" style="margin-left: 18pt">
         <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
           <tr style="vertical-align: baseline">
@@ -93,12 +93,12 @@
               <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">5)	</div>
             </td>
             <td width="100%">
-              <div class="List_Paragraph_inner"><a name="pID0E0WK0HA">To require client authentication, set the </a><span class="Code_char">clientauthentication</span> parameter in the <span class="Code_char">doradus.yaml</span> file. This requires REST API connections to use mutual authentication. Example:</div>
+              <div class="List_Paragraph_inner"><a name="pID0E01K0HA">To require client authentication, set the </a><span class="Code_char">clientauthentication</span> parameter in the <span class="Code_char">doradus.yaml</span> file. This requires REST API connections to use mutual authentication. Example:</div>
             </td>
           </tr>
         </table>
       </div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VK0HA">clientauthentication: true</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZK0HA">clientauthentication: true</a></div>
       <div class="List_Paragraph_outer" style="margin-left: 18pt">
         <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
           <tr style="vertical-align: baseline">
@@ -106,21 +106,21 @@
               <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">6)	</div>
             </td>
             <td width="100%">
-              <div class="List_Paragraph_inner"><a name="pID0E0UK0HA">The cipher algorithms allowed by the REST API when TLS is enabled is controlled via the </a><span class="Code_char">tls_cipher_suites</span> parameter. The default list includes the algorithms recommended for FIPS compliance. The actual algorithms allowed by REST API is a subset of the listed algorithms and those actually available to the JVM in which Doradus is running. The cipher algorithm list can be tailored, for example, to only allow 256-bit symmetrical encryption. Example:</div>
+              <div class="List_Paragraph_inner"><a name="pID0E0YK0HA">The cipher algorithms allowed by the REST API when TLS is enabled is controlled via the </a><span class="Code_char">tls_cipher_suites</span> parameter. The default list includes the algorithms recommended for FIPS compliance. The actual algorithms allowed by REST API is a subset of the listed algorithms and those actually available to the JVM in which Doradus is running. The cipher algorithm list can be tailored, for example, to only allow 256-bit symmetrical encryption. Example:</div>
             </td>
           </tr>
         </table>
       </div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TK0HA">tls_cipher_suites:</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SK0HA">   - TLS_DHE_DSS_WITH_AES_256_CBC_SHA</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0RK0HA">   - TLS_DHE_RSA_WITH_AES_256_CBC_SHA</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QK0HA">   - TLS_RSA_WITH_AES_256_CBC_SHA</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0PK0HA">   - TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OK0HA">   - TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NK0HA">   - TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0MK0HA">   - TLS_ECDH_RSA_WITH_AES_256_CBC_SHA</a></div>
-      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0LK0HA">Custom algorithms can also be used as long as installed with the JVM used to run Doradus.</a></div>
-      <div class="Normal"><a name="pID0E0KK0HA">With the steps above, Doradus will use TLS for its REST API port, optionally requiring mutual authentication. Clients must connect to the REST port using TLS. If client authentication is enabled, they must submit a certificate that was added to the truststore. Each client must also support one of the configured cipher algorithms.</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XK0HA">tls_cipher_suites:</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0WK0HA">   - TLS_DHE_DSS_WITH_AES_256_CBC_SHA</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VK0HA">   - TLS_DHE_RSA_WITH_AES_256_CBC_SHA</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0UK0HA">   - TLS_RSA_WITH_AES_256_CBC_SHA</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TK0HA">   - TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SK0HA">   - TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0RK0HA">   - TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QK0HA">   - TLS_ECDH_RSA_WITH_AES_256_CBC_SHA</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0PK0HA">Custom algorithms can also be used as long as installed with the JVM used to run Doradus.</a></div>
+      <div class="Normal"><a name="pID0E0OK0HA">With the steps above, Doradus will use TLS for its REST API port, optionally requiring mutual authentication. Clients must connect to the REST port using TLS. If client authentication is enabled, they must submit a certificate that was added to the truststore. Each client must also support one of the configured cipher algorithms.</a></div>
       <script type="text/javascript" language="JavaScript1.2">
         <!--
           // Clear related topics

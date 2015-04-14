@@ -1,9 +1,10 @@
 div.Normal
 {
   font-family: Arial;
-  font-size: small;
+  font-size: 10pt;
   margin-bottom: 12pt;
   margin-top: 12pt;
+  text-align: left;
 }
 
 .Normal_outer
@@ -15,7 +16,8 @@ div.Normal
 .Normal_inner
 {
   font-family: Arial;
-  font-size: small;
+  font-size: 10pt;
+  text-align: left;
   margin-left: 0pt;
   margin-right: 0pt;
   margin-top: 0pt;
@@ -196,10 +198,11 @@ div.List_Paragraph
 div.List_Bullet
 {
   font-family: Arial;
-  font-size: small;
+  font-size: 10pt;
   margin-bottom: 12pt;
   margin-left: 18pt;
   margin-top: 12pt;
+  text-align: left;
   text-indent: -18pt;
 }
 
@@ -212,7 +215,8 @@ div.List_Bullet
 .List_Bullet_inner
 {
   font-family: Arial;
-  font-size: small;
+  font-size: 10pt;
+  text-align: left;
   margin-left: 0pt;
   margin-right: 0pt;
   margin-top: 0pt;
@@ -262,10 +266,11 @@ div.Title
 div.Bullet
 {
   font-family: Arial;
-  font-size: small;
+  font-size: 10pt;
   margin-bottom: 12pt;
   margin-left: 36pt;
   margin-top: 12pt;
+  text-align: left;
   text-indent: -18pt;
 }
 
@@ -278,7 +283,8 @@ div.Bullet
 .Bullet_inner
 {
   font-family: Arial;
-  font-size: small;
+  font-size: 10pt;
+  text-align: left;
   margin-left: 0pt;
   margin-right: 0pt;
   margin-top: 0pt;
@@ -292,11 +298,12 @@ div.Bullet
 div.Caption
 {
   color: #4F81BD;
-  font-family: "Museo Sans For Dell Regular";
-  font-size: 9pt;
+  font-family: Arial;
+  font-size: 10pt;
   font-weight: bold;
   margin-bottom: 10pt;
   margin-top: 0pt;
+  text-align: left;
 }
 
 .Caption_outer
@@ -308,9 +315,10 @@ div.Caption
 .Caption_inner
 {
   color: #4F81BD;
-  font-family: "Museo Sans For Dell Regular";
-  font-size: 9pt;
+  font-family: Arial;
+  font-size: 10pt;
   font-weight: bold;
+  text-align: left;
   margin-left: 0pt;
   margin-right: 0pt;
   margin-top: 0pt;
@@ -382,5 +390,13 @@ table.Table_Normal
 table.Table_Grid
 {
   border-collapse: collapse;
+}
+
+img.Default
+{
+  left: 0pt;
+  margin-left: 0pt;
+  padding-left: 0%;
+  position: static;
 }
 

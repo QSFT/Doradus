@@ -30,8 +30,8 @@
       <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.34.html">Doradus Configuration and Operation</a> : Managing Doradus via JMX</div>
     <hr align="left" />
     <blockquote>
-      <div class="Heading_2"><a name="pID0E0HF0HA">Managing Doradus via JMX</a></div>
-      <div class="Normal"><a name="pID0E0GF0HA">Doradus extends the Java JMX API with monitoring and administration features. JMX functions can be accessed with off-the-shelf JMX applications such as JConsole, which is bundled with the Java SDK. JMX functions are available from two </a><span class="Code_char">MXBean</span> objects:</div>
+      <div class="Heading_2"><a name="pID0E0LF0HA">Managing Doradus via JMX</a></div>
+      <div class="Normal"><a name="pID0E0KF0HA">Doradus extends the Java JMX API with monitoring and administration features. JMX functions can be accessed with off-the-shelf JMX applications such as JConsole, which is bundled with the Java SDK. JMX functions are available from two </a><span class="Code_char">MXBean</span> objects:</div>
       <div class="Bullet_outer" style="margin-left: 18pt">
         <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
           <tr style="vertical-align: baseline">
@@ -39,7 +39,7 @@
               <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
             </td>
             <td width="100%">
-              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0FF0HA">com.dell.doradus.ServerMonitor</a></span>: This <span class="Code_char">MXBean</span> provides information about the Doradus server including its configuration, start time, and statistics about REST commands.</div>
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0JF0HA">com.dell.doradus.ServerMonitor</a></span>: This <span class="Code_char">MXBean</span> provides information about the Doradus server including its configuration, start time, and statistics about REST commands.</div>
             </td>
           </tr>
         </table>
@@ -51,12 +51,12 @@
               <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
             </td>
             <td width="100%">
-              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0EF0HA">com.dell.doradus.StorageManager</a></span>: This <span class="Code_char">MXBean</span> provides information used by the Doradus Task Manager to conduct background tasks. It also provides operations for modifying tasks and to execute Cassandra backup and recovery tasks.</div>
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0IF0HA">com.dell.doradus.StorageManager</a></span>: This <span class="Code_char">MXBean</span> provides information used by the Doradus Task Manager to conduct background tasks. It also provides operations for modifying tasks and to execute Cassandra backup and recovery tasks.</div>
             </td>
           </tr>
         </table>
       </div>
-      <div class="Normal"><a name="pID0E0DF0HA">JMX functions only collect and return information when the Doradus MBean service (</a><span class="Code_char">com.dell.doradus.mbeans.MBeanService</span>) has been initialized. This is always the case when the server is started as a standalone process but optional when Doradus is embedded within another application.</div>
+      <div class="Normal"><a name="pID0E0HF0HA">JMX functions only collect and return information when the Doradus MBean service (</a><span class="Code_char">com.dell.doradus.mbeans.MBeanService</span>) has been initialized. This is always the case when the server is started as a standalone process but optional when Doradus is embedded within another application.</div>
       <script type="text/javascript" language="JavaScript1.2">
         <!--
           // Clear related topics

@@ -16,6 +16,7 @@ x.t("summarized","below");
 x.t("/config","files");
 x.t("various","folders");
 x.t("locations","data");
+x.t("locations","setting");
 x.t("deployment","guidelines");
 x.t("log4j.properties","file");
 x.t("unencrypted","secured");

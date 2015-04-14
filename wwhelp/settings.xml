@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <WebWorksHelpSettings version="5.0" xmlns="urn:WebWorks-Help-Settings-Schema">
   <Common>
-    <Cookies enable="true" daystoexpire="30" id="Acc3EaAHPnQ" />
+    <Cookies enable="true" daystoexpire="30" id="JHm1a1tJ44I" />
     <Accessible value="false" />
     <SeeAlso showbook="false">
       <Size width="250" />
@@ -33,7 +33,7 @@
       <Email enable="false" address="" />
       <Print enable="true" />
       <Bookmark enable="false" />
-      <PDF enable="false" />
+      <PDF enable="true" />
     </NavigationBar>
     <Tabs>
       <DefaultColors foreground="#666666" />
@@ -46,7 +46,7 @@
         <Size width="150" />
       </HoverText>
       <Contents enable="true" />
-      <Index enable="true" />
+      <Index enable="false" />
       <Search enable="true">
         <Results showrank="true" />
         <Highlighting enable="true">

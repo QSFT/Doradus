@@ -30,14 +30,14 @@
       <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.34.html">Doradus Configuration and Operation</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.36.html">Doradus Configuration Files</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.43.html">Configuration Parameters in doradus.yaml</a> : Cassandra ColumnFamily Parameters</div>
     <hr align="left" />
     <blockquote>
-      <div class="Heading_4"><a name="pID0E0LI0HA">Cassandra ColumnFamily Parameters</a></div>
-      <div class="Normal"><a name="pID0E0KI0HA">The </a><span class="Code_char">cf_defaults</span> parameter is used when Doradus creates a new ColumnFamily. All values recognized by Cassandra are allowed and are passed “as is”. Parameters must begin with a dash (-), and sub-parameters should be further indented. Empty values should be specified with a pair of quotes. Example:</div>
-      <div class="Code"><a name="pID0E0JI0HA">cf_defaults:</a></div>
-      <div class="Code"><a name="pID0E0II0HA">    - compression_options:</a></div>
-      <div class="Code"><a name="pID0E0HI0HA">        - sstable_compression: ""   # use empty string for "none"</a></div>
-      <div class="Code"><a name="pID0E0GI0HA">    - gc_grace_seconds: 3600</a></div>
-      <div class="Normal"><a name="pID0E0FI0HA">After a ColumnFamily is created, Doradus does not modify its parameters to match values in </a><span class="Code_char">doradus.yaml</span>. It is safe to use Cassandra tools such as <span class="Code_char">cassandra-cli</span> to modify ColumnFamily parameters when needed.</div>
-      <div class="Normal"><a name="pID0E0EI0HA">See Cassandra documentation for information about ColumnFamily parameters.</a></div>
+      <div class="Heading_4"><a name="pID0E0NI0HA">Cassandra ColumnFamily Parameters</a></div>
+      <div class="Normal"><a name="pID0E0MI0HA">The </a><span class="Code_char">cf_defaults</span> parameter is used when Doradus creates a new ColumnFamily. All values recognized by Cassandra are allowed and are passed “as is”. Parameters must begin with a dash (-), and sub-parameters should be further indented. Empty values should be specified with a pair of quotes. Example:</div>
+      <div class="Code"><a name="pID0E0LI0HA">cf_defaults:</a></div>
+      <div class="Code"><a name="pID0E0KI0HA">    - compression_options:</a></div>
+      <div class="Code"><a name="pID0E0JI0HA">        - sstable_compression: ""   # use empty string for "none"</a></div>
+      <div class="Code"><a name="pID0E0II0HA">    - gc_grace_seconds: 3600</a></div>
+      <div class="Normal"><a name="pID0E0HI0HA">After a ColumnFamily is created, Doradus does not modify its parameters to match values in </a><span class="Code_char">doradus.yaml</span>. It is safe to use Cassandra tools such as <span class="Code_char">cassandra-cli</span> to modify ColumnFamily parameters when needed.</div>
+      <div class="Normal"><a name="pID0E0GI0HA">See Cassandra documentation for information about ColumnFamily parameters.</a></div>
       <script type="text/javascript" language="JavaScript1.2">
         <!--
           // Clear related topics

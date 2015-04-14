@@ -30,13 +30,13 @@
       <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.56.html">Cassandra Configuration and Operation</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.60.html">Cassandra Configuration Files</a> : Setting Cassandra Logging Options</div>
     <hr align="left" />
     <blockquote>
-      <div class="Heading_3"><a name="pID0E0BE0HA">Setting Cassandra Logging Options</a></div>
-      <div class="Normal"><a name="pID0E0AE0HA">Cassandra logs messages about its operation using the log4j logging facility. The file that controls logging options is </a><span class="Code_char">{cassandra_home}/conf/log4j-server.properties</span>. The one option you should change is shown below:</div>
-      <div class="Code"><a name="pID0E06D0HA">log4j.appender.R.File=/var/log/cassandra/system.log</a></div>
-      <div class="Normal"><a name="pID0E05D0HA">You should change this line to use a valid folder path where logs will be kept. The initial log file will be called </a><span class="Code_char">system.log</span>. When a log file becomes full (default is 20MB), it is renamed with a numeric suffix (e.g., “.1”, “.2”). When 50 files are created, the oldest files are removed.</div>
-      <div class="Normal"><a name="pID0E04D0HA">The other option you may want to modify under specific situations is:</a></div>
-      <div class="Code"><a name="pID0E03D0HA">log4j.rootLogger=INFO,stdout,R</a></div>
-      <div class="Normal"><a name="pID0E02D0HA">This line sets the global logging level to INFO. In certain diagnostic situations, you might want to change the INFO keyword to DEBUG to generate additional logging messages. Note that DEBUG log level causes log files to grow quickly and slow down Cassandra.</a></div>
+      <div class="Heading_3"><a name="pID0E0FE0HA">Setting Cassandra Logging Options</a></div>
+      <div class="Normal"><a name="pID0E0EE0HA">Cassandra logs messages about its operation using the log4j logging facility. The file that controls logging options is </a><span class="Code_char">{cassandra_home}/conf/log4j-server.properties</span>. The one option you should change is shown below:</div>
+      <div class="Code"><a name="pID0E0DE0HA">log4j.appender.R.File=/var/log/cassandra/system.log</a></div>
+      <div class="Normal"><a name="pID0E0CE0HA">You should change this line to use a valid folder path where logs will be kept. The initial log file will be called </a><span class="Code_char">system.log</span>. When a log file becomes full (default is 20MB), it is renamed with a numeric suffix (e.g., “.1”, “.2”). When 50 files are created, the oldest files are removed.</div>
+      <div class="Normal"><a name="pID0E0BE0HA">The other option you may want to modify under specific situations is:</a></div>
+      <div class="Code"><a name="pID0E0AE0HA">log4j.rootLogger=INFO,stdout,R</a></div>
+      <div class="Normal"><a name="pID0E06D0HA">This line sets the global logging level to INFO. In certain diagnostic situations, you might want to change the INFO keyword to DEBUG to generate additional logging messages. Note that DEBUG log level causes log files to grow quickly and slow down Cassandra.</a></div>
       <script type="text/javascript" language="JavaScript1.2">
         <!--
           // Clear related topics

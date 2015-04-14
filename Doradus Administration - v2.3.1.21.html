@@ -30,8 +30,8 @@
       <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.11.html">Deployment Guidelines</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.18.html">Security Considerations</a> : Best Practices</div>
     <hr align="left" />
     <blockquote>
-      <div class="Heading_3"><a name="pID0E0GR0HA">Best Practices</a></div>
-      <div class="Normal"><a name="pID0E0FR0HA">The recommendation best practices for security Doradus and Cassandra protocols and files are summarized below:</a></div>
+      <div class="Heading_3"><a name="pID0E0MR0HA">Best Practices</a></div>
+      <div class="Normal"><a name="pID0E0LR0HA">The recommendation best practices for security Doradus and Cassandra protocols and files are summarized below:</a></div>
       <div class="Bullet_outer" style="margin-left: 18pt">
         <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
           <tr style="vertical-align: baseline">
@@ -39,7 +39,7 @@
               <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
             </td>
             <td width="100%">
-              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0ER0HA">Cluster subset</a></span>: Deploy Doradus/Cassandra nodes on a subnet that is restricted from outside access. If applications reside outside of the subset, enable routing rules that restrict access to the Doradus REST API port.</div>
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0KR0HA">Cluster subset</a></span>: Deploy Doradus/Cassandra nodes on a subnet that is restricted from outside access. If applications reside outside of the subset, enable routing rules that restrict access to the Doradus REST API port.</div>
             </td>
           </tr>
         </table>
@@ -51,7 +51,7 @@
               <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
             </td>
             <td width="100%">
-              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0DR0HA">Doradus REST API</a></span>: Secure the Doradus REST API by configuring it to use TLS. Create a client certificate that is used to restrict access to authorized applications as describe in the section <span style="font-weight: bold">Securing the Doradus REST API</span>.</div>
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0JR0HA">Doradus REST API</a></span>: Secure the Doradus REST API by configuring it to use TLS. Create a client certificate that is used to restrict access to authorized applications as describe in the section <span class="Hyperlink"><a href="javascript:WWHClickedPopup('Doradus_Administration', 'Doradus%20Administration%20-%20v2.3.1.39.html', '');" title="Securing the Doradus REST API">Securing the Doradus REST API</a></span>.</div>
             </td>
           </tr>
         </table>
@@ -63,7 +63,7 @@
               <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
             </td>
             <td width="100%">
-              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0CR0HA">Doradus JMX API</a></span>: Use basic user ID/password authentication as described in section <span style="font-weight: bold">Securing the Doradus JMX API</span>.</div>
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0IR0HA">Doradus JMX API</a></span>: Use basic user ID/password authentication as described in section <span class="Hyperlink"><a href="javascript:WWHClickedPopup('Doradus_Administration', 'Doradus%20Administration%20-%20v2.3.1.40.html', '');" title="Securing the Doradus JMX API">Securing the Doradus JMX API</a></span>.</div>
             </td>
           </tr>
         </table>
@@ -75,7 +75,7 @@
               <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
             </td>
             <td width="100%">
-              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0BR0HA">Cassandra API</a></span>: Since Doradus is intended to run on the same machine or subset as Cassandra, the Cassandra API (CQL or Thrift) does not normally need to be secured. However, TLS can be used as described in section <span style="font-weight: bold">Securing the Cassandra API</span><span style="font-weight: bold">.</span></div>
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0HR0HA">Cassandra API</a></span>: Since Doradus is intended to run on the same machine or subset as Cassandra, the Cassandra API (CQL or Thrift) does not normally need to be secured. However, TLS can be used as described in section <span class="Hyperlink"><a href="javascript:WWHClickedPopup('Doradus_Administration', 'Doradus%20Administration%20-%20v2.3.1.64.html', '');" title="Securing the Cassandra API">Securing the Cassandra API</a></span><span style="font-weight: bold">.</span></div>
             </td>
           </tr>
         </table>
@@ -87,7 +87,7 @@
               <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
             </td>
             <td width="100%">
-              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0AR0HA">Cassandra JMX API</a></span>: Use basic user ID/password authentication as described in section <span style="font-weight: bold">Securing the Cassandra JMX Protocol</span>.</div>
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0GR0HA">Cassandra JMX API</a></span>: Use basic user ID/password authentication as described in section <span class="Hyperlink"><a href="javascript:WWHClickedPopup('Doradus_Administration', 'Doradus%20Administration%20-%20v2.3.1.65.html', '');" title="Securing the Cassandra JMX Protocol">Securing the Cassandra JMX Protocol</a></span>.</div>
             </td>
           </tr>
         </table>
@@ -99,7 +99,7 @@
               <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
             </td>
             <td width="100%">
-              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E06Q0HA">Doradus and Cassandra configuration files</a></span>: Secure the folders in which Doradus and Cassandra are installed, including their bin and conf or config folders.</div>
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0FR0HA">Doradus and Cassandra configuration files</a></span>: Secure the folders in which Doradus and Cassandra are installed, including their bin and conf or config folders.</div>
             </td>
           </tr>
         </table>
@@ -111,7 +111,7 @@
               <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
             </td>
             <td width="100%">
-              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E05Q0HA">Cassandra data files</a></span>: Secure the Cassandra data file folders with permissions that restrict access to the user ID under which the Cassandra process executes. For stronger security, encrypt the data within the file system, e.g., by using the Encrypted File System (EFS) on Windows.</div>
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0ER0HA">Cassandra data files</a></span>: Secure the Cassandra data file folders with permissions that restrict access to the user ID under which the Cassandra process executes. For stronger security, encrypt the data within the file system, e.g., by using the Encrypted File System (EFS) on Windows.</div>
             </td>
           </tr>
         </table>

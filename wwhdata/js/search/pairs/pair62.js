@@ -1,6 +1,6 @@
 function FileData_Pairs(x)
 {
-x.t("considerations","section");
+x.t("considerations","cassandra");
 x.t("protocols","thrift");
 x.t("protected","operating");
 x.t("files","protected");
@@ -26,7 +26,7 @@ x.t("options","cassandra");
 x.t("options","described");
 x.t("cassandra\u2019s","communication");
 x.t("section","describes");
-x.t("section","cassandra");
+x.t("section","security");
 x.t("encrypt","commit");
 x.t("operating","system-level");
 x.t("e.g","windows");
@@ -36,7 +36,7 @@ x.t("configuration","files");
 x.t("configuration","operation");
 x.t("cql","jmx");
 x.t("data","files");
-x.t("described","security");
+x.t("described","section");
 x.t("commit","log");
 x.t("log","data");
 }

@@ -30,18 +30,18 @@
       <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.22.html">Multi-Tenant Configuration</a> : Single-Tenant Operation</div>
     <hr align="left" />
     <blockquote>
-      <div class="Heading_2"><a name="pID0E0QQ0HA">Single-Tenant Operation</a></div>
-      <div class="Normal"><a name="pID0E0PQ0HA">By default, Doradus operates in </a><span style="font-style: italic">single-tenant</span> mode, which means all applications are created in a single keyspace with a default name. Single-tenant mode is affected primarily by two doradus.yaml file options:</div>
-      <div class="Code"><a name="pID0E0OQ0HA">multitenant_mode: false</a></div>
-      <div class="Code"><a name="pID0E0NQ0HA">keyspace: 'Doradus'</a></div>
-      <div class="Normal"><a name="pID0E0MQ0HA">When </a><span class="Code_char">multitenant_mode</span> is <span class="Code_char">false</span>, all applications are stored in the <span style="font-style: italic">default</span> keyspace defined by the <span class="Code_char">keyspace</span> option.</div>
-      <div class="Normal"><a name="pID0E0LQ0HA">Single-tenant mode does not require security to be enforced within Cassandra. However, you can configure Cassandra to enforce user/password authentication by setting the following options in each Cassandra node’s cassandra.yaml:</a></div>
-      <div class="Code"><a name="pID0E0KQ0HA">authenticator: PasswordAuthenticator</a></div>
-      <div class="Code"><a name="pID0E0JQ0HA">authorizer: CassandraAuthorizer</a></div>
-      <div class="Normal"><a name="pID0E0IQ0HA">When Cassandra first starts with these options, it creates a default </a><span style="font-style: italic">super user</span> account with the user ID and password <span class="Code_char">cassandra</span>/<span class="Code_char">cassandra</span>. You should change the super user ID and/or password to something more secure. Doradus must use a super user account for access, hence set the following doradus.yaml options to a valid super user account:</div>
-      <div class="Code"><a name="pID0E0HQ0HA">dbuser: cassandra</a></div>
-      <div class="Code"><a name="pID0E0GQ0HA">dbpassword: cassandra</a></div>
-      <div class="Normal"><a name="pID0E0FQ0HA">You can also pass these options into Doradus as runtime as arguments “</a><span class="Code_char">-dbuser xxx -dbpassword yyy</span>”.</div>
+      <div class="Heading_2"><a name="pID0E0WQ0HA">Single-Tenant Operation</a></div>
+      <div class="Normal"><a name="pID0E0VQ0HA">By default, Doradus operates in </a><span style="font-style: italic">single-tenant</span> mode, which means all applications are created in a single keyspace with a default name. Single-tenant mode is affected primarily by two doradus.yaml file options:</div>
+      <div class="Code"><a name="pID0E0UQ0HA">multitenant_mode: false</a></div>
+      <div class="Code"><a name="pID0E0TQ0HA">keyspace: 'Doradus'</a></div>
+      <div class="Normal"><a name="pID0E0SQ0HA">When </a><span class="Code_char">multitenant_mode</span> is <span class="Code_char">false</span>, all applications are stored in the <span style="font-style: italic">default</span> keyspace defined by the <span class="Code_char">keyspace</span> option.</div>
+      <div class="Normal"><a name="pID0E0RQ0HA">Single-tenant mode does not require security to be enforced within Cassandra. However, you can configure Cassandra to enforce user/password authentication by setting the following options in each Cassandra node’s cassandra.yaml:</a></div>
+      <div class="Code"><a name="pID0E0QQ0HA">authenticator: PasswordAuthenticator</a></div>
+      <div class="Code"><a name="pID0E0PQ0HA">authorizer: CassandraAuthorizer</a></div>
+      <div class="Normal"><a name="pID0E0OQ0HA">When Cassandra first starts with these options, it creates a default </a><span style="font-style: italic">super user</span> account with the user ID and password <span class="Code_char">cassandra</span>/<span class="Code_char">cassandra</span>. You should change the super user ID and/or password to something more secure. Doradus must use a super user account for access, hence set the following doradus.yaml options to a valid super user account:</div>
+      <div class="Code"><a name="pID0E0NQ0HA">dbuser: cassandra</a></div>
+      <div class="Code"><a name="pID0E0MQ0HA">dbpassword: cassandra</a></div>
+      <div class="Normal"><a name="pID0E0LQ0HA">You can also pass these options into Doradus as runtime as arguments “</a><span class="Code_char">-dbuser xxx -dbpassword yyy</span>”.</div>
       <script type="text/javascript" language="JavaScript1.2">
         <!--
           // Clear related topics

@@ -30,11 +30,11 @@
       <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.11.html">Deployment Guidelines</a> : Basic Architecture</div>
     <hr align="left" />
     <blockquote>
-      <div class="Heading_2"><a name="pID0E0MT0HA">Basic Architecture</a></div>
-      <div class="Normal"><a name="pID0E0LT0HA">The basic components used by Doradus are illustrated below:</a></div>
-      <div class="Normal" style="text-align: center"><a name="pID0E0KT0HA"><img class="Default" src="images/image1.png" width="380" height="369" style="display: inline; left: 0pt; top: 0pt" alt="" /></a></div>
-      <div class="Caption" style="text-align: center"><a name="pID0E0JT0HA">Figure 1 - Basic Doradus Components</a></div>
-      <div class="Normal"><a name="pID0E0IT0HA">These components are:</a></div>
+      <div class="Heading_2"><a name="pID0E0TT0HA">Basic Architecture</a></div>
+      <div class="Normal"><a name="pID0E0ST0HA">The basic components used by Doradus are illustrated below:</a></div>
+      <div class="Normal"><a name="pID0E0RT0HA"><img class="Default" src="images/image1.png" width="380" height="369" style="display: inline; top: 0pt" alt="" /></a></div>
+      <div class="Caption"><a name="pID0E0QT0HA">Figure 1 - Basic Doradus Components</a></div>
+      <div class="Normal"><a name="pID0E0PT0HA">These components are:</a></div>
       <div class="List_Bullet_outer" style="margin-left: 18pt">
         <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
           <tr style="vertical-align: baseline">
@@ -42,7 +42,7 @@
               <div class="List_Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
             </td>
             <td width="100%">
-              <div class="List_Bullet_inner"><span style="font-weight: bold"><a name="pID0E0HT0HA">Application</a></span>: This is a Doradus client application, which performs schema commands, updates objects, and submits queries using the Doradus <span style="font-weight: bold">REST API</span>.</div>
+              <div class="List_Bullet_inner"><span style="font-weight: bold"><a name="pID0E0OT0HA">Application</a></span>: This is a Doradus client application, which performs schema commands, updates objects, and submits queries using the Doradus <span style="font-weight: bold">REST API</span>.</div>
             </td>
           </tr>
         </table>
@@ -54,7 +54,7 @@
               <div class="List_Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
             </td>
             <td width="100%">
-              <div class="List_Bullet_inner"><span style="font-weight: bold"><a name="pID0E0GT0HA">Monitor Application</a></span>: Doradus provides the <span style="font-weight: bold">JMX API</span> to monitor resource usage and to perform certain administrative functions such as requesting backups. A JMX application such as JConsole can be used to invoke JMX functions.</div>
+              <div class="List_Bullet_inner"><span style="font-weight: bold"><a name="pID0E0NT0HA">Monitor Application</a></span>: Doradus provides the <span style="font-weight: bold">JMX API</span> to monitor resource usage and to perform certain administrative functions such as requesting backups. A JMX application such as JConsole can be used to invoke JMX functions.</div>
             </td>
           </tr>
         </table>
@@ -66,7 +66,7 @@
               <div class="List_Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
             </td>
             <td width="100%">
-              <div class="List_Bullet_inner"><span style="font-weight: bold"><a name="pID0E0FT0HA">Doradus Server</a></span>: This is the core Doradus component, which processes REST and JMX requests. It communicates with Cassandra using either the <span style="font-weight: bold">Thrift API </span>or <span style="font-weight: bold">CQL API</span>. The <span class="Code_char">doradus.yaml</span> file is the primary Doradus configuration file.</div>
+              <div class="List_Bullet_inner"><span style="font-weight: bold"><a name="pID0E0MT0HA">Doradus Server</a></span>: This is the core Doradus component, which processes REST and JMX requests. It communicates with Cassandra using either the <span style="font-weight: bold">Thrift API </span>or <span style="font-weight: bold">CQL API</span>. The <span class="Code_char">doradus.yaml</span> file is the primary Doradus configuration file.</div>
             </td>
           </tr>
         </table>
@@ -78,7 +78,7 @@
               <div class="List_Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
             </td>
             <td width="100%">
-              <div class="List_Bullet_inner"><span style="font-weight: bold"><a name="pID0E0ET0HA">Cassandra Server</a></span>: This is the core Cassandra component, which provides persistence, replication, elasticity, and other database services. Cassandra’s primary configuration comes from the <span class="Code_char">cassandra.yaml</span> file. Cassandra stores data in various data and log files.</div>
+              <div class="List_Bullet_inner"><span style="font-weight: bold"><a name="pID0E0LT0HA">Cassandra Server</a></span>: This is the core Cassandra component, which provides persistence, replication, elasticity, and other database services. Cassandra’s primary configuration comes from the <span class="Code_char">cassandra.yaml</span> file. Cassandra stores data in various data and log files.</div>
             </td>
           </tr>
         </table>

@@ -30,29 +30,29 @@
       <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.22.html">Multi-Tenant Configuration</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.26.html">Managing Tenants</a> : Creating a New Tenant</div>
     <hr align="left" />
     <blockquote>
-      <div class="Heading_3"><a name="pID0E0NP0HA">Creating a New Tenant</a></div>
-      <div class="Normal"><a name="pID0E0MP0HA">A new tenant is created with the REST command:</a></div>
-      <div class="Code"><a name="pID0E0LP0HA">POST /_tenants</a></div>
-      <div class="Normal"><a name="pID0E0KP0HA">This command must include a message body that minimally identifiers the new tenant’s name. Optionally, the command can define one or more tenant users and/or tenant options. An example in XML is shown below:</a></div>
-      <div class="Code"><a name="pID0E0JP0HA">&lt;tenant name="HelloKitty"&gt;</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E0IP0HA">&lt;users&gt;</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0HP0HA">&lt;user name="Katniss" password="Everdeen"/&gt;</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E0GP0HA">&lt;/users&gt;</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E0FP0HA">&lt;options&gt;</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0EP0HA">&lt;option name="ReplicationFactor"&gt;3&lt;/option&gt;</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E0DP0HA">&lt;/options&gt;</a></div>
-      <div class="Code"><a name="pID0E0CP0HA">&lt;/tenant&gt;</a></div>
-      <div class="Normal"><a name="pID0E0BP0HA">In JSON:</a></div>
-      <div class="Code"><a name="pID0E0AP0HA">{"HelloKitty": {</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E06O0HA">"users": {</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E05O0HA">"Katniss": {"password": "Everdeen"}</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E04O0HA">},</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E03O0HA">"options": {</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E02O0HA">"ReplicationFactor": "3"</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E01O0HA">}</a></div>
-      <div class="Code"><a name="pID0E0ZO0HA">}}</a></div>
-      <div class="Normal"><a name="pID0E0YO0HA">Only the new tenant name (</a><span class="Code_char">HelloKitty</span>) is required. Optionally, one or more tenant user/password can be defined (e.g., <span class="Code_char">Katniss</span>/<span class="Code_char">Everdeen</span>) with a <span class="Code_char">users</span> group. A tenant <span class="Code_char">options</span> group is also allowed, though the only option currently supported is <span class="Code_char">ReplicationFactor</span>. When set, this option overrides the <span class="Code_char">replication_factor</span> defined with the <span class="Code_char">ks_defaults</span> parameter (in doradus.yaml).</div>
-      <div class="Normal"><a name="pID0E0XO0HA">When a </a><span class="Code_char">POST /_tenants</span> command is received, if the given tenant already exists, a <span class="Code_char">409 Conflict</span> error response is returned. (This means tenant creation is not idempotent—a POST of the same request will produce an error.) If the tenant does not already exist, the following occurs:</div>
+      <div class="Heading_3"><a name="pID0E0TP0HA">Creating a New Tenant</a></div>
+      <div class="Normal"><a name="pID0E0SP0HA">A new tenant is created with the REST command:</a></div>
+      <div class="Code"><a name="pID0E0RP0HA">POST /_tenants</a></div>
+      <div class="Normal"><a name="pID0E0QP0HA">This command must include a message body that minimally identifiers the new tenant’s name. Optionally, the command can define one or more tenant users and/or tenant options. An example in XML is shown below:</a></div>
+      <div class="Code"><a name="pID0E0PP0HA">&lt;tenant name="HelloKitty"&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0OP0HA">&lt;users&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NP0HA">&lt;user name="Katniss" password="Everdeen"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0MP0HA">&lt;/users&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0LP0HA">&lt;options&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KP0HA">&lt;option name="ReplicationFactor"&gt;3&lt;/option&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0JP0HA">&lt;/options&gt;</a></div>
+      <div class="Code"><a name="pID0E0IP0HA">&lt;/tenant&gt;</a></div>
+      <div class="Normal"><a name="pID0E0HP0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E0GP0HA">{"HelloKitty": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0FP0HA">"users": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0EP0HA">"Katniss": {"password": "Everdeen"}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0DP0HA">},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0CP0HA">"options": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0BP0HA">"ReplicationFactor": "3"</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0AP0HA">}</a></div>
+      <div class="Code"><a name="pID0E06O0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E05O0HA">Only the new tenant name (</a><span class="Code_char">HelloKitty</span>) is required. Optionally, one or more tenant user/password can be defined (e.g., <span class="Code_char">Katniss</span>/<span class="Code_char">Everdeen</span>) with a <span class="Code_char">users</span> group. A tenant <span class="Code_char">options</span> group is also allowed, though the only option currently supported is <span class="Code_char">ReplicationFactor</span>. When set, this option overrides the <span class="Code_char">replication_factor</span> defined with the <span class="Code_char">ks_defaults</span> parameter (in doradus.yaml).</div>
+      <div class="Normal"><a name="pID0E04O0HA">When a </a><span class="Code_char">POST /_tenants</span> command is received, if the given tenant already exists, a <span class="Code_char">409 Conflict</span> error response is returned. (This means tenant creation is not idempotent—a POST of the same request will produce an error.) If the tenant does not already exist, the following occurs:</div>
       <div class="Bullet_outer" style="margin-left: 18pt">
         <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
           <tr style="vertical-align: baseline">
@@ -60,7 +60,7 @@
               <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
             </td>
             <td width="100%">
-              <div class="Bullet_inner"><a name="pID0E0WO0HA">A new keyspace is created using the tenant name. If the option </a><span class="Code_char">ReplicationFactor</span> is specified, it is used for the new keyspace. All other defaults come from the doradus.yaml parameter <span class="Code_char">ks_defaults</span>.</div>
+              <div class="Bullet_inner"><a name="pID0E03O0HA">A new keyspace is created using the tenant name. If the option </a><span class="Code_char">ReplicationFactor</span> is specified, it is used for the new keyspace. All other defaults come from the doradus.yaml parameter <span class="Code_char">ks_defaults</span>.</div>
             </td>
           </tr>
         </table>
@@ -72,7 +72,7 @@
               <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
             </td>
             <td width="100%">
-              <div class="Bullet_inner"><a name="pID0E0VO0HA">If no tenant users are specified, a new random user ID and password are chosen for the tenant.</a></div>
+              <div class="Bullet_inner"><a name="pID0E02O0HA">If no tenant users are specified, a new random user ID and password are chosen for the tenant.</a></div>
             </td>
           </tr>
         </table>
@@ -84,7 +84,7 @@
               <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
             </td>
             <td width="100%">
-              <div class="Bullet_inner"><a name="pID0E0UO0HA">CQL commands are issued to create all new tenant user IDs/passwords and authorize them for full access to the new keyspace. The Cassandra user is named </a><span class="Code_char">{tenant}_{user}</span> so that user names are unique across tenants. The Cassandra user can be used for direct access to Cassandra.</div>
+              <div class="Bullet_inner"><a name="pID0E01O0HA">CQL commands are issued to create all new tenant user IDs/passwords and authorize them for full access to the new keyspace. The Cassandra user is named </a><span class="Code_char">{tenant}_{user}</span> so that user names are unique across tenants. The Cassandra user can be used for direct access to Cassandra.</div>
             </td>
           </tr>
         </table>
@@ -96,7 +96,7 @@
               <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
             </td>
             <td width="100%">
-              <div class="Bullet_inner"><a name="pID0E0TO0HA">The keyspace is initialized by creating the </a><span class="Code_char">Applications</span> and <span class="Code_char">Tasks</span> ColumnFamilies.</div>
+              <div class="Bullet_inner"><a name="pID0E0ZO0HA">The keyspace is initialized by creating the </a><span class="Code_char">Applications</span> and <span class="Code_char">Tasks</span> ColumnFamilies.</div>
             </td>
           </tr>
         </table>
@@ -108,12 +108,12 @@
               <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
             </td>
             <td width="100%">
-              <div class="Bullet_inner"><a name="pID0E0SO0HA">The tenant’s definition is written to the </a><span class="Code_char">Applications</span> CF so it can be recovered if needed.</div>
+              <div class="Bullet_inner"><a name="pID0E0YO0HA">The tenant’s definition is written to the </a><span class="Code_char">Applications</span> CF so it can be recovered if needed.</div>
             </td>
           </tr>
         </table>
       </div>
-      <div class="Normal"><a name="pID0E0RO0HA">The POST command returns the new tenant’s full definition, including name, user IDs/passwords, and options using the same document format shown above.</a></div>
+      <div class="Normal"><a name="pID0E0XO0HA">The POST command returns the new tenant’s full definition, including name, user IDs/passwords, and options using the same document format shown above.</a></div>
       <script type="text/javascript" language="JavaScript1.2">
         <!--
           // Clear related topics

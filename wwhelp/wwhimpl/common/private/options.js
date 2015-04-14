@@ -3,11 +3,11 @@
 
 function  WWHCommonSettings_Object()
 {
-  this.mTitle = "Doradus";
+  this.mTitle = "Doradus Administration";
 
   this.mbCookies            = true;
   this.mCookiesDaysToExpire = 30;
-  this.mCookiesID           = "Acc3EaAHPnQ";
+  this.mCookiesID           = "JHm1a1tJ44I";
 
   this.mAccessible = "false";
 
@@ -18,7 +18,7 @@ function  WWHCommonSettings_Object()
   this.mbEmailEnabled         = false;
   this.mbPrintEnabled         = true;
   this.mbBookmarkEnabled      = false;
-  this.mbPDFEnabled           = false;
+  this.mbPDFEnabled           = true;
 
   this.mEmailAddress = "";
 

@@ -30,24 +30,24 @@
       <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.34.html">Doradus Configuration and Operation</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.36.html">Doradus Configuration Files</a> : Setting Doradus Logging Options</div>
     <hr align="left" />
     <blockquote>
-      <div class="Heading_3"><a name="pID0E0WL0HA">Setting Doradus Logging Options</a></div>
-      <div class="Normal"><a name="pID0E0VL0HA">Doradus logs messages about its operation using the log4j logging facility. Logging options are defined in the file </a><span class="Code_char">log4j-server.properties</span>. The high-level logging options are shown below:</div>
-      <div class="Code"><a name="pID0E0UL0HA">log4j.rootLogger=DEBUG, console, file, memory</a></div>
-      <div class="Code"><a name="pID0E0TL0HA">log4j.logger.org.eclipse.jetty=INFO</a></div>
-      <div class="Code"><a name="pID0E0SL0HA">log4j.appender.console.Threshold=INFO</a></div>
-      <div class="Code"><a name="pID0E0RL0HA">log4j.appender.file.Threshold=INFO</a></div>
-      <div class="Code"><a name="pID0E0QL0HA">log4j.appender.memory.Threshold=DEBUG</a></div>
-      <div class="Normal"><a name="pID0E0PL0HA">This sets the global logging level to DEBUG and defines multiple “appenders”: console (stdout), a disk file, and memory. Although DEBUG-level log records are generated, only INFO-level entries (and above) are sent to the console and file appenders. DEBUG entries are only collected by the memory appender. This minimizes the output to the console- and file-based logs, but it allows the most recent DEBUG records to be retrieved via the REST command: </a><span class="Code_char">GET /_logs</span>.</div>
-      <div class="Normal"><a name="pID0E0OL0HA">If Doradus is run as a service, the output to console is unnecessary, so this parameter should be removed. Additionally, the lines that begin with </a><span class="Code_char">log4j.appender.console</span> should be deleted or commented-out.</div>
-      <div class="Normal"><a name="pID0E0NL0HA">Because the memory appender only retains the most recent log entries, in diagnostic situations, you might want to capture DEBUG entries in the file log as well. Note that this causes log files to grow more quickly. DEBUG entries can be captured in the file appender by changing the following line:</a></div>
-      <div class="Code"><a name="pID0E0ML0HA">log4j.appender.console.Threshold=</a><span style="color: #FF0000">DEBUG</span></div>
-      <div class="Normal"><a name="pID0E0LL0HA">The </a><span class="Code_char">log4j-server.properties</span> file also defines the following option:</div>
-      <div class="Code"><a name="pID0E0KL0HA">log4j.appender.file.File=doradus.log</a></div>
-      <div class="Normal"><a name="pID0E0JL0HA">This option sends the file log appender to a log file called </a><span class="Code_char">doradus.log</span> in the Doradus server’s runtime directory. If you wish log files to be stored with another name and/or in another location, modify this option with a new relative or absolute file name.</div>
-      <div class="Normal"><a name="pID0E0IL0HA">Two other options to consider:</a></div>
-      <div class="Code"><a name="pID0E0HL0HA">log4j.appender.file.maxBackupIndex=50</a></div>
-      <div class="Code"><a name="pID0E0GL0HA">log4j.appender.file.maxFileSize=20MB</a></div>
-      <div class="Normal"><a name="pID0E0FL0HA">These options cause the log file to grow up to 20MB, at which point it is renamed with a numeric extension (.1, .2, etc.) and a new file is started. Up to 50 files are retained (up to 1GB total log data), at which point the oldest file is removed. Modify these options to increase or decrease the number and size of log files stored.</a></div>
+      <div class="Heading_3"><a name="pID0E03L0HA">Setting Doradus Logging Options</a></div>
+      <div class="Normal"><a name="pID0E02L0HA">Doradus logs messages about its operation using the log4j logging facility. Logging options are defined in the file </a><span class="Code_char">log4j-server.properties</span>. The high-level logging options are shown below:</div>
+      <div class="Code"><a name="pID0E01L0HA">log4j.rootLogger=DEBUG, console, file, memory</a></div>
+      <div class="Code"><a name="pID0E0ZL0HA">log4j.logger.org.eclipse.jetty=INFO</a></div>
+      <div class="Code"><a name="pID0E0YL0HA">log4j.appender.console.Threshold=INFO</a></div>
+      <div class="Code"><a name="pID0E0XL0HA">log4j.appender.file.Threshold=INFO</a></div>
+      <div class="Code"><a name="pID0E0WL0HA">log4j.appender.memory.Threshold=DEBUG</a></div>
+      <div class="Normal"><a name="pID0E0VL0HA">This sets the global logging level to DEBUG and defines multiple “appenders”: console (stdout), a disk file, and memory. Although DEBUG-level log records are generated, only INFO-level entries (and above) are sent to the console and file appenders. DEBUG entries are only collected by the memory appender. This minimizes the output to the console- and file-based logs, but it allows the most recent DEBUG records to be retrieved via the REST command: </a><span class="Code_char">GET /_logs</span>.</div>
+      <div class="Normal"><a name="pID0E0UL0HA">If Doradus is run as a service, the output to console is unnecessary, so this parameter should be removed. Additionally, the lines that begin with </a><span class="Code_char">log4j.appender.console</span> should be deleted or commented-out.</div>
+      <div class="Normal"><a name="pID0E0TL0HA">Because the memory appender only retains the most recent log entries, in diagnostic situations, you might want to capture DEBUG entries in the file log as well. Note that this causes log files to grow more quickly. DEBUG entries can be captured in the file appender by changing the following line:</a></div>
+      <div class="Code"><a name="pID0E0SL0HA">log4j.appender.console.Threshold=</a><span style="color: #FF0000">DEBUG</span></div>
+      <div class="Normal"><a name="pID0E0RL0HA">The </a><span class="Code_char">log4j-server.properties</span> file also defines the following option:</div>
+      <div class="Code"><a name="pID0E0QL0HA">log4j.appender.file.File=doradus.log</a></div>
+      <div class="Normal"><a name="pID0E0PL0HA">This option sends the file log appender to a log file called </a><span class="Code_char">doradus.log</span> in the Doradus server’s runtime directory. If you wish log files to be stored with another name and/or in another location, modify this option with a new relative or absolute file name.</div>
+      <div class="Normal"><a name="pID0E0OL0HA">Two other options to consider:</a></div>
+      <div class="Code"><a name="pID0E0NL0HA">log4j.appender.file.maxBackupIndex=50</a></div>
+      <div class="Code"><a name="pID0E0ML0HA">log4j.appender.file.maxFileSize=20MB</a></div>
+      <div class="Normal"><a name="pID0E0LL0HA">These options cause the log file to grow up to 20MB, at which point it is renamed with a numeric extension (.1, .2, etc.) and a new file is started. Up to 50 files are retained (up to 1GB total log data), at which point the oldest file is removed. Modify these options to increase or decrease the number and size of log files stored.</a></div>
       <script type="text/javascript" language="JavaScript1.2">
         <!--
           // Clear related topics

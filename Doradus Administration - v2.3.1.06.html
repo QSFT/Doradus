@@ -30,10 +30,10 @@
       <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.3.1.04.html">Installing and Running Doradus</a> : Downloading Doradus</div>
     <hr align="left" />
     <blockquote>
-      <div class="Heading_2"><a name="pID0E0SV0HA">Downloading Doradus</a></div>
-      <div class="Normal"><a name="pID0E0RV0HA">Doradus is a Github project whose source code and build scripts can be found at the following link:</a></div>
-      <div class="Normal" style="margin-left: 18pt"><span class="Hyperlink"><a href="https://github.com/dell-oss/Doradus" target="external_window" name="pID0E0QV0HA">https://github.com/dell-oss/Doradus</a></span></div>
-      <div class="Normal"><a name="pID0E0PV0HA">There are two basic ways to download Doradus:</a></div>
+      <div class="Heading_2"><a name="pID0E01V0HA">Downloading Doradus</a></div>
+      <div class="Normal"><a name="pID0E0ZV0HA">Doradus is a Github project whose source code and build scripts can be found at the following link:</a></div>
+      <div class="Normal" style="margin-left: 18pt"><span class="Hyperlink"><a href="https://github.com/dell-oss/Doradus" target="external_window" name="pID0E0YV0HA">https://github.com/dell-oss/Doradus</a></span></div>
+      <div class="Normal"><a name="pID0E0XV0HA">There are two basic ways to download Doradus:</a></div>
       <div class="List_Paragraph_outer" style="margin-left: 18pt">
         <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
           <tr style="vertical-align: baseline">
@@ -41,13 +41,13 @@
               <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">1)	</div>
             </td>
             <td width="100%">
-              <div class="List_Paragraph_inner"><a name="pID0E0OV0HA">Download the entire file tree as a single zip file using this link:</a></div>
+              <div class="List_Paragraph_inner"><a name="pID0E0WV0HA">Download the entire file tree as a single zip file using this link:</a></div>
             </td>
           </tr>
         </table>
       </div>
-      <div class="Normal" style="margin-left: 54pt"><span class="Hyperlink"><a href="https://github.com/dell-oss/Doradus/archive/master.zip" target="external_window" name="pID0E0NV0HA">https://github.com/dell-oss/Doradus/archive/master.zip</a></span></div>
-      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0MV0HA">Unzip this file, which will create a parent folder called “Doradus-master” containing build, source, and document files. Or:</a></div>
+      <div class="Normal" style="margin-left: 54pt"><span class="Hyperlink"><a href="https://github.com/dell-oss/Doradus/archive/master.zip" target="external_window" name="pID0E0VV0HA">https://github.com/dell-oss/Doradus/archive/master.zip</a></span></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0UV0HA">Unzip this file, which will create a parent folder called “Doradus-master” containing build, source, and document files. Or:</a></div>
       <div class="List_Paragraph_outer" style="margin-left: 18pt">
         <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
           <tr style="vertical-align: baseline">
@@ -55,31 +55,31 @@
               <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">2)	</div>
             </td>
             <td width="100%">
-              <div class="List_Paragraph_inner"><a name="pID0E0LV0HA">Clone the entire project using a Git client to your working space. For example, using a command line client:</a></div>
+              <div class="List_Paragraph_inner"><a name="pID0E0TV0HA">Clone the entire project using a Git client to your working space. For example, using a command line client:</a></div>
             </td>
           </tr>
         </table>
       </div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KV0HA">git clone https://github.com/dell-oss/Doradus.git</a></div>
-      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0JV0HA">This will create a local Git repository in a parent folder called “Doradus”.</a></div>
-      <div class="Normal"><a name="pID0E0IV0HA">JDK 1.7 and Maven must be installed to compile Doradus. From the parent folder, enter the following Maven commands:</a></div>
-      <div class="Code"><a name="pID0E0HV0HA">mvn clean install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true</a></div>
-      <div class="Code"><a name="pID0E0GV0HA">mvn dependency:copy-dependencies</a></div>
-      <div class="Normal"><a name="pID0E0FV0HA">The first command compiles all Doradus components: </a><span class="Code_char">doradus-client</span>, <span class="Code_char">doradus-common</span>, and <span class="Code_char">doradus-server</span>. Class and jar files are created under “target” subdirectories of each component. The second command copies dependent jar files to <span class="Code_char">target/dependency</span> folders of the <span class="Code_char">doradus-client</span> and <span class="Code_char">doradus-server</span> components. Therefore, you should see a directory structure similar to this:</div>
-      <div class="Code"><a name="pID0E0EV0HA">./Doradus (or ./Doradus-master)</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E0DV0HA">/doradus-client</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0CV0HA">...</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E0BV0HA">/doradus-common</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E0AV0HA">...</a></div>
-      <div class="Code" style="margin-left: 36pt"><a name="pID0E06U0HA">/doradus-server</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E05U0HA">/config</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E04U0HA">/script</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E03U0HA">/src</a></div>
-      <div class="Code" style="margin-left: 54pt"><a name="pID0E02U0HA">/target</a></div>
-      <div class="Code" style="margin-left: 72pt"><a name="pID0E01U0HA">/classes</a></div>
-      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ZU0HA">/dependency</a></div>
-      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YU0HA">...</a></div>
-      <div class="Normal"><a name="pID0E0XU0HA">In this document, the folder </a><span class="Code_char">/doradus-server</span> is referred to as <span class="Code_char">{doradus_home}</span>. The next sections describe various ways to start the server.</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SV0HA">git clone https://github.com/dell-oss/Doradus.git</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0RV0HA">This will create a local Git repository in a parent folder called “Doradus”.</a></div>
+      <div class="Normal"><a name="pID0E0QV0HA">JDK 1.7 and Maven must be installed to compile Doradus. From the parent folder, enter the following Maven commands:</a></div>
+      <div class="Code"><a name="pID0E0PV0HA">mvn clean install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true</a></div>
+      <div class="Code"><a name="pID0E0OV0HA">mvn dependency:copy-dependencies</a></div>
+      <div class="Normal"><a name="pID0E0NV0HA">The first command compiles all Doradus components: </a><span class="Code_char">doradus-client</span>, <span class="Code_char">doradus-common</span>, and <span class="Code_char">doradus-server</span>. Class and jar files are created under “target” subdirectories of each component. The second command copies dependent jar files to <span class="Code_char">target/dependency</span> folders of the <span class="Code_char">doradus-client</span> and <span class="Code_char">doradus-server</span> components. Therefore, you should see a directory structure similar to this:</div>
+      <div class="Code"><a name="pID0E0MV0HA">./Doradus (or ./Doradus-master)</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0LV0HA">/doradus-client</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KV0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0JV0HA">/doradus-common</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0IV0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0HV0HA">/doradus-server</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0GV0HA">/config</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0FV0HA">/script</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0EV0HA">/src</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0DV0HA">/target</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0CV0HA">/classes</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0BV0HA">/dependency</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0AV0HA">...</a></div>
+      <div class="Normal"><a name="pID0E06U0HA">In this document, the folder </a><span class="Code_char">/doradus-server</span> is referred to as <span class="Code_char">{doradus_home}</span>. The next sections describe various ways to start the server.</div>
       <script type="text/javascript" language="JavaScript1.2">
         <!--
           // Clear related topics
