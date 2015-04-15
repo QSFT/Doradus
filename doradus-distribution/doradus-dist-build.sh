@@ -44,7 +44,7 @@ cp ../../doradus-server/src/main/resources/* resources/
 cp ../../doradus-client/target/doradus-client-*.jar dependency/
 
 cd ../..
-tar -cvf Doradus-distribution-2.3.tar --exclude="._*" doradus-distribution/
+tar -cvf Doradus-distribution-2.4.tar --exclude="._*" doradus-distribution/
 
 
 echo "Doradus Distribution created"
