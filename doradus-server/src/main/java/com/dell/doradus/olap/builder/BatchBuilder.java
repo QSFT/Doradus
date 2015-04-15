@@ -165,16 +165,14 @@ public class BatchBuilder {
             for (String dottedName : valueMap.keySet()) {
                 List<String> values = valueMap.get(dottedName);
                 String[] names = dottedName.split("\\.");
-                if (names.length == 1) {
-                    addValues(document, names[0], values);
-                } else {
-                    addValue(document, names, 0, values);
-                }
+                addValue(document, names, 0, values);
             }
         }   // buildObject
         
         // Possible name structures we expect:
-        //      field.add.value or field.remove.value
+        //      field
+        //      field.value
+        //      field.add.value
         //      group.field
         //      group.field.add.value
         //      group1.group2.field
@@ -182,9 +180,12 @@ public class BatchBuilder {
         //      ...
         private void addValue(OlapDocument document, String[] names, int inx, List<String> values) {
             String fieldName = names[inx];
-            if ((names.length - inx) == 3 &&
-                 names[inx + 2].equals("value") &&
-                 names[inx + 1].equals("add")) {
+            if ((names.length - inx) == 2 && names[inx + 1].equals("value")) {
+                // field.value
+                addValues(document, fieldName, values);
+            } else if ((names.length - inx) == 3 &&
+                       names[inx + 2].equals("value") &&
+                       names[inx + 1].equals("add")) {
                 // field.add.value
                 addValues(document, fieldName, values);
             } else if ((names.length - inx) > 1) {

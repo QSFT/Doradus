@@ -564,12 +564,14 @@ final public class DBObject {
     private void parseFieldUpdate(String fieldName, UNode valueNode) {
         if (valueNode.isValue()) {
             addFieldValue(fieldName, valueNode.getValue());
+        } else if (valueNode.childrenAreValues()) {
+            parseFieldAdd(fieldName, valueNode);
         } else {
             for (UNode childNode : valueNode.getMemberList()) {
-                if (childNode.isCollection() && childNode.getName().equals("add") && childNode.hasMembers()) {
+                if (childNode.isCollection() && childNode.getName().equals("add") && childNode.childrenAreValues()) {
                     // "add" for an MV field
                     parseFieldAdd(fieldName, childNode);
-                } else if (childNode.isCollection() && childNode.getName().equals("remove") && childNode.hasMembers()) {
+                } else if (childNode.isCollection() && childNode.getName().equals("remove") && childNode.childrenAreValues()) {
                     // "remove" for an MV field
                     parseFieldRemove(fieldName, childNode);
                 } else {

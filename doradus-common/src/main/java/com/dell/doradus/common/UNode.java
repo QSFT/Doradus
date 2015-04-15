@@ -546,6 +546,26 @@ final public class UNode {
     }   // getTagName
 
     /**
+     * Return true if this node has child nodes and all of them are simple value nodes.
+     * This means that each child must be a {@link NodeType#VALUE} and its name must be
+     * "value". If this node has no children or if at least one child is not a simple
+     * value, false is returned.
+     * 
+     * @return  True if this node has children and they are all value nodes.
+     */
+    public boolean childrenAreValues() {
+        if (m_children == null || m_children.size() == 0) {
+            return false;
+        }
+        for (UNode child : m_children) {
+            if (!child.isValue() || !child.getName().equals("value")) {
+                return false;
+            }
+        }
+        return true;
+    }   // childrenAreValues
+
+    /**
      * Return true if this is an ARRAY or MAP node with at least one child node.
      * 
      * @return  True if this is an ARRAY or MAP node with at least one child node.
