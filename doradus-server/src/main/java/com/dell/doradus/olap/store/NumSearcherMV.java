@@ -39,10 +39,7 @@ public class NumSearcherMV {
 	public NumSearcherMV(VDirectory dir, String table, String field) {
 		if(!dir.fileExists(table + "." + field + ".dat")) return;
 		VInputStream stream = dir.open(table + "." + field + ".dat");
-		int size = stream.readVInt();
-		int bits = stream.readByte();
-		m_values = new NumArray(size, bits);
-		m_values.load(stream);
+		m_values = new NumArray(stream);
 		for(int i = 0; i < m_values.size(); i++) {
 			long val = m_values.get(i);
 			if(m_min > val) m_min = val;
@@ -66,7 +63,7 @@ public class NumSearcherMV {
 				int sz = inp_pos.readVInt();
 				m_positions[i + 1] = m_positions[i] + sz;
 			}
-		} else m_documents = size;
+		} else m_documents = m_values.size();
 		
 	}
 

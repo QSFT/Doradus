@@ -92,16 +92,14 @@ public class NumWriterMV {
 			int size = values.length;
 			if(size == 0) return;
 			VOutputStream stream = dir.create(table + "." + field + ".dat");
-			bits = NumArray.writeArray(values, min, max, stream);
+			bits = NumArray.writeArray(stream, values, values.length, min, max);
+			stream.close();
 		}else {
 			VOutputStream out_dat = dir.create(table + "." + field + ".dat");
 			VOutputStream out_pos = dir.create(table + "." + field + ".pos");
 			
-			long[] values = new long[m_doc.size()];
-			for(int i = 0; i < m_doc.size(); i++) {
-				values[i] = m_doc.get(i);
-			}
-			bits = NumArray.writeArray(values, min, max, out_dat);
+			bits = NumArray.writeArray(out_dat, m_doc.getArray(), m_doc.size(), min, max);
+			out_dat.close();
 			
 			out_pos.writeVInt(m_docsCount);
 			for(int i = 0; i < m_docsCount; i++) {

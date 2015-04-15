@@ -53,7 +53,7 @@ public class NumWriter {
 		int size = m_values.length;
 		if(size == 0) return;
 		VOutputStream stream = dir.create(table + "." + field + ".dat");
-        bits = NumArray.writeArray(m_values, min, max, stream);
+        bits = NumArray.writeArray(stream, m_values, m_values.length, min, max);
 		stream.close();
 	}
 
