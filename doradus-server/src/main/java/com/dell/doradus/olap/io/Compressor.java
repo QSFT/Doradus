@@ -26,13 +26,14 @@ import com.dell.doradus.core.ServerConfig;
 
 public class Compressor {
     private static boolean m_bCompress = ServerConfig.getInstance().olap_internal_compression;
+    private static int m_compressionLevel = ServerConfig.getInstance().olap_compression_level;
 	
 	public static byte[] compress(byte[] data) {
 		if(data.length == 0) return data;
 		if(!m_bCompress) return data;
 		try{
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			GZIPOutputStream gos = new GZIPOutputStream(baos);
+			GZIPOutputStream gos = new GZIPOutputStream(baos){{def.setLevel(m_compressionLevel);}};
 			gos.write(data, 0, data.length);
 			gos.close();
 			byte[] output = baos.toByteArray();

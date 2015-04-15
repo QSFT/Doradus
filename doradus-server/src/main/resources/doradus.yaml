@@ -367,6 +367,11 @@ olap_merge_threads: 0
 # Number of threads to use for compression. 0 means it is single-threaded.   
 olap_compression_threads: 0
 
+# Level of GZip-compression in OLAP. 0 means no compression, 9 means best compression
+# default is -1 (level 6). Tests suggest levels 2, 4, and 6(default) being a good choice.  
+olap_compression_level: -1
+
+
 # olap_cf_defaults: Options used to create the OLAP ColumnFamily. This CF is only created when the
 # server is first started for a new database. If these options are changed, an existing OLAP CF is
 # not modified to match. See Cassandra and Doradus Administration documentation for details about
