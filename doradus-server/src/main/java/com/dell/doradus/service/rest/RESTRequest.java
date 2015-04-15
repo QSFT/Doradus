@@ -307,7 +307,7 @@ public class RESTRequest {
         if (!Utils.isEmpty(acceptParts)) {
 	        for (String acceptPart : acceptParts.split(",")) {
 	            ContentType acceptType = new ContentType(acceptPart);
-	            if (acceptType.isJSON() || acceptType.isXML()) {
+	            if (acceptType.isJSON() || acceptType.isXML() || acceptType.isPlainText()) {
 	                return acceptType;
 	            }
 	        }

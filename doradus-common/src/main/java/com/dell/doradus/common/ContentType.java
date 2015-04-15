@@ -25,6 +25,7 @@ final public class ContentType {
     public static final ContentType TEXT_XML = new ContentType("text/xml");
     public static final ContentType APPLICATION_JSON = new ContentType("application/json");
     public static final String DEFAULT_CHARSET = "UTF-8";
+    public static final ContentType TEXT_PLAIN = new ContentType("text/plain");;
     
     // Member variables:
     private final String m_contentType;
@@ -127,6 +128,15 @@ final public class ContentType {
         // We may add more if experience suggests we need them.
         return m_contentType.equalsIgnoreCase("application/json");
     }   // isJSON
+    
+    /**
+     * Return true if this type MIME type is text/plain.
+     * 
+     * @return True if this type MIME type is text/plain.
+     */
+    public boolean isPlainText() {
+        return m_contentType.equalsIgnoreCase("text/plain");
+    }   // isPlainText
     
     /**
      * Return true if this type MIME type is considered XML.
