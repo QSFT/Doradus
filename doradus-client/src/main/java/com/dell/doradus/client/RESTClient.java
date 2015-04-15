@@ -242,7 +242,8 @@ public class RESTClient implements Closeable {
      * @throws IOException  If an I/O error occurs on the socket.
      */
     public RESTResponse sendRequest(HttpMethod method, String uri) throws IOException {
-        return sendRequest(method, uri, null, null);
+        Map<String, String> headers = new HashMap<>();
+        return sendRequest(method, uri, headers, null);
     }   // sendRequest
     
     /**
@@ -263,7 +264,24 @@ public class RESTClient implements Closeable {
         if (contentType != null) {
             headers.put(HttpDefs.CONTENT_TYPE, contentType.toString());
         }
-        
+        return sendAndReceive(method, uri, headers, body);
+    }   // sendRequest
+
+    /**
+     * Send a REST command with the given method, URI, headers, and body to the
+     * server and return the response in a {@link RESTResponse} object.
+     * 
+     * @param method        HTTP method such as "GET" or "POST".
+     * @param uri           URI such as "/foo/bar?baz"
+     * @param headers       Headers to be included in the request, including content-type
+     *                      if a body is included. Content-type is set automatically.
+     * @param body          Input entity to send with request in binary.
+     * @return              {@link RESTResponse} containing response from server.
+     * @throws IOException  If an error occurs on the socket. 
+     */
+    public RESTResponse sendRequest(HttpMethod method, String uri,
+                                    Map<String, String> headers, byte[] body)
+            throws IOException {
         // Compress body using GZIP and add a content-encoding header if compression is requested.
         byte[] entity = body;
         if (m_bCompress && body != null && body.length > 0) {

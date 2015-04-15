@@ -90,7 +90,7 @@ public class ServerConfig {
     public static final int DEFAULT_DBESOPTIONS_INITIAL_LINK_BUFFER_DIMENSION = 1000;
     public static final int DEFAULT_DBESOPTIONS_INITIAL_SCALAR_BUFFER = 30;
 	// Default Thrift timeout and retry values (not advertised in getUsage):
-    public static final int DEFAULT_DB_TIMEOUT_MILLIS = 5000;
+    public static final int DEFAULT_DB_TIMEOUT_MILLIS = 10000;
     public static final int DEFAULT_MAX_COMMIT_ATTEMPTS = 10;
     public static final int DEFAULT_MAX_READ_ATTEMPTS = 3;
     public static final int DEFAULT_RETRY_WAIT_MILLIS = 5000;
