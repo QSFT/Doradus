@@ -27,7 +27,6 @@ import com.dell.doradus.common.BatchResult;
 import com.dell.doradus.common.ContentType;
 import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.HttpMethod;
-import com.dell.doradus.common.ObjectResult;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
@@ -256,37 +255,6 @@ abstract public class ApplicationSession implements AutoCloseable {
     public abstract QueryResult objectQuery(String tableName, Map<String, String> params);
     
     //----- Protected methods
-    
-    // Extract the BatchResult from the given RESTResponse. Could be an error.
-    protected BatchResult createBatchResult(RESTResponse response) {
-        // See what kind of message payload, if any, we received.
-        BatchResult result = null;
-        if (response.getCode().isError()) {
-            String errMsg = response.getBody();
-            if (errMsg.length() == 0) {
-                errMsg = "Unknown error; response code=" + response.getCode();
-            }
-            result = BatchResult.newErrorResult(errMsg);
-        } else {
-            result = new BatchResult(getUNodeResult(response));
-        }
-        return result;
-    }   // createBatchResult
-
-    // Extract the ObjectResult from the given RESTResponse. Could be an error.
-    protected ObjectResult createObjectResult(RESTResponse response) {
-        ObjectResult result = null;
-        if (response.getCode().isError()) {
-            String errMsg = response.getBody();
-            if (Utils.isEmpty(errMsg)) {
-                errMsg = "Unknown error; response code=" + response.getCode();
-            }
-            result = ObjectResult.newErrorResult(errMsg, null);
-        } else {
-            result = new ObjectResult(getUNodeResult(response));
-        }
-        return result;
-    }   // createObjectResult
     
     // Parse the entity in given RESTResponse into a UNode tree, returning the root node.
     protected UNode getUNodeResult(RESTResponse response) {

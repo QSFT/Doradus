@@ -16,11 +16,10 @@
 
 package com.dell.doradus.common;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * BatchResult holds the results of a batch add- or update-object request.
@@ -40,7 +39,7 @@ public class BatchResult {
     private final Map<String, String> m_resultFields = new HashMap<String, String>();
     
     // ObjectResults of individually failed objects, indexed by object ID.
-    private final Map<String, ObjectResult> m_objResultMap = new HashMap<String, ObjectResult>();
+    private final List<ObjectResult> m_objResultList = new ArrayList<ObjectResult>();
     
     /**
      * Create a new BatchResult with an ERROR status and the given error message.
@@ -95,19 +94,12 @@ public class BatchResult {
     ///// Setters
     
     /**
-     * Add the given {@link ObjectResult} to this batch. If the given result has no
-     * object ID, it is indexed with a unique "fake" object ID so that it will appear
-     * in {@link #getFailedObjectIDs()} and {@link #getObjectResult(String)}.
+     * Add the given {@link ObjectResult} to this batch.
      * 
      * @param objResult ObjectResult to add to this batch result.
      */
     public void addObjectResult(ObjectResult objResult) {
-        String objectID = objResult.getObjectID();
-        if (Utils.isEmpty(objectID)) {
-            objectID = fakeObjectID();
-        }
-        assert !m_objResultMap.containsKey(objectID);
-        m_objResultMap.put(objectID, objResult);
+        m_objResultList.add(objResult);
         
         // Elevate batch-level status to warning if needed.
         Status batchResult = getStatus();
@@ -193,48 +185,43 @@ public class BatchResult {
     }   // getErrorMessage
     
     /**
-     * Get the set of object IDs whose update failed in this batch result. There will be
-     * {@link ObjectResult} objects present for each one. When an error occurs but the
-     * corresponding object did not acquire an object ID (e.g., when a new object was
-     * being added), a "fake" object ID is assigned to distinguish it from the results of
-     * other objects.
+     * Get the {@link ObjectResult}s for objects whose failed in this batch. When an
+     * object update fails, if the original DBObject had no object ID, none will exist in
+     * the corresponding ObjectResult either.
      * 
      * @return  Set of object IDs whose update failed.
      */
-    public Set<String> getFailedObjectIDs() {
-        Set<String> result = new HashSet<>();
-        for (String objID : m_objResultMap.keySet()) {
-            if (m_objResultMap.get(objID).isFailed()) {
-                result.add(objID);
+    public Iterable<ObjectResult> getFailedObjectResults() {
+        List<ObjectResult> result = new ArrayList<>();
+        for (ObjectResult objResult : m_objResultList) {
+            if (objResult.isFailed()) {
+                result.add(objResult);
             }
         }
         return result;
-    }   // getFailedObjectIDs
+    }   // getFailedObjectResults
     
     /**
-     * Get the {@link ObjectResult} for the object with the given object ID. If there is
-     * result for the given object ID in this match, null is returned.
+     * Return the the {@link ObjectResult}s for the batch result as an iterable object.
+     * The ObjectResults are returned in the same order they were added to the original
+     * {@link DBObjectBatch} that generated this result. If this BatchResult has no
+     * ObjectResults, the iterator will be empty but not null.
      * 
-     * @param objectID  Object ID of a failed object.
-     * @return          Object's error message or null if there isn't one.
+     * @return  The {@link ObjectResult}s of this batch result as an Iterable object.
      */
-    public ObjectResult getObjectResult(String objectID) {
-        return m_objResultMap.get(objectID);
-    }   // getObjectResult
+    public Iterable<ObjectResult> getResultObjects() {
+        return m_objResultList;
+    }   // getResultObjects
     
     /**
-     * Return the set of object IDs for which this BatchResult has an {@link ObjectResult}.
-     * If an object result was received that did not contain an object ID, a fake, unique
-     * object ID is assigned so that it will appear in this set and can be used by
-     * {@link #getObjectResult(String)}. If this BatchResult has no {@link ObjectResult}s,
-     * an empty set is returned.
+     * Return the count of {@link ObjectResult}s in this batch results.
      * 
-     * @return  The set of object IDs for which this BatchResult has an {@link ObjectResult}.
+     * @return  Count of {@link ObjectResult}s in this batch results.
      */
-    public Set<String> getResultObjectIDs() {
-        return m_objResultMap.keySet();
-    }   // getResultObjectIDs
-    
+    public int getResultObjectCount() {
+        return m_objResultList.size();
+    }
+
     /**
      * Get the stack trace for this result, if one exists.
      * 
@@ -292,22 +279,13 @@ public class BatchResult {
         for (String fieldName : m_resultFields.keySet()) {
             result.addValueNode(fieldName, m_resultFields.get(fieldName));
         }
-        if (m_objResultMap.size() > 0) {
+        if (m_objResultList.size() > 0) {
             UNode docsNode = result.addArrayNode("docs");
-            for (ObjectResult objResult : m_objResultMap.values()) {
+            for (ObjectResult objResult : m_objResultList) {
                 docsNode.addChildNode(objResult.toDoc());
             }
         }
         return result;
     }   // toDoc
-
-    // Next fake object ID value.
-    private static final AtomicInteger g_nextObjectID = new AtomicInteger(1);
-    
-    // Generate a fake object ID for objects where the _ID field wasn't returned.
-    private static String fakeObjectID() {
-        // Prefix the next fake object ID # with "#fake-objectID-"
-        return "#unknown-objectID-" + g_nextObjectID.getAndIncrement();
-    }   // fakeObjectID
 
 }   // class BatchResult

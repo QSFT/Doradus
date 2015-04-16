@@ -17,6 +17,7 @@
 package com.dell.doradus.client;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.dell.doradus.common.AggregateResult;
@@ -80,7 +81,7 @@ public class SpiderSession extends ApplicationSession {
             RESTResponse response = 
                 m_restClient.sendRequest(HttpMethod.POST, uri.toString(), ContentType.APPLICATION_JSON, body);
             m_logger.debug("addBatch() response: {}", response.toString());
-            return createBatchResult(response);
+            return createBatchResult(response, dbObjBatch);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -118,16 +119,15 @@ public class SpiderSession extends ApplicationSession {
             RESTResponse response = 
                 m_restClient.sendRequest(HttpMethod.POST, uri.toString(), ContentType.APPLICATION_JSON, body);
             m_logger.debug("addBatch() response: {}", response.toString());
-            BatchResult batchResult = createBatchResult(response);
+            BatchResult batchResult = createBatchResult(response, dbObjBatch);
             
             ObjectResult objResult = null;
             if (batchResult.isFailed()) {
                 objResult = ObjectResult.newErrorResult(batchResult.getErrorMessage(), dbObj.getObjectID());
             } else {
-                // Object may have been assigned an ID, so iterate to first ObjectResult.
-                for (String objID : batchResult.getResultObjectIDs()) {
-                    objResult = batchResult.getObjectResult(objID);
-                    break;
+                objResult = batchResult.getResultObjects().iterator().next();
+                if (Utils.isEmpty(dbObj.getObjectID())) {
+                    dbObj.setObjectID(objResult.getObjectID());
                 }
             }
             return objResult;
@@ -167,7 +167,7 @@ public class SpiderSession extends ApplicationSession {
             RESTResponse response = 
                 m_restClient.sendRequest(HttpMethod.DELETE, uri.toString(), ContentType.APPLICATION_JSON, body);
             m_logger.debug("deleteBatch() response: {}", response.toString());
-            return createBatchResult(response);
+            return createBatchResult(response, dbObjBatch);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -194,7 +194,10 @@ public class SpiderSession extends ApplicationSession {
         DBObjectBatch dbObjBatch = new DBObjectBatch();
         dbObjBatch.addObject(objID, tableName);
         BatchResult batchResult = deleteBatch(tableName, dbObjBatch);
-        return batchResult.getObjectResult(objID);
+        if (batchResult.isFailed()) {
+            throw new RuntimeException(batchResult.getErrorMessage());
+        }
+        return batchResult.getResultObjects().iterator().next();
     }   // deleteObject
     
     //----- Queries
@@ -527,6 +530,49 @@ public class SpiderSession extends ApplicationSession {
     
     //----- Private methods
 
+    // Extract the BatchResult from the given RESTResponse. Could be an error.
+    private BatchResult createBatchResult(RESTResponse response, DBObjectBatch dbObjBatch) {
+        // See what kind of message payload, if any, we received.
+        BatchResult result = null;
+        if (response.getCode().isError()) {
+            String errMsg = response.getBody();
+            if (errMsg.length() == 0) {
+                errMsg = "Unknown error; response code=" + response.getCode();
+            }
+            result = BatchResult.newErrorResult(errMsg);
+        } else {
+            result = new BatchResult(getUNodeResult(response));
+            copyObjectIDsToBatch(result, dbObjBatch);
+        }
+        return result;
+    }   // createBatchResult
+
+    // Copy new object IDs from the given BatchResult to the corresponding DBObjects
+    // within the given DBObjectBatch.
+    private void copyObjectIDsToBatch(BatchResult batchResult, DBObjectBatch dbObjBatch) {
+        if (batchResult.getResultObjectCount() < dbObjBatch.getObjectCount()) {
+            m_logger.warn("Batch result returned fewer objects ({}) than input batch ({})",
+                          batchResult.getResultObjectCount(), dbObjBatch.getObjectCount());
+        }
+        Iterator<ObjectResult> resultIter = batchResult.getResultObjects().iterator();
+        Iterator<DBObject> objectIter = dbObjBatch.getObjects().iterator();
+        while (resultIter.hasNext()) {
+            if (!objectIter.hasNext()) {
+                m_logger.warn("Batch result has more objects ({}) than input batch ({})!",
+                              batchResult.getResultObjectCount(), dbObjBatch.getObjectCount());
+                break;
+            }
+            ObjectResult objResult = resultIter.next();
+            DBObject dbObj = objectIter.next();
+            if (Utils.isEmpty(dbObj.getObjectID())) {
+                dbObj.setObjectID(objResult.getObjectID());
+            } else if (!dbObj.getObjectID().equals(objResult.getObjectID())) {
+                m_logger.warn("Batch results out of order: expected ID '{}', got '{}'",
+                              dbObj.getObjectID(), objResult.getObjectID());
+            }
+        }
+    }   // copyObjectIDsToBatch
+    
     // Throw if this session's AppDef is not for a Spider app.
     private void verifyApplication() {
         String ss = m_appDef.getStorageService();
