@@ -129,6 +129,7 @@ final public class DBObject {
     public DBObject makeCopy(String objID) {
         DBObject newObj = new DBObject();
         newObj.m_valueMap.putAll(m_valueMap);
+        newObj.setObjectID(objID);
         newObj.m_valueRemoveMap.putAll(m_valueRemoveMap);
         return newObj;
     }   // makeCopy
