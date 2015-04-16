@@ -362,10 +362,12 @@ olap_query_cache_size_mb: 100
 # field. It does not affect shards loaded in memory. 0 means they are not cached (default).
 olap_file_cache_size_mb: 0
 
-# Number of threads to use by shard merging algorithm. 0 means merging is single-threaded.   
+# Number of threads to use by shard merging algorithm. 0 means merging is single-threaded.
 olap_merge_threads: 0
 # Number of threads to use for compression. 0 means it is single-threaded.   
 olap_compression_threads: 0
+# Number of threads to use for search and aggregation. 0 means it is single-threaded.   
+olap_search_threads: 0
 
 # Level of GZip-compression in OLAP. 0 means no compression, 9 means best compression
 # default is -1 (level 6). Tests suggest levels 2, 4, and 6(default) being a good choice.  
