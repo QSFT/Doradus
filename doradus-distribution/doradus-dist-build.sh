@@ -1,15 +1,16 @@
 #!/bin/bash
 # Linux Script to build Doradus distribution
 
+DIST_VERSION=2.4
 #Build Doradus
 cd ..
 mvn clean install dependency:copy-dependencies -Dgpg.skip=true -Dmaven.javadoc.skip=true
 
 cd doradus-distribution
 
+#Installing cassandra 2.0.7  
 if [ ! -d cassandra ]
 then 
-    #Installing cassandra 2.0.7  
     echo "Installing and configuring cassandra for Doradus..."
     tar -xzvf dsc-cassandra-2.0.7-bin.tar.gz    
     mv dsc-cassandra-2.0.7 cassandra
@@ -25,7 +26,7 @@ then
     cd ../..
 fi    
 
-#clean up the doradus direct to place the new build binaries
+#Clean up the doradus directory to place the new build binaries
 if [ -d doradus ]
 then
     rm -rf doradus
@@ -43,8 +44,10 @@ cp ../../doradus-jetty/target/dependency/*.jar dependency/
 cp ../../doradus-server/src/main/resources/* resources/
 cp ../../doradus-client/target/doradus-client-*.jar dependency/
 
-cd ../..
-tar -cvf Doradus-distribution-2.4.tar --exclude="._*" --exclude="doradus-dist-build.sh" .
+cd ..
+
+#Create the final distribution file
+tar -cvf Doradus-distribution-"$DIST_VERSION".tar --exclude="._*" --exclude="doradus-dist-build.sh" .
 
 echo "Doradus Distribution created"
 ls -la Doradus-distribution-*.tar
