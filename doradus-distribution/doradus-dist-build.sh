@@ -2,6 +2,8 @@
 # Linux Script to build Doradus distribution
 
 DIST_VERSION=2.4
+DIST_FILE_NAME=Doradus-distribution-$DIST_VERSION.tar
+
 #Build Doradus
 cd ..
 mvn clean install dependency:copy-dependencies -Dgpg.skip=true -Dmaven.javadoc.skip=true
@@ -47,7 +49,7 @@ cp ../../doradus-client/target/doradus-client-*.jar dependency/
 cd ..
 
 #Create the final distribution file
-tar -cvf Doradus-distribution-"$DIST_VERSION".tar --exclude="._*" --exclude="doradus-dist-build.sh" .
+tar -cvf $DIST_FILE_NAME --exclude="._*" --exclude="doradus-dist-build.sh" --exclude="doradus-dist-build.bat" --exclude="$DIST_FILE_NAME" .
 
 echo "Doradus Distribution created"
 ls -la Doradus-distribution-*.tar
