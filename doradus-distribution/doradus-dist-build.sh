@@ -53,7 +53,3 @@ tar -cvf $DIST_FILE_NAME --exclude="._*" --exclude="doradus-dist-build.sh" --exc
 
 echo "Doradus Distribution created"
 ls -la Doradus-distribution-*.tar
-
-
-		
-
