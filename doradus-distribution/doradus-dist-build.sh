@@ -3,7 +3,7 @@
 
 #Build Doradus
 cd ..
-#mvn clean install dependency:copy-dependencies -Dgpg.skip=true -Dmaven.javadoc.skip=true
+mvn clean install dependency:copy-dependencies -Dgpg.skip=true -Dmaven.javadoc.skip=true
 
 cd doradus-distribution
 
@@ -44,8 +44,7 @@ cp ../../doradus-server/src/main/resources/* resources/
 cp ../../doradus-client/target/doradus-client-*.jar dependency/
 
 cd ../..
-tar -cvf Doradus-distribution-2.4.tar --exclude="._*" doradus-distribution/
-
+tar -cvf Doradus-distribution-2.4.tar --exclude="._*" --exclude="doradus-dist-build.sh" .
 
 echo "Doradus Distribution created"
 ls -la Doradus-distribution-*.tar
