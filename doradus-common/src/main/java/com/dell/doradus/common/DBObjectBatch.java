@@ -156,15 +156,13 @@ public class DBObjectBatch {
             for (String dottedName : valueMap.keySet()) {
                 List<String> values = valueMap.get(dottedName);
                 String[] names = dottedName.split("\\.");
-                if (names.length == 1) {
-                    dbObj.addFieldValues(names[0], values);
-                } else {
-                    addObjectValue(dbObj, names, 0, values);
-                }
+                addObjectValue(dbObj, names, 0, values);
             }
         }   // buildObject
         
         // Possible name structures we expect:
+        //      field
+        //      field.value
         //      field.add.value or field.remove.value
         //      group.field
         //      group.field.[add|remove].value
@@ -173,9 +171,12 @@ public class DBObjectBatch {
         //      ...
         private void addObjectValue(DBObject dbObj, String[] names, int inx, List<String> values) {
             String fieldName = names[inx];
-            if ((names.length - inx) == 3 &&
-                    names[inx + 2].equals("value") &&
-                    (names[inx + 1].equals("add") || names[inx + 1].equals("remove"))) {
+            if ((names.length - inx) == 2 && names[inx + 1].equals("value")) {
+                // field.value
+                dbObj.addFieldValues(fieldName, values);
+            } else if ((names.length - inx) == 3 &&
+                       names[inx + 2].equals("value") &&
+                       (names[inx + 1].equals("add") || names[inx + 1].equals("remove"))) {
                 // field.add.value or field.remove.value
                 if (names[inx + 1].equals("add")) {
                     dbObj.addFieldValues(fieldName, values);

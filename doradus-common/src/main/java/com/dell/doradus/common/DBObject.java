@@ -129,6 +129,7 @@ final public class DBObject {
     public DBObject makeCopy(String objID) {
         DBObject newObj = new DBObject();
         newObj.m_valueMap.putAll(m_valueMap);
+        newObj.setObjectID(objID);
         newObj.m_valueRemoveMap.putAll(m_valueRemoveMap);
         return newObj;
     }   // makeCopy
@@ -564,12 +565,14 @@ final public class DBObject {
     private void parseFieldUpdate(String fieldName, UNode valueNode) {
         if (valueNode.isValue()) {
             addFieldValue(fieldName, valueNode.getValue());
+        } else if (valueNode.childrenAreValues()) {
+            parseFieldAdd(fieldName, valueNode);
         } else {
             for (UNode childNode : valueNode.getMemberList()) {
-                if (childNode.isCollection() && childNode.getName().equals("add") && childNode.hasMembers()) {
+                if (childNode.isCollection() && childNode.getName().equals("add") && childNode.childrenAreValues()) {
                     // "add" for an MV field
                     parseFieldAdd(fieldName, childNode);
-                } else if (childNode.isCollection() && childNode.getName().equals("remove") && childNode.hasMembers()) {
+                } else if (childNode.isCollection() && childNode.getName().equals("remove") && childNode.childrenAreValues()) {
                     // "remove" for an MV field
                     parseFieldRemove(fieldName, childNode);
                 } else {

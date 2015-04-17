@@ -18,6 +18,8 @@ package com.dell.doradus.olap.aggregate.mr;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,13 +44,9 @@ public class MFAggregationBuilder {
     private static Logger LOG = LoggerFactory.getLogger("MFAggregationBuilder");
 	
 	public static AggregationResult aggregate(Olap olap, ApplicationDefinition appDef, AggregationRequest request) {
-		AggregationCollector collector = null;
-		for(String shard: request.shards) {
-			AggregationCollector agg = aggregate(olap, appDef, shard, request);
-			if(collector == null) collector = agg;
-			else collector.merge(agg);
-		}
-		if(collector == null) collector = new AggregationCollector(0);
+	    AggregationCollector collector = Olap.getSearchThreadPool() == null ? 
+	            searchSinglethreaded(olap, appDef, request) :
+                searchMultithreaded(olap, appDef, request);
 		AggregationResult result = AggregationResultBuilder.build(request, collector);
 		
 		
@@ -82,6 +80,58 @@ public class MFAggregationBuilder {
 		
 		return result;
 	}
+	
+	
+	private static AggregationCollector searchSinglethreaded(Olap olap, ApplicationDefinition appDef, AggregationRequest request) {
+        AggregationCollector collector = null;
+        for(String shard: request.shards) {
+            AggregationCollector agg = aggregate(olap, appDef, shard, request);
+            if(collector == null) collector = agg;
+            else collector.merge(agg);
+        }
+        if(collector == null) collector = new AggregationCollector(0);
+        return collector;
+	}
+
+    private static AggregationCollector searchMultithreaded(Olap olap, ApplicationDefinition appDef, AggregationRequest request) {
+        try {
+            final List<AggregationCollector> results = new ArrayList<AggregationCollector>();
+            List<Future<?>> futures = new ArrayList<>();
+            for(String shard: request.shards) {
+                final Olap f_olap = olap;
+                final ApplicationDefinition f_appDef = appDef;
+                final String f_shard = shard;
+                final AggregationRequest f_request = request;
+                futures.add(Olap.getSearchThreadPool().submit(new Runnable() {
+                    @Override public void run() {
+                        AggregationCollector agg = aggregate(f_olap, f_appDef, f_shard, f_request);
+                        synchronized (results) {
+                            results.add(agg);
+                        }
+                                
+                    }}));
+            }
+            
+            for(Future<?> f: futures) f.get();
+            futures.clear();
+            
+
+            AggregationCollector collector = null;
+            for(AggregationCollector agg: results) {
+                if(collector == null) collector = agg;
+                else collector.merge(agg);
+            }
+            if(collector == null) collector = new AggregationCollector(0);
+            return collector;
+        }catch(ExecutionException ee) {
+            throw new RuntimeException(ee);
+        }catch(InterruptedException ee) {
+            throw new RuntimeException(ee);
+        }
+        
+        
+    }
+	
 	
 	private static AggregationCollector aggregate(Olap olap, ApplicationDefinition appDef, String shard, AggregationRequest request) {
 		// repeat if segment was merged

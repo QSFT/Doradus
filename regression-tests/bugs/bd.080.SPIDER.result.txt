@@ -58,22 +58,22 @@
             <doc>
                 <updated>true</updated>
                 <status>OK</status>
-                <field name="_ID">1003</field>
-            </doc>
-            <doc>
-                <updated>true</updated>
-                <status>OK</status>
-                <field name="_ID">1004</field>
-            </doc>
-            <doc>
-                <updated>true</updated>
-                <status>OK</status>
                 <field name="_ID">1001</field>
             </doc>
             <doc>
                 <updated>true</updated>
                 <status>OK</status>
                 <field name="_ID">1002</field>
+            </doc>
+            <doc>
+                <updated>true</updated>
+                <status>OK</status>
+                <field name="_ID">1003</field>
+            </doc>
+            <doc>
+                <updated>true</updated>
+                <status>OK</status>
+                <field name="_ID">1004</field>
             </doc>
             <doc>
                 <updated>true</updated>
@@ -93,22 +93,6 @@
                    "updated":"false",
                    "status":"OK",
                    "comment":"No updates made",
-                   "_ID":"1003"
-                }
-             },
-             {
-                "doc":{
-                   "updated":"false",
-                   "status":"OK",
-                   "comment":"No updates made",
-                   "_ID":"1004"
-                }
-             },
-             {
-                "doc":{
-                   "updated":"false",
-                   "status":"OK",
-                   "comment":"No updates made",
                    "_ID":"1001"
                 }
              },
@@ -118,6 +102,22 @@
                    "status":"OK",
                    "comment":"No updates made",
                    "_ID":"1002"
+                }
+             },
+             {
+                "doc":{
+                   "updated":"false",
+                   "status":"OK",
+                   "comment":"No updates made",
+                   "_ID":"1003"
+                }
+             },
+             {
+                "doc":{
+                   "updated":"false",
+                   "status":"OK",
+                   "comment":"No updates made",
+                   "_ID":"1004"
                 }
              },
              {

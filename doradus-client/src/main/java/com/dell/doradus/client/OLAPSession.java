@@ -482,6 +482,22 @@ public class OLAPSession extends ApplicationSession {
     
     //----- Private methods
 
+    // Extract the BatchResult from the given RESTResponse. Could be an error.
+    private BatchResult createBatchResult(RESTResponse response) {
+        // See what kind of message payload, if any, we received.
+        BatchResult result = null;
+        if (response.getCode().isError()) {
+            String errMsg = response.getBody();
+            if (errMsg.length() == 0) {
+                errMsg = "Unknown error; response code=" + response.getCode();
+            }
+            result = BatchResult.newErrorResult(errMsg);
+        } else {
+            result = new BatchResult(getUNodeResult(response));
+        }
+        return result;
+    }   // createBatchResult
+
     // Throw if this session's AppDef is not for an OLAP app.
     private void verifyApplication() {
         String ss = m_appDef.getStorageService();

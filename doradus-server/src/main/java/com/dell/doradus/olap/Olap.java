@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,24 +39,12 @@ import com.dell.doradus.olap.aggregate.AggregationRequestData;
 import com.dell.doradus.olap.aggregate.AggregationResult;
 import com.dell.doradus.olap.aggregate.DuplicationDetection;
 import com.dell.doradus.olap.aggregate.mr.MFAggregationBuilder;
-import com.dell.doradus.olap.io.FileDeletedException;
 import com.dell.doradus.olap.io.VDirectory;
-import com.dell.doradus.olap.merge.MergeResult;
 import com.dell.doradus.olap.merge.Merger;
-import com.dell.doradus.olap.search.MetricsInSearch;
 import com.dell.doradus.olap.search.Searcher;
 import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.SegmentStats;
-import com.dell.doradus.olap.xlink.XLinkContext;
-import com.dell.doradus.search.FieldSet;
-import com.dell.doradus.search.SearchResult;
 import com.dell.doradus.search.SearchResultList;
-import com.dell.doradus.search.aggregate.SortOrder;
-import com.dell.doradus.search.parser.AggregationQueryBuilder;
-import com.dell.doradus.search.parser.DoradusQueryBuilder;
-import com.dell.doradus.search.query.AndQuery;
-import com.dell.doradus.search.query.IdRangeQuery;
-import com.dell.doradus.search.query.Query;
 import com.dell.doradus.search.util.LRUCache;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.Tenant;
@@ -83,6 +73,9 @@ import com.dell.doradus.utilities.Timer;
 
 public class Olap {
     private static Logger LOG = LoggerFactory.getLogger("Olap.Olap");
+    private static ExecutorService search_executor = 
+            ServerConfig.getInstance().olap_search_threads == 0 ?
+                null : Executors.newFixedThreadPool(ServerConfig.getInstance().olap_search_threads);
 	
     private Map<String, Map<String, VDirectory>> m_tenantAppRoots = new HashMap<>();
 	private FieldsCache m_fieldsCache = new FieldsCache(ServerConfig.getInstance().olap_cache_size_mb * 1024L * 1024);
@@ -90,6 +83,8 @@ public class Olap {
 	private Set<String> m_mergedCubes = new HashSet<String>();
 	
 	public Olap() { }
+	
+	public static ExecutorService getSearchThreadPool() { return search_executor; }
 	
 	// For testing: use default keyspace
 	public VDirectory createApplication(String appName) {
@@ -203,60 +198,9 @@ public class Olap {
 	}
 
 	public SearchResultList search(ApplicationDefinition appDef, String table, OlapQuery olapQuery) {
-		olapQuery.fixPairParameter();
-		TableDefinition tableDef = appDef.getTableDef(table);
-		String application = appDef.getAppName();
-		if(tableDef == null) throw new IllegalArgumentException("Table " + table + " does not exist");
-    	Query query = DoradusQueryBuilder.Build(olapQuery.getQuery(), tableDef);
-    	if(olapQuery.getContinueAfter() != null) {
-    		query = new AndQuery(new IdRangeQuery(olapQuery.getContinueAfter(), false, null, false), query);
-    	}
-    	if(olapQuery.getContinueAt() != null) {
-    		query = new AndQuery(new IdRangeQuery(olapQuery.getContinueAt(), true, null, false), query);
-    	}
-    	FieldSet fieldSet = new FieldSet(tableDef, olapQuery.getFieldSet());
-    	fieldSet.expand();
-    	SortOrder[] sortOrders = AggregationQueryBuilder.BuildSortOrders(olapQuery.getSortOrder(), tableDef);
-		List<SearchResultList> results = new ArrayList<SearchResultList>();
-		List<String> shardsList = olapQuery.getShards(appDef, this); 
-		List<String> xshardsList = olapQuery.getXShards(appDef, this); 
-    	XLinkContext xcontext = new XLinkContext(application, this, xshardsList, tableDef);
-    	xcontext.setupXLinkQuery(tableDef, query);
-		for(String shard : shardsList) {
-			results.add(search(appDef, shard, tableDef, query, fieldSet, olapQuery, sortOrders));
-		}
-		SearchResultList result = MergeResult.merge(results, fieldSet);
-		if(olapQuery.getSkip() > 0) {
-			int sz = result.results.size();
-			result.results = new ArrayList<SearchResult>(result.results.subList(Math.min(olapQuery.getSkip(), sz), sz));
-		}
-		//metrics in query
-		if(olapQuery.getMetrics() != null) {
-			MetricsInSearch.addMetricsInSearch(this, tableDef, result, olapQuery);
-		}
-		
-		return result;
+	    return Searcher.search(this, appDef, table, olapQuery);
 	}
 
-	private SearchResultList search(ApplicationDefinition appDef, String shard, TableDefinition tableDef, Query query, FieldSet fieldSet, OlapQuery olapQuery, SortOrder[] sortOrders) {
-		// repeat if segment was merged
-		for(int i = 0; i < 2; i++) {
-			try {
-				CubeSearcher s = getSearcher(appDef, shard, getCubeSegment(appDef, shard));
-				SearchResultList result = Searcher.search(s, tableDef, query, fieldSet, olapQuery.getPageSizeWithSkip(), sortOrders);
-				for(SearchResult sr: result.results) {
-					sr.scalars.put("_shard", shard);
-				}
-				return result;
-			}catch(FileDeletedException ex) {
-				LOG.warn(ex.getMessage() + " - retrying: " + i);
-				continue;
-			}
-		}
-		CubeSearcher s = getSearcher(appDef, shard, getCubeSegment(appDef, shard));
-		return Searcher.search(s, tableDef, query, fieldSet, olapQuery.getPageSizeWithSkip(), sortOrders);
-	}
-	
 	// default merge (used in tests): forceMerge enabled
 	public void merge(ApplicationDefinition appDef, String shard) {
 		MergeOptions options = new MergeOptions(null, 0, true);

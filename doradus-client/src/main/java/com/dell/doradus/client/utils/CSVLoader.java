@@ -771,8 +771,8 @@ public class CSVLoader {
                 if (result.isFailed()) {
                     m_logger.error("Worker {}: Batch update failed: {}",
                                   new Object[]{m_workerNo, result.getErrorMessage()});
-                    for (String objectID : result.getFailedObjectIDs()) {
-                        ObjectResult objResult = result.getObjectResult(objectID);
+                    for (ObjectResult objResult : result.getFailedObjectResults()) {
+                        String objectID = objResult.getObjectID();
                         m_logger.warn("Worker {}: error for object ID '{}': {}",
                                       new Object[]{m_workerNo, objectID, objResult.getErrorMessage()});
                         Map<String, String> errorDetails = objResult.getErrorDetails();

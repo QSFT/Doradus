@@ -266,6 +266,7 @@ public class ServerConfig {
     public int olap_query_cache_size_mb = 100;
     public int olap_merge_threads = 0;
     public int olap_compression_threads = 0;
+    public int olap_search_threads = 0;
     public int olap_compression_level = -1;
     
     // CQL (true) or Thrift (false) API
