@@ -67,6 +67,14 @@ public abstract class DBService extends Service {
     public abstract void createTenant(Tenant tenant, Map<String, String> options);
     
     /**
+     * Modify the given tenant with the given options.
+     * 
+     * @param tenant    {@link Tenant} to be modified.
+     * @param options   Map of options to apply to tenant.
+     */
+    public abstract void modifyTenant(Tenant tenant, Map<String, String> options);
+    
+    /**
      * Drop the given tenant.
      * 
      * @param tenant    {@link Tenant} to drop.
@@ -81,6 +89,23 @@ public abstract class DBService extends Service {
      * @param users     List of {@link UserDefinition} to add.
      */
     public abstract void addUsers(Tenant tenant, Iterable<UserDefinition> users);
+    
+    /**
+     * Modify the given list of users to for the given tenant. Currently, only passwords
+     * can be modified.
+     * 
+     * @param tenant    {@link Tenant} whose users are to be modified.
+     * @param users     List of {@link UserDefinition} to modify.
+     */
+    public abstract void modifyUsers(Tenant tenant, Iterable<UserDefinition> users);
+    
+    /**
+     * Delete the given list of users for the given tenant.
+     * 
+     * @param tenant    {@link Tenant} to delete users for.
+     * @param users     List of {@link UserDefinition} to delete.
+     */
+    public abstract void deleteUsers(Tenant tenant, Iterable<UserDefinition> users);
     
     /**
      * Get a list of all known {@link Tenant}s.

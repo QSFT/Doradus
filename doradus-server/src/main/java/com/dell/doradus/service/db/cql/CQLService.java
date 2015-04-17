@@ -128,7 +128,18 @@ public class CQLService extends DBService {
                 schemaMgr.createKeyspace(cqlKeyspace, options);
             }
         }
-    }   // createKeyspace
+    }   // createTenant
+
+    @Override
+    public void modifyTenant(Tenant tenant, Map<String, String> options) {
+        String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
+        KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(cqlKeyspace);
+        Utils.require(ksMetadata != null, "Tenant not found: " + tenant.toString());
+        try (Session session = m_cluster.connect()) {   // no-keyspace session
+            CQLSchemaManager schemaMgr = new CQLSchemaManager(session, null);
+            schemaMgr.modifyKeyspace(cqlKeyspace, options);
+        }
+    }   // modifyTenant
 
     @Override
     public void dropTenant(Tenant tenant) {
@@ -146,7 +157,7 @@ public class CQLService extends DBService {
                 schemaMgr.dropKeyspace(cqlKeyspace);
             }
         }
-    }   // dropKeyspace
+    }   // dropTenant
     
     @Override
     public void addUsers(Tenant tenant, Iterable<UserDefinition> users) {
@@ -189,6 +200,54 @@ public class CQLService extends DBService {
             session.execute(cql.toString());
         }
     }   // addUsers
+    
+    @Override
+    public void modifyUsers(Tenant tenant, Iterable<UserDefinition> users) {
+        checkState();
+        String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
+        Session session = getOrCreateKeyspaceSession(cqlKeyspace);
+        StringBuilder cql = new StringBuilder();
+        for (UserDefinition userDef : users) {
+            String userID = userDef.getID();
+            String password = userDef.getPassword();
+            
+            m_logger.debug("Modifying password for user '{}' for keyspace {}", userID, cqlKeyspace);
+            // ALTER USER Foo WITH PASSWORD 'bar';
+            cql.setLength(0);
+            cql.append("ALTER USER ");
+            cql.append(userID);
+            cql.append(" WITH PASSWORD '");
+            cql.append(password);   // TODO: escape embedded 's?
+            cql.append("';");
+            try {
+                session.execute(cql.toString());
+            } catch (InvalidQueryException e) {
+                m_logger.warn("Error modifying user '" + userID + "'; skipping this user", userID);
+            }
+        }
+    }   // addUsers
+    
+    @Override
+    public void deleteUsers(Tenant tenant, Iterable<UserDefinition> users) {
+        checkState();
+        // Use a no-keyspace session since the keyspace may already be gone.
+        try (Session session = m_cluster.connect()) {
+            StringBuilder cql = new StringBuilder();
+            for (UserDefinition userDef : users) {
+                String userID = userDef.getID();
+                m_logger.debug("Dropping user '{}'", userID);
+                cql.setLength(0);
+                cql.append("DROP USER ");
+                cql.append(userID);
+                cql.append(";");
+                try {
+                    session.execute(cql.toString());
+                } catch (InvalidQueryException e) {
+                    m_logger.warn("Cannot drop user '" + userID + "'; ignoring", e);
+                }
+            }
+        }
+    }   // deleteUsers
     
     @Override
     public Collection<Tenant> getTenants() {

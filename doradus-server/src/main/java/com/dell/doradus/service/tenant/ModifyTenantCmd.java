@@ -17,26 +17,19 @@
 package com.dell.doradus.service.tenant;
 
 import com.dell.doradus.common.UNode;
-import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.rest.UNodeInOutCallback;
 
 /**
- * Implements the system command: PUT /_tenants/{tenant}. The current user must be
- * authorized to administer this tenant.
+ * Implements the system command: PUT /_tenants/{tenant}.
  */
 public class ModifyTenantCmd extends UNodeInOutCallback {
 
     @Override
     public UNode invokeUNodeInOut(UNode inNode) {
-        Utils.require(ServerConfig.getInstance().multitenant_mode,
-                      "This command is only allowed in multi-tenant mode; see 'multitenant_mode' parameter");
-        String tenantParam = m_request.getVariableDecoded("tenant");
+        String tenantName = m_request.getVariableDecoded("tenant");
         TenantDefinition tenantDef = new TenantDefinition();
         tenantDef.parse(inNode);
-        Utils.require(tenantDef.getName().equals(tenantParam),
-                      "Cannot change tenant name: " + tenantDef.getName());
-        tenantDef = TenantService.instance().modifyTenant(tenantDef);
+        tenantDef = TenantService.instance().modifyTenant(tenantName, tenantDef);
         return tenantDef.toDoc();
     }
 

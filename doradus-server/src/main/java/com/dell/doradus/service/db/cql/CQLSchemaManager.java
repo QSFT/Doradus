@@ -66,6 +66,7 @@ public class CQLSchemaManager {
      * Where the list of <i>prop</i> properties come from {@link ServerConfig#ks_defaults}.
      * 
      * @param keyspace  Name of keyspace to create.
+     * @param options   Options to use for new keyspace.
      */
     public void createKeyspace(String keyspace, Map<String, String> options) {
         String cqlKeyspace = CQLService.storeToCQLName(keyspace);
@@ -75,6 +76,42 @@ public class CQLSchemaManager {
         cql.append(cqlKeyspace);
         cql.append(keyspaceDefaultsToCQLString(options));
         cql.append(";");
+        m_session.execute(cql.toString());
+    }   // createKeyspace
+    
+    /**
+     * Modify the keyspace with the given name with the given options. The only option
+     * that can be modified is ReplicationFactor. This method should be used with a
+     * no-keyspace session. If the ReplicationFactor is present, the keyspace is altered
+     * with the following CQL command:
+     * <pre>
+     *      ALTER KEYSPACE "<i>keyspace</i>" WITH REPLICATION = {'class':'SimpleStrategy',
+     *        'replication_factor' : <i>replication_factor</i> };
+     * </pre>
+     * 
+     * @param keyspace  Name of keyspace to modify.
+     * @param options   Modified options to use for keyspace. Only the option
+     *                  "replication_factor" is examined.
+     */
+    public void modifyKeyspace(String keyspace, Map<String, String> options) {
+        if (!options.containsKey("ReplicationFactor")) {
+            return;
+        }
+        String cqlKeyspace = CQLService.storeToCQLName(keyspace);
+        m_logger.info("Modifying keyspace: {}", cqlKeyspace);
+        StringBuilder cql = new StringBuilder();
+        cql.append("ALTER KEYSPACE ");
+        cql.append(cqlKeyspace);
+        cql.append(" WITH REPLICATION = {'class':'");
+        String strategyClass = "SimpleStrategy";
+        Map<String, Object> ksDefs = ServerConfig.getInstance().ks_defaults;
+        if (ksDefs != null && ksDefs.containsKey("strategy_class")) {
+            strategyClass = ksDefs.get("strategy_class").toString();
+        }
+        cql.append(strategyClass);
+        cql.append("','replication_factor':");
+        cql.append(options.get("ReplicationFactor"));
+        cql.append("};");
         m_session.execute(cql.toString());
     }   // createKeyspace
     
