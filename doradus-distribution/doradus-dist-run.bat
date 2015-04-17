@@ -10,11 +10,12 @@ echo "Cassandra has started..."
 REM Start Doradus
 
 cd doradus
-java -cp .\*;.\resources\*;.\dependency\* com.dell.doradus.core.DoradusServer
-
+start java -cp .\*;.\resources\*;.\dependency\* com.dell.doradus.core.DoradusServer
 
 echo "Doradus has started..."
 
-java -cp -cp .\*;.\resources\*;.\dependency\* com.dell.doradus.client.utils.HelloSpider localhost 1123
+timeout 5
+
+java -cp .\*;.\resources\*;.\dependency\* com.dell.doradus.client.utils.HelloSpider localhost 1123
 
 echo "Verify HelloSpider application created at http://localhost:1123/_applications"
