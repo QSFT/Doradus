@@ -61,6 +61,7 @@ public class TenantService extends Service {
         new RESTCommand("GET    /_tenants/{tenant}  com.dell.doradus.service.tenant.ListTenantCmd", true),
         new RESTCommand("POST   /_tenants           com.dell.doradus.service.tenant.DefineTenantCmd", true),
         new RESTCommand("PUT    /_tenants/{tenant}  com.dell.doradus.service.tenant.ModifyTenantCmd", true),
+        new RESTCommand("DELETE /_tenants/{tenant}  com.dell.doradus.service.tenant.DeleteTenantCmd", true),
     });
 
     // Singleton creation only.
@@ -121,7 +122,7 @@ public class TenantService extends Service {
         checkServiceState();
         Utils.require(ServerConfig.getInstance().multitenant_mode,
                       "This command is not valid in single-tenant mode");
-        return searchTenantDef(tenantName);
+        return getTenantDefFromCache(tenantName);
     }   // getTenantDefinition
 
     /**
@@ -148,32 +149,45 @@ public class TenantService extends Service {
         Utils.require(ServerConfig.getInstance().multitenant_mode,
                       "This command is not valid in single-tenant mode");
         String tenantName = tenantDef.getName();
-        if (searchTenantDef(tenantName) != null) {
+        if (getTenantDefFromCache(tenantName) != null) {
             throw new DuplicateException("Tenant already exists: " + tenantName);
         }
         Utils.require(!tenantName.equals(ServerConfig.getInstance().keyspace),
                       "Cannot create a tenant with the default keyspace name: " + tenantName);
         defineNewTenant(tenantDef);
-        return searchTenantDef(tenantName);
+        TenantDefinition updatedTenantDef = getTenantDefFromCache(tenantName);
+        if (updatedTenantDef == null) {
+            throw new RuntimeException("Tenant definition could not be retrieved after creation: " + tenantName);
+        }
+        return updatedTenantDef;
     }   // defineTenant
 
     /**
-     * Modify an existing tenant with the given definition and return the updated
-     * definition. The only modification currently allowed is a password update.
+     * Modify the tenant with the given name to match the given definition, and return the
+     * updated definition.
      * 
-     * @param tenantDef {@link TenantDefinition} of new tenant.
-     * @return          Updated definition.
+     * @param tenantName    Name of tenant to be modified.
+     * @param newTenantDef  Updated {@link TenantDefinition} to apply to tenant.
+     * @return              Updated {@link TenantDefinition}.
      */
-    public TenantDefinition modifyTenant(TenantDefinition tenantDef) {
+    public TenantDefinition modifyTenant(String tenantName, TenantDefinition newTenantDef) {
         checkServiceState();
         Utils.require(ServerConfig.getInstance().multitenant_mode,
                       "This command is not valid in single-tenant mode");
-        // TODO
-        throw new RuntimeException("Not yet implemented");
+        TenantDefinition oldTenantDef = getTenantDefFromCache(tenantName);
+        Utils.require(oldTenantDef != null, "Tenant '%s' does not exist", tenantName);
+        validateTenantUpdate(oldTenantDef, newTenantDef);
+        modifyTenantDefinition(oldTenantDef, newTenantDef);
+        TenantDefinition updatedTenantDef = getTenantDefFromCache(tenantName);
+        if (updatedTenantDef == null) {
+            throw new RuntimeException("Tenant definition could not be retrieved after creation: " + tenantName);
+        }
+        return updatedTenantDef;
     }   // modifyTenant
     
     /**
-     * Delete an existing tenant.
+     * Delete an existing tenant. The tenant's keyspace is dropped, which deletes all user
+     * and system tables, and the tenant's users are deleted.
      * 
      * @param tenantName    Name of tenant to delete.
      */
@@ -181,9 +195,12 @@ public class TenantService extends Service {
         checkServiceState();
         Utils.require(ServerConfig.getInstance().multitenant_mode,
                       "This command is not valid in single-tenant mode");
-        // TODO
-        // Be sure to delete from tenant map.
-        throw new RuntimeException("Not yet implemented");
+        TenantDefinition tenantDef = getTenantDefFromCache(tenantName);
+        Utils.require(tenantDef != null, "Tenant '%s' does not exist", tenantName);
+        Tenant tenant = new Tenant(tenantName);
+        DBService.instance().dropTenant(tenant);
+        deleteTenantFromCache(tenantName);
+        deleteAllUsers(tenantDef);
     }   // deleteTenant
 
     /**
@@ -303,7 +320,7 @@ public class TenantService extends Service {
         dbService.createStoreIfAbsent(tenant, SchemaService.APPS_STORE_NAME, false);
         dbService.createStoreIfAbsent(tenant, TaskManagerService.TASKS_STORE_NAME, false);
         storeTenantDefinition(tenantDef);
-    }   // defineNewTenant
+    }
 
     // Add all users in the given tenant definition to Cassandra and authorize them to use
     // the corresponding keyspace.
@@ -316,19 +333,21 @@ public class TenantService extends Service {
         Tenant tenant = new Tenant(tenantName);
         List<UserDefinition> dbUserList = new ArrayList<UserDefinition>();
         for (UserDefinition userDef : tenantDef.getUsers().values()) {
+            Utils.require(!Utils.isEmpty(userDef.getPassword()),
+                          "Password is required; user ID=" + userDef.getID());
             String newUserID = tenantName + "_" + userDef.getID();
             UserDefinition dbUserDef = userDef.makeCopy(newUserID);
             dbUserList.add(dbUserDef);
         }
         DBService.instance().addUsers(tenant, dbUserList);
-    }   // addTenantUsers
+    }
 
     // Add a default user account for the given tenant definition.
     private void addDefaultUser(TenantDefinition tenantDef) {
         UserDefinition userDef = new UserDefinition("U" + generateRandomID());
         userDef.setPassword(generateRandomID());
         tenantDef.addUser(userDef);
-    }   // addDefaultUser
+    }
 
     // Generate a unique ID by choosing a positive random long value and converting into a
     // String in the maximum radix allowed (36). Hence a value such as 1364581319703000
@@ -344,20 +363,21 @@ public class TenantService extends Service {
         DBTransaction dbTran = DBService.instance().startTransaction(tenant);
         dbTran.addColumn(SchemaService.APPS_STORE_NAME, TENANT_ROW_KEY, TENANT_DEF_COL_NAME, tenantDefJSON);
         DBService.instance().commit(dbTran);
-    }   // storeTenantDefinition
+        updateCache(tenantDef);
+    }
 
     // Return true if the given userid/password are valid system credentials.
     private boolean isValidSystemCredentials(String userid, String password) {
         return userid.equals(ServerConfig.getInstance().dbuser) &&
                password.equals(ServerConfig.getInstance().dbpassword);
-    }   // isValidSystemCredentials
+    }
     
     // Validate the given user ID and password.
     private boolean isValidTenantUserAccess(String tenantName, String userid, String password, String method) {
         if (isValidSystemCredentials(userid, password)) {
             return true;
         }
-        TenantDefinition tenantDef = searchTenantDef(tenantName);
+        TenantDefinition tenantDef = getTenantDefFromCache(tenantName);
         if (tenantDef != null) {
             UserDefinition userDef = tenantDef.getUser(userid);
             if (userDef != null && userDef.getPassword().equals(password)) {
@@ -365,7 +385,7 @@ public class TenantService extends Service {
             }
         }
         return false;
-    }   // isValidTenantUserAccess
+    }
 
     // Validate user's permission vs. the given access method.
     private boolean isValidUserAccess(UserDefinition userDef, String method) {
@@ -385,11 +405,18 @@ public class TenantService extends Service {
         default:
             throw new RuntimeException("Unexpected 'method': " + method);
         }
-    }   // isValidUserAccess
+    }
 
+    // Add the given new or updated tenant definition to the cache.
+    private void updateCache(TenantDefinition tenantDef) {
+        synchronized (m_tenantMap) {
+            m_tenantMap.put(tenantDef.getName(), tenantDef);
+        }
+    }
+    
     // Get the TenantDefinition for the given tenant. Use the cached tenant map but
     // refresh it if the tenant is unknown. If it's still unknown, return null. 
-    private TenantDefinition searchTenantDef(String tenantName) {
+    private TenantDefinition getTenantDefFromCache(String tenantName) {
         TenantDefinition tenantDef = null;
         synchronized (m_tenantMap) {
             tenantDef = m_tenantMap.get(tenantName);
@@ -399,7 +426,7 @@ public class TenantService extends Service {
             }
         }
         return tenantDef;
-    }   // searchTenantDef
+    }
 
     // Refresh the tenant name-to-definition map.
     private void refreshTenantMap() {
@@ -414,12 +441,19 @@ public class TenantService extends Service {
                     tenantDef = loadTenantDefinition(tenant);
                 }
                 if (tenantDef != null) {
-                    m_tenantMap.put(tenant.getKeyspace(), tenantDef);
+                    m_tenantMap.put(tenantDef.getName(), tenantDef);
                 }
             }
         }
-    }   // refreshTenantMap
+    }
 
+    // Delete the tenant definition with the given name from the cache, if present.
+    private void deleteTenantFromCache(String tenantName) {
+        synchronized (m_tenantMap) {
+            m_tenantMap.remove(tenantName);
+        }
+    }
+    
     // Load a TenantDefinition from the Applications table.
     private TenantDefinition loadTenantDefinition(Tenant tenant) {
         DColumn tenantDefCol =
@@ -438,4 +472,131 @@ public class TenantService extends Service {
         return tenantDef;
     }   // loadTenantDefinition
 
+    // Validate that the given modifications are allowed; throw any transgressions found.
+    private void validateTenantUpdate(TenantDefinition oldTenantDef,
+                                      TenantDefinition newTenantDef) {
+        Utils.require(oldTenantDef.getName().equals(newTenantDef.getName()),
+                      "Tenant name cannot be changed: %s", newTenantDef.getName());
+        // All other changes are allowed
+    }
+
+    // Modify an existing tenant with the changes given in the new tenant definition,
+    // copying preserved options to the new definition and then storing it.
+    private void modifyTenantDefinition(TenantDefinition oldTenantDef,
+                                                    TenantDefinition newTenantDef) {
+        modifyTenantOptions(oldTenantDef, newTenantDef);
+        modifyTenantUsers(oldTenantDef, newTenantDef);
+        storeTenantDefinition(newTenantDef);
+    }
+
+    // Implement option changes, if any, in the new tenant definition.
+    private void modifyTenantOptions(TenantDefinition oldTenantDef,
+                                     TenantDefinition newTenantDef) {
+        Tenant tenant = new Tenant(oldTenantDef.getName());
+        Map<String, String> oldOptions = oldTenantDef.getOptions();
+        Map<String, String> newOptions = newTenantDef.getOptions();
+        if (!sameProperties(oldOptions, newOptions)) {
+            DBService.instance().modifyTenant(tenant, newOptions);
+        }
+    }
+    
+    // Add, delete, or modify users as specified in the new tenant defintions. Copy
+    // passwords from the old to the new tenant definitions.
+    private void modifyTenantUsers(TenantDefinition oldTenantDef,
+                                   TenantDefinition newTenantDef) {
+        deleteObsoleteUsers(oldTenantDef, newTenantDef);
+        addNewUsers(oldTenantDef, newTenantDef);
+        modifyUpdatedUsers(oldTenantDef, newTenantDef);
+    }
+
+    // Delete obsolete users missing in the given new tenant definition.
+    private void deleteObsoleteUsers(TenantDefinition oldTenantDef,
+                                     TenantDefinition newTenantDef) {
+        String tenantName = oldTenantDef.getName();
+        Tenant tenant = new Tenant(tenantName);
+        List<UserDefinition> deletedUsers = new ArrayList<>();
+        for (UserDefinition userDef : oldTenantDef.getUsers().values()) {
+            if (newTenantDef.getUser(userDef.getID()) == null) {
+                String userID = tenantName + "_" + userDef.getID();
+                UserDefinition dbUserDef = userDef.makeCopy(userID);
+                deletedUsers.add(dbUserDef);
+            }
+        }
+        if (deletedUsers.size() > 0) {
+            DBService.instance().deleteUsers(tenant, deletedUsers);
+        }
+    }
+    
+    // Add new users in the given new tenant definition. 
+    private void addNewUsers(TenantDefinition oldTenantDef,
+                             TenantDefinition newTenantDef) {
+        String tenantName = oldTenantDef.getName();
+        Tenant tenant = new Tenant(tenantName);
+        List<UserDefinition> newUsers = new ArrayList<>();
+        for (UserDefinition userDef : newTenantDef.getUsers().values()) {
+            if (oldTenantDef.getUser(userDef.getID()) == null) {
+                Utils.require(!Utils.isEmpty(userDef.getPassword()),
+                              "Password is required for new users; user ID=" + userDef.getID());
+                String userID = tenantName + "_" + userDef.getID();
+                UserDefinition dbUserDef = userDef.makeCopy(userID);
+                newUsers.add(dbUserDef);
+            }
+        }
+        if (newUsers.size() > 0) {
+            DBService.instance().addUsers(tenant, newUsers);
+        }
+    }
+    
+    // Implement modified passwords as defined in the given new tenant definition. For
+    // users merely respecified, copy the old password to the new definition.
+    private void modifyUpdatedUsers(TenantDefinition oldTenantDef,
+                                    TenantDefinition newTenantDef) {
+        String tenantName = oldTenantDef.getName();
+        Tenant tenant = new Tenant(tenantName);
+        List<UserDefinition> modifiedUsers = new ArrayList<>();
+        for (UserDefinition userDef : newTenantDef.getUsers().values()) {
+            UserDefinition oldUserDef = oldTenantDef.getUser(userDef.getID());
+            if (oldUserDef != null) {
+                if (Utils.isEmpty(userDef.getPassword())) {
+                    userDef.setPassword(oldUserDef.getPassword());
+                } else if (!userDef.getPassword().equals(oldUserDef.getPassword())) {
+                    String userID = tenantName + "_" + userDef.getID();
+                    UserDefinition dbUserDef = userDef.makeCopy(userID);
+                    modifiedUsers.add(dbUserDef);
+                }
+            }
+        }
+        if (modifiedUsers.size() > 0) {
+            DBService.instance().modifyUsers(tenant, modifiedUsers);
+        }
+    }
+    
+    private void deleteAllUsers(TenantDefinition tenantDef) {
+        String tenantName = tenantDef.getName();
+        Tenant tenant = new Tenant(tenantName);
+        List<UserDefinition> deletedUsers = new ArrayList<>();
+        for (UserDefinition userDef : tenantDef.getUsers().values()) {
+            String userID = tenantName + "_" + userDef.getID();
+            UserDefinition dbUserDef = userDef.makeCopy(userID);
+            deletedUsers.add(dbUserDef);
+        }
+        if (deletedUsers.size() > 0) {
+            DBService.instance().deleteUsers(tenant, deletedUsers);
+        }
+    }
+    
+    private static boolean sameProperties(Map<String, String> map1, Map<String, String> map2) {
+        for (String key : map1.keySet()) {
+            if (!map2.containsKey(key) || !map1.get(key).equals(map2.get(key))) {
+                return false;
+            }
+        }
+        for (String key : map2.keySet()) {
+            if (!map1.containsKey(key) || !map2.get(key).equals(map1.get(key))) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
 }   // class TenantService

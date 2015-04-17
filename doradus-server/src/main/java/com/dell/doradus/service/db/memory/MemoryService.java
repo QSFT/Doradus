@@ -98,6 +98,8 @@ public class MemoryService extends DBService {
 		}
     }
 
+    @Override public void modifyTenant(Tenant tenant, Map<String, String> options) {}
+    
     @Override public void dropTenant(Tenant tenant) {
     	synchronized (m_sync) {
             String keyspace = tenant.getKeyspace();
@@ -107,6 +109,14 @@ public class MemoryService extends DBService {
     }
     
     @Override public void addUsers(Tenant tenant, Iterable<UserDefinition> users) {
+        throw new RuntimeException("This method is not supported for the Memory API");
+    }
+    
+    @Override public void modifyUsers(Tenant tenant, Iterable<UserDefinition> users) {
+        throw new RuntimeException("This method is not supported for the Memory API");
+    }
+    
+    @Override public void deleteUsers(Tenant tenant, Iterable<UserDefinition> users) {
         throw new RuntimeException("This method is not supported for the Memory API");
     }
     

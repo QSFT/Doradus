@@ -96,6 +96,11 @@ public class ThriftService extends DBService {
     }   // createTenant
 
     @Override
+    public void modifyTenant(Tenant tenant, Map<String, String> options) {
+        throw new RuntimeException("This command is not supported for the Thrift API");
+    }
+
+    @Override
     public void dropTenant(Tenant tenant) {
         checkState();
         // Use a temporary, no-keyspace session
@@ -110,6 +115,16 @@ public class ThriftService extends DBService {
     
     @Override
     public void addUsers(Tenant tenant, Iterable<UserDefinition> users) {
+        throw new RuntimeException("This method is not supported for the Thrift API");
+    }
+    
+    @Override
+    public void modifyUsers(Tenant tenant, Iterable<UserDefinition> users) {
+        throw new RuntimeException("This method is not supported for the Thrift API");
+    }
+    
+    @Override
+    public void deleteUsers(Tenant tenant, Iterable<UserDefinition> users) {
         throw new RuntimeException("This method is not supported for the Thrift API");
     }
     

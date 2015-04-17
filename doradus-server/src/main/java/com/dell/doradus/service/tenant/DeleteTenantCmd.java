@@ -18,25 +18,16 @@ package com.dell.doradus.service.tenant;
 
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.RESTResponse;
-import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.rest.RESTCallback;
 
 /**
- * Handles the system command: DELETE /_tenants/{tenant}. The user must be authorized as
- * a system user. 
+ * Handles the system command: DELETE /_tenants/{tenant}.
  */
 public class DeleteTenantCmd extends RESTCallback {
 
     @Override
     public RESTResponse invoke() {
-        Utils.require(ServerConfig.getInstance().multitenant_mode,
-                      "This command is only allowed in multi-tenant mode; see 'multitenant_mode' parameter");
         String tenantParam = m_request.getVariableDecoded("tenant");
-        assert tenantParam != null;
-        
-        // TODO: Ensure the user is a system user.
-        
         TenantService.instance().deleteTenant(tenantParam);
         return new RESTResponse(HttpCode.OK);
     }
