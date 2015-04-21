@@ -1,0 +1,87 @@
+<TEST>
+    <!-- ****************************************************************** -->
+    <!-- CR 107,761: NullPointerException appear when "Term Clause" is used -->
+    <!-- within Olap Service.                                               -->
+    <!-- Reference.  OLAP\Scalar Contains Clauses\                          -->
+    <!-- ****************************************************************** -->
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+    <POST path="_applications">
+    <XML>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+                <option name="StorageService">OLAPService</option>
+            </options>
+            <tables>
+                <table name="Table">
+                    <fields>
+                        <field name="SV" type="TEXT" collection="false" />
+                        <field name="MV" type="TEXT" collection="true" />
+                    </fields>
+                </table>
+            </tables>
+        </application>
+    </XML>
+    </POST>
+
+    <POST path="Application/shard">
+    <XML>
+        <batch>
+        <docs>
+            <doc _table="Table" _ID="1001" >
+                <field name="MV">
+                    <add>
+                        <value>John</value>
+                        <value>Smith</value>
+                    </add>
+                </field>
+                <field name="SV">12226</field>
+            </doc>
+            <doc _table="Table" _ID="1002" >
+                <field name="MV">
+                    <add>
+                        <value>A</value>
+                        <value>B</value>
+                    </add>
+                </field>
+                <field name="SV">John</field>
+            </doc>
+            <doc _table="Table" _ID="1003" >
+                <field name="MV">
+                    <add>
+                        <value>AA</value>
+                        <value>BB</value>
+                    </add>
+                </field>
+                <field name="SV">F</field>
+            </doc>
+        </docs>
+        </batch>
+    </XML>
+    </POST>
+
+    <POST path="Application/_shards/shard?expire-date=2015" />
+
+    <enable-output/>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test table content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="*" shards="shard"/>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Scalar "Contains" Clauses ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+
+    <echo>~~~~~~~~~~~~~~~</echo>
+    <echo>~ Term Clause ~</echo>
+    <echo>~~~~~~~~~~~~~~~</echo>
+
+    <QUERY path="Application/Table" q="MV:John" shards="shard"/>
+    <QUERY path="Application/Table" q="SV:John" shards="shard"/>
+
+<DELETE path="_applications/Application/ApplicationKey"/>
+<DISCONNECT/>
+</TEST>

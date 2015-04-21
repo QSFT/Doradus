@@ -1,0 +1,71 @@
+Object table content
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="N">3</field>
+                <field name="_ID">0001</field>
+            </doc>
+            <doc>
+                <field name="N">4</field>
+                <field name="_ID">0002</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=AVERAGE(N)
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="AVERAGE(N)"/>
+        <totalobjects>2</totalobjects>
+        <value>3.5</value>
+    </results>
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+Olap table content
+~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="N">3</field>
+                <field name="_ID">0001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="N">4</field>
+                <field name="_ID">0002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=AVERAGE(N)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="AVERAGE(N)" query="*"/>
+        <totalobjects>2</totalobjects>
+        <value>3.500</value>
+    </results>
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

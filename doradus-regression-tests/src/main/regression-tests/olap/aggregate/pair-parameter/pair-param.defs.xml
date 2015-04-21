@@ -1,0 +1,151 @@
+<TEST>
+
+<DEFINE name="schema.xml">
+<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+        <option name="StorageService">OLAPService</option>
+    </options>
+    <tables>
+        <table name="Messages">
+            <fields>
+                <field name="Participants" type="LINK" table="Participants" inverse="Sender1" />
+                <field name="Message" type="TEXT"/>
+            </fields>
+        </table>
+        <table name="Participants">
+            <fields>
+                <field name="IsSender" type="BOOLEAN"/>
+                <field name="Department" type="TEXT"/>
+                <field name="Office" type="TEXT"/>
+            </fields>
+        </table>
+    </tables>
+</application>
+</DEFINE>
+
+<DEFINE name="data.xml">
+      <batch>
+        <docs>
+          <doc _table="Messages" _ID="1001" >
+            <field name="Participants">
+              <add>
+                <value>2001</value>
+                <value>2002</value>
+              </add>
+            </field>
+            <field name="Message">Message 1</field>
+          </doc>
+          <doc _table="Messages" _ID="1002" >
+            <field name="Participants">
+              <add>
+                <value>2003</value>
+                <value>2004</value>
+              </add>
+            </field>
+            <field name="Message">Message 2</field>
+          </doc>
+          <doc _table="Messages" _ID="1003" >
+            <field name="Participants">
+              <add>
+                <value>2005</value>
+                <value>2006</value>
+              </add>
+            </field>
+            <field name="Message">Message 3</field>
+          </doc>
+          <doc _table="Messages" _ID="1004" >
+            <field name="Participants">
+              <add>
+                <value>2007</value>
+                <value>2008</value>
+              </add>
+            </field>
+            <field name="Message">Message 4</field>
+          </doc>
+          <doc _table="Messages" _ID="1005" >
+            <field name="Participants">
+              <add>
+                <value>2009</value>
+                <value>2010</value>
+              </add>
+            </field>
+            <field name="Message">Message 5</field>
+          </doc>
+          <doc _table="Messages" _ID="1006" >
+            <field name="Participants">
+              <add>
+                <value>2011</value>
+                <value>2012</value>
+              </add>
+            </field>
+            <field name="Message">Message 6</field>
+          </doc>
+          <doc _table="Participants" _ID="2001" >
+            <field name="IsSender">True</field>
+            <field name="Department">Support</field>
+            <field name="Office">Kanata</field>
+          </doc>
+          <doc _table="Participants" _ID="2002" >
+            <field name="IsSender">False</field>
+            <field name="Department">Support</field>
+            <field name="Office">Kanata</field>
+          </doc>
+          <doc _table="Participants" _ID="2003" >
+            <field name="IsSender">True</field>
+            <field name="Department">Support</field>
+            <field name="Office">Ohio</field>
+          </doc>
+          <doc _table="Participants" _ID="2004" >
+            <field name="IsSender">False</field>
+            <field name="Department">CEO</field>
+            <field name="Office">Aliso</field>
+          </doc>
+          <doc _table="Participants" _ID="2005" >
+            <field name="IsSender">True</field>
+            <field name="Department">CEO</field>
+            <field name="Office">Kanata</field>
+          </doc>
+          <doc _table="Participants" _ID="2006" >
+            <field name="IsSender">False</field>
+            <field name="Department">STO</field>
+            <field name="Office">Kanata</field>
+          </doc>
+          <doc _table="Participants" _ID="2007" >
+            <field name="IsSender">True</field>
+            <field name="Department">Support</field>
+            <field name="Office">Kanata</field>
+          </doc>
+          <doc _table="Participants" _ID="2008" >
+            <field name="IsSender">False</field>
+            <field name="Department">Support</field>
+            <field name="Office">Kanata</field>
+          </doc>
+          <doc _table="Participants" _ID="2009" >
+            <field name="IsSender">True</field>
+            <field name="Department">Support</field>
+            <field name="Office">Ohio</field>
+          </doc>
+          <doc _table="Participants" _ID="2010" >
+            <field name="IsSender">False</field>
+            <field name="Department">CEO</field>
+            <field name="Office">Aliso</field>
+          </doc>
+          <doc _table="Participants" _ID="2011" >
+            <field name="IsSender">False</field>
+            <field name="Department">CEO</field>
+            <field name="Office">Kanata</field>
+          </doc>
+          <doc _table="Participants" _ID="2012" >
+            <field name="IsSender">False</field>
+            <field name="Department">STO</field>
+            <field name="Office">Kanata</field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+
+<JSON-FROM-XML name ="schema.json" value="${schema.xml}"/>
+<JSON-FROM-XML name ="data.json" value="${data.xml}"/>
+
+</TEST>

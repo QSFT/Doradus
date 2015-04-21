@@ -1,0 +1,61 @@
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<IMPORT>link-paths-count.defs.xml</IMPORT>
+<DEFINE name="response.format" value="xml|json"/>
+<enable-output/>
+
+<FOR index="i" from="1" to="2">
+    <IF.EQ arg1="${i}" arg2="1">
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo>~ XML format ~</echo>
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" xml="${schema.xml}"/>
+        <POST path="Application/MessageParticipant" xml="${data1.xml}"/>
+        <POST path="Application/Message" xml="${data2.xml}"/>
+        <POST path="Application/Department" xml="${data3.xml}"/>
+        <enable-output/>
+    </IF.EQ>
+    <IF.EQ arg1="${i}" arg2="2">
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo>~ JSON format ~</echo>
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" json="${schema.json}"/>
+        <POST path="Application/MessageParticipant" json="${data1.json}"/>
+        <POST path="Application/Message" json="${data2.json}"/>
+        <POST path="Application/Department" json="${data3.json}"/>
+        <enable-output/>
+    </IF.EQ>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Message" q="*" f="_all" />
+    <QUERY path="Application/MessageParticipant" q="*" f="_all" />
+    <QUERY path="Application/Department" q="*" f="_all" />
+        
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test for Link Paths - COUNT ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Message" q="COUNT(Participants.Department)&lt;0" />
+    <QUERY path="Application/Message" q="COUNT(Participants.Department.DEP)>0" />
+    <QUERY path="Application/Message" q="COUNT(Participants.Department.DEP)>1" />
+    <QUERY path="Application/Message" q="COUNT(Participants.Department)>1" />
+    <QUERY path="Application/Message" q="COUNT(Participants.Department)&lt;4" />
+
+    <DELETE path="_applications/Application/ApplicationKey"/>
+</FOR>
+
+<DISCONNECT />
+</TEST>

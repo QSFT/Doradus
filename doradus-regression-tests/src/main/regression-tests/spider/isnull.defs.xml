@@ -1,0 +1,274 @@
+<TEST>
+
+<DEFINE name="schema.xml">
+<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+	<option name="AutoTables">false</option>
+	<option name="StorageService">SpiderService</option>
+    </options>
+    <tables>
+        <table name="Disk">
+            <fields>
+                <field type="LINK" collection="true" inverse="Disk" table="File" name="Location"/>
+                <field type="TEXT" name="DiskName" collection="false"/>
+            </fields>
+        </table>
+        <table name="Folder">
+            <fields>
+                <field type="LINK" collection="true" inverse="ParentFolder" table="File" name="Files"/>
+                <field type="TEXT" name="FolderName" collection="false"/>
+            </fields>
+        </table>
+        <table name="File">
+            <fields>
+                <field type="LINK" collection="true" inverse="Location" table="Disk" name="Disk"/>
+                <field type="LINK" collection="true" inverse="Files" table="Folder" name="ParentFolder"/>
+                <field type="TEXT" name="FileName" collection="false"/>
+                <field type="INTEGER" name="FileSize"/>
+                <field type="BOOLEAN" name="IsFileTested"/>
+                <field type="TEXT" name="FoldersList" collection="true"/>
+                <field type="TEXT" name="FolderName" collection="false"/>
+                <field type="TIMESTAMP" name="FileCreateDate"/>
+                <field type="FLOAT" name="Float"/>
+                <field type="DOUBLE" name="Double"/>
+            </fields>
+        </table>
+    </tables>
+</application>
+</DEFINE>
+
+<DEFINE name="data1.xml">
+      <batch>
+        <docs>
+          <doc _ID="3001" >
+            <field name="Location">
+              <add>
+                <value>2001</value>
+                <value>2004</value>
+              </add>
+	    </field>
+            <field name="DiskName">Disk_A</field>
+          </doc>
+          <doc _ID="3002" >
+            <field name="Location">
+              <add>
+                <value>2002</value>
+                <value>2006</value>
+              </add>
+	    </field>
+            <field name="DiskName">Disk_B</field>
+          </doc>
+          <doc _ID="3003" >
+            <field name="Location">
+              <add>
+                <value>2003</value>
+                <value>2005</value>
+              </add>
+	    </field>
+            <field name="DiskName">Disk_C</field>
+          </doc>
+          <doc _ID="3004" >
+            <field name="DiskName">Disk_D</field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+<DEFINE name="data2.xml">
+      <batch>
+        <docs>
+          <doc _ID="1001" >
+            <field name="Files">
+              <add>
+                <value>2001</value>
+                <value>2004</value>
+              </add>
+	    </field>
+            <field name="FolderName">Folder_A</field>
+          </doc>
+          <doc _ID="1002" >
+            <field name="Files">
+              <add>
+                <value>2002</value>
+                <value>2006</value>
+              </add>
+	    </field>
+            <field name="FolderName">Folder_B</field>
+          </doc>
+          <doc _ID="1003" >
+            <field name="Files">
+              <add>
+                <value>2003</value>
+                <value>2005</value>
+              </add>
+	    </field>
+            <field name="FolderName">Folder_C</field>
+          </doc>
+          <doc _ID="1004" >
+            <field name="FolderName">Folder_D</field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+<DEFINE name="data3.xml">
+      <batch>
+        <docs>
+          <doc _ID="2001" >
+            <field name="ParentFolder">
+              <add>
+                <value>1001</value>
+              </add>
+	    </field>
+            <field name="Disk">
+              <add>
+                <value>3001</value>
+              </add>
+	    </field>
+            <field name="FileName">File_1</field>
+            <field name="FoldersList">
+                <add>
+                    <value>WINDOWS 1</value>
+                    <value>PROGRAM FILES 1</value>
+                    <value>USERS 1</value>
+                </add>
+            </field>
+            <field name="FileCreateDate">2013-11-01 01:11:10</field>
+          </doc>
+          <doc _ID="2002" >
+            <field name="ParentFolder">
+              <add>
+                <value>1002</value>
+              </add>
+	    </field>
+            <field name="Disk">
+              <add>
+                <value>3002</value>
+              </add>
+	    </field>
+            <field name="FileName">File_2</field>
+            <field name="FolderName">Folder</field>
+            <field name="FileSize">2000002</field>
+            <field name="IsFileTested">TRUE</field>
+            <field name="FileCreateDate">2013-11-02 02:22:20</field>
+            <field name="Float">1.18E-38</field>
+            <field name="Double">2.23E-308</field>
+          </doc>
+          <doc _ID="2003" >
+            <field name="ParentFolder">
+              <add>
+                <value>1003</value>
+              </add>
+	    </field>
+            <field name="Disk">
+              <add>
+                <value>3003</value>
+              </add>
+	    </field>
+            <field name="FileName">File_3</field>
+            <field name="FolderName">Folder 3</field>
+            <field name="FileSize">2000003</field>
+            <field name="FoldersList">
+                <add>
+                    <value>WINDOWS 3</value>
+                    <value>PROGRAM FILES 3</value>
+                    <value>USERS 3</value>
+                </add>
+            </field>
+            <field name="FileCreateDate">2013-11-03 03:33:30</field>
+            <field name="Float">-1.18E-38</field>
+            <field name="Double">-2.23E-308</field>
+          </doc>
+          <doc _ID="2004" >
+            <field name="ParentFolder">
+              <add>
+                <value>1001</value>
+              </add>
+	    </field>
+            <field name="Disk">
+              <add>
+                <value>3001</value>
+              </add>
+	    </field>
+            <field name="FileName">File_4</field>
+            <field name="FileSize">2000003</field>
+            <field name="IsFileTested">FALSE</field>
+            <field name="FoldersList">
+                <add>
+                    <value>WINDOWS 4</value>
+                    <value>PROGRAM FILES 4</value>
+                    <value>USERS 4</value>
+                </add>
+            </field>
+            <field name="FileCreateDate">2013-11-04 04:44:40</field>
+            <field name="Float">3.39E+38</field>
+            <field name="Double">1.79E+308</field>
+          </doc>
+          <doc _ID="2005" >
+            <field name="ParentFolder">
+              <add>
+                <value>1003</value>
+              </add>
+	    </field>
+            <field name="Disk">
+              <add>
+                <value>3003</value>
+              </add>
+	    </field>
+            <field name="FileName">File_5</field>
+            <field name="FolderName">Folder 5</field>
+            <field name="FileSize">2000005</field>
+            <field name="FileCreateDate">2013-11-05 05:55:50</field>
+            <field name="Float">-3.39E+38</field>
+            <field name="Double">-1.79E+308</field>
+          </doc>
+          <doc _ID="2006" >
+            <field name="ParentFolder">
+              <add>
+                <value>1002</value>
+              </add>
+	    </field>
+            <field name="Disk">
+              <add>
+                <value>3002</value>
+              </add>
+	    </field>
+            <field name="FileName">File_6</field>
+            <field name="FileSize">2000006</field>
+            <field name="IsFileTested">TRUE</field>
+            <field name="FoldersList">
+                <add>
+                    <value>WINDOWS 6</value>
+                    <value>PROGRAM FILES 6</value>
+                    <value>USERS 6</value>
+                </add>
+            </field>
+            <field name="FileCreateDate">2013-11-06 06:46:16</field>
+          </doc>
+          <doc _ID="2007" >
+            <field name="FileName">File_7</field>
+            <field name="FileSize">2000007</field>
+            <field name="IsFileTested">FALSE</field>
+            <field name="FoldersList">
+                <add>
+                    <value>WINDOWS 7</value>
+                    <value>PROGRAM FILES 7</value>
+                    <value>USERS 7</value>
+                </add>
+            </field>
+            <field name="Float">-3000000000</field>
+            <field name="Double">-1000000000</field>
+          </doc>
+          <doc _ID="2008" >
+            <field name="FileName">File_8</field>
+            <field name="FileCreateDate">2013-11-08 08:48:18</field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+
+<JSON-FROM-XML name ="schema.json" value="${schema.xml}"/>
+<JSON-FROM-XML name ="data1.json" value="${data1.xml}"/>
+<JSON-FROM-XML name ="data2.json" value="${data2.xml}"/>
+<JSON-FROM-XML name ="data3.json" value="${data3.xml}"/>
+
+</TEST>

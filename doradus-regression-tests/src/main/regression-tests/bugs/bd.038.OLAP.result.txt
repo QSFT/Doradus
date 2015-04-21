@@ -1,0 +1,32 @@
+*** Request
+    GET /Application/Message/_query?q=COUNT(Participants) > 1&f=Participants.WHERE(Department.DEP:Logistic AND Text=Logistic)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2003</field>
+                <field name="_shard">shard</field>
+                <field name="Participants.WHERE((Any(Department).WHERE(DEP:Logistic)) AND (Text=Logistic))">
+                    <doc>
+                        <field name="_ID">1003</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">1007</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="_ID">2006</field>
+                <field name="_shard">shard</field>
+                <field name="Participants.WHERE((Any(Department).WHERE(DEP:Logistic)) AND (Text=Logistic))"/>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

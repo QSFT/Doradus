@@ -1,0 +1,121 @@
+<TEST>
+
+<DEFINE name="schema.xml">
+<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+        <option name="StorageService">OLAPService</option>
+    </options>
+    <tables>
+        <table name="Table">
+            <fields>
+                <field name="IsMajor" type="BOOLEAN"/>
+                <field name="SendDate" type="TIMESTAMP"/>
+                <field name="Location">
+	            <fields>
+			<field name="Department" type="Text" />
+			<field name="Office" type="Text" />
+			<field name="Rooms" type="Text" collection="true" />
+			<field name="Size" type="INTEGER" />
+			<field name="Float" type="FLOAT" />
+			<field name="Double" type="DOUBLE" />
+        	    </fields>
+                </field>
+                <field name="Manager">
+	            <fields>
+			<field name="FirstName" type="Text" />
+			<field name="LastName" type="Text" />
+        	    </fields>
+                </field>
+            </fields>
+        </table>
+    </tables>
+</application>
+</DEFINE>
+
+<DEFINE name="data.xml">
+<batch>
+  <docs>
+    <doc _table="Table" _ID="1001" >
+	<field name="Location">
+	<field name="IsMajor">false</field>
+	<field name="SendDate">2013-11-02 02:22:20</field>
+	    <fields>
+		<field name="Department">CTO</field>
+		<field name="Office">Saint-Petersburg</field>
+		<field name="Rooms">
+		<add>
+		  <value>543</value>
+		  <value>544</value>
+		</add>
+		</field>
+		<field name="Size">100</field>
+	        <field name="Float">1.8E-2</field>
+        	<field name="Double">2.2E-2</field>
+            </fields>
+        </field>
+        <field name="Manager">
+	    <fields>
+		<field name="FirstName">Egor</field>
+		<field name="LastName">Amosov</field>
+            </fields>
+        </field>
+    </doc>
+    <doc _table="Table" _ID="1002" >
+	<field name="SendDate">2013-11-02 03:22:20</field>
+	<field name="IsMajor">true</field>
+	<field name="Location">
+	    <fields>
+		<field name="Department">CTO</field>
+		<field name="Office">Saint-Petersburg</field>
+		<field name="Rooms">
+		<add>
+		  <value>222</value>
+		  <value>223</value>
+		</add>
+		</field>
+		<field name="Size">1000</field>
+                <field name="Float">-1.8E-2</field>
+                <field name="Double">-2.3E-2</field>
+            </fields>
+        </field>
+        <field name="Manager">
+	    <fields>
+		<field name="FirstName">Terr</field>
+		<field name="LastName">Petrushkin</field>
+            </fields>
+        </field>
+    </doc>
+    <doc _table="Table" _ID="1003" >
+	<field name="IsMajor">true</field>
+	<field name="SendDate">2013-11-02 04:22:20</field>
+	<field name="Location">
+	    <fields>
+		<field name="Department">RD</field>
+		<field name="Office">Moscov</field>
+		<field name="Rooms">
+		<add>
+		  <value>122</value>
+		  <value>123</value>
+		</add>
+		</field>
+		<field name="Size">10000</field>
+                <field name="Float">3.39E+3</field>
+                <field name="Double">1.79E+3</field>
+            </fields>
+        </field>
+        <field name="Manager">
+	    <fields>
+		<field name="FirstName">Alla</field>
+		<field name="LastName">Mikulina</field>
+            </fields>
+        </field>
+    </doc>
+  </docs>
+</batch>
+</DEFINE>
+
+<JSON-FROM-XML name ="schema.json" value="${schema.xml}"/>
+<JSON-FROM-XML name ="data.json" value="${data.xml}"/>
+
+</TEST>

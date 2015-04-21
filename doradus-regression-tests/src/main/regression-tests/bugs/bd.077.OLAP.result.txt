@@ -1,0 +1,88 @@
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Float">
+                    <value>200000.0</value>
+                    <value>300000.0</value>
+                </field>
+                <field name="_ID">2001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Float">
+                    <value>0.0</value>
+                    <value>400000.0</value>
+                    <value>500000.0</value>
+                </field>
+                <field name="_ID">2002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Float":[
+                      "200000.0",
+                      "300000.0"
+                   ],
+                   "_ID":"2001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Float":[
+                      "0.0",
+                      "400000.0",
+                      "500000.0"
+                   ],
+                   "_ID":"2002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(Float)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="COUNT(Float)" query="*"/>
+        <totalobjects>2</totalobjects>
+        <value>5</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(Float)",
+             "query":"*"
+          },
+          "totalobjects":"2",
+          "value":"5"
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

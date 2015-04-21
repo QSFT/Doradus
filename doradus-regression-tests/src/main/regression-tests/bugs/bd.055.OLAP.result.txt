@@ -1,0 +1,176 @@
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="Double">2.23E-308</field>
+                <field name="Float">1.179999945774631E-38</field>
+                <field name="_ID">1000</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Double">-2.23E-308</field>
+                <field name="Float">-1.179999945774631E-38</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Double">1.79E308</field>
+                <field name="Float">3.38999991291338E38</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Double">-1.79E308</field>
+                <field name="Float">-3.38999991291338E38</field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+
+~~~~~~~~~
+~ FLOAT ~
+~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=Float.INCLUDE(-1.18E-38)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Float.INCLUDE(-1.18E-38)" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>1</summary>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Float">-1.18E-38</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=Float.INCLUDE(1.18E-38)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Float.INCLUDE(1.18E-38)" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>1</summary>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Float">1.18E-38</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=Float.INCLUDE(-3.39E+38)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Float.INCLUDE(-3.39E+38)" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>1</summary>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Float">-3.39E+38</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=Float.INCLUDE(3.39E+38)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Float.INCLUDE(3.39E+38)" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>1</summary>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Float">3.39E+38</field>
+            </group>
+        </groups>
+    </results>
+
+~~~~~~~~~~
+~ DOUBLE ~
+~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=Double.INCLUDE(-2.23E-308)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Double.INCLUDE(-2.23E-308)" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>1</summary>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Double">-2.23E-308</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=Double.INCLUDE(2.23E-308)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Double.INCLUDE(2.23E-308)" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>1</summary>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Double">2.23E-308</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=Double.INCLUDE(-1.79E+308)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Double.INCLUDE(-1.79E+308)" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>1</summary>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Double">-1.79E+308</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=Double.INCLUDE(1.79E+308)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Double.INCLUDE(1.79E+308)" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>1</summary>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Double">1.79E+308</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

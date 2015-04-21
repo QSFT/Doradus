@@ -1,0 +1,68 @@
+<!--
+Doradus Data Model and Query Language -v2.1
+4.8.2 Phrase Clauses
+-->
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<IMPORT>phrase.defs.xml</IMPORT>
+<DEFINE name="response.format" value="xml|json"/>
+<enable-output/>
+
+<FOR index="i" from="1" to="2">
+    <IF.EQ arg1="${i}" arg2="1">
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo>~ XML format ~</echo>
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" xml="${schema.xml}"/>
+        <POST path="Application/shard" xml="${data.xml}"/>
+        <enable-output/>
+        <POST path="Application/_shards/shard" />
+    </IF.EQ>
+    <IF.EQ arg1="${i}" arg2="2">
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo>~ JSON format ~</echo>
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" json="${schema.json}"/>
+        <POST path="Application/shard" json="${data.json}"/>
+        <enable-output/>
+        <POST path="Application/_shards/shard" />
+    </IF.EQ>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/SV" q="*" f="_all" shards="shard"/>
+    <QUERY path="Application/MV" q="*" f="_all" shards="shard"/>
+        
+    <echo>~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Phrase Clauses ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~~~~~~</echo>
+    <echo>~ SV ~</echo>
+    <echo>~~~~~~</echo>
+    <QUERY path="Application/SV" q="FirstName:'Lop*ny Terr'" shards="shard"/>
+    <QUERY path="Application/SV" q="FirstName:'Terr Lop*ny'" shards="shard"/>
+
+    <echo>~~~~~~</echo>
+    <echo>~ MV ~</echo>
+    <echo>~~~~~~</echo>
+    <QUERY path="Application/MV" q="NameList:'Lop*ny Terr'" shards="shard"/>
+    <QUERY path="Application/MV" q="NameList:'Terr Lop*ny'" shards="shard"/>
+
+    <DELETE path="_applications/Application/ApplicationKey"/>
+</FOR>
+
+<DISCONNECT />
+</TEST>

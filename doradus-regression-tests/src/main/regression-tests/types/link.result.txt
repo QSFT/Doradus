@@ -1,0 +1,3506 @@
+Create application
+~~~~~~~~~~~~~~~~~~
+Table "People"
+~~~~~~~~~~~~~~
+*** Request
+    GET /Application/People/_query?q=*&f=Name,Wife,Spouse
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Name">Joshua</field>
+                <field name="_ID">1001</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+                <field name="Wife">
+                    <doc>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Neal</field>
+                <field name="_ID">1002</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+                <field name="Wife">
+                    <doc>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Jeffrey</field>
+                <field name="_ID">1003</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+                <field name="Wife">
+                    <doc>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Mary</field>
+                <field name="_ID">1004</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+                <field name="Wife"/>
+            </doc>
+            <doc>
+                <field name="Name">Angela</field>
+                <field name="_ID">1005</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+                <field name="Wife"/>
+            </doc>
+            <doc>
+                <field name="Name">Sara</field>
+                <field name="_ID">1006</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+                <field name="Wife"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Name":"Joshua",
+                   "_ID":"1001",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "_ID":"1006"
+                         }
+                      }
+                   ],
+                   "Wife":[
+                      {
+                         "doc":{
+                            "_ID":"1006"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Neal",
+                   "_ID":"1002",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "_ID":"1004"
+                         }
+                      }
+                   ],
+                   "Wife":[
+                      {
+                         "doc":{
+                            "_ID":"1004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Jeffrey",
+                   "_ID":"1003",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "_ID":"1005"
+                         }
+                      }
+                   ],
+                   "Wife":[
+                      {
+                         "doc":{
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Mary",
+                   "_ID":"1004",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "_ID":"1002"
+                         }
+                      }
+                   ],
+                   "Wife":[]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Angela",
+                   "_ID":"1005",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "_ID":"1003"
+                         }
+                      }
+                   ],
+                   "Wife":[]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Sara",
+                   "_ID":"1006",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "_ID":"1001"
+                         }
+                      }
+                   ],
+                   "Wife":[]
+                }
+             }
+          ]
+       }
+    }
+
+Table "Publishers"
+~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Publishers/_query?q=*&f=Name,Books
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Name">Dinosaur Brothers Press</field>
+                <field name="_ID">2001</field>
+                <field name="Books">
+                    <doc>
+                        <field name="_ID">3001</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">3002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Cats ans Dogs Press</field>
+                <field name="_ID">2002</field>
+                <field name="Books">
+                    <doc>
+                        <field name="_ID">3003</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">3006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Just A Publisher</field>
+                <field name="_ID">2003</field>
+                <field name="Books">
+                    <doc>
+                        <field name="_ID">3004</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">3005</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Name":"Dinosaur Brothers Press",
+                   "_ID":"2001",
+                   "Books":[
+                      {
+                         "doc":{
+                            "_ID":"3001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"3002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Cats ans Dogs Press",
+                   "_ID":"2002",
+                   "Books":[
+                      {
+                         "doc":{
+                            "_ID":"3003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"3006"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Just A Publisher",
+                   "_ID":"2003",
+                   "Books":[
+                      {
+                         "doc":{
+                            "_ID":"3004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"3005"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+Table "Books"
+~~~~~~~~~~~~~
+*** Request
+    GET /Application/Books/_query?q=*&f=Title,Author,PublishedBy
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Title">All About Everything</field>
+                <field name="_ID">3001</field>
+                <field name="Author">
+                    <doc>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+                <field name="PublishedBy">
+                    <doc>
+                        <field name="_ID">2001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">All About Something</field>
+                <field name="_ID">3002</field>
+                <field name="Author">
+                    <doc>
+                        <field name="_ID">1001</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+                <field name="PublishedBy">
+                    <doc>
+                        <field name="_ID">2001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">All About Nothing</field>
+                <field name="_ID">3003</field>
+                <field name="Author">
+                    <doc>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+                <field name="PublishedBy">
+                    <doc>
+                        <field name="_ID">2002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Everything</field>
+                <field name="_ID">3004</field>
+                <field name="Author">
+                    <doc>
+                        <field name="_ID">1004</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+                <field name="PublishedBy">
+                    <doc>
+                        <field name="_ID">2003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Something</field>
+                <field name="_ID">3005</field>
+                <field name="Author"/>
+                <field name="PublishedBy">
+                    <doc>
+                        <field name="_ID">2003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Nothing</field>
+                <field name="_ID">3006</field>
+                <field name="Author">
+                    <doc>
+                        <field name="_ID">1003</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+                <field name="PublishedBy">
+                    <doc>
+                        <field name="_ID">2002</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Title":"All About Everything",
+                   "_ID":"3001",
+                   "Author":[
+                      {
+                         "doc":{
+                            "_ID":"1001"
+                         }
+                      }
+                   ],
+                   "PublishedBy":[
+                      {
+                         "doc":{
+                            "_ID":"2001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"All About Something",
+                   "_ID":"3002",
+                   "Author":[
+                      {
+                         "doc":{
+                            "_ID":"1001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"1002"
+                         }
+                      }
+                   ],
+                   "PublishedBy":[
+                      {
+                         "doc":{
+                            "_ID":"2001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"All About Nothing",
+                   "_ID":"3003",
+                   "Author":[
+                      {
+                         "doc":{
+                            "_ID":"1003"
+                         }
+                      }
+                   ],
+                   "PublishedBy":[
+                      {
+                         "doc":{
+                            "_ID":"2002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Nothing About Everything",
+                   "_ID":"3004",
+                   "Author":[
+                      {
+                         "doc":{
+                            "_ID":"1004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"1005"
+                         }
+                      }
+                   ],
+                   "PublishedBy":[
+                      {
+                         "doc":{
+                            "_ID":"2003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Nothing About Something",
+                   "_ID":"3005",
+                   "Author":[],
+                   "PublishedBy":[
+                      {
+                         "doc":{
+                            "_ID":"2003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Nothing About Nothing",
+                   "_ID":"3006",
+                   "Author":[
+                      {
+                         "doc":{
+                            "_ID":"1003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"1005"
+                         }
+                      }
+                   ],
+                   "PublishedBy":[
+                      {
+                         "doc":{
+                            "_ID":"2002"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+Reflexive Links: Wives and Husbands"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/People/_query?q=*&f=Name,Wife.Name,Husband.Name
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Name">Joshua</field>
+                <field name="_ID">1001</field>
+                <field name="Husband"/>
+                <field name="Wife">
+                    <doc>
+                        <field name="Name">Sara</field>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Neal</field>
+                <field name="_ID">1002</field>
+                <field name="Husband"/>
+                <field name="Wife">
+                    <doc>
+                        <field name="Name">Mary</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Jeffrey</field>
+                <field name="_ID">1003</field>
+                <field name="Husband"/>
+                <field name="Wife">
+                    <doc>
+                        <field name="Name">Angela</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Mary</field>
+                <field name="_ID">1004</field>
+                <field name="Husband">
+                    <doc>
+                        <field name="Name">Neal</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+                <field name="Wife"/>
+            </doc>
+            <doc>
+                <field name="Name">Angela</field>
+                <field name="_ID">1005</field>
+                <field name="Husband">
+                    <doc>
+                        <field name="Name">Jeffrey</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+                <field name="Wife"/>
+            </doc>
+            <doc>
+                <field name="Name">Sara</field>
+                <field name="_ID">1006</field>
+                <field name="Husband">
+                    <doc>
+                        <field name="Name">Joshua</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+                <field name="Wife"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Name":"Joshua",
+                   "_ID":"1001",
+                   "Husband":[],
+                   "Wife":[
+                      {
+                         "doc":{
+                            "Name":"Sara",
+                            "_ID":"1006"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Neal",
+                   "_ID":"1002",
+                   "Husband":[],
+                   "Wife":[
+                      {
+                         "doc":{
+                            "Name":"Mary",
+                            "_ID":"1004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Jeffrey",
+                   "_ID":"1003",
+                   "Husband":[],
+                   "Wife":[
+                      {
+                         "doc":{
+                            "Name":"Angela",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Mary",
+                   "_ID":"1004",
+                   "Husband":[
+                      {
+                         "doc":{
+                            "Name":"Neal",
+                            "_ID":"1002"
+                         }
+                      }
+                   ],
+                   "Wife":[]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Angela",
+                   "_ID":"1005",
+                   "Husband":[
+                      {
+                         "doc":{
+                            "Name":"Jeffrey",
+                            "_ID":"1003"
+                         }
+                      }
+                   ],
+                   "Wife":[]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Sara",
+                   "_ID":"1006",
+                   "Husband":[
+                      {
+                         "doc":{
+                            "Name":"Joshua",
+                            "_ID":"1001"
+                         }
+                      }
+                   ],
+                   "Wife":[]
+                }
+             }
+          ]
+       }
+    }
+
+Self-Reflexive Links: Spouses"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/People/_query?q=*&f=Name,Spouse.Name
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Name">Joshua</field>
+                <field name="_ID">1001</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="Name">Sara</field>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Neal</field>
+                <field name="_ID">1002</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="Name">Mary</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Jeffrey</field>
+                <field name="_ID">1003</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="Name">Angela</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Mary</field>
+                <field name="_ID">1004</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="Name">Neal</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Angela</field>
+                <field name="_ID">1005</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="Name">Jeffrey</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Sara</field>
+                <field name="_ID">1006</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="Name">Joshua</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Name":"Joshua",
+                   "_ID":"1001",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "Name":"Sara",
+                            "_ID":"1006"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Neal",
+                   "_ID":"1002",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "Name":"Mary",
+                            "_ID":"1004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Jeffrey",
+                   "_ID":"1003",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "Name":"Angela",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Mary",
+                   "_ID":"1004",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "Name":"Neal",
+                            "_ID":"1002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Angela",
+                   "_ID":"1005",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "Name":"Jeffrey",
+                            "_ID":"1003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Sara",
+                   "_ID":"1006",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "Name":"Joshua",
+                            "_ID":"1001"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+Direct Links: Books.Author ==> People"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Books/_query?q=*&f=Title,Author.Name
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Title">All About Everything</field>
+                <field name="_ID">3001</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Joshua</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">All About Something</field>
+                <field name="_ID">3002</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Joshua</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Neal</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">All About Nothing</field>
+                <field name="_ID">3003</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Jeffrey</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Everything</field>
+                <field name="_ID">3004</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Mary</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Angela</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Something</field>
+                <field name="_ID">3005</field>
+                <field name="Author"/>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Nothing</field>
+                <field name="_ID">3006</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Jeffrey</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Angela</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Title":"All About Everything",
+                   "_ID":"3001",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Joshua",
+                            "_ID":"1001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"All About Something",
+                   "_ID":"3002",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Joshua",
+                            "_ID":"1001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Neal",
+                            "_ID":"1002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"All About Nothing",
+                   "_ID":"3003",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Jeffrey",
+                            "_ID":"1003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Nothing About Everything",
+                   "_ID":"3004",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Mary",
+                            "_ID":"1004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Angela",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Nothing About Something",
+                   "_ID":"3005",
+                   "Author":[]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Nothing About Nothing",
+                   "_ID":"3006",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Jeffrey",
+                            "_ID":"1003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Angela",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+Direct + Self-Reflexive Links: Books.Author ==> People.Spouse"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Books/_query?q=*&f=Title,Author(Name,Spouse.Name)
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Title">All About Everything</field>
+                <field name="_ID">3001</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Joshua</field>
+                        <field name="_ID">1001</field>
+                        <field name="Spouse">
+                            <doc>
+                                <field name="Name">Sara</field>
+                                <field name="_ID">1006</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">All About Something</field>
+                <field name="_ID">3002</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Joshua</field>
+                        <field name="_ID">1001</field>
+                        <field name="Spouse">
+                            <doc>
+                                <field name="Name">Sara</field>
+                                <field name="_ID">1006</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Neal</field>
+                        <field name="_ID">1002</field>
+                        <field name="Spouse">
+                            <doc>
+                                <field name="Name">Mary</field>
+                                <field name="_ID">1004</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">All About Nothing</field>
+                <field name="_ID">3003</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Jeffrey</field>
+                        <field name="_ID">1003</field>
+                        <field name="Spouse">
+                            <doc>
+                                <field name="Name">Angela</field>
+                                <field name="_ID">1005</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Everything</field>
+                <field name="_ID">3004</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Mary</field>
+                        <field name="_ID">1004</field>
+                        <field name="Spouse">
+                            <doc>
+                                <field name="Name">Neal</field>
+                                <field name="_ID">1002</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Angela</field>
+                        <field name="_ID">1005</field>
+                        <field name="Spouse">
+                            <doc>
+                                <field name="Name">Jeffrey</field>
+                                <field name="_ID">1003</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Something</field>
+                <field name="_ID">3005</field>
+                <field name="Author"/>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Nothing</field>
+                <field name="_ID">3006</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Jeffrey</field>
+                        <field name="_ID">1003</field>
+                        <field name="Spouse">
+                            <doc>
+                                <field name="Name">Angela</field>
+                                <field name="_ID">1005</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Angela</field>
+                        <field name="_ID">1005</field>
+                        <field name="Spouse">
+                            <doc>
+                                <field name="Name">Jeffrey</field>
+                                <field name="_ID">1003</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Title":"All About Everything",
+                   "_ID":"3001",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Joshua",
+                            "_ID":"1001",
+                            "Spouse":[
+                               {
+                                  "doc":{
+                                     "Name":"Sara",
+                                     "_ID":"1006"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"All About Something",
+                   "_ID":"3002",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Joshua",
+                            "_ID":"1001",
+                            "Spouse":[
+                               {
+                                  "doc":{
+                                     "Name":"Sara",
+                                     "_ID":"1006"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Neal",
+                            "_ID":"1002",
+                            "Spouse":[
+                               {
+                                  "doc":{
+                                     "Name":"Mary",
+                                     "_ID":"1004"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"All About Nothing",
+                   "_ID":"3003",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Jeffrey",
+                            "_ID":"1003",
+                            "Spouse":[
+                               {
+                                  "doc":{
+                                     "Name":"Angela",
+                                     "_ID":"1005"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Nothing About Everything",
+                   "_ID":"3004",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Mary",
+                            "_ID":"1004",
+                            "Spouse":[
+                               {
+                                  "doc":{
+                                     "Name":"Neal",
+                                     "_ID":"1002"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Angela",
+                            "_ID":"1005",
+                            "Spouse":[
+                               {
+                                  "doc":{
+                                     "Name":"Jeffrey",
+                                     "_ID":"1003"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Nothing About Something",
+                   "_ID":"3005",
+                   "Author":[]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Nothing About Nothing",
+                   "_ID":"3006",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Jeffrey",
+                            "_ID":"1003",
+                            "Spouse":[
+                               {
+                                  "doc":{
+                                     "Name":"Angela",
+                                     "_ID":"1005"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Angela",
+                            "_ID":"1005",
+                            "Spouse":[
+                               {
+                                  "doc":{
+                                     "Name":"Jeffrey",
+                                     "_ID":"1003"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+Inverse Links
+~~~~~~~~~~~~~
+*** Request
+    GET /Application/Publishers/_query?q=*&f=Name,Books(Title,Author(Name,AuthorOf.Title))
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Name">Dinosaur Brothers Press</field>
+                <field name="_ID">2001</field>
+                <field name="Books">
+                    <doc>
+                        <field name="Title">All About Everything</field>
+                        <field name="_ID">3001</field>
+                        <field name="Author">
+                            <doc>
+                                <field name="Name">Joshua</field>
+                                <field name="_ID">1001</field>
+                                <field name="AuthorOf">
+                                    <doc>
+                                        <field name="Title">All About Everything</field>
+                                        <field name="_ID">3001</field>
+                                    </doc>
+                                    <doc>
+                                        <field name="Title">All About Something</field>
+                                        <field name="_ID">3002</field>
+                                    </doc>
+                                </field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="Title">All About Something</field>
+                        <field name="_ID">3002</field>
+                        <field name="Author">
+                            <doc>
+                                <field name="Name">Joshua</field>
+                                <field name="_ID">1001</field>
+                                <field name="AuthorOf">
+                                    <doc>
+                                        <field name="Title">All About Everything</field>
+                                        <field name="_ID">3001</field>
+                                    </doc>
+                                    <doc>
+                                        <field name="Title">All About Something</field>
+                                        <field name="_ID">3002</field>
+                                    </doc>
+                                </field>
+                            </doc>
+                            <doc>
+                                <field name="Name">Neal</field>
+                                <field name="_ID">1002</field>
+                                <field name="AuthorOf">
+                                    <doc>
+                                        <field name="Title">All About Something</field>
+                                        <field name="_ID">3002</field>
+                                    </doc>
+                                </field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Cats ans Dogs Press</field>
+                <field name="_ID">2002</field>
+                <field name="Books">
+                    <doc>
+                        <field name="Title">All About Nothing</field>
+                        <field name="_ID">3003</field>
+                        <field name="Author">
+                            <doc>
+                                <field name="Name">Jeffrey</field>
+                                <field name="_ID">1003</field>
+                                <field name="AuthorOf">
+                                    <doc>
+                                        <field name="Title">All About Nothing</field>
+                                        <field name="_ID">3003</field>
+                                    </doc>
+                                    <doc>
+                                        <field name="Title">Nothing About Nothing</field>
+                                        <field name="_ID">3006</field>
+                                    </doc>
+                                </field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="Title">Nothing About Nothing</field>
+                        <field name="_ID">3006</field>
+                        <field name="Author">
+                            <doc>
+                                <field name="Name">Jeffrey</field>
+                                <field name="_ID">1003</field>
+                                <field name="AuthorOf">
+                                    <doc>
+                                        <field name="Title">All About Nothing</field>
+                                        <field name="_ID">3003</field>
+                                    </doc>
+                                    <doc>
+                                        <field name="Title">Nothing About Nothing</field>
+                                        <field name="_ID">3006</field>
+                                    </doc>
+                                </field>
+                            </doc>
+                            <doc>
+                                <field name="Name">Angela</field>
+                                <field name="_ID">1005</field>
+                                <field name="AuthorOf">
+                                    <doc>
+                                        <field name="Title">Nothing About Everything</field>
+                                        <field name="_ID">3004</field>
+                                    </doc>
+                                    <doc>
+                                        <field name="Title">Nothing About Nothing</field>
+                                        <field name="_ID">3006</field>
+                                    </doc>
+                                </field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Just A Publisher</field>
+                <field name="_ID">2003</field>
+                <field name="Books">
+                    <doc>
+                        <field name="Title">Nothing About Everything</field>
+                        <field name="_ID">3004</field>
+                        <field name="Author">
+                            <doc>
+                                <field name="Name">Mary</field>
+                                <field name="_ID">1004</field>
+                                <field name="AuthorOf">
+                                    <doc>
+                                        <field name="Title">Nothing About Everything</field>
+                                        <field name="_ID">3004</field>
+                                    </doc>
+                                </field>
+                            </doc>
+                            <doc>
+                                <field name="Name">Angela</field>
+                                <field name="_ID">1005</field>
+                                <field name="AuthorOf">
+                                    <doc>
+                                        <field name="Title">Nothing About Everything</field>
+                                        <field name="_ID">3004</field>
+                                    </doc>
+                                    <doc>
+                                        <field name="Title">Nothing About Nothing</field>
+                                        <field name="_ID">3006</field>
+                                    </doc>
+                                </field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="Title">Nothing About Something</field>
+                        <field name="_ID">3005</field>
+                        <field name="Author"/>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Name":"Dinosaur Brothers Press",
+                   "_ID":"2001",
+                   "Books":[
+                      {
+                         "doc":{
+                            "Title":"All About Everything",
+                            "_ID":"3001",
+                            "Author":[
+                               {
+                                  "doc":{
+                                     "Name":"Joshua",
+                                     "_ID":"1001",
+                                     "AuthorOf":[
+                                        {
+                                           "doc":{
+                                              "Title":"All About Everything",
+                                              "_ID":"3001"
+                                           }
+                                        },
+                                        {
+                                           "doc":{
+                                              "Title":"All About Something",
+                                              "_ID":"3002"
+                                           }
+                                        }
+                                     ]
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Title":"All About Something",
+                            "_ID":"3002",
+                            "Author":[
+                               {
+                                  "doc":{
+                                     "Name":"Joshua",
+                                     "_ID":"1001",
+                                     "AuthorOf":[
+                                        {
+                                           "doc":{
+                                              "Title":"All About Everything",
+                                              "_ID":"3001"
+                                           }
+                                        },
+                                        {
+                                           "doc":{
+                                              "Title":"All About Something",
+                                              "_ID":"3002"
+                                           }
+                                        }
+                                     ]
+                                  }
+                               },
+                               {
+                                  "doc":{
+                                     "Name":"Neal",
+                                     "_ID":"1002",
+                                     "AuthorOf":[
+                                        {
+                                           "doc":{
+                                              "Title":"All About Something",
+                                              "_ID":"3002"
+                                           }
+                                        }
+                                     ]
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Cats ans Dogs Press",
+                   "_ID":"2002",
+                   "Books":[
+                      {
+                         "doc":{
+                            "Title":"All About Nothing",
+                            "_ID":"3003",
+                            "Author":[
+                               {
+                                  "doc":{
+                                     "Name":"Jeffrey",
+                                     "_ID":"1003",
+                                     "AuthorOf":[
+                                        {
+                                           "doc":{
+                                              "Title":"All About Nothing",
+                                              "_ID":"3003"
+                                           }
+                                        },
+                                        {
+                                           "doc":{
+                                              "Title":"Nothing About Nothing",
+                                              "_ID":"3006"
+                                           }
+                                        }
+                                     ]
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Title":"Nothing About Nothing",
+                            "_ID":"3006",
+                            "Author":[
+                               {
+                                  "doc":{
+                                     "Name":"Jeffrey",
+                                     "_ID":"1003",
+                                     "AuthorOf":[
+                                        {
+                                           "doc":{
+                                              "Title":"All About Nothing",
+                                              "_ID":"3003"
+                                           }
+                                        },
+                                        {
+                                           "doc":{
+                                              "Title":"Nothing About Nothing",
+                                              "_ID":"3006"
+                                           }
+                                        }
+                                     ]
+                                  }
+                               },
+                               {
+                                  "doc":{
+                                     "Name":"Angela",
+                                     "_ID":"1005",
+                                     "AuthorOf":[
+                                        {
+                                           "doc":{
+                                              "Title":"Nothing About Everything",
+                                              "_ID":"3004"
+                                           }
+                                        },
+                                        {
+                                           "doc":{
+                                              "Title":"Nothing About Nothing",
+                                              "_ID":"3006"
+                                           }
+                                        }
+                                     ]
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Just A Publisher",
+                   "_ID":"2003",
+                   "Books":[
+                      {
+                         "doc":{
+                            "Title":"Nothing About Everything",
+                            "_ID":"3004",
+                            "Author":[
+                               {
+                                  "doc":{
+                                     "Name":"Mary",
+                                     "_ID":"1004",
+                                     "AuthorOf":[
+                                        {
+                                           "doc":{
+                                              "Title":"Nothing About Everything",
+                                              "_ID":"3004"
+                                           }
+                                        }
+                                     ]
+                                  }
+                               },
+                               {
+                                  "doc":{
+                                     "Name":"Angela",
+                                     "_ID":"1005",
+                                     "AuthorOf":[
+                                        {
+                                           "doc":{
+                                              "Title":"Nothing About Everything",
+                                              "_ID":"3004"
+                                           }
+                                        },
+                                        {
+                                           "doc":{
+                                              "Title":"Nothing About Nothing",
+                                              "_ID":"3006"
+                                           }
+                                        }
+                                     ]
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Title":"Nothing About Something",
+                            "_ID":"3005",
+                            "Author":[]
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+Create application
+~~~~~~~~~~~~~~~~~~
+Table "People"
+~~~~~~~~~~~~~~
+*** Request
+    GET /Application/People/_query?q=*&f=Name,Wife,Spouse
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Name">Joshua</field>
+                <field name="_ID">1001</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+                <field name="Wife">
+                    <doc>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Neal</field>
+                <field name="_ID">1002</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+                <field name="Wife">
+                    <doc>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Jeffrey</field>
+                <field name="_ID">1003</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+                <field name="Wife">
+                    <doc>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Mary</field>
+                <field name="_ID">1004</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+                <field name="Wife"/>
+            </doc>
+            <doc>
+                <field name="Name">Angela</field>
+                <field name="_ID">1005</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+                <field name="Wife"/>
+            </doc>
+            <doc>
+                <field name="Name">Sara</field>
+                <field name="_ID">1006</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+                <field name="Wife"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Name":"Joshua",
+                   "_ID":"1001",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "_ID":"1006"
+                         }
+                      }
+                   ],
+                   "Wife":[
+                      {
+                         "doc":{
+                            "_ID":"1006"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Neal",
+                   "_ID":"1002",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "_ID":"1004"
+                         }
+                      }
+                   ],
+                   "Wife":[
+                      {
+                         "doc":{
+                            "_ID":"1004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Jeffrey",
+                   "_ID":"1003",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "_ID":"1005"
+                         }
+                      }
+                   ],
+                   "Wife":[
+                      {
+                         "doc":{
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Mary",
+                   "_ID":"1004",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "_ID":"1002"
+                         }
+                      }
+                   ],
+                   "Wife":[]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Angela",
+                   "_ID":"1005",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "_ID":"1003"
+                         }
+                      }
+                   ],
+                   "Wife":[]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Sara",
+                   "_ID":"1006",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "_ID":"1001"
+                         }
+                      }
+                   ],
+                   "Wife":[]
+                }
+             }
+          ]
+       }
+    }
+
+Table "Publishers"
+~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Publishers/_query?q=*&f=Name,Books
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Name">Dinosaur Brothers Press</field>
+                <field name="_ID">2001</field>
+                <field name="Books">
+                    <doc>
+                        <field name="_ID">3001</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">3002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Cats ans Dogs Press</field>
+                <field name="_ID">2002</field>
+                <field name="Books">
+                    <doc>
+                        <field name="_ID">3003</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">3006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Just A Publisher</field>
+                <field name="_ID">2003</field>
+                <field name="Books">
+                    <doc>
+                        <field name="_ID">3004</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">3005</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Name":"Dinosaur Brothers Press",
+                   "_ID":"2001",
+                   "Books":[
+                      {
+                         "doc":{
+                            "_ID":"3001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"3002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Cats ans Dogs Press",
+                   "_ID":"2002",
+                   "Books":[
+                      {
+                         "doc":{
+                            "_ID":"3003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"3006"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Just A Publisher",
+                   "_ID":"2003",
+                   "Books":[
+                      {
+                         "doc":{
+                            "_ID":"3004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"3005"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+Table "Books"
+~~~~~~~~~~~~~
+*** Request
+    GET /Application/Books/_query?q=*&f=Title,Author,PublishedBy
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Title">All About Everything</field>
+                <field name="_ID">3001</field>
+                <field name="Author">
+                    <doc>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+                <field name="PublishedBy">
+                    <doc>
+                        <field name="_ID">2001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">All About Something</field>
+                <field name="_ID">3002</field>
+                <field name="Author">
+                    <doc>
+                        <field name="_ID">1001</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+                <field name="PublishedBy">
+                    <doc>
+                        <field name="_ID">2001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">All About Nothing</field>
+                <field name="_ID">3003</field>
+                <field name="Author">
+                    <doc>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+                <field name="PublishedBy">
+                    <doc>
+                        <field name="_ID">2002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Everything</field>
+                <field name="_ID">3004</field>
+                <field name="Author">
+                    <doc>
+                        <field name="_ID">1004</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+                <field name="PublishedBy">
+                    <doc>
+                        <field name="_ID">2003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Something</field>
+                <field name="_ID">3005</field>
+                <field name="Author"/>
+                <field name="PublishedBy">
+                    <doc>
+                        <field name="_ID">2003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Nothing</field>
+                <field name="_ID">3006</field>
+                <field name="Author">
+                    <doc>
+                        <field name="_ID">1003</field>
+                    </doc>
+                    <doc>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+                <field name="PublishedBy">
+                    <doc>
+                        <field name="_ID">2002</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Title":"All About Everything",
+                   "_ID":"3001",
+                   "Author":[
+                      {
+                         "doc":{
+                            "_ID":"1001"
+                         }
+                      }
+                   ],
+                   "PublishedBy":[
+                      {
+                         "doc":{
+                            "_ID":"2001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"All About Something",
+                   "_ID":"3002",
+                   "Author":[
+                      {
+                         "doc":{
+                            "_ID":"1001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"1002"
+                         }
+                      }
+                   ],
+                   "PublishedBy":[
+                      {
+                         "doc":{
+                            "_ID":"2001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"All About Nothing",
+                   "_ID":"3003",
+                   "Author":[
+                      {
+                         "doc":{
+                            "_ID":"1003"
+                         }
+                      }
+                   ],
+                   "PublishedBy":[
+                      {
+                         "doc":{
+                            "_ID":"2002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Nothing About Everything",
+                   "_ID":"3004",
+                   "Author":[
+                      {
+                         "doc":{
+                            "_ID":"1004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"1005"
+                         }
+                      }
+                   ],
+                   "PublishedBy":[
+                      {
+                         "doc":{
+                            "_ID":"2003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Nothing About Something",
+                   "_ID":"3005",
+                   "Author":[],
+                   "PublishedBy":[
+                      {
+                         "doc":{
+                            "_ID":"2003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Nothing About Nothing",
+                   "_ID":"3006",
+                   "Author":[
+                      {
+                         "doc":{
+                            "_ID":"1003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "_ID":"1005"
+                         }
+                      }
+                   ],
+                   "PublishedBy":[
+                      {
+                         "doc":{
+                            "_ID":"2002"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+Reflexive Links: Wives and Husbands"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/People/_query?q=*&f=Name,Wife.Name,Husband.Name
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Name">Joshua</field>
+                <field name="_ID">1001</field>
+                <field name="Husband"/>
+                <field name="Wife">
+                    <doc>
+                        <field name="Name">Sara</field>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Neal</field>
+                <field name="_ID">1002</field>
+                <field name="Husband"/>
+                <field name="Wife">
+                    <doc>
+                        <field name="Name">Mary</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Jeffrey</field>
+                <field name="_ID">1003</field>
+                <field name="Husband"/>
+                <field name="Wife">
+                    <doc>
+                        <field name="Name">Angela</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Mary</field>
+                <field name="_ID">1004</field>
+                <field name="Husband">
+                    <doc>
+                        <field name="Name">Neal</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+                <field name="Wife"/>
+            </doc>
+            <doc>
+                <field name="Name">Angela</field>
+                <field name="_ID">1005</field>
+                <field name="Husband">
+                    <doc>
+                        <field name="Name">Jeffrey</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+                <field name="Wife"/>
+            </doc>
+            <doc>
+                <field name="Name">Sara</field>
+                <field name="_ID">1006</field>
+                <field name="Husband">
+                    <doc>
+                        <field name="Name">Joshua</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+                <field name="Wife"/>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Name":"Joshua",
+                   "_ID":"1001",
+                   "Husband":[],
+                   "Wife":[
+                      {
+                         "doc":{
+                            "Name":"Sara",
+                            "_ID":"1006"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Neal",
+                   "_ID":"1002",
+                   "Husband":[],
+                   "Wife":[
+                      {
+                         "doc":{
+                            "Name":"Mary",
+                            "_ID":"1004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Jeffrey",
+                   "_ID":"1003",
+                   "Husband":[],
+                   "Wife":[
+                      {
+                         "doc":{
+                            "Name":"Angela",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Mary",
+                   "_ID":"1004",
+                   "Husband":[
+                      {
+                         "doc":{
+                            "Name":"Neal",
+                            "_ID":"1002"
+                         }
+                      }
+                   ],
+                   "Wife":[]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Angela",
+                   "_ID":"1005",
+                   "Husband":[
+                      {
+                         "doc":{
+                            "Name":"Jeffrey",
+                            "_ID":"1003"
+                         }
+                      }
+                   ],
+                   "Wife":[]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Sara",
+                   "_ID":"1006",
+                   "Husband":[
+                      {
+                         "doc":{
+                            "Name":"Joshua",
+                            "_ID":"1001"
+                         }
+                      }
+                   ],
+                   "Wife":[]
+                }
+             }
+          ]
+       }
+    }
+
+Self-Reflexive Links: Spouses"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/People/_query?q=*&f=Name,Spouse.Name
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Name">Joshua</field>
+                <field name="_ID">1001</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="Name">Sara</field>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Neal</field>
+                <field name="_ID">1002</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="Name">Mary</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Jeffrey</field>
+                <field name="_ID">1003</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="Name">Angela</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Mary</field>
+                <field name="_ID">1004</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="Name">Neal</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Angela</field>
+                <field name="_ID">1005</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="Name">Jeffrey</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Sara</field>
+                <field name="_ID">1006</field>
+                <field name="Spouse">
+                    <doc>
+                        <field name="Name">Joshua</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Name":"Joshua",
+                   "_ID":"1001",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "Name":"Sara",
+                            "_ID":"1006"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Neal",
+                   "_ID":"1002",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "Name":"Mary",
+                            "_ID":"1004"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Jeffrey",
+                   "_ID":"1003",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "Name":"Angela",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Mary",
+                   "_ID":"1004",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "Name":"Neal",
+                            "_ID":"1002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Angela",
+                   "_ID":"1005",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "Name":"Jeffrey",
+                            "_ID":"1003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Sara",
+                   "_ID":"1006",
+                   "Spouse":[
+                      {
+                         "doc":{
+                            "Name":"Joshua",
+                            "_ID":"1001"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+Direct Links: Books.Author ==> People"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Books/_query?q=*&f=Title,Author.Name
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Title">All About Everything</field>
+                <field name="_ID">3001</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Joshua</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">All About Something</field>
+                <field name="_ID">3002</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Joshua</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Neal</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">All About Nothing</field>
+                <field name="_ID">3003</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Jeffrey</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Everything</field>
+                <field name="_ID">3004</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Mary</field>
+                        <field name="_ID">1004</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Angela</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Something</field>
+                <field name="_ID">3005</field>
+                <field name="Author"/>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Nothing</field>
+                <field name="_ID">3006</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Jeffrey</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Angela</field>
+                        <field name="_ID">1005</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Title":"All About Everything",
+                   "_ID":"3001",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Joshua",
+                            "_ID":"1001"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"All About Something",
+                   "_ID":"3002",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Joshua",
+                            "_ID":"1001"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Neal",
+                            "_ID":"1002"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"All About Nothing",
+                   "_ID":"3003",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Jeffrey",
+                            "_ID":"1003"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Nothing About Everything",
+                   "_ID":"3004",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Mary",
+                            "_ID":"1004"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Angela",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Nothing About Something",
+                   "_ID":"3005",
+                   "Author":[]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Nothing About Nothing",
+                   "_ID":"3006",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Jeffrey",
+                            "_ID":"1003"
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Angela",
+                            "_ID":"1005"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+Direct + Self-Reflexive Links: Books.Author ==> People.Spouse"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Books/_query?q=*&f=Title,Author(Name,Spouse.Name)
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Title">All About Everything</field>
+                <field name="_ID">3001</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Joshua</field>
+                        <field name="_ID">1001</field>
+                        <field name="Spouse">
+                            <doc>
+                                <field name="Name">Sara</field>
+                                <field name="_ID">1006</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">All About Something</field>
+                <field name="_ID">3002</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Joshua</field>
+                        <field name="_ID">1001</field>
+                        <field name="Spouse">
+                            <doc>
+                                <field name="Name">Sara</field>
+                                <field name="_ID">1006</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Neal</field>
+                        <field name="_ID">1002</field>
+                        <field name="Spouse">
+                            <doc>
+                                <field name="Name">Mary</field>
+                                <field name="_ID">1004</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">All About Nothing</field>
+                <field name="_ID">3003</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Jeffrey</field>
+                        <field name="_ID">1003</field>
+                        <field name="Spouse">
+                            <doc>
+                                <field name="Name">Angela</field>
+                                <field name="_ID">1005</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Everything</field>
+                <field name="_ID">3004</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Mary</field>
+                        <field name="_ID">1004</field>
+                        <field name="Spouse">
+                            <doc>
+                                <field name="Name">Neal</field>
+                                <field name="_ID">1002</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Angela</field>
+                        <field name="_ID">1005</field>
+                        <field name="Spouse">
+                            <doc>
+                                <field name="Name">Jeffrey</field>
+                                <field name="_ID">1003</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Something</field>
+                <field name="_ID">3005</field>
+                <field name="Author"/>
+            </doc>
+            <doc>
+                <field name="Title">Nothing About Nothing</field>
+                <field name="_ID">3006</field>
+                <field name="Author">
+                    <doc>
+                        <field name="Name">Jeffrey</field>
+                        <field name="_ID">1003</field>
+                        <field name="Spouse">
+                            <doc>
+                                <field name="Name">Angela</field>
+                                <field name="_ID">1005</field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="Name">Angela</field>
+                        <field name="_ID">1005</field>
+                        <field name="Spouse">
+                            <doc>
+                                <field name="Name">Jeffrey</field>
+                                <field name="_ID">1003</field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Title":"All About Everything",
+                   "_ID":"3001",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Joshua",
+                            "_ID":"1001",
+                            "Spouse":[
+                               {
+                                  "doc":{
+                                     "Name":"Sara",
+                                     "_ID":"1006"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"All About Something",
+                   "_ID":"3002",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Joshua",
+                            "_ID":"1001",
+                            "Spouse":[
+                               {
+                                  "doc":{
+                                     "Name":"Sara",
+                                     "_ID":"1006"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Neal",
+                            "_ID":"1002",
+                            "Spouse":[
+                               {
+                                  "doc":{
+                                     "Name":"Mary",
+                                     "_ID":"1004"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"All About Nothing",
+                   "_ID":"3003",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Jeffrey",
+                            "_ID":"1003",
+                            "Spouse":[
+                               {
+                                  "doc":{
+                                     "Name":"Angela",
+                                     "_ID":"1005"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Nothing About Everything",
+                   "_ID":"3004",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Mary",
+                            "_ID":"1004",
+                            "Spouse":[
+                               {
+                                  "doc":{
+                                     "Name":"Neal",
+                                     "_ID":"1002"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Angela",
+                            "_ID":"1005",
+                            "Spouse":[
+                               {
+                                  "doc":{
+                                     "Name":"Jeffrey",
+                                     "_ID":"1003"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Nothing About Something",
+                   "_ID":"3005",
+                   "Author":[]
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Nothing About Nothing",
+                   "_ID":"3006",
+                   "Author":[
+                      {
+                         "doc":{
+                            "Name":"Jeffrey",
+                            "_ID":"1003",
+                            "Spouse":[
+                               {
+                                  "doc":{
+                                     "Name":"Angela",
+                                     "_ID":"1005"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Name":"Angela",
+                            "_ID":"1005",
+                            "Spouse":[
+                               {
+                                  "doc":{
+                                     "Name":"Jeffrey",
+                                     "_ID":"1003"
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+Inverse Links
+~~~~~~~~~~~~~
+*** Request
+    GET /Application/Publishers/_query?q=*&f=Name,Books(Title,Author(Name,AuthorOf.Title))
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Name">Dinosaur Brothers Press</field>
+                <field name="_ID">2001</field>
+                <field name="Books">
+                    <doc>
+                        <field name="Title">All About Everything</field>
+                        <field name="_ID">3001</field>
+                        <field name="Author">
+                            <doc>
+                                <field name="Name">Joshua</field>
+                                <field name="_ID">1001</field>
+                                <field name="AuthorOf">
+                                    <doc>
+                                        <field name="Title">All About Everything</field>
+                                        <field name="_ID">3001</field>
+                                    </doc>
+                                    <doc>
+                                        <field name="Title">All About Something</field>
+                                        <field name="_ID">3002</field>
+                                    </doc>
+                                </field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="Title">All About Something</field>
+                        <field name="_ID">3002</field>
+                        <field name="Author">
+                            <doc>
+                                <field name="Name">Joshua</field>
+                                <field name="_ID">1001</field>
+                                <field name="AuthorOf">
+                                    <doc>
+                                        <field name="Title">All About Everything</field>
+                                        <field name="_ID">3001</field>
+                                    </doc>
+                                    <doc>
+                                        <field name="Title">All About Something</field>
+                                        <field name="_ID">3002</field>
+                                    </doc>
+                                </field>
+                            </doc>
+                            <doc>
+                                <field name="Name">Neal</field>
+                                <field name="_ID">1002</field>
+                                <field name="AuthorOf">
+                                    <doc>
+                                        <field name="Title">All About Something</field>
+                                        <field name="_ID">3002</field>
+                                    </doc>
+                                </field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Cats ans Dogs Press</field>
+                <field name="_ID">2002</field>
+                <field name="Books">
+                    <doc>
+                        <field name="Title">All About Nothing</field>
+                        <field name="_ID">3003</field>
+                        <field name="Author">
+                            <doc>
+                                <field name="Name">Jeffrey</field>
+                                <field name="_ID">1003</field>
+                                <field name="AuthorOf">
+                                    <doc>
+                                        <field name="Title">All About Nothing</field>
+                                        <field name="_ID">3003</field>
+                                    </doc>
+                                    <doc>
+                                        <field name="Title">Nothing About Nothing</field>
+                                        <field name="_ID">3006</field>
+                                    </doc>
+                                </field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="Title">Nothing About Nothing</field>
+                        <field name="_ID">3006</field>
+                        <field name="Author">
+                            <doc>
+                                <field name="Name">Jeffrey</field>
+                                <field name="_ID">1003</field>
+                                <field name="AuthorOf">
+                                    <doc>
+                                        <field name="Title">All About Nothing</field>
+                                        <field name="_ID">3003</field>
+                                    </doc>
+                                    <doc>
+                                        <field name="Title">Nothing About Nothing</field>
+                                        <field name="_ID">3006</field>
+                                    </doc>
+                                </field>
+                            </doc>
+                            <doc>
+                                <field name="Name">Angela</field>
+                                <field name="_ID">1005</field>
+                                <field name="AuthorOf">
+                                    <doc>
+                                        <field name="Title">Nothing About Everything</field>
+                                        <field name="_ID">3004</field>
+                                    </doc>
+                                    <doc>
+                                        <field name="Title">Nothing About Nothing</field>
+                                        <field name="_ID">3006</field>
+                                    </doc>
+                                </field>
+                            </doc>
+                        </field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Name">Just A Publisher</field>
+                <field name="_ID">2003</field>
+                <field name="Books">
+                    <doc>
+                        <field name="Title">Nothing About Everything</field>
+                        <field name="_ID">3004</field>
+                        <field name="Author">
+                            <doc>
+                                <field name="Name">Mary</field>
+                                <field name="_ID">1004</field>
+                                <field name="AuthorOf">
+                                    <doc>
+                                        <field name="Title">Nothing About Everything</field>
+                                        <field name="_ID">3004</field>
+                                    </doc>
+                                </field>
+                            </doc>
+                            <doc>
+                                <field name="Name">Angela</field>
+                                <field name="_ID">1005</field>
+                                <field name="AuthorOf">
+                                    <doc>
+                                        <field name="Title">Nothing About Everything</field>
+                                        <field name="_ID">3004</field>
+                                    </doc>
+                                    <doc>
+                                        <field name="Title">Nothing About Nothing</field>
+                                        <field name="_ID">3006</field>
+                                    </doc>
+                                </field>
+                            </doc>
+                        </field>
+                    </doc>
+                    <doc>
+                        <field name="Title">Nothing About Something</field>
+                        <field name="_ID">3005</field>
+                        <field name="Author"/>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "Name":"Dinosaur Brothers Press",
+                   "_ID":"2001",
+                   "Books":[
+                      {
+                         "doc":{
+                            "Title":"All About Everything",
+                            "_ID":"3001",
+                            "Author":[
+                               {
+                                  "doc":{
+                                     "Name":"Joshua",
+                                     "_ID":"1001",
+                                     "AuthorOf":[
+                                        {
+                                           "doc":{
+                                              "Title":"All About Everything",
+                                              "_ID":"3001"
+                                           }
+                                        },
+                                        {
+                                           "doc":{
+                                              "Title":"All About Something",
+                                              "_ID":"3002"
+                                           }
+                                        }
+                                     ]
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Title":"All About Something",
+                            "_ID":"3002",
+                            "Author":[
+                               {
+                                  "doc":{
+                                     "Name":"Joshua",
+                                     "_ID":"1001",
+                                     "AuthorOf":[
+                                        {
+                                           "doc":{
+                                              "Title":"All About Everything",
+                                              "_ID":"3001"
+                                           }
+                                        },
+                                        {
+                                           "doc":{
+                                              "Title":"All About Something",
+                                              "_ID":"3002"
+                                           }
+                                        }
+                                     ]
+                                  }
+                               },
+                               {
+                                  "doc":{
+                                     "Name":"Neal",
+                                     "_ID":"1002",
+                                     "AuthorOf":[
+                                        {
+                                           "doc":{
+                                              "Title":"All About Something",
+                                              "_ID":"3002"
+                                           }
+                                        }
+                                     ]
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Cats ans Dogs Press",
+                   "_ID":"2002",
+                   "Books":[
+                      {
+                         "doc":{
+                            "Title":"All About Nothing",
+                            "_ID":"3003",
+                            "Author":[
+                               {
+                                  "doc":{
+                                     "Name":"Jeffrey",
+                                     "_ID":"1003",
+                                     "AuthorOf":[
+                                        {
+                                           "doc":{
+                                              "Title":"All About Nothing",
+                                              "_ID":"3003"
+                                           }
+                                        },
+                                        {
+                                           "doc":{
+                                              "Title":"Nothing About Nothing",
+                                              "_ID":"3006"
+                                           }
+                                        }
+                                     ]
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Title":"Nothing About Nothing",
+                            "_ID":"3006",
+                            "Author":[
+                               {
+                                  "doc":{
+                                     "Name":"Jeffrey",
+                                     "_ID":"1003",
+                                     "AuthorOf":[
+                                        {
+                                           "doc":{
+                                              "Title":"All About Nothing",
+                                              "_ID":"3003"
+                                           }
+                                        },
+                                        {
+                                           "doc":{
+                                              "Title":"Nothing About Nothing",
+                                              "_ID":"3006"
+                                           }
+                                        }
+                                     ]
+                                  }
+                               },
+                               {
+                                  "doc":{
+                                     "Name":"Angela",
+                                     "_ID":"1005",
+                                     "AuthorOf":[
+                                        {
+                                           "doc":{
+                                              "Title":"Nothing About Everything",
+                                              "_ID":"3004"
+                                           }
+                                        },
+                                        {
+                                           "doc":{
+                                              "Title":"Nothing About Nothing",
+                                              "_ID":"3006"
+                                           }
+                                        }
+                                     ]
+                                  }
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Just A Publisher",
+                   "_ID":"2003",
+                   "Books":[
+                      {
+                         "doc":{
+                            "Title":"Nothing About Everything",
+                            "_ID":"3004",
+                            "Author":[
+                               {
+                                  "doc":{
+                                     "Name":"Mary",
+                                     "_ID":"1004",
+                                     "AuthorOf":[
+                                        {
+                                           "doc":{
+                                              "Title":"Nothing About Everything",
+                                              "_ID":"3004"
+                                           }
+                                        }
+                                     ]
+                                  }
+                               },
+                               {
+                                  "doc":{
+                                     "Name":"Angela",
+                                     "_ID":"1005",
+                                     "AuthorOf":[
+                                        {
+                                           "doc":{
+                                              "Title":"Nothing About Everything",
+                                              "_ID":"3004"
+                                           }
+                                        },
+                                        {
+                                           "doc":{
+                                              "Title":"Nothing About Nothing",
+                                              "_ID":"3006"
+                                           }
+                                        }
+                                     ]
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "doc":{
+                            "Title":"Nothing About Something",
+                            "_ID":"3005",
+                            "Author":[]
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

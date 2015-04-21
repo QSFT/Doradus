@@ -1,0 +1,365 @@
+<TEST>
+
+<DEFINE name="schema.xml">
+<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+        <option name="StorageService">OLAPService</option>
+    </options>
+    <tables>
+        <table name="Disk">
+            <fields>
+                <field type="TEXT" collection="false" name="DiskName"/>
+                <field type="LINK" collection="true" inverse="Disk" table="Folder" name="Folder"/>
+            </fields>
+        </table>
+        <table name="Folder">
+            <fields>
+                <field type="TEXT" name="FolderName" collection="false"/>
+                <field type="LINK" collection="true" inverse="Folder" table="Disk" name="Disk"/>
+                <field type="LINK" collection="true" inverse="FileFolder" table="File" name="File"/>
+            </fields>
+        </table>
+        <table name="File">
+            <fields>
+                <field type="TEXT" name="FileName" collection="false"/>
+                <field type="LINK" collection="true" inverse="File" table="Folder" name="FileFolder"/>
+            </fields>
+        </table>
+    </tables>
+</application>
+</DEFINE>
+
+<DEFINE name="data.xml">
+      <batch>
+        <docs>
+          <doc _table="Disk" _ID="1001" >
+            <field name="DiskName">Disk_A</field>
+            <field name="Folder">
+              <add>
+                <value>2001</value>
+                <value>2004</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="Disk" _ID="1002" >
+            <field name="DiskName">Disk_B</field>
+            <field name="Folder">
+              <add>
+                <value>2002</value>
+                <value>2005</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="Disk" _ID="1003" >
+            <field name="DiskName">Disk_C</field>
+            <field name="Folder">
+              <add>
+                <value>2003</value>
+                <value>2006</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="Folder" _ID="2001" >
+            <field name="FolderName">Folder_A_1</field>
+            <field name="Disk">
+              <add>
+                <value>1001</value>
+              </add>
+	    </field>
+            <field name="File">
+              <add>
+                <value>3001</value>
+                <value>3002</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="Folder" _ID="2002" >
+            <field name="FolderName">Folder_B_1</field>
+            <field name="Disk">
+              <add>
+                <value>1002</value>
+              </add>
+	    </field>
+            <field name="File">
+              <add>
+                <value>3003</value>
+                <value>3004</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="Folder" _ID="2003" >
+            <field name="FolderName">Folder_C_1</field>
+            <field name="Disk">
+              <add>
+                <value>1003</value>
+              </add>
+	    </field>
+            <field name="File">
+              <add>
+                <value>3005</value>
+                <value>3006</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="Folder" _ID="2004" >
+            <field name="FolderName">Folder_A_2</field>
+            <field name="Disk">
+              <add>
+                <value>1001</value>
+              </add>
+	    </field>
+            <field name="File">
+              <add>
+                <value>3007</value>
+                <value>3008</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="Folder" _ID="2005" >
+            <field name="FolderName">Folder_B_2</field>
+            <field name="Disk">
+              <add>
+                <value>1002</value>
+              </add>
+	    </field>
+            <field name="File">
+              <add>
+                <value>3009</value>
+                <value>3010</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="Folder" _ID="2006" >
+            <field name="FolderName">Folder_C_2</field>
+            <field name="Disk">
+              <add>
+                <value>1003</value>
+              </add>
+	    </field>
+            <field name="File">
+              <add>
+                <value>3011</value>
+                <value>3012</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="File" _ID="3001" >
+            <field name="FileName">File_1</field>
+            <field name="FileFolder">
+              <add>
+                <value>2001</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="File" _ID="3002" >
+            <field name="FileName">File_2</field>
+            <field name="FileFolder">
+              <add>
+                <value>2001</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="File" _ID="3003" >
+            <field name="FileName">File_3</field>
+            <field name="FileFolder">
+              <add>
+                <value>2002</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="File" _ID="3004" >
+            <field name="FileName">File_4</field>
+            <field name="FileFolder">
+              <add>
+                <value>2002</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="File" _ID="3005" >
+            <field name="FileName">File_5</field>
+            <field name="FileFolder">
+              <add>
+                <value>2003</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="File" _ID="3006" >
+            <field name="FileName">File_6</field>
+            <field name="FileFolder">
+              <add>
+                <value>2003</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="File" _ID="3007" >
+            <field name="FileName">File_7</field>
+            <field name="FileFolder">
+              <add>
+                <value>2004</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="File" _ID="3008" >
+            <field name="FileName">File_8</field>
+            <field name="FileFolder">
+              <add>
+                <value>2004</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="File" _ID="3009" >
+            <field name="FileName">File_9</field>
+            <field name="FileFolder">
+              <add>
+                <value>2005</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="File" _ID="3010" >
+            <field name="FileName">File_10</field>
+            <field name="FileFolder">
+              <add>
+                <value>2005</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="File" _ID="3011" >
+            <field name="FileName">File_11</field>
+            <field name="FileFolder">
+              <add>
+                <value>2006</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _table="File" _ID="3012" >
+            <field name="FileName">File_12</field>
+            <field name="FileFolder">
+              <add>
+                <value>2006</value>
+              </add>
+	    </field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+
+<DEFINE name="del_file_by_post.xml">
+      <batch>
+        <docs>
+          <doc _table="File" _deleted="true">
+	    <field name="_ID">3012</field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+<DEFINE name="del_file_by_delete.xml">
+      <batch>
+        <docs>
+          <doc _table="File">
+	    <field name="_ID">3012</field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+<DEFINE name="add_file.xml">
+      <batch>
+        <docs>
+          <doc _table="File" _ID="3012" >
+            <field name="FileName">File_12</field>
+            <field name="FileFolder">
+              <add>
+                <value>2006</value>
+              </add>
+	    </field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+
+<DEFINE name="del_folder_by_post.xml">
+      <batch>
+        <docs>
+          <doc _table="Folder" _deleted="true" >
+	    <field name="_ID">2003</field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+<DEFINE name="del_folder_by_delete.xml">
+      <batch>
+        <docs>
+          <doc _table="Folder">
+	    <field name="_ID">2003</field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+<DEFINE name="add_folder.xml">
+      <batch>
+        <docs>
+          <doc _table="Folder" _ID="2003" >
+            <field name="FolderName">Folder_C_1</field>
+            <field name="Disk">
+              <add>
+                <value>1003</value>
+              </add>
+	    </field>
+            <field name="File">
+              <add>
+                <value>3005</value>
+                <value>3006</value>
+              </add>
+	    </field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+
+<DEFINE name="del_disk_by_post.xml">
+      <batch>
+        <docs>
+          <doc _table="Disk" _deleted="true" >
+	    <field name="_ID">1001</field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+<DEFINE name="del_disk_by_delete.xml">
+      <batch>
+        <docs>
+          <doc _table="Disk">
+	    <field name="_ID">1001</field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+<DEFINE name="add_disk.xml">
+      <batch>
+        <docs>
+          <doc _table="Disk" _ID="1001" >
+            <field name="DiskName">Disk_A</field>
+            <field name="Folder">
+              <add>
+                <value>2001</value>
+                <value>2004</value>
+              </add>
+	    </field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+
+<JSON-FROM-XML name ="schema.json" value="${schema.xml}"/>
+<JSON-FROM-XML name ="data.json" value="${data.xml}"/>
+<JSON-FROM-XML name ="del_disk_by_post.json" value="${del_disk_by_post.xml}"/>
+<JSON-FROM-XML name ="del_disk_by_delete.json" value="${del_disk_by_delete.xml}"/>
+<JSON-FROM-XML name ="add_disk.json" value="${add_disk.xml}"/>
+<JSON-FROM-XML name ="del_folder_by_post.json" value="${del_folder_by_post.xml}"/>
+<JSON-FROM-XML name ="del_folder_by_delete.json" value="${del_folder_by_delete.xml}"/>
+<JSON-FROM-XML name ="add_folder.json" value="${add_folder.xml}"/>
+<JSON-FROM-XML name ="del_file_by_post.json" value="${del_file_by_post.xml}"/>
+<JSON-FROM-XML name ="del_file_by_delete.json" value="${del_file_by_delete.xml}"/>
+<JSON-FROM-XML name ="add_file.json" value="${add_file.xml}"/>
+
+</TEST>

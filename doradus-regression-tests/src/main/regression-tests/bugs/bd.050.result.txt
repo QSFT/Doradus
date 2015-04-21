@@ -1,0 +1,101 @@
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Double">1.79E+308</field>
+                <field name="_ID">1001</field>
+            </doc>
+            <doc>
+                <field name="Double">1.79E+8</field>
+                <field name="_ID">1002</field>
+            </doc>
+            <doc>
+                <field name="Double">-1.79E+30</field>
+                <field name="_ID">1003</field>
+            </doc>
+            <doc>
+                <field name="Double">1000</field>
+                <field name="_ID">1004</field>
+            </doc>
+            <doc>
+                <field name="Double">9E+21</field>
+                <field name="_ID">1005</field>
+            </doc>
+        </docs>
+    </results>
+
+~~~~~~~~~~~~~~~~~~~~~
+~ Test for Ordering ~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~
+~ Double ~
+~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&o=Double ASC
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Double">-1.79E+30</field>
+                <field name="_ID">1003</field>
+            </doc>
+            <doc>
+                <field name="Double">1000</field>
+                <field name="_ID">1004</field>
+            </doc>
+            <doc>
+                <field name="Double">1.79E+8</field>
+                <field name="_ID">1002</field>
+            </doc>
+            <doc>
+                <field name="Double">9E+21</field>
+                <field name="_ID">1005</field>
+            </doc>
+            <doc>
+                <field name="Double">1.79E+308</field>
+                <field name="_ID">1001</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_query?q=*&o=Double DESC
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="Double">1.79E+308</field>
+                <field name="_ID">1001</field>
+            </doc>
+            <doc>
+                <field name="Double">9E+21</field>
+                <field name="_ID">1005</field>
+            </doc>
+            <doc>
+                <field name="Double">1.79E+8</field>
+                <field name="_ID">1002</field>
+            </doc>
+            <doc>
+                <field name="Double">1000</field>
+                <field name="_ID">1004</field>
+            </doc>
+            <doc>
+                <field name="Double">-1.79E+30</field>
+                <field name="_ID">1003</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

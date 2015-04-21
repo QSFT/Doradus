@@ -1,0 +1,96 @@
+<!--
+Doradus Data Model and Query Language -v2.1
+4.9 Range Clauses
+-->
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<IMPORT>range.defs.xml</IMPORT>
+<DEFINE name="response.format" value="xml|json"/>
+<enable-output/>
+
+<FOR index="i" from="1" to="2">
+    <IF.EQ arg1="${i}" arg2="1">
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo>~ XML format ~</echo>
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" xml="${schema.xml}"/>
+        <POST path="Application/shard" xml="${data.xml}"/>
+        <enable-output/>
+        <POST path="Application/_shards/shard" />
+    </IF.EQ>
+    <IF.EQ arg1="${i}" arg2="2">
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo>~ JSON format ~</echo>
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" json="${schema.json}"/>
+        <POST path="Application/shard" json="${data.json}"/>
+        <enable-output/>
+        <POST path="Application/_shards/shard" />
+    </IF.EQ>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="*" f="_all" shards="shard"/>
+        
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test for Clauses Range ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Integer ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="Size&lt;1000" shards="shard"/>
+    <QUERY path="Application/Table" q="Size&lt;=1000" shards="shard"/>
+    <QUERY path="Application/Table" q="Size>1000" shards="shard"/>
+    <QUERY path="Application/Table" q="Size>=1000" shards="shard"/>
+    <QUERY path="Application/Table" q="Size=[99 TO 10000}" shards="shard"/>
+
+    <echo>~~~~~~~~~</echo>
+    <echo>~ Float ~</echo>
+    <echo>~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="Float&lt;1.8E-2" shards="shard"/>
+    <QUERY path="Application/Table" q="Float&lt;=1.8E-2" shards="shard"/>
+    <QUERY path="Application/Table" q="Float>1.8E-2" shards="shard"/>
+    <QUERY path="Application/Table" q="Float>=1.8E-2" shards="shard"/>
+    <QUERY path="Application/Table" q="Float=[-1.8E-2 TO 3.39E+3}" shards="shard"/>
+
+    <echo>~~~~~~~~~~</echo>
+    <echo>~ Double ~</echo>
+    <echo>~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="Double&lt;2.2E-2" shards="shard"/>
+    <QUERY path="Application/Table" q="Double&lt;=2.2E-2" shards="shard"/>
+    <QUERY path="Application/Table" q="Double>2.2E-2" shards="shard"/>
+    <QUERY path="Application/Table" q="Double>=2.2E-2" shards="shard"/>
+    <QUERY path="Application/Table" q="Double=[-2.2E-2 TO 1.79E+3}" shards="shard"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Text SV ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="FirstName&lt;Allo" shards="shard"/>
+    <QUERY path="Application/Table" q="FirstName={All TO Terr]" shards="shard"/>
+
+    <echo>~~~~~~~~~~~~~</echo>
+    <echo>~ TimeStamp ~</echo>
+    <echo>~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="SendDate&lt;'2013-11-02 04:22:20'" shards="shard"/>
+    <QUERY path="Application/Table" q="SendDate>'2013-11-02 02:22:20'" shards="shard"/>
+    <QUERY path="Application/Table" q="SendDate={'2013-11-02 02:22:20' TO '2013-11-02 04:22:20'}" shards="shard"/>
+
+    <DELETE path="_applications/Application/ApplicationKey"/>
+</FOR>
+
+<DISCONNECT />
+</TEST>

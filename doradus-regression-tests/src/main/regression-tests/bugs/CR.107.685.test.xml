@@ -1,0 +1,54 @@
+<TEST>
+    <!-- *************************************************************************************************** -->
+    <!-- CR 107,685: The "contains" operator returns incorrect result for timestamp with fractional seconds. -->
+    <!-- *************************************************************************************************** -->
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+    <POST path="_applications">
+    <XML>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+                <option name="AutoTables">false</option>
+            </options>
+            <tables>
+                <table name="Table">
+                    <fields>
+                        <field name="D" type="TIMESTAMP" />
+                    </fields>
+                </table>
+            </tables>
+        </application>
+    </XML>
+    </POST>
+
+    <POST path="Application/Table">
+    <XML>
+        <batch>
+        <docs>
+            <doc>
+                <field name="D">1832-02-03 08:50:01.123</field>
+                <field name="_ID">0001</field>
+            </doc>
+            <doc>
+                <field name="D">1832-02-03 08:50:01</field>
+                <field name="_ID">0002</field>
+            </doc>
+        </docs>
+        </batch>
+    </XML>
+    </POST>
+    <enable-output/>
+    
+    <echo>Test table content</echo>
+    <echo>~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="*" f="D" />
+
+    <QUERY path="Application/Table" q="D:'1832-02-03 08:50:01.123'"/>
+    <QUERY path="Application/Table" q="D:'1832-02-03 08:50:01'"/>
+
+<DELETE path="_applications/Application/ApplicationKey"/>
+<DISCONNECT/>
+</TEST>

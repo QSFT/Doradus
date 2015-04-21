@@ -1,0 +1,87 @@
+<!--
+Doradus Data Model and Query Language -v2.1
+6.3.1 Metric Functions
+-->
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<IMPORT>min.defs.xml</IMPORT>
+<DEFINE name="response.format" value="xml|json"/>
+<enable-output/>
+
+<FOR index="i" from="1" to="2">
+    <IF.EQ arg1="${i}" arg2="1">
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo>~ XML format ~</echo>
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" xml="${schema.xml}"/>
+        <POST path="Application/shard" xml="${data.xml}"/>
+        <enable-output/>
+        <POST path="Application/_shards/shard" />
+    </IF.EQ>
+    <IF.EQ arg1="${i}" arg2="2">
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo>~ JSON format ~</echo>
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" json="${schema.json}"/>
+        <POST path="Application/shard" json="${data.json}"/>
+        <enable-output/>
+        <POST path="Application/_shards/shard" />
+    </IF.EQ>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="*" f="_all" shards="shard"/>
+        
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~   Test for Aggregates: MIN ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ INTEGER ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Table" m="MIN(People)" f="Country" shards="shard" />
+    <AGGREGATE path="Application/Table" m="MIN(People)" shards="shard" />
+
+    <echo>~~~~~~~~~~~~~</echo>
+    <echo>~ TIMESTAMP ~</echo>
+    <echo>~~~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Table" m="MIN(CreateDate)" f="Country" shards="shard"/>
+    <AGGREGATE path="Application/Table" m="MIN(CreateDate)" shards="shard"/>
+
+    <echo>~~~~~~~~~~~~~</echo>
+    <echo>~ STRING SV ~</echo>
+    <echo>~~~~~~~~~~~~~</echo>
+<!-- CR #107.835 fixed -->
+    <AGGREGATE path="Application/Table" m="MIN(City)" f="Country" shards="shard" />
+    <AGGREGATE path="Application/Table" m="MIN(Country)" shards="shard" />
+<!-- -->
+    <echo>~~~~~~~~~~~~~</echo>
+    <echo>~ STRING MV ~</echo>
+    <echo>~~~~~~~~~~~~~</echo>
+<!-- CR #107.835 fixed -->
+    <AGGREGATE path="Application/Table" m="MIN(MV)" f="Country" shards="shard" />
+    <AGGREGATE path="Application/Table" m="MIN(MV)" shards="shard" />
+<!-- -->
+    <echo>~~~~~~~~</echo>
+    <echo>~ LINK ~</echo>
+    <echo>~~~~~~~~</echo>
+    <AGGREGATE path="Application/Table" m="MIN(Manager)" f="Country" shards="shard" />
+    <AGGREGATE path="Application/Table1" m="MIN(Report)" shards="shard" />
+
+    <DELETE path="_applications/Application/ApplicationKey"/>
+</FOR>
+
+<DISCONNECT />
+</TEST>

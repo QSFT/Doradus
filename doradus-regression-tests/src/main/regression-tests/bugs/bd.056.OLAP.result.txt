@@ -1,0 +1,119 @@
+*** Request
+    POST /Application/_shards/shard
+*** Response: 
+    200 OK
+
+*** Request
+    GET /Application/Table/_query?q=*&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>7</totalobjects>
+        <docs>
+            <doc>
+                <field name="Title">Title 1</field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Title">Title 2</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Title">Title 3</field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Title">Title 4</field>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Title">Title 5</field>
+                <field name="_ID">1005</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Title">Title 6</field>
+                <field name="_ID">1006</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Double">0.0077</field>
+                <field name="Float">30000.0</field>
+                <field name="Int">100000</field>
+                <field name="Title">Title 7</field>
+                <field name="_ID">1007</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"7",
+          "docs":[
+             {
+                "doc":{
+                   "Title":"Title 1",
+                   "_ID":"1001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Title 2",
+                   "_ID":"1002",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Title 3",
+                   "_ID":"1003",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Title 4",
+                   "_ID":"1004",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Title 5",
+                   "_ID":"1005",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Title":"Title 6",
+                   "_ID":"1006",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Double":"0.0077",
+                   "Float":"30000.0",
+                   "Int":"100000",
+                   "Title":"Title 7",
+                   "_ID":"1007",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

@@ -1,0 +1,134 @@
+<TEST>
+<!-- 
+    Key: BD-32
+-->
+<CONNECT/>
+<DEFINE name="response.format" value="xml|json"/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+    
+    <POST path="_applications">
+    <XML>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+		<option name="AutoTables">false</option>
+		<option name="StorageService">SpiderService</option>
+            </options>
+    <tables>
+        <table name="Disk">
+            <fields>
+                <field type="TEXT" name="DiskName" />
+                <field type="LINK" collection="true" inverse="Disk" table="Folder" name="Folder"/>
+            </fields>
+        </table>
+        <table name="Folder">
+            <fields>
+                <field type="TEXT" name="FolderName" />
+                <field type="LINK" collection="true" inverse="Folder" table="Disk" name="Disk"/>
+            </fields>
+        </table>
+    </tables>
+        </application>
+    </XML>
+    </POST>
+
+    <POST path="Application/Disk">
+    <XML>
+        <batch>
+            <docs>
+          <doc _ID="1001" >
+            <field name="DiskName">Disk_A</field>
+            <field name="Folder">
+              <add>
+                <value>2001</value>
+                <value>2004</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="1002" >
+            <field name="DiskName">Disk_B</field>
+            <field name="Folder">
+              <add>
+                <value>2002</value>
+                <value>2005</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="1003" >
+            <field name="DiskName">Disk_C</field>
+            <field name="Folder">
+              <add>
+                <value>2003</value>
+                <value>2006</value>
+              </add>
+	    </field>
+          </doc>
+            </docs>
+        </batch>
+    </XML>
+    </POST>
+    <POST path="Application/Folder">
+    <XML>
+        <batch>
+            <docs>
+          <doc _ID="2001" >
+            <field name="FolderName">Folder_A_1</field>
+            <field name="Disk">
+              <add>
+                <value>1001</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="2002" >
+            <field name="FolderName">Folder_B_1</field>
+            <field name="Disk">
+              <add>
+                <value>1002</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="2003" >
+            <field name="FolderName">Folder_C_1</field>
+            <field name="Disk">
+              <add>
+                <value>1003</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="2004" >
+            <field name="FolderName">Folder_A_2</field>
+            <field name="Disk">
+              <add>
+                <value>1001</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="2005" >
+            <field name="FolderName">Folder_B_2</field>
+            <field name="Disk">
+              <add>
+                <value>1002</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="2006" >
+            <field name="FolderName">Folder_C_2</field>
+            <field name="Disk">
+              <add>
+                <value>1003</value>
+              </add>
+	    </field>
+          </doc>
+            </docs>
+        </batch>
+    </XML>
+    </POST>
+
+    <enable-output/>
+    <AGGREGATE path="Application/Disk" m="COUNT(*)" q="NOT Folder.WHERE(FolderName:Folder_C)" f="DiskName" />
+    <AGGREGATE path="Application/Disk" m="COUNT(*)" q="Folder.WHERE(FolderName:Folder_C)" f="DiskName" />
+
+<DELETE path="_applications/Application/ApplicationKey"/>
+<DISCONNECT/>
+</TEST>

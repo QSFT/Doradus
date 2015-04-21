@@ -1,0 +1,177 @@
+<TEST>
+
+<DEFINE name="schema.xml">
+<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+        <option name="StorageService">OLAPService</option>
+    </options>
+    <tables>
+        <table name="MV">
+            <fields>
+                <field name="Long" type="LONG" collection="true" />
+                <field name="Integer" type="INTEGER" collection="true" />
+                <field name="Text" type="TEXT" collection="true" />
+                <field name="Float" type="FLOAT" collection="true" />
+                <field name="Double" type="DOUBLE" collection="true" />
+                <field name="Boolean" type="BOOLEAN" collection="true" />
+                <field name="Timestamp" type="TIMESTAMP" collection="true" />
+            </fields>
+        </table>
+        <table name="SV">
+            <fields>
+                <field name="Long" type="LONG"/>
+                <field name="Integer" type="INTEGER"/>
+                <field name="Text" type="TEXT"/>
+                <field name="Float" type="FLOAT"/>
+                <field name="Double" type="DOUBLE"/>
+                <field name="Boolean" type="BOOLEAN"/>
+                <field name="Timestamp" type="TIMESTAMP"/>
+            </fields>
+        </table>
+    </tables>
+</application>
+</DEFINE>
+
+<DEFINE name="data.xml">
+      <batch>
+        <docs>
+          <doc _table="MV" _ID="1001" >
+            <field name="Long">
+		<add>
+		    <value>100</value>
+		    <value>60444</value>
+		    <value>1</value>
+		    <value>-45</value>
+		</add>
+	    </field>
+            <field name="Integer">
+		<add>
+		    <value>100</value>
+		    <value>60444</value>
+		    <value>1</value>
+		    <value>-45</value>
+		</add>
+	    </field>
+            <field name="Float">
+		<add>
+		    <value>0.001</value>
+		    <value>-3E2</value>
+		    <value>8E-3</value>
+		    <value>5E8</value>
+		</add>
+	    </field>
+            <field name="Double">
+		<add>
+		    <value>-0.001</value>
+		    <value>3E2</value>
+		    <value>8E-13</value>
+		    <value>5E28</value>
+		</add>
+	    </field>
+            <field name="Text">
+		<add>
+		    <value>One</value>
+		    <value>Three</value>
+		    <value>Silver</value>
+		    <value>Abs</value>
+		</add>
+	    </field>
+            <field name="Boolean">
+		<add>
+		    <value>true</value>
+		    <value>false</value>
+		    <value>false</value>
+		    <value>true</value>
+		</add>
+	    </field>
+            <field name="Timestamp">
+		<add>
+		    <value>2014</value>
+		    <value>2001</value>
+		    <value>1984</value>
+		    <value>1994</value>
+		</add>
+	    </field>
+          </doc>
+          <doc _table="MV" _ID="1002" >
+            <field name="Long">
+		<add>
+		    <value>100</value>
+		    <value>100</value>
+		    <value>60444</value>
+		</add>
+	    </field>
+            <field name="Integer">
+		<add>
+		    <value>100</value>
+		    <value>100</value>
+		    <value>60444</value>
+		</add>
+	    </field>
+            <field name="Float">
+		<add>
+		    <value>0.001</value>
+		    <value>0.001</value>
+		    <value>3E2</value>
+		</add>
+	    </field>
+            <field name="Double">
+		<add>
+		    <value>-0.001</value>
+		    <value>-0.001</value>
+		    <value>-3E2</value>
+		</add>
+	    </field>
+            <field name="Text">
+		<add>
+		    <value>One</value>
+		    <value>One</value>
+		    <value>Abs</value>
+		</add>
+	    </field>
+            <field name="Boolean">
+		<add>
+		    <value>false</value>
+		    <value>false</value>
+		    <value>true</value>
+		</add>
+	    </field>
+            <field name="Timestamp">
+		<add>
+		    <value>2014</value>
+		    <value>2014</value>
+		    <value>1994</value>
+		</add>
+	    </field>
+          </doc>
+          <doc _table="MV" _ID="1003" >
+          </doc>
+          <doc _table="SV" _ID="1001" >
+            <field name="Long">19999</field>
+            <field name="Integer">2000000</field>
+            <field name="Float">3E-3</field>
+            <field name="Double">5E13</field>
+            <field name="Text">OPUS</field>
+            <field name="Boolean">TRUE</field>
+            <field name="Timestamp">2009</field>
+          </doc>
+          <doc _table="SV" _ID="1002" >
+            <field name="Long">-900000</field>
+            <field name="Integer">-1230000</field>
+            <field name="Float">-1E-3</field>
+            <field name="Double">-15E8</field>
+            <field name="Text">LIST</field>
+            <field name="Boolean">FALSE</field>
+            <field name="Timestamp">2014</field>
+          </doc>
+          <doc _table="SV" _ID="1003" >
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+
+<JSON-FROM-XML name ="schema.json" value="${schema.xml}"/>
+<JSON-FROM-XML name ="data.json" value="${data.xml}"/>
+
+</TEST>

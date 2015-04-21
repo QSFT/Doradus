@@ -1,0 +1,136 @@
+<TEST>
+
+<DEFINE name="schema.xml">
+<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+        <option name="StorageService">OLAPService</option>
+    </options>
+    <tables>
+	<table name="Table">
+	  <fields>
+	    <field name="ThreadID" type="Text"/>
+	    <field name="InReplyTo" type="XLINK" table="Table" inverse="Responses" junction="ThreadID"/>
+	    <field name="Responses" type="XLINK" table="Table" inverse="InReplyTo" junction="_ID"/>
+	    <field name="Body" type="Text"/>
+	  </fields>
+	</table>
+    </tables>
+</application>
+</DEFINE>
+
+<!-- Now xlinks can be their own inverse (self-reflexive)-->
+<DEFINE name="schema1.xml">
+      <application name="Application1">
+          <key>ApplicationKey1</key>
+          <options>
+              <option name="StorageService">OLAPService</option>
+          </options>
+          <tables>
+              <table name="Table">
+                  <fields>
+                      <field name="ThreadID" type="Text"/>
+                      <field inverse="InReplyTo" junction="_ID"
+                          name="InReplyTo" table="Table" type="XLINK"/>
+                  </fields>
+              </table>
+          </tables>
+      </application>
+</DEFINE>
+
+<!-- Now xlinks can do not use '_ID' as the junction field-->
+<DEFINE name="schema2.xml">
+      <application name="Application2">
+          <key>ApplicationKey2</key>
+          <options>
+              <option name="StorageService">OLAPService</option>
+          </options>
+          <tables>
+              <table name="Table">
+                  <fields>
+                      <field name="ThreadID" type="Text"/>
+                      <field inverse="InReplyTo" junction="ThreadID"
+                          name="InReplyTo" table="Table" type="XLINK"/>
+                  </fields>
+              </table>
+          </tables>
+      </application>
+</DEFINE>
+
+<DEFINE name="data1.xml">
+<batch>
+  <docs>
+    <doc _table="Table" _ID="1001" >
+	<field name="Body">Root 1</field>
+    </doc>
+    <doc _table="Table" _ID="1002" >
+	<field name="Body">Root 2</field>
+    </doc>
+  </docs>
+</batch>
+</DEFINE>
+
+<DEFINE name="data2.xml">
+<batch>
+  <docs>
+    <doc _table="Table" _ID="2001" >
+	<field name="Body">SUB1 Root 1</field>
+	<field name="ThreadID">1001</field>
+    </doc>
+    <doc _table="Table" _ID="2002" >
+	<field name="Body">SUB1 Root 2</field>
+	<field name="ThreadID">1002</field>
+    </doc>
+  </docs>
+</batch>
+</DEFINE>
+
+<DEFINE name="data3.xml">
+<batch>
+  <docs>
+    <doc _table="Table" _ID="3001" >
+	<field name="Body">SUB SUB Root 1</field>
+	<field name="ThreadID">2001</field>
+    </doc>
+    <doc _table="Table" _ID="3002" >
+	<field name="Body">SUB SUB Root 2</field>
+	<field name="ThreadID">2002</field>
+    </doc>
+    <doc _table="Table" _ID="3003" >
+	<field name="Body">SUB SUB Root 2</field>
+	<field name="ThreadID">2002</field>
+    </doc>
+  </docs>
+</batch>
+</DEFINE>
+
+<DEFINE name="put_1.xml">
+<aggregate-search>
+   <query>*</query>
+   <metric>COUNT(InReplyTo)</metric>
+   <grouping-fields>Responses</grouping-fields>
+   <shards-range>*</shards-range>
+   <x-shards-range>*</x-shards-range>
+</aggregate-search>
+</DEFINE>
+
+<DEFINE name="put_2.xml">
+<aggregate-search>
+   <query>*</query>
+   <metric>COUNT(InReplyTo)</metric>
+   <grouping-fields>Responses</grouping-fields>
+   <shards-range>*</shards-range>
+   <x-shards>shard1</x-shards>
+</aggregate-search>
+</DEFINE>
+
+<JSON-FROM-XML name ="schema.json" value="${schema.xml}"/>
+<JSON-FROM-XML name ="schema1.json" value="${schema1.xml}"/>
+<JSON-FROM-XML name ="schema2.json" value="${schema2.xml}"/>
+<JSON-FROM-XML name ="data1.json" value="${data1.xml}"/>
+<JSON-FROM-XML name ="data2.json" value="${data2.xml}"/>
+<JSON-FROM-XML name ="data3.json" value="${data3.xml}"/>
+<JSON-FROM-XML name ="put_1.json" value="${put_1.xml}"/>
+<JSON-FROM-XML name ="put_2.json" value="${put_2.xml}"/>
+
+</TEST>

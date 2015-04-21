@@ -1,0 +1,32 @@
+*** Request
+    POST /Application/_shards/shard
+*** Response: 
+    200 OK
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate metric="COUNT(*)" query="*"/>
+        <totalobjects>2</totalobjects>
+        <value>2</value>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*"
+          },
+          "totalobjects":"2",
+          "value":"2"
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

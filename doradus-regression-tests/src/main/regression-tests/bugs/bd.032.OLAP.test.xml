@@ -1,0 +1,64 @@
+<TEST>
+<!--
+    ******************************************************
+    Key: BD-32, Bug
+    Summary: 
+            AVERAGE(float) should return null for empty 
+	    result 
+    ******************************************************
+-->
+<CONNECT/>
+<DEFINE name="response.format" value="xml|json"/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+    <POST path="_applications">
+    <XML>
+	<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+	<option name="StorageService">OLAPService</option>
+    </options>
+    <tables>
+        <table name="Table">
+            <fields>
+                <field type="TEXT" name="GroupName"/>
+                <field type="float" name="Float"/>
+                <field type="double" name="Double"/>
+            </fields>
+        </table>
+    </tables>
+	</application>
+    </XML>
+    </POST>
+
+    <POST path="Application/shard">
+    <XML>
+      <batch>
+        <docs>
+          <doc _ID="1001" _table="Table">
+            <field name="GroupName">Group 1</field>
+          </doc>
+          <doc _ID="1002" _table="Table">
+            <field name="GroupName">Group 2</field>
+          </doc>
+        </docs>
+      </batch>
+    </XML>
+    </POST>
+
+    <POST path="Application/_shards/shard"/>
+
+    <enable-output/>
+    <echo>~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ AVERAGE (float) ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Table" q="*" m="AVERAGE(Float)" f="GroupName" shards="shard"/>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ AVERAGE (double) ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Table" q="*" m="AVERAGE(Double)" f="GroupName" shards="shard"/>
+
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+<DISCONNECT/>
+</TEST>

@@ -1,0 +1,1112 @@
+~~~~~~~~~~~~~~
+~ XML format ~
+~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+~ Create applications ~
+~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /_applications
+    <application name="Application1">
+        <key>ApplicationKey1</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+        </options>
+        <tables>
+            <table name="Table1">
+                <fields>
+                    <field name="Name" type="TEXT"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: 
+    200 OK
+
+*** Request
+    POST /_applications
+    <application name="Application">
+        <key>ApplicationKey</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+        </options>
+        <tables>
+            <table name="Table1">
+                <fields>
+                    <field name="Name" type="TEXT"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Check that Applications has been created ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /_applications
+*** Response: xml
+    200 OK
+    <applications>
+        <application name="Application1">
+            <key>ApplicationKey1</key>
+            <options>
+                <option name="StorageService">OLAPService</option>
+                <option name="aging-check-frequency">1 DAY</option>
+            </options>
+            <tables>
+                <table name="Table1">
+                    <fields>
+                        <field name="Name" type="TEXT"/>
+                    </fields>
+                </table>
+            </tables>
+        </application>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+                <option name="StorageService">OLAPService</option>
+                <option name="aging-check-frequency">1 DAY</option>
+            </options>
+            <tables>
+                <table name="Table1">
+                    <fields>
+                        <field name="Name" type="TEXT"/>
+                    </fields>
+                </table>
+            </tables>
+        </application>
+    </applications>
+*** Response: json
+    200 OK
+    {
+       "applications":{
+          "Application1":{
+             "key":"ApplicationKey1",
+             "options":{
+                "StorageService":"OLAPService",
+                "aging-check-frequency":"1 DAY"
+             },
+             "tables":{
+                "Table1":{
+                   "fields":{
+                      "Name":{
+                         "type":"TEXT"
+                      }
+                   }
+                }
+             }
+          },
+          "Application":{
+             "key":"ApplicationKey",
+             "options":{
+                "StorageService":"OLAPService",
+                "aging-check-frequency":"1 DAY"
+             },
+             "tables":{
+                "Table1":{
+                   "fields":{
+                      "Name":{
+                         "type":"TEXT"
+                      }
+                   }
+                }
+             }
+          }
+       }
+    }
+
+*** Request
+    GET /_applications/Application
+*** Response: xml
+    200 OK
+    <application name="Application">
+        <key>ApplicationKey</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+            <option name="aging-check-frequency">1 DAY</option>
+        </options>
+        <tables>
+            <table name="Table1">
+                <fields>
+                    <field name="Name" type="TEXT"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: json
+    200 OK
+    {
+       "Application":{
+          "key":"ApplicationKey",
+          "options":{
+             "StorageService":"OLAPService",
+             "aging-check-frequency":"1 DAY"
+          },
+          "tables":{
+             "Table1":{
+                "fields":{
+                   "Name":{
+                      "type":"TEXT"
+                   }
+                }
+             }
+          }
+       }
+    }
+
+*** Request
+    GET /Application/Table1/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Name">Test Name 1</field>
+                <field name="_ID">0001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Name">Test Name 2</field>
+                <field name="_ID">0002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Name":"Test Name 1",
+                   "_ID":"0001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Test Name 2",
+                   "_ID":"0002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Modify application, method 1 ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    PUT /_applications/Application
+    <application name="Application">
+        <key>ApplicationKey</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+        </options>
+        <tables>
+            <table name="Table1">
+                <fields>
+                    <field name="Name" type="TEXT"/>
+                    <field name="Bool" type="Boolean"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Check that Application has been modified, method 1 ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /_applications/Application
+*** Response: xml
+    200 OK
+    <application name="Application">
+        <key>ApplicationKey</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+            <option name="aging-check-frequency">1 DAY</option>
+        </options>
+        <tables>
+            <table name="Table1">
+                <fields>
+                    <field name="Bool" type="BOOLEAN"/>
+                    <field name="Name" type="TEXT"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: json
+    200 OK
+    {
+       "Application":{
+          "key":"ApplicationKey",
+          "options":{
+             "StorageService":"OLAPService",
+             "aging-check-frequency":"1 DAY"
+          },
+          "tables":{
+             "Table1":{
+                "fields":{
+                   "Bool":{
+                      "type":"BOOLEAN"
+                   },
+                   "Name":{
+                      "type":"TEXT"
+                   }
+                }
+             }
+          }
+       }
+    }
+
+*** Request
+    GET /Application/Table1/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Bool">True</field>
+                <field name="Name">Test Name 1</field>
+                <field name="_ID">0001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Bool">False</field>
+                <field name="Name">Test Name 2</field>
+                <field name="_ID">0002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Bool":"True",
+                   "Name":"Test Name 1",
+                   "_ID":"0001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Bool":"False",
+                   "Name":"Test Name 2",
+                   "_ID":"0002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Modify application, method 2 ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /_applications
+    <application name="Application">
+        <key>ApplicationKey</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+        </options>
+        <tables>
+            <table name="Table1">
+                <fields>
+                    <field name="Name" type="TEXT"/>
+                    <field name="Bool" type="Boolean"/>
+                    <field name="Number" type="INTEGER"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Check that Application has been modified, method 2 ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /_applications/Application
+*** Response: xml
+    200 OK
+    <application name="Application">
+        <key>ApplicationKey</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+            <option name="aging-check-frequency">1 DAY</option>
+        </options>
+        <tables>
+            <table name="Table1">
+                <fields>
+                    <field name="Bool" type="BOOLEAN"/>
+                    <field name="Name" type="TEXT"/>
+                    <field name="Number" type="INTEGER"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: json
+    200 OK
+    {
+       "Application":{
+          "key":"ApplicationKey",
+          "options":{
+             "StorageService":"OLAPService",
+             "aging-check-frequency":"1 DAY"
+          },
+          "tables":{
+             "Table1":{
+                "fields":{
+                   "Bool":{
+                      "type":"BOOLEAN"
+                   },
+                   "Name":{
+                      "type":"TEXT"
+                   },
+                   "Number":{
+                      "type":"INTEGER"
+                   }
+                }
+             }
+          }
+       }
+    }
+
+*** Request
+    GET /Application/Table1/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Bool">True</field>
+                <field name="Name">Test Name 1</field>
+                <field name="Number">555</field>
+                <field name="_ID">0001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Bool">False</field>
+                <field name="Name">Test Name 2</field>
+                <field name="Number">111</field>
+                <field name="_ID">0002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Bool":"True",
+                   "Name":"Test Name 1",
+                   "Number":"555",
+                   "_ID":"0001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Bool":"False",
+                   "Name":"Test Name 2",
+                   "Number":"111",
+                   "_ID":"0002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Modify application, wrong Application key ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    PUT /_applications/Application
+    <application name="Application">
+        <key>WrongApplicationKey</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+        </options>
+        <tables>
+            <table name="Table1">
+                <fields>
+                    <field name="Name" type="TEXT"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: text
+    400 Bad Request
+    Application key cannot be changed: WrongApplicationKey
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Modify application, wrong Application name ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    PUT /_applications/WrongApplicationName
+    <application name="Application1">
+        <key>ApplicationKey1</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+        </options>
+        <tables>
+            <table name="Table1">
+                <fields>
+                    <field name="Name" type="TEXT"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: text
+    404 Not Found
+    Unknown application: WrongApplicationName
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Delete application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    DELETE /_applications/Application/Wrong_Application_Key
+*** Response: text
+    400 Bad Request
+    Application key does not match: Wrong_Application_Key
+
+*** Request
+    DELETE /_applications/Wrong_Application_Name/ApplicationKey
+*** Response: text
+    404 Not Found
+    Unknown application: Wrong_Application_Name
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+*** Request
+    DELETE /_applications/Application1/ApplicationKey1
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Check that Application has been deleted ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /_applications
+*** Response: xml
+    200 OK
+    <applications/>
+*** Response: json
+    200 OK
+    {
+       "applications":{}
+    }
+
+*** Request
+    GET /_applications/Application
+*** Response: text
+    404 Not Found
+    Unknown application: Application
+
+*** Request
+    GET /Application/Table1/_query?q=*&f=_all&shards=shard
+*** Response: text
+    404 Not Found
+    Unknown application: Application
+
+~~~~~~~~~~~~~~~
+~ JSON format ~
+~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+~ Create applications ~
+~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /_applications
+    {
+       "Application1":{
+          "key":"ApplicationKey1",
+          "options":{
+             "StorageService":"OLAPService"
+          },
+          "tables":{
+             "Table1":{
+                "fields":{
+                   "Name":{
+                      "type":"TEXT"
+                   }
+                }
+             }
+          }
+       }
+    }
+*** Response: 
+    200 OK
+
+*** Request
+    POST /_applications
+    {
+       "Application":{
+          "key":"ApplicationKey",
+          "options":{
+             "StorageService":"OLAPService"
+          },
+          "tables":{
+             "Table1":{
+                "fields":{
+                   "Name":{
+                      "type":"TEXT"
+                   }
+                }
+             }
+          }
+       }
+    }
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Check that Applications has been created ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /_applications
+*** Response: xml
+    200 OK
+    <applications>
+        <application name="Application1">
+            <key>ApplicationKey1</key>
+            <options>
+                <option name="StorageService">OLAPService</option>
+                <option name="aging-check-frequency">1 DAY</option>
+            </options>
+            <tables>
+                <table name="Table1">
+                    <fields>
+                        <field name="Name" type="TEXT"/>
+                    </fields>
+                </table>
+            </tables>
+        </application>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+                <option name="StorageService">OLAPService</option>
+                <option name="aging-check-frequency">1 DAY</option>
+            </options>
+            <tables>
+                <table name="Table1">
+                    <fields>
+                        <field name="Name" type="TEXT"/>
+                    </fields>
+                </table>
+            </tables>
+        </application>
+    </applications>
+*** Response: json
+    200 OK
+    {
+       "applications":{
+          "Application1":{
+             "key":"ApplicationKey1",
+             "options":{
+                "StorageService":"OLAPService",
+                "aging-check-frequency":"1 DAY"
+             },
+             "tables":{
+                "Table1":{
+                   "fields":{
+                      "Name":{
+                         "type":"TEXT"
+                      }
+                   }
+                }
+             }
+          },
+          "Application":{
+             "key":"ApplicationKey",
+             "options":{
+                "StorageService":"OLAPService",
+                "aging-check-frequency":"1 DAY"
+             },
+             "tables":{
+                "Table1":{
+                   "fields":{
+                      "Name":{
+                         "type":"TEXT"
+                      }
+                   }
+                }
+             }
+          }
+       }
+    }
+
+*** Request
+    GET /_applications/Application
+*** Response: xml
+    200 OK
+    <application name="Application">
+        <key>ApplicationKey</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+            <option name="aging-check-frequency">1 DAY</option>
+        </options>
+        <tables>
+            <table name="Table1">
+                <fields>
+                    <field name="Name" type="TEXT"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: json
+    200 OK
+    {
+       "Application":{
+          "key":"ApplicationKey",
+          "options":{
+             "StorageService":"OLAPService",
+             "aging-check-frequency":"1 DAY"
+          },
+          "tables":{
+             "Table1":{
+                "fields":{
+                   "Name":{
+                      "type":"TEXT"
+                   }
+                }
+             }
+          }
+       }
+    }
+
+*** Request
+    GET /Application/Table1/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Name">Test Name 1</field>
+                <field name="_ID">0001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Name">Test Name 2</field>
+                <field name="_ID">0002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Name":"Test Name 1",
+                   "_ID":"0001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Name":"Test Name 2",
+                   "_ID":"0002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Modify application, method 1 ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    PUT /_applications/Application
+    {
+       "Application":{
+          "key":"ApplicationKey",
+          "options":{
+             "StorageService":"OLAPService"
+          },
+          "tables":{
+             "Table1":{
+                "fields":{
+                   "Name":{
+                      "type":"TEXT"
+                   },
+                   "Bool":{
+                      "type":"Boolean"
+                   }
+                }
+             }
+          }
+       }
+    }
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Check that Application has been modified, method 1 ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /_applications/Application
+*** Response: xml
+    200 OK
+    <application name="Application">
+        <key>ApplicationKey</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+            <option name="aging-check-frequency">1 DAY</option>
+        </options>
+        <tables>
+            <table name="Table1">
+                <fields>
+                    <field name="Bool" type="BOOLEAN"/>
+                    <field name="Name" type="TEXT"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: json
+    200 OK
+    {
+       "Application":{
+          "key":"ApplicationKey",
+          "options":{
+             "StorageService":"OLAPService",
+             "aging-check-frequency":"1 DAY"
+          },
+          "tables":{
+             "Table1":{
+                "fields":{
+                   "Bool":{
+                      "type":"BOOLEAN"
+                   },
+                   "Name":{
+                      "type":"TEXT"
+                   }
+                }
+             }
+          }
+       }
+    }
+
+*** Request
+    GET /Application/Table1/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Bool">True</field>
+                <field name="Name">Test Name 1</field>
+                <field name="_ID">0001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Bool">False</field>
+                <field name="Name">Test Name 2</field>
+                <field name="_ID">0002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Bool":"True",
+                   "Name":"Test Name 1",
+                   "_ID":"0001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Bool":"False",
+                   "Name":"Test Name 2",
+                   "_ID":"0002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Modify application, method 2 ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /_applications
+    {
+       "Application":{
+          "key":"ApplicationKey",
+          "options":{
+             "StorageService":"OLAPService"
+          },
+          "tables":{
+             "Table1":{
+                "fields":{
+                   "Name":{
+                      "type":"TEXT"
+                   },
+                   "Bool":{
+                      "type":"Boolean"
+                   },
+                   "Number":{
+                      "type":"INTEGER"
+                   }
+                }
+             }
+          }
+       }
+    }
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Check that Application has been modified, method 2 ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /_applications/Application
+*** Response: xml
+    200 OK
+    <application name="Application">
+        <key>ApplicationKey</key>
+        <options>
+            <option name="StorageService">OLAPService</option>
+            <option name="aging-check-frequency">1 DAY</option>
+        </options>
+        <tables>
+            <table name="Table1">
+                <fields>
+                    <field name="Bool" type="BOOLEAN"/>
+                    <field name="Name" type="TEXT"/>
+                    <field name="Number" type="INTEGER"/>
+                </fields>
+            </table>
+        </tables>
+    </application>
+*** Response: json
+    200 OK
+    {
+       "Application":{
+          "key":"ApplicationKey",
+          "options":{
+             "StorageService":"OLAPService",
+             "aging-check-frequency":"1 DAY"
+          },
+          "tables":{
+             "Table1":{
+                "fields":{
+                   "Bool":{
+                      "type":"BOOLEAN"
+                   },
+                   "Name":{
+                      "type":"TEXT"
+                   },
+                   "Number":{
+                      "type":"INTEGER"
+                   }
+                }
+             }
+          }
+       }
+    }
+
+*** Request
+    GET /Application/Table1/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="Bool">True</field>
+                <field name="Name">Test Name 1</field>
+                <field name="Number">555</field>
+                <field name="_ID">0001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="Bool">False</field>
+                <field name="Name">Test Name 2</field>
+                <field name="Number">111</field>
+                <field name="_ID">0002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"2",
+          "docs":[
+             {
+                "doc":{
+                   "Bool":"True",
+                   "Name":"Test Name 1",
+                   "Number":"555",
+                   "_ID":"0001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "Bool":"False",
+                   "Name":"Test Name 2",
+                   "Number":"111",
+                   "_ID":"0002",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Modify application, wrong Application key ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    PUT /_applications/Application
+    {
+       "Application":{
+          "key":"WrongApplicationKey",
+          "options":{
+             "StorageService":"OLAPService"
+          },
+          "tables":{
+             "Table1":{
+                "fields":{
+                   "Name":{
+                      "type":"TEXT"
+                   }
+                }
+             }
+          }
+       }
+    }
+*** Response: text
+    400 Bad Request
+    Application key cannot be changed: WrongApplicationKey
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Modify application, wrong Application name ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    PUT /_applications/WrongApplicationName
+    {
+       "Application1":{
+          "key":"ApplicationKey1",
+          "options":{
+             "StorageService":"OLAPService"
+          },
+          "tables":{
+             "Table1":{
+                "fields":{
+                   "Name":{
+                      "type":"TEXT"
+                   }
+                }
+             }
+          }
+       }
+    }
+*** Response: text
+    404 Not Found
+    Unknown application: WrongApplicationName
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Delete application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    DELETE /_applications/Application/Wrong_Application_Key
+*** Response: text
+    400 Bad Request
+    Application key does not match: Wrong_Application_Key
+
+*** Request
+    DELETE /_applications/Wrong_Application_Name/ApplicationKey
+*** Response: text
+    404 Not Found
+    Unknown application: Wrong_Application_Name
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+*** Request
+    DELETE /_applications/Application1/ApplicationKey1
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Check that Application has been deleted ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /_applications
+*** Response: xml
+    200 OK
+    <applications/>
+*** Response: json
+    200 OK
+    {
+       "applications":{}
+    }
+
+*** Request
+    GET /_applications/Application
+*** Response: text
+    404 Not Found
+    Unknown application: Application
+
+*** Request
+    GET /Application/Table1/_query?q=*&f=_all&shards=shard
+*** Response: text
+    404 Not Found
+    Unknown application: Application
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: text
+    404 Not Found
+    Unknown application: Application
+
+*** Request
+    DELETE /_applications/Application1/ApplicationKey1
+*** Response: text
+    404 Not Found
+    Unknown application: Application1
+

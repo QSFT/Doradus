@@ -1,0 +1,1034 @@
+~~~~~~~~~~~~~~
+~ XML format ~
+~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-04-05 12:32:08</field>
+                <field name="MV">
+                    <value>One, Two</value>
+                </field>
+                <field name="People">11980000</field>
+                <field name="_ID">2001</field>
+            </doc>
+            <doc>
+                <field name="City">Washington</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-05 22:12:14</field>
+                <field name="MV">
+                    <value>Three, Four</value>
+                </field>
+                <field name="People">632323</field>
+                <field name="_ID">2002</field>
+            </doc>
+            <doc>
+                <field name="City">New York</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-15 10:20:01</field>
+                <field name="MV">
+                    <value>Five, Six</value>
+                </field>
+                <field name="People">8245000</field>
+                <field name="_ID">2003</field>
+            </doc>
+            <doc>
+                <field name="City">Saint-Petersburg</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-06-22 09:05:20</field>
+                <field name="MV">
+                    <value>Seven, Eight</value>
+                </field>
+                <field name="People">4880000</field>
+                <field name="_ID">2004</field>
+            </doc>
+            <doc>
+                <field name="City">Novgorod</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2012-12-30 15:29:04</field>
+                <field name="MV">
+                    <value>Nine, Ten</value>
+                </field>
+                <field name="People">1255000</field>
+                <field name="_ID">2005</field>
+            </doc>
+            <doc>
+                <field name="City">Chicago</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2013-05-28 13:14:33</field>
+                <field name="MV">
+                    <value>Eleven, Twelve</value>
+                </field>
+                <field name="People">2707000</field>
+                <field name="_ID">2006</field>
+            </doc>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-04-05 12:32:08</field>
+                <field name="MV">
+                    <value>Thirteen, Fourteen</value>
+                </field>
+                <field name="People">21980000</field>
+                <field name="_ID">2007</field>
+            </doc>
+            <doc>
+                <field name="City">Washington</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-05 22:12:14</field>
+                <field name="MV">
+                    <value>Fifteen, Sixteen</value>
+                </field>
+                <field name="People">1632323</field>
+                <field name="_ID">2008</field>
+            </doc>
+            <doc>
+                <field name="City">New York</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-15 10:20:01</field>
+                <field name="MV">
+                    <value>Seventeen, Eighteen</value>
+                </field>
+                <field name="People">18245000</field>
+                <field name="_ID">2009</field>
+            </doc>
+            <doc>
+                <field name="City">Saint-Petersburg</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-06-22 09:05:20</field>
+                <field name="MV">
+                    <value>Nineteen, Twenty</value>
+                </field>
+                <field name="People">14880000</field>
+                <field name="_ID">2010</field>
+            </doc>
+            <doc>
+                <field name="City">Novgorod</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2012-12-30 15:29:04</field>
+                <field name="MV">
+                    <value>Twenty One, Twenty Two</value>
+                </field>
+                <field name="People">11255000</field>
+                <field name="_ID">2011</field>
+            </doc>
+            <doc>
+                <field name="City">Chicago</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2013-05-28 13:14:33</field>
+                <field name="MV">
+                    <value>Twenty Three, Twenty Four</value>
+                </field>
+                <field name="People">12707000</field>
+                <field name="_ID">2012</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"Russia",
+                   "CreateDate":"2011-04-05 12:32:08",
+                   "MV":[
+                      "One, Two"
+                   ],
+                   "People":"11980000",
+                   "_ID":"2001"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Washington",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-05 22:12:14",
+                   "MV":[
+                      "Three, Four"
+                   ],
+                   "People":"632323",
+                   "_ID":"2002"
+                }
+             },
+             {
+                "doc":{
+                   "City":"New York",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-15 10:20:01",
+                   "MV":[
+                      "Five, Six"
+                   ],
+                   "People":"8245000",
+                   "_ID":"2003"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Saint-Petersburg",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"Russia",
+                   "CreateDate":"2011-06-22 09:05:20",
+                   "MV":[
+                      "Seven, Eight"
+                   ],
+                   "People":"4880000",
+                   "_ID":"2004"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Novgorod",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"Russia",
+                   "CreateDate":"2012-12-30 15:29:04",
+                   "MV":[
+                      "Nine, Ten"
+                   ],
+                   "People":"1255000",
+                   "_ID":"2005"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Chicago",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"USA",
+                   "CreateDate":"2013-05-28 13:14:33",
+                   "MV":[
+                      "Eleven, Twelve"
+                   ],
+                   "People":"2707000",
+                   "_ID":"2006"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"Russia",
+                   "CreateDate":"2011-04-05 12:32:08",
+                   "MV":[
+                      "Thirteen, Fourteen"
+                   ],
+                   "People":"21980000",
+                   "_ID":"2007"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Washington",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-05 22:12:14",
+                   "MV":[
+                      "Fifteen, Sixteen"
+                   ],
+                   "People":"1632323",
+                   "_ID":"2008"
+                }
+             },
+             {
+                "doc":{
+                   "City":"New York",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-15 10:20:01",
+                   "MV":[
+                      "Seventeen, Eighteen"
+                   ],
+                   "People":"18245000",
+                   "_ID":"2009"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Saint-Petersburg",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"Russia",
+                   "CreateDate":"2011-06-22 09:05:20",
+                   "MV":[
+                      "Nineteen, Twenty"
+                   ],
+                   "People":"14880000",
+                   "_ID":"2010"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Novgorod",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"Russia",
+                   "CreateDate":"2012-12-30 15:29:04",
+                   "MV":[
+                      "Twenty One, Twenty Two"
+                   ],
+                   "People":"11255000",
+                   "_ID":"2011"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Chicago",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"USA",
+                   "CreateDate":"2013-05-28 13:14:33",
+                   "MV":[
+                      "Twenty Three, Twenty Four"
+                   ],
+                   "People":"12707000",
+                   "_ID":"2012"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Test for Object Query via Entity ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    PUT /Application/Table/_query
+    <search>
+        <query>*</query>
+        <fields>Country,City</fields>
+        <order>City ASC</order>
+        <size>5</size>
+    </search>
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="City">Chicago</field>
+                <field name="Country">USA</field>
+                <field name="_ID">2006</field>
+            </doc>
+            <doc>
+                <field name="City">Chicago</field>
+                <field name="Country">USA</field>
+                <field name="_ID">2012</field>
+            </doc>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="Country">Russia</field>
+                <field name="_ID">2001</field>
+            </doc>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="Country">Russia</field>
+                <field name="_ID">2007</field>
+            </doc>
+            <doc>
+                <field name="City">New York</field>
+                <field name="Country">USA</field>
+                <field name="_ID">2003</field>
+            </doc>
+        </docs>
+        <continue>2003</continue>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "City":"Chicago",
+                   "Country":"USA",
+                   "_ID":"2006"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Chicago",
+                   "Country":"USA",
+                   "_ID":"2012"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "Country":"Russia",
+                   "_ID":"2001"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "Country":"Russia",
+                   "_ID":"2007"
+                }
+             },
+             {
+                "doc":{
+                   "City":"New York",
+                   "Country":"USA",
+                   "_ID":"2003"
+                }
+             }
+          ],
+          "continue":"2003"
+       }
+    }
+
+*** Request
+    PUT /Application/Table/_query
+    <search>
+        <query>*</query>
+        <fields>Country,City</fields>
+        <order>City DESC</order>
+        <skip>5</skip>
+    </search>
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="City">Novgorod</field>
+                <field name="Country">Russia</field>
+                <field name="_ID">2011</field>
+            </doc>
+            <doc>
+                <field name="City">New York</field>
+                <field name="Country">USA</field>
+                <field name="_ID">2003</field>
+            </doc>
+            <doc>
+                <field name="City">New York</field>
+                <field name="Country">USA</field>
+                <field name="_ID">2009</field>
+            </doc>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="Country">Russia</field>
+                <field name="_ID">2001</field>
+            </doc>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="Country">Russia</field>
+                <field name="_ID">2007</field>
+            </doc>
+            <doc>
+                <field name="City">Chicago</field>
+                <field name="Country">USA</field>
+                <field name="_ID">2006</field>
+            </doc>
+            <doc>
+                <field name="City">Chicago</field>
+                <field name="Country">USA</field>
+                <field name="_ID">2012</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "City":"Novgorod",
+                   "Country":"Russia",
+                   "_ID":"2011"
+                }
+             },
+             {
+                "doc":{
+                   "City":"New York",
+                   "Country":"USA",
+                   "_ID":"2003"
+                }
+             },
+             {
+                "doc":{
+                   "City":"New York",
+                   "Country":"USA",
+                   "_ID":"2009"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "Country":"Russia",
+                   "_ID":"2001"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "Country":"Russia",
+                   "_ID":"2007"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Chicago",
+                   "Country":"USA",
+                   "_ID":"2006"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Chicago",
+                   "Country":"USA",
+                   "_ID":"2012"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~
+~ JSON format ~
+~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-04-05 12:32:08</field>
+                <field name="MV">
+                    <value>One, Two</value>
+                </field>
+                <field name="People">11980000</field>
+                <field name="_ID">2001</field>
+            </doc>
+            <doc>
+                <field name="City">Washington</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-05 22:12:14</field>
+                <field name="MV">
+                    <value>Three, Four</value>
+                </field>
+                <field name="People">632323</field>
+                <field name="_ID">2002</field>
+            </doc>
+            <doc>
+                <field name="City">New York</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-15 10:20:01</field>
+                <field name="MV">
+                    <value>Five, Six</value>
+                </field>
+                <field name="People">8245000</field>
+                <field name="_ID">2003</field>
+            </doc>
+            <doc>
+                <field name="City">Saint-Petersburg</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-06-22 09:05:20</field>
+                <field name="MV">
+                    <value>Seven, Eight</value>
+                </field>
+                <field name="People">4880000</field>
+                <field name="_ID">2004</field>
+            </doc>
+            <doc>
+                <field name="City">Novgorod</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2012-12-30 15:29:04</field>
+                <field name="MV">
+                    <value>Nine, Ten</value>
+                </field>
+                <field name="People">1255000</field>
+                <field name="_ID">2005</field>
+            </doc>
+            <doc>
+                <field name="City">Chicago</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2013-05-28 13:14:33</field>
+                <field name="MV">
+                    <value>Eleven, Twelve</value>
+                </field>
+                <field name="People">2707000</field>
+                <field name="_ID">2006</field>
+            </doc>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-04-05 12:32:08</field>
+                <field name="MV">
+                    <value>Thirteen, Fourteen</value>
+                </field>
+                <field name="People">21980000</field>
+                <field name="_ID">2007</field>
+            </doc>
+            <doc>
+                <field name="City">Washington</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-05 22:12:14</field>
+                <field name="MV">
+                    <value>Fifteen, Sixteen</value>
+                </field>
+                <field name="People">1632323</field>
+                <field name="_ID">2008</field>
+            </doc>
+            <doc>
+                <field name="City">New York</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-15 10:20:01</field>
+                <field name="MV">
+                    <value>Seventeen, Eighteen</value>
+                </field>
+                <field name="People">18245000</field>
+                <field name="_ID">2009</field>
+            </doc>
+            <doc>
+                <field name="City">Saint-Petersburg</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-06-22 09:05:20</field>
+                <field name="MV">
+                    <value>Nineteen, Twenty</value>
+                </field>
+                <field name="People">14880000</field>
+                <field name="_ID">2010</field>
+            </doc>
+            <doc>
+                <field name="City">Novgorod</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2012-12-30 15:29:04</field>
+                <field name="MV">
+                    <value>Twenty One, Twenty Two</value>
+                </field>
+                <field name="People">11255000</field>
+                <field name="_ID">2011</field>
+            </doc>
+            <doc>
+                <field name="City">Chicago</field>
+                <field name="CloseDate">2014-01-01 00:00:01</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2013-05-28 13:14:33</field>
+                <field name="MV">
+                    <value>Twenty Three, Twenty Four</value>
+                </field>
+                <field name="People">12707000</field>
+                <field name="_ID">2012</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"Russia",
+                   "CreateDate":"2011-04-05 12:32:08",
+                   "MV":[
+                      "One, Two"
+                   ],
+                   "People":"11980000",
+                   "_ID":"2001"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Washington",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-05 22:12:14",
+                   "MV":[
+                      "Three, Four"
+                   ],
+                   "People":"632323",
+                   "_ID":"2002"
+                }
+             },
+             {
+                "doc":{
+                   "City":"New York",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-15 10:20:01",
+                   "MV":[
+                      "Five, Six"
+                   ],
+                   "People":"8245000",
+                   "_ID":"2003"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Saint-Petersburg",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"Russia",
+                   "CreateDate":"2011-06-22 09:05:20",
+                   "MV":[
+                      "Seven, Eight"
+                   ],
+                   "People":"4880000",
+                   "_ID":"2004"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Novgorod",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"Russia",
+                   "CreateDate":"2012-12-30 15:29:04",
+                   "MV":[
+                      "Nine, Ten"
+                   ],
+                   "People":"1255000",
+                   "_ID":"2005"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Chicago",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"USA",
+                   "CreateDate":"2013-05-28 13:14:33",
+                   "MV":[
+                      "Eleven, Twelve"
+                   ],
+                   "People":"2707000",
+                   "_ID":"2006"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"Russia",
+                   "CreateDate":"2011-04-05 12:32:08",
+                   "MV":[
+                      "Thirteen, Fourteen"
+                   ],
+                   "People":"21980000",
+                   "_ID":"2007"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Washington",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-05 22:12:14",
+                   "MV":[
+                      "Fifteen, Sixteen"
+                   ],
+                   "People":"1632323",
+                   "_ID":"2008"
+                }
+             },
+             {
+                "doc":{
+                   "City":"New York",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-15 10:20:01",
+                   "MV":[
+                      "Seventeen, Eighteen"
+                   ],
+                   "People":"18245000",
+                   "_ID":"2009"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Saint-Petersburg",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"Russia",
+                   "CreateDate":"2011-06-22 09:05:20",
+                   "MV":[
+                      "Nineteen, Twenty"
+                   ],
+                   "People":"14880000",
+                   "_ID":"2010"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Novgorod",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"Russia",
+                   "CreateDate":"2012-12-30 15:29:04",
+                   "MV":[
+                      "Twenty One, Twenty Two"
+                   ],
+                   "People":"11255000",
+                   "_ID":"2011"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Chicago",
+                   "CloseDate":"2014-01-01 00:00:01",
+                   "Country":"USA",
+                   "CreateDate":"2013-05-28 13:14:33",
+                   "MV":[
+                      "Twenty Three, Twenty Four"
+                   ],
+                   "People":"12707000",
+                   "_ID":"2012"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Test for Object Query via Entity ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    PUT /Application/Table/_query
+    {
+       "search":{
+          "query":"*",
+          "fields":"Country,City",
+          "order":"City ASC",
+          "size":"5"
+       }
+    }
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="City">Chicago</field>
+                <field name="Country">USA</field>
+                <field name="_ID">2006</field>
+            </doc>
+            <doc>
+                <field name="City">Chicago</field>
+                <field name="Country">USA</field>
+                <field name="_ID">2012</field>
+            </doc>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="Country">Russia</field>
+                <field name="_ID">2001</field>
+            </doc>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="Country">Russia</field>
+                <field name="_ID">2007</field>
+            </doc>
+            <doc>
+                <field name="City">New York</field>
+                <field name="Country">USA</field>
+                <field name="_ID">2003</field>
+            </doc>
+        </docs>
+        <continue>2003</continue>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "City":"Chicago",
+                   "Country":"USA",
+                   "_ID":"2006"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Chicago",
+                   "Country":"USA",
+                   "_ID":"2012"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "Country":"Russia",
+                   "_ID":"2001"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "Country":"Russia",
+                   "_ID":"2007"
+                }
+             },
+             {
+                "doc":{
+                   "City":"New York",
+                   "Country":"USA",
+                   "_ID":"2003"
+                }
+             }
+          ],
+          "continue":"2003"
+       }
+    }
+
+*** Request
+    PUT /Application/Table/_query
+    {
+       "search":{
+          "query":"*",
+          "fields":"Country,City",
+          "order":"City DESC",
+          "skip":"5"
+       }
+    }
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="City">Novgorod</field>
+                <field name="Country">Russia</field>
+                <field name="_ID">2011</field>
+            </doc>
+            <doc>
+                <field name="City">New York</field>
+                <field name="Country">USA</field>
+                <field name="_ID">2003</field>
+            </doc>
+            <doc>
+                <field name="City">New York</field>
+                <field name="Country">USA</field>
+                <field name="_ID">2009</field>
+            </doc>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="Country">Russia</field>
+                <field name="_ID">2001</field>
+            </doc>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="Country">Russia</field>
+                <field name="_ID">2007</field>
+            </doc>
+            <doc>
+                <field name="City">Chicago</field>
+                <field name="Country">USA</field>
+                <field name="_ID">2006</field>
+            </doc>
+            <doc>
+                <field name="City">Chicago</field>
+                <field name="Country">USA</field>
+                <field name="_ID">2012</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "docs":[
+             {
+                "doc":{
+                   "City":"Novgorod",
+                   "Country":"Russia",
+                   "_ID":"2011"
+                }
+             },
+             {
+                "doc":{
+                   "City":"New York",
+                   "Country":"USA",
+                   "_ID":"2003"
+                }
+             },
+             {
+                "doc":{
+                   "City":"New York",
+                   "Country":"USA",
+                   "_ID":"2009"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "Country":"Russia",
+                   "_ID":"2001"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "Country":"Russia",
+                   "_ID":"2007"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Chicago",
+                   "Country":"USA",
+                   "_ID":"2006"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Chicago",
+                   "Country":"USA",
+                   "_ID":"2012"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

@@ -1,0 +1,69 @@
+<TEST>
+    <!-- ******************************************************************* -->
+    <!-- CR 107,808: The _aggregate form should be added for 		     -->
+    <!-- aggregate-via-entity.						     -->
+    <!-- Reference.  OLAP\Aggregate Queries via GET_PUT Entity		     -->
+    <!-- ******************************************************************* -->
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+    <disable-output/>
+    <POST path="_applications">
+    <XML>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+                <option name="StorageService">OLAPService</option>
+            </options>
+            <tables>
+                <table name="Table">
+                    <fields>
+                        <field name="MV" type="TEXT"/>
+                        <field name="Country" type="TEXT" collection="false"/>
+                        <field name="City" type="TEXT" collection="false"/>
+                        <field name="People" type="INTEGER"/>
+                        <field name="CreateDate" type="TIMESTAMP"/>
+                    </fields>
+                </table>
+            </tables>
+        </application>
+    </XML>
+    </POST>
+
+    <POST path="Application/shard">
+    <XML>
+        <batch>
+        <docs>
+            <doc _table="Table" _ID="2001" >
+                <field name="MV">One, Two</field>
+                <field name="Country">Russia</field>
+                <field name="City">Moscow</field>
+                <field name="People">11980000</field>
+                <field name="CreateDate">2011-04-05 12:32:08.555</field>
+            </doc>
+            <doc _table="Table" _ID="2002" >
+                <field name="MV">Three, Four</field>
+                <field name="Country">USA</field>
+                <field name="City">Washington</field>
+                <field name="People">632323</field>
+                <field name="CreateDate">2011-05-10 22:12:14.666</field>
+            </doc>
+        </docs>
+        </batch>
+    </XML>
+    </POST>
+
+    <POST path="Application/_shards/shard" />
+
+    <enable-output/>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test table content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="*" shards="shard"/>
+    
+    <PUT path="Application/Table/_aggregate" xml-file="CR.107.808.put_int.xml"/>
+
+<DELETE path="_applications/Application/ApplicationKey"/>
+<DISCONNECT/>
+</TEST>

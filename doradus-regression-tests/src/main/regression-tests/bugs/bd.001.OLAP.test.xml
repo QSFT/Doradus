@@ -1,0 +1,52 @@
+<TEST>
+<!--
+    ***********************************************************
+    Key: BD-1, Bug
+    Summary: NPE occurs when object added without _ID field set
+    ***********************************************************
+ -->
+<CONNECT/>
+<DEFINE name="response.format" value="xml|json"/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+    
+    <disable-output/>
+    <POST path="_applications">
+    <XML>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+                <option name="StorageService">OLAPService</option>
+            </options>
+            <tables>
+                <table name="Table">
+                    <fields>
+                        <field name="Field" type="TEXT"/>
+                    </fields>
+                </table>
+            </tables>
+        </application>
+    </XML>
+    </POST>
+
+    <POST path="Application/shard">
+    <XML>
+        <batch>
+            <docs>
+                <doc>
+                    <field name="Field">xxx</field>
+                    <field name="_table">Table</field>
+                </doc>
+            </docs>
+        </batch>
+    </XML>
+    </POST>
+
+    <enable-output/>
+    <POST path="Application/_shards/shard"/>
+
+    <AGGREGATE path="Application/Table" q="*" m="COUNT(*)" shards="shard"/>
+
+<DELETE path="_applications/Application/ApplicationKey"/>
+<DISCONNECT/>
+</TEST>

@@ -1,0 +1,152 @@
+<TEST>
+
+<DEFINE name="schema.xml">
+<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+        <option name="StorageService">OLAPService</option>
+    </options>
+    <tables>
+        <table name="Table">
+            <fields>
+                <field name="MV" type="TEXT" collection="true"/>
+                <field name="Country" type="TEXT"/>
+                <field name="City" type="TEXT"/>
+                <field name="People" type="INTEGER"/>
+                <field name="CreateDate" type="TIMESTAMP"/>
+                <field name="CloseDate" type="TIMESTAMP"/>
+            </fields>
+        </table>
+    </tables>
+</application>
+</DEFINE>
+
+<DEFINE name="data.xml">
+      <batch>
+        <docs>
+          <doc _table="Table" _ID="2001" >
+            <field name="MV">One, Two</field>
+            <field name="Country">Russia</field>
+            <field name="City">Moscow</field>
+            <field name="People">11980000</field>
+            <field name="CreateDate">2011-04-05 12:32:08</field>
+            <field name="CloseDate">2014-01-01 00:00:01</field>
+          </doc>
+          <doc _table="Table" _ID="2002" >
+            <field name="MV">Three, Four</field>
+            <field name="Country">USA</field>
+            <field name="City">Washington</field>
+            <field name="People">632323</field>
+            <field name="CreateDate">2011-04-05 22:12:14</field>
+            <field name="CloseDate">2014-01-01 00:00:01</field>
+          </doc>
+          <doc _table="Table" _ID="2003" >
+            <field name="MV">Five, Six</field>
+            <field name="Country">USA</field>
+            <field name="City">New York</field>
+            <field name="People">8245000</field>
+            <field name="CreateDate">2011-04-15 10:20:01</field>
+            <field name="CloseDate">2014-01-01 00:00:01</field>
+          </doc>
+          <doc _table="Table" _ID="2004" >
+            <field name="MV">Seven, Eight</field>
+            <field name="Country">Russia</field>
+            <field name="City">Saint-Petersburg</field>
+            <field name="People">4880000</field>
+            <field name="CreateDate">2011-06-22 09:05:20</field>
+            <field name="CloseDate">2014-01-01 00:00:01</field>
+          </doc>
+          <doc _table="Table" _ID="2005" >
+            <field name="MV">Nine, Ten</field>
+            <field name="Country">Russia</field>
+            <field name="City">Novgorod</field>
+            <field name="People">1255000</field>
+            <field name="CreateDate">2012-12-30 15:29:04</field>
+            <field name="CloseDate">2014-01-01 00:00:01</field>
+          </doc>
+          <doc _table="Table" _ID="2006" >
+            <field name="MV">Eleven, Twelve</field>
+            <field name="Country">USA</field>
+            <field name="City">Chicago</field>
+            <field name="People">2707000</field>
+            <field name="CreateDate">2013-05-28 13:14:33</field>
+            <field name="CloseDate">2014-01-01 00:00:01</field>
+          </doc>
+          <doc _table="Table" _ID="2007" >
+            <field name="MV">Thirteen, Fourteen</field>
+            <field name="Country">Russia</field>
+            <field name="City">Moscow</field>
+            <field name="People">21980000</field>
+            <field name="CreateDate">2011-04-05 12:32:08</field>
+            <field name="CloseDate">2014-01-01 00:00:01</field>
+          </doc>
+          <doc _table="Table" _ID="2008" >
+            <field name="MV">Fifteen, Sixteen</field>
+            <field name="Country">USA</field>
+            <field name="City">Washington</field>
+            <field name="People">1632323</field>
+            <field name="CreateDate">2011-04-05 22:12:14</field>
+            <field name="CloseDate">2014-01-01 00:00:01</field>
+          </doc>
+          <doc _table="Table" _ID="2009" >
+            <field name="MV">Seventeen, Eighteen</field>
+            <field name="Country">USA</field>
+            <field name="City">New York</field>
+            <field name="People">18245000</field>
+            <field name="CreateDate">2011-04-15 10:20:01</field>
+            <field name="CloseDate">2014-01-01 00:00:01</field>
+          </doc>
+          <doc _table="Table" _ID="2010" >
+            <field name="MV">Nineteen, Twenty</field>
+            <field name="Country">Russia</field>
+            <field name="City">Saint-Petersburg</field>
+            <field name="People">14880000</field>
+            <field name="CreateDate">2011-06-22 09:05:20</field>
+            <field name="CloseDate">2014-01-01 00:00:01</field>
+          </doc>
+          <doc _table="Table" _ID="2011" >
+            <field name="MV">Twenty One, Twenty Two</field>
+            <field name="Country">Russia</field>
+            <field name="City">Novgorod</field>
+            <field name="People">11255000</field>
+            <field name="CreateDate">2012-12-30 15:29:04</field>
+            <field name="CloseDate">2014-01-01 00:00:01</field>
+          </doc>
+          <doc _table="Table" _ID="2012" >
+            <field name="MV">Twenty Three, Twenty Four</field>
+            <field name="Country">USA</field>
+            <field name="City">Chicago</field>
+            <field name="People">12707000</field>
+            <field name="CreateDate">2013-05-28 13:14:33</field>
+            <field name="CloseDate">2014-01-01 00:00:01</field>
+          </doc>
+        </docs>
+      </batch>
+</DEFINE>
+
+<DEFINE name="put_1.xml">
+<search>
+   <query>*</query>
+   <fields>Country,City</fields>
+   <order>City ASC</order>
+   <shards>shard</shards>
+   <size>5</size>
+</search>
+</DEFINE>
+
+<DEFINE name="put_2.xml">
+<search>
+   <query>*</query>
+   <fields>Country,City</fields>
+   <order>City DESC</order>
+   <skip>5</skip>
+   <shards-range>[a-z}</shards-range>
+</search>
+</DEFINE>
+
+<JSON-FROM-XML name ="schema.json" value="${schema.xml}"/>
+<JSON-FROM-XML name ="data.json" value="${data.xml}"/>
+<JSON-FROM-XML name ="put_1.json" value="${put_1.xml}"/>
+<JSON-FROM-XML name ="put_2.json" value="${put_2.xml}"/>
+
+</TEST>

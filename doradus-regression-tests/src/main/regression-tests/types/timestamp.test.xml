@@ -1,0 +1,84 @@
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<IMPORT>timestamp.defs.xml</IMPORT>
+<DEFINE name="response.format" value="xml|json"/>
+<enable-output/>
+
+<FOR index="i" from="1" to="2">
+    <ECHO>Create application</ECHO>
+    <ECHO>~~~~~~~~~~~~~~~~~~</ECHO>
+    <disable-output/>
+    <IF.EQ arg1="${i}" arg2="1">
+        <POST path="_applications"     xml="${schema.xml}"/>
+        <POST path="Application/Table" xml="${data.xml}"/>
+    </IF.EQ>
+    <IF.EQ arg1="${i}" arg2="2">
+        <POST path="_applications"     json="${schema.json}"/>
+        <POST path="Application/Table" json="${data.json}"/>
+    </IF.EQ>
+
+    <enable-output/>
+    <ECHO>table content</ECHO>
+    <ECHO>~~~~~~~~~~~~~</ECHO>
+    <QUERY path="Application/Table" q="*" f="D1" />
+
+    <ECHO>Contains Clause</ECHO>
+    <ECHO>~~~~~~~~~~~~~~~</ECHO>
+    <ECHO></ECHO>
+
+    <!-- CR 107,685
+    <QUERY path="Application/Table" q="D1:'1832-02-01 08:50:01.123'"  f="D1"/>
+    -->
+    <QUERY path="Application/Table" q="D1:'1832-02-03 08:50:01'"      f="D1"/>
+    <QUERY path="Application/Table" q="D1:'1832-02-03 08:50'"         f="D1"/>
+    <QUERY path="Application/Table" q="D1:'1832-02-03 08'"            f="D1"/>
+    <QUERY path="Application/Table" q="D1:'1832-02-03'"               f="D1"/>
+    <QUERY path="Application/Table" q="D1:'1832-02'"                  f="D1"/>
+    <QUERY path="Application/Table" q="D1:'1832'"                     f="D1"/>
+
+    <QUERY path="Application/Table" q="D1:'1833-01-01 00:00:00.000'"  f="D1"/>
+    <QUERY path="Application/Table" q="D1:'1833-01-01 00:00:00'"      f="D1"/>
+    <QUERY path="Application/Table" q="D1:'1833-01-01 00:00'"         f="D1"/>
+    <QUERY path="Application/Table" q="D1:'1833-01-01 00'"            f="D1"/>
+    <QUERY path="Application/Table" q="D1:'1833-01-01'"               f="D1"/>
+    <QUERY path="Application/Table" q="D1:'1833-01'"                  f="D1"/>
+    <QUERY path="Application/Table" q="D1:'1833'"                     f="D1"/>
+
+    <ECHO>XTest table content</ECHO>
+    <ECHO>~~~~~~~~~~~~~~~~~~~</ECHO>
+    <QUERY path="Application/Table" q="*" f="D2" />
+
+    <ECHO>Math operators</ECHO>
+    <ECHO>~~~~~~~~~~~~~~</ECHO>
+    <ECHO></ECHO>
+
+    <QUERY path="Application/Table" q="D2&lt;'2010'"              f="D2"/>
+    <QUERY path="Application/Table" q="D2&lt;='2000-12-31 23:59'" f="D2"/>
+    <QUERY path="Application/Table" q="D2='2011-07-01'"           f="D2"/>
+    <QUERY path="Application/Table" q="D2>='2011-07-01'"          f="D2"/>
+    <QUERY path="Application/Table" q="D2>'2010-10-22 23:29'"     f="D2"/>
+
+    <ECHO>Ranges: inclusive [ ] and exclusive { }</ECHO>
+    <ECHO>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</ECHO>
+    <ECHO></ECHO>
+
+    <QUERY path="Application/Table" q="D2:['2000-05-27 12:00' TO '2011-08']"  f="D2"/>
+    <QUERY path="Application/Table" q="D2:{'2000-05-27 12:00' TO '2011-08']"  f="D2"/>
+    <QUERY path="Application/Table" q="D2:['2000-05-27 12:00' TO '2011-08'}"  f="D2"/>
+    <QUERY path="Application/Table" q="D2:{'2000-05-27 12:00' TO '2011-08'}"  f="D2"/>
+
+    <ECHO>IN operator</ECHO>
+    <ECHO>~~~~~~~~~~~</ECHO>
+    <ECHO></ECHO>
+
+    <QUERY path="Application/Table" q="D2 IN ('2000-12-31 23:59')" f="D2"/>
+    <QUERY path="Application/Table" q="D2 IN ('2000-12-31 23:58')" f="D2"/>
+    <QUERY path="Application/Table" q="D2 IN ('2000-12-31 23:59','2011-08','2013-07-14')" f="D2"/>
+
+    <DELETE path="_applications/Application/ApplicationKey"/>
+</FOR>
+
+<DISCONNECT/>
+</TEST>

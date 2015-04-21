@@ -1,0 +1,109 @@
+<TEST>
+
+<DEFINE name="schema.xml">
+<application name="Application">
+    <key>ApplicationKey</key>
+    <options>
+        <option name="StorageService">OLAPService</option>
+    </options>
+    <tables>
+        <table name="Table">
+            <fields>
+                <field name="MV" type="TEXT" collection="true" />
+            </fields>
+        </table>
+    </tables>
+</application>
+</DEFINE>
+
+<DEFINE name="data.xml">
+<batch>
+  <docs>
+    <doc _table="Table" _ID="1001" >
+      <field name="MV">
+        <add>
+          <value>AAAAAA</value>
+          <value>ABBBBB</value>
+          <value>BCCCCC</value>
+        </add>
+      </field>
+    </doc>
+    <doc _table="Table" _ID="1002" >
+      <field name="MV">
+        <add>
+          <value>DEEEEE</value>
+          <value>EFFFFF</value>
+          <value>FGGGGG</value>
+        </add>
+      </field>
+    </doc>
+    <doc _table="Table" _ID="1003" >
+      <field name="MV">
+        <add>
+          <value>GHHHHH</value>
+          <value>HIIIII</value>
+          <value>IJJJJJ</value>
+        </add>
+      </field>
+    </doc>
+    <doc _table="Table" _ID="1004" >
+      <field name="MV">
+        <add>
+          <value>JKKKKK</value>
+          <value>KLLLLL</value>
+          <value>LMMMMM</value>
+        </add>
+      </field>
+    </doc>
+    <doc _table="Table" _ID="1005" >
+      <field name="MV">
+        <add>
+          <value>MNNNNN</value>
+          <value>NOOOOO</value>
+          <value>OPPPPP</value>
+        </add>
+      </field>
+    </doc>
+    <doc _table="Table" _ID="1006" >
+      <field name="MV">
+        <add>
+          <value>PQQQQQ</value>
+          <value>QRRRRR</value>
+          <value>RSSSSS</value>
+        </add>
+      </field>
+    </doc>
+    <doc _table="Table" _ID="1007" >
+      <field name="MV">
+        <add>
+          <value>STTTTT</value>
+          <value>TUUUUU</value>
+          <value>UVVVVV</value>
+        </add>
+      </field>
+    </doc>
+    <doc _table="Table" _ID="1008" >
+      <field name="MV">
+        <add>
+          <value>VWWWWW</value>
+          <value>WXXXXX</value>
+          <value>XYYYYY</value>
+        </add>
+      </field>
+    </doc>
+    <doc _table="Table" _ID="1009" >
+      <field name="MV">
+        <add>
+          <value>YZZZZZ</value>
+          <value>ZAAAAA</value>
+        </add>
+      </field>
+    </doc>
+  </docs>
+</batch>
+</DEFINE>
+
+<JSON-FROM-XML name ="schema.json" value="${schema.xml}"/>
+<JSON-FROM-XML name ="data.json" value="${data.xml}"/>
+
+</TEST>

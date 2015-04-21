@@ -1,0 +1,54 @@
+~~~~~~~~~~~~~~~~~~~~~~
+~ Test table content ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>2</totalobjects>
+        <docs>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-04-05 12:32:08</field>
+                <field name="People">11980000</field>
+                <field name="_ID">2001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Washington</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2012-12-31 22:12:14</field>
+                <field name="People">632323</field>
+                <field name="_ID">2002</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(CreateDate)&f=Country&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Country" metric="COUNT(CreateDate)" query="*"/>
+        <totalobjects>2</totalobjects>
+        <summary>2</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Country">Russia</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Country">USA</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK

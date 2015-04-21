@@ -1,0 +1,104 @@
+<!--
+Doradus Data Model and Query Language -v2.1
+4.10 Equality Clauses
+-->
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<IMPORT>equality.defs.xml</IMPORT>
+<DEFINE name="response.format" value="xml|json"/>
+<enable-output/>
+
+<FOR index="i" from="1" to="2">
+    <IF.EQ arg1="${i}" arg2="1">
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo>~ XML format ~</echo>
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" xml="${schema.xml}"/>
+        <POST path="Application/shard" xml="${data.xml}"/>
+        <enable-output/>
+        <POST path="Application/_shards/shard" />
+    </IF.EQ>
+    <IF.EQ arg1="${i}" arg2="2">
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo>~ JSON format ~</echo>
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" json="${schema.json}"/>
+        <POST path="Application/shard" json="${data.json}"/>
+        <enable-output/>
+        <POST path="Application/_shards/shard" />
+    </IF.EQ>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Folder" q="*" f="_all" shards="shard"/>
+    <QUERY path="Application/File" q="*" f="_all" shards="shard"/>
+        
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test for Clauses Equality ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~~~~~~~~~</echo>
+    <echo>~ Links ~</echo>
+    <echo>~~~~~~~~~</echo>
+    <QUERY path="Application/Folder" q="Files=2006" shards="shard"/>
+    <QUERY path="Application/Folder" q="Files=7000" shards="shard"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Integer ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <QUERY path="Application/File" q="FileSize=2000004" shards="shard"/>
+    <QUERY path="Application/File" q="FileSize=3000004" shards="shard"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Boolean ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <QUERY path="Application/File" q="IsFileTested=true" shards="shard"/>
+    <QUERY path="Application/File" q="IsFileTested=false" shards="shard"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Text MV ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <QUERY path="Application/Folder" q="Files.FoldersList='PROGRAM*3'" shards="shard"/>
+    <QUERY path="Application/Folder" q="Files.FoldersList='PROGRAM FILES 3'" shards="shard"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Text SV ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <QUERY path="Application/Folder" q="Files.FileName='F*6'" shards="shard"/>
+    <QUERY path="Application/Folder" q="Files.FileName='File_6'" shards="shard"/>
+    <QUERY path="Application/Folder" q="Files.FileName='F*8'" shards="shard"/>
+
+    <echo>~~~~~~~~~~~~~</echo>
+    <echo>~ TimeStamp ~</echo>
+    <echo>~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Folder" q="Files.FileCreateDate='2013-11-02 02:22:20'" shards="shard"/>
+
+    <echo>~~~~~~~~~</echo>
+    <echo>~ Float ~</echo>
+    <echo>~~~~~~~~~</echo>
+    <QUERY path="Application/File" q="Float=-1.8E-2" shards="shard"/>
+    <QUERY path="Application/File" q="Float=-3.39E+3" shards="shard"/>
+
+    <echo>~~~~~~~~~~</echo>
+    <echo>~ Double ~</echo>
+    <echo>~~~~~~~~~~</echo>
+    <QUERY path="Application/File" q="Double=-2.3E-2" shards="shard"/>
+    <QUERY path="Application/File" q="Double=-1.79E+3" shards="shard"/>
+
+    <DELETE path="_applications/Application/ApplicationKey"/>
+</FOR>
+
+<DISCONNECT />
+</TEST>

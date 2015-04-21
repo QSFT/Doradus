@@ -1,0 +1,1012 @@
+~~~~~~~~~~~~~~
+~ XML format ~
+~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /Application/_shards/shard
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>6</totalobjects>
+        <docs>
+            <doc>
+                <field name="MV">
+                    <value>TEST</value>
+                    <value>TEST1</value>
+                    <value>TEST2</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="Link"/>
+                <field name="test"/>
+            </doc>
+            <doc>
+                <field name="SV">SV TEST</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="Link"/>
+                <field name="test"/>
+            </doc>
+            <doc>
+                <field name="SendDate">2013-06-04 01:01:01</field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="Link"/>
+                <field name="test"/>
+            </doc>
+            <doc>
+                <field name="Number">100000</field>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="Link"/>
+                <field name="test"/>
+            </doc>
+            <doc>
+                <field name="BOOL">True</field>
+                <field name="_ID">1005</field>
+                <field name="_shard">shard</field>
+                <field name="Link"/>
+                <field name="test"/>
+            </doc>
+            <doc>
+                <field name="_ID">1006</field>
+                <field name="_shard">shard</field>
+                <field name="Link">
+                    <doc>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+                <field name="test">
+                    <doc>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"6",
+          "docs":[
+             {
+                "doc":{
+                   "MV":[
+                      "TEST",
+                      "TEST1",
+                      "TEST2"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "Link":[],
+                   "test":[]
+                }
+             },
+             {
+                "doc":{
+                   "SV":"SV TEST",
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "Link":[],
+                   "test":[]
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2013-06-04 01:01:01",
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "Link":[],
+                   "test":[]
+                }
+             },
+             {
+                "doc":{
+                   "Number":"100000",
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "Link":[],
+                   "test":[]
+                }
+             },
+             {
+                "doc":{
+                   "BOOL":"True",
+                   "_ID":"1005",
+                   "_shard":"shard",
+                   "Link":[],
+                   "test":[]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1006",
+                   "_shard":"shard",
+                   "Link":[
+                      {
+                         "doc":{
+                            "_ID":"1006"
+                         }
+                      }
+                   ],
+                   "test":[
+                      {
+                         "doc":{
+                            "_ID":"1006"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Range Queries on MV Text Fields ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=SV&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="SV" metric="COUNT(*)" query="*"/>
+        <totalobjects>6</totalobjects>
+        <summary>6</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>5</metric>
+                <field name="SV">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="SV">SV TEST</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"SV"
+          },
+          "totalobjects":"6",
+          "summary":"6",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"5",
+                   "field":{
+                      "SV":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "SV":"SV TEST"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=MV&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="MV" metric="COUNT(*)" query="*"/>
+        <totalobjects>6</totalobjects>
+        <summary>6</summary>
+        <totalgroups>4</totalgroups>
+        <groups>
+            <group>
+                <metric>5</metric>
+                <field name="MV">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="MV">TEST</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="MV">TEST1</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="MV">TEST2</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"MV"
+          },
+          "totalobjects":"6",
+          "summary":"6",
+          "totalgroups":"4",
+          "groups":[
+             {
+                "group":{
+                   "metric":"5",
+                   "field":{
+                      "MV":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "MV":"TEST"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "MV":"TEST1"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "MV":"TEST2"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=BOOL&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="BOOL" metric="COUNT(*)" query="*"/>
+        <totalobjects>6</totalobjects>
+        <summary>6</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>5</metric>
+                <field name="BOOL">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="BOOL">true</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"BOOL"
+          },
+          "totalobjects":"6",
+          "summary":"6",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"5",
+                   "field":{
+                      "BOOL":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "BOOL":"true"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=Link&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Link" metric="COUNT(*)" query="*"/>
+        <totalobjects>6</totalobjects>
+        <summary>6</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>5</metric>
+                <field name="Link">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Link">1006</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"Link"
+          },
+          "totalobjects":"6",
+          "summary":"6",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"5",
+                   "field":{
+                      "Link":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Link":"1006"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=TRUNCATE(SendDate,DAY)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="TRUNCATE(SendDate,DAY)" metric="COUNT(*)" query="*"/>
+        <totalobjects>6</totalobjects>
+        <summary>6</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>5</metric>
+                <field name="TRUNCATE(SendDate,DAY)">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="TRUNCATE(SendDate,DAY)">2013-06-04</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"TRUNCATE(SendDate,DAY)"
+          },
+          "totalobjects":"6",
+          "summary":"6",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"5",
+                   "field":{
+                      "TRUNCATE(SendDate,DAY)":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "TRUNCATE(SendDate,DAY)":"2013-06-04"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=Number&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Number" metric="COUNT(*)" query="*"/>
+        <totalobjects>6</totalobjects>
+        <summary>6</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>5</metric>
+                <field name="Number">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Number">100000</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"Number"
+          },
+          "totalobjects":"6",
+          "summary":"6",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"5",
+                   "field":{
+                      "Number":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Number":"100000"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~
+~ JSON format ~
+~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /Application/_shards/shard
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>6</totalobjects>
+        <docs>
+            <doc>
+                <field name="MV">
+                    <value>TEST</value>
+                    <value>TEST1</value>
+                    <value>TEST2</value>
+                </field>
+                <field name="_ID">1001</field>
+                <field name="_shard">shard</field>
+                <field name="Link"/>
+                <field name="test"/>
+            </doc>
+            <doc>
+                <field name="SV">SV TEST</field>
+                <field name="_ID">1002</field>
+                <field name="_shard">shard</field>
+                <field name="Link"/>
+                <field name="test"/>
+            </doc>
+            <doc>
+                <field name="SendDate">2013-06-04 01:01:01</field>
+                <field name="_ID">1003</field>
+                <field name="_shard">shard</field>
+                <field name="Link"/>
+                <field name="test"/>
+            </doc>
+            <doc>
+                <field name="Number">100000</field>
+                <field name="_ID">1004</field>
+                <field name="_shard">shard</field>
+                <field name="Link"/>
+                <field name="test"/>
+            </doc>
+            <doc>
+                <field name="BOOL">True</field>
+                <field name="_ID">1005</field>
+                <field name="_shard">shard</field>
+                <field name="Link"/>
+                <field name="test"/>
+            </doc>
+            <doc>
+                <field name="_ID">1006</field>
+                <field name="_shard">shard</field>
+                <field name="Link">
+                    <doc>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+                <field name="test">
+                    <doc>
+                        <field name="_ID">1006</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"6",
+          "docs":[
+             {
+                "doc":{
+                   "MV":[
+                      "TEST",
+                      "TEST1",
+                      "TEST2"
+                   ],
+                   "_ID":"1001",
+                   "_shard":"shard",
+                   "Link":[],
+                   "test":[]
+                }
+             },
+             {
+                "doc":{
+                   "SV":"SV TEST",
+                   "_ID":"1002",
+                   "_shard":"shard",
+                   "Link":[],
+                   "test":[]
+                }
+             },
+             {
+                "doc":{
+                   "SendDate":"2013-06-04 01:01:01",
+                   "_ID":"1003",
+                   "_shard":"shard",
+                   "Link":[],
+                   "test":[]
+                }
+             },
+             {
+                "doc":{
+                   "Number":"100000",
+                   "_ID":"1004",
+                   "_shard":"shard",
+                   "Link":[],
+                   "test":[]
+                }
+             },
+             {
+                "doc":{
+                   "BOOL":"True",
+                   "_ID":"1005",
+                   "_shard":"shard",
+                   "Link":[],
+                   "test":[]
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"1006",
+                   "_shard":"shard",
+                   "Link":[
+                      {
+                         "doc":{
+                            "_ID":"1006"
+                         }
+                      }
+                   ],
+                   "test":[
+                      {
+                         "doc":{
+                            "_ID":"1006"
+                         }
+                      }
+                   ]
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Range Queries on MV Text Fields ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=SV&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="SV" metric="COUNT(*)" query="*"/>
+        <totalobjects>6</totalobjects>
+        <summary>6</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>5</metric>
+                <field name="SV">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="SV">SV TEST</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"SV"
+          },
+          "totalobjects":"6",
+          "summary":"6",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"5",
+                   "field":{
+                      "SV":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "SV":"SV TEST"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=MV&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="MV" metric="COUNT(*)" query="*"/>
+        <totalobjects>6</totalobjects>
+        <summary>6</summary>
+        <totalgroups>4</totalgroups>
+        <groups>
+            <group>
+                <metric>5</metric>
+                <field name="MV">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="MV">TEST</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="MV">TEST1</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="MV">TEST2</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"MV"
+          },
+          "totalobjects":"6",
+          "summary":"6",
+          "totalgroups":"4",
+          "groups":[
+             {
+                "group":{
+                   "metric":"5",
+                   "field":{
+                      "MV":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "MV":"TEST"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "MV":"TEST1"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "MV":"TEST2"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=BOOL&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="BOOL" metric="COUNT(*)" query="*"/>
+        <totalobjects>6</totalobjects>
+        <summary>6</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>5</metric>
+                <field name="BOOL">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="BOOL">true</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"BOOL"
+          },
+          "totalobjects":"6",
+          "summary":"6",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"5",
+                   "field":{
+                      "BOOL":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "BOOL":"true"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=Link&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Link" metric="COUNT(*)" query="*"/>
+        <totalobjects>6</totalobjects>
+        <summary>6</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>5</metric>
+                <field name="Link">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Link">1006</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"Link"
+          },
+          "totalobjects":"6",
+          "summary":"6",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"5",
+                   "field":{
+                      "Link":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Link":"1006"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=TRUNCATE(SendDate,DAY)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="TRUNCATE(SendDate,DAY)" metric="COUNT(*)" query="*"/>
+        <totalobjects>6</totalobjects>
+        <summary>6</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>5</metric>
+                <field name="TRUNCATE(SendDate,DAY)">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="TRUNCATE(SendDate,DAY)">2013-06-04</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"TRUNCATE(SendDate,DAY)"
+          },
+          "totalobjects":"6",
+          "summary":"6",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"5",
+                   "field":{
+                      "TRUNCATE(SendDate,DAY)":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "TRUNCATE(SendDate,DAY)":"2013-06-04"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(*)&q=*&f=Number&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Number" metric="COUNT(*)" query="*"/>
+        <totalobjects>6</totalobjects>
+        <summary>6</summary>
+        <totalgroups>2</totalgroups>
+        <groups>
+            <group>
+                <metric>5</metric>
+                <field name="Number">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Number">100000</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(*)",
+             "query":"*",
+             "group":"Number"
+          },
+          "totalobjects":"6",
+          "summary":"6",
+          "totalgroups":"2",
+          "groups":[
+             {
+                "group":{
+                   "metric":"5",
+                   "field":{
+                      "Number":"(null)"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1",
+                   "field":{
+                      "Number":"100000"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

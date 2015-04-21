@@ -1,0 +1,102 @@
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<IMPORT>isnull.defs.xml</IMPORT>
+<DEFINE name="response.format" value="xml|json"/>
+<enable-output/>
+
+<FOR index="i" from="1" to="2">
+    <IF.EQ arg1="${i}" arg2="1">
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo>~ XML format ~</echo>
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" xml="${schema.xml}"/>
+        <POST path="Application/Disk" xml="${data1.xml}"/>
+        <POST path="Application/Folder" xml="${data2.xml}"/>
+        <POST path="Application/File" xml="${data3.xml}"/>
+        <enable-output/>
+    </IF.EQ>
+    <IF.EQ arg1="${i}" arg2="2">
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo>~ JSON format ~</echo>
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" json="${schema.json}"/>
+        <POST path="Application/Disk" json="${data1.json}"/>
+        <POST path="Application/Folder" json="${data2.json}"/>
+        <POST path="Application/File" json="${data3.json}"/>
+        <enable-output/>
+    </IF.EQ>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Folder" q="*" f="_all"/>
+    <QUERY path="Application/File" q="*" f="_all"/>
+        
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test for IS NULL ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~~~~~~~~~</echo>
+    <echo>~ Links ~</echo>
+    <echo>~~~~~~~~~</echo>
+    <AGGREGATE path="Application/Folder" m="COUNT(*)" q="Files IS NULL"/>
+    <AGGREGATE path="Application/Folder" m="COUNT(*)" q="NOT Files IS NULL"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Integer ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" q="FileSize IS NULL"/>
+    <AGGREGATE path="Application/File" m="COUNT(*)" q="NOT FileSize IS NULL"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Boolean ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" q="IsFileTested IS NULL"/>
+    <AGGREGATE path="Application/File" m="COUNT(*)" q="NOT IsFileTested IS NULL"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Text MV ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" q="FoldersList IS NULL"/>
+    <AGGREGATE path="Application/File" m="COUNT(*)" q="NOT FoldersList IS NULL"/>
+
+    <echo>~~~~~~~~~~~</echo>
+    <echo>~ Text SV ~</echo>
+    <echo>~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" q="FolderName IS NULL"/>
+    <AGGREGATE path="Application/File" m="COUNT(*)" q="NOT FolderName IS NULL"/>
+
+    <echo>~~~~~~~~~~~~~</echo>
+    <echo>~ TimeStamp ~</echo>
+    <echo>~~~~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" q="FileCreateDate IS NULL"/>
+    <AGGREGATE path="Application/File" m="COUNT(*)" q="NOT FileCreateDate IS NULL"/>
+
+    <echo>~~~~~~~~~</echo>
+    <echo>~ Float ~</echo>
+    <echo>~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" q="Float IS NULL"/>
+    <AGGREGATE path="Application/File" m="COUNT(*)" q="NOT Float IS NULL"/>
+
+    <echo>~~~~~~~~~~</echo>
+    <echo>~ Double ~</echo>
+    <echo>~~~~~~~~~~</echo>
+    <AGGREGATE path="Application/File" m="COUNT(*)" q="Double IS NULL"/>
+    <AGGREGATE path="Application/File" m="COUNT(*)" q="NOT Double IS NULL"/>
+
+    <DELETE path="_applications/Application/ApplicationKey"/>
+</FOR>
+
+<DISCONNECT />
+</TEST>

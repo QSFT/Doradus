@@ -1,0 +1,1278 @@
+~~~~~~~~~~~~~~
+~ XML format ~
+~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /Application/_shards/a
+*** Response: 
+    200 OK
+
+*** Request
+    POST /Application/_shards/c
+*** Response: 
+    200 OK
+
+*** Request
+    POST /Application/_shards/e
+*** Response: 
+    200 OK
+
+*** Request
+    POST /Application/_shards/g
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=a
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>3</totalobjects>
+        <docs>
+            <doc>
+                <field name="DiskName">Disk_1</field>
+                <field name="_ID">2001</field>
+                <field name="_shard">a</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_2</field>
+                <field name="_ID">2002</field>
+                <field name="_shard">a</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_3</field>
+                <field name="_ID">2003</field>
+                <field name="_shard">a</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"3",
+          "docs":[
+             {
+                "doc":{
+                   "DiskName":"Disk_1",
+                   "_ID":"2001",
+                   "_shard":"a"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_2",
+                   "_ID":"2002",
+                   "_shard":"a"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_3",
+                   "_ID":"2003",
+                   "_shard":"a"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=c
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="DiskName">Disk_1</field>
+                <field name="_ID">2001</field>
+                <field name="_shard">c</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_4</field>
+                <field name="_ID">2004</field>
+                <field name="_shard">c</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_5</field>
+                <field name="_ID">2005</field>
+                <field name="_shard">c</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_6</field>
+                <field name="_ID">2006</field>
+                <field name="_shard">c</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "DiskName":"Disk_1",
+                   "_ID":"2001",
+                   "_shard":"c"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_4",
+                   "_ID":"2004",
+                   "_shard":"c"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_5",
+                   "_ID":"2005",
+                   "_shard":"c"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_6",
+                   "_ID":"2006",
+                   "_shard":"c"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=e
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="DiskName">Disk_4</field>
+                <field name="_ID">2004</field>
+                <field name="_shard">e</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_7</field>
+                <field name="_ID">2007</field>
+                <field name="_shard">e</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_8</field>
+                <field name="_ID">2008</field>
+                <field name="_shard">e</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_9</field>
+                <field name="_ID">2009</field>
+                <field name="_shard">e</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "DiskName":"Disk_4",
+                   "_ID":"2004",
+                   "_shard":"e"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_7",
+                   "_ID":"2007",
+                   "_shard":"e"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_8",
+                   "_ID":"2008",
+                   "_shard":"e"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_9",
+                   "_ID":"2009",
+                   "_shard":"e"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=g
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="DiskName">Disk_1</field>
+                <field name="_ID">2001</field>
+                <field name="_shard">g</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_4</field>
+                <field name="_ID">2004</field>
+                <field name="_shard">g</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_10</field>
+                <field name="_ID">2010</field>
+                <field name="_shard">g</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_11</field>
+                <field name="_ID">2011</field>
+                <field name="_shard">g</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "DiskName":"Disk_1",
+                   "_ID":"2001",
+                   "_shard":"g"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_4",
+                   "_ID":"2004",
+                   "_shard":"g"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_10",
+                   "_ID":"2010",
+                   "_shard":"g"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_11",
+                   "_ID":"2011",
+                   "_shard":"g"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~
+~ Test for Duplicates ~
+~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_duplicates?range=a
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>15</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2004</field>
+                <field name="shards">c,e,g</field>
+            </doc>
+            <doc>
+                <field name="_ID">2001</field>
+                <field name="shards">a,c,g</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"15",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"2004",
+                   "shards":"c,e,g"
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"2001",
+                   "shards":"a,c,g"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=a,c
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>7</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2001</field>
+                <field name="shards">a,c</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"7",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"2001",
+                   "shards":"a,c"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=a,e
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>11</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2004</field>
+                <field name="shards">c,e</field>
+            </doc>
+            <doc>
+                <field name="_ID">2001</field>
+                <field name="shards">a,c</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"11",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"2004",
+                   "shards":"c,e"
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"2001",
+                   "shards":"a,c"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=a,g
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>15</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2004</field>
+                <field name="shards">c,e,g</field>
+            </doc>
+            <doc>
+                <field name="_ID">2001</field>
+                <field name="shards">a,c,g</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"15",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"2004",
+                   "shards":"c,e,g"
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"2001",
+                   "shards":"a,c,g"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=c
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>12</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2004</field>
+                <field name="shards">c,e,g</field>
+            </doc>
+            <doc>
+                <field name="_ID">2001</field>
+                <field name="shards">c,g</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"12",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"2004",
+                   "shards":"c,e,g"
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"2001",
+                   "shards":"c,g"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=c,e
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>8</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2004</field>
+                <field name="shards">c,e</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"8",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"2004",
+                   "shards":"c,e"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=c,g
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>12</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2004</field>
+                <field name="shards">c,e,g</field>
+            </doc>
+            <doc>
+                <field name="_ID">2001</field>
+                <field name="shards">c,g</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"12",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"2004",
+                   "shards":"c,e,g"
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"2001",
+                   "shards":"c,g"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=e
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>8</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2004</field>
+                <field name="shards">e,g</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"8",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"2004",
+                   "shards":"e,g"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=e,g
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>8</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2004</field>
+                <field name="shards">e,g</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"8",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"2004",
+                   "shards":"e,g"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=g
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=x
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~
+~ JSON format ~
+~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /Application/_shards/a
+*** Response: 
+    200 OK
+
+*** Request
+    POST /Application/_shards/c
+*** Response: 
+    200 OK
+
+*** Request
+    POST /Application/_shards/e
+*** Response: 
+    200 OK
+
+*** Request
+    POST /Application/_shards/g
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=a
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>3</totalobjects>
+        <docs>
+            <doc>
+                <field name="DiskName">Disk_1</field>
+                <field name="_ID">2001</field>
+                <field name="_shard">a</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_2</field>
+                <field name="_ID">2002</field>
+                <field name="_shard">a</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_3</field>
+                <field name="_ID">2003</field>
+                <field name="_shard">a</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"3",
+          "docs":[
+             {
+                "doc":{
+                   "DiskName":"Disk_1",
+                   "_ID":"2001",
+                   "_shard":"a"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_2",
+                   "_ID":"2002",
+                   "_shard":"a"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_3",
+                   "_ID":"2003",
+                   "_shard":"a"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=c
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="DiskName">Disk_1</field>
+                <field name="_ID">2001</field>
+                <field name="_shard">c</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_4</field>
+                <field name="_ID">2004</field>
+                <field name="_shard">c</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_5</field>
+                <field name="_ID">2005</field>
+                <field name="_shard">c</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_6</field>
+                <field name="_ID">2006</field>
+                <field name="_shard">c</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "DiskName":"Disk_1",
+                   "_ID":"2001",
+                   "_shard":"c"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_4",
+                   "_ID":"2004",
+                   "_shard":"c"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_5",
+                   "_ID":"2005",
+                   "_shard":"c"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_6",
+                   "_ID":"2006",
+                   "_shard":"c"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=e
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="DiskName">Disk_4</field>
+                <field name="_ID">2004</field>
+                <field name="_shard">e</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_7</field>
+                <field name="_ID">2007</field>
+                <field name="_shard">e</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_8</field>
+                <field name="_ID">2008</field>
+                <field name="_shard">e</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_9</field>
+                <field name="_ID">2009</field>
+                <field name="_shard">e</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "DiskName":"Disk_4",
+                   "_ID":"2004",
+                   "_shard":"e"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_7",
+                   "_ID":"2007",
+                   "_shard":"e"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_8",
+                   "_ID":"2008",
+                   "_shard":"e"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_9",
+                   "_ID":"2009",
+                   "_shard":"e"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=g
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs>
+            <doc>
+                <field name="DiskName">Disk_1</field>
+                <field name="_ID">2001</field>
+                <field name="_shard">g</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_4</field>
+                <field name="_ID">2004</field>
+                <field name="_shard">g</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_10</field>
+                <field name="_ID">2010</field>
+                <field name="_shard">g</field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_11</field>
+                <field name="_ID">2011</field>
+                <field name="_shard">g</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[
+             {
+                "doc":{
+                   "DiskName":"Disk_1",
+                   "_ID":"2001",
+                   "_shard":"g"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_4",
+                   "_ID":"2004",
+                   "_shard":"g"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_10",
+                   "_ID":"2010",
+                   "_shard":"g"
+                }
+             },
+             {
+                "doc":{
+                   "DiskName":"Disk_11",
+                   "_ID":"2011",
+                   "_shard":"g"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~
+~ Test for Duplicates ~
+~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_duplicates?range=a
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>15</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2004</field>
+                <field name="shards">c,e,g</field>
+            </doc>
+            <doc>
+                <field name="_ID">2001</field>
+                <field name="shards">a,c,g</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"15",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"2004",
+                   "shards":"c,e,g"
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"2001",
+                   "shards":"a,c,g"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=a,c
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>7</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2001</field>
+                <field name="shards">a,c</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"7",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"2001",
+                   "shards":"a,c"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=a,e
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>11</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2004</field>
+                <field name="shards">c,e</field>
+            </doc>
+            <doc>
+                <field name="_ID">2001</field>
+                <field name="shards">a,c</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"11",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"2004",
+                   "shards":"c,e"
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"2001",
+                   "shards":"a,c"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=a,g
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>15</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2004</field>
+                <field name="shards">c,e,g</field>
+            </doc>
+            <doc>
+                <field name="_ID">2001</field>
+                <field name="shards">a,c,g</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"15",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"2004",
+                   "shards":"c,e,g"
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"2001",
+                   "shards":"a,c,g"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=c
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>12</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2004</field>
+                <field name="shards">c,e,g</field>
+            </doc>
+            <doc>
+                <field name="_ID">2001</field>
+                <field name="shards">c,g</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"12",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"2004",
+                   "shards":"c,e,g"
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"2001",
+                   "shards":"c,g"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=c,e
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>8</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2004</field>
+                <field name="shards">c,e</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"8",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"2004",
+                   "shards":"c,e"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=c,g
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>12</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2004</field>
+                <field name="shards">c,e,g</field>
+            </doc>
+            <doc>
+                <field name="_ID">2001</field>
+                <field name="shards">c,g</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"12",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"2004",
+                   "shards":"c,e,g"
+                }
+             },
+             {
+                "doc":{
+                   "_ID":"2001",
+                   "shards":"c,g"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=e
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>8</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2004</field>
+                <field name="shards">e,g</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"8",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"2004",
+                   "shards":"e,g"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=e,g
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>8</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">2004</field>
+                <field name="shards">e,g</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"8",
+          "docs":[
+             {
+                "doc":{
+                   "_ID":"2004",
+                   "shards":"e,g"
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=g
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>4</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"4",
+          "docs":[]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_duplicates?range=x
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"0",
+          "docs":[]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

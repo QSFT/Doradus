@@ -1,0 +1,489 @@
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Disk/_query?q=*&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="DiskName">Disk_A</field>
+                <field name="_ID">3001</field>
+                <field name="Location">
+                    <doc>
+                        <field name="FileCreateDate">2013-11-01 01:11:10</field>
+                        <field name="FileName">File_1</field>
+                        <field name="FoldersList">
+                            <value>PROGRAM FILES 1</value>
+                            <value>USERS 1</value>
+                            <value>WINDOWS 1</value>
+                        </field>
+                        <field name="_ID">2001</field>
+                    </doc>
+                    <doc>
+                        <field name="Double">1.79E+308</field>
+                        <field name="FileCreateDate">2013-11-04 04:44:40</field>
+                        <field name="FileName">File_4</field>
+                        <field name="FileSize">2000003</field>
+                        <field name="Float">3.39E+38</field>
+                        <field name="FoldersList">
+                            <value>PROGRAM FILES 4</value>
+                            <value>USERS 4</value>
+                            <value>WINDOWS 4</value>
+                        </field>
+                        <field name="IsFileTested">FALSE</field>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_B</field>
+                <field name="_ID">3002</field>
+                <field name="Location">
+                    <doc>
+                        <field name="Double">2.23E-308</field>
+                        <field name="FileCreateDate">2013-11-02 02:22:20</field>
+                        <field name="FileName">File_2</field>
+                        <field name="FileSize">2000002</field>
+                        <field name="Float">1.18E-38</field>
+                        <field name="FolderName">Folder</field>
+                        <field name="IsFileTested">TRUE</field>
+                        <field name="_ID">2002</field>
+                    </doc>
+                    <doc>
+                        <field name="FileCreateDate">2013-11-06 06:46:16</field>
+                        <field name="FileName">File_6</field>
+                        <field name="FileSize">2000006</field>
+                        <field name="FoldersList">
+                            <value>PROGRAM FILES 6</value>
+                            <value>USERS 6</value>
+                            <value>WINDOWS 6</value>
+                        </field>
+                        <field name="IsFileTested">TRUE</field>
+                        <field name="_ID">2006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_C</field>
+                <field name="_ID">3003</field>
+                <field name="Location">
+                    <doc>
+                        <field name="Double">-2.23E-308</field>
+                        <field name="FileCreateDate">2013-11-03 03:33:30</field>
+                        <field name="FileName">File_3</field>
+                        <field name="FileSize">2000003</field>
+                        <field name="Float">-1.18E-38</field>
+                        <field name="FolderName">Folder 3</field>
+                        <field name="FoldersList">
+                            <value>PROGRAM FILES 3</value>
+                            <value>USERS 3</value>
+                            <value>WINDOWS 3</value>
+                        </field>
+                        <field name="_ID">2003</field>
+                    </doc>
+                    <doc>
+                        <field name="Double">-1.79E+308</field>
+                        <field name="FileCreateDate">2013-11-05 05:55:50</field>
+                        <field name="FileName">File_5</field>
+                        <field name="FileSize">2000005</field>
+                        <field name="Float">-3.39E+38</field>
+                        <field name="FolderName">Folder 5</field>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="DiskName">Disk_D</field>
+                <field name="_ID">3004</field>
+                <field name="Location"/>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Folder/_query?q=*&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="FolderName">Folder_A</field>
+                <field name="_ID">1001</field>
+                <field name="Files">
+                    <doc>
+                        <field name="FileCreateDate">2013-11-01 01:11:10</field>
+                        <field name="FileName">File_1</field>
+                        <field name="FoldersList">
+                            <value>PROGRAM FILES 1</value>
+                            <value>USERS 1</value>
+                            <value>WINDOWS 1</value>
+                        </field>
+                        <field name="_ID">2001</field>
+                    </doc>
+                    <doc>
+                        <field name="Double">1.79E+308</field>
+                        <field name="FileCreateDate">2013-11-04 04:44:40</field>
+                        <field name="FileName">File_4</field>
+                        <field name="FileSize">2000003</field>
+                        <field name="Float">3.39E+38</field>
+                        <field name="FoldersList">
+                            <value>PROGRAM FILES 4</value>
+                            <value>USERS 4</value>
+                            <value>WINDOWS 4</value>
+                        </field>
+                        <field name="IsFileTested">FALSE</field>
+                        <field name="_ID">2004</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="FolderName">Folder_B</field>
+                <field name="_ID">1002</field>
+                <field name="Files">
+                    <doc>
+                        <field name="Double">2.23E-308</field>
+                        <field name="FileCreateDate">2013-11-02 02:22:20</field>
+                        <field name="FileName">File_2</field>
+                        <field name="FileSize">2000002</field>
+                        <field name="Float">1.18E-38</field>
+                        <field name="FolderName">Folder</field>
+                        <field name="IsFileTested">TRUE</field>
+                        <field name="_ID">2002</field>
+                    </doc>
+                    <doc>
+                        <field name="FileCreateDate">2013-11-06 06:46:16</field>
+                        <field name="FileName">File_6</field>
+                        <field name="FileSize">2000006</field>
+                        <field name="FoldersList">
+                            <value>PROGRAM FILES 6</value>
+                            <value>USERS 6</value>
+                            <value>WINDOWS 6</value>
+                        </field>
+                        <field name="IsFileTested">TRUE</field>
+                        <field name="_ID">2006</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="FolderName">Folder_C</field>
+                <field name="_ID">1003</field>
+                <field name="Files">
+                    <doc>
+                        <field name="Double">-2.23E-308</field>
+                        <field name="FileCreateDate">2013-11-03 03:33:30</field>
+                        <field name="FileName">File_3</field>
+                        <field name="FileSize">2000003</field>
+                        <field name="Float">-1.18E-38</field>
+                        <field name="FolderName">Folder 3</field>
+                        <field name="FoldersList">
+                            <value>PROGRAM FILES 3</value>
+                            <value>USERS 3</value>
+                            <value>WINDOWS 3</value>
+                        </field>
+                        <field name="_ID">2003</field>
+                    </doc>
+                    <doc>
+                        <field name="Double">-1.79E+308</field>
+                        <field name="FileCreateDate">2013-11-05 05:55:50</field>
+                        <field name="FileName">File_5</field>
+                        <field name="FileSize">2000005</field>
+                        <field name="Float">-3.39E+38</field>
+                        <field name="FolderName">Folder 5</field>
+                        <field name="_ID">2005</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="FolderName">Folder_D</field>
+                <field name="_ID">1004</field>
+                <field name="Files"/>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/File/_query?q=*&f=_all
+*** Response: xml
+    200 OK
+    <results>
+        <docs>
+            <doc>
+                <field name="FileCreateDate">2013-11-01 01:11:10</field>
+                <field name="FileName">File_1</field>
+                <field name="FoldersList">
+                    <value>PROGRAM FILES 1</value>
+                    <value>USERS 1</value>
+                    <value>WINDOWS 1</value>
+                </field>
+                <field name="_ID">2001</field>
+                <field name="Disk">
+                    <doc>
+                        <field name="DiskName">Disk_A</field>
+                        <field name="_ID">3001</field>
+                    </doc>
+                </field>
+                <field name="ParentFolder">
+                    <doc>
+                        <field name="FolderName">Folder_A</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Double">2.23E-308</field>
+                <field name="FileCreateDate">2013-11-02 02:22:20</field>
+                <field name="FileName">File_2</field>
+                <field name="FileSize">2000002</field>
+                <field name="Float">1.18E-38</field>
+                <field name="FolderName">Folder</field>
+                <field name="IsFileTested">TRUE</field>
+                <field name="_ID">2002</field>
+                <field name="Disk">
+                    <doc>
+                        <field name="DiskName">Disk_B</field>
+                        <field name="_ID">3002</field>
+                    </doc>
+                </field>
+                <field name="ParentFolder">
+                    <doc>
+                        <field name="FolderName">Folder_B</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Double">-2.23E-308</field>
+                <field name="FileCreateDate">2013-11-03 03:33:30</field>
+                <field name="FileName">File_3</field>
+                <field name="FileSize">2000003</field>
+                <field name="Float">-1.18E-38</field>
+                <field name="FolderName">Folder 3</field>
+                <field name="FoldersList">
+                    <value>PROGRAM FILES 3</value>
+                    <value>USERS 3</value>
+                    <value>WINDOWS 3</value>
+                </field>
+                <field name="_ID">2003</field>
+                <field name="Disk">
+                    <doc>
+                        <field name="DiskName">Disk_C</field>
+                        <field name="_ID">3003</field>
+                    </doc>
+                </field>
+                <field name="ParentFolder">
+                    <doc>
+                        <field name="FolderName">Folder_C</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Double">1.79E+308</field>
+                <field name="FileCreateDate">2013-11-04 04:44:40</field>
+                <field name="FileName">File_4</field>
+                <field name="FileSize">2000003</field>
+                <field name="Float">3.39E+38</field>
+                <field name="FoldersList">
+                    <value>PROGRAM FILES 4</value>
+                    <value>USERS 4</value>
+                    <value>WINDOWS 4</value>
+                </field>
+                <field name="IsFileTested">FALSE</field>
+                <field name="_ID">2004</field>
+                <field name="Disk">
+                    <doc>
+                        <field name="DiskName">Disk_A</field>
+                        <field name="_ID">3001</field>
+                    </doc>
+                </field>
+                <field name="ParentFolder">
+                    <doc>
+                        <field name="FolderName">Folder_A</field>
+                        <field name="_ID">1001</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Double">-1.79E+308</field>
+                <field name="FileCreateDate">2013-11-05 05:55:50</field>
+                <field name="FileName">File_5</field>
+                <field name="FileSize">2000005</field>
+                <field name="Float">-3.39E+38</field>
+                <field name="FolderName">Folder 5</field>
+                <field name="_ID">2005</field>
+                <field name="Disk">
+                    <doc>
+                        <field name="DiskName">Disk_C</field>
+                        <field name="_ID">3003</field>
+                    </doc>
+                </field>
+                <field name="ParentFolder">
+                    <doc>
+                        <field name="FolderName">Folder_C</field>
+                        <field name="_ID">1003</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="FileCreateDate">2013-11-06 06:46:16</field>
+                <field name="FileName">File_6</field>
+                <field name="FileSize">2000006</field>
+                <field name="FoldersList">
+                    <value>PROGRAM FILES 6</value>
+                    <value>USERS 6</value>
+                    <value>WINDOWS 6</value>
+                </field>
+                <field name="IsFileTested">TRUE</field>
+                <field name="_ID">2006</field>
+                <field name="Disk">
+                    <doc>
+                        <field name="DiskName">Disk_B</field>
+                        <field name="_ID">3002</field>
+                    </doc>
+                </field>
+                <field name="ParentFolder">
+                    <doc>
+                        <field name="FolderName">Folder_B</field>
+                        <field name="_ID">1002</field>
+                    </doc>
+                </field>
+            </doc>
+            <doc>
+                <field name="Double">-1000000000</field>
+                <field name="FileName">File_7</field>
+                <field name="FileSize">2000007</field>
+                <field name="Float">-3000000000</field>
+                <field name="FoldersList">
+                    <value>PROGRAM FILES 7</value>
+                    <value>USERS 7</value>
+                    <value>WINDOWS 7</value>
+                </field>
+                <field name="IsFileTested">FALSE</field>
+                <field name="_ID">2007</field>
+                <field name="Disk"/>
+                <field name="ParentFolder"/>
+            </doc>
+            <doc>
+                <field name="FileCreateDate">2013-11-08 08:48:18</field>
+                <field name="FileName">File_8</field>
+                <field name="_ID">2008</field>
+                <field name="Disk"/>
+                <field name="ParentFolder"/>
+            </doc>
+        </docs>
+    </results>
+
+~~~~~~~~~~~~~~~~~~~
+~ EXCLUDE/INCLUDE ~
+~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Disk/_aggregate?m=COUNT(*)&q=*&f=Location.EXCLUDE(NULL)
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Location.EXCLUDE(NULL)" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>3</summary>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Location">2001</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Location">2002</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Location">2003</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Location">2004</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Location">2005</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Location">2006</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Disk/_aggregate?m=COUNT(*)&q=*&f=Location.EXCLUDE(2005)
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Location.EXCLUDE(2005)" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>4</summary>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Location">(null)</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Location">2001</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Location">2002</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Location">2003</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Location">2004</field>
+            </group>
+            <group>
+                <metric>1</metric>
+                <field name="Location">2006</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Disk/_aggregate?m=COUNT(*)&q=*&f=Location.INCLUDE(NULL)
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Location.INCLUDE(NULL)" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>1</summary>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Location">(null)</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    GET /Application/Disk/_aggregate?m=COUNT(*)&q=*&f=Location.INCLUDE(2005)
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="Location.INCLUDE(2005)" metric="COUNT(*)" query="*"/>
+        <totalobjects>4</totalobjects>
+        <summary>1</summary>
+        <groups>
+            <group>
+                <metric>1</metric>
+                <field name="Location">2005</field>
+            </group>
+        </groups>
+    </results>
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

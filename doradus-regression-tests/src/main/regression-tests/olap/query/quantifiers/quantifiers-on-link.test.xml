@@ -1,0 +1,67 @@
+<!--
+Doradus Data Model and Query Language -v2.1
+4.14.4 Quantifiers on Link Fields
+-->
+<TEST>
+<CONNECT/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<IMPORT>quantifiers-on-link.defs.xml</IMPORT>
+<DEFINE name="response.format" value="xml|json"/>
+<enable-output/>
+
+<FOR index="i" from="1" to="2">
+    <IF.EQ arg1="${i}" arg2="1">
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo>~ XML format ~</echo>
+        <echo>~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" xml="${schema.xml}"/>
+        <POST path="Application/shard" xml="${data.xml}"/>
+        <enable-output/>
+        <POST path="Application/_shards/shard" />
+    </IF.EQ>
+    <IF.EQ arg1="${i}" arg2="2">
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo>~ JSON format ~</echo>
+        <echo>~~~~~~~~~~~~~~~</echo>
+        <echo></echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <echo>~ Create application ~</echo>
+        <echo>~~~~~~~~~~~~~~~~~~~~~~</echo>
+        <disable-output/>
+        <POST path="_applications" json="${schema.json}"/>
+        <POST path="Application/shard" json="${data.json}"/>
+        <enable-output/>
+        <POST path="Application/_shards/shard" />
+    </IF.EQ>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="*" f="_all" shards="shard"/>
+        
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Test for Quantifies on Link ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Table" q="ANY(Manager)=14001" shards="shard"/>
+    <QUERY path="Application/Table" q="ANY(Manager)=4001" shards="shard"/>
+    <QUERY path="Application/Table" q="ANY(DirectReports)=(3001, 4002, 6001)" f="Name" shards="shard"/>
+
+    <QUERY path="Application/Table" q="ALL(DirectReports)=(14001)" f="Name" shards="shard"/>
+    <QUERY path="Application/Table" q="ALL(DirectReports)=(3001)" f="Name" shards="shard"/>
+    <QUERY path="Application/Table" q="ALL(DirectReports)=(3001, 4002, 6001)" f="Name" shards="shard"/>
+
+    <QUERY path="Application/Table" q="NONE(DirectReports)=14001" f="Name" shards="shard"/>
+    <QUERY path="Application/Table" q="NONE(DirectReports)=(3001)" f="Name" shards="shard"/>
+    <QUERY path="Application/Table" q="NONE(DirectReports)=(3001, 4002, 6001)" f="Name" shards="shard"/>
+
+    <DELETE path="_applications/Application/ApplicationKey"/>
+</FOR>
+
+<DISCONNECT />
+</TEST>

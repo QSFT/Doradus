@@ -1,0 +1,2536 @@
+~~~~~~~~~~~~~~
+~ XML format ~
+~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /Application/_shards/shard
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>12</totalobjects>
+        <docs>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-04-05 12:32:08.555</field>
+                <field name="People">11980000</field>
+                <field name="_ID">2001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Washington</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-05 22:12:14.666</field>
+                <field name="People">632323</field>
+                <field name="_ID">2002</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">New York</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-15 10:20:01.777</field>
+                <field name="People">8245000</field>
+                <field name="_ID">2003</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Saint-Petersburg</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-06-22 09:05:20.888</field>
+                <field name="People">4880000</field>
+                <field name="_ID">2004</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Novgorod</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2012-12-30 15:29:04.999</field>
+                <field name="People">1255000</field>
+                <field name="_ID">2005</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Chicago</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2013-05-28 13:14:33.444</field>
+                <field name="People">2707000</field>
+                <field name="_ID">2006</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-04-05 12:32:08.555</field>
+                <field name="People">21980000</field>
+                <field name="_ID">2007</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Washington</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-05 22:12:14.666</field>
+                <field name="People">1632323</field>
+                <field name="_ID">2008</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">New York</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-15 10:20:01.777</field>
+                <field name="People">18245000</field>
+                <field name="_ID">2009</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Saint-Petersburg</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-06-22 09:05:20.888</field>
+                <field name="People">14880000</field>
+                <field name="_ID">2010</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Novgorod</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2012-12-30 15:29:04.999</field>
+                <field name="People">11255000</field>
+                <field name="_ID">2011</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Chicago</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2013-05-28 13:14:33.444</field>
+                <field name="People">12707000</field>
+                <field name="_ID">2012</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"12",
+          "docs":[
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "Country":"Russia",
+                   "CreateDate":"2011-04-05 12:32:08.555",
+                   "People":"11980000",
+                   "_ID":"2001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Washington",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-05 22:12:14.666",
+                   "People":"632323",
+                   "_ID":"2002",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"New York",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-15 10:20:01.777",
+                   "People":"8245000",
+                   "_ID":"2003",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Saint-Petersburg",
+                   "Country":"Russia",
+                   "CreateDate":"2011-06-22 09:05:20.888",
+                   "People":"4880000",
+                   "_ID":"2004",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Novgorod",
+                   "Country":"Russia",
+                   "CreateDate":"2012-12-30 15:29:04.999",
+                   "People":"1255000",
+                   "_ID":"2005",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Chicago",
+                   "Country":"USA",
+                   "CreateDate":"2013-05-28 13:14:33.444",
+                   "People":"2707000",
+                   "_ID":"2006",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "Country":"Russia",
+                   "CreateDate":"2011-04-05 12:32:08.555",
+                   "People":"21980000",
+                   "_ID":"2007",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Washington",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-05 22:12:14.666",
+                   "People":"1632323",
+                   "_ID":"2008",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"New York",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-15 10:20:01.777",
+                   "People":"18245000",
+                   "_ID":"2009",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Saint-Petersburg",
+                   "Country":"Russia",
+                   "CreateDate":"2011-06-22 09:05:20.888",
+                   "People":"14880000",
+                   "_ID":"2010",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Novgorod",
+                   "Country":"Russia",
+                   "CreateDate":"2012-12-30 15:29:04.999",
+                   "People":"11255000",
+                   "_ID":"2011",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Chicago",
+                   "Country":"USA",
+                   "CreateDate":"2013-05-28 13:14:33.444",
+                   "People":"12707000",
+                   "_ID":"2012",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Test for TOTAL GROUP for TOP and BOTTOM aggr queries ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=MAX(People)&f=TOP(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="TOP(0, City)" metric="MAX(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>21980000</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>21980000</metric>
+                <field name="City">Moscow</field>
+            </group>
+            <group>
+                <metric>18245000</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>14880000</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>12707000</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>11255000</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>1632323</metric>
+                <field name="City">Washington</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MAX(People)",
+             "query":"*",
+             "group":"TOP(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"21980000",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"21980000",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"18245000",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"14880000",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"12707000",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"11255000",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1632323",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(People)&f=TOP(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="TOP(0, City)" metric="MIN(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>632323</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>11980000</metric>
+                <field name="City">Moscow</field>
+            </group>
+            <group>
+                <metric>8245000</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>4880000</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>2707000</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>1255000</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>632323</metric>
+                <field name="City">Washington</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(People)",
+             "query":"*",
+             "group":"TOP(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"632323",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"11980000",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"8245000",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"4880000",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2707000",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1255000",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"632323",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(People)&f=TOP(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="TOP(0, City)" metric="COUNT(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>12</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>2</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">Moscow</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">Washington</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(People)",
+             "query":"*",
+             "group":"TOP(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"12",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=SUM(People)&f=TOP(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="TOP(0, City)" metric="SUM(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>110398646</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>33960000</metric>
+                <field name="City">Moscow</field>
+            </group>
+            <group>
+                <metric>26490000</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>19760000</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>15414000</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>12510000</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>2264646</metric>
+                <field name="City">Washington</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"SUM(People)",
+             "query":"*",
+             "group":"TOP(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"110398646",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"33960000",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"26490000",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"19760000",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"15414000",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"12510000",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2264646",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=AVERAGE(People)&f=TOP(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="TOP(0, City)" metric="AVERAGE(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>9199887.167</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>16980000.000</metric>
+                <field name="City">Moscow</field>
+            </group>
+            <group>
+                <metric>13245000.000</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>9880000.000</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>7707000.000</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>6255000.000</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>1132323.000</metric>
+                <field name="City">Washington</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"AVERAGE(People)",
+             "query":"*",
+             "group":"TOP(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"9199887.167",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"16980000.000",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"13245000.000",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"9880000.000",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"7707000.000",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"6255000.000",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1132323.000",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=MAX(People)&f=BOTTOM(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="BOTTOM(0, City)" metric="MAX(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>21980000</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>1632323</metric>
+                <field name="City">Washington</field>
+            </group>
+            <group>
+                <metric>11255000</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>12707000</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>14880000</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>18245000</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>21980000</metric>
+                <field name="City">Moscow</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MAX(People)",
+             "query":"*",
+             "group":"BOTTOM(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"21980000",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1632323",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"11255000",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"12707000",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"14880000",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"18245000",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"21980000",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(People)&f=BOTTOM(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="BOTTOM(0, City)" metric="MIN(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>632323</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>632323</metric>
+                <field name="City">Washington</field>
+            </group>
+            <group>
+                <metric>1255000</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>2707000</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>4880000</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>8245000</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>11980000</metric>
+                <field name="City">Moscow</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(People)",
+             "query":"*",
+             "group":"BOTTOM(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"632323",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"632323",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1255000",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2707000",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"4880000",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"8245000",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"11980000",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(People)&f=BOTTOM(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="BOTTOM(0, City)" metric="COUNT(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>12</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>2</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">Moscow</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">Washington</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(People)",
+             "query":"*",
+             "group":"BOTTOM(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"12",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=SUM(People)&f=BOTTOM(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="BOTTOM(0, City)" metric="SUM(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>110398646</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>2264646</metric>
+                <field name="City">Washington</field>
+            </group>
+            <group>
+                <metric>12510000</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>15414000</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>19760000</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>26490000</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>33960000</metric>
+                <field name="City">Moscow</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"SUM(People)",
+             "query":"*",
+             "group":"BOTTOM(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"110398646",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"2264646",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"12510000",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"15414000",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"19760000",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"26490000",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"33960000",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=AVERAGE(People)&f=BOTTOM(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="BOTTOM(0, City)" metric="AVERAGE(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>9199887.167</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>1132323.000</metric>
+                <field name="City">Washington</field>
+            </group>
+            <group>
+                <metric>6255000.000</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>7707000.000</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>9880000.000</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>13245000.000</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>16980000.000</metric>
+                <field name="City">Moscow</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"AVERAGE(People)",
+             "query":"*",
+             "group":"BOTTOM(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"9199887.167",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1132323.000",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"6255000.000",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"7707000.000",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"9880000.000",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"13245000.000",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"16980000.000",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~
+~ JSON format ~
+~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /Application/_shards/shard
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~
+~ Table of Content ~
+~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_query?q=*&f=_all&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>12</totalobjects>
+        <docs>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-04-05 12:32:08.555</field>
+                <field name="People">11980000</field>
+                <field name="_ID">2001</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Washington</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-05 22:12:14.666</field>
+                <field name="People">632323</field>
+                <field name="_ID">2002</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">New York</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-15 10:20:01.777</field>
+                <field name="People">8245000</field>
+                <field name="_ID">2003</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Saint-Petersburg</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-06-22 09:05:20.888</field>
+                <field name="People">4880000</field>
+                <field name="_ID">2004</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Novgorod</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2012-12-30 15:29:04.999</field>
+                <field name="People">1255000</field>
+                <field name="_ID">2005</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Chicago</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2013-05-28 13:14:33.444</field>
+                <field name="People">2707000</field>
+                <field name="_ID">2006</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Moscow</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-04-05 12:32:08.555</field>
+                <field name="People">21980000</field>
+                <field name="_ID">2007</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Washington</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-05 22:12:14.666</field>
+                <field name="People">1632323</field>
+                <field name="_ID">2008</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">New York</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2011-04-15 10:20:01.777</field>
+                <field name="People">18245000</field>
+                <field name="_ID">2009</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Saint-Petersburg</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2011-06-22 09:05:20.888</field>
+                <field name="People">14880000</field>
+                <field name="_ID">2010</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Novgorod</field>
+                <field name="Country">Russia</field>
+                <field name="CreateDate">2012-12-30 15:29:04.999</field>
+                <field name="People">11255000</field>
+                <field name="_ID">2011</field>
+                <field name="_shard">shard</field>
+            </doc>
+            <doc>
+                <field name="City">Chicago</field>
+                <field name="Country">USA</field>
+                <field name="CreateDate">2013-05-28 13:14:33.444</field>
+                <field name="People">12707000</field>
+                <field name="_ID">2012</field>
+                <field name="_shard">shard</field>
+            </doc>
+        </docs>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "totalobjects":"12",
+          "docs":[
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "Country":"Russia",
+                   "CreateDate":"2011-04-05 12:32:08.555",
+                   "People":"11980000",
+                   "_ID":"2001",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Washington",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-05 22:12:14.666",
+                   "People":"632323",
+                   "_ID":"2002",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"New York",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-15 10:20:01.777",
+                   "People":"8245000",
+                   "_ID":"2003",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Saint-Petersburg",
+                   "Country":"Russia",
+                   "CreateDate":"2011-06-22 09:05:20.888",
+                   "People":"4880000",
+                   "_ID":"2004",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Novgorod",
+                   "Country":"Russia",
+                   "CreateDate":"2012-12-30 15:29:04.999",
+                   "People":"1255000",
+                   "_ID":"2005",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Chicago",
+                   "Country":"USA",
+                   "CreateDate":"2013-05-28 13:14:33.444",
+                   "People":"2707000",
+                   "_ID":"2006",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Moscow",
+                   "Country":"Russia",
+                   "CreateDate":"2011-04-05 12:32:08.555",
+                   "People":"21980000",
+                   "_ID":"2007",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Washington",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-05 22:12:14.666",
+                   "People":"1632323",
+                   "_ID":"2008",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"New York",
+                   "Country":"USA",
+                   "CreateDate":"2011-04-15 10:20:01.777",
+                   "People":"18245000",
+                   "_ID":"2009",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Saint-Petersburg",
+                   "Country":"Russia",
+                   "CreateDate":"2011-06-22 09:05:20.888",
+                   "People":"14880000",
+                   "_ID":"2010",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Novgorod",
+                   "Country":"Russia",
+                   "CreateDate":"2012-12-30 15:29:04.999",
+                   "People":"11255000",
+                   "_ID":"2011",
+                   "_shard":"shard"
+                }
+             },
+             {
+                "doc":{
+                   "City":"Chicago",
+                   "Country":"USA",
+                   "CreateDate":"2013-05-28 13:14:33.444",
+                   "People":"12707000",
+                   "_ID":"2012",
+                   "_shard":"shard"
+                }
+             }
+          ]
+       }
+    }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Test for TOTAL GROUP for TOP and BOTTOM aggr queries ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table/_aggregate?m=MAX(People)&f=TOP(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="TOP(0, City)" metric="MAX(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>21980000</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>21980000</metric>
+                <field name="City">Moscow</field>
+            </group>
+            <group>
+                <metric>18245000</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>14880000</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>12707000</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>11255000</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>1632323</metric>
+                <field name="City">Washington</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MAX(People)",
+             "query":"*",
+             "group":"TOP(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"21980000",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"21980000",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"18245000",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"14880000",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"12707000",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"11255000",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1632323",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(People)&f=TOP(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="TOP(0, City)" metric="MIN(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>632323</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>11980000</metric>
+                <field name="City">Moscow</field>
+            </group>
+            <group>
+                <metric>8245000</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>4880000</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>2707000</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>1255000</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>632323</metric>
+                <field name="City">Washington</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(People)",
+             "query":"*",
+             "group":"TOP(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"632323",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"11980000",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"8245000",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"4880000",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2707000",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1255000",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"632323",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(People)&f=TOP(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="TOP(0, City)" metric="COUNT(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>12</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>2</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">Moscow</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">Washington</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(People)",
+             "query":"*",
+             "group":"TOP(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"12",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=SUM(People)&f=TOP(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="TOP(0, City)" metric="SUM(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>110398646</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>33960000</metric>
+                <field name="City">Moscow</field>
+            </group>
+            <group>
+                <metric>26490000</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>19760000</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>15414000</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>12510000</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>2264646</metric>
+                <field name="City">Washington</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"SUM(People)",
+             "query":"*",
+             "group":"TOP(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"110398646",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"33960000",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"26490000",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"19760000",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"15414000",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"12510000",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2264646",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=AVERAGE(People)&f=TOP(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="TOP(0, City)" metric="AVERAGE(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>9199887.167</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>16980000.000</metric>
+                <field name="City">Moscow</field>
+            </group>
+            <group>
+                <metric>13245000.000</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>9880000.000</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>7707000.000</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>6255000.000</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>1132323.000</metric>
+                <field name="City">Washington</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"AVERAGE(People)",
+             "query":"*",
+             "group":"TOP(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"9199887.167",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"16980000.000",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"13245000.000",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"9880000.000",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"7707000.000",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"6255000.000",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1132323.000",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=MAX(People)&f=BOTTOM(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="BOTTOM(0, City)" metric="MAX(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>21980000</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>1632323</metric>
+                <field name="City">Washington</field>
+            </group>
+            <group>
+                <metric>11255000</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>12707000</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>14880000</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>18245000</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>21980000</metric>
+                <field name="City">Moscow</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MAX(People)",
+             "query":"*",
+             "group":"BOTTOM(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"21980000",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1632323",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"11255000",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"12707000",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"14880000",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"18245000",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"21980000",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=MIN(People)&f=BOTTOM(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="BOTTOM(0, City)" metric="MIN(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>632323</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>632323</metric>
+                <field name="City">Washington</field>
+            </group>
+            <group>
+                <metric>1255000</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>2707000</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>4880000</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>8245000</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>11980000</metric>
+                <field name="City">Moscow</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"MIN(People)",
+             "query":"*",
+             "group":"BOTTOM(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"632323",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"632323",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"1255000",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2707000",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"4880000",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"8245000",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"11980000",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=COUNT(People)&f=BOTTOM(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="BOTTOM(0, City)" metric="COUNT(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>12</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>2</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">Moscow</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>2</metric>
+                <field name="City">Washington</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"COUNT(People)",
+             "query":"*",
+             "group":"BOTTOM(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"12",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"2",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=SUM(People)&f=BOTTOM(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="BOTTOM(0, City)" metric="SUM(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>110398646</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>2264646</metric>
+                <field name="City">Washington</field>
+            </group>
+            <group>
+                <metric>12510000</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>15414000</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>19760000</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>26490000</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>33960000</metric>
+                <field name="City">Moscow</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"SUM(People)",
+             "query":"*",
+             "group":"BOTTOM(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"110398646",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"2264646",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"12510000",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"15414000",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"19760000",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"26490000",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"33960000",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    GET /Application/Table/_aggregate?m=AVERAGE(People)&f=BOTTOM(0, City)&shards=shard
+*** Response: xml
+    200 OK
+    <results>
+        <aggregate group="BOTTOM(0, City)" metric="AVERAGE(People)" query="*"/>
+        <totalobjects>12</totalobjects>
+        <summary>9199887.167</summary>
+        <totalgroups>6</totalgroups>
+        <groups>
+            <group>
+                <metric>1132323.000</metric>
+                <field name="City">Washington</field>
+            </group>
+            <group>
+                <metric>6255000.000</metric>
+                <field name="City">Novgorod</field>
+            </group>
+            <group>
+                <metric>7707000.000</metric>
+                <field name="City">Chicago</field>
+            </group>
+            <group>
+                <metric>9880000.000</metric>
+                <field name="City">Saint-Petersburg</field>
+            </group>
+            <group>
+                <metric>13245000.000</metric>
+                <field name="City">New York</field>
+            </group>
+            <group>
+                <metric>16980000.000</metric>
+                <field name="City">Moscow</field>
+            </group>
+        </groups>
+    </results>
+*** Response: json
+    200 OK
+    {
+       "results":{
+          "aggregate":{
+             "metric":"AVERAGE(People)",
+             "query":"*",
+             "group":"BOTTOM(0, City)"
+          },
+          "totalobjects":"12",
+          "summary":"9199887.167",
+          "totalgroups":"6",
+          "groups":[
+             {
+                "group":{
+                   "metric":"1132323.000",
+                   "field":{
+                      "City":"Washington"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"6255000.000",
+                   "field":{
+                      "City":"Novgorod"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"7707000.000",
+                   "field":{
+                      "City":"Chicago"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"9880000.000",
+                   "field":{
+                      "City":"Saint-Petersburg"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"13245000.000",
+                   "field":{
+                      "City":"New York"
+                   }
+                }
+             },
+             {
+                "group":{
+                   "metric":"16980000.000",
+                   "field":{
+                      "City":"Moscow"
+                   }
+                }
+             }
+          ]
+       }
+    }
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+

@@ -1,0 +1,37 @@
+<TEST>
+    
+<DEFINE name="schema.xml">
+    <application name="Application">
+        <key>ApplicationKey</key>
+        <options>
+            <option name="AutoTables">false</option>
+        </options>
+        <tables>
+            <table name="Table">
+                <fields>
+                    <field name="B" type="BOOLEAN" />
+                </fields>
+            </table>
+        </tables>
+    </application>
+</DEFINE>
+
+<DEFINE name="data.xml">
+    <batch>
+        <docs>
+            <doc>
+                <field name="B">false</field>
+                <field name="_ID">0001</field>
+            </doc>
+            <doc>
+                <field name="B">true</field>
+                <field name="_ID">0002</field>
+            </doc>
+        </docs>
+    </batch>
+</DEFINE>
+
+<JSON-FROM-XML name ="schema.json" value="${schema.xml}"/>
+<JSON-FROM-XML name ="data.json" value="${data.xml}"/>
+
+</TEST>

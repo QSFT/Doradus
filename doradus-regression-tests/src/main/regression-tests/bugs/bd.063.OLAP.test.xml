@@ -1,0 +1,88 @@
+<TEST>
+<CONNECT/>
+<DEFINE name="response.format" value="xml|json"/>
+<disable-output/>
+<DELETE path="_applications/Application/ApplicationKey"/>
+<POST path="_applications">
+    <XML>
+        <application name="Application">
+            <key>ApplicationKey</key>
+                <options>
+	            <option name="StorageService">OLAPService</option>
+	        </options>
+	    <tables>
+	        <table name="Message">
+            	    <fields>
+		        <field name="Title" type="Text"/>
+		        <field name="Size" type="INTEGER" collection="true"/>
+	            </fields>
+        	</table>
+	    </tables>
+	</application>
+    </XML>
+</POST>
+<POST path="Application/shard">
+    <XML>
+	<batch>
+            <docs>
+		<doc _table="Message" _ID="1001" >
+		    <field name="Size">
+			<add>
+			    <value>1001</value>
+			    <value>1002</value>
+			    <value>6001</value>
+			</add>
+		    </field>
+		    <field name="Title">Subject 1</field>
+		</doc>
+		<doc _table="Message" _ID="1002" >
+		    <field name="Size">
+			<add>
+			    <value>3001</value>
+			    <value>3002</value>
+			    <value>4001</value>
+			</add>
+		    </field>
+		    <field name="Title">Subject 2</field>
+		</doc>
+		<doc _table="Message" _ID="1003" >
+		    <field name="Size">
+			<add>
+			    <value>2001</value>
+			    <value>2002</value>
+			    <value>5001</value>
+			</add>
+		    </field>
+		    <field name="Title">Subject 3</field>
+		</doc>
+		<doc _table="Message" _ID="1004" >
+		    <field name="Size">
+			<add>
+			    <value>5005</value>
+			    <value>6006</value>
+			    <value>4004</value>
+			</add>
+		    </field>
+		    <field name="Title">Subject 4</field>
+		</doc>
+	    </docs>
+	</batch>
+    </XML>
+</POST>
+
+<POST path="Application/_shards/shard"/>
+
+    <enable-output/>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <echo>~ Table of Content ~</echo>
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Message" q="*" f="_all" shards="shard"/>
+
+    <echo>~~~~~~~~~~~~~~~~~~~~</echo>
+    <QUERY path="Application/Message" q="*" range="0" o="Size ASC"/>
+    <QUERY path="Application/Message" q="*" range="0" o="Size DESC"/>
+
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+<DISCONNECT/>
+</TEST>

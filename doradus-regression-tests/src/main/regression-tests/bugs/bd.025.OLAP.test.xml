@@ -1,0 +1,310 @@
+<TEST>
+<!-- 
+    **************************************************************************************************
+    Key: BD-25, Bug
+    Summary: OLAP: [Titan's Request]: NPE Aggregating with LOWER and alias
+    **************************************************************************************************
+-->
+<CONNECT/>
+<DEFINE name="response.format" value="xml|json"/>
+<disable-output/>
+
+<DELETE path="_applications/Application/ApplicationKey"/>
+    
+    <POST path="_applications">
+    <XML>
+        <application name="Application">
+            <key>ApplicationKey</key>
+            <options>
+		<option name="StorageService">OLAPService</option>
+            </options>
+    <tables>
+        <table name="Vint">
+            <fields>
+                <field type="TEXT" name="VintName" collection="false"/>
+                <field type="LINK" collection="true" inverse="Vint" table="Disk" name="Disk"/>
+                <field type="BOOLEAN" name="HasBought"/>
+            </fields>
+        </table>
+        <table name="Disk">
+            <fields>
+                <field type="TEXT" name="DiskName" collection="false"/>
+                <field type="LINK" collection="true" inverse="Disk" table="Folder" name="Folder"/>
+            </fields>
+        </table>
+        <table name="Folder">
+            <fields>
+                <field type="TEXT" name="FolderName" collection="false"/>
+                <field type="LINK" collection="true" inverse="Folder" table="Disk" name="Disk"/>
+                <field type="LINK" collection="true" inverse="FileFolder" table="File" name="File"/>
+                <field type="BOOLEAN" name="IsSender"/>
+            </fields>
+        </table>
+        <table name="File">
+            <fields>
+                <field type="TEXT" name="FileName" collection="false"/>
+                <field type="LINK" collection="true" inverse="File" table="Folder" name="FileFolder"/>
+                <field type="TEXT" name="FoldersList" collection="true"/>
+            </fields>
+        </table>
+    </tables>
+        </application>
+    </XML>
+    </POST>
+
+    <POST path="Application/shard">
+    <XML>
+        <batch>
+            <docs>
+          <doc _ID="9001" _table="Vint" >
+            <field name="VintName">Vint_A</field>
+            <field name="HasBought">True</field>
+            <field name="Disk">
+              <add>
+                <value>1001</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="9002" _table="Vint" >
+            <field name="VintName">Vint_B</field>
+            <field name="HasBought">False</field>
+            <field name="Disk">
+              <add>
+                <value>1002</value>
+                <value>1003</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="1001" _table="Disk" >
+            <field name="DiskName">Disk_A</field>
+            <field name="Folder">
+              <add>
+                <value>2001</value>
+                <value>2004</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="1002" _table="Disk" >
+            <field name="DiskName">Disk_B</field>
+            <field name="Folder">
+              <add>
+                <value>2002</value>
+                <value>2005</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="1003" _table="Disk" >
+            <field name="DiskName">Disk_C</field>
+            <field name="Folder">
+              <add>
+                <value>2003</value>
+                <value>2006</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="2001" _table="Folder" >
+            <field name="FolderName">Folder_A_1</field>
+            <field name="IsSender">True</field>
+            <field name="Disk">
+              <add>
+                <value>1001</value>
+              </add>
+	    </field>
+            <field name="File">
+              <add>
+                <value>3001</value>
+                <value>3002</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="2002" _table="Folder" >
+            <field name="FolderName">Folder_B_1</field>
+            <field name="IsSender">False</field>
+            <field name="Disk">
+              <add>
+                <value>1002</value>
+              </add>
+	    </field>
+            <field name="File">
+              <add>
+                <value>3003</value>
+                <value>3004</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="2003" _table="Folder" >
+            <field name="FolderName">Folder_C_1</field>
+            <field name="IsSender">True</field>
+            <field name="Disk">
+              <add>
+                <value>1003</value>
+              </add>
+	    </field>
+            <field name="File">
+              <add>
+                <value>3005</value>
+                <value>3006</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="2004" _table="Folder" >
+            <field name="FolderName">Folder_A_2</field>
+            <field name="IsSender">False</field>
+            <field name="Disk">
+              <add>
+                <value>1001</value>
+              </add>
+	    </field>
+            <field name="File">
+              <add>
+                <value>3007</value>
+                <value>3008</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="2005" _table="Folder" >
+            <field name="FolderName">Folder_B_2</field>
+            <field name="IsSender">True</field>
+            <field name="Disk">
+              <add>
+                <value>1002</value>
+              </add>
+	    </field>
+            <field name="File">
+              <add>
+                <value>3009</value>
+                <value>3010</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="2006" _table="Folder" >
+            <field name="FolderName">Folder_C_2</field>
+            <field name="IsSender">False</field>
+            <field name="Disk">
+              <add>
+                <value>1003</value>
+              </add>
+	    </field>
+            <field name="File">
+              <add>
+                <value>3011</value>
+                <value>3012</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="3001" _table="File" >
+            <field name="FileName">File_1</field>
+            <field name="FileFolder">
+              <add>
+                <value>2001</value>
+              </add>
+	    </field>
+            <field name="FoldersList">
+                <add>
+                    <value>WINDOWS 1</value>
+                    <value>PROGRAM FILES 1</value>
+                    <value>USERS 1</value>
+                </add>
+            </field>
+          </doc>
+          <doc _ID="3002" _table="File" >
+            <field name="FileName">File_2</field>
+            <field name="FileFolder">
+              <add>
+                <value>2001</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="3003" _table="File" >
+            <field name="FileName">File_3</field>
+            <field name="FileFolder">
+              <add>
+                <value>2002</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="3004" _table="File" >
+            <field name="FileName">File_4</field>
+            <field name="FileFolder">
+              <add>
+                <value>2002</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="3005" _table="File" >
+            <field name="FileName">File_5</field>
+            <field name="FileFolder">
+              <add>
+                <value>2003</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="3006" _table="File" >
+            <field name="FileName">File_6</field>
+            <field name="FileFolder">
+              <add>
+                <value>2003</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="3007" _table="File" >
+            <field name="FileName">File_7</field>
+            <field name="FileFolder">
+              <add>
+                <value>2004</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="3008" _table="File" >
+            <field name="FileName">File_8</field>
+            <field name="FileFolder">
+              <add>
+                <value>2004</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="3009" _table="File" >
+            <field name="FileName">File_9</field>
+            <field name="FileFolder">
+              <add>
+                <value>2005</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="3010" _table="File" >
+            <field name="FileName">File_10</field>
+            <field name="FileFolder">
+              <add>
+                <value>2005</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="3011" _table="File" >
+            <field name="FileName">File_11</field>
+            <field name="FileFolder">
+              <add>
+                <value>2006</value>
+              </add>
+	    </field>
+          </doc>
+          <doc _ID="3012" _table="File" >
+            <field name="FileName">File_12</field>
+            <field name="FileFolder">
+              <add>
+                <value>2006</value>
+              </add>
+	    </field>
+          </doc>
+            </docs>
+        </batch>
+    </XML>
+    </POST>
+    <POST path="Application/_shards/shard"/>
+
+    <enable-output/>
+    <AGGREGATE path="Application/Vint" q="*" m="COUNT(*)" f="LOWER(Disk.WHERE(Folder.File.FileName='abracadabara'))" shards="shard" />
+
+<DELETE path="_applications/Application/ApplicationKey"/>
+
+<DISCONNECT/>
+</TEST>

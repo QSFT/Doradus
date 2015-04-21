@@ -1,0 +1,204 @@
+~~~~~~~~~~~~~~
+~ XML format ~
+~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Create application ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /Application/_shards/shard1
+*** Response: 
+    200 OK
+
+*** Request
+    POST /Application/_shards/shard2?expire-date=2013-01-01
+*** Response: 
+    200 OK
+
+*** Request
+    POST /Application/_shards/shard3?expire-date=2013-01
+*** Response: 
+    200 OK
+
+*** Request
+    POST /Application/_shards/shard4?expire-date=2039
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~~~
+~ Get List of Shards ~
+~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/_shards
+*** Response: xml
+    200 OK
+    <result>
+        <application name="Application">
+            <shards>
+                <value>shard0</value>
+                <value>shard1</value>
+                <value>shard2</value>
+                <value>shard3</value>
+                <value>shard4</value>
+            </shards>
+        </application>
+    </result>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Check that shard0 has not been merged ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/_shards/shard0
+*** Response: text
+    400 Bad Request
+    Application does not exist or does not have merges yet
+
+*** Request
+    GET /Application/Table1/_query?q=*&f=_all&shards=shard0
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Check that shard merged ordinary ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table1/_query?q=*&f=Link_T1.Name&shards=shard1
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">Table1_001</field>
+                <field name="_shard">shard1</field>
+                <field name="Link_T1">
+                    <doc>
+                        <field name="Name">Table2_1</field>
+                        <field name="_ID">Table2_001</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Check that shard2 and shard3 data still available ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/Table1/_query?q=*&f=Link_T1.Name&shards=shard2
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">Table1_001</field>
+                <field name="_shard">shard2</field>
+                <field name="Link_T1">
+                    <doc>
+                        <field name="Name">Table2_1</field>
+                        <field name="_ID">Table2_001</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+
+*** Request
+    GET /Application/Table1/_query?q=*&f=Link_T1.Name&shards=shard3
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>1</totalobjects>
+        <docs>
+            <doc>
+                <field name="_ID">Table1_001</field>
+                <field name="_shard">shard3</field>
+                <field name="Link_T1">
+                    <doc>
+                        <field name="Name">Table2_1</field>
+                        <field name="_ID">Table2_001</field>
+                    </doc>
+                </field>
+            </doc>
+        </docs>
+    </results>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Change existing shard's expire-date for shard3 ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    POST /Application/_shards/shard3
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Get list of Shards again ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/_shards
+*** Response: xml
+    200 OK
+    <result>
+        <application name="Application">
+            <shards>
+                <value>shard0</value>
+                <value>shard1</value>
+                <value>shard3</value>
+                <value>shard4</value>
+            </shards>
+        </application>
+    </result>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Check that shard2 has been deleted ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/_shards/shard2
+*** Response: text
+    400 Bad Request
+    Application does not exist or does not have merges yet
+
+*** Request
+    GET /Application/Table1/_query?q=*&f=_all&shards=shard2
+*** Response: xml
+    200 OK
+    <results>
+        <totalobjects>0</totalobjects>
+        <docs/>
+    </results>
+
+~~~~~~~~~~~~~~~~~
+~ Delete shard1 ~
+~~~~~~~~~~~~~~~~~
+*** Request
+    DELETE /Application/_shards/shard1
+*** Response: 
+    200 OK
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ Get list of Shards again ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*** Request
+    GET /Application/_shards
+*** Response: xml
+    200 OK
+    <result>
+        <application name="Application">
+            <shards>
+                <value>shard0</value>
+                <value>shard3</value>
+                <value>shard4</value>
+            </shards>
+        </application>
+    </result>
+
+*** Request
+    DELETE /_applications/Application/ApplicationKey
+*** Response: 
+    200 OK
+
