@@ -4,7 +4,7 @@ REM Start Cassandra
 echo "Starting Cassandra 2.0.7..."
 start cassandra\bin\cassandra
 
-timeout 5
+timeout 10
 echo "Cassandra has started..."
 
 REM Start Doradus
@@ -12,9 +12,8 @@ REM Start Doradus
 cd doradus
 start java -cp .\*;.\resources\*;.\dependency\* com.dell.doradus.core.DoradusServer
 
-echo "Doradus has started..."
-
 timeout 5
+echo "Doradus has started..."
 
 java -cp .\*;.\resources\*;.\dependency\* com.dell.doradus.client.utils.HelloSpider localhost 1123
 
