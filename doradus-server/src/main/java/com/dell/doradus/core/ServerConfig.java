@@ -17,19 +17,20 @@
 package com.dell.doradus.core;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import com.dell.doradus.common.ConfigurationException;
+import com.dell.doradus.common.Utils;
 
 /**
  * Provides the static <code>load(args)</code> method that
@@ -65,6 +67,7 @@ public class ServerConfig {
     public final static String DEFAULT_CONFIG_URL = "doradus.yaml";
     public final static String CONFIG_URL_PROPERTY_NAME = "doradus.config";
     public final static String SUN_JAVA_COMMAND = "sun.java.command";
+    public final static String DEFAULT_PARAM_OVERRIDE_FILE_PARAM = "param_override_filename";
 
     // Default database connection values:
     public static final String DEFAULT_DB_HOST = "localhost";
@@ -150,7 +153,7 @@ public class ServerConfig {
             LinkedHashMap<String, ?> dataColl = (LinkedHashMap<String, ?>)yaml.load(input);
             config = new ServerConfig();
             setParams(dataColl);
-
+                       
             logger.info("Ok. Configuration loaded.");
 
         } catch (ConfigurationException e) {
@@ -176,6 +179,17 @@ public class ServerConfig {
             throw e;
         }
 
+        //overrides with params from the file
+        if (!Utils.isEmpty(config.param_override_filename)) {
+	        try {
+		        InputStream overrideFile = new FileInputStream(config.param_override_filename);
+		        Yaml yaml = new Yaml();
+		        LinkedHashMap<String, ?> overrideColl = (LinkedHashMap<String, ?>)yaml.load(overrideFile);
+		        setParams(overrideColl);
+	        } catch (Exception e) {
+	        	logger.warn(e.getMessage() + " -- Ignoring.");
+        }       
+        }
         return config;
     }
 
@@ -278,6 +292,9 @@ public class ServerConfig {
     //
     // search configuration properties
     //
+    
+    //override property
+    public String param_override_filename;
 
     /**
      * @return The map of the configuration properties.
