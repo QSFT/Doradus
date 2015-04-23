@@ -49,7 +49,7 @@ cp ../../doradus-client/target/doradus-client-*.jar dependency/
 cd ..
 
 #Create the final distribution file
-tar -cvf $DIST_FILE_NAME --exclude="._*" --exclude="doradus-dist-build.sh" --exclude="doradus-dist-build.bat" --exclude="$DIST_FILE_NAME" .
+tar -cvf $DIST_FILE_NAME --exclude="*._*" --exclude="doradus-dist-build.sh" --exclude="doradus-dist-build.bat" --exclude="$DIST_FILE_NAME" .
 
 echo "Doradus Distribution created"
 ls -la Doradus-distribution-*.tar
