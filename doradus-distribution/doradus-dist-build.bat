@@ -26,7 +26,7 @@ copy ..\..\doradus-client\target\doradus-client-*.jar dependency
 cd ..
 
 rem Create the final distribution file
-zip -r %DIST_FILE_NAME% .
+7za a %DIST_FILE_NAME% -r .
 
 echo "Doradus Distribution created"
 dir Doradus-distribution-*.zip      
