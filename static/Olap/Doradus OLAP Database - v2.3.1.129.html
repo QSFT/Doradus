@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Aggregate Query via Entity</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.102.html">OLAP REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.127.html">Aggregate Query Commands</a> : Aggregate Query via Entity</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0ZC0HA">Aggregate Query via Entity</a></div>
+      <div class="Normal"><a name="pID0E0YC0HA">Aggregate query parameters can be provided in an input entity instead of URI parameters. The same REST command is used except that no URI parameters are provided. Because some browsers/HTTP frameworks do not support HTTP GET-with-entity, this command also supports the PUT method even though no modifications are made. Both of the following are equivalent:</a></div>
+      <div class="Code"><a name="pID0E0XC0HA">GET /{application}/{table}/_aggregate</a></div>
+      <div class="Code"><a name="pID0E0WC0HA">PUT /{application}/{table}/_aggregate</a></div>
+      <div class="Normal"><a name="pID0E0VC0HA">where </a><span class="Code_Char">{application}</span> is the application name and <span class="Code_Char">{table}</span> is the perspective table. The input entity must be a JSON or XML document whose root element is <span class="Code_Char">aggregate-search</span>. Aggregate query parameters are given as child elements. URI query parameters map to the following element names:</div>
+      <table class="Table_Normal" style="margin-left: 36pt; width: 172.95pt" cellspacing="0" summary="">
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; width: 83.8pt">
+            <div class="Normal" style="margin-bottom: 0pt"><span style="font-weight: bold"><a name="pID0EABI0UC0HA">URI Parameter</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; width: 89.15pt">
+            <div class="Normal" style="margin-bottom: 0pt"><span style="font-weight: bold"><a name="pID0EAAI0UC0HA">Element name</a></span></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABH0UC0HA">q</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EAAH0UC0HA">query</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABG0UC0HA">m</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EAAG0UC0HA">metric</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABF0UC0HA">f</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EAAF0UC0HA">grouping-fields</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABE0UC0HA">pair</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EAAE0UC0HA">pair</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABD0UC0HA">shards</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EAAD0UC0HA">shards</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABC0UC0HA">range</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EAAC0UC0HA">shards-range</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABB0UC0HA">xshards</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EAAB0UC0HA">x-shards</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABA0UC0HA">xrange</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EAAA0UC0HA">x-shards-range</a></div>
+          </td>
+        </tr>
+      </table>
+      <div class="Normal" style="margin-bottom: 0pt"><a name="pID0E0TC0HA">&nbsp;</a></div>
+      <div class="Normal"><a name="pID0E0SC0HA">Below is an example aggregate query request entity in XML:</a></div>
+      <div class="Code"><a name="pID0E0RC0HA">&lt;aggregate-search&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0QC0HA">&lt;query&gt;Size&amp;gt;10000&lt;/query&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0PC0HA">&lt;metric&gt;COUNT(*)&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0OC0HA">&lt;grouping-fields&gt;TOP(3,Sender.Person.Department)&lt;/grouping-fields&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0NC0HA">&lt;shards-range&gt;2014&lt;/shards-range&gt;</a></div>
+      <div class="Code"><a name="pID0E0MC0HA">&lt;/aggregate-search&gt;</a></div>
+      <div class="Normal"><a name="pID0E0LC0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E0KC0HA">{"aggregate-search": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0JC0HA">"query": "Size&gt;10000",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0IC0HA">"metric": "COUNT(*)",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0HC0HA">"grouping-fields": "TOP(3,Sender.Person.Department)",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0GC0HA">"shards-range": "2014"</a></div>
+      <div class="Code"><a name="pID0E0FC0HA">}}</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

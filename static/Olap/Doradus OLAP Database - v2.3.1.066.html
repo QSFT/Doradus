@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Link Field AS Aliases</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.060.html">OLAP Object Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.062.html">Fields Parameter</a> : Link Field AS Aliases</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0FYB0HA">Link Field AS Aliases</a></div>
+      <div class="Normal"><a name="pID0E0EYB0HA">By default, when an object query returns link fields, the link field name and filter, if present, are used in the query result. For example, in the following parameter:</a></div>
+      <div class="Code"><a name="pID0E0DYB0HA">.../_query?f=InternalRecipients.WHERE(Person.LastName:wright)&amp;q=...</a></div>
+      <div class="Normal"><a name="pID0E0CYB0HA">The query results identifies the values belonging to the </a><span class="Code_Char">InternalRecipients</span> link as follows:</div>
+      <div class="Code"><a name="pID0E0BYB0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0AYB0HA">&lt;field name="_ID"&gt;D+EGzQxdH1jWk9CCZqts1Q==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E06XB0HA">&lt;field name="_shard"&gt;s1&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E05XB0HA">&lt;field </a><span style="color: #FF0000">name="InternalRecipients.WHERE(Person.LastName:wright)"</span>&gt;</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E04XB0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E03XB0HA">&lt;field name="_ID"&gt;w1snUDxw3pZHh5yr55oHBA==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E02XB0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E01XB0HA">&lt;/field&gt;</a></div>
+      <div class="Code"><a name="pID0E0ZXB0HA">&lt;/doc&gt;</a></div>
+      <div class="Normal"><a name="pID0E0YXB0HA">The expanded link field name can be simplified by using the </a><span class="Code_Char">AS</span> function, as shown below:</div>
+      <div class="Code"><a name="pID0E0XXB0HA">.../_query?f=InternalRecipients.WHERE(Person.LastName:wright)</a><span style="color: #3366FF">.AS(Wright)</span>&amp;q=...</div>
+      <div class="Normal"><a name="pID0E0WXB0HA">The </a><span class="Code_Char">AS</span> function must appear after the <span class="Code_Char">WHERE</span> filter and/or link size limit, if any. The parameter to the <span class="Code_Char">AS</span> function can be an unquoted term or a quoted string. The parameter value defines a field name <span style="font-style: italic">alias</span> that is used instead of the default link field name in the query results. For example:</div>
+      <div class="Code"><a name="pID0E0VXB0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0UXB0HA">&lt;field name="_ID"&gt;D+EGzQxdH1jWk9CCZqts1Q==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0TXB0HA">&lt;field name="_shard"&gt;s1&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0SXB0HA">&lt;field </a><span style="color: #3366FF">name="Wright"</span>&gt;</div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0RXB0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QXB0HA">&lt;field name="_ID"&gt;w1snUDxw3pZHh5yr55oHBA==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0PXB0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0OXB0HA">&lt;/field&gt;</a></div>
+      <div class="Code"><a name="pID0E0NXB0HA">&lt;/doc&gt;</a></div>
+      <div class="Normal"><a name="pID0E0MXB0HA">Multiple </a><span class="Code_Char">AS</span> functions can be used in the same object query. However, alias names used at the same level must be unique so that each field name in the output results is unique.</div>
+      <div class="Normal"><a name="pID0E0LXB0HA">The AS function can be useful to identify query results when table-level alias is used. For example, assume the following alias definition:</a></div>
+      <div class="Code"><a name="pID0E0KXB0HA">"Person": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0JXB0HA">aliases: {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0IXB0HA">"</a><span style="color: #3366FF">$SalesPeople</span>": {"expression": "WHERE(Department:sales)"}</div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0HXB0HA">}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0GXB0HA">...</a></div>
+      <div class="Code"><a name="pID0E0FXB0HA">}</a></div>
+      <div class="Normal"><a name="pID0E0EXB0HA">The alias </a><span class="Code_Char">$SalesPeople</span> can be used as in a fields parameter, potentially with additional filtering, as in the following example:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0DXB0HA">GET /Email/Message/_query?q=Size&gt;100000&amp;range=0<br />&amp;f=Sender.Person.</a><span style="color: #3366FF">$SalesPeople</span>.WHERE(Office:aliso).LastName</div>
+      <div class="Normal"><a name="pID0E0CXB0HA">By default, the query results for the </a><span class="Code_Char">Person</span> link includes the filters in both the alias definition and the &amp;f parameter. For example, it will appear within the <span class="Code_Char">Sender</span> group element as follows:</div>
+      <div class="Code"><a name="pID0E0BXB0HA">&lt;field name="Sender"&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0AXB0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E06WB0HA">&lt;field name="_ID"&gt;Klk8VEzG2ZBQMLibi/t4Ig==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E05WB0HA">&lt;field </a><span style="color: #FF0000">name="Person.WHERE((Department:sales) AND (Office:aliso))"</span>&gt;</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E04WB0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E03WB0HA">&lt;field name="LastName"&gt;McKeehan&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E02WB0HA">&lt;field name="_ID"&gt;tNI90WCArcnd76jEeEWmxg==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E01WB0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZWB0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0YWB0HA">&lt;/doc&gt;</a></div>
+      <div class="Code"><a name="pID0E0XWB0HA">&lt;/field&gt;</a></div>
+      <div class="Normal"><a name="pID0E0WWB0HA">The AS function can apply an alias that makes the link element easier to identify. So, for example:</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0VWB0HA">GET /Email/Message/_query?q=Size&gt;100000&amp;range=0<br />&amp;f=Sender.Person.</a><span style="color: #3366FF">$SalesPeople</span>.WHERE(Office:aliso).AS("Sales Person").LastName</div>
+      <div class="Normal"><a name="pID0E0UWB0HA">This causes the results to appear as follows:</a></div>
+      <div class="Code"><a name="pID0E0TWB0HA">&lt;field name="Sender"&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0SWB0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0RWB0HA">&lt;field name="_ID"&gt;Klk8VEzG2ZBQMLibi/t4Ig==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QWB0HA">&lt;field </a><span style="color: #3366FF">name="Sales Person"</span>&gt;</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0PWB0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0OWB0HA">&lt;field name="LastName"&gt;McKeehan&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0NWB0HA">&lt;field name="_ID"&gt;tNI90WCArcnd76jEeEWmxg==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0MWB0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0LWB0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0KWB0HA">&lt;/doc&gt;</a></div>
+      <div class="Code"><a name="pID0E0JWB0HA">&lt;/field&gt;</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

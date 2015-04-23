@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Aggregate Parameters Overview</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.086.html">Spider Aggregate Queries</a> : Aggregate Parameters Overview</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E05NB0HA">Aggregate Parameters Overview</a></div>
+      <div class="Normal"><a name="pID0E04NB0HA">Aggregate queries use the following parameters:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E03NB0HA">Metric </a></span>(required): Defines one or more functions to calculate for selected objects. Metric functions such as <span class="Code_Char">COUNT</span>, <span class="Code_Char">SUM</span>, and <span class="Code_Char">MAX</span> are supported. Each function is computed across selected objects, optionally subdivided into groups as defined by the grouping parameter. See the section <span class="Hyperlink" style="font-weight: bold"><a href="javascript:WWHClickedPopup('Spider', 'Doradus%20Spider%20Database%20-%20v2.3.1.088.html', '');" title="Metric Parameter">Metric Parameter</a></span> for details.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E02NB0HA">Query</a></span> (optional): A DQL query expression that selects objects in the perspective table. When this parameter is omitted, all objects in the table are included in metric computations.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E01NB0HA">Grouping </a></span>(optional): A list of one or more grouping expressions, which divide computations into single- or multi-level groups. When this parameter is omitted, the corresponding <span style="font-style: italic">global query</span> computes a single value for each metric function. When provided, the corresponding <span style="font-style: italic">grouped query</span> computes a value for each group value/metric function combination. A wide range of grouping expressions are supported as described in the section <span class="Hyperlink" style="font-weight: bold"><a href="javascript:WWHClickedPopup('Spider', 'Doradus%20Spider%20Database%20-%20v2.3.1.089.html', '');" title="Grouping Parameter">Grouping Parameter</a></span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0ZNB0HA">How parameters are passed depends on the REST command. Spider supports two commands for submitting aggregate queries:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0YNB0HA">URI command</a></span>: All parameters are passed in the URI of the command.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0XNB0HA">Entity command</a></span>: All parameters are passed in an entity (XML or JSON document) submitted with the command.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0WNB0HA">Details of each command are described in the section </a><span class="Hyperlink" style="font-weight: bold"><a href="javascript:WWHClickedPopup('Spider', 'Doradus%20Spider%20Database%20-%20v2.3.1.108.html', '');" title="Spider REST Commands">Spider REST Commands</a></span>. In the examples used in this section, the URI command is used. The following sections describe the more complex parameters used by aggregate queries.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

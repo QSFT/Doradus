@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>IN Clause</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.025.html">Doradus Query Language (DQL)</a> : IN Clause</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0TBC0HA">IN Clause</a></div>
+      <div class="Normal"><a name="pID0E0SBC0HA">A field can be tested for membership in a set of values using the </a><span class="Code_Char">IN</span> clause. Examples:</div>
+      <div class="Code"><a name="pID0E0RBC0HA">Size IN (512,1024,2048,4096,8192,16384,32768,65536)</a></div>
+      <div class="Code"><a name="pID0E0QBC0HA">LastName IN (Jones, Smi*, Vledick)</a></div>
+      <div class="Code"><a name="pID0E0PBC0HA">Manager IN (shf637, dhs729, fjj901)</a></div>
+      <div class="Code"><a name="pID0E0OBC0HA">_ID IN (sjh373,whs873,shc729)</a></div>
+      <div class="Normal"><a name="pID0E0NBC0HA">As shown, values are enclosed in parentheses and separated by commas. If the comparison field is a text field, values can use wildcards. Link fields and the </a><span class="Code_Char">_ID</span> field are compared to object IDs. Literals that are not a simple term must be enclosed in single or double quotes.</div>
+      <div class="Normal"><a name="pID0E0MBC0HA">The </a><span class="Code_Char">IN</span> clause is a shorthand for a series of <span class="Code_Char">OR</span> clauses. For example, the following clause:</div>
+      <div class="Code"><a name="pID0E0LBC0HA">LastName IN (Jones, Smi*, Vledick)</a></div>
+      <div class="Normal"><a name="pID0E0KBC0HA">is the same as the following </a><span class="Code_Char">OR</span> clauses:</div>
+      <div class="Code"><span class="Code_Char"><a name="pID0E0JBC0HA">LastName = Jones OR LastName = Smi* OR LastName = Vledick</a></span></div>
+      <div class="Normal"><a name="pID0E0IBC0HA">As a synonym for the </a><span class="Code_Char">IN</span> keyword, Doradus also allows the syntax <span class="Code_Char" style="font-style: italic">field</span><span class="Code_Char">=(</span><span class="Code_Char" style="font-style: italic">list</span><span class="Code_Char">)</span>. For example, the following two clauses are equivalent:</div>
+      <div class="Code"><a name="pID0E0HBC0HA">LastName IN (Jones, Smi*, Vledick)</a></div>
+      <div class="Code"><a name="pID0E0GBC0HA">LastName=(Jones, Smi*, Vledick)</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

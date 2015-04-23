@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Modify Application</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.102.html">OLAP REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.111.html">Application Management Commands</a> : Modify Application</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0NQ0HA">Modify Application</a></div>
+      <div class="Normal"><a name="pID0E0MQ0HA">An existing application’s schema is modified with the following REST command:</a></div>
+      <div class="Code"><a name="pID0E0LQ0HA">POST /_application/{application}</a></div>
+      <div class="Normal"><a name="pID0E0KQ0HA">where </a><span class="Code_Char">{application}</span> is the application’s name. The request must include the application’s modified schema in XML or JSON as specified by the request’s <span class="Code_Char">content-type</span> header. Because an application’s name cannot be changed, {application} must match the application name in the schema. An application’s key cannot be changed either, hence if the application was defined with a key, the same key must be provided. If application was defined without a key, a key can be added by including it in the updated schema. If the request is successful, a <span class="Code_Char">200 OK</span> response is returned with no message body.</div>
+      <div class="Normal"><a name="pID0E0JQ0HA">Modifying an application </a><span style="font-style: italic">replaces</span> its current schema. If any previously-defined tables or fields are omitted in the new schema, those tables/fields can no longer be referenced in queries, but existing data is not modified or deleted. Data is deleted only when an object is explicitly deleted, the owning shard is explicitly deleted, or  shard is automatically deleted due to data aging.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

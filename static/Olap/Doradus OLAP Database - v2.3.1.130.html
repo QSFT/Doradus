@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Find Duplicates Command</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.102.html">OLAP REST Commands</a> : Find Duplicates Command</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0EC0HA">Find Duplicates Command</a></div>
+      <div class="Normal"><a name="pID0E0DC0HA">An object with a given ID can be added to the same table in multiple shards. This is necessary for each shard to be a self-contained graph. But sometimes an application needs to determine which shards have objects with the same ID for a given table. The Find Duplicates command is optimized for this use case has the following form:</a></div>
+      <div class="Code"><a name="pID0E0CC0HA">GET /{application}/{table}/_duplicates[?{params}]</a></div>
+      <div class="Normal"><a name="pID0E0BC0HA">where </a><span class="Code_Char">{application}</span> is the application name and <span class="Code_Char">{table}</span> is the name of the table to search. The optional <span class="Code_Char">{params}</span> define which shards are searched:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0AC0HA">shards=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">shards</span>: A comma-separated list of shard names. Either this or the <span class="Code_Char">range</span> parameter can be specified, but not both.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E06B0HA">range=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">shard-from</span><span class="Code_Char" style="font-weight: bold">[,</span><span class="Code_Char" style="font-style: italic; font-weight: bold">shard-to</span><span class="Code_Char" style="font-weight: bold">]</span>: A starting shard name and optional ending shard name. All shards whose name falls between the given shard names (inclusive) are searched. If an ending shard name is not given all shards whose name is greater than or equal to the starting shard name are searched.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E05B0HA">Either the </a><span class="Code_Char">shards</span> or <span class="Code_Char">range</span> parameter can be specified, but not both. If neither parameter is specified, all shards are searched. The result of the query is a <span class="Code_Char">results</span> element containing a <span class="Code_Char">totalobjects</span> value and a <span class="Code_Char">docs</span> group, which contains one <span class="Code_Char">doc</span> element for each object that was found in 2 or more shards. Below is an example:</div>
+      <div class="Code"><a name="pID0E04B0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E03B0HA">&lt;totalobjects&gt;3&lt;/totalobjects&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E02B0HA">&lt;docs&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01B0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ZB0HA">&lt;field&nbsp;name="_ID"&gt;kUNaqNJ2ymmb07jHY9OPOw==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YB0HA">&lt;field&nbsp;name="shards"&gt;2014-01-01,2014-01-02&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XB0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0WB0HA">&lt;/docs&gt;</a></div>
+      <div class="Code"><a name="pID0E0VB0HA">&lt;/results&gt;</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

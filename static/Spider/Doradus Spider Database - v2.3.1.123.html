@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Add Batch</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.108.html">Spider REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.122.html">Object Update Commands</a> : Add Batch</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0KO0HA">Add Batch</a></div>
+      <div class="Normal"><a name="pID0E0JO0HA">A batch of new objects is added to a specific table in an application using the following REST command:</a></div>
+      <div class="Code"><a name="pID0E0IO0HA">POST /{application}/{table}</a></div>
+      <div class="Normal"><a name="pID0E0HO0HA">where </a><span class="Code_Char">{application}</span> is the application name and <span class="Code_Char">{table}</span> is the table in which the objects are to be added. If the given table name does not exist but the application’s <span class="Code_Char">AutoTables</span> option is true, the table is implicitly created before the batch is added. If <span class="Code_Char">AutoTables</span> is false and the table is unknown, an error is returned.</div>
+      <div class="Normal"><a name="pID0E0GO0HA">The command must include an input entity that contains the objects to be added. The format of an example input message in XML as shown below:</a></div>
+      <div class="Code"><a name="pID0E0FO0HA">&lt;batch&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0EO0HA">&lt;docs&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0DO0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0CO0HA">&lt;field&nbsp;name="_ID"&gt;AAFE9rf++BCa3bQ4HgAA&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0BO0HA">&lt;field&nbsp;name="SendDate"&gt;2010-07-18 05:22:35&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0AO0HA">&lt;field&nbsp;name="Size"&gt;3654&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E06N0HA">&lt;field&nbsp;name="Subject"&gt;RE: synopses copens silk seagull citizens&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E05N0HA">&lt;field&nbsp;name="Tags"&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E04N0HA">&lt;add&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E03N0HA">&lt;value&gt;AfterHours&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E02N0HA">&lt;value&gt;Customer&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E01N0HA">&lt;/add&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ZN0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YN0HA">&lt;field&nbsp;name="InternalRecipients"&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0XN0HA">&lt;add&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0WN0HA">&lt;value&gt;KMTkYYrkL4MmrHxj//ZVhQ==&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0VN0HA">&lt;/add&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0UN0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0TN0HA">&lt;field&nbsp;name="Sender"&gt;wWR7yZik2p1rrI6/qSepXg==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0SN0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0RN0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QN0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0PN0HA">&lt;field name="_ID"&gt;AAFE9rf++BCa3bQ4HgAB&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ON0HA">&lt;field name="SendDate"&gt;2010-07-17 10:37:03&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0NN0HA">&lt;field name="Size"&gt;15830&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0MN0HA">&lt;field name="Subject"&gt;bloodily douches spadones poinds vestals&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0LN0HA">&lt;field name="Tags"&gt;AfterHours&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0KN0HA">&lt;field name="InternalRecipients"&gt;Ii91O7qHb8rPhzvaihzTqw==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0JN0HA">&lt;field name="Sender"&gt;fiJOQPhAJqQJeuEOD+iH8Q==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0IN0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0HN0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0GN0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0FN0HA">&lt;/docs&gt;</a></div>
+      <div class="Code"><a name="pID0E0EN0HA">&lt;/batch&gt;</a></div>
+      <div class="Normal"><a name="pID0E0DN0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E0CN0HA">{"batch": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0BN0HA">"docs": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0AN0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E06M0HA">"_ID":&nbsp;"AAFE9rf++BCa3bQ4HgAA",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E05M0HA">"SendDate":&nbsp;"2010-07-18 05:22:35",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E04M0HA">"Size":&nbsp;"3654",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E03M0HA">"Subject":&nbsp;"RE: synopses copens silk seagull citizens",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E02M0HA">"Tags":&nbsp;{</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E01M0HA">"add": ["AfterHours", "Customer"]</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ZM0HA">},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YM0HA">"InternalRecipients":&nbsp;{</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0XM0HA">"add": ["KMTkYYrkL4MmrHxj//ZVhQ=="]</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0WM0HA">},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0VM0HA">"Sender":&nbsp;"wWR7yZik2p1rrI6/qSepXg==",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0UM0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TM0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SM0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0RM0HA">"_ID":&nbsp;"AAFE9rf++BCa3bQ4HgAB",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0QM0HA">"SendDate":&nbsp;"2010-07-17 10:37:03",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0PM0HA">"Size":&nbsp;"15830",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0OM0HA">"Subject":&nbsp;"bloodily douches spadones poinds vestals",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0NM0HA">"Tags":&nbsp;"AfterHours",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0MM0HA">"InternalRecipients":&nbsp;"Ii91O7qHb8rPhzvaihzTqw==",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0LM0HA">"Sender":&nbsp;"fiJOQPhAJqQJeuEOD+iH8Q=="</a><span style="font-weight: bold">,</span></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0KM0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0JM0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0IM0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0HM0HA">]</a></div>
+      <div class="Code"><a name="pID0E0GM0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0FM0HA">Semantics about adding batches are described below:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0EM0HA">Object ID</a></span>: If the <span class="Code_Char">_ID</span> field is not defined for an object, Spider assigns a unique ID based (e.g., “<span class="Code_Char">AAFE95dAqRCa3bQ4HgAA</span>”). The ID is a base 64-encoded 120-bit value that is generated in a way to ensure uniqueness even in a multi-node cluster.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0DM0HA">MV scalars and link fields</a></span>: When an MV scalar or link field is assigned a single value, it can use the same syntax as an SV scalar field. For example, the link <span class="Code_Char">Sender</span> is assigned a single value and uses the simplified name/value syntax. But when an MV scalar or link field is assigned multiple values, they must be enclosed in an <span class="Code_Char">add</span> group. See for example the MV scalar <span class="Code_Char">Tags</span>, which is assigned 2 values. An MV field can always use the <span class="Code_Char">add</span> group syntax even if it being assigned a single value. See for example the link field <span class="Code_Char">InternalRecipients</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0CM0HA">Batch size</a></span>: Batches can be arbitrarily large, but large batches require more memory since the entire parsed batch is held in memory. Also, mutations are flushed when their count reaches <span class="Code_Char">batch_mutation_threshold</span>, defined in doradus.yaml. Hence, large batches can be stored as multiple “sub-batch” transactions.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0BM0HA">Existing IDs</a></span>: If an object in an Add Batch command is given an ID that corresponds to an existing object, the existing object is updated. This preserves the idempotent update semantics of Add Batch commands: if the same object is added twice, the second “add” is treated as an “update” and, since all of the values will be the same, the second “add” will be a no-op.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0AM0HA">Binary fields</a></span>: Binary field values must be encoded as declared using the <span class="Code_Char">encoding</span> declared in the schema (Base64 or Hex).</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E06L0HA">Group fields</a></span>: Group fields can be ignored, and assignments can be made to leaf fields directly. However, leaf fields can also be qualified via the owning group. For example, in the <span class="Code_Char">doc</span> group below, <span class="Code_Char">Participants</span> and <span class="Code_Char">Recipients</span> are both group fields:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E05L0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E04L0HA">&lt;field&nbsp;name="</a><span style="color: #008000">Participants</span>"&gt;</div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E03L0HA">&lt;field name="</a><span style="color: #008000">Recipients</span>"&gt;</div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E02L0HA">&lt;field&nbsp;name="</a><span style="color: #3366FF">InternalRecipients</span>"&gt;KMTkYYrkL4MmrHxj//ZVhQ==&lt;/field&gt;</div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E01L0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0ZL0HA">&lt;field&nbsp;name="</a><span style="color: #3366FF">Sender</span>"&gt;wWR7yZik2p1rrI6/qSepXg==&lt;/field&gt;</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YL0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0XL0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0WL0HA">&lt;/doc&gt;</a></div>
+      <div class="Normal"><a name="pID0E0VL0HA">If the Add Batch command is successful, the request returns a </a><span class="Code_Char">201 Created</span> response. The response contains a <span class="Code_Char">doc</span> element for each object in the batch:</div>
+      <div class="Code"><a name="pID0E0UL0HA">&lt;batch-result&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0TL0HA">&lt;status&gt;OK&lt;/status&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0SL0HA">&lt;has_updates&gt;true&lt;/has_updates&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0RL0HA">&lt;docs&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QL0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0PL0HA">&lt;updated&gt;true&lt;/updated&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0OL0HA">&lt;status&gt;OK&lt;/status&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0NL0HA">&lt;field name="_ID"&gt;AAFE9rf++BCa3bQ4HgAA&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ML0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0LL0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KL0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0JL0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0IL0HA">&lt;/docs&gt;</a></div>
+      <div class="Code"><a name="pID0E0HL0HA">&lt;/batch-result&gt;</a></div>
+      <div class="Normal"><a name="pID0E0GL0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E0FL0HA">{"batch-result": {</a></div>
+      <div class="Code" style="text-indent: 18pt"><a name="pID0E0EL0HA">"status": "OK"</a></div>
+      <div class="Code" style="text-indent: 18pt"><a name="pID0E0DL0HA">"has_updates": "true",</a></div>
+      <div class="Code" style="text-indent: 18pt"><a name="pID0E0CL0HA">"docs": [</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: 18pt"><a name="pID0E0BL0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: 18pt"><a name="pID0E0AL0HA">"updated": "true",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: 18pt"><a name="pID0E06K0HA">"status": "OK",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: 18pt"><a name="pID0E05K0HA">"_ID": "AAFE9rf++BCa3bQ4HgAA"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E04K0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03K0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: 18pt"><a name="pID0E02K0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01K0HA">}}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0ZK0HA">]</a></div>
+      <div class="Code"><a name="pID0E0YK0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0XK0HA">As shown, a </a><span class="Code_Char">doc</span> element is given with an <span class="Code_Char">_ID</span> value for every object added or updated including objects whose <span class="Code_Char">_ID</span> was set by Doradus. The <span class="Code_Char">status</span> element indicates if the update for that object was a valid request, and the <span class="Code_Char">updated</span> element indicates if a change was actually made to the database for that object. If at least one object in the batch was updated, the <span class="Code_Char">has_updates</span> element is included with a value of <span class="Code_Char">true</span>. If an individual object update failed, its <span class="Code_Char">status</span> will be <span class="Code_Char">Error</span>, and an error message will be included in its <span class="Code_Char">doc</span> element. If no objects in the batch were updated (because the existing objects already existed and had the requested values), the <span class="Code_Char">has_updates</span> element will be absent. For example:</div>
+      <div class="Code"><a name="pID0E0WK0HA">&lt;batch-result&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0VK0HA">&lt;status&gt;OK&lt;/status&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0UK0HA">&lt;docs&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TK0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0SK0HA">&lt;updated&gt;false&lt;/updated&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0RK0HA">&lt;status&gt;OK&lt;/status&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0QK0HA">&lt;comment&gt;No updates made&lt;/comment&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0PK0HA">&lt;field name="_ID"&gt;AAFE9rf++BCa3bQ4HgAA&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OK0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NK0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: 18pt"><a name="pID0E0MK0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0LK0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0KK0HA">&lt;/docs&gt;</a></div>
+      <div class="Code"><a name="pID0E0JK0HA">&lt;/batch-result&gt;</a></div>
+      <div class="Normal"><a name="pID0E0IK0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E0HK0HA">{"batch-result": {</a></div>
+      <div class="Code" style="text-indent: 18pt"><a name="pID0E0GK0HA">"status": "OK"</a></div>
+      <div class="Code" style="text-indent: 18pt"><a name="pID0E0FK0HA">"docs": [</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: 18pt"><a name="pID0E0EK0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: 18pt"><a name="pID0E0DK0HA">"updated": "false",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: 18pt"><a name="pID0E0CK0HA">"status": "OK",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: 18pt"><a name="pID0E0BK0HA">"comment": "No updates made",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: 18pt"><a name="pID0E0AK0HA">"_ID": "AAFE9rf++BCa3bQ4HgAA"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E06J0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E05J0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: 18pt"><a name="pID0E04J0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03J0HA">}}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E02J0HA">]</a></div>
+      <div class="Code"><a name="pID0E01J0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0ZJ0HA">If the entire batch is rejected, e.g., due to a syntax error in the parsed input message, a </a><span class="Code_Char">400 Bad Request</span> is returned along with a plain text message. For example:</div>
+      <div class="Code"><a name="pID0E0YJ0HA">HTTP/1.1 400 Bad Request</a></div>
+      <div class="Code"><a name="pID0E0XJ0HA">Content-length: 62</a></div>
+      <div class="Code"><a name="pID0E0WJ0HA">Content-type: Text/plain</a></div>
+      <div class="Code"><a name="pID0E0VJ0HA">&nbsp;</a></div>
+      <div class="Code"><a name="pID0E0UJ0HA">Child of link field update node must be 'add' or 'remove': foo</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

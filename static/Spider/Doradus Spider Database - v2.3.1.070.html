@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Quantifiers with IS NULL</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.037.html">Doradus Query Language (DQL)</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.065.html">Quantifier Functions</a> : Quantifiers with IS NULL</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0FYB0HA">Quantifiers with IS NULL</a></div>
+      <div class="Normal"><a name="pID0E0EYB0HA">Special semantics are applied when a link path is used with the </a><span class="Code_Char">IS NULL</span> clause. When quantified with <span class="Code_Char">ANY</span>, a link path is null if the resulting value set is empty. In the following example, each link is implicitly qualified with <span class="Code_Char">ANY</span>:</div>
+      <div class="Code"><a name="pID0E0DYB0HA">InternalRecipients.Person.LastName IS NULL</a></div>
+      <div class="Normal"><a name="pID0E0CYB0HA">This clause is true for a perspective object if:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0BYB0HA">InternalRecipients</a></span> is null, or</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0AYB0HA">Person</a></span> is null for every <span class="Code_Char">InternalRecipients</span> object, or</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E06XB0HA">LastName</a></span> is null for ever <span class="Code_Char">Person</span> object.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E05XB0HA">In other words, if at least one </a><span class="Code_Char">InternalRecipients.Person.LastName</span> exists, <span class="Code_Char">IS NULL</span> is false. Since <span class="Code_Char">ANY</span> is associative, any portion of the link path can be explicitly quantified and the result is the same.</div>
+      <div class="Normal"><a name="pID0E04XB0HA">If a link path used with </a><span class="Code_Char">IS NULL</span> is quantified with <span class="Code_Char">ALL</span>, the clause is true only if (1) the quantified portion of the path is not empty but (2) the remainder of the path produces an empty set. For example:</div>
+      <div class="Code"><a name="pID0E03XB0HA">ALL(InternalRecipients).Person.LastName IS NULL</a></div>
+      <div class="Normal"><a name="pID0E02XB0HA">This clause is true if </a><span class="Code_Char">InternalRecipients</span> is <span style="text-decoration: underline">not</span> null but <span class="Code_Char">Person.LastName</span> is null for every <span class="Code_Char">InternalRecipients</span> value. Either <span class="Code_Char">Person</span> can be null or a <span class="Code_Char">Person</span>’s <span class="Code_Char">LastName</span> can be null to satisfy the second condition. Alternatively, consider this <span class="Code_Char">ALL</span> quantification:</div>
+      <div class="Code"><a name="pID0E01XB0HA">ALL(InternalRecipients.Person).LastName IS NULL</a></div>
+      <div class="Normal"><a name="pID0E0ZXB0HA">In this case, </a><span class="Code_Char">InternalRecipients</span> cannot be null, at least one <span class="Code_Char">InternalRecipients</span> must have a <span class="Code_Char">Person</span>, but no <span class="Code_Char">Person</span> objects have a <span class="Code_Char">LastName</span>. Essentially, <span class="Code_Char">ALL</span> adds an existential requirement to the quantified portion of the link path.</div>
+      <div class="Normal"><a name="pID0E0YXB0HA">If the quantifier </a><span class="Code_Char">NONE</span> is used, the quantified portion of the link path <span style="text-decoration: underline">can</span> be empty. For example:</div>
+      <div class="Code"><a name="pID0E0XXB0HA">NONE(InternalRecipients).Person.LastName IS NULL</a></div>
+      <div class="Normal"><a name="pID0E0WXB0HA">This clause is true for an object if either </a><span class="Code_Char">InternalRecipients</span> is null or if <span class="Code_Char">LastName</span> is <span style="text-decoration: underline">not</span> null for every <span class="Code_Char">InternalRecipients.Person</span>.</div>
+      <div class="Normal"><a name="pID0E0VXB0HA">When a quantified </a><span class="Code_Char">IS NULL</span> clause is negated, it selects the opposite objects than without negation. This means that all objects selected by the following clause:</div>
+      <div class="Code"><a name="pID0E0UXB0HA">Q(X).Y IS NULL</a></div>
+      <div class="Normal"><a name="pID0E0TXB0HA">are selected by the clause:</a></div>
+      <div class="Code"><a name="pID0E0SXB0HA">NOT Q(X).Y IS NULL</a></div>
+      <div class="Normal"><a name="pID0E0RXB0HA">where </a><span class="Code_Char">Q</span> is a quantifier and <span class="Code_Char">X</span> and <span class="Code_Char">Y</span> are field paths.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

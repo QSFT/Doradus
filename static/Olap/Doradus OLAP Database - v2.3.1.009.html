@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>The Email Sample Application</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.005.html">OLAP Database Overview</a> : The Email Sample Application</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E01SC0HA">The </a><span class="Code_Char" style="font-size: 12pt">Email</span><span style="font-size: 12pt"> </span>Sample Application</div>
+      <div class="Normal"><a name="pID0E0ZSC0HA">To illustrate features, a sample OLAP application called </a><span class="Code_Char">Email</span> is used. The <span class="Code_Char">Email </span>application schema is depicted below:</div>
+      <div class="Normal"><a name="pID0E0YSC0HA"><img class="Default" src="images/Doradus%20OLAP%20Database%20-%20v2.3.1.009.1.jpg" width="632" height="491" style="display: inline; top: 0pt" alt="" /></a></div>
+      <div class="Normal"><a name="pID0E0XSC0HA">The tables in the </a><span class="Code_Char">Email</span> application are used as follows:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0WSC0HA">Message</a></span>: Holds one object per <span style="font-style: italic">sent</span> email. Each object stores values such as <span class="Code_Char">Size</span> and <span class="Code_Char">SendDate</span> timestamp and links to <span class="Code_Char">Participant</span> objects in three different roles: sender, internal recipient, and external recipient.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0VSC0HA">Participant</a></span>: Represents a sender or receiver of the linked <span class="Code_Char">Message</span>. Holds the <span class="Code_Char">ReceiptDate</span> timestamp for that participant and links to identifying <span class="Code_Char">Person</span> and <span class="Code_Char">Address</span> objects.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0USC0HA">Address</a></span>: Stores each participant’s email address, a redundant link to <span class="Code_Char">Person</span>, and a link to a <span class="Code_Char">Domain</span> object.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0TSC0HA">Person</a></span>: Stores Directory Server properties such as a <span class="Code_Char">Name</span>, <span class="Code_Char">Department</span>, and <span class="Code_Char">Office</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0SSC0HA">Domain</a></span>: Stores unique domain names such as “yahoo.com”.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0RSC0HA">In the diagram, relationships are represented by their link name pairs with arrows pointing to each link’s </a><span style="font-style: italic">extent</span>. For example, <span class="Code_Char">Sender</span> is a link owned by <span class="Code_Char">Message</span>, pointing to <span class="Code_Char">Participant</span>, and <span class="Code_Char">MessageAsSender</span> is the inverse link of the same relationship. The <span class="Code_Char">Manager</span> and <span class="Code_Char">DirectReports</span> links form a <span style="font-style: italic">reflexive</span> relationship within <span class="Code_Char">Person</span>, representing an org chart.</div>
+      <div class="Normal"><span class="Code_Char"><a name="pID0E0QSC0HA">Message</a></span> objects are stored in a shard named <span class="Code_Char">YYYY-MM-DD</span> based on their <span class="Code_Char">SendDate</span>. The related <span class="Code_Char">Participant</span>, <span class="Code_Char">Address</span>, <span class="Code_Char">Person</span>, and <span class="Code_Char">Domain</span> objects are stored in the same shard. This means, for example, that <span class="Code_Char">Person</span> and <span class="Code_Char">Domain</span> objects are replicated to every shard in which they are referenced.</div>
+      <div class="Normal"><a name="pID0E0PSC0HA">The schema for the </a><span class="Code_Char">Email</span> application is shown below in XML:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0OSC0HA">&lt;application name="</a><span style="color: #3366FF">Email</span>"&gt;</div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0NSC0HA">&lt;key&gt;EmailKey&lt;/key&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0MSC0HA">&lt;options&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0LSC0HA">&lt;option name="StorageService"&gt;OLAPService&lt;/option&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0KSC0HA">&lt;/options&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0JSC0HA">&lt;tables&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0ISC0HA">&lt;table name="</a><span style="color: #3366FF">Message</span>"&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0HSC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0GSC0HA">&lt;field name="</a><span style="color: #3366FF">InReplyTo</span>" type="XLINK" table="Message" inverse="Responses" junction="ThreadID"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0FSC0HA">&lt;field name="</a><span style="color: #3366FF">Participants</span>"&gt;</div>
+      <div class="Code" style="margin-left: 126pt; text-indent: -18pt"><a name="pID0E0ESC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 144pt; text-indent: -18pt"><a name="pID0E0DSC0HA">&lt;field name="</a><span style="color: #3366FF">Sender</span>" type="LINK" table="Participant" inverse="MessageAsSender"/&gt;</div>
+      <div class="Code" style="margin-left: 144pt; text-indent: -18pt"><a name="pID0E0CSC0HA">&lt;field name="</a><span style="color: #3366FF">Recipients</span>"&gt;</div>
+      <div class="Code" style="margin-left: 162pt; text-indent: -18pt"><a name="pID0E0BSC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 180pt; text-indent: -18pt"><a name="pID0E0ASC0HA">&lt;field name="</a><span style="color: #3366FF">ExternalRecipients</span>" type="LINK" table="Participant" inverse="MessageAsExternalRecipient"/&gt;</div>
+      <div class="Code" style="margin-left: 180pt; text-indent: -18pt"><a name="pID0E06RC0HA">&lt;field name="</a><span style="color: #3366FF">InternalRecipients</span>" type="LINK" table="Participant" inverse="MessageAsInternalRecipient"/&gt;</div>
+      <div class="Code" style="margin-left: 162pt; text-indent: -18pt"><a name="pID0E05RC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 144pt; text-indent: -18pt"><a name="pID0E04RC0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 126pt; text-indent: -18pt"><a name="pID0E03RC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E02RC0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E01RC0HA">&lt;field name="</a><span style="color: #3366FF">Responses</span>" type="XLINK" table="Message" inverse="InReplyTo" junction="_ID"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0ZRC0HA">&lt;field name="</a><span style="color: #3366FF">SendDate</span>" type="TIMESTAMP"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0YRC0HA">&lt;field name="</a><span style="color: #3366FF">Size</span>" type="INTEGER"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0XRC0HA">&lt;field name="</a><span style="color: #3366FF">Subject</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0WRC0HA">&lt;field name="</a><span style="color: #3366FF">Tags</span>" collection="true" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0VRC0HA">&lt;field name="</a><span style="color: #3366FF">ThreadID</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0URC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0TRC0HA">&lt;aliases&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0SRC0HA">&lt;alias name="</a><span style="color: #3366FF">$SalesEmails</span>" expression="Sender.Person.WHERE(Department:Sales)"/&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0RRC0HA">&lt;/aliases&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0QRC0HA">&lt;/table&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0PRC0HA">&lt;table name="</a><span style="color: #3366FF">Participant</span>"&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0ORC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0NRC0HA">&lt;field name="</a><span style="color: #3366FF">MessageAddress</span>" type="LINK" table="Address" inverse="Messages"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0MRC0HA">&lt;field name="</a><span style="color: #3366FF">MessageAsExternalRecipient</span>" type="LINK" table="Message" inverse="ExternalRecipients"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0LRC0HA">&lt;field name="</a><span style="color: #3366FF">MessageAsInternalRecipient</span>" type="LINK" table="Message" inverse="InternalRecipients"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0KRC0HA">&lt;field name="</a><span style="color: #3366FF">MessageAsSender</span>" type="LINK" table="Message" inverse="Sender"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0JRC0HA">&lt;field name="</a><span style="color: #3366FF">Person</span>" type="LINK" table="Person" inverse="Messages"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0IRC0HA">&lt;field name="</a><span style="color: #3366FF">ReceiptDate</span>" type="TIMESTAMP"/&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0HRC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0GRC0HA">&lt;/table&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0FRC0HA">&lt;table name="</a><span style="color: #3366FF">Address</span>"&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0ERC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0DRC0HA">&lt;field name="</a><span style="color: #3366FF">Domain</span>" type="LINK" table="Domain" inverse="Addresses"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0CRC0HA">&lt;field name="</a><span style="color: #3366FF">Messages</span>" type="LINK" table="Participant" inverse="MessageAddress"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0BRC0HA">&lt;field name="</a><span style="color: #3366FF">Name</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0ARC0HA">&lt;field name="</a><span style="color: #3366FF">Person</span>" type="LINK" table="Person" inverse="MessageAddresses"/&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E06QC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E05QC0HA">&lt;/table&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E04QC0HA">&lt;table name="</a><span style="color: #3366FF">Person</span>"&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E03QC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E02QC0HA">&lt;field name="</a><span style="color: #3366FF">Location</span>"&gt;</div>
+      <div class="Code" style="margin-left: 126pt; text-indent: -18pt"><a name="pID0E01QC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 144pt; text-indent: -18pt"><a name="pID0E0ZQC0HA">&lt;field name="</a><span style="color: #3366FF">Department</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 144pt; text-indent: -18pt"><a name="pID0E0YQC0HA">&lt;field name="</a><span style="color: #3366FF">Office</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 126pt; text-indent: -18pt"><a name="pID0E0XQC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0WQC0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0VQC0HA">&lt;field name="</a><span style="color: #3366FF">DirectReports</span>" type="LINK" table="Person" inverse="Manager"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0UQC0HA">&lt;field name="</a><span style="color: #3366FF">FirstName</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0TQC0HA">&lt;field name="</a><span style="color: #3366FF">LastName</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0SQC0HA">&lt;field name="</a><span style="color: #3366FF">Manager</span>" type="LINK" table="Person" inverse="DirectReports"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0RQC0HA">&lt;field name="</a><span style="color: #3366FF">MessageAddresses</span>" type="LINK" table="Address" inverse="Person"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0QQC0HA">&lt;field name="</a><span style="color: #3366FF">Messages</span>" type="LINK" table="Participant" inverse="Person"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0PQC0HA">&lt;field name="</a><span style="color: #3366FF">Name</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0OQC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0NQC0HA">&lt;/table&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0MQC0HA">&lt;table name="</a><span style="color: #3366FF">Domain</span>"&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0LQC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0KQC0HA">&lt;field name="</a><span style="color: #3366FF">Addresses</span>" type="LINK" table="Address" inverse="Domain"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0JQC0HA">&lt;field name="</a><span style="color: #3366FF">IsInternal</span>" type="BOOLEAN"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0IQC0HA">&lt;field name="</a><span style="color: #3366FF">Name</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0HQC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0GQC0HA">&lt;/table&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0FQC0HA">&lt;/tables&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0EQC0HA">&lt;schedules&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0DQC0HA">&lt;schedule type="data-aging" value="0 0 3 * *"/&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0CQC0HA">&lt;/schedules&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0BQC0HA">&lt;/application&gt;</a></div>
+      <div class="Normal"><a name="pID0E0AQC0HA">The same schema in JSON is shown below:</a></div>
+      <div class="Code"><a name="pID0E06PC0HA">{"</a><span style="color: #3366FF">Email</span>": {</div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E05PC0HA">"key": "EmailKey",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E04PC0HA">"options": {"StorageService": "OLAPService"},</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E03PC0HA">"tables": {</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E02PC0HA">"</a><span style="color: #3366FF">Message</span>": {</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E01PC0HA">"fields": {</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0ZPC0HA">"</a><span style="color: #3366FF">InReplyTo</span>": {"type": "XLINK", "table": "Message", "inverse": "Responses", "junction": "ThreadID"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0YPC0HA">"</a><span style="color: #3366FF">Participants</span>": {</div>
+      <div class="Code" style="margin-left: 126pt; text-indent: -18pt"><a name="pID0E0XPC0HA">"fields": {</a></div>
+      <div class="Code" style="margin-left: 144pt; text-indent: -18pt"><a name="pID0E0WPC0HA">"</a><span style="color: #3366FF">Sender</span>": {"type": "LINK", "table": "Participant", "inverse": "MessageAsSender"},</div>
+      <div class="Code" style="margin-left: 144pt; text-indent: -18pt"><a name="pID0E0VPC0HA">"</a><span style="color: #3366FF">Recipients</span>": {</div>
+      <div class="Code" style="margin-left: 162pt; text-indent: -18pt"><a name="pID0E0UPC0HA">"fields": {</a></div>
+      <div class="Code" style="margin-left: 180pt; text-indent: -18pt"><a name="pID0E0TPC0HA">"</a><span style="color: #3366FF">ExternalRecipients</span>": {"type": "LINK", "table": "Participant", "inverse": "MessageAsExternalRecipient"},</div>
+      <div class="Code" style="margin-left: 180pt; text-indent: -18pt"><a name="pID0E0SPC0HA">"</a><span style="color: #3366FF">InternalRecipients</span>": {"type": "LINK", "table": "Participant", "inverse": "MessageAsInternalRecipient"}</div>
+      <div class="Code" style="margin-left: 162pt; text-indent: -18pt"><a name="pID0E0RPC0HA">}</a></div>
+      <div class="Code" style="margin-left: 144pt; text-indent: -18pt"><a name="pID0E0QPC0HA">}</a></div>
+      <div class="Code" style="margin-left: 126pt; text-indent: -18pt"><a name="pID0E0PPC0HA">}</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0OPC0HA">},</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0NPC0HA">"</a><span style="color: #3366FF">Responses</span>": {"type": "XLINK", "table": "Message", "inverse": "InReplyTo", "junction": "_ID"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0MPC0HA">"</a><span style="color: #3366FF">SendDate</span>": {"type": "TIMESTAMP"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0LPC0HA">"</a><span style="color: #3366FF">Size</span>": {"type": "INTEGER"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0KPC0HA">"</a><span style="color: #3366FF">Subject</span>": {"type": "TEXT"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0JPC0HA">"</a><span style="color: #3366FF">Tags</span>": {"collection": "true", "type": "TEXT"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0IPC0HA">"</a><span style="color: #3366FF">ThreadID</span>": {"type": "TEXT"}</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0HPC0HA">},</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0GPC0HA">"</a><span style="color: #3366FF">aliases</span>": {</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0FPC0HA">"</a><span style="color: #3366FF">$SalesEmails</span>": {"expression": "Sender.Person.WHERE(Department:Sales)"}</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0EPC0HA">}</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0DPC0HA">},</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0CPC0HA">"</a><span style="color: #3366FF">Participant</span>": {</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0BPC0HA">"fields": {</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0APC0HA">"</a><span style="color: #3366FF">MessageAddress</span>": {"type": "LINK", "table": "Address", "inverse": "Messages"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E06OC0HA">"</a><span style="color: #3366FF">MessageAsExternalRecipient</span>": {"type": "LINK", "table": "Message", "inverse": "ExternalRecipients"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E05OC0HA">"</a><span style="color: #3366FF">MessageAsInternalRecipient</span>": {"type": "LINK", "table": "Message", "inverse": "InternalRecipients"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E04OC0HA">"</a><span style="color: #3366FF">MessageAsSender</span>": {"type": "LINK", "table": "Message", "inverse": "Sender"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E03OC0HA">"</a><span style="color: #3366FF">Person</span>": {"type": "LINK", "table": "Person", "inverse": "Messages"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E02OC0HA">"</a><span style="color: #3366FF">ReceiptDate</span>": {"type": "TIMESTAMP"}</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E01OC0HA">}</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0ZOC0HA">},</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0YOC0HA">"</a><span style="color: #3366FF">Address</span>": {</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0XOC0HA">"fields": {</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0WOC0HA">"</a><span style="color: #3366FF">Domain</span>": {"type": "LINK", "table": "Domain", "inverse": "Addresses"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0VOC0HA">"</a><span style="color: #3366FF">Messages</span>": {"type": "LINK", "table": "Participant", "inverse": "MessageAddress"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0UOC0HA">"</a><span style="color: #3366FF">Name</span>": {"type": "TEXT"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0TOC0HA">"</a><span style="color: #3366FF">Person</span>": {"type": "LINK", "table": "Person", "inverse": "MessageAddresses"}</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0SOC0HA">}</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0ROC0HA">},</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0QOC0HA">"</a><span style="color: #3366FF">Person</span>": {</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0POC0HA">"fields": {</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0OOC0HA">"</a><span style="color: #3366FF">DirectReports</span>": {"type": "LINK", "table": "Person", "inverse": "Manager"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0NOC0HA">"</a><span style="color: #3366FF">FirstName</span>": {"type": "TEXT"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0MOC0HA">"</a><span style="color: #3366FF">LastName</span>": {"type": "TEXT"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0LOC0HA">"</a><span style="color: #3366FF">Location</span>": {</div>
+      <div class="Code" style="margin-left: 126pt; text-indent: -18pt"><a name="pID0E0KOC0HA">"fields": {</a></div>
+      <div class="Code" style="margin-left: 144pt; text-indent: -18pt"><a name="pID0E0JOC0HA">"</a><span style="color: #3366FF">Department</span>": {"type": "TEXT"},</div>
+      <div class="Code" style="margin-left: 144pt; text-indent: -18pt"><a name="pID0E0IOC0HA">"</a><span style="color: #3366FF">Office</span>": {"type": "TEXT"}</div>
+      <div class="Code" style="margin-left: 126pt; text-indent: -18pt"><a name="pID0E0HOC0HA">}</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0GOC0HA">},</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0FOC0HA">"</a><span style="color: #3366FF">Manager</span>": {"type": "LINK", "table": "Person", "inverse": "DirectReports"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0EOC0HA">"</a><span style="color: #3366FF">MessageAddresses</span>": {"type": "LINK", "table": "Address", "inverse": "Person"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0DOC0HA">"</a><span style="color: #3366FF">Messages</span>": {"type": "LINK", "table": "Participant", "inverse": "Person"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0COC0HA">"</a><span style="color: #3366FF">Name</span>": {"type": "TEXT"}</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0BOC0HA">}</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0AOC0HA">},</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E06NC0HA">"</a><span style="color: #3366FF">Domain</span>": {</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E05NC0HA">"fields": {</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E04NC0HA">"</a><span style="color: #3366FF">Addresses</span>": {"type": "LINK", "table": "Address", "inverse": "Domain"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E03NC0HA">"</a><span style="color: #3366FF">IsInternal</span>": {"type": "BOOLEAN"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E02NC0HA">"</a><span style="color: #3366FF">Name</span>": {"type": "TEXT"}</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E01NC0HA">}</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0ZNC0HA">}</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0YNC0HA">},</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0XNC0HA">"schedules": [</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0WNC0HA">{"schedule": {"type": "data-aging", "value": "0 0 3 * *"}}</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0VNC0HA">]</a></div>
+      <div class="Code"><a name="pID0E0UNC0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0TNC0HA">Some highlights of this schema:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0SNC0HA">The application-level option </a><span class="Code_Char">StorageService</span> explicitly assigns the application to the <span class="Code_Char">OLAPService</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0RNC0HA">The </a><span class="Code_Char">Message</span> table contains a group field called <span class="Code_Char">Participants</span>, which contains the link field <span class="Code_Char">Sender</span> and a second-level group called <span class="Code_Char">Recipients</span>, which contains the links <span class="Code_Char">InternalRecipients</span> and <span class="Code_Char">ExternalRecipients</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0QNC0HA">The </a><span class="Code_Char">Message</span> table contains a reflexive, cross-shard relationship formed by the xlinks <span class="Code_Char">InReplyTo</span> and <span class="Code_Char">Responses</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0PNC0HA">The </a><span class="Code_Char">Message</span> table defines an alias called <span class="Code_Char">$SalesEmails</span>, which is assigned the expression <span class="Code_Char">Sender.Person.WHERE(Department:Sales)</span>. <span class="Code_Char">$SalesEmails</span> is dynamically expanded when used in DQL queries.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0ONC0HA">The application defines a </a><span class="Code_Char">data-aging</span> task, assigning its schedule the cron expression "<span style="color: #595959; font-family: &quot;Courier New&quot;; font-size: 9pt">0 3 * * *</span>", which means “every day at 03:00".</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

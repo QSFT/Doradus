@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Table Sharding Options</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.010.html">Spider Data Model</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.015.html">Table</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.016.html">Table Options</a> : Table Sharding Options</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_4"><a name="pID0E03IC0HA">Table Sharding Options</a></div>
+      <div class="Normal"><a name="pID0E02IC0HA">Table sharding improves the performance of certain queries for tables with large populations (millions of objects or more). To benefit from sharding, a table must meet the following conditions:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E01IC0HA">Objects have a timestamp field whose value is stable, meaning it is rarely modified. In the example schema, the </a><span class="Code_Char">Message</span> table’s <span class="Code_Char">SendDate</span> field works well because it is rarely modified once a message is created. This timestamp field is used as the <span style="font-style: italic">sharding</span> field.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0ZIC0HA">To benefit from a sharded table, queries must include an </a><span style="font-style: italic">equality clause</span> or <span style="font-style: italic">range clause</span> that uses the sharding field. For example, both of the following queries select objects in specific time frames:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0YIC0HA">GET /Msgs/Message/_query?q=SendDate=PERIOD().LASTWEEK AND ...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XIC0HA">GET /Msgs/Message/_query?q=SendDate=[2014-01-01 TO 2014-03-01] AND ...</a></div>
+      <div class="Normal"><a name="pID0E0WIC0HA">Normally, Doradus Spider creates a single </a><span style="font-style: italic">term vector</span> for each field/term combination. For example, the term vector with key “<span class="Code_Char">Body/the</span>” holds references to all objects that use the term “the” in the field <span class="Code_Char">Body</span>. For common terms, the term vector may point to every object in the table, and very large term vectors slow query performance. When sharding is enabled, separate term vectors are created for objects in each <span style="font-style: italic">shard</span>. Faster searching occurs when the sharding field is then included in queries.</div>
+      <div class="Normal"><a name="pID0E0VIC0HA">Sharding is enabled with the following table-level </a><span class="Code_Char">options</span>:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-family: &quot;Times New Roman&quot;; font-size: 11pt">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0UIC0HA">sharding-field</a></span>: This option enables sharding and identifies the sharding field. Its value must be a <span class="Code_Char">timestamp</span> field defined in the schema.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-family: &quot;Times New Roman&quot;; font-size: 11pt">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0TIC0HA">sharding-granularity</a></span>: This option specifies what time period causes objects to be assigned to a new shard. It can be <span class="Code_Char">HOUR</span>, <span class="Code_Char">DAY</span>, <span class="Code_Char">WEEK</span>, or <span class="Code_Char">MONTH</span>. If not specified, it defaults to <span class="Code_Char">MONTH</span>. The value should be chosen so that each shard as a reasonable number of objects (&lt; 1 million).</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="color: #595959">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0SIC0HA">sharding-start</a></span>: This option specifies the date on which sharding begins for the table. Objects whose sharding-field value is null or less than the <span class="Code_Char">sharding-start</span> value are considered “un-sharded” and assigned to shard #0. Objects whose sharding field is greater than or equal to the <span class="Code_Char">sharding-start</span> value are assigned a shard number based on the difference between the two values and the <span class="Code_Char">sharding-granularity</span>. If not explicitly assigned, <span class="Code_Char">sharding-start</span> defaults to “now”, meaning the timestamp of the schema change that enables sharding.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0RIC0HA">Each object’s sharding field value can be modified at any time. If the modified value does not cause the object to be assigned a new shard number, the update is efficient. However, if the sharding field is assigned a value that changes the object’s shard number, the update is slower since the object’s fields are re-indexed.</a></div>
+      <div class="Normal"><a name="pID0E0QIC0HA">Table sharding can also benefit certain links that have very high </a><span style="font-style: italic">fan-outs</span>. See the description later on <span style="font-weight: bold">Sharded Links</span>.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

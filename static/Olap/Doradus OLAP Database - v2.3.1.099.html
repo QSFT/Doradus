@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>SETS Function</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.074.html">OLAP Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.082.html">Grouping Parameter</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.088.html">Special Grouping Functions</a> : SETS Function</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_4"><a name="pID0E0I10HA">SETS Function</a></div>
+      <div class="Normal"><a name="pID0E0H10HA">The </a><span class="Code_Char">SETS</span> function allows aggregate query groups to be created from arbitrary query expressions. The general syntax is:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0G10HA">SETS(&lt;query 1&gt; [AS &lt;name&gt;], &lt;query 2&gt; [AS &lt;name&gt;], ..., &lt;query n&gt; [AS &lt;name&gt;]) [AS &lt;name&gt;])</a></div>
+      <div class="Normal"><a name="pID0E0F10HA">Where each &lt;query&gt; is a DQL query expression that selects a set of objects from the perspective table. The queries can overlap such that multiple expressions can select the same objects. For example, the following query selects messages with overlapping </a><span class="Code_Char">Size</span> values:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0E10HA">GET /Email/Message/_aggregate?range=0&amp;m=COUNT(*)<br />&amp;f=SETS(Size &lt; 1000, Size &gt; 100 AND Size &lt; 100000, Size &gt; 10000)</a></div>
+      <div class="Normal"><a name="pID0E0D10HA">This returns a result such as the following:</a></div>
+      <div class="Code"><a name="pID0E0C10HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0B10HA">&lt;aggregate&nbsp;metric="COUNT(*)"&nbsp;query="*"&nbsp;group="SETS(Size &lt; 1000, Size &gt; 100 AND Size &lt; 100000, Size &gt; 10000)"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0A10HA">&lt;totalobjects&gt;6030&lt;/totalobjects&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E06Z0HA">&lt;summary&gt;6030&lt;/summary&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E05Z0HA">&lt;totalgroups&gt;3&lt;/totalgroups&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E04Z0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03Z0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E02Z0HA">&lt;metric&gt;125&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E01Z0HA">&lt;field&nbsp;name="SETS(Size &lt; 1000, Size &gt; 100 AND Size &lt; 100000, Size &gt; 10000)"&gt;Size IN {null - 1000}&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZZ0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0YZ0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0XZ0HA">&lt;metric&gt;5925&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0WZ0HA">&lt;field&nbsp;name="SETS(Size &lt; 1000, Size &gt; 100 AND Size &lt; 100000, Size &gt; 10000)"&gt;(Size IN {100 - null}) AND (Size IN {null - 100000})&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VZ0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0UZ0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0TZ0HA">&lt;metric&gt;1254&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0SZ0HA">&lt;field&nbsp;name="SETS(Size &lt; 1000, Size &gt; 100 AND Size &lt; 100000, Size &gt; 10000)"&gt;Size IN {10000 - null}&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0RZ0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0QZ0HA">&lt;/groups&gt;</a></div>
+      <div class="Code"><a name="pID0E0PZ0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0OZ0HA">By default, each group uses the corresponding query expression in both the field </a><span class="Code_Char">name</span> and value. The query expression text may not match the original query text exactly since expressions may be transformed internally. A custom field <span class="Code_Char">name</span> can be used by using the <span class="Code_Char">AS</span> syntax after the <span class="Code_Char">SETS</span> function. Example:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0NZ0HA">GET /Email/Message/_aggregate?range=0&amp;m=COUNT(*)<br />&amp;f=SETS(Size &lt; 1000, Size &gt; 100 AND Size &lt; 100000, Size &gt; 10000) AS Sizes</a></div>
+      <div class="Normal"><a name="pID0E0MZ0HA">This creates the simpler output format:</a></div>
+      <div class="Code"><a name="pID0E0LZ0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0KZ0HA">&lt;aggregate&nbsp;metric="COUNT(*)"&nbsp;query="*"&nbsp;group="SETS(Size &lt; 1000, Size &gt; 100 AND Size &lt; 100000, Size &gt; 10000) AS Sizes"/&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0JZ0HA">&lt;totalobjects&gt;6030&lt;/totalobjects&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0IZ0HA">&lt;summary&gt;6030&lt;/summary&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0HZ0HA">&lt;totalgroups&gt;3&lt;/totalgroups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0GZ0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0FZ0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0EZ0HA">&lt;metric&gt;125&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0DZ0HA">&lt;field&nbsp;name="Sizes"&gt;Size IN {null - 1000}&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0CZ0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0BZ0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0AZ0HA">&lt;metric&gt;5925&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E06Y0HA">&lt;field&nbsp;name="Sizes"&gt;(Size IN {100 - null}) AND (Size IN {null - 100000})&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E05Y0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E04Y0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E03Y0HA">&lt;metric&gt;1254&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E02Y0HA">&lt;field&nbsp;name="Sizes"&gt;Size IN {10000 - null}&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E01Y0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0ZY0HA">&lt;/groups&gt;</a></div>
+      <div class="Code"><a name="pID0E0YY0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0XY0HA">The field values can also be customized by using the </a><span class="Code_Char">AS</span> syntax after each query expression. For example:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0WY0HA">GET /Email/Message/_aggregate?range=0&amp;m=COUNT(*)<br />&amp;f=SETS(Size &lt; 1000 AS Littles, Size &gt; 100 AND Size &lt; 100000 AS Middles,<br />	Size &gt; 10000 AS Biggies) AS Sizes</a></div>
+      <div class="Normal"><a name="pID0E0VY0HA">This creates an even simpler format:</a></div>
+      <div class="Code"><a name="pID0E0UY0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0TY0HA">&lt;aggregate&nbsp;metric="COUNT(*)"&nbsp;query="*"&nbsp;group="SETS(Size &lt; 1000 AS Littles, Size &gt; 100 AND Size &lt; 100000 AS Middles, Size &gt; 10000 AS Biggies) AS Sizes"/&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0SY0HA">&lt;totalobjects&gt;6030&lt;/totalobjects&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0RY0HA">&lt;summary&gt;6030&lt;/summary&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0QY0HA">&lt;totalgroups&gt;3&lt;/totalgroups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0PY0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0OY0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0NY0HA">&lt;metric&gt;125&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0MY0HA">&lt;field&nbsp;name="Sizes"&gt;Littles&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0LY0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0KY0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0JY0HA">&lt;metric&gt;5925&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0IY0HA">&lt;field&nbsp;name="Sizes"&gt;Middles&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0HY0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0GY0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0FY0HA">&lt;metric&gt;1254&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0EY0HA">&lt;field&nbsp;name="Sizes"&gt;Biggies&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0DY0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0CY0HA">&lt;/groups&gt;</a></div>
+      <div class="Code"><a name="pID0E0BY0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0AY0HA">Note that if objects are selected by the aggregate query but not included in any query expressions defined by the SETS function, those objects are automatically included in a null set. For example:</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E06X0HA">GET /Email/Message/_aggregate? range=0&amp;m=COUNT(*)<br />&amp;f=SETS(Size &lt; 10 AS BittyEmails, Size &gt; 100000 AS MegaEmails) AS Sizes</a></div>
+      <div class="Normal"><a name="pID0E05X0HA">Messages that don’t fit either of the two query expressions are included in a group named </a><span class="Code_Char">(null)</span> as shown below:</div>
+      <div class="Code"><a name="pID0E04X0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E03X0HA">&lt;aggregate&nbsp;metric="COUNT(*)"&nbsp;query="*"&nbsp;group="SETS(Size &lt; 10 AS BittyEmails, Size &gt; 100000 AS MegaEmails) AS Sizes"/&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E02X0HA">&lt;totalobjects&gt;6030&lt;/totalobjects&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E01X0HA">&lt;summary&gt;6030&lt;/summary&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0ZX0HA">&lt;totalgroups&gt;3&lt;/totalgroups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0YX0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0XX0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0WX0HA">&lt;metric&gt;5925&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0VX0HA">&lt;field&nbsp;name="Sizes"&gt;(null)&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0UX0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0TX0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0SX0HA">&lt;metric&gt;0&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0RX0HA">&lt;field&nbsp;name="Sizes"&gt;BittyEmails&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0QX0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0PX0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0OX0HA">&lt;metric&gt;105&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0NX0HA">&lt;field&nbsp;name="Sizes"&gt;MegaEmails&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0MX0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0LX0HA">&lt;/groups&gt;</a></div>
+      <div class="Code"><a name="pID0E0KX0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0JX0HA">As shown, the majority of messages (5925) did not match either query expression and were therefore included in the (null) group. No messages matches the </a><span class="Code_Char">BittyEmails</span> query expression, hence the metric value for that group is 0.</div>
+      <div class="Normal"><a name="pID0E0IX0HA">Note that the query expressions do not need to use the same fields. Each query expression can use any criteria to create its groups. Example:</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0HX0HA">GET /Email/Message/_aggregate?m=COUNT(*)&amp;range=0<br />&amp;f=SETS(Size &lt; 1000, Tags=Customer, Sender.Person.Department:support)</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

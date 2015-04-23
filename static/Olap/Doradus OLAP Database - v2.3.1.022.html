@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>OLAP Sharding Model</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.010.html">OLAP Data Model</a> : OLAP Sharding Model</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E01HC0HA">OLAP Sharding Model</a></div>
+      <div class="Normal"><a name="pID0E0ZHC0HA">OLAP employs a </a><span style="font-style: italic">sharding</span> model that partitions data into named <span style="font-style: italic">shards</span>. The sharding strategy controls how data is loaded and queried.</div>
+      <div class="Normal"><a name="pID0E0YHC0HA">A shard is a data partition. It is analogous to an OLAP </a><span style="font-style: italic">cube</span>, containing data that is organized into queryable <span style="font-style: italic">dimensions</span>. A shard is an application-level partition: every object is assigned to a shard, and a shard holds objects from all tables. Data is stored in arrays on a per-shard/per-field basis. Queries define one or more shards as their query scope. When a field is accessed by a query for a specific shard, the corresponding array is loaded into memory, typically in one I/O. Accessing field values is very fast: typically millions of values/second. Arrays are cached on an LRU basis.</div>
+      <div class="Normal"><a name="pID0E0XHC0HA">A shard holds objects that are related by user-defined criteria. The most common criteria is time: for example, objects that were created in the same hour or day. But other criteria can be used such as geography or department. The goal of each shard is to hold “a few million” objects that balances load/merge time with memory usage. (Experimentation is highly encouraged.) A shard’s name should reflect its contents, e.g., “2014-01-03” for a shard that holds data from January 3</a><span style="vertical-align: super">rd</span>, 2014. Shards should use alphabetically-ordered names since queries can operate on shard name ranges (e.g., “2014-01-01” to “2014-01-31”).</div>
+      <div class="Normal"><a name="pID0E0WHC0HA">Objects are loaded into a shard in </a><span style="font-style: italic">batches</span>. A batch contains new, modified, and deleted objects in any order for any/all tables. Batches are intended to be large: typically thousands of objects. When one of more batches are loaded, the shard is <span style="font-style: italic">merged</span> to apply all updates. Once merged, a shard’s updates are visible to queries. After a merge, a shard can receive more batches and be merged again.</div>
+      <div class="Normal"><a name="pID0E0VHC0HA">A given object ID can be inserted into the same table in multiple shards. The duplicates may be identical or they may reflect the state of a given person, account, etc. over time. Duplicating objects between shards is desirable so that shards are self-contained graphs.</a></div>
+      <div class="Normal"><a name="pID0E0UHC0HA">A shard can be explicitly deleted, which removes all of its data. Alternatively, each shard can be assigned an </a><span style="font-style: italic">expire-date</span> and will be automatically deleted by a background data-aging task when it expires.</div>
+      <div class="Normal"><a name="pID0E0THC0HA">An example of the OLAP sharding model is shown below:</a></div>
+      <div class="Normal"><a name="pID0E0SHC0HA"><img class="Default" src="images/Doradus%20OLAP%20Database%20-%20v2.3.1.022.1.jpg" width="524" height="352" style="display: inline; top: 0pt" alt="" /></a></div>
+      <div class="Normal"><a name="pID0E0RHC0HA">In this example, the database holds multiple applications (</a><span class="Code_Char">Magellan</span>, <span class="Code_Char">Galileo</span>.) Each application holds its own shards: The <span class="Code_Char">Magellan</span> application’s shards are named with dates (“<span class="Code_Char">2012-12-20</span>”, “<span class="Code_Char">2012-12-19</span>”, …). Each shard holds objects from all tables and are interrelated using links. Note that it is not necessary for an application to use multiple tables or links in order to take advantage of OLAP: a single table with only scalar fields is all some applications need.</div>
+      <div class="Normal"><a name="pID0E0QHC0HA">Although data is organized into per-field/per-shard arrays, this structure is hidden from applications. Objects are queried using DQL object and aggregate queries. The only extra parameter required for queries is the shard list or range that defines the query’s scope.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

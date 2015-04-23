@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Add Batch</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.102.html">OLAP REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.116.html">Object Update Commands</a> : Add Batch</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E02P0HA">Add Batch</a></div>
+      <div class="Normal"><a name="pID0E01P0HA">A batch of new, updated, and/or deleted objects is loaded into a specific shard of an application using the following REST command:</a></div>
+      <div class="Code"><a name="pID0E0ZP0HA">POST /{application}/{shard}[?Overwrite={true|false}]</a></div>
+      <div class="Normal"><a name="pID0E0YP0HA">where </a><span class="Code_Char">{application}</span> is the application name and <span class="Code_Char">{shard}</span> is the shard to which the batch is to be added. Shard names are text strings and are not predefined: a shard is started when the first batch is added to it.</div>
+      <div class="Normal"><a name="pID0E0XP0HA">The optional </a><span class="Code_Char">Overwrite</span> parameter (case-insensitive) indicates whether or not the batch should replace existing field values. The default is <span class="Code_Char">true</span>, which means any field that already has a value for the corresponding object replaces the existing value. If multiple batches are added to the same shard with <span class="Code_Char">Overwrite=true</span>, the last value added when the shard is merged takes precedence. If <span class="Code_Char">Overwrite</span> is set to <span class="Code_Char">false</span>, values in the corresponding batch are only additive: they never replace existing field values when the shard is merged.</div>
+      <div class="Normal"><a name="pID0E0WP0HA">The Add Batch command must include an input entity that contains the objects to be added, updated, and/or deleted. The format of an example input message in XML as shown below:</a></div>
+      <div class="Code"><a name="pID0E0VP0HA">&lt;batch&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0UP0HA">&lt;docs&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TP0HA">&lt;doc </a><span style="color: #FF0000">_table="Message"</span>&gt;</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0SP0HA">&lt;field name="_ID"&gt;92XJeDwQ8lD3/RS4yM5gTg==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0RP0HA">&lt;field name="Size"&gt;10334&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0QP0HA">&lt;field name="Tags"&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0PP0HA">&lt;add&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0OP0HA">&lt;value&gt;Confidential&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0NP0HA">&lt;value&gt;Sensitive&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0MP0HA">&lt;/add&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0LP0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0KP0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0JP0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0IP0HA">&lt;doc </a><span style="color: #FF0000">_table="Message" </span><span style="color: #660066">_deleted="true"</span>&gt;</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0HP0HA">&lt;field name="_ID"&gt;95lfrCiljbiKOQK9UH7LYg==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0GP0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0FP0HA">&lt;doc </a><span style="color: #FF0000">_table="Person"</span>&gt;</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0EP0HA">&lt;field name="_ID"&gt;x3OKbjCmKw47wEHaqV0nLQ==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0DP0HA">&lt;field name="FirstName"&gt;John&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0CP0HA">&lt;field name="Manager"&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0BP0HA">&lt;add&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0AP0HA">&lt;value&gt;LjJEtDcwp1ltqJWJ980+HQ==&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E06O0HA">&lt;/add&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E05O0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E04O0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03O0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E02O0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E01O0HA">&lt;/docs&gt;</a></div>
+      <div class="Code"><a name="pID0E0ZO0HA">&lt;/batch&gt;</a></div>
+      <div class="Normal"><a name="pID0E0YO0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E0XO0HA">{"batch": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0WO0HA">"docs": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VO0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #FF0000"><a name="pID0E0UO0HA">"_table": "Message"</a></span>,</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0TO0HA">"_ID": "92XJeDwQ8lD3/RS4yM5gTg==",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0SO0HA">"Size": "10334",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0RO0HA">"Tags": {</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0QO0HA">"add": ["Confidential", "Sensitive"]</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0PO0HA">},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0OO0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NO0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0MO0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #FF0000"><a name="pID0E0LO0HA">"_table": "Message"</a></span>,</div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #660066"><a name="pID0E0KO0HA">"_deleted": "true"</a></span>,</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0JO0HA">"_ID": "95lfrCiljbiKOQK9UH7LYg=="</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0IO0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0HO0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #FF0000"><a name="pID0E0GO0HA">"_table": "Person"</a></span>,</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0FO0HA">"_ID": "x3OKbjCmKw47wEHaqV0nLQ==",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0EO0HA">"FirstName": "John",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0DO0HA">"Manager": {</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0CO0HA">"add": ["LjJEtDcwp1ltqJWJ980+HQ=="]</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0BO0HA">},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0AO0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E06N0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E05N0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E04N0HA">]</a></div>
+      <div class="Code"><a name="pID0E03N0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E02N0HA">As shown, messages from multiple tables can be mixed in the same batch. The </a><span class="Code_Char">_table</span> property identifies the table that the object will be inserted to, updated in, or deleted from. An object is added the first time fields are assigned to its <span class="Code_Char">_ID</span>. Assigning an SV scalar field for an existing object replaces its current value. MV scalar and link field values are added in <span class="Code_Char">add</span> groups. An object is deleted by giving its <span class="Code_Char">_ID</span> value and setting the system field <span class="Code_Char">_deleted</span> to <span class="Code_Char">true</span>.</div>
+      <div class="Normal"><a name="pID0E01N0HA">When an object is added, the </a><span class="Code_Char">_ID</span> field can be omitted, in which case Doradus assigns a unique ID. The ID is a base 64-encoded 120-bit value that is generated in a way to ensure uniqueness even in a multi-node cluster. However, automatic IDs remove the idempotency of updates: if the same object is added twice with the <span class="Code_Char">_ID</span> field assigned, it will be inserted twice with different ID values.</div>
+      <div class="Normal"><a name="pID0E0ZN0HA">The only restrictions on Doradus OLAP updates are:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0YN0HA">Once assigned a value, a field cannot be set to null.</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0XN0HA">There is no way to remove values from an MV scalar or link field. (However, deleting an object automatically updates affected inverse links.)</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0WN0HA">Batches are persisted but not processed until the containing shard is merged. When the shard is merged, all adds, updates, and deletes are merged with existing objects in the shard. If the same object is updated in multiple batches, the updates are merged; conflicts, such setting the same SV scalar field to different values, are resolved by using the update in the most recently-added batch.</a></div>
+      <div class="Normal"><a name="pID0E0VN0HA">The ideal batch size is application-specific and depends on several factors:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0UN0HA">If the number of objects per batch is too large or too small, merging the batches into a single segment will take longer, slowing down the overall load time.</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0TN0HA">Because an object batch temporarily resides in memory, both the client and the Doradus server require memory proportional to the size of the batch. Using REST API compression helps with server memory because object batches are parsed and loaded from the compressed message entity.</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

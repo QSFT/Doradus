@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Terms</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.025.html">Doradus Query Language (DQL)</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.030.html">Literals</a> : Terms</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0YEC0HA">Terms</a></div>
+      <div class="Normal"><a name="pID0E0XEC0HA">Text fields can be evaluated as a set of tokens called </a><span style="font-style: italic">terms</span>. Depending on the underlying storage service, the terms may be generated and indexed when a text field is stored, or they may be computed dynamically. Generally, terms are alphanumeric character sequences separated by whitespace and/or punctuation.</div>
+      <div class="Normal"><a name="pID0E0WEC0HA">In search clauses, multiple terms can be used, and each term can contain wildcards. Example search terms are shown below:</a></div>
+      <div class="Code"><a name="pID0E0VEC0HA">John</a></div>
+      <div class="Code"><a name="pID0E0UEC0HA">Fo*</a></div>
+      <div class="Code"><a name="pID0E0TEC0HA">a?c</a></div>
+      <div class="Code"><a name="pID0E0SEC0HA">Event_413</a></div>
+      <div class="Normal"><a name="pID0E0REC0HA">Note that terms are not quoted. A term is a sequence of characters consisting of letters, digits, or any of these characters:</a></div>
+      <div class="Code"><a name="pID0E0QEC0HA">? (question mark)</a></div>
+      <div class="Code"><a name="pID0E0PEC0HA">* (asterisk)</a></div>
+      <div class="Code"><a name="pID0E0OEC0HA">_ (underscore)</a></div>
+      <div class="Code"><a name="pID0E0NEC0HA">@ (at symbol)</a></div>
+      <div class="Code"><a name="pID0E0MEC0HA"># (hash or pound)</a></div>
+      <div class="Code"><a name="pID0E0LEC0HA">- (dash or minus)</a></div>
+      <div class="Normal"><a name="pID0E0KEC0HA">In a term, the characters </a><span class="Code_Char">_</span>, <span class="Code_Char">@</span>, <span class="Code_Char">#</span>, and <span class="Code_Char">-</span> are treated as term <span style="font-style: italic">separators</span>, creating multiple terms that are part of the same literal. For example, the following literals all define two terms, <span class="Code_Char">john</span> and <span class="Code_Char">smith</span> – the separator character is not part of either term:</div>
+      <div class="Code"><a name="pID0E0JEC0HA">john_smith</a></div>
+      <div class="Code"><a name="pID0E0IEC0HA">john@smith</a></div>
+      <div class="Code"><a name="pID0E0HEC0HA">john#smith</a></div>
+      <div class="Code"><a name="pID0E0GEC0HA">john-smith</a></div>
+      <div class="Normal"><a name="pID0E0FEC0HA">The characters </a><span class="Code_Char">?</span> and <span class="Code_Char">*</span> are single- and multi-character wildcards: <span class="Code_Char">?</span> matches any single character and <span class="Code_Char">*</span> matches any sequence of characters.</div>
+      <div class="Normal"><a name="pID0E0EEC0HA">See the discussion on </a><span style="font-weight: bold">Contains Clauses</span> for more details about using terms in searches.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

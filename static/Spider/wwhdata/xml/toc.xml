@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WebWorksHelpTOC version="5.0" xmlns="urn:WebWorks-Help-TOC-Schema">
+  <i t="Introduction" l="1">
+    <i t="Recent Changes" l="2" />
+  </i>
+  <i t="Architecture" l="3" />
+  <i t="Spider Database Overview" l="4">
+    <i t="Starting a Spider Database" l="5" />
+    <i t="Spider Overview" l="6" />
+    <i t="When Spider Works Best" l="7" />
+    <i t="The Msgs Sample Application" l="8" />
+  </i>
+  <i t="Spider Data Model" l="9">
+    <i t="Motivation" l="10" />
+    <i t="Identifiers" l="11" />
+    <i t="Application" l="12">
+      <i t="Application Options" l="13" />
+    </i>
+    <i t="Table" l="14">
+      <i t="Table Options" l="15">
+        <i t="Data Aging Options" l="16" />
+        <i t="Table Sharding Options" l="17" />
+      </i>
+    </i>
+    <i t="Objects" l="18" />
+    <i t="Object IDs" l="19" />
+    <i t="Fields" l="20">
+      <i t="Scalar Fields" l="21">
+        <i t="The Collection Property" l="22" />
+        <i t="The Analyzer Property" l="23">
+          <i t="4.7.1.2.1 TextAnalyzer" l="24" />
+          <i t="4.7.1.2.2 IntegerAnalyzer" l="25" />
+          <i t="4.7.1.2.3 BooleanAnalyzer" l="26" />
+          <i t="4.7.1.2.4 DateAnalyzer" l="27" />
+          <i t="4.7.1.2.5 NullAnalyzer" l="28" />
+          <i t="4.7.1.2.6 OpaqueTextAnalyzer" l="29" />
+          <i t="4.7.1.2.7 HTMLAnalyzer" l="30" />
+        </i>
+      </i>
+      <i t="Link Fields" l="31">
+        <i t="The Sharded Property" l="32" />
+      </i>
+      <i t="Group Fields" l="33" />
+      <i t="Dynamically-Added Fields" l="34" />
+    </i>
+    <i t="Aliases" l="35" />
+  </i>
+  <i t="Doradus Query Language (DQL)" l="36">
+    <i t="Query Perspective" l="37" />
+    <i t="Clauses" l="38" />
+    <i t="Clause Negation: NOT" l="39" />
+    <i t="Clause Connectors: AND, OR, and Parentheses" l="40" />
+    <i t="Literals" l="41">
+      <i t="Booleans" l="42" />
+      <i t="Numbers" l="43" />
+      <i t="Timestamps" l="44" />
+      <i t="Terms" l="45" />
+      <i t="Strings" l="46" />
+    </i>
+    <i t="Null Values" l="47" />
+    <i t="IS NULL Clause" l="48" />
+    <i t="Text Contains Clauses" l="49">
+      <i t="Term Clauses" l="50" />
+      <i t="Phrase Clauses" l="51" />
+      <i t="Any-field Clauses" l="52" />
+    </i>
+    <i t="Range Clauses" l="53" />
+    <i t="Equality Clauses" l="54" />
+    <i t="IN Clause" l="55" />
+    <i t="Timestamp Clauses" l="56">
+      <i t="Subfield Clauses" l="57" />
+      <i t="NOW Function" l="58" />
+      <i t="PERIOD Function" l="59" />
+    </i>
+    <i t="Link Clauses" l="60">
+      <i t="Link Path Clauses" l="61" />
+      <i t="WHERE Filter" l="62" />
+      <i t="Outer WHERE Filter" l="63" />
+    </i>
+    <i t="Quantifier Functions" l="64">
+      <i t="Overview: ANY, ALL, and NONE" l="65" />
+      <i t="Quantifiers on MV Scalar Fields" l="66" />
+      <i t="Quantifiers on SV Scalar Fields" l="67" />
+      <i t="Quantifiers on Link Fields" l="68" />
+      <i t="Quantifiers with IS NULL" l="69" />
+      <i t="Quantifiers on Group Fields" l="70" />
+    </i>
+    <i t="Transitive Function" l="71" />
+    <i t="COUNT(&lt;link path&gt;)" l="72" />
+  </i>
+  <i t="Spider Object Queries" l="73">
+    <i t="Query Parameters" l="74" />
+    <i t="Fields Parameter" l="75">
+      <i t="Basic Formats" l="76" />
+      <i t="WHERE Filters" l="77" />
+      <i t="Size Limits on Link Fields" l="78" />
+    </i>
+    <i t="Order Parameter" l="79" />
+    <i t="Query Results" l="80">
+      <i t="Empty Results" l="81" />
+      <i t="SV Scalar Fields" l="82" />
+      <i t="MV Scalar Fields" l="83" />
+      <i t="Link Fields" l="84" />
+    </i>
+  </i>
+  <i t="Spider Aggregate Queries" l="85">
+    <i t="Aggregate Parameters Overview" l="86" />
+    <i t="Metric Parameter" l="87" />
+    <i t="Grouping Parameter" l="88">
+      <i t="Global Aggregates: No Grouping Parameter" l="89" />
+      <i t="Single-level Grouping" l="90" />
+      <i t="Grouping Field Aliases" l="91" />
+      <i t="Multi-level Grouping" l="92" />
+      <i t="Group Fields as Grouping Parameters" l="93" />
+      <i t="Composite Grouping" l="94" />
+      <i t="Compound Grouping: GROUP Sets" l="95" />
+      <i t="Compound/Multi-metric Grouping Results" l="96" />
+      <i t="Special Grouping Functions" l="97">
+        <i t="BATCH Function" l="98" />
+        <i t="INCLUDE and EXCLUDE Functions" l="99" />
+        <i t="TERMS Function" l="100" />
+        <i t="TOP and BOTTOM Functions" l="101" />
+        <i t="FIRST and LAST Functions" l="102" />
+        <i t="TRUNCATE Function" l="103" />
+        <i t="UPPER and LOWER Functions" l="104" />
+        <i t="WHERE Function" l="105" />
+      </i>
+    </i>
+    <i t="Multi-metric Aggregate Queries" l="106" />
+  </i>
+  <i t="Spider REST Commands" l="107">
+    <i t="REST API Overview" l="108">
+      <i t="Common REST Headers" l="109" />
+      <i t="Common REST URI Parameters" l="110" />
+      <i t="REST Commands in Multi-Tenant Mode" l="111" />
+      <i t="Common JSON Rules" l="112" />
+      <i t="Illegal Characters in XML Content" l="113" />
+      <i t="Common REST Responses" l="114" />
+    </i>
+    <i t="Spider REST Command Summary" l="115" />
+    <i t="Application Management Commands" l="116">
+      <i t="Create Application" l="117" />
+      <i t="Modify Application" l="118" />
+      <i t="List Application" l="119" />
+      <i t="Delete Application" l="120" />
+    </i>
+    <i t="Object Update Commands" l="121">
+      <i t="Add Batch" l="122" />
+      <i t="Update Batch" l="123" />
+      <i t="Delete Batch" l="124" />
+    </i>
+    <i t="Get Object Command" l="125" />
+    <i t="Object Query Commands" l="126">
+      <i t="Object Query via URI" l="127" />
+      <i t="Object Query via Entity" l="128" />
+    </i>
+    <i t="Aggregate Query Commands" l="129">
+      <i t="Aggregate Query via URI" l="130" />
+      <i t="Aggregate Query via Entity" l="131" />
+    </i>
+    <i t="Task Status Command" l="132" />
+  </i>
+</WebWorksHelpTOC>

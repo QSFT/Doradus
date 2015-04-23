@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Metric Functions</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.074.html">OLAP Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.076.html">Metric Parameter</a> : Metric Functions</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0VOB0HA">Metric Functions</a></div>
+      <div class="Normal"><a name="pID0E0UOB0HA">In it’s basic form, the metric parameter is a comma-separated list of </a><span style="font-style: italic">metric functions</span>. Each function performs a statistical calculation on a scalar or link field. The general syntax of a metric function is:</div>
+      <div class="Code"><span style="font-style: italic"><a name="pID0E0TOB0HA">function</a></span>(<span style="font-style: italic">field</span>)</div>
+      <div class="Normal"><a name="pID0E0SOB0HA">Where </a><span style="font-style: italic">function</span> is a metric function name and <span style="font-style: italic">field</span> defines what the metric function is computed on. The field must be a scalar or link defined in the application’s schema. It can belong to the perspective table, or it can be a path to a field linked to the perspective table (e.g., <span class="Code_Char">DirectReports.Name</span>).</div>
+      <div class="Normal"><a name="pID0E0ROB0HA">If the metric function parameter is a field path with a reflexive link, the transitive operator can be used. Example:</a></div>
+      <div class="Code"><a name="pID0E0QOB0HA">COUNT=(DirectReports^)</a></div>
+      <div class="Normal"><a name="pID0E0POB0HA">This function counts all </a><span class="Code_Char">DirectReports</span> link values for each perspective object (i.e., all employees in the org chart reporting to each person). Scalar fields of transitively-linked objects can also be used as the metric function’s parameter. For example:</div>
+      <div class="Code"><a name="pID0E0OOB0HA">MAX(Manager^.FirstName)</a></div>
+      <div class="Normal"><a name="pID0E0NOB0HA">This function finds the maximum </a><span class="Code_Char">FirstName</span> (highest, alphabetically) of all managers “up” the org chart for each perspective object. For more information on the transitive operator, see the section <span class="Hyperlink"><a href="javascript:WWHClickedPopup('OLAP', 'Doradus%20OLAP%20Database%20-%20v2.3.1.058.html', '');" title="Transitive Function">Transitive Function</a></span>.</div>
+      <div class="Normal"><a name="pID0E0MOB0HA">The supported metric functions are summarized below:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0LOB0HA">COUNT(</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">field</span><span class="Code_Char" style="font-weight: bold">)</span>: Counts the values for the specified <span style="font-style: italic">field</span>. If the field is multi-valued with respect to the perspective object, all values are counted for each selected object. For example, <span class="Code_Char">COUNT(Tags)</span> tallies all <span class="Code_Char">Tags</span> values of all objects. The COUNT function also allows the special value “*”, which counts the selected objects in the perspective table regardless of any fields. That is, <span class="Code_Char">COUNT(*)</span> counts <span style="text-decoration: underline">objects</span> instead of <span style="text-decoration: underline">values</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0KOB0HA">DISTINCT(</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">field</span><span class="Code_Char" style="font-weight: bold">)</span>: This metric is similar to COUNT except that it totals <span style="text-decoration: underline">unique</span> values for the given <span style="font-style: italic">field</span>. For example, <span class="Code_Char">COUNT(Size)</span> finds the total number of values of the <span class="Code_Char">Size</span> field, whereas <span class="Code_Char">DISTINCT(Size)</span> finds the number of unique <span class="Code_Char">Size</span> values.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0JOB0HA">SUM(</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">field</span><span class="Code_Char" style="font-weight: bold">)</span>: Sums the non-null values for the given numeric <span style="font-style: italic">field</span>. The field’s type must be <span class="Code_Char">integer</span>, <span class="Code_Char">long</span>, <span class="Code_Char">float</span>, or <span class="Code_Char">double</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0IOB0HA">AVERAGE(</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">field</span><span class="Code_Char" style="font-weight: bold">)</span>: Computes the average value for the given <span style="font-style: italic">field</span>, which must be <span class="Code_Char">integer</span>, <span class="Code_Char">long</span>, <span class="Code_Char">float</span>, <span class="Code_Char">double</span>, or <span class="Code_Char">timestamp</span>. Note that the <span class="Code_Char">AVERAGE</span> function uses SQL <span style="font-style: italic">null-elimination</span> semantics. This means that objects for which the metric field does not have a value are not considered for computation even though the object itself was selected. As an example, consider an aggregate query that computes <span class="Code_Char">AVERAGE(foo)</span> for four selected objects, whose value for <span class="Code_Char">foo</span> are 2, 4, 6, and null. The value computed will be 4 ((2+4+6)/3) not 3 ((2+4+6+0)/4) because the object with the null field is eliminated from the computation.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0HOB0HA">MIN(</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">field</span><span class="Code_Char" style="font-weight: bold">)</span>: Computes the minimum value for the given <span style="font-style: italic">field</span>. For scalar fields, <span class="Code_Char">MIN</span> computes the lowest value found based on the field type’s natural order. For link fields, <span class="Code_Char">MIN</span> computes the lowest object ID found in the link field’s values based on the string form of the object ID.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0GOB0HA">MAX(</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">field</span><span class="Code_Char" style="font-weight: bold">)</span>: Computes the maximum value for the given <span style="font-style: italic">field</span>, which must be a predefined scalar or link field.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0FOB0HA">MAXCOUNT(</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">field</span><span class="Code_Char" style="font-weight: bold">)</span>: This function computes the maximum cardinality of the given scalar or link <span style="font-style: italic">field</span>. For example, for the <span class="Code_Char">Message</span> table, <span class="Code_Char">MAXCOUNT(ExternalRecipients)</span> returns the highest number of <span class="Code_Char">ExternalRecipients</span> values found for selected objects.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0EOB0HA">MINCOUNT(</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">field</span><span class="Code_Char" style="font-weight: bold">)</span>: This function computes the minimum cardinality of the given <span style="font-style: italic">field</span>. If any selected objects have no value for the given field, the result will be 0.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0DOB0HA">When applied to a single-valued field, the result of both </a><span class="Code_Char">MINCOUNT</span> and <span class="Code_Char">MAXCOUNT</span> will be either 0 or 1.</div>
+      <div class="Normal"><a name="pID0E0COB0HA">Example metric functions are shown below:</a></div>
+      <div class="Code"><a name="pID0E0BOB0HA">COUNT(*)</a></div>
+      <div class="Code"><a name="pID0E0AOB0HA">DISTINCT(Tags)</a></div>
+      <div class="Code"><a name="pID0E06NB0HA">MAX(Sender.Person.LastName)</a></div>
+      <div class="Code"><a name="pID0E05NB0HA">AVERAGE(Size)</a></div>
+      <div class="Code"><a name="pID0E04NB0HA">MAXCOUNT(Sender.Person.DirectReports)</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

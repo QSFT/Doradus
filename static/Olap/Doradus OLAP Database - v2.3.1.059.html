@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>COUNT(&lt;link path&gt;)</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.025.html">Doradus Query Language (DQL)</a> : COUNT(&lt;link path&gt;)</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0Z1B0HA">COUNT(&lt;link path&gt;)</a></div>
+      <div class="Normal"><a name="pID0E0Y1B0HA">The </a><span class="Code_Char">COUNT</span> function can be used on a link field or a field path ending with a link. It produces a count of the link values relative to each perspective object; the count can then be used in a comparison clause. For example:</div>
+      <div class="Code"><a name="pID0E0X1B0HA">COUNT(DirectReports) &gt; 0</a></div>
+      <div class="Normal"><a name="pID0E0W1B0HA">This clause returns true for a perspective object if it has at least one </a><span class="Code_Char">DirectReports</span> value.</div>
+      <div class="Normal"><a name="pID0E0V1B0HA">When a link path is used, the number of </a><span style="font-style: italic">leaf</span> link values are counted. For example:</div>
+      <div class="Code"><a name="pID0E0U1B0HA">COUNT(InternalRecipients.MessageAddress.Person) &gt; 5</a></div>
+      <div class="Normal"><a name="pID0E0T1B0HA">This clause returns true if the total of all </a><span class="Code_Char">InternalRecipients.MessageAddress.Person</span> values is &gt; 5. Some <span class="Code_Char">InternalRecipients</span> may not have a <span class="Code_Char">MessageAddress</span> value, and some <span class="Code_Char">MessageAddress</span> objects may not have a <span class="Code_Char">Person</span> value.</div>
+      <div class="Normal"><a name="pID0E0S1B0HA">The link values to be included in a </a><span class="Code_Char">COUNT</span> function can be filtered by using the <span class="Code_Char">WHERE</span> function. For example:</div>
+      <div class="Code"><a name="pID0E0R1B0HA">COUNT(DirectReports.WHERE(LastName=Smith)) &gt; 0</a></div>
+      <div class="Normal"><a name="pID0E0Q1B0HA">This clause returns true for objects that have at least one direct report whose last name is </a><span class="Code_Char">Smith</span>. Note that the <span class="Code_Char">WHERE</span> expression is specified immediately after the link name to be filtered. The parameter to the <span class="Code_Char">WHERE</span> function is an expression relative to the link field. In this example, <span class="Code_Char">LastName</span> must be a scalar field belong to <span class="Code_Char">DirectReports</span>’ extent table.</div>
+      <div class="Normal"><a name="pID0E0P1B0HA">The parameter to the </a><span class="Code_Char">WHERE</span> function can be a link path. For example:</div>
+      <div class="Code"><a name="pID0E0O1B0HA">COUNT(InternalRecipients.WHERE(MessageAddress.Person.LastName=Smith)) &gt; 5</a></div>
+      <div class="Normal"><a name="pID0E0N1B0HA">This clause returns true for messages that have at least 5 internal recipients whose last name is Smith.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

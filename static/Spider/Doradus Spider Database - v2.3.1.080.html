@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Order Parameter</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.074.html">Spider Object Queries</a> : Order Parameter</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E06TB0HA">Order Parameter</a></div>
+      <div class="Normal"><a name="pID0E05TB0HA">The order parameter sorts the perspective objects by one or more fields. In the simplest case, a scalar field belonging to the perspective table is chosen. Example:</a></div>
+      <div class="Code"><a name="pID0E04TB0HA">GET /Email/Message/_query?q=Tags=Customer&amp;range=0</a><span style="color: #3366FF">&amp;o=Size</span></div>
+      <div class="Normal"><a name="pID0E03TB0HA">This sorts selected messages by </a><span class="Code_Char">Size</span> in ascending order. The suffix <span class="Code_Char">ASC</span> can be added after the sort field to explicitly request ascending order. Alternatively, the suffice <span class="Code_Char">DESC</span> can be added to request descending sort order:</div>
+      <div class="Code"><a name="pID0E02TB0HA">GET /Email/Message/_query?q=Tags=Customer&amp;range=0</a><span style="color: #3366FF">&amp;o=Size+DESC</span></div>
+      <div class="Normal"><a name="pID0E01TB0HA">If a sort field is MV, the smallest (ascending) or largest (descending) value for each object is chosen to decide the object’s sort position.</a></div>
+      <div class="Normal"><a name="pID0E0ZTB0HA">The order parameter can also use multiple sort fields, as in this example:</a></div>
+      <div class="Code"><a name="pID0E0YTB0HA">GET /Email/Person/_query?q=Department:support&amp;range=0</a><span style="color: #3366FF">&amp;o=LastName,FirstName+DESC</span></div>
+      <div class="Normal"><a name="pID0E0XTB0HA">This query sorts selected people by ascending </a><span class="Code_Char">LastName</span> and then by descending <span class="Code_Char">FirstName</span>.</div>
+      <div class="Normal"><a name="pID0E0WTB0HA">A sort field can also belong to an object linked to the perspective table. When an extended field is used for sorting, the same field should also be requested in the query’s field list. Example:</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0VTB0HA">GET /Email/Message/_query?q=NOT Sender.Person.Name IS NULL&amp;range=0<br /></a><span style="color: #3366FF">&amp;o=Sender.Person.Name</span>&amp;f=Sender.Person.Name</div>
+      <div class="Normal"><a name="pID0E0UTB0HA">This query returns all messages where </a><span class="Code_Char">Sender.Person.Name</span> is not null, sorted by the sender’s name, which is also returned.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Overview: ANY, ALL, and NONE</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.037.html">Doradus Query Language (DQL)</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.065.html">Quantifier Functions</a> : Overview: ANY, ALL, and NONE</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0FZB0HA">Overview: ANY, ALL, and NONE</a></div>
+      <div class="Normal"><a name="pID0E0EZB0HA">When a comparison field is multi-valued with respect to a query’s perspective table, it is possible that all, some, or none of its values related to a given perspective object will match the target value or range. By default, sets are implicitly compared using “any” quantification. However, the explicit quantifiers </a><span class="Code_Char">ANY</span>, <span class="Code_Char">ALL</span>, and <span class="Code_Char">NONE</span> can be used. Here is how these quantifiers work:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0DZB0HA">Every clause can be thought of as having the general form &lt;field path&gt; = {target}, which means the values produced by the &lt;field path&gt; must </a><span style="font-style: italic">match</span> the values in the {target} set. The {target} set is defined by the comparison operator and values specified in the clause (e.g., <span class="Code_Char">Size &gt; 10</span>, <span class="Code_Char">Size = [1000 TO 10000]</span>). How the link path <span style="font-style: italic">matches</span> the {target} set depends on how the &lt;field path&gt; is quantified.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0CZB0HA">When a field path has no explicit quantification, such as </a><span class="Code_Char">A.B.C</span>, then the path is implicitly quantified with “any”. This means that at least one value in the set {A.B.C} must match the target value set. Logically, the set is constructed by gathering all C’s for all B’s for all A’s into a single set; if the intersection between this set and the {target} set is not empty, the quantified expression is true.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0BZB0HA">The explicitly quantified link path </a><span class="Code_Char">ANY(A.B.C)</span> is identical to the implicitly quantified link path <span class="Code_Char">A.B.C</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0AZB0HA">If a set implicitly or explicitly quantified with </a><span class="Code_Char">ANY</span> is empty, it does not match the {target} set. Hence, if there are no A values, or no A’s have a B value, or no B’s have a C value, the set is empty and the clause cannot match the {target} set.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E06YB0HA">The explicit quantifier </a><span class="Code_Char">ALL</span> requires that the &lt;field path&gt; is not an empty set and that <span style="text-decoration: underline">every</span> member is contained in the {target} set. For <span class="Code_Char">ALL(A.B.C)</span>, some A’s might not have a B value and some B’s might not have a C value, but that’s OK – as long as the set {A.B.C} is not be empty and every C value in the set matches the {target} set, the clause is true.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E05YB0HA">The explicit quantifier </a><span class="Code_Char">NONE</span> requires that no member of the &lt;field path&gt; is contained in the {target} set. Unlike <span class="Code_Char">ANY</span> and <span class="Code_Char">ALL</span>, this means <span class="Code_Char">NONE</span> matches the {target} set if the &lt;field path&gt; set is empty. Otherwise, no member of the set {A.B.C} must match a {target} set value for the clause to be true. Semantically, <span class="Code_Char">NONE</span> is the same as <span class="Code_Char">NOT ANY</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E04YB0HA">A &lt;field path&gt; can use multiple quantifiers, up to one per field. For example </a><span class="Code_Char">ALL(A).ANY(B).NONE(C)</span> can be interpreted as “No C’s for any B for every A can match a target value”. Put another way, for the quantified &lt;field path&gt; to be true for a perspective object P, all of P’s A values must have at least one B value for which none of its C values match the {target} set. The same existence criteria applies as described above: if a given B has no C values, <span class="Code_Char">NONE(C)</span> is true for that B; if a given A has no B values, <span class="Code_Char">ANY(B)</span> is false for that A; if a given object P has no A values, <span class="Code_Char">ALL(A)</span> is false for that P.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E03YB0HA">Implicit “any” quantification is used for any link “sub-path” this is not explicitly quantified. For example, </a><span class="Code_Char">ALL(A).B.C</span> is the same as <span class="Code_Char">ALL(A).ANY(B.C)</span>. Similarly, <span class="Code_Char">A.B.NONE(C)</span> is the same as <span class="Code_Char">ANY(A.B).NONE(C)</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E02YB0HA">Note that </a><span class="Code_Char">ALL(A.B)</span> is not the same as <span class="Code_Char">ALL(A).ALL(B)</span>. This is because in the first case, we collect the set of all B’s for all A’s and test the set – if a given A has no B’s, that’s OK as long as the set {A.B} is not empty and every value matches the {target} set. However, in <span class="Code_Char">ALL(A).ALL(B)</span>, if a given A has no B values, <span class="Code_Char">ALL(A)</span> fails for that A, therefore the clause is false for the corresponding perspective object.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E01YB0HA">However, </a><span class="Code_Char">ANY(A.B)</span> is effectively the same as <span class="Code_Char">ANY(A).ANY(B)</span> because in both cases we only need one A to have one B that matches the {target} set. Similarly, <span class="Code_Char">NONE(A.B)</span> is effectively the same as <span class="Code_Char">NONE(A).NONE(B)</span> because <span class="Code_Char">NONE(X)</span> is the same as <span class="Code_Char">NOT ANY(X)</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0ZYB0HA">Nested quantifiers are not allowed (e.g., </a><span class="Code_Char">ANY(A.ALL(B))</span>).</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0YYB0HA">The following sections look more closely at explicit quantifiers in certain instances.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

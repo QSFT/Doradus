@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Global Aggregates: No Grouping Parameter</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.074.html">OLAP Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.082.html">Grouping Parameter</a> : Global Aggregates: No Grouping Parameter</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0YKB0HA">Global Aggregates: No Grouping Parameter</a></div>
+      <div class="Normal"><a name="pID0E0XKB0HA">Without a grouping parameter, an aggregate query returns a single value: the metric function computed across all selected objects. Consider the following aggregate query URI REST command:</a></div>
+      <div class="Code"><a name="pID0E0WKB0HA">GET /Email/Message/_aggregate?m=MAX(Size)&amp;range=0</a></div>
+      <div class="Normal"><a name="pID0E0VKB0HA">This aggregate query returns the largest </a><span class="Code_Char">Size</span> value among all messages in all shards. The response in XML is:</div>
+      <div class="Code"><a name="pID0E0UKB0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0TKB0HA">&lt;aggregate metric="MAX(Size)"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0SKB0HA">&lt;value&gt;16796009&lt;/value&gt;</a></div>
+      <div class="Code"><a name="pID0E0RKB0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0QKB0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E0PKB0HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0OKB0HA">"aggregate": {"metric": "MAX(Size)"},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0NKB0HA">"value": "16796009"</a></div>
+      <div class="Code"><a name="pID0E0MKB0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0LKB0HA">As shown, an </a><span class="Code_Char">aggregate</span> element lists the parameters used for the aggregate query. In this case, only a metric parameter was provided. For a global aggregate, the metric value is provided in the <span class="Code_Char">value</span> element.</div>
+      <div class="Normal"><a name="pID0E0KKB0HA">When the grouping field is multi-valued with respect to the perspective table, the metric is applied across all values for each perspective object. For example, in this query:</a></div>
+      <div class="Code"><a name="pID0E0JKB0HA">GET /Email/Message/_aggregate?m=COUNT(Tags)&amp;range=0</a></div>
+      <div class="Normal"><a name="pID0E0IKB0HA">If </a><span class="Code_Char">Tags</span> is an MV scalar, all values for each message are counted, so the total returned may be more than the number of objects. Furthermore, an object related to a perspective object may be processed more than once. Consider this query:</div>
+      <div class="Code"><a name="pID0E0HKB0HA">GET /Email/Message/_aggregate?m=COUNT(ExternalRecipients.MessageAddress.Domain)&amp;shards=2014-06-01</a></div>
+      <div class="Normal"><a name="pID0E0GKB0HA">Some messages are likely to have multiple external recipients linked to the same domain. Therefore, </a><span class="Code_Char">ExternalRecipients.MessageAddress.Domain</span> will count the same domain multiple times for those messages.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

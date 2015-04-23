@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Cross-shard Relationships: Xlinks</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.010.html">OLAP Data Model</a> : Cross-shard Relationships: Xlinks</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0PHC0HA">Cross-shard Relationships: Xlinks</a></div>
+      <div class="Normal"><a name="pID0E0OHC0HA">With Doradus OLAP, links can only reference objects in the </a><span style="text-decoration: underline">same</span> shard. A link such as <span class="Code_Char">Person.Manager</span> cannot reference an object in another shard. (In fact, setting <span class="Code_Char">Person.Manager</span> to a given object ID implicitly creates the inverse object in the same shard if it does not already exist.) This means that some objects may need to be duplicated in multiple shards so that each shard is a complete graph, allowing queries to work efficiently. Because OLAP stores data compactly, the duplication is worthwhile since same-shard link path evaluation is extremely fast.</div>
+      <div class="Normal"><a name="pID0E0NHC0HA">However, sometimes object duplication is not practical, and relationships must span shards. For example, suppose we want to track messages in the same conversation </a><span style="font-style: italic">thread</span>. Since replies and forwards can be sent at any future date, messages in the same thread may reside in any shard. We could add a scalar field <span class="Code_Char">ThreadID</span> that identifies messages in the same thread and query for a given value across shards. For some scenarios, this may be sufficient.</div>
+      <div class="Normal"><a name="pID0E0MHC0HA">But in some cases, we may want to treat the object relationships in a way that allows us to use link paths. For these cases, Doradus OLAP supports a cross-shard field type called an </a><span style="font-style: italic">xlink</span>.</div>
+      <div class="Normal"><a name="pID0E0LHC0HA">Xlinks are similar to regular links: a pair of xlinks are defined in the schema as inverses of each other, forming a bi-directional relationship. However, xlinks are not explicitly assigned: relationships are </a><span style="font-style: italic">implicitly</span> formed via foreign keys called <span style="font-style: italic">junction</span> fields. In its definition, each xlink identifies its junction field, which is a text field whose values point to related objects, which reside in the same and/or other shards. An example for connecting objects in a message thread is shown below:</div>
+      <div class="Code"><a name="pID0E0KHC0HA">&lt;table name="Message"&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0JHC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0IHC0HA">&lt;field name="</a><span style="color: #008000">ThreadID</span>" type="Text"/&gt;</div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0HHC0HA">&lt;field name="</a><span style="color: #3366FF">InReplyTo</span>" type="<span style="color: #660066">XLINK</span>" table="Message" inverse="Responses"<br /><span style="color: #FF0000">junction="ThreadID"</span>/&gt;</div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0GHC0HA">&lt;field name="</a><span style="color: #3366FF">Responses</span>" type="<span style="color: #660066">XLINK</span>" table="Message" inverse="InReplyTo"<br /><span style="color: #FF0000">junction="_ID"</span>/&gt;</div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0FHC0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0EHC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0DHC0HA">&lt;/table&gt;</a></div>
+      <div class="Normal"><a name="pID0E0CHC0HA">Here is how the xlinks </a><span class="Code_Char">InReplyTo</span> and <span class="Code_Char">Responses</span> work:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0BHC0HA">The </a><span class="Code_Char">_ID</span> of a <span style="font-style: italic">root</span> message that begins a new conversation thread is used as the thread ID.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0AHC0HA">When a new message is created that is </a><span style="text-decoration: underline">not</span> part of another thread, we set its <span class="Code_Char">ThreadID</span> to its own <span class="Code_Char">_ID</span>. That is, every root message is the initially the only member of its own thread.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E06GC0HA">When other messages are created (replies or forwards) in the same message thread, we set their </a><span class="Code_Char">ThreadID</span> to the root message’s <span class="Code_Char">_ID</span>, even if the root message resides in another shard.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E05GC0HA">We can then traverse </a><span class="Code_Char">Message.Responses</span> to navigate from the root message to other messages in the same thread. To do this, Doradus takes the root message’s <span class="Code_Char">_ID</span> (because it is the junction field for <span class="Code_Char">Responses</span>) and searches for messages in other shards whose <span class="Code_Char">ThreadID</span> matches (because it is the junction field for the inverse link, <span class="Code_Char">InReplyTo</span>).</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E04GC0HA">Similarly, we can traverse </a><span class="Code_Char">Message.InReplyTo</span> to navigate from any message back to the root message. In this case, Doradus takes the message’s <span class="Code_Char">ThreadID</span> and searches for another message with a matching <span class="Code_Char">_ID</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E03GC0HA">One consideration used in this example is </a><span style="font-style: italic">shard merging</span>. In an OLAP database that uses time-oriented shards, we generally want to add data to <span style="text-decoration: underline">new</span> shards, which are then merged. We don’t want to modify data in older shards if possible because this requires extra merging. In the example above, message threads are formed by simply setting the <span class="Code_Char">ThreadID</span> of newer messages. Older messages in the thread, including the root message, are never modified, hence we don’t need to merge older shards.</div>
+      <div class="Normal"><a name="pID0E02GC0HA">Although xlinks are similar to regular links, there are differences in how they are declared and used:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E01GC0HA">The inverse of an xlink must also be an xlink. In the example above, </a><span class="Code_Char">Responses</span> and <span class="Code_Char">InReplyTo</span> are inverses. Although these xlinks both belong to <span class="Code_Char">Message</span>, in general xlinks can relate objects between any tables.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0ZGC0HA">Each xlink identifies a </a><span style="font-style: italic">junction</span> field, which must be a text field belonging to the same table or the <span class="Code_Char">_ID</span> field. The junction field is a <span style="font-style: italic">foreign key</span> to related objects. In a given relationship, at least one xlink must <span class="Code_Char">_ID</span> field as its junction field. If the junction field is not explicitly defined, it defaults to the <span class="Code_Char">_ID</span> field.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0YGC0HA">One xlink can use a text field as its junction field. This is the normal practice for most use cases. In the example above:</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 36pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0XGC0HA">The xlink </a><span class="Code_Char">InReplyTo</span> defines <span class="Code_Char">ThreadID</span> as its junction field. This means an object is related via <span class="Code_Char">InReplyTo</span> to the message(s) whose <span class="Code_Char">_ID</span> matches its <span class="Code_Char">ThreadID</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 36pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0WGC0HA">The xlink </a><span class="Code_Char">Responses</span> uses <span class="Code_Char">_ID</span> as its junction field. This means an object is related via <span class="Code_Char">Responses</span> to the message(s) whose <span class="Code_Char">ThreadID</span> matches its <span class="Code_Char">_ID</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0VGC0HA">If both xlinks in a relationship use </a><span class="Code_Char">_ID</span> as their junction field, each object is related to objects with the same object ID. This is allowed even if the xlinks are defined in different tables.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0UGC0HA">A xlink’s junction field can be an MV text field, thereby allowing the xlink to refer to multiple objects in each shard.</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0TGC0HA">Xlinks form </a><span style="font-style: italic">soft</span> relationships, hence no referential integrity is assured. When a junction field is assigned a value, there may or may not exist any foreign objects with a matching value. Likewise, if two objects are related, the relationship may be broken by altering the junction field value, deleting one of the objects, or shard aging. Traversing an xlink whose junction field doesn’t match any foreign objects acts as if the xlink is null.</div>
+      <div class="Normal"><a name="pID0E0SGC0HA">In aggregate queries, xlinks can be used anywhere regular links are used: query expressions, aggregate grouping expressions, and metric expressions. Doradus OLAP searches the shards defined by the </a><span class="Code_Char">shards</span> or <span class="Code_Char">range</span> parameter for <span style="font-style: italic">perspective</span> objects, and it searches shards defined by the <span class="Code_Char">xshards</span> or <span class="Code_Char">xrange</span> parameter for objects related via xlinks. For example:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0RGC0HA">GET /Email/Message/_aggregate?m=COUNT(*)&amp;q=_ID=XYZ&amp;</a><span style="color: #008000">shards</span>=2014-01-01&amp;<span style="color: #660066">xrange</span>=2014-01-01<br />&amp;f=<span style="color: #3366FF">Responses</span>.Sender.Person.Department&amp;range=0</div>
+      <div class="Normal"><a name="pID0E0QGC0HA">This query counts the messages in the thread rooted by the message with </a><span class="Code_Char">_ID=XYZ</span>, grouped by the <span class="Code_Char">Sender. Person.Department</span> of each response. Only shard <span class="Code_Char">2014-01-01</span> is searched for the root message; all shards named <span class="Code_Char">2014-01-01</span> or greater are searched for objects related to the xlink <span class="Code_Char">Responses</span>. See the section <span class="Hyperlink" style="font-weight: bold"><a href="javascript:WWHClickedPopup('OLAP', 'Doradus%20OLAP%20Database%20-%20v2.3.1.025.html', '');" title="Doradus Query Language (DQL)">Doradus Query Language (DQL)</a></span> for more details on query parameters.</div>
+      <div class="Normal"><a name="pID0E0PGC0HA">Using xlinks in queries is slower than regular links. Consequently, they should be used only in those cases where normal links are not feasible.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

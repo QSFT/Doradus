@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Application</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.010.html">OLAP Data Model</a> : Application</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0FNC0HA">Application</a></div>
+      <div class="Normal"><a name="pID0E0ENC0HA">An application is a named schema hosted in a Doradus cluster. An application’s name is a unique identifier. An application’s data is stored in </a><span style="font-style: italic">tables</span>, which are isolated from other applications. A cluster can host multiple applications, and each application uses unique URIs to access its data. Example application names are <span class="Code_Char">Email</span> and <span class="Code_Char">Magellan_1</span>.</div>
+      <div class="Normal"><a name="pID0E0DNC0HA">Each application is defined in a </a><span style="font-style: italic">schema</span>. When the schema is first used to create the application, it is assigned to a specific <span style="font-style: italic">storage manager</span>. Depending on the Doradus server’s configuration, multiple storage managers may be available. An application’s schema can use core Doradus data model features plus extensions provided by the assigned storage service. Application schemas have the following components:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0CNC0HA">Key</a></span>: A user-defined string that acts as a secondary identifier. The key is optional and acts as an extra safety mechanism. If an application’s schema is defined with a key, the same key must be provided to modify the schema or delete the application.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0BNC0HA">Options</a></span>: The following application-level options can be defined:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 54pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-family: &quot;Courier New&quot;">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0ANC0HA">StorageService</a></span>: defines the storage service that will manage the application’s data.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 54pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-family: &quot;Courier New&quot;">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E06MC0HA">aging-check-frequency</a></span>: Specifies the data aging check frequency for the application. The value of the <span class="Code_Char">aging-check-frequency</span> must be in the form “&lt;number&gt; &lt;units&gt;” where &lt;number&gt; is a positive integer and &lt;units&gt; is <span class="Code_Char">MINUTES</span>, <span class="Code_Char">HOURS</span>, or <span class="Code_Char">DAYS</span>. (Singular forms of these mnemonics are also allowed.) At the specified frequency, a background task looks for and deletes expired shards.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E05MC0HA">Tables</a></span>: Tables and their fields that the application owns.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E04MC0HA">The general structure of a schema definition in XML is shown below:</a></div>
+      <div class="Code"><a name="pID0E03MC0HA">&lt;application name="</a><span style="color: #3366FF">Email</span>"&gt;</div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E02MC0HA">&lt;key&gt;EmailKey&lt;/key&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E01MC0HA">&lt;options&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZMC0HA">// options</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0YMC0HA">&lt;/options&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0XMC0HA">&lt;tables&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0WMC0HA">// table definitions</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0VMC0HA">&lt;/tables&gt;</a></div>
+      <div class="Code"><a name="pID0E0UMC0HA">&lt;/application&gt;</a></div>
+      <div class="Normal"><a name="pID0E0TMC0HA">The general structure of a schema definition in JSON is shown below:</a></div>
+      <div class="Code"><a name="pID0E0SMC0HA">{"</a><span style="color: #3366FF">Email</span>": {</div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0RMC0HA">"key": "EmailKey",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0QMC0HA">"options": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0PMC0HA">// options</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0OMC0HA">},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0NMC0HA">"tables": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0MMC0HA">// table definitions</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0LMC0HA">}</a></div>
+      <div class="Code"><a name="pID0E0KMC0HA">}}</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Equality Clauses</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.037.html">Doradus Query Language (DQL)</a> : Equality Clauses</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0J5B0HA">Equality Clauses</a></div>
+      <div class="Normal"><a name="pID0E0I5B0HA">An equality clause searches a field for a value that matches a literal constant, or, for text fields, a pattern. The equals sign (=) is used to search for an exact field value. The right hand side must be a literal value. Example:</a></div>
+      <div class="Code"><a name="pID0E0H5B0HA">Name="John Smith"</a></div>
+      <div class="Normal"><a name="pID0E0G5B0HA">This searches the </a><span class="Code_Char">Name</span> field for objects that exactly match the string “John Smith”. The search is case-insensitive, so an object will match if its <span class="Code_Char">Name</span> field is “<span class="Code_Char">john smith</span>”, “<span class="Code_Char">JOHN SMITH</span>”, etc.</div>
+      <div class="Normal"><a name="pID0E0F5B0HA">For text fields, wildcards can be used to define patterns. For example:</a></div>
+      <div class="Code"><a name="pID0E0E5B0HA">Name="J* Sm?th"</a></div>
+      <div class="Normal"><a name="pID0E0D5B0HA">This clause matches “</a><span class="Code_Char">John Smith</span>”, “<span class="Code_Char">Joe Smyth</span>”, etc.</div>
+      <div class="Normal"><a name="pID0E0C5B0HA">Boolean, numeric and timestamp fields cannot use wildcards. Examples:</a></div>
+      <div class="Code"><a name="pID0E0B5B0HA">HasBeenSent=false</a></div>
+      <div class="Code"><a name="pID0E0A5B0HA">Size=1024</a></div>
+      <div class="Code"><a name="pID0E064B0HA">ModifiedDate="2012-11-16 17:19:12.134"</a></div>
+      <div class="Normal"><a name="pID0E054B0HA">In a timestamp literal, elements can be omitted from right-to-left, but the clause still compares to an exact value. Omitted time elements default to 0; omitted date elements default to 1. For example:</a></div>
+      <div class="Code"><a name="pID0E044B0HA">ModifiedDate="2010-08-05 05:40"</a></div>
+      <div class="Normal"><a name="pID0E034B0HA">This clause actually searches for the exact timestamp value </a><span class="Code_Char">2010-08-05 05:40:00.000</span>. However, timestamps can be used in range clauses. See also the section <span class="Hyperlink" style="font-weight: bold"><a href="javascript:WWHClickedPopup('Spider', 'Doradus%20Spider%20Database%20-%20v2.3.1.058.html', '');" title="Subfield Clauses">Subfield Clauses</a></span>, which describes clauses that search for timestamp subfields.</div>
+      <div class="Normal"><a name="pID0E024B0HA">Link fields and the </a><span class="Code_Char">_ID</span> field can also be used in equal searches by comparing to an object ID. For example:</div>
+      <div class="Code"><a name="pID0E014B0HA">Manager=sqs284</a></div>
+      <div class="Code"><a name="pID0E0Z4B0HA">_ID='kUNaqNJ2ymmb07jHY9OPOw=='</a></div>
+      <div class="Normal"><span style="font-style: italic"><a name="pID0E0Y4B0HA">Not equals</a></span> is written by negating an equality clause with the keyword <span class="Code_Char">NOT</span>. Example:</div>
+      <div class="Code"><a name="pID0E0X4B0HA">NOT Size=1024</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

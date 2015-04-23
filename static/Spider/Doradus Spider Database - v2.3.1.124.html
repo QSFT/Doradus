@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Update Batch</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.108.html">Spider REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.122.html">Object Update Commands</a> : Update Batch</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0TJ0HA">Update Batch</a></div>
+      <div class="Normal"><a name="pID0E0SJ0HA">A batch of objects can be updated by issuing a PUT request to the appropriate application and table:</a></div>
+      <div class="Code"><a name="pID0E0RJ0HA">PUT /{application}/{table}</a></div>
+      <div class="Normal"><a name="pID0E0QJ0HA">An input entity must be provided in JSON or XML as specified by the command’s content-type. The message has the same format as the Add Batch command with the following differences:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0PJ0HA">Object IDs</a></span>: Every object in the batch must be assigned an ID. If the <span class="Code_Char">_ID</span> field value is missing within a <span class="Code_Char">doc</span> group, that update is skipped.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0OJ0HA">Nullifying SV scalars</a></span>: An object’s SV scalar field can be set to null by giving it an empty value. Example:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NJ0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0MJ0HA">&lt;field&nbsp;name="SendDate"&gt;&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0LJ0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KJ0HA">&lt;/doc&gt;</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0JJ0HA">In JSON, the keyword </a><span class="Code_Char">NULL</span> or an empty string (“”) can be assigned to nullify an SV scalar.</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0IJ0HA">Removing MV field values</a></span>: MV scalar and link values can be removed with a <span class="Code_Char">remove</span> group. Example:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0HJ0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0GJ0HA">&lt;field name="Tags"&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0FJ0HA">&lt;</a><span style="color: #3366FF">remove</span>&gt;</div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0EJ0HA">&lt;value&gt;AfterHours&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0DJ0HA">&lt;/remove&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0CJ0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0BJ0HA">&lt;field name="InternalRecipients"&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0AJ0HA">&lt;</a><span style="color: #3366FF">remove</span>&gt;</div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E06I0HA">&lt;value&gt;Ii91O7qHb8rPhzvaihzTqw==&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E05I0HA">&lt;/remove&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E04I0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E03I0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E02I0HA">&lt;/doc&gt;</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E01I0HA">Values can be added and removed for the same field in the same </a><span class="Code_Char">doc</span> group.</div>
+      <div class="Normal"><a name="pID0E0ZI0HA">If the PUT request is successful, a </a><span class="Code_Char">200 OK</span> response is returned with a <span class="Code_Char">batch-result</span> group. It contains a <span class="Code_Char">doc</span> element for each object updated, including <span class="Code_Char">_ID</span>, <span class="Code_Char">status</span>, and other elements as needed.</div>
+      <div class="Normal"><a name="pID0E0YI0HA">Updating an object is an idempotent operation: if an update does not actually change any of the object’s fields, the update is a no-op. Hence, performing the same update in succession is safe.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>BATCH Function</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.086.html">Spider Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.089.html">Grouping Parameter</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.098.html">Special Grouping Functions</a> : BATCH Function</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_4"><a name="pID0E0V40HA">BATCH Function</a></div>
+      <div class="Normal"><a name="pID0E0U40HA">The </a><span class="Code_Char">BATCH</span> function divides a scalar field’s values into specific ranges. Each range becomes a grouping field value, and objects contribute to the metric computation for the ranges for which it has values. The <span class="Code_Char">BATCH</span> function’s first value must be a scalar field. The remaining values must be literal values compatible with the field’s type (text, timestamp, or numeric), and they must be given in ascending order. Example:</div>
+      <div class="Code"><a name="pID0E0T40HA">GET /Msgs/Message/_aggregate?m=COUNT(*)&amp;f=BATCH(Size,100,1000,10000,100000)</a></div>
+      <div class="Normal"><a name="pID0E0S40HA">This query counts messages grouped by specific ranges of the </a><span class="Code_Char">Size</span> field. The ranges are divided at the given literal values: <span class="Code_Char">100</span>, <span class="Code_Char">1000</span>, <span class="Code_Char">10000</span>, and <span class="Code_Char">100000</span>. The lowest value implicitly creates an extra <span style="font-style: italic">less than</span> group; the highest value is open-ended and creates a <span style="font-style: italic">greater than or equal to</span> group. The query in the example above defines the following 5 groups:</div>
+      <div class="Code"><a name="pID0E0R40HA">Group 1: Size &lt; 100</a></div>
+      <div class="Code"><a name="pID0E0Q40HA">Group 2: Size &gt;= 100 AND Size &lt; 1000</a></div>
+      <div class="Code"><a name="pID0E0P40HA">Group 3: Size &gt;= 1000 AND Size &lt; 10000</a></div>
+      <div class="Code"><a name="pID0E0O40HA">Group 4: Size &gt;= 10000 AND Size &lt; 100000</a></div>
+      <div class="Code"><a name="pID0E0N40HA">Group 5: Size &gt;= 100000</a></div>
+      <div class="Normal"><a name="pID0E0M40HA">The example above returns a result such as the following:</a></div>
+      <div class="Code"><a name="pID0E0L40HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0K40HA">&lt;aggregate metric="COUNT(Size)" group="BATCH(Size,100,1000,10000,100000)"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0J40HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0I40HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0H40HA">&lt;field name="Size"&gt;&amp;lt;100&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0G40HA">&lt;metric&gt;0&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0F40HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0E40HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0D40HA">&lt;field name="Size"&gt;100-1000&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0C40HA">&lt;metric&gt;125&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0B40HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0A40HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0630HA">&lt;field name="Size"&gt;1000-10000&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0530HA">&lt;metric&gt;4651&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0430HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0330HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0230HA">&lt;field name="Size"&gt;10000-100000&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0130HA">&lt;metric&gt;1149&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0Z30HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0Y30HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0X30HA">&lt;field name="Size"&gt;&amp;gt;=100000&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0W30HA">&lt;metric&gt;105&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0V30HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0U30HA">&lt;/groups&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0T30HA">&lt;summary&gt;6030&lt;/summary&gt;</a></div>
+      <div class="Code"><a name="pID0E0S30HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0R30HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E0Q30HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0P30HA">"aggregate": {"group": "BATCH(Size,100,1000,10000,100000)", "metric": "COUNT(Size)"},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0O30HA">"groups": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0N30HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0M30HA">"field": {"Size": "&lt;100"},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0L30HA">"metric": "0"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0K30HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0J30HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0I30HA">"field": {"Size": "100-1000"},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0H30HA">"metric": "125"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0G30HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0F30HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0E30HA">"field": {"Size": "1000-10000"},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0D30HA">"metric": "4651"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0C30HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0B30HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0A30HA">"field": {"Size":"10000-100000"},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0620HA">"metric": "1149"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0520HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0420HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0320HA">"field": {"Size": "&gt;=100000"},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0220HA">"metric": "105"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0120HA">}}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0Z20HA">],</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0Y20HA">"summary":"6030"</a></div>
+      <div class="Code"><a name="pID0E0X20HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0W20HA">As shown above in the </a><span class="Code_Char">&lt;100</span> group, if no selected object has a value that falls into one of the specified groups, that group is still returned: the group’s metric is 0 for the <span class="Code_Char">COUNT</span> function and empty for all other metric functions. As with all grouped aggregate queries, a <span class="Code_Char">summary</span> value is returned that applies the metric function across all groups.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

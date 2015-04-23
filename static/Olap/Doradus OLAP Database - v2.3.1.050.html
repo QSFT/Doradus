@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>WHERE Filter</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.025.html">Doradus Query Language (DQL)</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.048.html">Link Clauses</a> : WHERE Filter</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0G5B0HA">WHERE Filter</a></div>
+      <div class="Normal"><a name="pID0E0F5B0HA">Sometimes we need multiple selection clauses for the objects in a link path, but we need the clauses to be “bound” to the same instances. To illustrate this concept, consider this query: Suppose we want to find messages where an internal recipient is within the R&amp;D department </a><span style="text-decoration: underline">and</span> in an office in Kanata. We might try to write the query like this:</div>
+      <div class="Code"><a name="pID0E0E5B0HA">// Doesn't do what we want</a></div>
+      <div class="Code"><a name="pID0E0D5B0HA">GET /Email/Message/_query?q=InternalRecipients.Person.Department='R&amp;D' AND<br />	InternalRecipients.Person.Office='Kanata'&amp;range=0</a></div>
+      <div class="Normal"><a name="pID0E0C5B0HA">But the problem is that the two </a><span class="Code_Char">InternalRecipients.Person</span> paths are separately quantified with <span class="Code_Char">ANY</span>, so the query will return messages that have at least one internal recipient in R&amp;D (but not necessarily in Kanata) while another internal recipient is in Kanata (but not necessarily in R&amp;D). It might be tempting to quantify the two <span class="Code_Char">InternalRecipient.Person</span> paths with <span class="Code_Char">ALL</span>:</div>
+      <div class="Code"><a name="pID0E0B5B0HA">// Still not what we want</a></div>
+      <div class="Code"><a name="pID0E0A5B0HA">GET /Email/Message/_query?q=ALL(InternalRecipients.Person).Department='R&amp;D' AND<br />	ALL(InternalRecipients.Person).Office='Kanata'&amp;range=0</a></div>
+      <div class="Normal"><a name="pID0E064B0HA">Now the problem is that the query won't select messages that have one or more internal recipients who are </a><span style="text-decoration: underline">not</span> in R&amp;D/Kanata, even though there might be another recipient who is.</div>
+      <div class="Normal"><a name="pID0E054B0HA">What we really need is for the two </a><span class="Code_Char">InternalRecipient.Person</span> clauses to be <span style="font-style: italic">bound</span>, meaning they apply to the same instances and are not separately quantified.</div>
+      <div class="Normal"><a name="pID0E044B0HA">The </a><span class="Code_Char">WHERE</span> filter can be used for this scenario, as shown below:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E034B0HA">GET /Email/Message/_query?q=InternalRecipients.Person.</a><span style="color: #3366FF">WHERE</span>(Department='R&amp;D' AND Office='Kanata')<br />&amp;range=0</div>
+      <div class="Normal"><a name="pID0E024B0HA">The </a><span class="Code_Char">WHERE</span> function is appended to the portion of the link path for which we need multiple selection clauses, and the clauses are specified as a parameter. The field names referenced in the <span class="Code_Char">WHERE</span> expression are qualified to the object to the left of the <span class="Code_Char">WHERE</span> clause. In the example above, <span class="Code_Char">Department</span> and <span class="Code_Char">Office</span> are qualified to <span class="Code_Char">Person</span>, so they must be fields belonging to those objects. Note that implicit quantification takes places in the example above, hence it is identical to the following query:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E014B0HA">GET /Email/Message/_query?q=</a><span style="color: #3366FF">ANY</span>(InternalRecipients.Person).WHERE(Department='R&amp;D' AND Office='Kanata')&amp;range=0</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

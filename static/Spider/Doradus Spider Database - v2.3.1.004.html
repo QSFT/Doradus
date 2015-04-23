@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Architecture</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">Architecture</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_1"><a name="pID0E0BVC0HA">Architecture</a></div>
+      <div class="Normal"><a name="pID0E0AVC0HA">Doradus is a Java server application that leverages and extends the Cassandra NoSQL database. At a high level, it is a REST service that sits between applications and a Cassandra cluster, adding powerful features to—and hiding complexities in—the underlying database. This allows applications to leverage the benefits of NoSQL such as horizontal scalability, replication, and failover while enjoying rich features such as full text searching, bi-directional relationships, and powerful analytic queries.</a></div>
+      <div class="Normal"><a name="pID0E06UC0HA">An overview of Doradus architecture is depicted below:</a></div>
+      <div class="Normal"><a name="pID0E05UC0HA"><img class="Default" src="images/Doradus%20Spider%20Database%20-%20v2.3.1.004.1.jpg" width="549" height="466" style="display: inline; top: 0pt" alt="" /></a></div>
+      <div class="Normal"><a name="pID0E04UC0HA">Key components of this architecture are summarized below:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E03UC0HA">Apps</a></span>: One or more applications access a Doradus server instance using a simple <span style="font-weight: bold">REST</span> API. A <span style="font-weight: bold">JMX</span> API is available to monitor Doradus and perform administrative functions. </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E02UC0HA">DoradusServer</a></span>: This core component controls server startup, shutdown, and services. Entry points are provided to run the server as a stand-alone application, as a Windows service (via procrun), or embedded within another application.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E01UC0HA">Services</a></span>: Doradus’ architecture encapsulates functions within service modules. Services are initialized based on the server’s <span style="font-weight: bold">doradus.yaml</span> configuration. Services provide functions such as the <span style="font-weight: bold">REST</span> API (an embedded Jetty server), <span style="font-weight: bold">Schema</span> processing, and physical <span style="font-weight: bold">DB</span> access. A special class of <span style="font-style: italic">storage services </span>provide storage and access features for specific application types. Doradus currently provides two storage services:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 54pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-family: &quot;Courier New&quot;">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0ZUC0HA">OLAP Service</a></span>: A Doradus database configured to use the OLAP storage service is termed a <span style="font-style: italic">Doradus OLAP Database</span>. OLAP uses online analytical processing techniques to provide dense storage and very fast processing of analytical queries. This service is ideal for applications that use immutable or semi-mutable time-series data.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 54pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-family: &quot;Courier New&quot;">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0YUC0HA">Spider Service</a></span>: A Doradus database configured to use the Spider storage service is termed a <span style="font-style: italic">Doradus Spider Database</span>. The Spider service supports schemaless applications, fully inverted indexing, fine-grained updates, table-level sharding, and other features that support applications that use highly mutable and/or variable data.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0XUC0HA">Doradus can be configured to use both storage services in a single instance.</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0WUC0HA">Cassandra Cluster</a></span>: Doradus currently uses the Apache Cassandra NoSQL database for persistence. Future releases are intended to use other data stores. Cassandra performs the “heavy lifting” in terms of persistent, replication, load balancing, replication, and more.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0VUC0HA">By default, Doradus operates in </a><span style="font-style: italic">single-tenant</span> mode, which means that all applications are stored in a single Cassandra keyspace. In <span style="font-style: italic">multi-tenant</span> mode, named tenants own one or more applications stored in a separate keyspace. Multi-tenant mode allows multiple applications to share a common Doradus cluster while providing data isolation and security. Full details on configuring and operating multi-tenant mode are described in the <span style="font-weight: bold">Doradus Administration</span> documentation.</div>
+      <div class="Normal"><a name="pID0E0UUC0HA">The minimal deployment configuration is a single Doradus instance and a single Cassandra instance running on the same machine. On Windows, these instances can be installed as services. The Doradus server can also be embedded in the same JVM as an application.</a></div>
+      <div class="Normal"><a name="pID0E0TUC0HA">Multiple Doradus and Cassandra instances can be deployed to scale a cluster horizontally. An example of a Doradus/Cassandra multi-node cluster is shown below:</a></div>
+      <div class="Normal"><a name="pID0E0SUC0HA"><img class="Default" src="images/Doradus%20Spider%20Database%20-%20v2.3.1.004.2.jpg" width="689" height="289" style="display: inline; top: 0pt" alt="" /></a></div>
+      <div class="Normal"><a name="pID0E0RUC0HA">This example demonstrates several deployment features:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0QUC0HA">One Doradus instance and one Cassandra instance are typically deployed on each node.</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0PUC0HA">Doradus instances are </a><span style="font-style: italic">peers</span>, hence an application can submit requests to any Doradus instance in the cluster.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0OUC0HA">Each Doradus instance is typically configured to use all </a><span style="font-style: italic">network near</span> Cassandra instances. This allows it to distribute requests to local Cassandra instances, providing automatic failover should a Cassandra instance fail.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0NUC0HA">Cassandra can be configured to know which nodes are in the same </a><span style="font-style: italic">rack</span> and which racks are in the same <span style="font-style: italic">data center</span>. With this knowledge, Cassandra uses replication strategies to balance network bandwidth and recoverability from node-, rack-, and data center-level failures.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0MUC0HA">Details on installing and configuring Doradus/Cassandra clusters are provided in the </a><span style="font-weight: bold">Doradus Administration </span>document.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

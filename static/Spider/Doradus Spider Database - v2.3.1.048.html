@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Null Values</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.037.html">Doradus Query Language (DQL)</a> : Null Values</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0KAC0HA">Null Values</a></div>
+      <div class="Normal"><a name="pID0E0JAC0HA">A field that has no value for a given object is </a><span style="font-style: italic">null</span>. Doradus treats null as a “value” that will not match any literal. For example, the clause <span class="Code_Char">Size=0</span> will be false if the <span class="Code_Char">Size</span> field is null. This means that <span class="Code_Char">NOT(</span><span class="Code_Char" style="font-style: italic">clause</span><span class="Code_Char">)</span> will be true if <span class="Code_Char" style="font-style: italic">clause</span> references a null field.</div>
+      <div class="Normal"><a name="pID0E0IAC0HA">For Boolean fields, this may be a little unintuitive: assume a Boolean field </a><span class="Code_Char">IsInternal</span> is null for a given object. Then:</div>
+      <div class="Code"><a name="pID0E0HAC0HA">IsInternal=true	// false</a></div>
+      <div class="Code"><a name="pID0E0GAC0HA">IsInternal=false	// false</a></div>
+      <div class="Code"><a name="pID0E0FAC0HA">NOT IsInternal=true	// true</a></div>
+      <div class="Code"><a name="pID0E0EAC0HA">NOT IsInternal=false	// true</a></div>
+      <div class="Normal"><a name="pID0E0DAC0HA">In other words, a null Boolean field is neither true nor false, so comparison to either value will always be false, and negating such a comparison will always be true.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>TRUNCATE Function</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.086.html">Spider Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.089.html">Grouping Parameter</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.098.html">Special Grouping Functions</a> : TRUNCATE Function</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_4"><a name="pID0E0MX0HA">TRUNCATE Function</a></div>
+      <div class="Normal"><a name="pID0E0LX0HA">The </a><span class="Code_Char">TRUNCATE</span> function truncates a timestamp field to a given granularity, yielding a value that can be used as a grouping field. Before the timestamp field is truncated, the <span class="Code_Char">TRUNCATE</span> function can optionally <span style="font-style: italic">shift</span> the value to another time first. The syntax for the function is:</div>
+      <div class="Code"><a name="pID0E0KX0HA">TRUNCATE(&lt;timestamp field&gt;, &lt;precision&gt; [, &lt;time shift&gt;])</a></div>
+      <div class="Normal"><a name="pID0E0JX0HA">For example:</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0IX0HA">GET /Msgs/Message/_aggregate?m=COUNT(*)&amp;f=TRUNCATE(SendDate,DAY,GMT-2)<br />&amp;q=SendDate &gt;= "2010-07-17"</a></div>
+      <div class="Normal"><a name="pID0E0HX0HA">This query finds all messages whose </a><span class="Code_Char">SendDate</span> is &gt;= <span class="Code_Char">"2010-07-17"</span>. For each one, it subtracts 2 hours from the <span class="Code_Char">SendDate</span> value and then truncates (“rounds down”) to the nearest day. The count of all objects for each modified timestamp is computed in a separate group.</div>
+      <div class="Normal"><a name="pID0E0GX0HA">The &lt;precision&gt; value must be one of the following mnemonics:</a></div>
+      <table class="Table_Normal" style="margin-left: 36pt; width: 514.8pt" cellspacing="0" summary="">
+        <tr>
+          <td style="background-color: #99CCFF; border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle; width: 54.2pt">
+            <div class="List_Bullet" style="margin-bottom: 0pt"><span style="font-weight: bold"><a name="pID0EABI0FX0HA">Precision</a></span></div>
+          </td>
+          <td style="background-color: #99CCFF; border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle; width: 460.6pt">
+            <div class="Normal"><span style="font-weight: bold"><a name="pID0EAAI0FX0HA">Meaning</a></span></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABH0FX0HA">SECOND</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal"><a name="pID0EAAH0FX0HA">The milliseconds component of the timestamp is set to 0.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABG0FX0HA">MINUTE</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal"><a name="pID0EAAG0FX0HA">The milliseconds and seconds components are set to 0.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABF0FX0HA">HOUR</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal"><a name="pID0EAAF0FX0HA">The milliseconds, seconds, and minutes components are set to 0.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABE0FX0HA">DAY</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal"><a name="pID0EAAE0FX0HA">All time components are set to 0.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABD0FX0HA">WEEK</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal"><a name="pID0EAAD0FX0HA">All time components are set to 0, and the date components are set to the Monday of the calendar week in which the timestamp falls (as defined by ISO 8601). For example 2010-01-02 is truncated to the week 2009-12-28. </a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABC0FX0HA">MONTH</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal"><a name="pID0EAAC0FX0HA">All time components are set to 0, and the day component is set to 1.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABB0FX0HA">QUARTER</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal"><a name="pID0EAAB0FX0HA">All time components are set to 0, the day component is set to 1, and the month component is rounded “down” to January, April, July, or October.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABA0FX0HA">YEAR</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal"><a name="pID0EAAA0FX0HA">All time components are set to 0 and the day and month components are set to 1.</a></div>
+          </td>
+        </tr>
+      </table>
+      <div class="Normal" style="margin-bottom: 0pt"><a name="pID0E0EX0HA">&nbsp;</a></div>
+      <div class="Normal"><a name="pID0E0DX0HA">The optional &lt;time shift&gt; parameter adds or subtracts a specific amount to each object’s timestamp value before truncating it to the requested granularity. Optionally, the parameter can be quoted in single or double quotes. The syntax of the &lt;time shift&gt; parameter is:</a></div>
+      <div class="Code"><a name="pID0E0CX0HA">&lt;timezone&gt; | &lt;GMT offset&gt;</a></div>
+      <div class="Normal"><a name="pID0E0BX0HA">Where &lt;GMT offset&gt; uses the same format as the </a><span class="Code_Char">NOW</span> function:</div>
+      <div class="Code"><a name="pID0E0AX0HA">GMT&lt;sign&gt;&lt;hours&gt;[:&lt;minutes&gt;]</a></div>
+      <div class="Normal"><a name="pID0E06W0HA">The meaning of each format is summarized below:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E05W0HA">&lt;timezone&gt;</a></span>: A timezone abbreviation (e.g., <span class="Code_Char">"PST"</span>) or name (e.g., <span class="Code_Char">"America/Los_Angeles"</span>) can be given. Each object’s timestamp value is assumed to be in GMT (UTC) time and adjusted by the necessary amount to reflect the equivalent value in the given timezone. The allowable values for a &lt;timezone&gt; abbreviation or name are those recognized by the Java function <span class="Code_Char">java.util.TimeZone.getAvailableIDs()</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E04W0HA">GMT+&lt;hour&gt;</a></span> or <span class="Code_Char">GMT-&lt;hour&gt;</span>: The term GMT followed by a plus or minus signed followed by an integer hour value adjust each object’s timestamp up or down by the given number of hours.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E03W0HA">GMT+&lt;hour&gt;:&lt;minute&gt;</a></span> or <span class="Code_Char">GMT-&lt;hour&gt;:&lt;minute&gt;</span>: This is the same as the previous format except that each object’s timestamp is adjusted up or down by the given hour and minute value.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E02W0HA">Note that in the GMT versions, the sign (‘+’ or ‘-‘) is required, and in URIs, the ‘+’ sign must be escaped as </a><span class="Code_Char">%2B</span>. </div>
+      <div class="Normal"><a name="pID0E01W0HA">The timestamp field passed to the </a><span class="Code_Char">TRUNCATE</span> function can belong to the perspective table, or it can be at the end of a field path (e.g., <span class="Code_Char">TRUNCATE(Messages.SendDate)</span>).</div>
+      <div class="Normal"><a name="pID0E0ZW0HA">When a grouping field uses the </a><span class="Code_Char">TRUNCATE</span> function, the truncated value is used for the field value within each group. An example in XML is shown below:</div>
+      <div class="Code"><a name="pID0E0YW0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0XW0HA">&lt;aggregate query="SendDate &gt;= 2010-07-17" metric="COUNT(*)" group="TRUNCATE(SendDate,HOUR)"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0WW0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VW0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0UW0HA">&lt;field name="SendDate"&gt;2010-07-17 00:00:00&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0TW0HA">&lt;metric&gt;5&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SW0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0RW0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0QW0HA">&lt;field name="SendDate"&gt;2010-07-17 01:00:00&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0PW0HA">&lt;metric&gt;4&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OW0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NW0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0MW0HA">&lt;field name="SendDate"&gt;2010-07-17 02:00:00&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0LW0HA">&lt;metric&gt;4&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KW0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0JW0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0IW0HA">&lt;/groups&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0HW0HA">&lt;summary&gt;6030&lt;/summary&gt;</a></div>
+      <div class="Code"><a name="pID0E0GW0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0FW0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E0EW0HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0DW0HA">"aggregate": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0CW0HA">"group": "TRUNCATE(SendDate,HOUR)",</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0BW0HA">"metric": "COUNT(*)",</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0AW0HA">"query": "SendDate &gt;= 2010-07-17"</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E06V0HA">},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E05V0HA">"groups": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E04V0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E03V0HA">"field": {"SendDate": "2010-07-17 00:00:00"},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E02V0HA">"metric": "5"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01V0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZV0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YV0HA">"field": {"SendDate": "2010-07-17 01:00:00"},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0XV0HA">"metric": "4"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0WV0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VV0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0UV0HA">"field": {"SendDate": "2010-07-17 02:00:00"},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0TV0HA">"metric": "4"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SV0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0RV0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0QV0HA">]</a></div>
+      <div class="Code"><a name="pID0E0PV0HA">}}</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

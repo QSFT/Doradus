@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Aggregate Query via URI</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.108.html">Spider REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.130.html">Aggregate Query Commands</a> : Aggregate Query via URI</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E02C0HA">Aggregate Query via URI</a></div>
+      <div class="Normal"><a name="pID0E01C0HA">An aggregate query can submit all parameters in the URI of a GET request. The REST command is:</a></div>
+      <div class="Code"><a name="pID0E0ZC0HA">GET /{application}/{table}/_aggregate?{params}</a></div>
+      <div class="Normal"><a name="pID0E0YC0HA">where </a><span class="Code_Char">{application}</span> is the application name, <span class="Code_Char">{table}</span> is the perspective table, and <span class="Code_Char">{params}</span> are URI parameters separated by ampersands (&amp;). The following parameters are supported:</div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0XC0HA">m=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">metric function list</span><span class="Code_Char" style="font-weight: bold"> </span>(required): A list of one or more metric functions to calculate for selected objects. Each function is computed across selected objects, optionally subdivided into groups as defined by the grouping parameter. Example metric function:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0WC0HA">m=COUNT(*)</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VC0HA">m=DISTINCT(Name)</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0UC0HA">m=SUM(Size)</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TC0HA">m=MAX(Sender.Person.LastName)</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SC0HA">m=AVERAGE(SendDate)</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0RC0HA">m=MAX(Size), MIN(Size), AVERAGE(Size), COUNT(*)		// 4 metric functions</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0QC0HA">q=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">text</span> (optional): A DQL query expression that defines which objects to include in metric computations. If omitted, all objects are selected (same as <span class="Code_Char">q=*</span>). Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0PC0HA">q=*</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OC0HA">q=LastName=Smith</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NC0HA">q=ALL(InternalRecipients.Person.Domain).IsInternal = false</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0MC0HA">f=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">grouping list</span> (optional): A list of one or more grouping expressions, which divide computations into single- or multi-level groups. When this parameter is omitted, the corresponding <span style="font-style: italic">global query</span> computes a single value for each metric function. When provided, the corresponding <span style="font-style: italic">grouped query</span> computes a value for each group value/metric function combination. Multiple grouping sets can be specified via the <span class="Code_Char">GROUP</span> function. Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0LC0HA">f=Tags</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KC0HA">f=TOP(3,Sender.Person.Department)</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0JC0HA">f=BATCH(Size,1000,10000,100000),TOP(5,ExternalRecipients.MessageAddress.Domain.Name)</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0IC0HA">f=GROUP(*),GROUP(Tags),GROUP(TOP(3,Sender.Person.Office),TOP(3,Sender.Person.Department))</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0HC0HA">cf=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">grouping list</span> (optional): For multi-level grouped queries, Doradus spider supports a special feature called <span style="font-style: italic">composite</span> grouping. It is requested by using <span class="Code_Char">&amp;cf</span> instead of <span class="Code_Char">&amp;f</span>, and it is meaningful only for aggregate queries with 2 or more grouping levels. The <span class="Code_Char">&amp;cf</span> parameter’s value is the same as for <span class="Code_Char">&amp;f</span>, but it causes extra composite values to be computed for intermediate grouping levels.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0GC0HA">Below is an example aggregate query using URI parameters:</a></div>
+      <div class="Code"><a name="pID0E0FC0HA">GET /Msgs/Message/_aggregate?q=Size&gt;10000&amp;m=COUNT(*)&amp;f=TOP(3,Sender.Person.Department)</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

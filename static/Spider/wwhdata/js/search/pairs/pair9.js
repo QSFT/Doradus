@@ -1,0 +1,21 @@
+function FileData_Pairs(x)
+{
+x.t("describes","core");
+x.t("doradus","spider");
+x.t("doradus","data");
+x.t("spider","features");
+x.t("spider","extends");
+x.t("spider","data");
+x.t("features","section");
+x.t("unique","features");
+x.t("section","describes");
+x.t("extended","spider");
+x.t("core","doradus");
+x.t("core","data");
+x.t("extends","core");
+x.t("data","model");
+x.t("model","doradus");
+x.t("model","spider");
+x.t("model","unique");
+x.t("model","extended");
+}

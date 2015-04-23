@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>WHERE Filter</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.074.html">OLAP Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.076.html">Metric Parameter</a> : WHERE Filter</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0DNB0HA">WHERE Filter</a></div>
+      <div class="Normal"><a name="pID0E0CNB0HA">When the parameter to a metric function is a link path, the </a><span class="Code_Char">WHERE</span> function can be used to filter values passed to the metric calculation. When the <span class="Code_Char">WHERE</span> function follows a link name, it filters objects connected via that link. For example:</div>
+      <div class="Code"><a name="pID0E0BNB0HA">GET /Email/Message/_aggregate?range=0&amp;m=MIN(Sender.Person.</a><span style="color: #3366FF">WHERE</span>(Department:sales).Office)</div>
+      <div class="Normal"><a name="pID0E0ANB0HA">This query selects </a><span style="text-decoration: underline">all</span> <span class="Code_Char">Message</span> objects, but the <span class="Code_Char">WHERE</span> filter selects only those <span class="Code_Char">Person</span> objects whose <span class="Code_Char">Department</span> contains the term <span class="Code_Char">sales</span>. Hence, the <span class="Code_Char">MIN</span> metric finds the lowest (first alphabetic) <span class="Code_Char">Office</span> value whose sender is in the sales department.</div>
+      <div class="Normal"><a name="pID0E06MB0HA">When the </a><span class="Code_Char">WHERE</span> function appears at the <span style="text-decoration: underline">beginning</span> of the metric function, it filters <span style="font-style: italic">perspective</span> objects, acting in conjunction with the query selection expression, if present. When used in this way, the <span class="Code_Char">WHERE</span> function must be followed by <span class="Code_Char">.</span><span class="Code_Char" style="font-style: italic">field</span> where <span class="Code_Char" style="font-style: italic">field</span> is the metric field name or link path. For example:</div>
+      <div class="Code"><a name="pID0E05MB0HA">GET /Email/Person/_aggregate?range=0&amp;m=COUNT(</a><span style="color: #3366FF">WHERE</span>(Department:sales).*)&amp;q=Office:aliso</div>
+      <div class="Normal"><a name="pID0E04MB0HA">Since the </a><span class="Code_Char">COUNT</span> function’s outer <span class="Code_Char">WHERE</span> filter is followed by <span class="Code_Char">.*</span>, the function counts objects. The <span class="Code_Char">WHERE</span> expression is AND-ed with the query expression <span class="Code_Char">Office:also</span>. Therefore, this query is similar (but not identical) to the following:</div>
+      <div class="Code"><a name="pID0E03MB0HA">GET /Email/Person/_aggregate?range=0&amp;m=COUNT(*)&amp;q=Office:aliso AND Department:sales</a></div>
+      <div class="Normal"><a name="pID0E02MB0HA">Because the </a><span style="font-style: italic">scope</span> of an outer WHERE function remains at the perspective table, multiple WHERE functions can be chained together to filter perspective objects. Example:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E01MB0HA">GET /Email/Message/_aggregate?range=0<br />&amp;m=MIN(</a><span style="color: #3366FF">WHERE</span>(Sender.Person.Department:sales).<span style="color: #3366FF">WHERE</span>(InternalRecipients.Person.Office:aliso).Size)<br />&amp;q=Tags=AfterHours</div>
+      <div class="Normal"><a name="pID0E0ZMB0HA">This query finds the smallest </a><span class="Code_Char">Message.Size</span> value of all messages where (1) the message is tagged with <span class="Code_Char">AfterHours</span>, (2) at least one sender belongs to the <span class="Code_Char">sales</span> department, and (3) at least one internal recipient resides in the <span class="Code_Char">aliso</span> office.</div>
+      <div class="Normal"><a name="pID0E0YMB0HA">Note that filtering objects within the metric function does not produce exactly the same results as filtering objects in the query expression. In the previous example, the query expression </a><span class="Code_Char">Tags=AfterHours</span> determines which objects are initially selected. The number of these objects is reflected in the <span class="Code_Char">&lt;totalobjects&gt;</span> element returned by the query. However, the objects actually passed to the metric function are filtered by the other <span class="Code_Char">WHERE</span> functions. This number is probably less than <span class="Code_Char">&lt;totalobjects&gt;</span> but otherwise unknown unless the metric function is <span class="Code_Char">COUNT(*)</span>. A typical result is shown below:</div>
+      <div class="Code"><a name="pID0E0XMB0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0WMB0HA">&lt;aggregate metric="MIN(WHERE(Sender.Person.Department:sales).<br />WHERE(InternalRecipients.Person.Office:aliso).Size)" query="Tags=AfterHours"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0VMB0HA">&lt;totalobjects&gt;6029&lt;/totalobjects&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0UMB0HA">&lt;value&gt;4802&lt;/value&gt;</a></div>
+      <div class="Code"><a name="pID0E0TMB0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0SMB0HA">Suppose we moved the outer WHERE functions to the query parameter:</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0RMB0HA">GET /Email/Message/_aggregate?range=0&amp;m=MIN(Size)<br />&amp;q=Sender.Person.Department:sales AND InternalRecipients.Person.Office:aliso AND Tags=AfterHours</a></div>
+      <div class="Normal"><a name="pID0E0QMB0HA">Here, the objects are filtered by the query expression, so only those selected are reflected in the </a><span class="Code_Char">&lt;totalobjects&gt;</span> element returned by the query. A typical result is shown below:</div>
+      <div class="Code"><a name="pID0E0PMB0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0OMB0HA">&lt;aggregate metric="MIN(Size)" query="Sender.Person.Department:sales AND InternalRecipients.Person.Office:aliso AND Tags=AfterHours"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0NMB0HA">&lt;totalobjects&gt;2&lt;/totalobjects&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0MMB0HA">&lt;value&gt;4802&lt;/value&gt;</a></div>
+      <div class="Code"><a name="pID0E0LMB0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0KMB0HA">Compared to the previous query, which selected 6029 objects, this query selected only 2 objects. This also shows that selecting objects in the query expression (&amp;q) is more efficient, especially for large data sets.</a></div>
+      <div class="Normal"><a name="pID0E0JMB0HA">However, sometimes metric-level filtering is the only way to get the results we need. For example, suppose we want to count messages sent by people in two different departments but grouped by the same office. We could use the following multi-metric query:</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0IMB0HA">GET /Email/Message/_aggregate?range=0<br />&amp;m=COUNT(WHERE(Sender.Person.Department:sales).*),<br />   COUNT(WHERE(Sender.Person.Department:support).*)<br />&amp;f=TOP(3,Sender.Person.Office)</a></div>
+      <div class="Normal"><a name="pID0E0HMB0HA">This query performs two </a><span class="Code_Char">COUNT(*)</span> functions: the first selects messages whose sender belong to <span class="Code_Char">sales</span>, the second those sender belong to <span class="Code_Char">support</span>. By definition, when a TOP or BOTTOM grouping field is used with a multi-metric query, the groups are generated from the sorted values of the <span style="text-decoration: underline">first</span> metric function. Secondary metric functions follow the same grouping pattern so that the metric computations are correlated. A typical result for this query looks like this:</div>
+      <div class="Code"><a name="pID0E0GMB0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0FMB0HA">&lt;aggregate metric="COUNT(WHERE(Sender.Person.Department:sales).*),<br />COUNT(WHERE(Sender.Person.Department:support).*)" query="*" group="TOP(3,Sender.Person.Office)"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0EMB0HA">&lt;totalobjects&gt;6030&lt;/totalobjects&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0DMB0HA">&lt;groupsets&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0CMB0HA">&lt;groupset group="TOP(3,Sender.Person.Office)" metric="COUNT(WHERE(Sender.Person.Department:sales).*)"&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0BMB0HA">&lt;summary&gt;81&lt;/summary&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0AMB0HA">&lt;totalgroups&gt;40&lt;/totalgroups&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E06LB0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E05LB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E04LB0HA">&lt;metric&gt;68&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E03LB0HA">&lt;field name="Sender.Person.Office"&gt;Maidenhead&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E02LB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E01LB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0ZLB0HA">&lt;metric&gt;5&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0YLB0HA">&lt;field name="Sender.Person.Office"&gt;Madrid&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0XLB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0WLB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0VLB0HA">&lt;metric&gt;2&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0ULB0HA">&lt;field name="Sender.Person.Office"&gt;Aliso Viejo 5&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0TLB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0SLB0HA">&lt;/groups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0RLB0HA">&lt;/groupset&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0QLB0HA">&lt;groupset group="TOP(3,Sender.Person.Office)" metric="COUNT(WHERE(Sender.Person.Department:support).*)"&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0PLB0HA">&lt;summary&gt;16&lt;/summary&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0OLB0HA">&lt;totalgroups&gt;40&lt;/totalgroups&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0NLB0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0MLB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0LLB0HA">&lt;metric&gt;14&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0KLB0HA">&lt;field name="Sender.Person.Office"&gt;Maidenhead&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0JLB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0ILB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0HLB0HA">&lt;metric&gt;0&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0GLB0HA">&lt;field name="Sender.Person.Office"&gt;Madrid&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0FLB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0ELB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0DLB0HA">&lt;metric&gt;2&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0CLB0HA">&lt;field name="Sender.Person.Office"&gt;Aliso Viejo 5&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0BLB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ALB0HA">&lt;/groups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E06KB0HA">&lt;/groupset&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E05KB0HA">&lt;/groupsets&gt;</a></div>
+      <div class="Code"><a name="pID0E04KB0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E03KB0HA">This allows the offices with the most email senders in </a><span class="Code_Char">sales</span> to be directly compared to the number of email senders in <span class="Code_Char">support</span> for the same offices. If we executed two separate aggregate queries—one for each function—but with the same grouping parameter, we would get different, uncorrelated groups.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+function FileData_Pairs(x)
+{
+x.t("parameter","olap");
+x.t("parameter","fields");
+x.t("parameter","omitted");
+x.t("provided","options");
+x.t("objects","returned");
+x.t("olap","object");
+x.t("fields","parameter");
+x.t("fields","selected");
+x.t("fields","returned");
+x.t("selected","objects");
+x.t("queries","fields");
+x.t("options","selecting");
+x.t("scalar","fields");
+x.t("returned","provided");
+x.t("returned","described");
+x.t("omitted","scalar");
+x.t("selecting","fields");
+x.t("described","below");
+x.t("object","queries");
+}

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>WHERE Filters</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.074.html">Spider Object Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.076.html">Fields Parameter</a> : WHERE Filters</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0DVB0HA">WHERE Filters</a></div>
+      <div class="Normal"><a name="pID0E0CVB0HA">When link paths are used in the </a><span style="font-weight: bold">fields</span> parameter, values can be filtered using a <span class="Code_Char">WHERE</span> expression. For example, consider this URI query:</div>
+      <div class="Code"><a name="pID0E0BVB0HA">.../_query?q=Size&gt;1000&amp;f=InternalRecipients.</a><span style="color: #008000">WHERE(Person.Department:support)</span></div>
+      <div class="Normal"><a name="pID0E0AVB0HA">This returns only InternalRecipients whose </a><span class="Code_Char">Person.Department</span> contains the term “support”.</div>
+      <div class="Normal"><a name="pID0E06UB0HA">The WHERE clause does not have to be applied to the terminal field in the link path. For example:</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E05UB0HA">.../_query?q=Size&gt;1000&amp;f=InternalRecipients.Person.</a><span style="color: #008000">WHERE(Department:support)</span>.Office</div>
+      <div class="Normal"><a name="pID0E04UB0HA">This returns </a><span class="Code_Char">InternalRecipients.Person.Office</span> values for each message but only for <span class="Code_Char">InternalRecipients.Person</span> objects whose Department contains the term “support”.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

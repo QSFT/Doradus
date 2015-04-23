@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Table</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.010.html">Spider Data Model</a> : Table</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0RKC0HA">Table</a></div>
+      <div class="Normal"><a name="pID0E0QKC0HA">A table is a named set of objects. Table names are identifiers and must be unique within the same application. Example table names are: </a><span class="Code_Char">Message</span>, <span class="Code_Char">LogSnapshot</span>, and <span class="Code_Char">Security_4xx_Events</span>.</div>
+      <div class="Normal"><a name="pID0E0PKC0HA">A table can include the following components:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0OKC0HA">Options</a></span>: Table-level options (described below).</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0NKC0HA">Fields</a></span>: Definitions of scalar, link, and group fields that the table uses.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0MKC0HA">Aliases</a></span>: Alias definitions, which are schema-defined expressions that can then be used in queries.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0LKC0HA">The general structure of a table definition in XML is shown below:</a></div>
+      <div class="Code"><a name="pID0E0KKC0HA">&lt;tables&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0JKC0HA">&lt;table name="</a><span style="color: #3366FF">Message</span>"&gt;</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0IKC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0HKC0HA">// fields</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0GKC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0FKC0HA">&lt;aliases&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0EKC0HA">// aliases</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0DKC0HA">&lt;/aliases&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0CKC0HA">&lt;/table&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0BKC0HA">...</a></div>
+      <div class="Code"><a name="pID0E0AKC0HA">&lt;/tables&gt;</a></div>
+      <div class="Normal"><a name="pID0E06JC0HA">In same structure in JSON is shown below:</a></div>
+      <div class="Code"><a name="pID0E05JC0HA">"tables": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E04JC0HA">"Message": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03JC0HA">"fields": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E02JC0HA">// fields</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01JC0HA">},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZJC0HA">"aliases": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YJC0HA">// aliases</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XJC0HA">}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0WJC0HA">},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0VJC0HA">...</a></div>
+      <div class="Code"><a name="pID0E0UJC0HA">}</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

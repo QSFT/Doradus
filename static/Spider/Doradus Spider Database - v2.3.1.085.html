@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Link Fields</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.074.html">Spider Object Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.081.html">Query Results</a> : Link Fields</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E02PB0HA">Link Fields</a></div>
+      <div class="Normal"><a name="pID0E01PB0HA">When a query has no </a><span style="font-weight: bold">fields</span> parameter or explicitly requests “*”, only scalar fields of perspective objects are returned. When the fields parameter includes a link field, by default only the <span class="Code_Char">_ID</span> field of each linked object is returned. If a link field is requested that has no values, an empty list is returned. For example, consider this object query:</div>
+      <div class="Code"><a name="pID0E0ZPB0HA">GET /Msgs/Person/_query?q=LastName=Powell&amp;f=Manager,DirectReports</a></div>
+      <div class="Normal"><a name="pID0E0YPB0HA">This query searches for people whose </a><span class="Code_Char">LastName</span> is <span class="Code_Char">Powell</span> and requests the <span class="Code_Char">Manager</span> and <span class="Code_Char">DirectReports</span> links. An example result in XML:</div>
+      <div class="Code"><a name="pID0E0XPB0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0WPB0HA">&lt;docs&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VPB0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0UPB0HA">&lt;field name="_ID"&gt;gfNqhYF7LgBAtKTdIx3BKw==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0TPB0HA">&lt;field name="DirectReports"&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0SPB0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0RPB0HA">&lt;field name="_ID"&gt;mKjYJmmLPoTVxJu2xdFmUg==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0QPB0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0PPB0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0OPB0HA">&lt;field name="Manager"&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0NPB0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0MPB0HA">&lt;field name="_ID"&gt;nLOCpa7aH/Y3zDrnMqG6Fw==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0LPB0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0KPB0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0JPB0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0IPB0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0HPB0HA">&lt;field name="_ID"&gt;sHUm0PEKu3gQDDNIHHWv1g==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0GPB0HA">&lt;field name="DirectReports"/&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0FPB0HA">&lt;field name="Manager"&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0EPB0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0DPB0HA">&lt;field name="_ID"&gt;tkSQlrRqaeHsGvRU65g9HQ==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0CPB0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0BPB0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0APB0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E06OB0HA">&lt;/docs&gt;</a></div>
+      <div class="Code"><a name="pID0E05OB0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E04OB0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E03OB0HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E02OB0HA">"docs": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01OB0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ZOB0HA">"_ID": "gfNqhYF7LgBAtKTdIx3BKw==",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YOB0HA">"DirectReports": [</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0XOB0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0WOB0HA">"_ID": "mKjYJmmLPoTVxJu2xdFmUg=="</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0VOB0HA">}}</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0UOB0HA">],</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0TOB0HA">"Manager": [</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0SOB0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0ROB0HA">"_ID": "nLOCpa7aH/Y3zDrnMqG6Fw=="</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0QOB0HA">}}</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0POB0HA">]</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OOB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NOB0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0MOB0HA">"_ID": "sHUm0PEKu3gQDDNIHHWv1g==",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0LOB0HA">"DirectReports": [],</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0KOB0HA">"Manager": [</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0JOB0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0IOB0HA">"_ID": "tkSQlrRqaeHsGvRU65g9HQ=="</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0HOB0HA">}}</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0GOB0HA">]</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0FOB0HA">}}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0EOB0HA">]</a></div>
+      <div class="Code"><a name="pID0E0DOB0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0COB0HA">As shown, requested link fields are returned even if they have no values. By default, only the </a><span class="Code_Char">_ID</span> values of linked objects are included.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

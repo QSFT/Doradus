@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Quantifiers on Group Fields</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.037.html">Doradus Query Language (DQL)</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.065.html">Quantifier Functions</a> : Quantifiers on Group Fields</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0QXB0HA">Quantifiers on Group Fields</a></div>
+      <div class="Normal"><a name="pID0E0PXB0HA">Doradus Spider allows quantifiers (</a><span class="Code_Char">ANY</span>, <span class="Code_Char">ALL</span>, and <span class="Code_Char">NONE</span>) on group fields. Group field quantification works as follows: Assume a group field G with <span style="font-style: italic">leaf</span> fields F1, F2, … Fn. Quantifiers can be used on the group field G if all fields Fi are of the same type:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0OXB0HA">If the fields are scalars, they must be all of the same scalar type (e.g., integer or text).</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0NXB0HA">If the fields are links, they must all have the same extent (target table).</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0MXB0HA">When a group field is quantified, the quantifier is applied to the union of the leaf field values. That is, the quantifier Q on the group field G:</a></div>
+      <div class="Code"><a name="pID0E0LXB0HA">Q(G)</a></div>
+      <div class="Normal"><a name="pID0E0KXB0HA">This is interpreted as:</a></div>
+      <div class="Code"><a name="pID0E0JXB0HA">Q(</a><span style="font-style: italic">union</span>(F1, F2, ..., Fn))</div>
+      <div class="Normal"><a name="pID0E0IXB0HA">In our example </a><span class="Code_Char">Msgs</span> schema, the <span class="Code_Char">Message</span> table’s group field <span class="Code_Char">Participants</span> contains three links that all refer to the <span class="Code_Char">Participant</span> table: <span class="Code_Char">ExternalRecipients</span>, <span class="Code_Char">InternalRecipients</span>, and <span class="Code_Char">Sender</span>. Consider the following query:</div>
+      <div class="Code"><a name="pID0E0HXB0HA">ANY(Participants.ReceiptDate) = [2013-01-01 TO 2013-01-31]</a></div>
+      <div class="Normal"><a name="pID0E0GXB0HA">This is evaluated as the following equivalent expression:</a></div>
+      <div class="Code"><a name="pID0E0FXB0HA">ANY(</a><span style="font-style: italic">union</span>(ExternalRecipients, InternalRecipients, Sender).ReceiptDate) = [2013-01-01 TO 2013-01-31]</div>
+      <div class="Normal"><a name="pID0E0EXB0HA">The “union” function does not actually exist – it is shown for illustrative purposes. It semantically combines all link values into a single set. If any linked object has a </a><span class="Code_Char">ReceiptDate</span> within the given range, the entire expression is true. The <span class="Code_Char">ANY</span> quantifier is false when all three links are null since <span class="Code_Char">ANY</span> on an empty set is false.</div>
+      <div class="Normal"><a name="pID0E0DXB0HA">If </a><span class="Code_Char">ALL</span> is used instead of <span class="Code_Char">ANY</span>, the overall expression is true only if all values in the set have a <span class="Code_Char">ReceiptDate</span> within the given range and the set is not empty.</div>
+      <div class="Normal"><a name="pID0E0CXB0HA">If </a><span class="Code_Char">NONE</span> is used, the overall expression is true if none of the objects in the set have a <span class="Code_Char">ReceiptDate</span> within the given range <span style="text-decoration: underline">or</span> if the set is empty. Unlike <span class="Code_Char">ANY</span> and <span class="Code_Char">ALL</span>, <span class="Code_Char">NONE</span> quantification returns true if the set is empty.</div>
+      <div class="Normal"><a name="pID0E0BXB0HA">Quantifiers can also be used on group fields whose leaf fields are scalars of the same type. In the example schema, the </a><span class="Code_Char">Person</span> table’s <span class="Code_Char">Location</span> field is a group containing the scalar text fields <span class="Code_Char">Department</span> and <span class="Code_Char">Office</span>. The following query:</div>
+      <div class="Code"><a name="pID0E0AXB0HA">GET /Msgs/Person/_query?q=NONE(Location):Sales</a></div>
+      <div class="Normal"><a name="pID0E06WB0HA">Finds people for which neither </a><span class="Code_Char">Department</span> nor <span class="Code_Char">Office</span> contains the term <span class="Code_Char">Sales</span>.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

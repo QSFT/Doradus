@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Aggregate Query via URI</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.102.html">OLAP REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.127.html">Aggregate Query Commands</a> : Aggregate Query via URI</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0JF0HA">Aggregate Query via URI</a></div>
+      <div class="Normal"><a name="pID0E0IF0HA">An aggregate query can submit all parameters in the URI of a GET request. The REST command is:</a></div>
+      <div class="Code"><a name="pID0E0HF0HA">GET /{application}/{table}/_aggregate?{params}</a></div>
+      <div class="Normal"><a name="pID0E0GF0HA">where </a><span class="Code_Char">{application}</span> is the application name, <span class="Code_Char">{table}</span> is the perspective table, and <span class="Code_Char">{params}</span> are URI parameters separated by ampersands (&amp;). The following parameters are supported:</div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0FF0HA">m=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">metric expression list</span><span class="Code_Char" style="font-weight: bold"> </span>(required): A list of one or more metric expressions to calculate for selected objects. A metric expression is an algebraic expression consisting of functions, constants, simple math operators, and parentheses. Each expression is computed across selected objects, optionally subdivided into groups as defined by the grouping parameter. Example metric parameters:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0EF0HA">m=COUNT(*)</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0DF0HA">m=DISTINCT(Name)</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0CF0HA">m=SUM(Size)</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0BF0HA">m=MAX(Sender.Person.LastName)</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0AF0HA">m=AVERAGE(SendDate)</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E06E0HA">m=COUNT(*) / COUNT(Sender.Person)</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E05E0HA">m=COUNT(*) / COUNT(Sender.Person) / (DATEDIFF(DAY,"2010-01-01","2011-12-31") + 1)</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E04E0HA">m=MAX(Size), MIN(Size), AVERAGE(Size), COUNT(*)		// 4 metric epressions</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E03E0HA">q=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">text</span> (optional): A DQL query expression that defines which objects to include in metric computations. If omitted, all objects are selected (same as <span class="Code_Char">q=*</span>). Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E02E0HA">q=*</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01E0HA">q=LastName=Smith</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZE0HA">q=ALL(InternalRecipients.Person.Domain).IsInternal = false</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0YE0HA">f=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">grouping list</span> (optional): A list of one or more grouping expressions, which divide computations into single- or multi-level groups. When this parameter is omitted, the corresponding <span style="font-style: italic">global query</span> computes a single value for each metric expression. When provided, the corresponding <span style="font-style: italic">grouped query</span> computes a value for each group value/metric expression combination. Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XE0HA">f=Tags</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0WE0HA">f=TOP(3,Sender.Person.Department)</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VE0HA">f=BATCH(Size,1000,10000,100000),TOP(5,ExternalRecipients.MessageAddress.Domain.Name)</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0UE0HA">pair=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">pair list</span>: Defines two fields that are used to compute special <span style="font-style: italic">dual role</span> queries. See the section <span class="Hyperlink" style="font-weight: bold"><a href="javascript:WWHClickedPopup('OLAP', 'Doradus%20OLAP%20Database%20-%20v2.3.1.101.html', '');" title="Pair Parameter">Pair Parameter</a></span> for a description. Example:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TE0HA">pair=Sender,InternalRecipients</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0SE0HA">shards=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">shards</span> (required*): A comma-separated list of shard names. Only the specified shards are searched. Either this or the <span class="Code_Char">range</span> parameter must be provided. Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0RE0HA">shards=2010-01-01</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QE0HA">shards=13Q1,13Q2,13Q2</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0PE0HA">range=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">shard-from</span><span class="Code_Char" style="font-weight: bold">[,</span><span class="Code_Char" style="font-style: italic; font-weight: bold">shard-to</span><span class="Code_Char" style="font-weight: bold">]</span> (required*): A starting shard name and optionally an ending shard name. Only shard names in the specified range are searched. If the ending <span class="Code_Char">shard-to</span> name is omitted, all shards whose name is greater than or equal to the <span class="Code_Char">shard-from</span> name are searched. Either this or the <span class="Code_Char">shards</span> parameter must be provided. Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OE0HA">range=2013-11-01,2013-12-31	// "2013-11-01" &lt;= shard name &lt;= "2013-12-31"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NE0HA">range=2013-01-01	// "2013-01-01" &lt;= shard name</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ME0HA">range=2013	// "2013" &lt;= shard name</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0LE0HA">xshards=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">shards</span> (optional): A comma-separated list of shard names to search for objects referenced by xlinks. If the aggregate query has no xlinks, this parameter is ignored. If this and the <span class="Code_Char">xrange</span> parameter are both omitted, the scope of xlink searching is the same as the <span class="Code_Char">shards</span> or <span class="Code_Char">range</span> parameter. Either this of the <span class="Code_Char">xrange</span> parameter can be provided, but not both. See the <span class="Code_Char">shards</span> parameter above for examples.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0KE0HA">xrange=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">shard-from</span><span class="Code_Char" style="font-weight: bold">[,</span><span class="Code_Char" style="font-style: italic; font-weight: bold">shard-to</span><span class="Code_Char" style="font-weight: bold">]</span> (optional): A starting shard name and optional ending shard name that defines the range of shards to search for objects referenced by xlinks. If the ending <span class="Code_Char">shard-to</span> name is omitted, all shards whose name is greater than or equal to the <span class="Code_Char">shard-from</span> name are searched. If the aggregate query has no xlinks, this parameter is ignored. If this and the <span class="Code_Char">xshards</span> parameter are both omitted, the xlink search scope is the same as defined by the <span class="Code_Char">shards</span> or <span class="Code_Char">range</span> parameter. Either this of the <span class="Code_Char">xshards</span> parameter can be provided, but not both. See the <span class="Code_Char">range</span> parameter above for examples.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0JE0HA">Below is an example aggregate query using URI parameters:</a></div>
+      <div class="Code"><a name="pID0E0IE0HA">GET /Email/Message/_aggregate?q=Size&gt;10000&amp;m=COUNT(*)&amp;f=TOP(3,Sender.Person.Department)&amp;range=2014</a></div>
+      <div class="Normal"><a name="pID0E0HE0HA">An example response in XML is:</a></div>
+      <div class="Code"><a name="pID0E0GE0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0FE0HA">&lt;aggregate metric="COUNT(*)" query="Size&gt;10000" group="TOP(3,Sender.Person.Department)"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0EE0HA">&lt;totalobjects&gt;1254&lt;/totalobjects&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0DE0HA">&lt;summary&gt;1254&lt;/summary&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0CE0HA">&lt;totalgroups&gt;37&lt;/totalgroups&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0BE0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0AE0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E06D0HA">&lt;metric&gt;926&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E05D0HA">&lt;field name="Sender.Person.Department"&gt;(null)&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E04D0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03D0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E02D0HA">&lt;metric&gt;82&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E01D0HA">&lt;field name="Sender.Person.Department"&gt;HR&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZD0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0YD0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0XD0HA">&lt;metric&gt;45&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0WD0HA">&lt;field name="Sender.Person.Department"&gt;Sales Technical Specialists&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VD0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0UD0HA">&lt;/groups&gt;</a></div>
+      <div class="Code"><a name="pID0E0TD0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0SD0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E0RD0HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0QD0HA">"aggregate": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0PD0HA">"metric": "COUNT(*)",</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OD0HA">"query": "Size&gt;10000",</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ND0HA">"group": "TOP(3,Sender.Person.Department)"</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0MD0HA">},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0LD0HA">"totalobjects": "1254",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0KD0HA">"summary": "1254",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0JD0HA">"totalgroups": "37",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0ID0HA">"groups": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0HD0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0GD0HA">"metric": "926",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0FD0HA">"field": {"Sender.Person.Department": "(null)"}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ED0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0DD0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0CD0HA">"metric": "82",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0BD0HA">"field": {"Sender.Person.Department": "HR"}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0AD0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E06C0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E05C0HA">"metric": "45",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E04C0HA">"field": {"Sender.Person.Department": "Sales Technical Specialists"}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03C0HA">}}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E02C0HA">]</a></div>
+      <div class="Code"><a name="pID0E01C0HA">}}</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

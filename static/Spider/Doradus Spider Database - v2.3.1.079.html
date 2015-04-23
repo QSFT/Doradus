@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Size Limits on Link Fields</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.074.html">Spider Object Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.076.html">Fields Parameter</a> : Size Limits on Link Fields</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E03UB0HA">Size Limits on Link Fields</a></div>
+      <div class="Normal"><a name="pID0E02UB0HA">When the </a><span style="font-weight: bold">fields</span> parameter includes link fields, the maximum number of values returned for each link can be controlled individually. As an example, consider the following link path:</div>
+      <div class="Code"><a name="pID0E01UB0HA">A -&gt; B -&gt; (C, D)</a></div>
+      <div class="Normal"><a name="pID0E0ZUB0HA">That is, A is a link from the perspective object, B is a link from A’s extent, and B’s extent has two link fields C and D. If the query includes a query-level </a><span style="font-weight: bold">page size</span> parameter, it controls the maximum number of objects returned, but not the number of link field values returned. For example, the following queries are all identical, showing different forms of dotted and parenthetical qualification currently allowed for the f parameter:</div>
+      <div class="Code"><a name="pID0E0YUB0HA">.../_query?f=A(B(C,D)))</a><span style="color: #008000">&amp;s=10</span>&amp;q=...</div>
+      <div class="Code"><a name="pID0E0XUB0HA">.../_query?f=A.B(C,D)</a><span style="color: #008000">&amp;s=10</span>&amp;q=...</div>
+      <div class="Code"><a name="pID0E0WUB0HA">.../_query?f=A.B.C,A.B.D</a><span style="color: #008000">&amp;s=10</span>&amp;q=...</div>
+      <div class="Normal"><a name="pID0E0VUB0HA">In these queries, the maximum number of objects returned is 10, but the number of A, B, C, or D values returned for any object is unlimited.</a></div>
+      <div class="Normal"><a name="pID0E0UUB0HA">To limit the maximum number of values returned for a link field, a size limit can be given in square brackets immediately after the link field name. Suppose we want to limit the number of A values returned to 5. This can be done with either of the following queries:</a></div>
+      <div class="Code"><a name="pID0E0TUB0HA">.../_query?f=A</a><span style="color: #008000">[5]</span>(B(C,D)))&amp;s=10&amp;q=...</div>
+      <div class="Code"><a name="pID0E0SUB0HA">.../_query?f=A</a><span style="color: #008000">[5]</span>.B(C,D))&amp;s=10&amp;q=...</div>
+      <div class="Normal"><a name="pID0E0RUB0HA">In these queries, the maximum objects returned is 10, the number of values returned for B, C, and D is unlimited, and the maximum number of A values returned for each object is 5.</a></div>
+      <div class="Normal"><a name="pID0E0QUB0HA">To control the maximum values of both A and B, either of the following syntaxes can be used:</a></div>
+      <div class="Code"><a name="pID0E0PUB0HA">.../_query?f=A</a><span style="color: #008000">[5]</span>(B<span style="color: #008000">[4]</span>(C,D))&amp;s=10&amp;q=...	// alternative #1</div>
+      <div class="Code"><a name="pID0E0OUB0HA">.../_query?f=A</a><span style="color: #008000">[5]</span>.B<span style="color: #008000">[4]</span>(C,D)&amp;s=10&amp;q=...	// alternative #2</div>
+      <div class="Normal"><a name="pID0E0NUB0HA">These two syntax variations are identical, limiting A to 5 values for each perspective object and B to 4 values for each A value. The maximum object limits is still 10, and the field value limits for C and D is unlimited.</a></div>
+      <div class="Normal"><a name="pID0E0MUB0HA">To limit the number of values for C and D (but not A or B), we can use any of the following syntax variations:</a></div>
+      <div class="Code"><a name="pID0E0LUB0HA">.../_query?f=A(B(C</a><span style="color: #008000">[4]</span>,D<span style="color: #008000">[3]</span>))&amp;s=10&amp;q=...	// alternative #1</div>
+      <div class="Code"><a name="pID0E0KUB0HA">.../_query?f=A.B(C</a><span style="color: #008000">[4]</span>,D<span style="color: #008000">[3]</span>)&amp;s=10&amp;q=...	// alternative #2</div>
+      <div class="Code"><a name="pID0E0JUB0HA">.../_query?f=A.B.C</a><span style="color: #008000">[4]</span>,A.B.D<span style="color: #008000">[3]</span>&amp;s=10&amp;q=...	// alternative #3</div>
+      <div class="Normal"><a name="pID0E0IUB0HA">When a </a><span class="Code_Char">WHERE</span> filter is used (see previous section), a size limit for the same field should be provided <span style="text-decoration: underline">after</span> the <span class="Code_Char">WHERE</span> clause. The following examples show the same query with alternate syntax variations:</div>
+      <div class="Code"><a name="pID0E0HUB0HA">.../_query?f=A.</a><span style="color: #0000FF">WHERE(foo=bar)</span><span style="color: #008000">[5]</span>(B.<span style="color: #0000FF">WHERE(foogle=true)</span>(C<span style="color: #008000">[4]</span>,D<span style="color: #008000">[3]</span>))&amp;s=10&amp;q=...</div>
+      <div class="Code"><a name="pID0E0GUB0HA">.../_query?f=A.</a><span style="color: #0000FF">WHERE(foo=bar)</span><span style="color: #008000">[5]</span>.B.<span style="color: #0000FF">WHERE(foogle=true)</span>(C<span style="color: #008000">[4]</span>,D<span style="color: #008000">[3]</span>)&amp;s=10&amp;q=...</div>
+      <div class="Normal"><a name="pID0E0FUB0HA">In this example, link A is filtered and limited to 5 values maximum; B is filtered but has no value limit; C is not filtered but limited to 4 values; and D is also not filtered but limited to 3 values.</a></div>
+      <div class="Normal"><a name="pID0E0EUB0HA">The </a><span class="Code_Char">WHERE</span> clause is always qualified with a dot, whereas field names can be qualified with a dot or within parentheses. Placing the size limit after the <span class="Code_Char">WHERE</span> clause helps to signify that field values are first filtered by the <span class="Code_Char">WHERE</span> condition; the filtered set is then limited by the size limit. Also as shown, parenthetical qualification is preferable when multiple extended fields are listed <span style="text-decoration: underline">after</span> a link that uses a <span class="Code_Char">WHERE</span> filter. (Using purely dotted notation, the <span class="Code_Char">WHERE</span> condition would have to be repeated.)</div>
+      <div class="Normal"><a name="pID0E0DUB0HA">Keeping with current conventions, an explicit size value of zero means “unlimited”. So, for example:</a></div>
+      <div class="Code"><a name="pID0E0CUB0HA">.../_query?f=A</a><span style="color: #008000">[5]</span>(B(C,D<span style="color: #008000">[3]</span>)))&amp;s=<span style="color: #FF0000">0</span>&amp;q=...</div>
+      <div class="Normal"><a name="pID0E0BUB0HA">This query places no limits on the number of objects returned as well as the number of B values returned for each A, or the number of C values returned for each B. But a maximum of 5 A values are returned for each object, and a maximum of 3 D values are returned for each B.</a></div>
+      <div class="Normal"><a name="pID0E0AUB0HA">Note that size limits only apply to link fields: when an MV scalar field is requested, all values are returned.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

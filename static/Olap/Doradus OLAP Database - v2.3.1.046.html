@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>NOW Function</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.025.html">Doradus Query Language (DQL)</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.044.html">Timestamp Clauses</a> : NOW Function</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0VAC0HA">NOW Function</a></div>
+      <div class="Normal"><a name="pID0E0UAC0HA">A timestamp field can be compared to the current time, optionally adjusted by an offset, using the </a><span class="Code_Char">NOW</span> function. The <span class="Code_Char">NOW</span> function dynamically computes a timestamp value, which can be used anywhere a timestamp literal value can be used. The <span class="Code_Char">NOW</span> function uses the general format:</div>
+      <div class="Code"><a name="pID0E0TAC0HA">NOW([&lt;timezone&gt; | &lt;GMT offset&gt;] [&lt;unit adjust&gt;])</a></div>
+      <div class="Normal"><a name="pID0E0SAC0HA">The basic formats supported by the </a><span class="Code_Char">NOW</span> function are:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0RAC0HA">NOW()</a></span>: Without any parameters, <span class="Code_Char">NOW</span> creates a timestamp equal to the current time in the UTC (GMT) time zone. (Remember that Doradus considers all timestamp fields values as belonging to the UTC time zone.)</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0QAC0HA">NOW(&lt;timezone&gt;)</a></span>: A time zone mnemonic (<span class="Code_Char">PST</span>) or name (<span class="Code_Char">US/Pacific</span>) can be passed, which creates a timestamp equal to the current time in the given time zone. The values supported for the &lt;timezone&gt; parameter are those returned by the Java function <span class="Code_Char">java.util.TimeZone.getAvailableIDs()</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0PAC0HA">NOW(&lt;GMT offset&gt;)</a></span>: This format creates a timestamp equal to the current in UTC, offset by a specific hour/minute value. The &lt;GMT offset&gt; must use the format:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OAC0HA">GMT&lt;sign&gt;&lt;hours&gt;[:&lt;minutes&gt;]</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0NAC0HA">where &lt;sign&gt; is a plus (‘+’) or minus (‘-‘) sign and &lt;hours&gt; is an integer. If provided, &lt;minutes&gt; is an integer preceded by a colon.</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0MAC0HA">NOW(&lt;unit adjust&gt;)</a></span>: This format creates a timestamp relative to the current UTC time and adjusts a single unit by a specific amount. The &lt;unit adjust&gt; parameter has the format:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0LAC0HA">&lt;sign&gt;&lt;amount&gt;&lt;unit&gt;</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0KAC0HA">where &lt;sign&gt; is a plus (‘+’) or minus (‘-‘) sign, &lt;amount&gt; is an integer, and &lt;unit&gt; is a singular or plural time/date mnemonic (uppercase). Recognized values (in plural form) are </a><span class="Code_Char">SECONDS</span>, <span class="Code_Char">MINUTES</span>, <span class="Code_Char">HOURS</span>, <span class="Code_Char">DAYS</span>, <span class="Code_Char">MONTHS</span>, or <span class="Code_Char">YEARS</span>.</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0JAC0HA">NOW(&lt;timezone&gt; &lt;unit adjust&gt;)</a></span> and <span class="Code_Char" style="font-weight: bold">NOW(&lt;GMT offset&gt; &lt;unit adjust&gt;)</span>: Both the &lt;timezone&gt; and &lt;GMT offset&gt; parameters can be combined with a &lt;unit adjust&gt;. In this case, the current UTC time is first adjusted to the specified timezone or GMT offset and then adjusted by the given unit adjustment.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0IAC0HA">Below are example </a><span class="Code_Char">NOW</span> functions and the values they generate. For illustrative purposes, assume that the current time on the Doradus server to which the <span class="Code_Char">NOW</span> function is submitted is <span class="Code_Char">2013-12-04 01:24:35.986 UTC</span>.</div>
+      <table class="Table_Normal" style="margin-left: 36pt; width: 509.4pt" cellspacing="0" summary="">
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle; width: 117.9pt">
+            <div class="Normal" style="margin-bottom: 0pt"><span style="font-weight: bold"><a name="pID0EACJ0HAC0HA">Function</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle; width: 126pt">
+            <div class="Normal" style="margin-bottom: 0pt"><span style="font-weight: bold"><a name="pID0EABJ0HAC0HA">Timestamp Created</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle; width: 265.5pt">
+            <div class="Normal" style="margin-bottom: 0pt"><span style="font-weight: bold"><a name="pID0EAAJ0HAC0HA">Comments</a></span></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACI0HAC0HA">NOW()</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABI0HAC0HA">2013-12-04 01:24:35.986</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAI0HAC0HA">Current UTC time (no adjustment)</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACH0HAC0HA">NOW(PST)</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABH0HAC0HA">2013-12-</a><span style="color: #3366FF">03 17</span>:24:35.986</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAH0HAC0HA">Pacific Standard Time (-8 hours)</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACG0HAC0HA">NOW(Europe/Moscow)</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABG0HAC0HA">2013-12-04 </a><span style="color: #3366FF">05</span>:24:35.986</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAG0HAC0HA">Moscow Standard Time (+4 hours)</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACF0HAC0HA">NOW(GMT+3:15)</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABF0HAC0HA">2013-12-04 </a><span style="color: #3366FF">04:39</span>:35.986</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAF0HAC0HA">UTC incremented by 3 hours, 15 minutes</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACE0HAC0HA">NOW(GMT-2)</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABE0HAC0HA">2013-12-</a><span style="color: #3366FF">03 23</span>:24:35.986</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAE0HAC0HA">UTC decremented by 2 hours</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACD0HAC0HA">NOW(+1 DAY)</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABD0HAC0HA">2013-12-</a><span style="color: #3366FF">05</span> 01:24:35.986</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAD0HAC0HA">UTC incremented by 1 day</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACC0HAC0HA">NOW(+1 MONTH)</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><span style="color: #3366FF"><a name="pID0EABC0HAC0HA">2014-01</a></span>-04 01:24:35.986</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAC0HAC0HA">UTC incremented by 1 month</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACB0HAC0HA">NOW(GMT-3:00 +1 YEAR)</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><span style="color: #3366FF"><a name="pID0EABB0HAC0HA">2014</a></span>-12-<span style="color: #3366FF">03</span> <span style="color: #3366FF">22</span>:24:35.986</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAB0HAC0HA">UTC decremented by 3 hours, incremented by 1 year</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACA0HAC0HA">NOW(ACT -6 MONTHS)</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABA0HAC0HA">2013-</a><span style="color: #3366FF">06</span>-04 <span style="color: #3366FF">11</span>:24:35.986</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAA0HAC0HA">FMT adjusted to Australian Capitol Territory Time  (+10 hours) then decremented by 6 months</a></div>
+          </td>
+        </tr>
+      </table>
+      <div class="Normal" style="margin-bottom: 0pt"><a name="pID0E0GAC0HA">&nbsp;</a></div>
+      <div class="Normal"><a name="pID0E0FAC0HA">(Remember to escape the ‘+’ sign as </a><span class="Code_Char">%2B</span> in URIs since, un-escaped, it is interpreted as a space.)</div>
+      <div class="Normal"><a name="pID0E0EAC0HA">The value generated by the </a><span class="Code_Char">NOW</span> function can be used wherever a literal timestamp value can appear. Below are some examples:</div>
+      <div class="Code"><a name="pID0E0DAC0HA">SendDate &gt; NOW(-1 YEAR)</a></div>
+      <div class="Code"><a name="pID0E0CAC0HA">SendDate &gt;= NOW(PST +9 MONTHS)</a></div>
+      <div class="Code"><a name="pID0E0BAC0HA">ReceiptDate = [NOW() TO NOW(+1 YEAR)]</a></div>
+      <div class="Code"><a name="pID0E0AAC0HA">ReceiptDate = ["2013-01-01" TO NOW(Europe/Moscow)]</a></div>
+      <div class="Normal"><a name="pID0E066B0HA">Because the </a><span class="Code_Char">NOW</span> function computes a timestamp relative to the time the query is executed, successive executions or the same query could create different results. This could also affect the results of paged queries.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

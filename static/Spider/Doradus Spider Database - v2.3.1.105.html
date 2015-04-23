@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>UPPER and LOWER Functions</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.086.html">Spider Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.089.html">Grouping Parameter</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.098.html">Special Grouping Functions</a> : UPPER and LOWER Functions</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_4"><a name="pID0E0OV0HA">UPPER and LOWER Functions</a></div>
+      <div class="Normal"><a name="pID0E0NV0HA">When a text field is used as a grouping field in an aggregate query, </a><span style="font-style: italic">actual</span> field values are used to form each group value. For example, in this query:</div>
+      <div class="Code"><a name="pID0E0MV0HA">.../_aggregate?m=COUNT(*)&amp;f=Extension&amp;...</a></div>
+      <div class="Normal"><a name="pID0E0LV0HA">If the field </a><span class="Code_Char">Extension</span> has identical but differently-cased values such as “.jpg” and “.JPG”, a group is created for each one and the metric function (<span class="Code_Char">COUNT</span>) is applied to each one.</div>
+      <div class="Normal"><a name="pID0E0KV0HA">When a text field is used as the grouping field, values can be case-normalized as they are used as grouping field values. This can be done with the </a><span class="Code_Char">UPPER</span> and <span class="Code_Char">LOWER</span> functions, which translate each text field accordingly as it is sorted into aggregated groups. Example:</div>
+      <div class="Code"><a name="pID0E0JV0HA">.../_aggregate?m=COUNT(*)&amp;f=LOWER(Extension)&amp;...</a></div>
+      <div class="Normal"><a name="pID0E0IV0HA">This causes the </a><span class="Code_Char">Extension</span> field to be down-cased before it is sorted into its metric group. Hence, both values “.jpg” and “.JPG” are counted in a single group.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

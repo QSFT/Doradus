@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Object Query via URI</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.102.html">OLAP REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.124.html">Object Query Commands</a> : Object Query via URI</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0LJ0HA">Object Query via URI</a></div>
+      <div class="Normal"><a name="pID0E0KJ0HA">An object query can submit all query parameters in the URI of a GET request. The general form is:</a></div>
+      <div class="Code"><a name="pID0E0JJ0HA">GET /{application}/{table}/_query?{params}</a></div>
+      <div class="Normal"><a name="pID0E0IJ0HA">where </a><span class="Code_Char">{application}</span> is the application name, <span class="Code_Char">{table}</span> is the perspective table to be queried, and <span class="Code_Char">{params}</span> are URI parameters, separated by ampersands (&amp;) and encoded as necessary. The following parameters are supported:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0HJ0HA">q=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">text</span> (required): A DQL query expression that defines which objects to select. Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0GJ0HA">q=*		// selects all objects</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0FJ0HA">q=FirstName:Doug</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0EJ0HA">q=NONE(InternalRecipients.Person.WHERE(LastName=Smith)).Department=Sales</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0DJ0HA">s=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">size</span> (optional): Limits the number of objects returned. If absent, the page size defaults to the <span class="Code_Char">search_default_page_size</span> option in the doradus.yaml file. The page size can be set to 0 to disable paging, causing all results to be returned in a single page. Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0CJ0HA">s=50</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0BJ0HA">s=0		// return all objects</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0AJ0HA">f=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">fields</span> (optional): A comma-separated list of fields to return for each selected object. Without this parameter, all scalar fields of each object are returned. Link paths can use parenthetical or dotted qualification. Link fields can use <span class="Code_Char">WHERE</span> filtering and per-object value limits in square brackets. Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E06I0HA">f=*</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E05I0HA">f=_all</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E04I0HA">f=Size,Sender.Person.*</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03I0HA">f=InternalRecipients[3].Person.DirectReports.WHERE(LastName=Smith)[5].FirstName</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E02I0HA">f=Name,Manager(Name,Manager(Name))</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="color: #000000; font-family: &quot;Times New Roman&quot;; font-size: 11pt">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E01I0HA">m=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">metric expression list</span><span class="Code_Char" style="color: #000000; font-family: &quot;Times New Roman&quot;; font-size: 11pt"> (optional): A comma-separated list of metric expressions to be computed and returned for each selected objects. The syntax for metric expressions is the same as for aggregate queries. Examples:</span></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZI0HA">m=COUNT(DirectReports)</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0YI0HA">m=COUNT(Messages.MessageAsSender) AS 'Messages Sent'</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XI0HA">m=COUNT(Messages.MessageAsSender),SUM(Messages.MessageAsSender.Size)</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0WI0HA">m=COUNT(DirectReports^.WHERE(LastName:smith))+COUNT(Manager^.WHERE(Department:support))</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0VI0HA">o=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">field </span><span class="Code_Char" style="font-weight: bold">[ASC|DESC]</span> (optional): Orders the results by the specified <span style="font-style: italic">field</span>, which must be a scalar field belonging to the perspective table. Without this parameter, objects are returned in an internally-defined order. When an order field is specified, by default objects are sorted in ascending of the field’s value. Optionally, the field name can be followed by ASC to explicitly request ascending order or DESC to request descending order. Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0UI0HA">o=FirstName</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TI0HA">o=LastName DESC</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0SI0HA">k=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">count</span> (optional): Causes the first <span style="font-style: italic">count</span> objects in the query results to be skipped. Without this parameter, the first page of objects is returned. Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0RI0HA">k=100</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QI0HA">k=0		// returns first page</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0PI0HA">g=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">token</span> (optional): Returns a secondary page of objects starting with the first object <span style="font-style: italic">greater</span> than the given continuation token. The continuation token must be one returned in a previous query. The <span class="Code_Char">&amp;g</span> parameter can only be used for queries that are not sorted (no <span class="Code_Char">&amp;o</span> parameter). The <span class="Code_Char">&amp;g</span> and <span class="Code_Char">&amp;e</span> parameters cannot both be used in the same query.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0OI0HA">e=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">token</span> (optional): Returns a secondary page of objects starting with the first object <span style="font-style: italic">equal</span> to the given continuation token. The continuation token must be one returned in a previous query. The <span class="Code_Char">&amp;e</span> parameter can only be used for queries that are not sorted (no <span class="Code_Char">&amp;o</span> parameter). The <span class="Code_Char">&amp;g</span> and <span class="Code_Char">&amp;e</span> parameters cannot both be used in the same query.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0NI0HA">shards=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">shards</span> (required*): A comma-separated list of shard names. Only the specified shards are searched. Either this or the <span class="Code_Char">range</span> parameter must be provided. Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0MI0HA">shards=2010-01-01</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0LI0HA">shards=13Q1,13Q2,13Q3</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0KI0HA">range=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">shard-from</span><span class="Code_Char" style="font-weight: bold">[,</span><span class="Code_Char" style="font-style: italic; font-weight: bold">shard-to</span><span class="Code_Char" style="font-weight: bold">]</span> (required*): A starting shard name and optional ending shard name that defines the range of shards to search. If the ending <span class="Code_Char">shard-to</span> name is omitted, all shards whose name is greater than or equal to the <span class="Code_Char">shard-from</span> name are searched. Either this or the <span class="Code_Char">shards</span> parameter must be provided, but not both. Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0JI0HA">range=2013-11-01,2013-12-31	// "2013-11-01" &lt;= shard name &lt;= "2013-12-31"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0II0HA">range=2013-01-01	// "2013-01-01" &lt;= shard name</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0HI0HA">range=2013	// "2013" &lt;= shard name</a></div>
+      <div class="Normal"><a name="pID0E0GI0HA">Query results can be </a><span style="font-style: italic">paged</span> using either of two methods depending on whether or not the results are sorted with the <span class="Code_Char">&amp;o</span> parameter:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0FI0HA">Sorted queries</a></span>: To retrieve a secondary page, the same query text should be submitted along with the <span class="Code_Char">&amp;k</span> parameter to specify the number of objects to skip. Doradus OLAP will re-execute the query and skip the specified number of objects.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0EI0HA">Unsorted queries</a></span>: To retrieve a secondary page, the same query text should be submitted using either the <span class="Code_Char">&amp;g</span> or <span class="Code_Char">&amp;e</span> parameter to pass the continuation token from the previous page. This form of paging is more efficient since Doradus OLAP does not re-execute the entire query but instead <span style="font-style: italic">continues</span> the query from the continuation object.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0DI0HA">The following object query selects people whose </a><span class="Code_Char">LastName</span> is Powell and returns their full name, their manager's name, and their direct reports' name. The shard named <span class="Code_Char">2014-01-01</span> is queried:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0CI0HA">GET /Email/Person/_query?q=LastName=Powell&amp;f=Name,Manager(Name),DirectReports(Name)<br />&amp;range=2014-01-01</a></div>
+      <div class="Normal"><a name="pID0E0BI0HA">A typical result in XML is shown below:</a></div>
+      <div class="Code"><a name="pID0E0AI0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E06H0HA">&lt;totalobjects&gt;2&lt;/totalobjects&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E05H0HA">&lt;docs&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E04H0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E03H0HA">&lt;field name="Name"&gt;Karen Powell&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E02H0HA">&lt;field name="_ID"&gt;gfNqhYF7LgBAtKTdIx3BKw==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E01H0HA">&lt;field name="DirectReports"&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0ZH0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0YH0HA">&lt;field name="Name"&gt;PartnerMarketing EMEA&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0XH0HA">&lt;field name="_ID"&gt;mKjYJmmLPoTVxJu2xdFmUg==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0WH0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0VH0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0UH0HA">&lt;field name="Manager"&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0TH0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0SH0HA">&lt;field name="Name"&gt;David Cuss&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0RH0HA">&lt;field name="_ID"&gt;nLOCpa7aH/Y3zDrnMqG6Fw==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0QH0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0PH0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OH0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NH0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0MH0HA">&lt;field name="Name"&gt;Rob Powell&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0LH0HA">&lt;field name="_ID"&gt;sHUm0PEKu3gQDDNIHHWv1g==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0KH0HA">&lt;field name="DirectReports"/&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0JH0HA">&lt;field name="Manager"&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0IH0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0HH0HA">&lt;field name="Name"&gt;Bill Stomiany&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0GH0HA">&lt;field name="_ID"&gt;tkSQlrRqaeHsGvRU65g9HQ==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0FH0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0EH0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0DH0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0CH0HA">&lt;/docs&gt;</a></div>
+      <div class="Code"><a name="pID0E0BH0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0AH0HA">The same result in JSON:</a></div>
+      <div class="Code"><a name="pID0E06G0HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E05G0HA">"totalobjects": "2",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E04G0HA">"docs": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03G0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E02G0HA">"Name": "Karen Powell",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E01G0HA">"_ID": "gfNqhYF7LgBAtKTdIx3BKw==",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ZG0HA">"DirectReports": [</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0YG0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0XG0HA">"Name": "PartnerMarketing EMEA",</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0WG0HA">"_ID": "mKjYJmmLPoTVxJu2xdFmUg=="</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0VG0HA">}}</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0UG0HA">],</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0TG0HA">"Manager": [</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0SG0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0RG0HA">"Name": "David Cuss",</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0QG0HA">"_ID": "nLOCpa7aH/Y3zDrnMqG6Fw=="</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0PG0HA">}}</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0OG0HA">]</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NG0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0MG0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0LG0HA">"Name": "Rob Powell",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0KG0HA">"_ID": "sHUm0PEKu3gQDDNIHHWv1g==",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0JG0HA">"DirectReports" :[],</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0IG0HA">"Manager": [</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0HG0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0GG0HA">"Name": "Bill Stomiany",</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0FG0HA">"_ID": "tkSQlrRqaeHsGvRU65g9HQ=="</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0EG0HA">}}</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0DG0HA">]</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0CG0HA">}}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0BG0HA">]</a></div>
+      <div class="Code"><a name="pID0E0AG0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E06F0HA">As shown, requested link fields are returned even if when they are empty.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

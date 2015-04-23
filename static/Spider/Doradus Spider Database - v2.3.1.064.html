@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Outer WHERE Filter</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.037.html">Doradus Query Language (DQL)</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.061.html">Link Clauses</a> : Outer WHERE Filter</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E03ZB0HA">Outer WHERE Filter</a></div>
+      <div class="Normal"><a name="pID0E02ZB0HA">The </a><span class="Code_Char">WHERE</span> filter usually <span style="text-decoration: underline">follows</span> a link name to select <span style="font-style: italic">related</span> objects connected via that link. However, a link path can <span style="text-decoration: underline">begin</span> when a <span class="Code_Char">WHERE</span> filter, in which case it selects <span style="font-style: italic">perspective</span> objects. For example:</div>
+      <div class="Code"><a name="pID0E01ZB0HA">GET /Msgs/Person/_query?q=</a><span style="color: #3366FF">WHERE</span>(<span style="color: #008000">Department:sales</span>)</div>
+      <div class="Normal"><a name="pID0E0ZZB0HA">This </a><span class="Code_Char">WHERE</span> filter selects perspective objects, in this case <span class="Code_Char">Person</span>. The query above is identical to the following:</div>
+      <div class="Code"><a name="pID0E0YZB0HA">GET /Msgs/Person/_query?q=</a><span style="color: #008000">Department:sales</span></div>
+      <div class="Normal"><a name="pID0E0XZB0HA">The </a><span style="font-style: italic">scope</span> of an outer <span class="Code_Char">WHERE</span> filter remains at the perspective object. Hence, multiple, outer <span class="Code_Char">WHERE</span> filters can be chained together as in the following example:</div>
+      <div class="Code"><a name="pID0E0WZB0HA">GET /Msgs/Person/_query?q=</a><span style="color: #3366FF">WHERE</span>(<span style="color: #008000">Department:sales</span>).<span style="color: #3366FF">WHERE</span>(<span style="color: #008000">Office:aliso</span>)</div>
+      <div class="Normal"><a name="pID0E0VZB0HA">The outer </a><span class="Code_Char">WHERE</span> filters are AND-ed together, so the example above is identical to this query:</div>
+      <div class="Code"><a name="pID0E0UZB0HA">GET /Msgs/Person/_query?q=</a><span style="color: #008000">Department:sales</span> <span style="color: #3366FF">AND</span> <span style="color: #008000">Office:aliso</span></div>
+      <div class="Normal"><a name="pID0E0TZB0HA">Outer </a><span class="Code_Char">WHERE</span> filters allow aliases to be defined as link paths that can be used in multiple contexts. For example, assume the following alias is defined:</div>
+      <div class="Code"><a name="pID0E0SZB0HA">"Person": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0RZB0HA">aliases: {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QZB0HA">"$SalesPeople": {"expression": "</a><span style="color: #008000">WHERE(Department:sales)</span>"}</div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0PZB0HA">}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0OZB0HA">...</a></div>
+      <div class="Code"><a name="pID0E0NZB0HA">}</a></div>
+      <div class="Normal"><a name="pID0E0MZB0HA">The alias </a><span class="Code_Char">$SalesPeople</span> can be used as a selection expression or link filter whenever the expression scope is <span class="Code_Char">Person</span>. For example, the alias can be used in the following queries:</div>
+      <div class="Code"><a name="pID0E0LZB0HA">GET /Msgs/Person/_query?q=</a><span style="color: #3366FF">$SalesPeople</span></div>
+      <div class="Code"><a name="pID0E0KZB0HA">GET /Msgs/Person/_query?q=</a><span style="color: #3366FF">$SalesPeople</span>.WHERE(Office:aliso)</div>
+      <div class="Code"><a name="pID0E0JZB0HA">GET /Msgs/Message/_query?q=Sender.Person.</a><span style="color: #3366FF">$SalesPeople</span></div>
+      <div class="Normal"><a name="pID0E0IZB0HA">In the first two cases, the aliases expression </a><span class="Code_Char">WHERE(Department:sales)</span> filters perspective <span class="Code_Char">Person</span> objects. In the third case, the expression filters <span class="Code_Char">Person</span> objects connected to a perspective <span class="Code_Char">Message</span> object via <span class="Code_Char">Sender.Person</span>.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

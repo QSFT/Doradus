@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>The Msgs Sample Application</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.005.html">Spider Database Overview</a> : The Msgs Sample Application</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0WSC0HA">The </a><span class="Code_Char" style="font-size: 12pt">Msgs</span><span style="font-size: 12pt"> </span>Sample Application</div>
+      <div class="Normal"><a name="pID0E0VSC0HA">To illustrate features, a sample application called </a><span class="Code_Char">Msgs</span> is used. The <span class="Code_Char">Msgs</span> application schema is depicted below:</div>
+      <div class="Normal"><a name="pID0E0USC0HA"><img class="Default" src="images/Doradus%20Spider%20Database%20-%20v2.3.1.009.1.jpg" width="632" height="491" style="display: inline; top: 0pt" alt="" /></a></div>
+      <div class="Normal"><a name="pID0E0TSC0HA">The tables in the </a><span class="Code_Char">Msgs</span> application are used as follows:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0SSC0HA">Message</a></span>: Holds one object per <span style="font-style: italic">sent</span> email. Each object stores values such as <span class="Code_Char">Body</span>, <span class="Code_Char">Subject</span>, <span class="Code_Char">Size</span>, and <span class="Code_Char">SendDate</span> and links to <span class="Code_Char">Participant</span> objects in three different roles: sender, internal recipient, and external recipient.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0RSC0HA">Participant</a></span>: Represents a sender or receiver of the linked <span class="Code_Char">Message</span>. Holds the <span class="Code_Char">ReceiptDate</span> timestamp for that participant and links to identifying <span class="Code_Char">Person</span> and <span class="Code_Char">Address</span> objects.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0QSC0HA">Address</a></span>: Stores each participant’s email address, a redundant link to <span class="Code_Char">Person</span>, and a link to a <span class="Code_Char">Domain</span> object.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0PSC0HA">Person</a></span>: Stores person Directory Server properties such as a <span class="Code_Char">Name</span>, <span class="Code_Char">Department</span>, and <span class="Code_Char">Office</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0OSC0HA">Domain</a></span>: Stores unique domain names such as “yahoo.com”.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0NSC0HA">In the diagram, relationships are represented by their link name pairs with arrows pointing to each link’s </a><span style="font-style: italic">extent</span>. For example, <span class="Code_Char">Sender</span> is a link owned by <span class="Code_Char">Message</span>, pointing to <span class="Code_Char">Participant</span>, and <span class="Code_Char">MessageAsSender</span> is the inverse link of the same relationship. The <span class="Code_Char">Manager</span> and <span class="Code_Char">DirectReports</span> links form a <span style="font-style: italic">reflexive</span> relationship within <span class="Code_Char">Person</span>, representing an org chart.</div>
+      <div class="Normal"><a name="pID0E0MSC0HA">The schema for the </a><span class="Code_Char">Msgs</span> application is shown below in XML:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0LSC0HA">&lt;application name="</a><span style="color: #3366FF">Msgs</span>"&gt;</div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0KSC0HA">&lt;key&gt;MsgsKey&lt;/key&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0JSC0HA">&lt;options&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0ISC0HA">&lt;option name="</a><span style="color: #3366FF">AutoTables</span>"&gt;false&lt;/option&gt;</div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0HSC0HA">&lt;option name="</a><span style="color: #3366FF">StorageService</span>"&gt;SpiderService&lt;/option&gt;</div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0GSC0HA">&lt;/options&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0FSC0HA">&lt;tables&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0ESC0HA">&lt;table name="</a><span style="color: #3366FF">Address</span>"&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0DSC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0CSC0HA">&lt;field name="</a><span style="color: #3366FF">Domain</span>" type="LINK" inverse="Addresses" table="Domain"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0BSC0HA">&lt;field name="</a><span style="color: #3366FF">Messages</span>" type="LINK" inverse="MessageAddress" table="Participant" sharded="true"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0ASC0HA">&lt;field name="</a><span style="color: #3366FF">Name</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E06RC0HA">&lt;field name="</a><span style="color: #3366FF">Person</span>" type="LINK" inverse="MessageAddresses" table="Person"/&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E05RC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E04RC0HA">&lt;/table&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E03RC0HA">&lt;table name="</a><span style="color: #3366FF">Domain</span>"&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E02RC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E01RC0HA">&lt;field name="</a><span style="color: #3366FF">Addresses</span>" type="LINK" inverse="Domain" table="Address"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0ZRC0HA">&lt;field name="</a><span style="color: #3366FF">InternalID</span>" type="TEXT" analyzer="NullAnalyzer"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0YRC0HA">&lt;field name="</a><span style="color: #3366FF">IsInternal</span>" type="BOOLEAN"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0XRC0HA">&lt;field name="</a><span style="color: #3366FF">Name</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0WRC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0VRC0HA">&lt;/table&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0URC0HA">&lt;table name="</a><span style="color: #3366FF">Message</span>"&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0TRC0HA">&lt;options&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0SRC0HA">&lt;option name="</a><span style="color: #3366FF">sharding-field</span>"&gt;SendDate&lt;/option&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0RRC0HA">&lt;option name="</a><span style="color: #3366FF">sharding-granularity</span>"&gt;DAY&lt;/option&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0QRC0HA">&lt;option name="</a><span style="color: #3366FF">retention-age</span>"&gt;5 YEARS&lt;/option&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0PRC0HA">&lt;option name="</a><span style="color: #3366FF">sharding-start</span>"&gt;2010-07-17&lt;/option&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0ORC0HA">&lt;option name="</a><span style="color: #3366FF">aging-field</span>"&gt;SendDate&lt;/option&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0NRC0HA">&lt;option name="aging-check-frequency"&gt;3 DAYS&lt;/option&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0MRC0HA">&lt;/options&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0LRC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0KRC0HA">&lt;field name="</a><span style="color: #3366FF">Body</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0JRC0HA">&lt;field name="</a><span style="color: #3366FF">Participants</span>"&gt;</div>
+      <div class="Code" style="margin-left: 126pt; text-indent: -18pt"><a name="pID0E0IRC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 144pt; text-indent: -18pt"><a name="pID0E0HRC0HA">&lt;field name="</a><span style="color: #3366FF">Recipients</span>"&gt;</div>
+      <div class="Code" style="margin-left: 162pt; text-indent: -18pt"><a name="pID0E0GRC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 180pt; text-indent: -18pt"><a name="pID0E0FRC0HA">&lt;field name="</a><span style="color: #3366FF">ExternalRecipients</span>" type="LINK" inverse="MessageAsExternalRecipient" table="Participant"/&gt;</div>
+      <div class="Code" style="margin-left: 180pt; text-indent: -18pt"><a name="pID0E0ERC0HA">&lt;field name="</a><span style="color: #3366FF">InternalRecipients</span>" type="LINK" inverse="MessageAsInternalRecipient" table="Participant"/&gt;</div>
+      <div class="Code" style="margin-left: 162pt; text-indent: -18pt"><a name="pID0E0DRC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 144pt; text-indent: -18pt"><a name="pID0E0CRC0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 144pt; text-indent: -18pt"><a name="pID0E0BRC0HA">&lt;field name="</a><span style="color: #3366FF">Sender</span>" type="LINK" inverse="MessageAsSender" table="Participant"/&gt;</div>
+      <div class="Code" style="margin-left: 126pt; text-indent: -18pt"><a name="pID0E0ARC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E06QC0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E05QC0HA">&lt;field name="</a><span style="color: #3366FF">SendDate</span>" type="TIMESTAMP"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E04QC0HA">&lt;field name="</a><span style="color: #3366FF">Size</span>" type="INTEGER"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E03QC0HA">&lt;field name="</a><span style="color: #3366FF">Subject</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E02QC0HA">&lt;field name="</a><span style="color: #3366FF">Tags</span>" type="TEXT" collection="true"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E01QC0HA">&lt;field name="</a><span style="color: #3366FF">ThreadID</span>" type="TEXT" analyzer="OpaqueTextAnalyzer"/&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0ZQC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0YQC0HA">&lt;aliases&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0XQC0HA">&lt;alias name="</a><span style="color: #3366FF">$SalesEmails</span>" expression="Sender.Person.WHERE(Department:Sales)" /&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0WQC0HA">&lt;/aliases&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0VQC0HA">&lt;/table&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0UQC0HA">&lt;table name="</a><span style="color: #3366FF">Participant</span>"&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0TQC0HA">&lt;options&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0SQC0HA">&lt;option name="</a><span style="color: #3366FF">sharding-field</span>"&gt;ReceiptDate&lt;/option&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0RQC0HA">&lt;option name="</a><span style="color: #3366FF">sharding-granularity</span>"&gt;DAY&lt;/option&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0QQC0HA">&lt;option name="</a><span style="color: #3366FF">sharding-start</span>"&gt;2012-07-17&lt;/option&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0PQC0HA">&lt;/options&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0OQC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0NQC0HA">&lt;field name="</a><span style="color: #3366FF">MessageAddress</span>" type="LINK" inverse="Messages" table="Address"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0MQC0HA">&lt;field name="</a><span style="color: #3366FF">MessageAsExternalRecipient</span>" type="LINK" inverse="ExternalRecipients" table="Message"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0LQC0HA">&lt;field name="</a><span style="color: #3366FF">MessageAsInternalRecipient</span>" type="LINK" inverse="InternalRecipients" table="Message"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0KQC0HA">&lt;field name="</a><span style="color: #3366FF">MessageAsSender</span>" type="LINK" inverse="Sender" table="Message"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0JQC0HA">&lt;field name="</a><span style="color: #3366FF">Person</span>" type="LINK" inverse="Messages" table="Person"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0IQC0HA">&lt;field name="</a><span style="color: #3366FF">ReceiptDate</span>" type="TIMESTAMP"/&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0HQC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0GQC0HA">&lt;/table&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0FQC0HA">&lt;table name="</a><span style="color: #3366FF">Person</span>"&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0EQC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0DQC0HA">&lt;field name="</a><span style="color: #3366FF">DirectReports</span>" type="LINK" inverse="Manager" table="Person"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0CQC0HA">&lt;field name="</a><span style="color: #3366FF">FirstName</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0BQC0HA">&lt;field name="</a><span style="color: #3366FF">LastName</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0AQC0HA">&lt;field name="</a><span style="color: #3366FF">Location</span>"&gt;</div>
+      <div class="Code" style="margin-left: 126pt; text-indent: -18pt"><a name="pID0E06PC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 144pt; text-indent: -18pt"><a name="pID0E05PC0HA">&lt;field name="</a><span style="color: #3366FF">Department</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 144pt; text-indent: -18pt"><a name="pID0E04PC0HA">&lt;field name="</a><span style="color: #3366FF">Office</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 126pt; text-indent: -18pt"><a name="pID0E03PC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E02PC0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E01PC0HA">&lt;field name="</a><span style="color: #3366FF">Manager</span>" type="LINK" inverse="DirectReports" table="Person"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0ZPC0HA">&lt;field name="</a><span style="color: #3366FF">MessageAddresses</span>" type="LINK" inverse="Person" table="Address"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0YPC0HA">&lt;field name="</a><span style="color: #3366FF">Messages</span>" type="LINK" inverse="Person" table="Participant"/&gt;</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0XPC0HA">&lt;field name="</a><span style="color: #3366FF">Name</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0WPC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0VPC0HA">&lt;/table&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0UPC0HA">&lt;/tables&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0TPC0HA">&lt;/application&gt;</a></div>
+      <div class="Normal"><a name="pID0E0SPC0HA">The same schema in JSON is shown below:</a></div>
+      <div class="Code"><a name="pID0E0RPC0HA">{"</a><span style="color: #3366FF">Msgs</span>": {</div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0QPC0HA">"key": "MsgsKey",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0PPC0HA">"options": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OPC0HA">"</a><span style="color: #3366FF">StorageService</span>": "SpiderService",</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NPC0HA">"</a><span style="color: #3366FF">AutoTables</span>": "false"</div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0MPC0HA">},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0LPC0HA">"tables": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KPC0HA">"</a><span style="color: #3366FF">Message</span>": {</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0JPC0HA">"options": {</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0IPC0HA">"</a><span style="color: #3366FF">sharding-field</span>": "SendDate",</div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0HPC0HA">"</a><span style="color: #3366FF">sharding-granularity</span>": "DAY",</div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0GPC0HA">"</a><span style="color: #3366FF">sharding-start</span>": "2010-07-17",</div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0FPC0HA">"</a><span style="color: #3366FF">aging-field</span>": "SendDate",</div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0EPC0HA">"</a><span style="color: #3366FF">retention-age</span>": "5 YEARS",</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0DPC0HA">"</a><span style="color: #3366FF">aging-check-frequency</span>": "3 DAYS"</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0CPC0HA">},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0BPC0HA">"fields": {</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0APC0HA">"</a><span style="color: #3366FF">Body</span>": {"type": "TEXT"},</div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E06OC0HA">"</a><span style="color: #3366FF">Participants</span>": {</div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E05OC0HA">"fields": {</a></div>
+      <div class="Code" style="margin-left: 144pt; text-indent: -18pt"><a name="pID0E04OC0HA">"</a><span style="color: #3366FF">Sender</span>": {"type": "LINK", "table": "Participant", "inverse": "MessageAsSender"},</div>
+      <div class="Code" style="margin-left: 144pt; text-indent: -18pt"><a name="pID0E03OC0HA">"</a><span style="color: #3366FF">Recipients</span>": {</div>
+      <div class="Code" style="margin-left: 162pt; text-indent: -18pt"><a name="pID0E02OC0HA">"fields": {</a></div>
+      <div class="Code" style="margin-left: 180pt; text-indent: -18pt"><a name="pID0E01OC0HA">"</a><span style="color: #3366FF">ExternalRecipients</span>": {"type": "LINK", "table": "Participant", "inverse": "MessageAsExternalRecipient"},</div>
+      <div class="Code" style="margin-left: 180pt; text-indent: -18pt"><a name="pID0E0ZOC0HA">"</a><span style="color: #3366FF">InternalRecipients</span>": {"type": "LINK", "table": "Participant", "inverse": "MessageAsInternalRecipient"}</div>
+      <div class="Code" style="margin-left: 144pt"><a name="pID0E0YOC0HA">}</a></div>
+      <div class="Code" style="margin-left: 126pt"><a name="pID0E0XOC0HA">}</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0WOC0HA">}</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0VOC0HA">},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0UOC0HA">"</a><span style="color: #3366FF">SendDate</span>": {"type": "TIMESTAMP"},</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0TOC0HA">"</a><span style="color: #3366FF">Size</span>": {"type": "INTEGER"},</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0SOC0HA">"</a><span style="color: #3366FF">Subject</span>": {"type": "TEXT"},</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ROC0HA">"</a><span style="color: #3366FF">Tags</span>": {"collection": "true", "type": "TEXT"},</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0QOC0HA">"</a><span style="color: #3366FF">ThreadID</span>": {"type": "TEXT", "analyzer": "OpaqueTextAnalyzer"}</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0POC0HA">},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OOC0HA">"aliases": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0NOC0HA">"</a><span style="color: #3366FF">$SalesEmails</span>": {"expression": "Sender.Person.WHERE(Department:Sales)"}</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0MOC0HA">},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0LOC0HA">"Participant": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0KOC0HA">"options": {</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0JOC0HA">"</a><span style="color: #3366FF">sharding-field</span>": "ReceiptDate",</div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0IOC0HA">"</a><span style="color: #3366FF">sharding-granularity</span>": "DAY",</div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0HOC0HA">"</a><span style="color: #3366FF">sharding-start</span>": "2012-07-17"</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0GOC0HA">},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0FOC0HA">"fields": {</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0EOC0HA">"</a><span style="color: #3366FF">MessageAddress</span>": {"type": "LINK", "table": "Address", "inverse": "Messages"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0DOC0HA">"</a><span style="color: #3366FF">MessageAsExternalRecipient</span>": {"type": "LINK", "table": "Message", "inverse": "ExternalRecipients"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0COC0HA">"</a><span style="color: #3366FF">MessageAsInternalRecipient</span>": {"type": "LINK", "table": "Message", "inverse": "InternalRecipients"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0BOC0HA">"</a><span style="color: #3366FF">MessageAsSender</span>": {"type": "LINK", "table": "Message", "inverse": "Sender"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0AOC0HA">"</a><span style="color: #3366FF">Person</span>": {"type": "LINK", "table": "Person", "inverse": "Messages"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E06NC0HA">"</a><span style="color: #3366FF">ReceiptDate</span>": {"type": "TIMESTAMP"}</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E05NC0HA">}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E04NC0HA">},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03NC0HA">"</a><span style="color: #3366FF">Address</span>": {</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E02NC0HA">"fields": {</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E01NC0HA">"</a><span style="color: #3366FF">Domain</span>": {"type": "LINK", "table": "Domain", "inverse": "Addresses"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0ZNC0HA">"</a><span style="color: #3366FF">Messages</span>": {"type": "LINK", "table": "Participant", "inverse": "MessageAddress", "sharded": "true"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0YNC0HA">"</a><span style="color: #3366FF">Name</span>": {"type": "TEXT"},</div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0XNC0HA">"</a><span style="color: #3366FF">Person</span>": {"type": "LINK", "table": "Person", "inverse": "MessageAddresses"}</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0WNC0HA">}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VNC0HA">},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0UNC0HA">"</a><span style="color: #3366FF">Person</span>": {</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0TNC0HA">"fields": {</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0SNC0HA">"</a><span style="color: #3366FF">DirectReports</span>": {"type": "LINK", "table": "Person", "inverse": "Manager"},</div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0RNC0HA">"</a><span style="color: #3366FF">FirstName</span>": {"type": "TEXT"},</div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0QNC0HA">"</a><span style="color: #3366FF">LastName</span>": {"type": "TEXT"},</div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0PNC0HA">"</a><span style="color: #3366FF">Location</span>": {</div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0ONC0HA">"fields": {</a></div>
+      <div class="Code" style="margin-left: 126pt"><a name="pID0E0NNC0HA">"</a><span style="color: #3366FF">Department</span>": {"type": "TEXT"},</div>
+      <div class="Code" style="margin-left: 126pt"><a name="pID0E0MNC0HA">"</a><span style="color: #3366FF">Office</span>": {"type": "TEXT"}</div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0LNC0HA">}</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0KNC0HA">},</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0JNC0HA">"</a><span style="color: #3366FF">Manager</span>": {"type": "LINK", "table": "Person", "inverse": "DirectReports"},</div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0INC0HA">"</a><span style="color: #3366FF">MessageAddresses</span>": {"type": "LINK", "table": "Address", "inverse": "Person"},</div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0HNC0HA">"</a><span style="color: #3366FF">Messages</span>": {"type": "LINK", "table": "Participant", "inverse": "Person"},</div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0GNC0HA">"</a><span style="color: #3366FF">Name</span>": {"type": "TEXT"}</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0FNC0HA">}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ENC0HA">},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0DNC0HA">"</a><span style="color: #3366FF">Domain</span>": {</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0CNC0HA">"fields": {</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0BNC0HA">"</a><span style="color: #3366FF">Addresses</span>": {"type": "LINK", "table": "Address", "inverse": "Domain"},</div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0ANC0HA">"</a><span style="color: #3366FF">InternalID</span>": {"type": "text", "analyzer": "NullAnalyzer"},</div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E06MC0HA">"</a><span style="color: #3366FF">IsInternal</span>": {"type": "BOOLEAN"},</div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E05MC0HA">"</a><span style="color: #3366FF">Name</span>": {"type": "TEXT"}</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E04MC0HA">}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03MC0HA">}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E02MC0HA">}</a></div>
+      <div class="Code"><a name="pID0E01MC0HA">}</a></div>
+      <div class="Normal"><a name="pID0E0ZMC0HA">Some highlights of this schema (details described later):</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0YMC0HA">The application-level option </a><span class="Code_Char">StorageService</span> explicitly assigns the application to the <span class="Code_Char">SpiderService</span>. The <span class="Code_Char">AutoTables</span> option is disabled.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0XMC0HA">The </a><span class="Code_Char">Message</span> table uses these unique features:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 54pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-family: &quot;Courier New&quot;">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0WMC0HA">Table-level sharding is enabled via the </a><span class="Code_Char">sharding-field</span>, <span class="Code_Char">sharding-granularity</span>, and <span class="Code_Char">sharding-start</span> options, and automatic data aging is enabled via the <span class="Code_Char">aging-field</span> and <span class="Code_Char">retention-age</span> options. The data aging check frequency is set to 3 days.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 54pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-family: &quot;Courier New&quot;">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0VMC0HA">A group field called </a><span class="Code_Char">Participants</span> contains the link field <span class="Code_Char">Sender</span> and a second-level group called <span class="Code_Char">Recipients</span>, which contains the links <span class="Code_Char">InternalRecipients</span> and <span class="Code_Char">ExternalRecipients</span>. All three links point to the <span class="Code_Char">Participant</span> table, allowing the <span class="Code_Char">Participants</span> and <span class="Code_Char">Recipients</span> group fields to be used in DQL quantifiers.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 54pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-family: &quot;Courier New&quot;">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0UMC0HA">The </a><span class="Code_Char">ThreadID</span> field is assigned the non-default <span class="Code_Char">OpaqueTextAnalyzer</span>, which means it can only be searched for whole values (not terms).</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 54pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-family: &quot;Courier New&quot;">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0TMC0HA">An alias called </a><span class="Code_Char">$SalesEmails</span> is assigned the expression <span class="Code_Char">Sender.Person.WHERE(Department:Sales)</span>. <span class="Code_Char">$SalesEmails</span> is dynamically expanded when used in DQL queries.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0SMC0HA">The </a><span class="Code_Char">Participant</span> table uses table-level sharding similarly as the <span class="Code_Char">Message</span> table.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0RMC0HA">The </a><span class="Code_Char">Address</span> table declares the <span class="Code_Char">Messages</span> link as <span class="Code_Char">sharded</span> to leverage its target table’s sharding.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0QMC0HA">The </a><span class="Code_Char">Domain</span> table declares the <span class="Code_Char">InternalID</span> field with the non-default <span class="Code_Char">NullAnalyzer</span>. This means the <span class="Code_Char">InternalID</span> can be returned in queries but is not indexed and cannot be searched.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>The Sharded Property</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.010.html">Spider Data Model</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.021.html">Fields</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.032.html">Link Fields</a> : The Sharded Property</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_4"><a name="pID0E04EC0HA">The </a><span style="font-family: Consolas">Sharded</span> Property</div>
+      <div class="Normal"><a name="pID0E03EC0HA">The table sharding feature described earlier can benefit certain </a><span style="font-style: italic">high fan-out</span> links. These are links that have a large number of values (thousands to millions). When a high fan-out link points to a sharded table, the link can also be declared as <span style="font-style: italic">sharded</span> by settings its <span class="Code_Char">sharded</span> property to true. Example:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E02EC0HA">&lt;table name="Address"&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E01EC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZEC0HA">&lt;field name="Name" type="TEXT"/&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0YEC0HA">&lt;field name="Messages" type="LINK" inverse="MessageAddress" table="Participant" </a><span style="color: #3366FF">sharded="true"</span>/&gt;</div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0XEC0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0WEC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0VEC0HA">&lt;/table&gt;</a></div>
+      <div class="Normal"><a name="pID0E0UEC0HA">In this example, the </a><span class="Code_Char">Messages</span> link connects each <span class="Code_Char">Address</span> object to related <span class="Code_Char">Participant</span> objects. Since a participant exists for each sender or recipient of every message, some address objects could be linked to thousands or millions of participant objects. Because the <span class="Code_Char">Messages</span> extent table, <span class="Code_Char">Address</span>, is declared as sharded, the <span class="Code_Char">Messages</span> link can be declared as sharded. That is, only links whose target table is sharded can be declared as sharded.</div>
+      <div class="Normal"><a name="pID0E0TEC0HA">A sharded link’s values are stored in sharded term vectors similarly as sharded scalar fields. This improves performance for queries that include a selection clause on the link’s owning table </a><span style="text-decoration: underline">and</span> a clause that uses the referenced table’s sharding field. Example:</div>
+      <div class="Code"><a name="pID0E0SEC0HA">GET /Msgs/Address/_query?q=Name:dell AND Messages.ReceiptDate=[2013-01-01 TO 2013-01-31]</a></div>
+      <div class="Normal"><a name="pID0E0REC0HA">This query searches for </a><span class="Code_Char">Address</span> objects whose <span class="Code_Char">Name</span> contains the term “dell” and that are connected to participants whose <span class="Code_Char">ReceiptDate</span> is in January, 2013. In other words, this query lists all addresses that sent or received a message in a specific time frame. Queries that fit this pattern are more efficient for high fan-out links declared as sharded.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

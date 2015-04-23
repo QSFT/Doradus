@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Outer WHERE Function</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.074.html">OLAP Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.082.html">Grouping Parameter</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.088.html">Special Grouping Functions</a> : Outer WHERE Function</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_4"><a name="pID0E0310HA">Outer WHERE Function</a></div>
+      <div class="Normal"><a name="pID0E0210HA">The </a><span class="Code_Char">WHERE</span> filter usually <span style="text-decoration: underline">follows</span> a link name to select <span style="font-style: italic">related</span> objects connected via that link. However, a link path can <span style="text-decoration: underline">begin</span> when a <span class="Code_Char">WHERE</span> filter, in which case it selects <span style="font-style: italic">perspective</span> objects. For example:</div>
+      <div class="Code"><a name="pID0E0110HA">GET /Email/Person/_aggregate?range=0&amp;m=COUNT(*)&amp;f=</a><span style="color: #3366FF">WHERE(Department:sales)</span>.Office</div>
+      <div class="Normal"><a name="pID0E0Z10HA">In this query, the grouping field is </a><span class="Code_Char">Office</span>. But because it is <span style="font-style: italic">prefixed</span> with a <span class="Code_Char">WHERE</span> filter, the filter is applied to perspective objects (<span class="Code_Char">Person</span>). Following an outer <span class="Code_Char">WHERE</span> filter, the <span style="font-style: italic">scope</span> of the link path remains at the query perspective, consequently the subsequent link path or additional <span class="Code_Char">WHERE</span> filters must be applicable to the query perspective.</div>
+      <div class="Normal"><a name="pID0E0Y10HA">When the grouping field is used with a grouping function such as </a><span class="Code_Char">BATCH</span>, <span class="Code_Char">TERMS</span>, or <span class="Code_Char">TOP</span>, the outer <span class="Code_Char">WHERE</span> field is always specified as a prefix to the grouping field. Examples:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0X10HA">GET /Email/Person/_aggregate?range=0&amp;m=COUNT(*)&amp;f=TOP(6,</a><span style="color: #3366FF">WHERE(Department:sales).</span>Office)</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0W10HA">GET /Email/Message/_aggregate?range=0&amp;m=COUNT(*)<br />&amp;f=BATCH(</a><span style="color: #3366FF">WHERE(Tags=AfterHours).</span>Size,1000,10000,100000)</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0V10HA">GET /Email/Message/_aggregate?range=0&amp;m=COUNT(*)&amp;f=TOP(5,TERMS(</a><span style="color: #3366FF">WHERE(Size&gt;100000).</span>Subject))</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0U10HA">GET /Email/Message/_aggregate?range=0&amp;m=COUNT(*)<br />&amp;f=TERMS(</a><span style="color: #3366FF">WHERE(Size&gt;100000).</span>Subject),<span style="color: #3366FF">WHERE(Sender.Person.LastName:Cuthill)</span>.Tags</div>
+      <div class="Normal"><a name="pID0E0T10HA">If present, the query parameter (&amp;q) is used first to select objects, the total number of which is reflected in the </a><span class="Code_Char">&lt;totalobjects&gt;</span> element in the query results. Each outer <span class="Code_Char">WHERE</span> function is used to further filter objects passed to the calculations of the corresponding aggregate groups.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

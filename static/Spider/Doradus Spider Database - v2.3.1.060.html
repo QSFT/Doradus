@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>PERIOD Function</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.037.html">Doradus Query Language (DQL)</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.057.html">Timestamp Clauses</a> : PERIOD Function</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0B3B0HA">PERIOD Function</a></div>
+      <div class="Normal"><a name="pID0E0A3B0HA">The </a><span class="Code_Char">PERIOD</span> function generates a timestamp value range, computed relative to the current time. It is a shortcut for commonly-used range clauses that occur close to (or relative to) the current date/time. A timestamp field can be compared to a <span class="Code_Char">PERIOD</span> function to see if its value falls within the corresponding range. A timestamp range clause using the <span class="Code_Char">PERIOD</span> function uses the following form:</div>
+      <div class="Code"><span style="font-style: italic"><a name="pID0E062B0HA">field = </a></span>PERIOD([&lt;timezone&gt;]).&lt;range&gt;</div>
+      <div class="Normal"><a name="pID0E052B0HA">With no parameter, the </a><span class="Code_Char">PERIOD</span> function computes a timestamp range relative to a snapshot of the current time in UTC. If a &lt;timezone&gt; parameter is provided, the UTC time is adjusted up or down to the specified time zone. The &lt;timezone&gt; can be an abbreviation (<span class="Code_Char">PST</span>) or a name (<span class="Code_Char">America/Los_Angeles</span>). The allowable values for a &lt;timezone&gt; abbreviation or name are those recognized by the Java function <span class="Code_Char">java.util.TimeZone.getAvailableIDs()</span>.</div>
+      <div class="Normal"><a name="pID0E042B0HA">The &lt;range&gt; parameter is a mnemonic that chooses how the range is computed relative to the “now” snapshot. There are two types of range mnemonics: </a><span class="Code_Char">THIS</span> mnemonics and <span class="Code_Char">LAST</span> mnemonics. All mnemonics must be uppercase.</div>
+      <div class="Normal"><span class="Code_Char"><a name="pID0E032B0HA">THIS</a></span> mnemonics compute a range <span style="font-style: italic">around</span> the current time, that is a range that includes the current time. The recognized <span class="Code_Char">THIS</span> mnemonics are:</div>
+      <div class="Code"><a name="pID0E022B0HA">THISMINUTE</a></div>
+      <div class="Code"><a name="pID0E012B0HA">THISHOUR</a></div>
+      <div class="Code"><a name="pID0E0Z2B0HA">TODAY</a></div>
+      <div class="Code"><a name="pID0E0Y2B0HA">THISWEEK</a></div>
+      <div class="Code"><a name="pID0E0X2B0HA">THISMONTH</a></div>
+      <div class="Code"><a name="pID0E0W2B0HA">THISYEAR</a></div>
+      <div class="Normal"><a name="pID0E0V2B0HA">Note that </a><span class="Code_Char">TODAY</span> is used as the mnemonic for “this day”. <span class="Code_Char">THIS</span> mnemonics use no additional parameters. They define a timeframe (minute, hour, day, week, month, or year) that includes the current time. The timeframe is inclusive of the timeframe start but exclusive of the timeframe end. For example, if the current time is <span class="Code_Char">2013-12-17 12:40:13</span>, the function <span class="Code_Char">PERIOD.THISHOUR</span> defines the range:</div>
+      <div class="Code"><span class="Code_Char"><a name="pID0E0U2B0HA">[</a></span>"<span class="Code_Char">2013-12-17 12:00:00</span>"<span class="Code_Char"> TO </span>"<span class="Code_Char">2013-12-17 13:00:00</span>"<span class="Code_Char">}</span></div>
+      <div class="Normal"><a name="pID0E0T2B0HA">Note the exclusive bracket (}) on the right hand side.</a></div>
+      <div class="Normal"><span class="Code_Char"><a name="pID0E0S2B0HA">LAST</a></span> mnemonics compute a range that <span style="font-style: italic">ends</span> at the current time. That is, they choose a timeframe that leads up to “now”, going back an exact number of units. The recognized <span class="Code_Char">LAST</span> mnemonics are:</div>
+      <div class="Code"><a name="pID0E0R2B0HA">LASTMINUTE</a></div>
+      <div class="Code"><a name="pID0E0Q2B0HA">LASTHOUR</a></div>
+      <div class="Code"><a name="pID0E0P2B0HA">LASTDAY</a></div>
+      <div class="Code"><a name="pID0E0O2B0HA">LASTWEEK</a></div>
+      <div class="Code"><a name="pID0E0N2B0HA">LASTMONTH</a></div>
+      <div class="Code"><a name="pID0E0M2B0HA">LASTYEAR</a></div>
+      <div class="Normal"><a name="pID0E0L2B0HA">By default, the </a><span class="Code_Char">LAST</span> mnemonics reach back one unit: 1 minute, 1 hour, etc. Optionally, they allow an integral parameter that extends the timeframe back a whole number of units. For example, <span class="Code_Char">LASTMINUTE(2)</span> means “within the last 2 minutes”, <span class="Code_Char">LASTMONTH(3)</span> means “within the last 3 months”, etc. <span class="Code_Char">LAST</span> periods are inclusive at both ends of the range. For example, if the current time is <span class="Code_Char">2013-12-17 12:40:13</span>, the function <span class="Code_Char">PERIOD.LASTHOUR</span> defines the range:</div>
+      <div class="Code"><a name="pID0E0K2B0HA">["</a><span class="Code_Char">2013-12-17 11:40:13</span>"<span class="Code_Char"> TO </span>"<span class="Code_Char">2013-12-17 12:40:13</span>"<span class="Code_Char">]</span></div>
+      <div class="Normal"><a name="pID0E0J2B0HA">Example timestamp clauses using the </a><span class="Code_Char">PERIOD</span> function are shown below:</div>
+      <div class="Code"><a name="pID0E0I2B0HA">ExpireDate = PERIOD().TODAY	// Field has the same year, month and date as now (UTC)</a></div>
+      <div class="Code"><a name="pID0E0H2B0HA">CreationStamp = PERIOD().LASTWEEK	// Field falls within the last week (UTC)</a></div>
+      <div class="Code"><a name="pID0E0G2B0HA">MaturityDate = PERIOD(PST).LASTMONTH(2)	// Field falls within the last 2 months (PST)</a></div>
+      <div class="Code"><a name="pID0E0F2B0HA">SendDate = PERIOD(Europe/Moscow).LASTYEAR(3)	// Field falls within the last 3 years (Moscow time)</a></div>
+      <div class="Normal"><a name="pID0E0E2B0HA">Example ranges generated by each mnemonic are given below. For illustrative purposes, assume that the current time on the Doradus server to which the </a><span class="Code_Char">PERIOD</span> function is submitted is <span class="Code_Char">2013-12-04 01:24:35 UTC</span>. If a &lt;timezone&gt; parameter is included, the “now” value would first be adjusted to the corresponding timezone, and the range would be computed relative to the adjusted value.</div>
+      <table class="Table_Normal" style="margin-left: 36pt; width: 433.1pt" cellspacing="0" summary="">
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle; width: 63.05pt">
+            <div class="Normal" style="margin-bottom: 0pt"><span style="font-weight: bold"><a name="pID0EACM0D2B0HA">&lt;range&gt;<br />Mnemonic</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle; width: 141.4pt">
+            <div class="Normal" style="margin-bottom: 0pt"><span style="font-weight: bold"><a name="pID0EABM0D2B0HA">Timestamp Range</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle; width: 228.65pt">
+            <div class="Normal" style="margin-bottom: 0pt"><span style="font-weight: bold"><a name="pID0EAAM0D2B0HA">Comments</a></span></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACL0D2B0HA">THISMINUTE</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABL0D2B0HA">["2013-12-04 01:24:</a><span style="color: #3366FF">00</span>" TO<br /> "2013-12-04 01:<span style="color: #3366FF">25</span>:00"}</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAL0D2B0HA">Same year, month, day, hour, and minute as now.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACK0D2B0HA">LASTMINUTE</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABK0D2B0HA">["2013-12-04 01:</a><span style="color: #3366FF">23</span>:35" TO<br /> "2013-12-04 01:24:35"]</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAK0D2B0HA">Within the last minute (60 seconds).</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACJ0D2B0HA">THISHOUR</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABJ0D2B0HA">["2013-12-04 01:</a><span style="color: #3366FF">00:00</span>" TO<br /> "2013-12-04 <span style="color: #3366FF">02:00:00</span>"}</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAJ0D2B0HA">Same year, month, day, and hour as now.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACI0D2B0HA">LASTHOUR</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABI0D2B0HA">["2013-12-04 </a><span style="color: #3366FF">00:24:35</span>" TO<br /> "2013-12-04 01:24:35"]</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAI0D2B0HA">Within the last hour (60 minutes).</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACH0D2B0HA">TODAY</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABH0D2B0HA">["2013-12-04 </a><span style="color: #3366FF">00:00:00</span>" TO<br /> "2013-12-<span style="color: #3366FF">05</span> <span style="color: #3366FF">00:00:00</span>"}</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAH0D2B0HA">Same year, month, and day as now.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACG0D2B0HA">LASTDAY</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABG0D2B0HA">["2013-12-</a><span style="color: #3366FF">03</span> 01:24:35" TO<br /> "2013-12-04 01:24:35"]</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAG0D2B0HA">Within the last day (24 hours).</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACF0D2B0HA">THISWEEK</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABF0D2B0HA">["2013-12-</a><span style="color: #3366FF">02 00:00:00</span>" TO<br /> "2013-12-<span style="color: #3366FF">09 00:00:00</span>"}</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAF0D2B0HA">Same week as now (based on ISO 8601).</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACE0D2B0HA">LASTWEEK</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABE0D2B0HA">["2013-</a><span style="color: #3366FF">11-27</span> 01:24:35" TO<br /> "2013-12-04 01:24:35"]</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAE0D2B0HA">Within the last 7 days.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACD0D2B0HA">THISMONTH</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABD0D2B0HA">["2013-12-</a><span style="color: #3366FF">00 00:00:00</span>" TO<br /> "201<span style="color: #3366FF">4-01-01 00:00:00</span>"}</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAD0D2B0HA">Same year and month as now.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACC0D2B0HA">LASTMONTH</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABC0D2B0HA">["2013-</a><span style="color: #3366FF">11-04</span> 01:24:35" TO<br /> "2013-12-04 01:24:35"]</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAC0D2B0HA">Within the last calendar month.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACB0D2B0HA">THISYEAR</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABB0D2B0HA">["2013-</a><span style="color: #3366FF">01-01 00:00:00</span>" TO<br /> "201<span style="color: #3366FF">4-01-01 00:00:00</span>"}</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAB0D2B0HA">Same year as now.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EACA0D2B0HA">LASTYEAR</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABA0D2B0HA">["</a><span style="color: #3366FF">2012</span>-12-04 01:24:35" TO<br /> "2013-12-04 01:24:35"]</div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAA0D2B0HA">Within the last year.</a></div>
+          </td>
+        </tr>
+      </table>
+      <div class="Normal"><a name="pID0E0C2B0HA">&nbsp;</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+function FileData_Pairs(x)
+{
+x.t("later","compare");
+x.t("field","value");
+x.t("(dql)","text");
+x.t("text","fields");
+x.t("text","contains");
+x.t("doradus","query");
+x.t("queried","values");
+x.t("fields","queried");
+x.t("entire","field");
+x.t("contain","specific");
+x.t("contrast","equality");
+x.t("language","(dql)");
+x.t("specific","terms");
+x.t("clauses","text");
+x.t("clauses","doradus");
+x.t("clauses","described");
+x.t("query","language");
+x.t("values","contain");
+x.t("described","later");
+x.t("terms","contrast");
+x.t("compare","entire");
+x.t("equality","clauses");
+x.t("contains","clauses");
+}

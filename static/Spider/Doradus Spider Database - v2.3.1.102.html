@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>TOP and BOTTOM Functions</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.086.html">Spider Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.089.html">Grouping Parameter</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.098.html">Special Grouping Functions</a> : TOP and BOTTOM Functions</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_4"><a name="pID0E0EZ0HA">TOP and BOTTOM Functions</a></div>
+      <div class="Normal"><a name="pID0E0DZ0HA">By default, all group values are returned at each grouping level, and the groups are returned in ascending order of the </a><span style="text-decoration: underline">grouping field</span> value. The <span class="Code_Char">TOP</span> and <span class="Code_Char">BOTTOM</span> functions can be used to return groups in the order of the <span style="text-decoration: underline">metric</span> value. Optionally, they can also be used to limit the number of groups returned to the <span style="font-style: italic">highest</span> or <span style="font-style: italic">lowest</span> metric values. The <span class="Code_Char">TOP</span> and <span class="Code_Char">BOTTOM</span> functions <span style="font-style: italic">wrap</span> a grouping field expression and specify a <span style="font-style: italic">limit</span> parameter. For example:</div>
+      <div class="Code"><a name="pID0E0CZ0HA">GET /Msgs/Message/_aggregate?m=SUM(Size)&amp;f=TOP(3,InternalRecipients.Person.Name)</a></div>
+      <div class="Normal"><a name="pID0E0BZ0HA">The first parameter to TOP/BOTTOM is the limit value; the second parameter is the grouping field expression. This aggregate query sums the </a><span class="Code_Char">Size</span> field of message objects, grouped by internal recipient names, but it only returns the groups with the three highest <span class="Code_Char">SUM</span> values. Typical results for the example above in XML:</div>
+      <div class="Code"><a name="pID0E0AZ0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E06Y0HA">&lt;aggregate metric="SUM(Size)" group="TOP(3,InternalRecipients.Person.Name)"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E05Y0HA">&lt;totalobjects&gt;6030&lt;/totalobjects&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E04Y0HA">&lt;summary&gt;190643320&lt;/summary&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><span style="color: #008000"><a name="pID0E03Y0HA">&lt;totalgroups&gt;836&lt;/totalgroups&gt;</a></span></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E02Y0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01Y0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ZY0HA">&lt;metric&gt;103198352&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YY0HA">&lt;field name="InternalRecipients.Person.Name"&gt;(null)&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XY0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0WY0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0VY0HA">&lt;metric&gt;20060808&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0UY0HA">&lt;field name="InternalRecipients.Person.Name"&gt;Marc Bourauel&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TY0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SY0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0RY0HA">&lt;metric&gt;16798901&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0QY0HA">&lt;field name="InternalRecipients.Person.Name"&gt;Nina Cantauw&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0PY0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0OY0HA">&lt;/groups&gt;</a></div>
+      <div class="Code"><a name="pID0E0NY0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0MY0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E0LY0HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0KY0HA">"aggregate": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0JY0HA">"metric": "SUM(Size)",</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0IY0HA">"group": "TOP(3,InternalRecipients.Person.Name)"</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0HY0HA">},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0GY0HA">"totalobjects": "6030",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0FY0HA">"summary": "190643320",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0EY0HA">"totalgroups": "836",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0DY0HA">"groups": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0CY0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0BY0HA">"metric": "103198352",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0AY0HA">"field": {"InternalRecipients.Person.Name": "(null)"}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E06X0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E05X0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E04X0HA">"metric": "20060808",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E03X0HA">"field": {"InternalRecipients.Person.Name": "Marc Bourauel"}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E02X0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01X0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ZX0HA">"metric": "16798901",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YX0HA">"field": {"InternalRecipients.Person.Name": "Nina Cantauw"}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XX0HA">}}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0WX0HA">]</a></div>
+      <div class="Code"><a name="pID0E0VX0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0UX0HA">The </a><span class="Code_Char">BOTTOM</span> parameter works the same way but returns the groups with the lowest metric values. When either the <span class="Code_Char">TOP</span> or <span class="Code_Char">BOTTOM</span> function is used, the total number of groups that were actually computed is returned in the element <span class="Code_Char">totalgroups</span>, as shown above.</div>
+      <div class="Normal"><a name="pID0E0TX0HA">When the limit parameter is 0, </a><span style="text-decoration: underline">all</span> groups are returned, but they are returned in metric-computation order. Using 0 for the limit parameter essentially means <span style="font-style: italic">unlimited</span>.</div>
+      <div class="Normal"><a name="pID0E0SX0HA">When the aggregate query has multiple grouping fields, a </a><span class="Code_Char">TOP</span> or <span class="Code_Char">BOTTOM</span> function can be used with each grouping field. In secondary groups, <span class="Code_Char">TOP</span> and <span class="Code_Char">BOTTOM</span> return groups whose metric values are computed relative to their parent groups. Below is an example aggregate query 2-level grouping using <span class="Code_Char">TOP</span> for the outer level and <span class="Code_Char">BOTTOM</span> for the inner level:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0RX0HA">GET /Msgs/Message/_aggregate?m=COUNT(*)&amp;f=TOP(3,Sender.Person),BOTTOM(2,TRUNCATE(SendDate,DAY))</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Strings</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.037.html">Doradus Query Language (DQL)</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.042.html">Literals</a> : Strings</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0XAC0HA">Strings</a></div>
+      <div class="Normal"><a name="pID0E0WAC0HA">Some clauses compare to a full text string instead of a term. When the text string conforms to the syntax of a term, it can be provided unquoted. Example:</a></div>
+      <div class="Code"><a name="pID0E0VAC0HA">Name=Smith</a></div>
+      <div class="Normal"><a name="pID0E0UAC0HA">The value </a><span class="Code_Char">Smith</span> is a string because “=” follows the field name; if the field name was followed by “:”, <span class="Code_Char">Smith</span> would be treated as a term. See <span style="font-weight: bold">Equality Clauses</span> described later.</div>
+      <div class="Normal"><a name="pID0E0TAC0HA">When the string consists of multiple terms or contains characters not allowed in terms, the string must be enclosed in single or double quotes. Example:</a></div>
+      <div class="Code"><a name="pID0E0SAC0HA">Name="John Smith"</a></div>
+      <div class="Normal"><a name="pID0E0RAC0HA">Note that to Doradus, object IDs are also strings. Therefore, when used in DQL queries, object ID literals may be provided as a single unquoted term or as a quoted string. Examples:</a></div>
+      <div class="Code"><a name="pID0E0QAC0HA">_ID=ISBN1234</a></div>
+      <div class="Code"><a name="pID0E0PAC0HA">Sender='cihSptpZrCM6oXaVQH6dwA=='</a></div>
+      <div class="Normal"><a name="pID0E0OAC0HA">In a string, the characters </a><span class="Code_Char">?</span> and <span class="Code_Char">*</span> are treated as wildcards as they are in terms. If a string needs a <span class="Code_Char">?</span> or <span class="Code_Char">*</span> that must be used literally, they must be escaped. Escaping can also be used for non-printable or other characters. Doradus uses the backslash for escaping, and there are two escape formats:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0NAC0HA">\x</a></span>: Where <span class="Code_Char">x</span> can be one of these characters: <span class="Code_Char">t</span> (tab character), <span class="Code_Char">b</span> (backspace), <span class="Code_Char">n</span> (newline or LF), <span class="Code_Char">r</span> (carriage return), <span class="Code_Char">f</span> (form feed), <span class="Code_Char">'</span> (single quote), <span class="Code_Char">"</span> (double quote), or <span class="Code_Char">\</span> (backslash).</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0MAC0HA">\uNNNN</a></span>: This escape sequence can be used for any Unicode character. <span class="Code_Char">NNNN</span> must consist of four hex characters 0-F.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0LAC0HA">For example, the string </a><span class="Code_Char">"Hello!World"</span> can also be specified as "<span class="Code_Char">Hello\u0021World"</span>.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Common REST Responses</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.102.html">OLAP REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.103.html">REST API Overview</a> : Common REST Responses</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0GR0HA">Common REST Responses</a></div>
+      <div class="Normal"><a name="pID0E0FR0HA">When the Doradus Server starts, it listens to its REST port and accepts commands right away. However, if the underlying Cassandra database cannot be contacted (e.g., it is still starting and not yet accepting commands), REST commands that use the database will return a </a><span class="Code_Char">503 Service Unavailable</span> response such as the following:</div>
+      <div class="Code"><a name="pID0E0ER0HA">HTTP/1.1 503 Service Unavailable</a></div>
+      <div class="Code"><a name="pID0E0DR0HA">Content-length: 43</a></div>
+      <div class="Code"><a name="pID0E0CR0HA">Content-type: Text/plain</a></div>
+      <div class="Code"><a name="pID0E0BR0HA">&nbsp;</a></div>
+      <div class="Code"><a name="pID0E0AR0HA">Database is not reachable. Waiting to retry</a></div>
+      <div class="Normal"><a name="pID0E06Q0HA">When a REST command succeeds, a </a><span class="Code_Char">200 OK</span> or <span class="Code_Char">201 Created</span> response is typically returned. Whether the response includes a message entity depends on the command.</div>
+      <div class="Normal"><a name="pID0E05Q0HA">When a command fails due to user error, the response is usually </a><span class="Code_Char">400 Bad Request</span> or <span class="Code_Char">404 Not Found</span>. These responses usually include a plain text error message (similar to the <span class="Code_Char">503</span> response shown above).</div>
+      <div class="Normal"><a name="pID0E04Q0HA">When a command fails due to a server error, the response is typically </a><span class="Code_Char">500 Internal Server Error</span>. The response includes a plain text message and may include a stack trace of the error.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

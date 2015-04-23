@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Single-level Grouping</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.086.html">Spider Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.089.html">Grouping Parameter</a> : Single-level Grouping</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0LMB0HA">Single-level Grouping</a></div>
+      <div class="Normal"><a name="pID0E0KMB0HA">When the grouping parameter consists of a single grouping field, objects are divided into sets based on the distinct values found for the grouping field. A separate metric value is computed for each group. For example, this aggregate query uses a single-valued scalar as the grouping field:</a></div>
+      <div class="Code"><a name="pID0E0JMB0HA">GET /Msgs/Message/_aggregate?m=MAX(Size)&amp;f=Tags</a></div>
+      <div class="Normal"><a name="pID0E0IMB0HA">The </a><span class="Code_Char">Tags</span> field logically partitions objects into groups: one for each field value. Each object is included in each group for which is has a <span class="Code_Char">Tags</span> value. If an object has no <span class="Code_Char">Tags</span> value, it is placed in a <span class="Code_Char">(null)</span> group. The maximum <span class="Code_Char">Size</span> is then computed for each group. A typical result in XML is shown below:</div>
+      <div class="Code"><a name="pID0E0HMB0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0GMB0HA">&lt;aggregate metric="MAX(Size)" group="Tags"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><span style="color: #008000"><a name="pID0E0FMB0HA">&lt;totalobjects&gt;6030&lt;/totalobjects&gt;</a></span></div>
+      <div class="Code" style="margin-left: 36pt"><span style="color: #008000"><a name="pID0E0EMB0HA">&lt;summary&gt;16796009&lt;/summary&gt;</a></span></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0DMB0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0CMB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0BMB0HA">&lt;metric&gt;4875&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0AMB0HA">&lt;field name="Tags"&gt;</a><span style="color: #FF0000">(null)</span>&lt;/field&gt;</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E06LB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E05LB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E04LB0HA">&lt;metric&gt;16796009&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E03LB0HA">&lt;field name="Tags"&gt;AfterHours&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E02LB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01LB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ZLB0HA">&lt;metric&gt;16796009&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YLB0HA">&lt;field name="Tags"&gt;Customer&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XLB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0WLB0HA">&lt;/groups&gt;</a></div>
+      <div class="Code"><a name="pID0E0VLB0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0ULB0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E0TLB0HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0SLB0HA">"aggregate": {"metric": "MAX(Size)", "group": "Tags"},</a></div>
+      <div class="Code" style="margin-left: 36pt"><span style="color: #008000"><a name="pID0E0RLB0HA">"totalobjects": "6030",</a></span></div>
+      <div class="Code" style="margin-left: 36pt"><span style="color: #008000"><a name="pID0E0QLB0HA">"summary": "16796009",</a></span></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0PLB0HA">"groups": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OLB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0NLB0HA">"metric": "4875",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0MLB0HA">"field": {"Tags": "</a><span style="color: #FF0000">(null)</span>"}</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0LLB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KLB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0JLB0HA">"metric": "16796009",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ILB0HA">"field": {"Tags": "AfterHours"}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0HLB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0GLB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0FLB0HA">"metric": "16796009",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ELB0HA">"field": {"Tags":"Customer"}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0DLB0HA">}}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0CLB0HA">]</a></div>
+      <div class="Code"><a name="pID0E0BLB0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0ALB0HA">For grouped aggregate queries, the </a><span class="Code_Char">results</span> element contains a <span class="Code_Char">groups</span> element, which contains one <span class="Code_Char">group</span> for each group value. Each <span class="Code_Char">group</span> contains the <span class="Code_Char">field</span> name and value for that group and the corresponding <span class="Code_Char">metric</span> value. The <span class="Code_Char">totalobjects</span> value computes the number of objects selected in the computation. The <span class="Code_Char">summary</span> value computes the metric value across all selected objects independent of groups. For the <span class="Code_Char">AVERAGE</span> function, this provides the <span style="font-style: italic">true average</span>, not the <span style="font-style: italic">average of averages</span>.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

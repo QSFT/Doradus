@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>REST Commands in Multi-Tenant Mode</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.108.html">Spider REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.109.html">REST API Overview</a> : REST Commands in Multi-Tenant Mode</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0WQ0HA">REST Commands in Multi-Tenant Mode</a></div>
+      <div class="Normal"><a name="pID0E0VQ0HA">By default, Doradus executes in single-tenant mode, hence all applications are owned by a single </a><span style="font-style: italic">default</span> tenant. In this case, REST commands do not need the <span class="Code_Char">?tenant</span> parameter described in the previous section, and tenant credentials are not used. Even when Doradus is configured to operate in multi-tenant mode, REST commands intended for applications belonging to the default tenant omit the <span class="Code_Char">?tenant</span> parameter and authentication credentials. (The default tenant <span style="font-style: italic">may</span> be disabled in multi-tenant mode—see the <span style="font-weight: bold">Doradus Administration</span> documentation for details.)</div>
+      <div class="Normal"><a name="pID0E0UQ0HA">When Doradus is configured to operate in multi-tenant mode, REST commands intended for a specific tenant must include the </a><span class="Code_Char">?tenant</span> parameter. Each command must also include valid credentials for the corresponding tenant. Credentials are provided using <span style="font-style: italic">basic authorization</span>, which uses the general <span class="Code_Char">Authorization</span> header format shown below:</div>
+      <div class="Code"><a name="pID0E0TQ0HA">Authorization: Basic xxx</a></div>
+      <div class="Normal"><a name="pID0E0SQ0HA">Where xxx is the tenant user ID and password, separated by a colon, and base64-encoded. For example, if the user ID and password are </a><span class="Code_Char">Katniss:Everdeen</span>, the header would look like this:</div>
+      <div class="Code"><a name="pID0E0RQ0HA">Authorization: Basic S2F0bmlzczpFdmVyZGVlbgo=</a></div>
+      <div class="Normal"><a name="pID0E0QQ0HA">When Doradus receives this header, the base64 value is decoded and validated against the given tenant. Note that </a><span class="Code_Char">curl</span> supports basic authentication by adding the “-u” parameter. Example:</div>
+      <div class="Code"><a name="pID0E0PQ0HA">curl -u Katniss:Everdeen http://localhost:1123/HelloKitty/...</a></div>
+      <div class="Normal"><a name="pID0E0OQ0HA">If the tenant user ID or password is incorrect for the identified tenant, the REST command returns a </a><span class="Code_Char">401 Unauthorized</span> response.</div>
+      <div class="Normal"><a name="pID0E0NQ0HA">The only commands that should not provide the </a><span class="Code_Char">?tenant</span> parameter in multi-tenant mode are <span style="font-style: italic">system</span> commands, which are not directed to a specific tenant. These commands are used by administrators to create tenants and perform diagnostic operations. In multi-tenant mode, system commands must use basic authorization and provide <span style="font-style: italic">super user</span> credentials. See the <span style="font-weight: bold">Doradus Administration</span> documentation for details.</div>
+      <div class="Normal"><a name="pID0E0MQ0HA">In the remainder of this documentation, all examples are displayed as if Doradus is operating in single-tenant mode or the command is intended for the default tenant in multi-tenant mode.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

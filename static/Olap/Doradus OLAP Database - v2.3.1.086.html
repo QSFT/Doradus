@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Multi-level Grouping</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.074.html">OLAP Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.082.html">Grouping Parameter</a> : Multi-level Grouping</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0IHB0HA">Multi-level Grouping</a></div>
+      <div class="Normal"><a name="pID0E0HHB0HA">The grouping parameter can list multiple grouping expressions to form multi-level grouping. Each grouping expression must be a </a><span style="font-style: italic">path</span> from the perspective table to a link or scalar field. Below is an example multi-level aggregate query:</div>
+      <div class="Code"><a name="pID0E0GHB0HA">GET /Email/Message/_aggregate?m=COUNT(*)&amp;f=TRUNCATE(SendDate,DAY),Tags&amp;range=0</a></div>
+      <div class="Normal"><a name="pID0E0FHB0HA">In this example, </a><span class="Code_Char">TRUNCATE(SendDate,DAY)</span> is the top-level grouping field and <span class="Code_Char">Tags</span> is the second-level grouping field. The query creates groups based on the cross-product of all grouping field values, and a metric is computed for each combination for which at least one object has a value. A perspective object is included in the metric computation for each group for which it has actual values. A <span class="Code_Char">summary</span> value is computed for each non-leaf group, and a <span class="Code_Char">totalobjects</span> value is computed for the top-level group. An example result in XML is shown below:</div>
+      <div class="Code"><a name="pID0E0EHB0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0DHB0HA">&lt;aggregate metric="COUNT(*)" group="TRUNCATE(SendDate,DAY),Tags"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0CHB0HA">&lt;</a><span style="color: #3366FF">totalobjects</span>&gt;6030&lt;/totalobjects&gt;</div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0BHB0HA">&lt;</a><span style="color: #008000">summary</span>&gt;6030&lt;/summary&gt;</div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0AHB0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E06GB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E05GB0HA">&lt;</a><span style="color: #008000">summary</span>&gt;4752&lt;/summary&gt;</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E04GB0HA">&lt;field name="SendDate"&gt;2010-07-17 00:00:00&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E03GB0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E02GB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E01GB0HA">&lt;metric&gt;1&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0ZGB0HA">&lt;field name="Tags"&gt;(null)&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0YGB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0XGB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0WGB0HA">&lt;metric&gt;4751&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0VGB0HA">&lt;field name="Tags"&gt;AfterHours&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0UGB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0TGB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0SGB0HA">&lt;metric&gt;1524&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0RGB0HA">&lt;field name="Tags"&gt;Customer&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0QGB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0PGB0HA">&lt;/groups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OGB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NGB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0MGB0HA">&lt;</a><span style="color: #008000">summary</span>&gt;1278&lt;/summary&gt;</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0LGB0HA">&lt;field name="SendDate"&gt;2010-07-18 00:00:00&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0KGB0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0JGB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0IGB0HA">&lt;metric&gt;1278&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0HGB0HA">&lt;field name="Tags"&gt;AfterHours&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0GGB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0FGB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0EGB0HA">&lt;metric&gt;700&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0DGB0HA">&lt;field name="Tags"&gt;Customer&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0CGB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0BGB0HA">&lt;/groups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0AGB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E06FB0HA">&lt;/groups&gt;</a></div>
+      <div class="Code"><a name="pID0E05FB0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E04FB0HA">The same response in JSON:</a></div>
+      <div class="Code"><a name="pID0E03FB0HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E02FB0HA">"aggregate": {"metric": "COUNT(*)", "group": "TRUNCATE(SendDate,DAY),Tags"},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E01FB0HA">"</a><span style="color: #3366FF">totalobjects</span>": "6030",</div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0ZFB0HA">"</a><span style="color: #008000">summary</span>": "6030",</div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0YFB0HA">"groups": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XFB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0WFB0HA">"</a><span style="color: #008000">summary</span>": "4752",</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0VFB0HA">"field": {"SendDate":"2010-07-17 00:00:00"},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0UFB0HA">"groups": [</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0TFB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0SFB0HA">"metric": "1",</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0RFB0HA">"field": {"Tags": "(null)"}</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0QFB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0PFB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0OFB0HA">"metric": "4751",</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0NFB0HA">"field": {"Tags":"AfterHours"}</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0MFB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0LFB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0KFB0HA">"metric": "1524",</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0JFB0HA">"field": {"Tags":"Customer"}</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0IFB0HA">}}</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0HFB0HA">]</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0GFB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0FFB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0EFB0HA">"</a><span style="color: #008000">summary</span>": "1278",</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0DFB0HA">"field": {"SendDate": "2010-07-18 00:00:00"},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0CFB0HA">"groups": [</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0BFB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0AFB0HA">"metric": "1278",</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E06EB0HA">"field": {"Tags":"AfterHours"}</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E05EB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E04EB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E03EB0HA">"metric": "700",</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E02EB0HA">"field": {"Tags":"Customer"}</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E01EB0HA">}}</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ZEB0HA">]</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0YEB0HA">}}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0XEB0HA">]</a></div>
+      <div class="Code"><a name="pID0E0WEB0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0VEB0HA">Each non-leaf </a><span class="Code_Char">group</span> has an inner <span class="Code_Char">groups</span> element containing its corresponding lower-level <span class="Code_Char">group</span> elements and a <span class="Code_Char">summary</span> element that provides a group-level metric value. Leaf-level groups have a <span class="Code_Char">metric</span> element. This structure is recursive if there are more than two grouping levels.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Clauses</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.025.html">Doradus Query Language (DQL)</a> : Clauses</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0EGC0HA">Clauses</a></div>
+      <div class="Normal"><a name="pID0E0DGC0HA">A DQL query is comprised of one or more Boolean expressions called </a><span style="font-style: italic">clauses</span>. Each clause examines a field that is related to perspective objects. The clause evaluates to true for a given object if the examined field matches the clause’s condition. Example clauses are shown below:</div>
+      <div class="Code"><a name="pID0E0CGC0HA">Name:Smith</a></div>
+      <div class="Code"><a name="pID0E0BGC0HA">FirstName=John</a></div>
+      <div class="Code"><a name="pID0E0AGC0HA">SendDate:[2001 TO "2005-06-31"]</a></div>
+      <div class="Code"><a name="pID0E06FC0HA">NOT Name:Jo*</a></div>
+      <div class="Code"><a name="pID0E05FC0HA">ALL(InternalRecipients).ANY(MessageAddress).Domain.Name = "dell.com"</a></div>
+      <div class="Code"><a name="pID0E04FC0HA">Manager^(3).LastName:Wright</a></div>
+      <div class="Normal"><a name="pID0E03FC0HA">These examples show a variety of comparison types: qualified and unqualified fields, </a><span style="font-style: italic">contains</span> and <span style="font-style: italic">equals</span>, ranges, pattern matching, quantifiers, and transitive searches.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

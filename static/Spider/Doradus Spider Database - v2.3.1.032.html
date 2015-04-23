@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Link Fields</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.010.html">Spider Data Model</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.021.html">Fields</a> : Link Fields</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0SFC0HA">Link Fields</a></div>
+      <div class="Normal"><a name="pID0E0RFC0HA">Link fields are </a><span style="font-style: italic">pointers</span> that create inter-object relationships. All relationships are bi-directional, therefore every link has an <span style="font-style: italic">inverse</span> link that defines the same relationship from the opposite direction. A link and its inverse link can be in the same table or they can reside in different tables. An example link declaration in XML is shown below:</div>
+      <div class="Code"><a name="pID0E0QFC0HA">&lt;table name="Participant"&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0PFC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OFC0HA">&lt;field name="</a><span style="color: #3366FF">MessageAddress</span>" table="<span style="color: #008000">Address</span>" type="LINK" inverse="<span style="color: #660066">Messages</span>"/&gt;</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NFC0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0MFC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code"><a name="pID0E0LFC0HA">&lt;/table&gt;</a></div>
+      <div class="Normal"><a name="pID0E0KFC0HA">In this example, the link field </a><span class="Code_Char">MessageAddress</span> is owned by the <span class="Code_Char">Participant</span> table and points to the <span class="Code_Char">Address</span> table, whose inverse link is called <span class="Code_Char">Messages</span>. The table to which a link points is called the link’s <span style="font-style: italic">extent</span>.</div>
+      <div class="Normal"><a name="pID0E0JFC0HA">Link fields are always MV: the </a><span class="Code_Char">collection</span> property, if set, is ignored. A link’s values are IDs of objects that belong to its extent table. Relationships are created or deleted by adding IDs to or removing IDs from the link field. Like MV scalar fields, link values are <span style="font-style: italic">sets</span>, hence duplicates are ignored.</div>
+      <div class="Normal"><a name="pID0E0IFC0HA">Because relationships are bi-directional, when a link is updated, its inverse link is automatically updated at the same time. For example, if an object ID is added to </a><span class="Code_Char">MessageAddress</span>, connecting the owning participant object to a specific <span class="Code_Char">Address</span> object, the <span class="Code_Char">Messages</span> link for that address object is updated to point back to the same participant.</div>
+      <div class="Normal"><a name="pID0E0HFC0HA">One side-effect of this referential integrity behavior is that objects can be </a><span style="font-style: italic">implicitly </span>created: if an object ID is added to <span class="Code_Char">MessageAddress</span> and the corresponding person doesn’t exist, it is created. An implicitly-created object will only have an <span class="Code_Char">_ID</span> and automatically-updated link field value(s).</div>
+      <div class="Normal"><a name="pID0E0GFC0HA">If a link’s owner and extent are the same table, the relationship is </a><span style="font-style: italic">reflexive</span>. An example reflexive relationship is the <span class="Code_Char">Manager</span>/<span class="Code_Char">DirectReports</span> relationship in the <span class="Code_Char">Person</span> table:</div>
+      <div class="Code"><a name="pID0E0FFC0HA">&lt;table name="Person"&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0EFC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0DFC0HA">&lt;field name="</a><span style="color: #3366FF">DirectReports</span>" table="Person" type="LINK" inverse="<span style="color: #660066">Manager</span>"/&gt;</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0CFC0HA">&lt;field name="</a><span style="color: #3366FF">Manager</span>" table="Person" type="LINK" inverse="<span style="color: #660066">DirectReports</span>"/&gt;</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0BFC0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0AFC0HA">&lt;/fields&gt;</a></div>
+      <div class="Code"><a name="pID0E06EC0HA">&lt;/table&gt;</a></div>
+      <div class="Normal"><a name="pID0E05EC0HA">A link can also be its own inverse: such relationships are called </a><span style="font-style: italic">self-reflexive</span>. For example, we could define <span style="font-style: italic">spouse</span> and <span style="font-style: italic">friends</span> as self-reflexive relationships (though some may argue friendship is not always reciprocal).</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

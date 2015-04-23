@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Transitive Function</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.037.html">Doradus Query Language (DQL)</a> : Transitive Function</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E05WB0HA">Transitive Function</a></div>
+      <div class="Normal"><a name="pID0E04WB0HA">The transitive function causes a </a><span style="font-style: italic">reflexive</span> link to be traversed recursively, creating a set of objects for evaluation. Consider this clause:</div>
+      <div class="Code"><a name="pID0E03WB0HA">DirectReports.Name = Fred</a></div>
+      <div class="Normal"><a name="pID0E02WB0HA">This clause selects people that have at least one </a><span class="Code_Char">DirectReports</span> value whose <span class="Code_Char">Name</span> is <span class="Code_Char">Fred</span>. Each clause considers the immediate <span class="Code_Char">DirectReports</span> of each object.</div>
+      <div class="Normal"><a name="pID0E01WB0HA">We can change the search to </a><span style="font-style: italic">transitively</span> follow <span class="Code_Char">DirectReports</span> links by adding the transitive operator ‘^’ after the reflexive link’s name:</div>
+      <div class="Code"><a name="pID0E0ZWB0HA">DirectReports</a><span style="color: #3366FF">^</span>.Name = Fred</div>
+      <div class="Normal"><a name="pID0E0YWB0HA">This selects people with a direct report named </a><span class="Code_Char">Fred</span> or a direct report that has a second-level direct report named <span class="Code_Char">Fred</span>, recursively down the org chart. The transitive operator ‘^’ expands the set of objects evaluated in the place where the reflexive link (<span class="Code_Char">DirectReports</span>) occurs recursively. The recursion stops when either:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0XWB0HA">A cycle is detected: If an object is found that was already visited in evaluating the </a><span class="Code_Char">DirectReports^</span> expression, that object is not evaluated again.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0WWB0HA">A null is detected: The recursion stops at the “edges” of the graph, in this case someone with no direct reports.</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0VWB0HA">In some cases, we know that a reflexive graph is not very deep for any given object, so we can let the recursion continue until the leaf nodes are reached. But in some cases, the graph may be arbitrarily large and we need to restrict the number of levels searched. In this case, a </a><span style="font-style: italic">limit</span> can be passed to the transitive operator in parentheses:</div>
+      <div class="Code"><a name="pID0E0UWB0HA">DirectReports^(5).LastName = Smith</a></div>
+      <div class="Normal"><a name="pID0E0TWB0HA">This clause selects people with any direct report up to 5 levels deep whose last name is </a><span class="Code_Char">Smith</span>.</div>
+      <div class="Normal"><a name="pID0E0SWB0HA">The transitive function can be combined with quantifiers as shown below:</a></div>
+      <div class="Code"><a name="pID0E0RWB0HA">ALL(InternalRecipient.Person).Manager^.Name : Fred</a></div>
+      <div class="Normal"><a name="pID0E0QWB0HA">This clause selects messages whose every internal recipient has a superior (manager, manager’s manager, etc.) named </a><span class="Code_Char">Fred</span>.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

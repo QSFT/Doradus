@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>TERMS Function</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.074.html">OLAP Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.082.html">Grouping Parameter</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.088.html">Special Grouping Functions</a> : TERMS Function</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_4"><a name="pID0E04BB0HA">TERMS Function</a></div>
+      <div class="Normal"><a name="pID0E03BB0HA">Groups can be created from the </a><span style="font-style: italic">terms</span> used within a specific field. The general format of the <span class="Code_Char">TERMS</span> function is:</div>
+      <div class="Code"><a name="pID0E02BB0HA">TERMS(&lt;field name&gt; [, (&lt;stop term 1&gt; &lt;stop term 2&gt; ...)])</a></div>
+      <div class="Normal"><a name="pID0E01BB0HA">Any predefined scalar field can be used, but </a><span class="Code_Char">TERMS</span> is most effective with text fields. The optional <span style="font-style: italic">stop term</span> list is a list of terms, enclosed in parentheses, that are excluded from the unique set of terms found within the specified field.</div>
+      <div class="Normal"><a name="pID0E0ZBB0HA">For example, the following request fetches the </a><span class="Code_Char">COUNT</span> of messages grouped by terms found within the <span class="Code_Char">Subject</span> field for a particular sender. For brevity, the <span class="Code_Char">TERMS</span> function is wrapped by the <span class="Code_Char">TOP</span> function to limit the results to the five groups with the highest counts:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0YBB0HA">GET /Email/Message/_aggregate?m=COUNT(*)&amp;q=Sender.MessageAddress.Person.Name:Support<br />&amp;f=TOP(5,TERMS(Subject))&amp;shards=2014-06-01</a></div>
+      <div class="Normal"><a name="pID0E0XBB0HA">Similar to the </a><span class="Code_Char">BATCH</span> function, the <span class="Code_Char">TERMS</span> function creates dynamic groups from a text field based on the terms it uses. To do this, as objects matching the query parameter (if any) are found, the field passed to <span class="Code_Char">TERMS</span> is parsed into alphanumeric terms, and a group is created for each unique term. Each contributes to the group metric computation for each term it contains. If a term appears multiple times within a field (e.g., “plan for a plan”), the object is only counted once. An example result in XML is shown below:</div>
+      <div class="Code"><a name="pID0E0WBB0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0VBB0HA">&lt;aggregate query="Sender.MessageAddress.Person.Name:Support" metric="COUNT(*)"<br />group="TOP(5,TERMS(Subject))"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0UBB0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TBB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0SBB0HA">&lt;field name="Subject"&gt;dilemmas&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0RBB0HA">&lt;metric&gt;14&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QBB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0PBB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0OBB0HA">&lt;field name="Subject"&gt;unchary&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0NBB0HA">&lt;metric&gt;14&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0MBB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0LBB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0KBB0HA">&lt;field name="Subject"&gt;sundae&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0JBB0HA">&lt;metric&gt;14&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0IBB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0HBB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0GBB0HA">&lt;field name="Subject"&gt;tillage&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0FBB0HA">&lt;metric&gt;14&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0EBB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0DBB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0CBB0HA">&lt;field name="Subject"&gt;infernal&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0BBB0HA">&lt;metric&gt;14&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ABB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E06AB0HA">&lt;/groups&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E05AB0HA">&lt;summary&gt;82&lt;/summary&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E04AB0HA">&lt;totalgroups&gt;85&lt;/totalgroups&gt;</a></div>
+      <div class="Code"><a name="pID0E03AB0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E02AB0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E01AB0HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0ZAB0HA">"aggregate": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0YAB0HA">"group": "TOP(5,TERMS(Subject))",</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XAB0HA">"metric": "COUNT(*)",</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0WAB0HA">"query": "Sender.MessageAddress.Person.Name:Support"</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0VAB0HA">},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0UAB0HA">"groups": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TAB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0SAB0HA">"field": {"Subject": "dilemmas"},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0RAB0HA">"metric": "14"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QAB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0PAB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0OAB0HA">"field": {"Subject": "unchary"},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0NAB0HA">"metric": "14"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0MAB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0LAB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0KAB0HA">"field": {"Subject": "sundae"},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0JAB0HA">"metric": "14"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0IAB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0HAB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0GAB0HA">"field": {"Subject": "tillage"},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0FAB0HA">"metric": "14"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0EAB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0DAB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0CAB0HA">"field": {"Subject": "infernal"},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0BAB0HA">"metric": "14"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0AAB0HA">}}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0660HA">],</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0560HA">"summary": "82",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0460HA">"totalgroups": "85"</a></div>
+      <div class="Code"><a name="pID0E0360HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0260HA">If the terms “sundae” and “tillage” were considered uninteresting, they could be eliminated from the results by listing them as stop terms in a second parenthetical parameter to the </a><span class="Code_Char">TERMS</span> function:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0160HA">GET /Email/Message/_aggregate?m=COUNT(*)&amp;q=Sender.MessageAddress.Person.Name='Quest Support'<br />&amp;f=TOP(5,TERMS(Subject,(sundae tillage)))&amp;shards=2014-06-01</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

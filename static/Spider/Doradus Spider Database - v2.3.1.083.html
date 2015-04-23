@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>SV Scalar Fields</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.074.html">Spider Object Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.081.html">Query Results</a> : SV Scalar Fields</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0ITB0HA">SV Scalar Fields</a></div>
+      <div class="Normal"><a name="pID0E0HTB0HA">This object query requests all scalar fields of </a><span class="Code_Char">Person</span> objects whose <span class="Code_Char">LastName</span> is <span class="Code_Char">Garn</span>:</div>
+      <div class="Code"><a name="pID0E0GTB0HA">GET /Msgs/Person/_query?q=LastName:Garn&amp;f=*</a></div>
+      <div class="Normal"><a name="pID0E0FTB0HA">In XML, the result looks like this:</a></div>
+      <div class="Code"><a name="pID0E0ETB0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0DTB0HA">&lt;docs&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0CTB0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0BTB0HA">&lt;field name="Department"&gt;Field Sales&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ATB0HA">&lt;field name="FirstName"&gt;Chris&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E06SB0HA">&lt;field name="LastName"&gt;Garn&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E05SB0HA">&lt;field name="Name"&gt;Chris Garn&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E04SB0HA">&lt;field name="Office"&gt;Aliso Viejo 5&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E03SB0HA">&lt;field name="_ID"&gt;07Z094KNjmEsqMoV/yNI0g==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E02SB0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01SB0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ZSB0HA">&lt;field name="Department"&gt;Sales Operations&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YSB0HA">&lt;field name="FirstName"&gt;Jim&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0XSB0HA">&lt;field name="LastName"&gt;Garn&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0WSB0HA">&lt;field name="Name"&gt;Jim Garn&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0VSB0HA">&lt;field name="Office"&gt;Aliso Viejo 5&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0USB0HA">&lt;field name="_ID"&gt;kUNaqNJ2ymmb07jHY9OPOw==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TSB0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SSB0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0RSB0HA">&lt;field name="Department"&gt;Admin&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0QSB0HA">&lt;field name="FirstName"&gt;Doug&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0PSB0HA">&lt;field name="LastName"&gt;Garn&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0OSB0HA">&lt;field name="Name"&gt;Doug Garn&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0NSB0HA">&lt;field name="Office"&gt;Aliso Viejo 5&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0MSB0HA">&lt;field name="_ID"&gt;m1yYabbtytmjw+e8OCz1dg==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0LSB0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0KSB0HA">&lt;/docs&gt;</a></div>
+      <div class="Code"><a name="pID0E0JSB0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0ISB0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E0HSB0HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0GSB0HA">"docs": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0FSB0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ESB0HA">"Department": "Field Sales",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0DSB0HA">"FirstName": "Chris",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0CSB0HA">"LastName": "Garn",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0BSB0HA">"Name": "Chris Garn",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ASB0HA">"Office": "Aliso Viejo 5",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E06RB0HA">"_ID": "07Z094KNjmEsqMoV/yNI0g=="</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E05RB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E04RB0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E03RB0HA">"Department": "Sales Operations",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E02RB0HA">"FirstName": "Jim",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E01RB0HA">"LastName": "Garn",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ZRB0HA">"Name": "Jim Garn",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YRB0HA">"Office": "Aliso Viejo 5",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0XRB0HA">"_ID": "kUNaqNJ2ymmb07jHY9OPOw=="</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0WRB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VRB0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0URB0HA">"Department": "Admin",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0TRB0HA">"FirstName": "Doug",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0SRB0HA">"LastName": "Garn",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0RRB0HA">"Name": "Doug Garn",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0QRB0HA">"Office": "Aliso Viejo 5",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0PRB0HA">"_ID": "m1yYabbtytmjw+e8OCz1dg=="</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ORB0HA">}}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0NRB0HA">]</a></div>
+      <div class="Code"><a name="pID0E0MRB0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0LRB0HA">The </a><span class="Code_Char">_ID</span> field of each object is always included. SV scalar fields are returned only if they have values. If a group contains any leaf fields with values, they are returned at the outer (<span class="Code_Char">doc</span>) level: the group field is not included.</div>
+      <div class="Normal"><a name="pID0E0KRB0HA">When timestamp fields are returned, the fractional component of a value is suppressed when it is zero. For example:</a></div>
+      <div class="Code"><a name="pID0E0JRB0HA">2012-01-06 19:59:51</a></div>
+      <div class="Normal"><a name="pID0E0IRB0HA">This value means that the seconds component is a whole value (51). If a seconds component has a fractional value, it is displayed with 3 digits to the right of the decimal place. Example:</a></div>
+      <div class="Code"><a name="pID0E0HRB0HA">2012-01-06 19:59:51.385</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

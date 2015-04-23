@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Get Object Command</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.108.html">Spider REST Commands</a> : Get Object Command</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0HI0HA">Get Object Command</a></div>
+      <div class="Normal"><a name="pID0E0GI0HA">All fields of a single object can be fetched with a GET request using the application name, table name, and ID of the desired object:</a></div>
+      <div class="Code"><a name="pID0E0FI0HA">GET /{application}/{table}/{ID}</a></div>
+      <div class="Normal"><a name="pID0E0EI0HA">The object’s ID should not be quoted, but it must be URL-encoded. If the specified object is not found, a </a><span class="Code_Char">404 Not Found</span> response is returned. Otherwise, all scalar and link fields of the object are returned as a <span class="Code_Char">200 OK</span> response. Leaf fields are qualified within their owning group fields. For example:</div>
+      <div class="Code"><a name="pID0E0DI0HA">GET /Msgs/Person/UdjrbyhvF%2FfPGV6fT4fewg%3D%3D</a></div>
+      <div class="Normal"><a name="pID0E0CI0HA">The response message is the same used for Add Batch and Update Batch commands. MV scalar and link fields with a single value are returned without the enclosing </a><span class="Code_Char">add</span> group. For example in XML:</div>
+      <div class="Code"><a name="pID0E0BI0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0AI0HA">&lt;field&nbsp;name="Name"&gt;Damien Munro&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E06H0HA">&lt;field&nbsp;name="DirectReports"&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E05H0HA">&lt;add&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E04H0HA">&lt;value&gt;+/0sWHX9YiVnWYT+kqwxig==&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E03H0HA">&lt;value&gt;0iaYNVln92Blc0HFxyMMOA==&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E02H0HA">&lt;value&gt;aZcnXyb1AJj1OLO92drpjA==&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E01H0HA">&lt;value&gt;let9N7as5W/N+9Lib0woKQ==&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ZH0HA">&lt;value&gt;qBbk9tqZ5sF+/1x/xsC9JA==&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YH0HA">&lt;value&gt;tIlJFIruDFOoStlzzB9vag==&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0XH0HA">&lt;value&gt;zqd7seWR5a+78JRKc8ztDQ==&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0WH0HA">&lt;/add&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0VH0HA">&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0UH0HA">&lt;field&nbsp;name="Manager"&gt;VTuT6K8SlRMnNtdscYDwLQ==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0TH0HA">&lt;field&nbsp;name="FirstName"&gt;Damien&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0SH0HA">&lt;field&nbsp;name="LastName"&gt;Munro&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0RH0HA">&lt;field&nbsp;name="_ID"&gt;UdjrbyhvF/fPGV6fT4fewg==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0QH0HA">&lt;field&nbsp;name="Location"&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0PH0HA">&lt;field&nbsp;name="Department"&gt;Management-Sales&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OH0HA">&lt;field&nbsp;name="Office"&gt;Melbourne&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0NH0HA">&lt;/field&gt;</a></div>
+      <div class="Code"><a name="pID0E0MH0HA">&lt;/doc&gt;</a></div>
+      <div class="Normal"><a name="pID0E0LH0HA">In JSON, the same response is:</a></div>
+      <div class="Code"><span style="font-weight: bold"><a name="pID0E0KH0HA">{</a></span>"doc":&nbsp;<span style="font-weight: bold">{</span></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0JH0HA">"Name":&nbsp;"Damien Munro",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0IH0HA">"DirectReports":&nbsp;</a><span style="font-weight: bold">{</span></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0HH0HA">"add":&nbsp;</a><span style="font-weight: bold">[</span></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0GH0HA">"+/0sWHX9YiVnWYT+kqwxig==",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0FH0HA">"0iaYNVln92Blc0HFxyMMOA==",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0EH0HA">"aZcnXyb1AJj1OLO92drpjA==",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0DH0HA">"let9N7as5W/N+9Lib0woKQ==",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0CH0HA">"qBbk9tqZ5sF+/1x/xsC9JA==",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0BH0HA">"tIlJFIruDFOoStlzzB9vag==",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0AH0HA">"zqd7seWR5a+78JRKc8ztDQ=="</a></div>
+      <div class="Code" style="margin-left: 54pt"><span style="font-weight: bold"><a name="pID0E06G0HA">]</a></span></div>
+      <div class="Code" style="margin-left: 36pt"><span style="font-weight: bold"><a name="pID0E05G0HA">}</a></span>,</div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E04G0HA">"Manager":&nbsp;"VTuT6K8SlRMnNtdscYDwLQ==",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E03G0HA">"FirstName":&nbsp;"Damien",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E02G0HA">"LastName":&nbsp;"Munro",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E01G0HA">"_ID":&nbsp;"UdjrbyhvF/fPGV6fT4fewg==",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0ZG0HA">"Location":&nbsp;</a><span style="font-weight: bold">{</span></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0YG0HA">"Department":&nbsp;"Management-Sales",</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XG0HA">"Office":&nbsp;"Melbourne"</a></div>
+      <div class="Code" style="margin-left: 36pt"><span style="font-weight: bold"><a name="pID0E0WG0HA">}</a></span></div>
+      <div class="Code"><span style="font-weight: bold"><a name="pID0E0VG0HA">}}</a></span></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

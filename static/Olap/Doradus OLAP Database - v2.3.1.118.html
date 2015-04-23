@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Delete Batch</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.102.html">OLAP REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.116.html">Object Update Commands</a> : Delete Batch</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0SN0HA">Delete Batch</a></div>
+      <div class="Normal"><a name="pID0E0RN0HA">Objects can be deleted in the Add Batch command, but they can also be deleted en masse with the following REST command:</a></div>
+      <div class="Code"><a name="pID0E0QN0HA">DELETE /{application}/{shard}</a></div>
+      <div class="Normal"><a name="pID0E0PN0HA">where </a><span class="Code_Char">{application}</span> is the application name and <span class="Code_Char">{shard}</span> is the shard from which objects are to be deleted. The command must include an input entity that only contains the <span class="Code_Char">_table</span> and <span class="Code_Char">_ID</span> of each object to be deleted. Example:</div>
+      <div class="Code"><a name="pID0E0ON0HA">&lt;batch&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0NN0HA">&lt;docs&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0MN0HA">&lt;doc </a><span style="color: #FF0000">_table="Message"</span>&gt;</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0LN0HA">&lt;field name="_ID"&gt;92XJeDwQ8lD3/RS4yM5gTg==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KN0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0JN0HA">&lt;doc </a><span style="color: #FF0000">_table="Message"</span>&gt;</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0IN0HA">&lt;field name="_ID"&gt;95lfrCiljbiKOQK9UH7LYg==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0HN0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0GN0HA">&lt;doc </a><span style="color: #FF0000">_table="Person"</span>&gt;</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0FN0HA">&lt;field name="_ID"&gt;x3OKbjCmKw47wEHaqV0nLQ==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0EN0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0DN0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0CN0HA">&lt;/docs&gt;</a></div>
+      <div class="Code"><a name="pID0E0BN0HA">&lt;/batch&gt;</a></div>
+      <div class="Normal"><a name="pID0E0AN0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E06M0HA">{"batch": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E05M0HA">"docs": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E04M0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #FF0000"><a name="pID0E03M0HA">"_table": "Message"</a></span>,</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E02M0HA">"_ID": "92XJeDwQ8lD3/RS4yM5gTg=="</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01M0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZM0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #FF0000"><a name="pID0E0YM0HA">"_table": "Message"</a></span>,</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0XM0HA">"_ID": "95lfrCiljbiKOQK9UH7LYg=="</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0WM0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VM0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #FF0000"><a name="pID0E0UM0HA">"_table": "Person"</a></span>,</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0TM0HA">"_ID": "x3OKbjCmKw47wEHaqV0nLQ=="</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SM0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0RM0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0QM0HA">]</a></div>
+      <div class="Code"><a name="pID0E0PM0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0OM0HA">Only the </a><span class="Code_Char">_table</span> and <span class="Code_Char">_ID</span> of each doc element is required. If any other fields are assigned values, they are ignored. As with the Add Batch command, the delete batch is stored but not processed until the corresponding shard is merged.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

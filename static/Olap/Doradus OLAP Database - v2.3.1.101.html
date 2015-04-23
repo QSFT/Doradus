@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Pair Parameter</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.074.html">OLAP Aggregate Queries</a> : Pair Parameter</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E04T0HA">Pair Parameter</a></div>
+      <div class="Normal"><a name="pID0E03T0HA">The </a><span style="font-style: italic">pair</span> parameter supports a special kind of aggregate query called a <span style="font-style: italic">dual role</span> query. To illustrate when it is needed, let’s first look at a dual role <span style="font-style: italic">object</span> query, which <span style="text-decoration: underline">doesn’t</span> require the “pair” functionality.</div>
+      <div class="Normal"><a name="pID0E02T0HA">Assume we divide the participants of a Message object into </a><span style="font-style: italic">senders</span> and <span style="font-style: italic">internal recipients</span>. Suppose we want to find all messages where either:</div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">(1)	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><a name="pID0E01T0HA">The sender resides in the Kanata office and the internal recipient is a member of a Support department, or:</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">(2)	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><a name="pID0E0ZT0HA">The internal recipient resides in the Kanata office and the sender is a member of a Support department.</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0YT0HA">In other words, we want to find messages between the Kanata office and a Support department, but we don’t care if the message is sent from Kanata to Support or the other way around. We also have to eliminate the case where one participant is </a><span style="text-decoration: underline">both</span> in Kanata and belongs to Support but the other participants are neither (otherwise it’s not really a query “between” these two roles.)</div>
+      <div class="Normal"><a name="pID0E0XT0HA">As an </a><span style="text-decoration: underline">object</span> query, this is rather straightforward and can be specified as follows:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0WT0HA">.../Message/_query?q=(Sender.Person.Office:Kanata AND InternalRecipients.Person.Department:Support) OR<br />(InternalRecipients.Person.Office:Kanata AND Sender.Person.Department:Support)</a></div>
+      <div class="Normal"><a name="pID0E0VT0HA">This query uses two OR clauses: the first clause selects messages sent by someone in the Kanata office and received by anyone in the Support department; the second clause uses the same office/department criteria but reverses the sender/receiver roles. A message that satisfies either clause is selected.</a></div>
+      <div class="Normal"><a name="pID0E0UT0HA">Now suppose we want to execute this as an aggregate query. If all we want is a total count of messages, we can use the same query parameter as above.</a></div>
+      <div class="Normal"><a name="pID0E0TT0HA">But suppose we want to group the results based on a field belonging to one of the </a><span style="text-decoration: underline">roles</span>: for example, we want to group by the Department of the Kanata participant. When the Kanata participant is the sender, we want to group by <span class="Code_Char">Sender.MessageAddress.Person.Department</span>. When the Kanata participant is the receiver, we want to group by <span class="Code_Char">InternalRecipients.MessageAddress.Person.Department</span>. But we can only group on one field at each level—we can’t group on a participant’s <span style="font-style: italic">role</span> (“the Kanata participant”), which is defined by two different link paths.</div>
+      <div class="Normal"><a name="pID0E0ST0HA">The aggregate “pair” feature allows such dual role queries. To demonstrate how it works, below is the aggregate query proposed above, grouping messages by the Kanata participants’ department, regardless of whether those participants are senders or the internal recipients:</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0RT0HA">.../Message/_aggregate?</a><span style="color: #008000">pair</span>=Sender,InternalRecipients<br />&amp;q=<span style="color: #008000">_pair.</span><span style="color: #E36C0A">first</span>.Person.Office:Kanata AND <span style="color: #008000">_pair</span>.<span style="color: #660066">second</span>.Person.Department:Support<br />&amp;f=<span style="color: #008000">_pair.</span><span style="color: #E36C0A">first</span>.Person.Department</div>
+      <div class="Normal"><a name="pID0E0QT0HA">The pair parameter works as follows:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0PT0HA">When used, the pair parameter must be a comma-separated list of exactly two link paths referring to the same table. These fields are referred to as the “pair fields”. In this example, the pair fields are </a><span class="Code_Char">Sender</span> and <span class="Code_Char">InternalRecipients</span>, which both refer to the <span class="Code_Char">Participant</span> table. Though not shown in this example, the pair field link paths can use <span class="Code_Char">WHERE</span> filters if needed.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0OT0HA">When the pair parameter is used, the system field </a><span class="Code_Char">_pair</span> can be used in the query and/or fields parameters. The <span class="Code_Char">_pair</span> system field must be followed by the subfield <span class="Code_Char">first</span> or <span class="Code_Char">second</span>, and the remainder of the expression must be valid based on the pair fields’ table. In this example, since the pair fields are links to the <span class="Code_Char">Participant</span> table, the remainder of the expression must be valid for <span class="Code_Char">Participant</span> objects.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0NT0HA">The subfield name (</a><span class="Code_Char">first</span> or <span class="Code_Char">second</span>) is used for <span style="font-style: italic">binding</span> purposes: the <span class="Code_Char">_pair</span> field expression is actually applied to <span style="text-decoration: underline">both</span> pair fields. That is, the query is executed twice with the roles of the pair fields reversed. In the first execution, the query expression is first evaluated using <span class="Code_Char">Sender</span> in the <span class="Code_Char">first</span> role and <span class="Code_Char">Recipients</span> in the <span class="Code_Char">second</span> role:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0MT0HA">Sender.Person.Office:Kanata AND InternalRecipients.Person.Department:Support</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0LT0HA">In this execution, the sender(s) are </a><span style="font-style: italic">bound</span> to <span class="Code_Char">_pair.first</span> and the internal recipients are bound to <span class="Code_Char">_pair.second</span>. Because the grouping parameter groups by <span class="Code_Char">_pair.first.Person.Department</span>, this means that if the expression selects a message, the sender’s department is used to choose the message’s group. In other words:</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KT0HA">&amp;f=_pair.first.Person.Department</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0JT0HA">Is interpreted as:</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0IT0HA">&amp;f=Sender.Person.Department</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0HT0HA">The roles of the pair fields are then swapped and the query expression is executed again. The second query executed is:</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0GT0HA">InternalRecipients.Person.Office:Kanata AND Sender.Person.Department:Support</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0FT0HA">Here, </a><span class="Code_Char">_pair.first</span> is bound to <span class="Code_Char">Recipients</span> and <span class="Code_Char">_pair.second</span> is bound to <span class="Code_Char">Sender</span>. Consequently, if the expression selects a message, it is recipient’s department that is used to choose the message’s group. In other words:</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ET0HA">&amp;f=_pair.first.Person.Department</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0DT0HA">Is interpreted as:</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0CT0HA">&amp;f=InternalRecipients.Person.Department</a></div>
+      <div class="Normal"><a name="pID0E0BT0HA">In this example, “location in Kanata” is one role and “department in Support” is the other role. Messages are found by looking for one role as sender and the other role as internal recipients and then vice versa. Regardless of which combination selects a message, the aggregate results are grouped by the Kanata office’s department.</a></div>
+      <div class="Normal"><a name="pID0E0AT0HA">Note that when the pair parameter is used, the query and fields parameters can use </a><span class="Code_Char">WHERE</span> filters and all other normal aggregate query features.</div>
+      <div class="Normal"><a name="pID0E06S0HA">Pair queries can use standard metric functions and expressions including multiple metric parameters. Additionally, pair queries can reference the </a><span class="Code_Char">_pair</span> subfields in metric expressions. For example:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E05S0HA">GET /Email/Message/_aggregate?pair=Sender,InternalRecipients<br />&amp;q=_pair.first.Person.Office:Kanata AND _pair.second.Person.Department:Support<br />&amp;f=_pair.first.Person.Department<br />&amp;m=COUNT(_pair.first),COUNT(_pair.second)<br />&amp;range=0</a></div>
+      <div class="Normal"><a name="pID0E04S0HA">This is the dual role query described so far, using a metric parameter (&amp;m) that returns two totals: (1) the number of objects participating in the first role (</a><span class="Code_Char">Sender</span>), and (2) the number of objects participating in the second role (<span class="Code_Char">InternalRecipients</span>). Both metric computations are grouped by the department of the participant.</div>
+      <div class="Normal"><a name="pID0E03S0HA">Note that using a </a><span class="Code_Char">_pair</span> field in a metric parameter may produce unexpected results. If the same object participates in both roles, it included twice in each metric computation. In general, the objects selected by the two pair field parameters should be mutually exclusive.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

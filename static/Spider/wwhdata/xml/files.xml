@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WebWorksHelpBook version="5.0" name="Spider" context="Spider" locale="en" xmlns="urn:WebWorks-Help-Book-Files-Schema">
+  <CommonWordsToSkip minlen="3">
+    a about after all also am an and another any are as at
+    be because been before being between both but by
+    came can come copyright corp corporation could
+    did do does
+    each etc
+    for from
+    get goes got
+    had has have he her here him himself his how
+    if in inc into is it its
+    let like
+    make many me might more most much must my
+    never nor not now
+    of off on one only or other our out over own
+    reserved rights
+    said same see set shall she should since so some still such
+    take than that the their them then there these they this those though through to too
+    under us use
+    very
+    was way we well were what when where which while who why will with would
+    yes yet you your
+   </CommonWordsToSkip>
+  <ScoringPrefs>
+    <meta name="keywords" weight="100" />
+    <meta name="description" weight="50" />
+    <meta name="summary" weight="50" />
+    <title weight="20" />
+    <h1 weight="15" />
+    <h2 weight="10" />
+    <caption weight="10" />
+    <h3 weight="7" />
+    <th weight="5" />
+    <h4 weight="5" />
+    <h5 weight="4" />
+    <h6 weight="3" />
+    <h7 weight="2" />
+  </ScoringPrefs>
+  <DocumentInfo>
+    <Document title="Doradus Spider Database" href="Doradus%20Spider%20Database%20-%20v2.3.1.001.html" />
+    <Document title="Introduction" href="Doradus%20Spider%20Database%20-%20v2.3.1.002.html" />
+    <Document title="Recent Changes" href="Doradus%20Spider%20Database%20-%20v2.3.1.003.html" />
+    <Document title="Architecture" href="Doradus%20Spider%20Database%20-%20v2.3.1.004.html" />
+    <Document title="Spider Database Overview" href="Doradus%20Spider%20Database%20-%20v2.3.1.005.html" />
+    <Document title="Starting a Spider Database" href="Doradus%20Spider%20Database%20-%20v2.3.1.006.html" />
+    <Document title="Spider Overview" href="Doradus%20Spider%20Database%20-%20v2.3.1.007.html" />
+    <Document title="When Spider Works Best" href="Doradus%20Spider%20Database%20-%20v2.3.1.008.html" />
+    <Document title="The Msgs Sample Application" href="Doradus%20Spider%20Database%20-%20v2.3.1.009.html" />
+    <Document title="Spider Data Model" href="Doradus%20Spider%20Database%20-%20v2.3.1.010.html" />
+    <Document title="Motivation" href="Doradus%20Spider%20Database%20-%20v2.3.1.011.html" />
+    <Document title="Identifiers" href="Doradus%20Spider%20Database%20-%20v2.3.1.012.html" />
+    <Document title="Application" href="Doradus%20Spider%20Database%20-%20v2.3.1.013.html" />
+    <Document title="Application Options" href="Doradus%20Spider%20Database%20-%20v2.3.1.014.html" />
+    <Document title="Table" href="Doradus%20Spider%20Database%20-%20v2.3.1.015.html" />
+    <Document title="Table Options" href="Doradus%20Spider%20Database%20-%20v2.3.1.016.html" />
+    <Document title="Data Aging Options" href="Doradus%20Spider%20Database%20-%20v2.3.1.017.html" />
+    <Document title="Table Sharding Options" href="Doradus%20Spider%20Database%20-%20v2.3.1.018.html" />
+    <Document title="Objects" href="Doradus%20Spider%20Database%20-%20v2.3.1.019.html" />
+    <Document title="Object IDs" href="Doradus%20Spider%20Database%20-%20v2.3.1.020.html" />
+    <Document title="Fields" href="Doradus%20Spider%20Database%20-%20v2.3.1.021.html" />
+    <Document title="Scalar Fields" href="Doradus%20Spider%20Database%20-%20v2.3.1.022.html" />
+    <Document title="The Collection Property" href="Doradus%20Spider%20Database%20-%20v2.3.1.023.html" />
+    <Document title="The Analyzer Property" href="Doradus%20Spider%20Database%20-%20v2.3.1.024.html" />
+    <Document title="4.7.1.2.1 TextAnalyzer" href="Doradus%20Spider%20Database%20-%20v2.3.1.025.html" />
+    <Document title="4.7.1.2.2 IntegerAnalyzer" href="Doradus%20Spider%20Database%20-%20v2.3.1.026.html" />
+    <Document title="4.7.1.2.3 BooleanAnalyzer" href="Doradus%20Spider%20Database%20-%20v2.3.1.027.html" />
+    <Document title="4.7.1.2.4 DateAnalyzer" href="Doradus%20Spider%20Database%20-%20v2.3.1.028.html" />
+    <Document title="4.7.1.2.5 NullAnalyzer" href="Doradus%20Spider%20Database%20-%20v2.3.1.029.html" />
+    <Document title="4.7.1.2.6 OpaqueTextAnalyzer" href="Doradus%20Spider%20Database%20-%20v2.3.1.030.html" />
+    <Document title="4.7.1.2.7 HTMLAnalyzer" href="Doradus%20Spider%20Database%20-%20v2.3.1.031.html" />
+    <Document title="Link Fields" href="Doradus%20Spider%20Database%20-%20v2.3.1.032.html" />
+    <Document title="The Sharded Property" href="Doradus%20Spider%20Database%20-%20v2.3.1.033.html" />
+    <Document title="Group Fields" href="Doradus%20Spider%20Database%20-%20v2.3.1.034.html" />
+    <Document title="Dynamically-Added Fields" href="Doradus%20Spider%20Database%20-%20v2.3.1.035.html" />
+    <Document title="Aliases" href="Doradus%20Spider%20Database%20-%20v2.3.1.036.html" />
+    <Document title="Doradus Query Language (DQL)" href="Doradus%20Spider%20Database%20-%20v2.3.1.037.html" />
+    <Document title="Query Perspective" href="Doradus%20Spider%20Database%20-%20v2.3.1.038.html" />
+    <Document title="Clauses" href="Doradus%20Spider%20Database%20-%20v2.3.1.039.html" />
+    <Document title="Clause Negation: NOT" href="Doradus%20Spider%20Database%20-%20v2.3.1.040.html" />
+    <Document title="Clause Connectors: AND, OR, and Parentheses" href="Doradus%20Spider%20Database%20-%20v2.3.1.041.html" />
+    <Document title="Literals" href="Doradus%20Spider%20Database%20-%20v2.3.1.042.html" />
+    <Document title="Booleans" href="Doradus%20Spider%20Database%20-%20v2.3.1.043.html" />
+    <Document title="Numbers" href="Doradus%20Spider%20Database%20-%20v2.3.1.044.html" />
+    <Document title="Timestamps" href="Doradus%20Spider%20Database%20-%20v2.3.1.045.html" />
+    <Document title="Terms" href="Doradus%20Spider%20Database%20-%20v2.3.1.046.html" />
+    <Document title="Strings" href="Doradus%20Spider%20Database%20-%20v2.3.1.047.html" />
+    <Document title="Null Values" href="Doradus%20Spider%20Database%20-%20v2.3.1.048.html" />
+    <Document title="IS NULL Clause" href="Doradus%20Spider%20Database%20-%20v2.3.1.049.html" />
+    <Document title="Text Contains Clauses" href="Doradus%20Spider%20Database%20-%20v2.3.1.050.html" />
+    <Document title="Term Clauses" href="Doradus%20Spider%20Database%20-%20v2.3.1.051.html" />
+    <Document title="Phrase Clauses" href="Doradus%20Spider%20Database%20-%20v2.3.1.052.html" />
+    <Document title="Any-field Clauses" href="Doradus%20Spider%20Database%20-%20v2.3.1.053.html" />
+    <Document title="Range Clauses" href="Doradus%20Spider%20Database%20-%20v2.3.1.054.html" />
+    <Document title="Equality Clauses" href="Doradus%20Spider%20Database%20-%20v2.3.1.055.html" />
+    <Document title="IN Clause" href="Doradus%20Spider%20Database%20-%20v2.3.1.056.html" />
+    <Document title="Timestamp Clauses" href="Doradus%20Spider%20Database%20-%20v2.3.1.057.html" />
+    <Document title="Subfield Clauses" href="Doradus%20Spider%20Database%20-%20v2.3.1.058.html" />
+    <Document title="NOW Function" href="Doradus%20Spider%20Database%20-%20v2.3.1.059.html" />
+    <Document title="PERIOD Function" href="Doradus%20Spider%20Database%20-%20v2.3.1.060.html" />
+    <Document title="Link Clauses" href="Doradus%20Spider%20Database%20-%20v2.3.1.061.html" />
+    <Document title="Link Path Clauses" href="Doradus%20Spider%20Database%20-%20v2.3.1.062.html" />
+    <Document title="WHERE Filter" href="Doradus%20Spider%20Database%20-%20v2.3.1.063.html" />
+    <Document title="Outer WHERE Filter" href="Doradus%20Spider%20Database%20-%20v2.3.1.064.html" />
+    <Document title="Quantifier Functions" href="Doradus%20Spider%20Database%20-%20v2.3.1.065.html" />
+    <Document title="Overview: ANY, ALL, and NONE" href="Doradus%20Spider%20Database%20-%20v2.3.1.066.html" />
+    <Document title="Quantifiers on MV Scalar Fields" href="Doradus%20Spider%20Database%20-%20v2.3.1.067.html" />
+    <Document title="Quantifiers on SV Scalar Fields" href="Doradus%20Spider%20Database%20-%20v2.3.1.068.html" />
+    <Document title="Quantifiers on Link Fields" href="Doradus%20Spider%20Database%20-%20v2.3.1.069.html" />
+    <Document title="Quantifiers with IS NULL" href="Doradus%20Spider%20Database%20-%20v2.3.1.070.html" />
+    <Document title="Quantifiers on Group Fields" href="Doradus%20Spider%20Database%20-%20v2.3.1.071.html" />
+    <Document title="Transitive Function" href="Doradus%20Spider%20Database%20-%20v2.3.1.072.html" />
+    <Document title="COUNT(&lt;link path&gt;)" href="Doradus%20Spider%20Database%20-%20v2.3.1.073.html" />
+    <Document title="Spider Object Queries" href="Doradus%20Spider%20Database%20-%20v2.3.1.074.html" />
+    <Document title="Query Parameters" href="Doradus%20Spider%20Database%20-%20v2.3.1.075.html" />
+    <Document title="Fields Parameter" href="Doradus%20Spider%20Database%20-%20v2.3.1.076.html" />
+    <Document title="Basic Formats" href="Doradus%20Spider%20Database%20-%20v2.3.1.077.html" />
+    <Document title="WHERE Filters" href="Doradus%20Spider%20Database%20-%20v2.3.1.078.html" />
+    <Document title="Size Limits on Link Fields" href="Doradus%20Spider%20Database%20-%20v2.3.1.079.html" />
+    <Document title="Order Parameter" href="Doradus%20Spider%20Database%20-%20v2.3.1.080.html" />
+    <Document title="Query Results" href="Doradus%20Spider%20Database%20-%20v2.3.1.081.html" />
+    <Document title="Empty Results" href="Doradus%20Spider%20Database%20-%20v2.3.1.082.html" />
+    <Document title="SV Scalar Fields" href="Doradus%20Spider%20Database%20-%20v2.3.1.083.html" />
+    <Document title="MV Scalar Fields" href="Doradus%20Spider%20Database%20-%20v2.3.1.084.html" />
+    <Document title="Link Fields" href="Doradus%20Spider%20Database%20-%20v2.3.1.085.html" />
+    <Document title="Spider Aggregate Queries" href="Doradus%20Spider%20Database%20-%20v2.3.1.086.html" />
+    <Document title="Aggregate Parameters Overview" href="Doradus%20Spider%20Database%20-%20v2.3.1.087.html" />
+    <Document title="Metric Parameter" href="Doradus%20Spider%20Database%20-%20v2.3.1.088.html" />
+    <Document title="Grouping Parameter" href="Doradus%20Spider%20Database%20-%20v2.3.1.089.html" />
+    <Document title="Global Aggregates: No Grouping Parameter" href="Doradus%20Spider%20Database%20-%20v2.3.1.090.html" />
+    <Document title="Single-level Grouping" href="Doradus%20Spider%20Database%20-%20v2.3.1.091.html" />
+    <Document title="Grouping Field Aliases" href="Doradus%20Spider%20Database%20-%20v2.3.1.092.html" />
+    <Document title="Multi-level Grouping" href="Doradus%20Spider%20Database%20-%20v2.3.1.093.html" />
+    <Document title="Group Fields as Grouping Parameters" href="Doradus%20Spider%20Database%20-%20v2.3.1.094.html" />
+    <Document title="Composite Grouping" href="Doradus%20Spider%20Database%20-%20v2.3.1.095.html" />
+    <Document title="Compound Grouping: GROUP Sets" href="Doradus%20Spider%20Database%20-%20v2.3.1.096.html" />
+    <Document title="Compound/Multi-metric Grouping Results" href="Doradus%20Spider%20Database%20-%20v2.3.1.097.html" />
+    <Document title="Special Grouping Functions" href="Doradus%20Spider%20Database%20-%20v2.3.1.098.html" />
+    <Document title="BATCH Function" href="Doradus%20Spider%20Database%20-%20v2.3.1.099.html" />
+    <Document title="INCLUDE and EXCLUDE Functions" href="Doradus%20Spider%20Database%20-%20v2.3.1.100.html" />
+    <Document title="TERMS Function" href="Doradus%20Spider%20Database%20-%20v2.3.1.101.html" />
+    <Document title="TOP and BOTTOM Functions" href="Doradus%20Spider%20Database%20-%20v2.3.1.102.html" />
+    <Document title="FIRST and LAST Functions" href="Doradus%20Spider%20Database%20-%20v2.3.1.103.html" />
+    <Document title="TRUNCATE Function" href="Doradus%20Spider%20Database%20-%20v2.3.1.104.html" />
+    <Document title="UPPER and LOWER Functions" href="Doradus%20Spider%20Database%20-%20v2.3.1.105.html" />
+    <Document title="WHERE Function" href="Doradus%20Spider%20Database%20-%20v2.3.1.106.html" />
+    <Document title="Multi-metric Aggregate Queries" href="Doradus%20Spider%20Database%20-%20v2.3.1.107.html" />
+    <Document title="Spider REST Commands" href="Doradus%20Spider%20Database%20-%20v2.3.1.108.html" />
+    <Document title="REST API Overview" href="Doradus%20Spider%20Database%20-%20v2.3.1.109.html" />
+    <Document title="Common REST Headers" href="Doradus%20Spider%20Database%20-%20v2.3.1.110.html" />
+    <Document title="Common REST URI Parameters" href="Doradus%20Spider%20Database%20-%20v2.3.1.111.html" />
+    <Document title="REST Commands in Multi-Tenant Mode" href="Doradus%20Spider%20Database%20-%20v2.3.1.112.html" />
+    <Document title="Common JSON Rules" href="Doradus%20Spider%20Database%20-%20v2.3.1.113.html" />
+    <Document title="Illegal Characters in XML Content" href="Doradus%20Spider%20Database%20-%20v2.3.1.114.html" />
+    <Document title="Common REST Responses" href="Doradus%20Spider%20Database%20-%20v2.3.1.115.html" />
+    <Document title="Spider REST Command Summary" href="Doradus%20Spider%20Database%20-%20v2.3.1.116.html" />
+    <Document title="Application Management Commands" href="Doradus%20Spider%20Database%20-%20v2.3.1.117.html" />
+    <Document title="Create Application" href="Doradus%20Spider%20Database%20-%20v2.3.1.118.html" />
+    <Document title="Modify Application" href="Doradus%20Spider%20Database%20-%20v2.3.1.119.html" />
+    <Document title="List Application" href="Doradus%20Spider%20Database%20-%20v2.3.1.120.html" />
+    <Document title="Delete Application" href="Doradus%20Spider%20Database%20-%20v2.3.1.121.html" />
+    <Document title="Object Update Commands" href="Doradus%20Spider%20Database%20-%20v2.3.1.122.html" />
+    <Document title="Add Batch" href="Doradus%20Spider%20Database%20-%20v2.3.1.123.html" />
+    <Document title="Update Batch" href="Doradus%20Spider%20Database%20-%20v2.3.1.124.html" />
+    <Document title="Delete Batch" href="Doradus%20Spider%20Database%20-%20v2.3.1.125.html" />
+    <Document title="Get Object Command" href="Doradus%20Spider%20Database%20-%20v2.3.1.126.html" />
+    <Document title="Object Query Commands" href="Doradus%20Spider%20Database%20-%20v2.3.1.127.html" />
+    <Document title="Object Query via URI" href="Doradus%20Spider%20Database%20-%20v2.3.1.128.html" />
+    <Document title="Object Query via Entity" href="Doradus%20Spider%20Database%20-%20v2.3.1.129.html" />
+    <Document title="Aggregate Query Commands" href="Doradus%20Spider%20Database%20-%20v2.3.1.130.html" />
+    <Document title="Aggregate Query via URI" href="Doradus%20Spider%20Database%20-%20v2.3.1.131.html" />
+    <Document title="Aggregate Query via Entity" href="Doradus%20Spider%20Database%20-%20v2.3.1.132.html" />
+    <Document title="Task Status Command" href="Doradus%20Spider%20Database%20-%20v2.3.1.133.html" />
+  </DocumentInfo>
+  <TopicMap />
+</WebWorksHelpBook>

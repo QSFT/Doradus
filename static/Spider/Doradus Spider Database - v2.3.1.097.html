@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Compound/Multi-metric Grouping Results</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.086.html">Spider Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.089.html">Grouping Parameter</a> : Compound/Multi-metric Grouping Results</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0Y50HA">Compound/Multi-metric Grouping Results</a></div>
+      <div class="Normal"><a name="pID0E0X50HA">Multi-metric aggregate queries can also use compound grouping. That is, a single aggregate query can specify multiple metric functions in the </a><span class="Code_Char">&amp;m</span> parameter <span style="text-decoration: underline">and</span> multiple <span class="Code_Char">GROUP</span> functions in the <span class="Code_Char">&amp;f</span> or <span class="Code_Char">&amp;cf</span> parameter. Such queries compute multiple metric functions, like a multi-metric query, and provide multiple grouping operations for each metric, all in a single query.</div>
+      <div class="Normal"><a name="pID0E0W50HA">The results of compound/multi-metric queries are returned using </a><span class="Code_Char">groupset</span> elements for each combination of metric function and <span class="Code_Char">GROUP</span> function. If there are <span style="font-style: italic">m</span> metric functions and <span style="font-style: italic">n</span> <span class="Code_Char">GROUP</span> functions, the result will contain <span style="font-style: italic">m x n</span> <span class="Code_Char">groupset</span> elements. Each <span class="Code_Char">groupset</span> identifies the metric and grouping parameter for which it provides results.</div>
+      <div class="Normal"><a name="pID0E0V50HA">As an example, the following compound/multi-metric aggregate query has 3 metric functions and 2 </a><span class="Code_Char">GROUP</span> functions:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0U50HA">GET /Msgs/Message/_aggregate?m=</a><span style="color: #008000">COUNT(*)</span>,<span style="color: #0000FF">MAX(Size)</span>,<span style="color: #FF6600">AVERAGE(Size)</span><br />&amp;cf=<span style="color: #FF0000">GROUP(TOP(2,Tags),Subject)</span>,<span style="color: #660066">GROUP(TRUNCATE(SendDate,DAY))</span></div>
+      <div class="Normal"><a name="pID0E0T50HA">This means the result will contain 6 </a><span class="Code_Char">groupset</span> elements, as shown in the following XML outline:</div>
+      <div class="Code"><a name="pID0E0S50HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0R50HA">&lt;aggregate metric="</a><span style="color: #008000">COUNT(*)</span>,<span style="color: #0000FF">MAX(Size)</span>,<span style="color: #FF6600">AVERAGE(Size)</span>" group="<span style="color: #FF0000">GROUP(TOP(2,Tags),Subject)</span>,<span style="color: #660066">GROUP(TRUNCATE(SendDate,DAY))</span>"/&gt;</div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0Q50HA">&lt;groupsets&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0P50HA">&lt;groupset </a><span style="color: #FF0000">group="TOP(2,Tags),Subject"</span> <span style="color: #008000">metric="COUNT(*)"</span>&gt;...&lt;/groupset&gt;</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0O50HA">&lt;groupset </a><span style="color: #660066">group="TRUNCATE(SendDate,DAY)"</span> <span style="color: #008000">metric="COUNT(*)"</span>&gt;...&lt;/groupset&gt;</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0N50HA">&lt;groupset </a><span style="color: #FF0000">group="TOP(2,Tags),Subject"</span> <span style="color: #0000FF">metric="MAX(Size)"</span>&gt;...&lt;/groupset&gt;</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0M50HA">&lt;groupset </a><span style="color: #660066">group="TRUNCATE(SendDate,DAY)"</span> <span style="color: #0000FF">metric="MAX(Size)"</span>&gt;...&lt;/groupset&gt;</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0L50HA">&lt;groupset </a><span style="color: #FF0000">group="TOP(2,Tags),Subject"</span> <span style="color: #FF6600">metric="AVERAGE(Size)"</span>&gt;...&lt;/groupset&gt;</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0K50HA">&lt;groupset </a><span style="color: #660066">group="TRUNCATE(SendDate,DAY)"</span> <span style="color: #FF6600">metric="AVERAGE(Size)"</span>&gt;...&lt;/groupset&gt;</div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0J50HA">&lt;/groupsets&gt;</a></div>
+      <div class="Code"><a name="pID0E0I50HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0H50HA">In JSON:</a></div>
+      <div class="Code"><span style="font-weight: bold"><a name="pID0E0G50HA">{</a></span>"results":&nbsp;<span style="font-weight: bold">{</span></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0F50HA">"aggregate":&nbsp;</a><span style="font-weight: bold">{</span></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0E50HA">"group":&nbsp;"</a><span style="color: #FF0000">GROUP(TOP(2,Tags),Origin)</span>,<span style="color: #660066">GROUP(TRUNCATE(SendDate,DAY))</span>",</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0D50HA">"metric":&nbsp;"</a><span style="color: #008000">COUNT(*)</span>,<span style="color: #0000FF">MAX(Size)</span>,<span style="color: #FF6600">AVERAGE(Size)</span>"</div>
+      <div class="Code" style="margin-left: 36pt"><span style="font-weight: bold"><a name="pID0E0C50HA">}</a></span>,</div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0B50HA">"groupsets":&nbsp;</a><span style="font-weight: bold">[</span></div>
+      <div class="Code" style="margin-left: 54pt"><span style="font-weight: bold"><a name="pID0E0A50HA">{</a></span>"groupset":&nbsp;<span style="font-weight: bold">{</span><span style="color: #FF0000">"group":&nbsp;"TOP(2,Subject),Origin"</span>, <span style="color: #008000">"metric":&nbsp;"COUNT(*)"</span>, ...<span style="font-weight: bold">}}</span>,</div>
+      <div class="Code" style="margin-left: 54pt"><span style="font-weight: bold"><a name="pID0E0640HA">{</a></span>"groupset":&nbsp;<span style="font-weight: bold">{</span><span style="color: #660066">"group":&nbsp;"TRUNCATE(SendDate,DAY)"</span>, <span style="color: #008000">"metric":&nbsp;"COUNT(*)"</span>, ...<span style="font-weight: bold">}}</span>,</div>
+      <div class="Code" style="margin-left: 54pt"><span style="font-weight: bold"><a name="pID0E0540HA">{</a></span>"groupset":&nbsp;<span style="font-weight: bold">{</span><span style="color: #FF0000">"group":&nbsp;"TOP(2,Subject),Origin"</span>, <span style="color: #0000FF">"metric":&nbsp;"MAX(Size)"</span>, ...<span style="font-weight: bold">}}</span>,</div>
+      <div class="Code" style="margin-left: 54pt"><span style="font-weight: bold"><a name="pID0E0440HA">{</a></span>"groupset":&nbsp;<span style="font-weight: bold">{</span><span style="color: #660066">"group":&nbsp;"TRUNCATE(SendDate,DAY)"</span>, <span style="color: #0000FF">"metric":&nbsp;"MAX(Size)"</span>, ...<span style="font-weight: bold">}</span>,</div>
+      <div class="Code" style="margin-left: 54pt"><span style="font-weight: bold"><a name="pID0E0340HA">{</a></span>"groupset":&nbsp;<span style="font-weight: bold">{</span><span style="color: #FF0000">"group":&nbsp;"TOP(2,Subject),Origin"</span>, <span style="color: #FF6600">"metric":&nbsp;"AVERAGE(Size)"</span>, ...<span style="font-weight: bold">}}</span>,</div>
+      <div class="Code" style="margin-left: 54pt"><span style="font-weight: bold"><a name="pID0E0240HA">{</a></span>"groupset":&nbsp;<span style="font-weight: bold">{</span><span style="color: #660066">"group":&nbsp;"TRUNCATE(SendDate,DAY)"</span>, <span style="color: #FF6600">"metric":&nbsp;"AVERAGE(Size)"</span>, ...<span style="font-weight: bold">}}</span></div>
+      <div class="Code" style="margin-left: 36pt"><span style="font-weight: bold"><a name="pID0E0140HA">]</a></span></div>
+      <div class="Code"><span style="font-weight: bold"><a name="pID0E0Z40HA">}}</a></span></div>
+      <div class="Normal"><a name="pID0E0Y40HA">Though not shown here, each </a><span class="Code_Char">groupset</span> will contain <span class="Code_Char">groups</span>, <span class="Code_Char">summary</span>, and <span class="Code_Char">totalgroups</span> elements as required by each GROUP function. If the query requests composite grouping (<span class="Code_Char">&amp;cf</span>), a <span class="Code_Char">groupset</span> with multi-level grouping will contain a composite group for non-leaf groups.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

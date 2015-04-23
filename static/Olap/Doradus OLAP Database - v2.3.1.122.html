@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Merge Shard</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.102.html">OLAP REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.119.html">Shard Management Commands</a> : Merge Shard</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E01J0HA">Merge Shard</a></div>
+      <div class="Normal"><a name="pID0E0ZJ0HA">All batches that have been loaded for a given shard are merged with the following REST command:</a></div>
+      <div class="Code"><a name="pID0E0YJ0HA">POST /{application}/_shards/{shard}[?expire-date=&lt;timestamp&gt;]</a></div>
+      <div class="Normal"><a name="pID0E0XJ0HA">where </a><span class="Code_Char">{application}</span> is the owning application's name and <span class="Code_Char">{shard}</span> is the shard name. The command requires no input entity. It merges all segments synchronously and returns when the merge is complete.</div>
+      <div class="Normal"><a name="pID0E0WJ0HA">The Merge Shard command optionally assigns an expiration date to the shard via the </a><span class="Code_Char">expire-date</span> parameter. The given <span class="Code_Char">&lt;timestamp&gt;</span> must be in the format of a timestamp (<span class="Code_Char">YYYY-MM-DD HH:MM:SS</span>); trailing elements can be omitted. Example:</div>
+      <div class="Code"><a name="pID0E0VJ0HA">POST /Email/_shards/2014-01-01?expire-date=2015-01-01</a></div>
+      <div class="Normal"><a name="pID0E0UJ0HA">If the </a><span class="Code_Char">expire-date</span> is not given, the shard will have no expiration date, even if it was previously assigned one. If the command is successful, a <span class="Code_Char">200 OK</span> response is returned, and all updates will be visible to queries.</div>
+      <div class="Normal"><a name="pID0E0TJ0HA">Note that only one process can submit a merge request for a given shard at a time. If a merge request is submitted for a shard that is already undergoing a merge request, the second request immediately receives an error.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

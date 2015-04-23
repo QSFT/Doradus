@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<WebWorksHelpBook version="5.0" name="Doradus Administration" context="Doradus_Administration" locale="en" xmlns="urn:WebWorks-Help-Book-Files-Schema">
+<WebWorksHelpBook version="5.0" name="Admin" context="Admin" locale="en" xmlns="urn:WebWorks-Help-Book-Files-Schema">
   <CommonWordsToSkip minlen="3">
     a about after all also am an and another any are as at
     be because been before being between both but by

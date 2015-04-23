@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Metric Parameter</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.060.html">OLAP Object Queries</a> : Metric Parameter</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0HWB0HA">Metric Parameter</a></div>
+      <div class="Normal"><a name="pID0E0GWB0HA">In an object query, the metric parameter returns one or more metric computations for each selected object. These computed values are in addition to the field values specified by the </a><span style="font-weight: bold">fields</span> parameter. The syntax for the metric parameter is the same as in aggregate queries: it is a comma-separated list of metric expressions. Each metric expression is an algebraic expression using metric functions, arithmetic operators, and parentheses. See the section <span style="font-weight: bold; text-decoration: underline">Metric Parameter</span> for aggregate queries for full details. Below is an example object query with a single metric function:</div>
+      <div class="Code"><a name="pID0E0FWB0HA">GET /Email/Person/_query?shards=s1&amp;m=COUNT(Messages.MessageAsSender)&amp;f=FirstName,LastName</a></div>
+      <div class="Normal"><a name="pID0E0EWB0HA">This query selects all </a><span class="Code_Char">Person</span> objects and returns their <span class="Code_Char">FirstName</span> and <span class="Code_Char">LastName</span> fields. Additionally, the metric parameter returns the <span class="Code_Char">COUNT</span> of all <span class="Code_Char">Messages.MessageAsSender</span> values for each object. The metric expression result is returned as an additional field element whose name equals the metric expression text. Example:</div>
+      <div class="Code"><a name="pID0E0DWB0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0CWB0HA">&lt;totalobjects&gt;185&lt;/totalobjects&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0BWB0HA">&lt;docs&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0AWB0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E06VB0HA">&lt;field&nbsp;name="COUNT(Messages.MessageAsSender)"&gt;3&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E05VB0HA">&lt;field&nbsp;name="FirstName"&gt;Chris&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E04VB0HA">&lt;field&nbsp;name="LastName"&gt;Rudd&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E03VB0HA">&lt;field&nbsp;name="_ID"&gt;+IBGjRcg4dMXgu3l7aOZXg==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E02VB0HA">&lt;field&nbsp;name="_shard"&gt;s1&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01VB0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZVB0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YVB0HA">&lt;field&nbsp;name="COUNT(Messages.MessageAsSender)"&gt;9&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0XVB0HA">&lt;field&nbsp;name="FirstName"&gt;Scott&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0WVB0HA">&lt;field&nbsp;name="LastName"&gt;Reasoner&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0VVB0HA">&lt;field&nbsp;name="_ID"&gt;+eVQDWAtRBSjWc6DHYVtTg==&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0UVB0HA">&lt;field&nbsp;name="_shard"&gt;s1&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TVB0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SVB0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0RVB0HA">&lt;/docs&gt;</a></div>
+      <div class="Code"><a name="pID0E0QVB0HA">&lt;results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0PVB0HA">The field name used for the metric function can be customized for easier recognition using the </a><span class="Code_Char">AS</span> syntax. Example:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0OVB0HA">GET /Email/Person/_query?shards=s1&amp;m=COUNT(Messages.MessageAsSender) AS 'Messages Sent'<br />&amp;f=FirstName,LastName</a></div>
+      <div class="Normal"><a name="pID0E0NVB0HA">The name following </a><span class="Code_Char">AS</span> can be a simple term or a quoted string.</div>
+      <div class="Normal"><a name="pID0E0MVB0HA">Multiple expressions can be computed by the metrics parameter by separating each expression by a comma. For example, suppose we want to know the total number of messages sent by each person and the total size of all sent messages. The following query could be used:</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0LVB0HA">GET /Email/Person/_query?range=0&amp;f=FirstName,LastName<br />&amp;m=COUNT(Messages.MessageAsSender) AS TotalMessages,<br />   SUM(Messages.MessageAsSender.Size) AS TotalSize</a></div>
+      <div class="Normal"><a name="pID0E0KVB0HA">Below is an example where a metric computation uses an algebraic expression to compute a more complex result:</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0JVB0HA">GET /Email/Person/_query?range=0&amp;f=FirstName,LastName<br />&amp;m=COUNT(DirectReports^.WHERE(LastName:smith)) + COUNT(Manager^.WHERE(Department:support))</a></div>
+      <div class="Normal"><a name="pID0E0IVB0HA">In addition to </a><span class="Code_Char">FirstName</span> and <span class="Code_Char">LastName</span>, this query returns for each person the sum of (1) the count of all <span class="Code_Char">DirectReports</span> transitively (“down” the org chart) whose <span class="Code_Char">LastName</span> contains the term “smith”, and (2) the count of all <span class="Code_Char">Manager</span>s transitively (“up” the org chart) whose <span class="Code_Char">Department</span> contains the term “support”.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

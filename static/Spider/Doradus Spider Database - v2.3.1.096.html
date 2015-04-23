@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Compound Grouping: GROUP Sets</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.086.html">Spider Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.089.html">Grouping Parameter</a> : Compound Grouping: GROUP Sets</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0WCB0HA">Compound Grouping: GROUP Sets</a></div>
+      <div class="Normal"><a name="pID0E0VCB0HA">Doradus Spider allows the aggregate query grouping parameter to consist of multiple </a><span style="font-style: italic">grouping sets</span>. Each grouping set is enclosed in a <span class="Code_Char">GROUP</span> function; multiple grouping sets are separated by commas. This feature is known as <span style="font-style: italic">compound</span> grouping. The general syntax is:</div>
+      <div class="Code"><a name="pID0E0UCB0HA">GROUP(&lt;expression 1&gt;),GROUP(&lt;expression 2&gt;),...,GROUP(&lt;expression n&gt;)</a></div>
+      <div class="Normal"><a name="pID0E0TCB0HA">Each </a><span class="Code_Char">&lt;expression n&gt;</span> parameter must use one of the following forms:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0SCB0HA">A “*” can be used to compute a global aggregate (i.e., </a><span class="Code_Char">GROUP(*)</span>). The metric function is computed for all selected objects just as in an aggregate query with no grouping parameter. The <span class="Code_Char">GROUP(*)</span> function should be specified at most once since there is only one metric value for a global aggregate.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0RCB0HA">A single-level grouping expression, consisting of a single scalar field or a field path (e.g., </a><span class="Code_Char">GROUP(Tags)</span>).</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0QCB0HA">A multi-level grouping expression, consisting of a comma-separated list of scalar fields and/or field paths (e.g., </a><span class="Code_Char">GROUP(TRUNCATE(SendDate,DAY),Tags)</span>).</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0PCB0HA">Each single- and multi-level grouping expression must be relative to the perspective table. The same set of objects selected by the aggregate query is passed to each grouping set, and separate metric computations are performed for each grouping set. Aggregate queries that use compound grouping perform a single pass through the selected objects and computes multiple grouping sets at the same time.</a></div>
+      <div class="Normal"><a name="pID0E0OCB0HA">Consider this aggregate query:</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0NCB0HA">GET /Msgs/Message/_aggregate?m=MAX(Size)<br />&amp;cf=</a><span style="color: #008000">GROUP(*)</span>,<span style="color: #FF0000">GROUP(TRUNCATE(SendDate,WEEK))</span>,<span style="color: #0000FF">GROUP(TOP(2,TERMS(Subject)),Tags)</span><br />&amp;q=SendDate &gt; 2013-10-15</div>
+      <div class="Normal"><a name="pID0E0MCB0HA">This compound grouping aggregate query selects messages whose </a><span class="Code_Char">SendDate</span> is &gt;= <span class="Code_Char">2013-10-15</span>, and it computes the following:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0LCB0HA">The maximum </a><span class="Code_Char">Size</span> value of selected messages (<span class="Code_Char">GROUP(*)</span>).</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0KCB0HA">The maximum </a><span class="Code_Char">Size</span> of selected messages grouped by <span class="Code_Char">SendDate</span> truncated to WEEK granularity (<span class="Code_Char">GROUP(TRUNCATE(SendDate,WEEK))</span>).</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0JCB0HA">The maximum </a><span class="Code_Char">Size</span> of selected messages grouped first by the top 2 terms used in the <span class="Code_Char">Subject</span> field and then by the <span class="Code_Char">Tags</span> field (<span class="Code_Char">GROUP(</span><span style="color: #595959; font-family: &quot;Courier New&quot;; font-size: 9.5pt">TOP(2,TERMS(Subject)),Tags</span><span class="Code_Char">)</span>). Because composite grouping was requested (<span class="Code_Char">&amp;cf</span>), this multi-level grouping expression uses the composite grouping technique.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0ICB0HA">Compound aggregate queries compute all grouping sets in a single pass. The query above returns XML results such as the following:</a></div>
+      <div class="Code"><a name="pID0E0HCB0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0GCB0HA">&lt;aggregate metric="MAX(Size)" query="SendDate &gt; 2009-10-15"<br />group="GROUP(*),GROUP(TRUNCATE(SendDate,WEEK)),GROUP(TOP(2,TERMS(Subject)),Tags)"/&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0FCB0HA">&lt;totalobjects&gt;6032&lt;/totalobjects&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0ECB0HA">&lt;groupsets&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><span style="color: #008000"><a name="pID0E0DCB0HA">&lt;groupset&gt;</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #008000"><a name="pID0E0CCB0HA">&lt;value&gt;16796009&lt;/value&gt;</a></span></div>
+      <div class="Code" style="margin-left: 54pt"><span style="color: #008000"><a name="pID0E0BCB0HA">&lt;/groupset&gt;</a></span></div>
+      <div class="Code" style="margin-left: 54pt"><span style="color: #FF0000"><a name="pID0E0ACB0HA">&lt;groupset group="TRUNCATE(SendDate,WEEK)"&gt;</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #FF0000"><a name="pID0E06BB0HA">&lt;summary&gt;16796009&lt;/summary&gt;</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #FF0000"><a name="pID0E05BB0HA">&lt;groups&gt;</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #FF0000"><a name="pID0E04BB0HA">&lt;group&gt;</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #FF0000"><a name="pID0E03BB0HA">&lt;field name="SendDate"&gt;2010-07-12 00:00:00&lt;/field&gt;</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #FF0000"><a name="pID0E02BB0HA">&lt;metric&gt;965230&lt;/metric&gt;</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #FF0000"><a name="pID0E01BB0HA">&lt;/group&gt;</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #FF0000"><a name="pID0E0ZBB0HA">...</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #FF0000"><a name="pID0E0YBB0HA">&lt;/groups&gt;</a></span></div>
+      <div class="Code" style="margin-left: 54pt"><span style="color: #FF0000"><a name="pID0E0XBB0HA">&lt;/groupset&gt;</a></span></div>
+      <div class="Code" style="margin-left: 54pt"><span style="color: #0000FF"><a name="pID0E0WBB0HA">&lt;groupset group="TOP(2,TERMS(Subject)),Tags"&gt;</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #0000FF"><a name="pID0E0VBB0HA">&lt;summary&gt;16796009&lt;/summary&gt;</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #0000FF"><a name="pID0E0UBB0HA">&lt;totalgroups&gt;15267&lt;/totalgroups&gt;</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #0000FF"><a name="pID0E0TBB0HA">&lt;groups&gt;</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #0000FF"><a name="pID0E0SBB0HA">&lt;group&gt;</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #0000FF"><a name="pID0E0RBB0HA">&lt;summary&gt;16796009&lt;/summary&gt;</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #0000FF"><a name="pID0E0QBB0HA">&lt;field name="Subject"&gt;scalepan&lt;/field&gt;</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #0000FF"><a name="pID0E0PBB0HA">&lt;groups&gt;</a></span></div>
+      <div class="Code" style="margin-left: 126pt"><span style="color: #0000FF"><a name="pID0E0OBB0HA">&lt;group&gt;</a></span></div>
+      <div class="Code" style="margin-left: 144pt"><span style="color: #0000FF"><a name="pID0E0NBB0HA">&lt;metric&gt;16796009&lt;/metric&gt;</a></span></div>
+      <div class="Code" style="margin-left: 144pt"><span style="color: #0000FF"><a name="pID0E0MBB0HA">&lt;field name="Tags"&gt;AfterHours&lt;/field&gt;</a></span></div>
+      <div class="Code" style="margin-left: 126pt"><span style="color: #0000FF"><a name="pID0E0LBB0HA">&lt;/group&gt;</a></span></div>
+      <div class="Code" style="margin-left: 126pt"><span style="color: #0000FF"><a name="pID0E0KBB0HA">...</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #0000FF"><a name="pID0E0JBB0HA">&lt;/groups&gt;</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #0000FF"><a name="pID0E0IBB0HA">&lt;/group&gt;</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #0000FF"><a name="pID0E0HBB0HA">...</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #660066"><a name="pID0E0GBB0HA">&lt;group composite="true"&gt;</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #660066"><a name="pID0E0FBB0HA">&lt;field name="Subject"&gt;*&lt;/field&gt;</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #660066"><a name="pID0E0EBB0HA">&lt;groups&gt;</a></span></div>
+      <div class="Code" style="margin-left: 126pt"><span style="color: #660066"><a name="pID0E0DBB0HA">&lt;group&gt;</a></span></div>
+      <div class="Code" style="margin-left: 144pt"><span style="color: #660066"><a name="pID0E0CBB0HA">&lt;metric&gt;7317&lt;/metric&gt;</a></span></div>
+      <div class="Code" style="margin-left: 144pt"><span style="color: #660066"><a name="pID0E0BBB0HA">&lt;field name="Tags"&gt;(null)&lt;/field&gt;</a></span></div>
+      <div class="Code" style="margin-left: 126pt"><span style="color: #660066"><a name="pID0E0ABB0HA">&lt;/group&gt;</a></span></div>
+      <div class="Code" style="margin-left: 126pt"><span style="color: #660066"><a name="pID0E06AB0HA">...</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #660066"><a name="pID0E05AB0HA">&lt;/groups&gt;</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #660066"><a name="pID0E04AB0HA">&lt;/group&gt;</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #0000FF"><a name="pID0E03AB0HA">&lt;/groups&gt;</a></span></div>
+      <div class="Code" style="margin-left: 54pt"><span style="color: #0000FF"><a name="pID0E02AB0HA">&lt;/groupset&gt;</a></span></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E01AB0HA">&lt;/groupsets&gt;</a></div>
+      <div class="Code"><a name="pID0E0ZAB0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0YAB0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E0XAB0HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0WAB0HA">"aggregate": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VAB0HA">"group": "GROUP(*),GROUP(TRUNCATE(SendDate,WEEK)),GROUP(TOP(2,TERMS(Subject)),Tags)",</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0UAB0HA">"query": "SendDate &gt; 2009-10-15",</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TAB0HA">"metric":"MAX(Size)"</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0SAB0HA">},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0RAB0HA">"totalobjects": "6032",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0QAB0HA">"groupsets": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><span style="color: #008000"><a name="pID0E0PAB0HA">{"groupset": {</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #008000"><a name="pID0E0OAB0HA">"value": "16796009"</a></span></div>
+      <div class="Code" style="margin-left: 54pt"><span style="color: #008000"><a name="pID0E0NAB0HA">}},</a></span></div>
+      <div class="Code" style="margin-left: 54pt"><span style="color: #FF0000"><a name="pID0E0MAB0HA">{"groupset": {</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #FF0000"><a name="pID0E0LAB0HA">"group": "TRUNCATE(SendDate,WEEK)",</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #FF0000"><a name="pID0E0KAB0HA">"summary": "16796009",</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #FF0000"><a name="pID0E0JAB0HA">"groups": [</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #FF0000"><a name="pID0E0IAB0HA">{"group": {</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #FF0000"><a name="pID0E0HAB0HA">"field": {"SendDate": "2010-07-12 00:00:00"},</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #FF0000"><a name="pID0E0GAB0HA">"metric": "16796009"</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #FF0000"><a name="pID0E0FAB0HA">}},</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #FF0000"><a name="pID0E0EAB0HA">...</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #FF0000"><a name="pID0E0DAB0HA">]</a></span></div>
+      <div class="Code" style="margin-left: 54pt"><span style="color: #FF0000"><a name="pID0E0CAB0HA">}},</a></span></div>
+      <div class="Code" style="margin-left: 54pt"><span style="color: #0000FF"><a name="pID0E0BAB0HA">{"groupset": {</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #0000FF"><a name="pID0E0AAB0HA">"group": "</a></span> <span style="color: #0000FF">TOP(2,TERMS(Subject)),Tags ",</span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #0000FF"><a name="pID0E0660HA">"summary": "16796009",</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #0000FF"><a name="pID0E0560HA">"totalgroups": "15267",</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #0000FF"><a name="pID0E0460HA">"groups": [</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #0000FF"><a name="pID0E0360HA">{"group": </a></span><span style="color: #0000FF; font-weight: bold">{</span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #0000FF"><a name="pID0E0260HA">"summary": "16796009",</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #0000FF"><a name="pID0E0160HA">"field": </a></span><span style="color: #0000FF; font-weight: bold">{</span><span style="color: #0000FF">"Subject": "scalepan"</span><span style="color: #0000FF; font-weight: bold">}</span><span style="color: #0000FF">,</span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #0000FF"><a name="pID0E0Z60HA">"groups": </a></span><span style="color: #0000FF; font-weight: bold">[</span></div>
+      <div class="Code" style="margin-left: 126pt"><span style="color: #0000FF; font-weight: bold"><a name="pID0E0Y60HA">{</a></span><span style="color: #0000FF">"group": </span><span style="color: #0000FF; font-weight: bold">{</span></div>
+      <div class="Code" style="margin-left: 144pt"><span style="color: #0000FF"><a name="pID0E0X60HA">"metric": "16796009",</a></span></div>
+      <div class="Code" style="margin-left: 144pt"><span style="color: #0000FF"><a name="pID0E0W60HA">"field": </a></span><span style="color: #0000FF; font-weight: bold">{</span><span style="color: #0000FF">"Tags": "AfterHours"</span><span style="color: #0000FF; font-weight: bold">}</span></div>
+      <div class="Code" style="margin-left: 126pt"><span style="color: #0000FF; font-weight: bold"><a name="pID0E0V60HA">}}</a></span><span style="color: #0000FF">,</span></div>
+      <div class="Code" style="margin-left: 126pt"><span style="color: #0000FF; font-weight: bold"><a name="pID0E0U60HA">{</a></span><span style="color: #0000FF">"group": </span><span style="color: #0000FF; font-weight: bold">{</span></div>
+      <div class="Code" style="margin-left: 144pt"><span style="color: #0000FF"><a name="pID0E0T60HA">"metric": "16796009",</a></span></div>
+      <div class="Code" style="margin-left: 144pt"><span style="color: #0000FF"><a name="pID0E0S60HA">"field": </a></span><span style="color: #0000FF; font-weight: bold">{</span><span style="color: #0000FF">"Tags": "Customer"</span><span style="color: #0000FF; font-weight: bold">}</span></div>
+      <div class="Code" style="margin-left: 126pt"><span style="color: #0000FF; font-weight: bold"><a name="pID0E0R60HA">}}</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #0000FF; font-weight: bold"><a name="pID0E0Q60HA">]</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #0000FF; font-weight: bold"><a name="pID0E0P60HA">}</a></span><span style="color: #0000FF">},</span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #0000FF"><a name="pID0E0O60HA">...</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #660066"><a name="pID0E0N60HA">{"group": {</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #660066"><a name="pID0E0M60HA">"composite": "true",</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #660066"><a name="pID0E0L60HA">"field": {"Origin": "*"},</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #660066"><a name="pID0E0K60HA">"groups": [</a></span></div>
+      <div class="Code" style="margin-left: 126pt"><span style="color: #660066; font-weight: bold"><a name="pID0E0J60HA">{</a></span><span style="color: #660066">"group": </span><span style="color: #660066; font-weight: bold">{</span></div>
+      <div class="Code" style="margin-left: 144pt"><span style="color: #660066"><a name="pID0E0I60HA">"metric": "7317",</a></span></div>
+      <div class="Code" style="margin-left: 144pt"><span style="color: #660066"><a name="pID0E0H60HA">"field": </a></span><span style="color: #660066; font-weight: bold">{</span><span style="color: #660066">"Tags": "(null)"</span><span style="color: #660066; font-weight: bold">}</span></div>
+      <div class="Code" style="margin-left: 126pt"><span style="color: #660066; font-weight: bold"><a name="pID0E0G60HA">}}</a></span><span style="color: #660066">,</span></div>
+      <div class="Code" style="margin-left: 126pt"><span style="color: #660066"><a name="pID0E0F60HA">...</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #660066"><a name="pID0E0E60HA">]</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #660066"><a name="pID0E0D60HA">}}</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #0000FF"><a name="pID0E0C60HA">]</a></span></div>
+      <div class="Code" style="margin-left: 54pt"><span style="color: #0000FF"><a name="pID0E0B60HA">}}</a></span></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0A60HA">]</a></div>
+      <div class="Code"><a name="pID0E0650HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0550HA">Notable aspects of a compound group result:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0450HA">As with all aggregate queries, the outer </a><span class="Code_Char">results</span> element contains an <span class="Code_Char">aggregate</span> element that confirms the aggregate query parameters.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0350HA">The </a><span class="Code_Char">results</span> element also contains a <span class="Code_Char">groupsets</span> element, which contains one <span class="Code_Char">groupset</span> element per grouping set, that is, for each <span class="Code_Char">GROUP</span> function.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0250HA">The contents of each </a><span class="Code_Char">groupset</span> element follows the format applicable for global, single-level, or multi-level aggregate queries, except that they do not contain an <span class="Code_Char">aggregate</span> element.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0150HA">As with all grouped aggregate queries, each </a><span class="Code_Char">groupset</span> and each non-leaf group contains a <span class="Code_Char">summary</span> value.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0Z50HA">Only multi-level grouping sets can contain a composite group, denoted by a </a><span class="Code_Char">composite=true</span> element and a <span class="Code_Char">field</span> value of “*”.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

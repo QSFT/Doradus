@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>The Analyzer Property</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.010.html">Spider Data Model</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.021.html">Fields</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.022.html">Scalar Fields</a> : The Analyzer Property</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_4"><a name="pID0E0GHC0HA">The </a><span style="font-family: Consolas">Analyzer</span> Property</div>
+      <div class="Normal"><a name="pID0E0FHC0HA">Doradus Spider uses </a><span style="font-style: italic">analyzers</span> to determine how to store and index scalar fields. The analyzer controls two aspects of scalar field management:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0EHC0HA">Indexing</a></span>: The analyzer determines whether or not the field’s value are indexed.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0DHC0HA">Term extraction</a></span>: If values are indexed, the analyzer generates one or more <span style="font-style: italic">terms</span> from each field value that are used to create index records. In other words, the analyzer <span style="font-style: italic">tokenizes</span> the field for indexing.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0CHC0HA">Every scalar field defined in the schema is assigned a default analyzer that is optimized for the scalar’s field type. Optionally, the field can explicitly declare an </a><span class="Code_Char">analyzer</span> property that assigns the default or an alternate analyzer as allowed by the chart below:</div>
+      <table class="Table_Normal" style="margin-left: 36pt; width: 403.5pt" cellspacing="0" summary="">
+        <tr>
+          <td style="background-color: #99CCFF; border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle; width: 61.25pt">
+            <div class="Normal" style="margin-bottom: 0pt"><span style="font-weight: bold"><a name="pID0EACG0BHC0HA">Field Type</a></span></div>
+          </td>
+          <td style="background-color: #99CCFF; border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle; width: 91.15pt">
+            <div class="Normal" style="margin-bottom: 0pt"><span style="font-weight: bold"><a name="pID0EABG0BHC0HA">Default Analyzer</a></span></div>
+          </td>
+          <td style="background-color: #99CCFF; border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle; width: 251.1pt">
+            <div class="Normal" style="margin-bottom: 0pt"><span style="font-weight: bold"><a name="pID0EAAG0BHC0HA">Alternate Analyzers</a></span></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EACF0BHC0HA">Text</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABF0BHC0HA">TextAnalyzer</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EAAF0BHC0HA">NullAnalyzer, OpaqueTextAnalyzer, HTMLAnalyzer</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EACE0BHC0HA">Integer</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABE0BHC0HA">IntegerAnalyzer</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EAAE0BHC0HA">NullAnalyzer</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EACD0BHC0HA">Long</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABD0BHC0HA">IntegerAnalyzer</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EAAD0BHC0HA">NullAnalyzer</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EACC0BHC0HA">Boolean</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABC0BHC0HA">BooleanAnalyzer</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EAAC0BHC0HA">NullAnalyzer</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EACB0BHC0HA">Timestamp</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABB0BHC0HA">DateAnalyzer</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EAAB0BHC0HA">NullAnalyzer</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EACA0BHC0HA">Binary</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EABA0BHC0HA">NullAnalyzer</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; vertical-align: middle">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EAAA0BHC0HA">&nbsp;</a></div>
+          </td>
+        </tr>
+      </table>
+      <div class="Normal" style="margin-bottom: 0pt"><a name="pID0E0AHC0HA">&nbsp;</a></div>
+      <div class="Normal"><a name="pID0E06GC0HA">Every scalar field type can declare the </a><span class="Code_Char">NullAnalyzer</span> to prevent the field from being indexed. Text fields can assign the <span class="Code_Char">OpaqueTextAnalyzer</span> to index the entire field as a single value instead of being tokenized into terms, or they can assign the <span class="Code_Char">HTMLAnalyzer</span> to index the field as HTML text. Binary fields are not indexed and must always use the <span class="Code_Char">NullAnalyzer</span>.</div>
+      <div class="Normal"><a name="pID0E05GC0HA">When a scalar field is MV, all values are indexed. For example, consider the following declaration:</a></div>
+      <div class="Code"><a name="pID0E04GC0HA">&lt;field name="Quotes" type="Text" collection="true" analyzer="TextAnalyzer"/&gt;</a></div>
+      <div class="Normal"><a name="pID0E03GC0HA">Suppose an object is inserted with the following three </a><span class="Code_Char">Quotes</span> values:</div>
+      <div class="Code"><a name="pID0E02GC0HA">{"What time is it?", "Life is a Beach", "It's Happy Hour!"}</a></div>
+      <div class="Normal"><a name="pID0E01GC0HA">Using the </a><span class="Code_Char">TextAnalyzer</span>, each unique term is indexed once (“a”, “happy”, “is”, etc.), and each whole value (“life is a beach”) is also indexed. Therefore phrase clauses such as <span class="Code_Char">Quotes:Happy</span> will select the object, as will equality searches such as <span class="Code_Char">Quotes="life is a beach"</span>. If the analyzer is set to <span class="Code_Char">OpaqueTextAnalyzer</span>, only whole values are indexed, hence the equality clause will select the object but the term clause won’t. Details of each analyzer are described in the next sections.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

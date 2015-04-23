@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>4.7.1.2.7 HTMLAnalyzer</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.010.html">Spider Data Model</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.021.html">Fields</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.022.html">Scalar Fields</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.024.html">The Analyzer Property</a> : 4.7.1.2.7 HTMLAnalyzer</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_5">4.7.1.2.7 <span class="Code_Char" style="font-size: 11pt"><a name="pID0E04FC0HA">HTMLAnalyzer</a></span></div>
+      <div class="Normal"><a name="pID0E03FC0HA">Text fields can optionally be assigned the </a><span class="Code_Char">HTMLAnalyzer</span>. This analyzer indexes the element content of any HTML elements it finds in the text. Tag names and element attributes are ignored. The content of all elements is logically concatenated into a single text field, which is then indexed with the same process as the <span class="Code_Char">TextAnalyzer</span>. For example, consider the following HTML document:</div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -54pt"><a name="pID0E02FC0HA">&lt;html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US"&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E01FC0HA">&lt;body&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZFC0HA">&lt;div name="Body"&gt;Hi Betty,</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0YFC0HA">&lt;p&gt;Just a reminder that you’re scheduled to move to your “fancy” new office<br />tomorrow, number &lt;b&gt;B413&lt;/b&gt;. If you have any questions, please let me know.<br />Thanks, John.</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XFC0HA">&lt;/div&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0WFC0HA">&lt;/body&gt;</a></div>
+      <div class="Code"><a name="pID0E0VFC0HA">&lt;/html&gt;</a></div>
+      <div class="Normal"><a name="pID0E0UFC0HA">If this HTML document is the value of a field named </a><span class="Code_Char">Body</span>, it generates the exact same terms as in the plain text example shown for the <span class="Code_Char">TextAnalyzer</span>. Specifically, the terms generated are:</div>
+      <div class="Code"><a name="pID0E0TFC0HA">a any b413 betty fancy have hi if john just know let me move new number office please questions reminder scheduled thanks that to tomorrow you your you're</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

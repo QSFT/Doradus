@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Term Clauses</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.037.html">Doradus Query Language (DQL)</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.050.html">Text Contains Clauses</a> : Term Clauses</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0W6B0HA">Term Clauses</a></div>
+      <div class="Normal"><a name="pID0E0V6B0HA">A </a><span style="font-style: italic">term clause</span> searches a specific field for one or more terms. To designate it as a <span style="font-style: italic">contains</span> clause, the field name must be followed by a colon. Example:</div>
+      <div class="Code"><a name="pID0E0U6B0HA">Name:Smith</a></div>
+      <div class="Normal"><a name="pID0E0T6B0HA">This clause searches perspective objects’ </a><span class="Code_Char">Name</span> field for the term <span class="Code_Char">Smith</span> (case-insensitive). To specify multiple terms, enclose them in parentheses. Example:</div>
+      <div class="Code"><a name="pID0E0S6B0HA">Name:(John Smith)</a></div>
+      <div class="Normal"><a name="pID0E0R6B0HA">To match this clause, an object’s </a><span class="Code_Char">Name</span> field must contain both <span class="Code_Char">John</span> and <span class="Code_Char">Smith</span>, but they can appear in any order and be separated by other terms.</div>
+      <div class="Normal"><a name="pID0E0Q6B0HA">Be sure to enclose multi-term clauses in parentheses! The following query looks like it searches for </a><span class="Code_Char">John</span> and <span class="Code_Char">Smith</span> in the <span class="Code_Char">Name</span> field:</div>
+      <div class="Code"><a name="pID0E0P6B0HA">Name:John Smith		// doesn’t do what you think!</a></div>
+      <div class="Normal"><a name="pID0E0O6B0HA">But, this sequence is actually interpreted as two clauses that are AND-ed together:</a></div>
+      <div class="Code"><a name="pID0E0N6B0HA">Name:John AND *:Smith</a></div>
+      <div class="Normal"><a name="pID0E0M6B0HA">Matching objects must have </a><span class="Code_Char">John</span> in the <span class="Code_Char">Name</span> field and <span class="Code_Char">Smith</span> in <span style="text-decoration: underline">any</span> field.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

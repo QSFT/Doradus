@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Composite Grouping</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.086.html">Spider Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.089.html">Grouping Parameter</a> : Composite Grouping</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0RGB0HA">Composite Grouping</a></div>
+      <div class="Normal"><a name="pID0E0QGB0HA">Doradus Spider supports a special grouping feature called </a><span style="font-style: italic">composite</span> grouping. It is meaningful only for aggregate queries with 2 or more grouping levels. It causes the metric function(s) to be computed for parent (non-leaf) groups in addition to leaf-most groups. The extra computations are returned as composite results within the corresponding parent groups.</div>
+      <div class="Normal"><a name="pID0E0PGB0HA">Composite grouping is requested by using a special grouping parameter instead of the normal grouping parameter. For example, consider the following URI aggregate query:</a></div>
+      <div class="Code"><a name="pID0E0OGB0HA">GET /Msgs/Message/_aggregate?m=COUNT(*)&amp;f=TRUNCATE(SendDate,DAY),Tags</a></div>
+      <div class="Normal"><a name="pID0E0NGB0HA">Composite grouping can be requested for this 2-level query by using the </a><span class="Code_Char">&amp;cf</span> parameter instead of <span class="Code_Char">&amp;f</span>:</div>
+      <div class="Code"><a name="pID0E0MGB0HA">GET /Msgs/Message/_aggregate?m=COUNT(*)&amp;</a><span style="color: #3366FF">cf</span>=TRUNCATE(SendDate,DAY),Tags</div>
+      <div class="Normal"><a name="pID0E0LGB0HA">A typical result for this 2-level aggregate query in XML is shown below:</a></div>
+      <div class="Code"><a name="pID0E0KGB0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0JGB0HA">&lt;aggregate&nbsp;metric="COUNT(*)"&nbsp;group="TRUNCATE(SendDate,DAY),Tags"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0IGB0HA">&lt;totalobjects&gt;6032&lt;/totalobjects&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0HGB0HA">&lt;summary&gt;6032&lt;/summary&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0GGB0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0FGB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0EGB0HA">&lt;summary&gt;4753&lt;/summary&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0DGB0HA">&lt;field&nbsp;name="SendDate"&gt;2010-07-17 00:00:00&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0CGB0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0BGB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0AGB0HA">&lt;metric&gt;1&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E06FB0HA">&lt;field&nbsp;name="Tags"&gt;(null)&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E05FB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E04FB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E03FB0HA">&lt;metric&gt;4752&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E02FB0HA">&lt;field&nbsp;name="Tags"&gt;AfterHours&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E01FB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0ZFB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0YFB0HA">&lt;metric&gt;1524&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0XFB0HA">&lt;field&nbsp;name="Tags"&gt;Customer&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0WFB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0VFB0HA">&lt;/groups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0UFB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TFB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0SFB0HA">&lt;summary&gt;1279&lt;/summary&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0RFB0HA">&lt;field&nbsp;name="SendDate"&gt;2010-07-18 00:00:00&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0QFB0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0PFB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0OFB0HA">&lt;metric&gt;1279&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0NFB0HA">&lt;field&nbsp;name="Tags"&gt;AfterHours&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0MFB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0LFB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0KFB0HA">&lt;metric&gt;701&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0JFB0HA">&lt;field&nbsp;name="Tags"&gt;Customer&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0IFB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0HFB0HA">&lt;/groups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0GFB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><span style="color: #3366FF"><a name="pID0E0FFB0HA">&lt;group&nbsp;composite="true"&gt;</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #3366FF"><a name="pID0E0EFB0HA">&lt;field&nbsp;name="SendDate"&gt;*&lt;/field&gt;</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #3366FF"><a name="pID0E0DFB0HA">&lt;groups&gt;</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #3366FF"><a name="pID0E0CFB0HA">&lt;group&gt;</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #3366FF"><a name="pID0E0BFB0HA">&lt;metric&gt;1&lt;/metric&gt;</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #3366FF"><a name="pID0E0AFB0HA">&lt;field&nbsp;name="Tags"&gt;(null)&lt;/field&gt;</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #3366FF"><a name="pID0E06EB0HA">&lt;/group&gt;</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #3366FF"><a name="pID0E05EB0HA">&lt;group&gt;</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #3366FF"><a name="pID0E04EB0HA">&lt;metric&gt;6031&lt;/metric&gt;</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #3366FF"><a name="pID0E03EB0HA">&lt;field&nbsp;name="Tags"&gt;AfterHours&lt;/field&gt;</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #3366FF"><a name="pID0E02EB0HA">&lt;/group&gt;</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #3366FF"><a name="pID0E01EB0HA">&lt;group&gt;</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #3366FF"><a name="pID0E0ZEB0HA">&lt;metric&gt;2225&lt;/metric&gt;</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #3366FF"><a name="pID0E0YEB0HA">&lt;field&nbsp;name="Tags"&gt;Customer&lt;/field&gt;</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #3366FF"><a name="pID0E0XEB0HA">&lt;/group&gt;</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #3366FF"><a name="pID0E0WEB0HA">&lt;/groups&gt;</a></span></div>
+      <div class="Code" style="margin-left: 54pt"><span style="color: #3366FF"><a name="pID0E0VEB0HA">&lt;/group&gt;</a></span></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0UEB0HA">&lt;/groups&gt;</a></div>
+      <div class="Code"><a name="pID0E0TEB0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0SEB0HA">The same response in JSON is shown below:</a></div>
+      <div class="Code"><a name="pID0E0REB0HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0QEB0HA">"aggregate": {"metric": "COUNT(*)", "group": "TRUNCATE(SendDate,DAY),Tags"},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0PEB0HA">"totalobjects": "6032",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0OEB0HA">"summary": "6032",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0NEB0HA">"groups": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0MEB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0LEB0HA">"summary": "4753",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0KEB0HA">"field": {"SendDate": "2010-07-17 00:00:00"},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0JEB0HA">"groups": [</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0IEB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0HEB0HA">"metric": "1",</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0GEB0HA">"field": {"Tags": "(null)"}</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0FEB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0EEB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0DEB0HA">"metric": "4752",</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0CEB0HA">"field": {"Tags": "AfterHours"}</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0BEB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0AEB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E06DB0HA">"metric": "1524",</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E05DB0HA">"field": {"Tags": "Customer"}</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E04DB0HA">}}</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E03DB0HA">]</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E02DB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01DB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ZDB0HA">"summary": "1279",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YDB0HA">"field": {"SendDate": "2010-07-18 00:00:00"},</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0XDB0HA">"groups": [</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0WDB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0VDB0HA">"metric": "1279",</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0UDB0HA">"field": {"Tags": "AfterHours"}</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0TDB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0SDB0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0RDB0HA">"metric": "701",</a></div>
+      <div class="Code" style="margin-left: 108pt"><a name="pID0E0QDB0HA">"field": {"Tags": "Customer"}</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0PDB0HA">}}</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ODB0HA">]</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NDB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><span style="color: #3366FF"><a name="pID0E0MDB0HA">{"group": {</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #3366FF"><a name="pID0E0LDB0HA">"composite": "true",</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #3366FF"><a name="pID0E0KDB0HA">"field": {"SendDate": "*"},</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #3366FF"><a name="pID0E0JDB0HA">"groups": [</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #3366FF"><a name="pID0E0IDB0HA">{"group": {</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #3366FF"><a name="pID0E0HDB0HA">"metric": "1",</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #3366FF"><a name="pID0E0GDB0HA">"field": {"Tags": "(null)"}</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #3366FF"><a name="pID0E0FDB0HA">}},</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #3366FF"><a name="pID0E0EDB0HA">{"group": {</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #3366FF"><a name="pID0E0DDB0HA">"metric": "6031",</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #3366FF"><a name="pID0E0CDB0HA">"field": {"Tags": "AfterHours"}</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #3366FF"><a name="pID0E0BDB0HA">}},</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #3366FF"><a name="pID0E0ADB0HA">{"group": {</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #3366FF"><a name="pID0E06CB0HA">"metric": "2225",</a></span></div>
+      <div class="Code" style="margin-left: 108pt"><span style="color: #3366FF"><a name="pID0E05CB0HA">"field": {"Tags":"Customer"}</a></span></div>
+      <div class="Code" style="margin-left: 90pt"><span style="color: #3366FF"><a name="pID0E04CB0HA">}}</a></span></div>
+      <div class="Code" style="margin-left: 72pt"><span style="color: #3366FF"><a name="pID0E03CB0HA">]</a></span></div>
+      <div class="Code" style="margin-left: 54pt"><span style="color: #3366FF"><a name="pID0E02CB0HA">}}</a></span></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E01CB0HA">]</a></div>
+      <div class="Code"><a name="pID0E0ZCB0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0YCB0HA">As shown, composite grouping produces an extra group for non-leaf grouping levels. This group is marked with a </a><span class="Code_Char">composite</span> property of <span class="Code_Char">true</span>, and the value for its <span class="Code_Char">field</span> element is “*”. Within the composite group, lower-level metric groups are provided for each lower-level grouping field value, however, these lower-level metrics are computed across <span style="text-decoration: underline">all</span> objects at the composite grouping level. In the example above, the composite group computes the metric function (<span class="Code_Char">COUNT(*)</span>) for all second-level groups (<span class="Code_Char">Tags</span>) across all first-level group values (<span class="Code_Char">SendDate</span>).</div>
+      <div class="Normal"><a name="pID0E0XCB0HA">Composite grouping is only meaningful for multi-level grouping.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

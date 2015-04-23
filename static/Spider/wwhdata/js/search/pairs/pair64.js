@@ -1,0 +1,26 @@
+function FileData_Pairs(x)
+{
+x.t("right","quantity");
+x.t("related","particular");
+x.t("(dql)","quantifier");
+x.t("satisfy","clause\u2019s");
+x.t("quantifier","functions");
+x.t("quantifier","clause");
+x.t("quantitatively","right");
+x.t("doradus","query");
+x.t("true","values");
+x.t("tests","values");
+x.t("functions","quantifier");
+x.t("functions","doradus");
+x.t("clause\u2019s","condition");
+x.t("particular","perspective");
+x.t("language","(dql)");
+x.t("condition","quantitatively");
+x.t("query","language");
+x.t("values","related");
+x.t("values","satisfy");
+x.t("perspective","object");
+x.t("clause","true");
+x.t("clause","tests");
+x.t("object","clause");
+}

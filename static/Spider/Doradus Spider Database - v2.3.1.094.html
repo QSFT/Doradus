@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Group Fields as Grouping Parameters</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.086.html">Spider Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.089.html">Grouping Parameter</a> : Group Fields as Grouping Parameters</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E02GB0HA">Group Fields as Grouping Parameters</a></div>
+      <div class="Normal"><a name="pID0E01GB0HA">Doradus Spider allows a group field to be used as a grouping expression if all of its leaf fields are links. For example, in the example schema the group field </a><span class="Code_Char">Participants</span> contains links <span class="Code_Char">Sender</span>, <span class="Code_Char">InternalRecipients</span>, and <span class="Code_Char">ExternalRecipients</span>, all pointing to the <span class="Code_Char">Participant</span> table. If the <span class="Code_Char">Participants</span> field is used as a grouping parameter, the values (object IDs) for all three links are combined into a set for each perspective object. The object is included in the metric computation for each group for which it has a value. If a perspective object has no values for any of the links, it is included in the <span class="Code_Char">(null)</span> group.</div>
+      <div class="Normal"><a name="pID0E0ZGB0HA">Link paths and </a><span class="Code_Char">WHERE</span> filters can be used on the group field with the same syntax as allowed for links. For example:</div>
+      <div class="Code"><a name="pID0E0YGB0HA">f=Participants.Person.Name</a></div>
+      <div class="Code"><a name="pID0E0XGB0HA">f=Participants.WHERE(ReceiptDate &gt; 2014-02-01).Person.Name</a></div>
+      <div class="Code"><a name="pID0E0WGB0HA">f=Participants.Person.WHERE(Department:Sales).Name</a></div>
+      <div class="Normal"><a name="pID0E0VGB0HA">In the first example, the combined </a><span class="Code_Char">Person.Name</span> values of each link (<span class="Code_Char">ExternalRecipients</span>, <span class="Code_Char">InternalRecipients</span>, and <span class="Code_Char">Sender</span>) form the grouping sets; each perspective object is included in each set in which it participates. If a perspective object has no <span class="Code_Char">Participants.Person.Name</span> values, it is included in the null group.</div>
+      <div class="Normal"><a name="pID0E0UGB0HA">The second and third examples using the same grouping parameter: </a><span class="Code_Char">Participants.Person.Name</span>. However, the presence of the <span class="Code_Char">WHERE</span> filter causes nulls to be handled differently:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0TGB0HA">In the second example, a perspective object is simply skipped if it has no participants or none of its participants are selected by the expression </a><span style="color: #595959; font-family: &quot;Courier New&quot;; font-size: 9pt">ReceiptDate &gt; 2014-02-01</span>. When a perspective is selected by the <span class="Code_Char">WHERE</span> expression but it is has no <span class="Code_Char">Person.Name</span> values, it is included in the <span class="Code_Char">(null)</span> group.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0SGB0HA">In the third example, a perspective object is skipped if it has no participants, no participants have </a><span class="Code_Char">Person</span> values, or no <span class="Code_Char">Person.Department</span> field includes the term <span class="Code_Char">Sales</span>. Only if a perspective object is chosen but has no <span class="Code_Char">Name</span> values is it included in the <span class="Code_Char">(null)</span> group.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>WHERE Function</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.074.html">OLAP Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.082.html">Grouping Parameter</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.088.html">Special Grouping Functions</a> : WHERE Function</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_4"><a name="pID0E0L20HA">WHERE Function</a></div>
+      <div class="Normal"><a name="pID0E0K20HA">The </a><span class="Code_Char">WHERE</span> function can be used to provide <span style="font-style: italic">filtering</span> on a path used in a grouping expression. Most importantly, it can be used for multi-clause expressions that are <span style="font-style: italic">bound</span> to the same objects. To illustrate why the <span class="Code_Char">WHERE</span> clause is needed and how it is used, here’s an example.</div>
+      <div class="Normal"><a name="pID0E0J20HA">Suppose we want to count messages grouped by the domain name of each message’s recipients, but we only want recipients that received the message after a certain date </a><span style="text-decoration: underline">and</span> the recipient’s address is considered external. As an example, this aggregate query <span style="text-decoration: underline">won’t</span> work:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0I20HA">// Doesn’t do what we want</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0H20HA">GET /Email/Message/_aggregate?m=COUNT(*)<br />&amp;f=Recipients.MessageAddress.Domain.Name<br />&amp;q=Recipients.ReceiptDate &gt; "2014-01-01" AND Recipients.MessageAddress.Domain.IsInternal=false<br />&amp;shards=...</a></div>
+      <div class="Normal"><a name="pID0E0G20HA">This query doesn’t work because it selects messages for which </a><span style="text-decoration: underline">at least one</span> recipient’s <span class="Code_Char">ReceiptDate</span> is &gt; <span class="Code_Char">"2014‑01‑01"</span>, and <span style="text-decoration: underline">at least one</span> recipient has an external domain. Every such message is then counted in <span style="text-decoration: underline">all</span> of its <span class="Code_Char">Recipients.MessageAddress.Domain.Name</span> values, even for those that don’t really qualify.</div>
+      <div class="Normal"><a name="pID0E0F20HA">Using the </a><span class="Code_Char">WHERE</span> filter for query expressions, we could bind the two query clauses to the same <span class="Code_Char">Recipients</span> instances. But this query still doesn’t work:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0E20HA">// Still not what we want</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0D20HA">GET /Email/Message/_aggregate?m=COUNT(*)<br />&amp;f=Recipients.MessageAddress.Domain.Name<br />&amp;q=Recipients.WHERE(ReceiptDate &gt; "2014-01-01" AND MessageAddress.Domain.IsInternal=false)<br />&amp;shards=...</a></div>
+      <div class="Normal"><a name="pID0E0C20HA">This causes the correct objects to be selected, but it still counts them in </a><span style="text-decoration: underline">all</span> <span class="Code_Char">Recipients.MessageAddress.Domain.Name</span> groups, not just those found with the query expression.</div>
+      <div class="Normal"><a name="pID0E0B20HA">For this scenario, we can use the </a><span class="Code_Char">WHERE</span> function in the grouping parameter instead of the query parameter. In a grouping parameter, the <span class="Code_Char">WHERE</span> function filters out group values we don’t want. And, when the object selection criteria lies solely in the choice of groups, we don’t need a separate query parameter. The solution to the previous problem can be expressed as follows:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0A20HA">GET /Email/Message/_aggregate?m=COUNT(*)<br />&amp;f=Recipients.WHERE(ReceiptDate &gt; "2014-01-01" AND 	MessageAddress.Domain.IsInternal=false).MessageAddress.Domain.Name<br />&amp;shards=...</a></div>
+      <div class="Normal"><a name="pID0E0610HA">The grouping field is still </a><span class="Code_Char">Recipients.MessageAddress.Domain.Name</span>, but the <span class="Code_Char">WHERE</span> function inserted after <span class="Code_Char">Recipients</span> filters values used for grouping. The first field in each <span class="Code_Char">WHERE</span> clause (<span class="Code_Char">ReceiptDate</span> and <span class="Code_Char">MessageAddress</span>) must be members of the same table as <span class="Code_Char">Recipients</span>, thereby filtering the recipients in some manner. In this case, only recipients whose <span class="Code_Char">ReceiptDate</span> is &gt; <span class="Code_Char">"2014‑01‑01"</span> <span style="text-decoration: underline">and</span> whose <span style="color: #595959; font-family: &quot;Courier New&quot;; font-size: 9pt">MessageAddress.Domain.IsInternal</span> is false. Groups are created by domains of recipients that match those constraints, and only objects within those group values are counted.</div>
+      <div class="Normal"><a name="pID0E0510HA">But wait! It gets better! The </a><span class="Code_Char">WHERE</span> function can be applied to multiple components of the same grouping path as long as each subquery is qualified to the path component to which it is attached. Exploiting this, we can factor out the redundant specification of <span class="Code_Char">MessageAddress.Domain</span> with this shorter but equivalent expression:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0410HA">GET /Email/Message/_aggregate?m=COUNT(*)<br />&amp;f=Recipients.WHERE(ReceiptDate &gt; "2014-01-01").Address.Domain.WHERE(IsInternal=false).Name<br />&amp;shards=...</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

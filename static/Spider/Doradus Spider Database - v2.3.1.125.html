@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Delete Batch</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.108.html">Spider REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.122.html">Object Update Commands</a> : Delete Batch</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0XI0HA">Delete Batch</a></div>
+      <div class="Normal"><a name="pID0E0WI0HA">A batch of one or more objects can be deleted by issuing a DELETE command using the appropriate application and table:</a></div>
+      <div class="Code"><a name="pID0E0VI0HA">DELETE /{application}/{table}</a></div>
+      <div class="Normal"><a name="pID0E0UI0HA">An input entity is required using the same syntax as for the Add Batch and Update Batch commands except that only the </a><span class="Code_Char">_ID</span> field should be set for each <span class="Code_Char">doc</span> group. All other field assignments are ignored. When an object is deleted that has link fields, inverse link values are fixed-up in the same request.</div>
+      <div class="Normal"><a name="pID0E0TI0HA">A </a><span class="Code_Char">200 OK</span> response with a <span class="Code_Char">batch-result</span> group is returned with a <span class="Code_Char">doc</span> element for each requested _ID. The <span class="Code_Char">doc</span> element indicates if the object was actually found or not. Example:</div>
+      <div class="Code"><a name="pID0E0SI0HA">&lt;batch-result&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0RI0HA">&lt;status&gt;OK&lt;/status&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0QI0HA">&lt;docs&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0PI0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0OI0HA">&lt;status&gt;OK&lt;/status&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0NI0HA">&lt;comment&gt;Object not found&lt;/comment&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0MI0HA">&lt;field&nbsp;name="_ID"&gt;28dj2716rgq&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0LI0HA">&nbsp;&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0KI0HA">&lt;/docs&gt;</a></div>
+      <div class="Code"><a name="pID0E0JI0HA">&lt;/batch-result&gt;</a></div>
+      <div class="Normal"><a name="pID0E0II0HA">Like other updates, deletes are idempotent: It is not an error to delete an already-deleted object.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Grouping Field Aliases</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.074.html">OLAP Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.082.html">Grouping Parameter</a> : Grouping Field Aliases</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0ZIB0HA">Grouping Field Aliases</a></div>
+      <div class="Normal"><a name="pID0E0YIB0HA">By default, aggregate query group results use the fully-qualified path name of each grouping field. You can shorten the output result by using an </a><span style="font-style: italic">alias</span> for each grouping field. The alias name is used instead of the fully-qualified name. For example:</div>
+      <div class="Code"><a name="pID0E0XIB0HA">GET /Email/Message/_aggregate?m=COUNT(*)&amp;f=TOP(3,Sender.Person.Name)&amp;range=0</a></div>
+      <div class="Normal"><a name="pID0E0WIB0HA">This query produces a result such as the following:</a></div>
+      <div class="Code"><a name="pID0E0VIB0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0UIB0HA">&lt;aggregate metric="COUNT(*)" group="TOP(3,Sender.Person.Name)"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0TIB0HA">&lt;totalobjects&gt;6030&lt;/totalobjects&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0SIB0HA">&lt;summary&gt;6030&lt;/summary&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0RIB0HA">&lt;totalgroups&gt;186&lt;/totalgroups&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0QIB0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0PIB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0OIB0HA">&lt;metric&gt;5256&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0NIB0HA">&lt;field name="Sender.Person.Name"&gt;(null)&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0MIB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0LIB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0KIB0HA">&lt;metric&gt;82&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0JIB0HA">&lt;field name="Sender.Person.Name"&gt;Quest Support&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0IIB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0HIB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0GIB0HA">&lt;metric&gt;80&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0FIB0HA">&lt;field name="Sender.Person.Name"&gt;spb_setupbuilder&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0EIB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0DIB0HA">&lt;/groups&gt;</a></div>
+      <div class="Code"><a name="pID0E0CIB0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0BIB0HA">The fully-qualified field name </a><span class="Code_Char">Sender.Person.Name</span> is used for the field parameter in each group element. An alias can be substituted for a grouping field by appending <span class="Code_Char">AS </span><span class="Code_Char" style="font-style: italic">name</span> or <span class="Code_Char">.AS(</span><span class="Code_Char" style="font-style: italic">name</span><span class="Code_Char">)</span> to the grouping field. The two syntaxes are equivalent. The <span class="Code_Char">AS</span> function’s parameter can be an unquoted term or a quoted string. Example:</div>
+      <div class="Code"><a name="pID0E0AIB0HA">GET /Email/Message/_aggregate?m=COUNT(*)&amp;f=TOP(3,Sender.Person.Name) </a><span style="color: #3366FF">AS Name</span>&amp;range=0</div>
+      <div class="Code"><a name="pID0E06HB0HA">GET /Email/Message/_aggregate?m=COUNT(*)&amp;f=TOP(3,Sender.Person.Name).</a><span style="color: #3366FF">AS(Name)</span>&amp;range=0</div>
+      <div class="Normal"><a name="pID0E05HB0HA">With either form, the alias </a><span class="Code_Char">Name</span> is used in the output as shown below:</div>
+      <div class="Code"><a name="pID0E04HB0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E03HB0HA">&lt;aggregate metric="COUNT(*)" group="TOP(3,Sender.Person.Name)"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E02HB0HA">&lt;totalobjects&gt;6030&lt;/totalobjects&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E01HB0HA">&lt;summary&gt;6030&lt;/summary&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0ZHB0HA">&lt;totalgroups&gt;186&lt;/totalgroups&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0YHB0HA">&lt;groups&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XHB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0WHB0HA">&lt;metric&gt;5256&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0VHB0HA">&lt;field name="</a><span style="color: #3366FF">Name</span>"&gt;(null)&lt;/field&gt;</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0UHB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0THB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0SHB0HA">&lt;metric&gt;82&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0RHB0HA">&lt;field name="</a><span style="color: #3366FF">Name</span>"&gt;Quest Support&lt;/field&gt;</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QHB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0PHB0HA">&lt;group&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0OHB0HA">&lt;metric&gt;80&lt;/metric&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0NHB0HA">&lt;field name="</a><span style="color: #3366FF">Name</span>"&gt;spb_setupbuilder&lt;/field&gt;</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0MHB0HA">&lt;/group&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0LHB0HA">&lt;/groups&gt;</a></div>
+      <div class="Code"><a name="pID0E0KHB0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0JHB0HA">When many groups are returned and/or the grouping field name is long, the alias name can significantly shorten the output results. An alias name can also improve the identity of the groups.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

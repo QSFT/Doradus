@@ -1,0 +1,24 @@
+function FileData_Pairs(x)
+{
+x.t("describes","core");
+x.t("doradus","olap");
+x.t("doradus","data");
+x.t("features","advantageous");
+x.t("olap","features");
+x.t("olap","extends");
+x.t("olap","data");
+x.t("olap","applications");
+x.t("unique","features");
+x.t("section","describes");
+x.t("extended","olap");
+x.t("advantageous","olap");
+x.t("core","doradus");
+x.t("core","data");
+x.t("extends","core");
+x.t("data","model");
+x.t("applications","section");
+x.t("model","doradus");
+x.t("model","olap");
+x.t("model","unique");
+x.t("model","extended");
+}

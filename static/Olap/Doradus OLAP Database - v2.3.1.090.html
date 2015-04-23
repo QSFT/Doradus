@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>INCLUDE and EXCLUDE Functions</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.074.html">OLAP Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.082.html">Grouping Parameter</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.088.html">Special Grouping Functions</a> : INCLUDE and EXCLUDE Functions</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_4"><a name="pID0E0NCB0HA">INCLUDE and EXCLUDE Functions</a></div>
+      <div class="Normal"><a name="pID0E0MCB0HA">In an aggregate query, normally all values of a scalar grouping field are used to create groups. For example:</a></div>
+      <div class="Code"><a name="pID0E0LCB0HA">GET /Email/Message/_aggregate?f=Tags&amp;...</a></div>
+      <div class="Normal"><a name="pID0E0KCB0HA">All values of the </a><span class="Code_Char">Tags</span> field for selected objects are used to create grouping fields. To eliminate specific values from being used for grouping—without affecting the selection of the owning object—the <span class="Code_Char">EXCLUDE</span> function can be used:</div>
+      <div class="Code"><a name="pID0E0JCB0HA">GET /Email/Message/_aggregate?f=Tags.</a><span style="color: #3366FF">EXCLUDE</span>('Confidential, 'Internal')&amp;...</div>
+      <div class="Normal"><a name="pID0E0ICB0HA">When the grouping field is a text field, the values passed to the </a><span class="Code_Char">EXCLUDE</span> function are whole, case-insensitive values—not terms—and must be enclosed in quotes. In the example above, groups matching the value <span class="Code_Char">Confidential</span> or <span class="Code_Char">Internal</span> or case variations of these are excluded. The values used for text scalars can contain wildcards <span class="Code_Char">?</span> and <span class="Code_Char">*</span>. For example:</div>
+      <div class="Code"><a name="pID0E0HCB0HA">GET /Email/Message/_aggregate?f=Tags.</a><span style="color: #3366FF">EXCLUDE</span>('*sam?')&amp;...</div>
+      <div class="Normal"><a name="pID0E0GCB0HA">This aggregate query excludes all groups that end with the </a><span class="Code_Char">sam</span><span class="Code_Char" style="font-style: italic">x</span>, where <span class="Code_Char">x</span> is any letter, or case variations of this sequence.</div>
+      <div class="Normal"><a name="pID0E0FCB0HA">To generate only groups that match specific scalar values—without affecting the selection of the owning object—the </a><span class="Code_Char">INCLUDE</span> function can be used:</div>
+      <div class="Code"><a name="pID0E0ECB0HA">GET /Email/Message/_aggregate?f=Tags.</a><span style="color: #3366FF">INCLUDE</span>('Confidential, 'Internal')&amp;...</div>
+      <div class="Normal"><a name="pID0E0DCB0HA">The only groups generated are those matching </a><span class="Code_Char">Confidential</span> and <span class="Code_Char">Internal</span> and case variations of these; all other values are skipped. Again, when the grouping field is a text scalar, the value must be enclosed in quotes, and it can contain wildcards <span class="Code_Char">?</span> and <span class="Code_Char">*</span>.</div>
+      <div class="Normal"><a name="pID0E0CCB0HA">The values passed to </a><span class="Code_Char">INCLUDE</span> and <span class="Code_Char">EXCLUDE </span>must be compatible with the corresponding scalar type field: integers for <span class="Code_Char">integer</span> or <span class="Code_Char">long</span> fields, Booleans for <span class="Code_Char">boolean</span> fields, etc. Additionally, the keyword <span class="Code_Char">NULL</span> (uppercase) can be used to include or exclude the <span class="Code_Char">(null)</span> group normally generated when at least one object has a null value for the grouping field. Example:</div>
+      <div class="Code"><a name="pID0E0BCB0HA">GET /Email/Message/_aggregate?f=Tags.EXCLUDE(</a><span style="color: #3366FF">NULL</span>)&amp;...</div>
+      <div class="Normal"><span class="Code_Char"><a name="pID0E0ACB0HA">INCLUDE</a></span> and <span class="Code_Char">EXCLUDE</span> can be used in the same grouping expression. Because the functions are processed in order from left-to-right, it is most useful to use <span class="Code_Char">INCLUDE</span> first, to select a overly-broad set of values, and then use <span class="Code_Char">EXCLUDE</span> to prune-out unwanted values. <span class="Code_Char">INCLUDE</span> and <span class="Code_Char">EXCLUDE</span> can also be used in conjunction with other grouping functions, as shown in this example:</div>
+      <div class="Code"><a name="pID0E06BB0HA">GET /Email/Person/_aggregate?m=COUNT(*)&amp;f=TOP(10,Name.INCLUDE(aaron*).EXCLUDE(*Murphy))&amp;range=0</a></div>
+      <div class="Normal"><a name="pID0E05BB0HA">This query returns a </a><span class="Code_Char">COUNT</span> of the <span class="Code_Char">TOP</span> 10 most-used <span class="Code_Char">Name</span> values, but it only <span class="Code_Char">INCLUDE</span>s names that begin with “aaron”. Within those names, it <span class="Code_Char">EXCLUDE</span>s names that end with “murphy”.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

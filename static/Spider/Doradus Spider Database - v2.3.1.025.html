@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>4.7.1.2.1 TextAnalyzer</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.010.html">Spider Data Model</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.021.html">Fields</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.022.html">Scalar Fields</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.024.html">The Analyzer Property</a> : 4.7.1.2.1 TextAnalyzer</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_5">4.7.1.2.1 <span class="Code_Char" style="font-size: 11pt"><a name="pID0E0ZGC0HA">TextAnalyzer</a></span></div>
+      <div class="Normal"><a name="pID0E0YGC0HA">The </a><span class="Code_Char">TextAnalyzer</span> assumes that text values are “plain text” (i.e., no metadata or mark-up). For each field value it tokenizes, the <span class="Code_Char">TextAnalyzer</span> generates zero or more terms as lowercased letter/digit/apostrophe sequences separated by consecutive whitespace/punctuation sequences. That is, each contiguous sequence of letters, digits, and/or apostrophes becomes a term. A term can <span style="font-style: italic">contain</span> an apostrophe, but it cannot begin or end with an apostrophe. For example, the apostrophe is included in <span style="font-style: italic">doesn’t</span>, but outer apostrophes in the sequence <span style="font-style: italic">‘tough’</span> are excluded, yielding the term <span style="font-style: italic">tough</span>. An apostrophe is any of the following characters:</div>
+      <div class="List_Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Bullet_inner"><a name="pID0E0XGC0HA">The Unicode APOSTROPHE (0x27)</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Bullet_inner"><a name="pID0E0WGC0HA">The Windows right single quote (0x92)</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Bullet_inner"><a name="pID0E0VGC0HA">The Unicode RIGHT SINGLE QUOTATATION MARK (0x2019)</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0UGC0HA">As example of how text fields are tokenized by the </a><span class="Code_Char">TextAnalyzer</span>, suppose an email object is created with the following text field values, all indexed with <span class="Code_Char">TextAnalyzer</span>:</div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -54pt"><a name="pID0E0TGC0HA">From:	John Smith</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -54pt"><a name="pID0E0SGC0HA">To:	Betty Sue</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -54pt"><a name="pID0E0RGC0HA">Subject:	The Office Move</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -54pt"><a name="pID0E0QGC0HA">Body:	Hi Betty,<br />Just a reminder that you’re scheduled to move to your “fancy” new office tomorrow, number B413. If you have any questions, please let me know.<br />Thanks, John.</a></div>
+      <div class="Normal"><a name="pID0E0PGC0HA">The </a><span class="Code_Char">TextAnalyzer</span> indexes these fields to generate the following terms:</div>
+      <table class="Table_Normal" style="margin-left: 21.6pt; width: 529.2pt" cellspacing="0" summary="">
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; width: 69.3pt">
+            <div class="Normal" style="margin-bottom: 0pt"><span style="font-weight: bold"><a name="pID0EABE0OGC0HA">Field Name</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; width: 459.9pt">
+            <div class="Normal" style="margin-bottom: 0pt"><span style="font-weight: bold"><a name="pID0EAAE0OGC0HA">Terms</a></span></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0.9pt"><a name="pID0EABD0OGC0HA">From</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EAAD0OGC0HA">john smith</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0.9pt"><a name="pID0EABC0OGC0HA">To</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EAAC0OGC0HA">betty sue</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0.9pt"><a name="pID0EABB0OGC0HA">Subject</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EAAB0OGC0HA">move office the</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0.9pt"><a name="pID0EABA0OGC0HA">Body</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code" style="margin-left: 0pt"><a name="pID0EAAA0OGC0HA">a any b413 betty fancy have hi if john just know let me move new number office please questions reminder scheduled thanks that to tomorrow you your you're</a></div>
+          </td>
+        </tr>
+      </table>
+      <div class="Normal" style="margin-bottom: 0pt"><a name="pID0E0NGC0HA">&nbsp;</a></div>
+      <div class="Normal"><a name="pID0E0MGC0HA">As shown, terms are extracted in lowercase, and punctuation and whitespace are removed. As part of down-casing, the </a><span class="Code_Char">TextAnalyzer</span> converts any apostrophe retained within a term to the “straight apostrophe” character (0x27.) Although a term may appear multiple times within a field, it is indexed but once.</div>
+      <div class="Normal"><a name="pID0E0LGC0HA">Though not shown above, the </a><span class="Code_Char">TextAnalyzer</span> also creates a term equal to the term’s entire field value, down-cased, and enclosed in single quotes. This value is used as an optimization for equality searches. For example, the whole-field value for the field <span class="Code_Char">From</span> is <span class="Code_Char">'john smith'</span>. For text fields with large values, this “whole field” value is created as an MD5 value instead of the literal text.</div>
+      <div class="Normal" style="margin-top: 12pt"><a name="pID0E0KGC0HA">The terms generated by the </a><span class="Code_Char">TextAnalyzer</span> allow efficient execution of a wide range of full text queries: single terms, phrases, wildcard terms, range clauses, etc. Searches are performed without case sensitivity: for example the phrase “You’re Scheduled to MOVE” will match the <span class="Code_Char">Body</span> field shown above.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

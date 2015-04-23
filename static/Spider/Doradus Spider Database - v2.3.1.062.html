@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Link Path Clauses</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.037.html">Doradus Query Language (DQL)</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.061.html">Link Clauses</a> : Link Path Clauses</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0Z1B0HA">Link Path Clauses</a></div>
+      <div class="Normal"><a name="pID0E0Y1B0HA">A clause can search a field of an object that is related to the perspective object by using a </a><span style="font-style: italic">link path</span>. The general form of a link path is:</div>
+      <div class="Code"><span style="font-style: italic"><a name="pID0E0X1B0HA">field1</a></span>.<span style="font-style: italic">field2</span>...<span style="font-style: italic">fieldN</span></div>
+      <div class="Normal"><a name="pID0E0W1B0HA">The field names used in a link path must follow these rules:</a></div>
+      <div class="List_Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Bullet_inner"><a name="pID0E0V1B0HA">The first field (</a><span class="Code_Char">field1</span>) must be a link field defined in the query’s perspective table.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Bullet_inner"><a name="pID0E0U1B0HA">All fields in the path must be link fields except for the last field, which can be a link or scalar field.</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Bullet_inner"><a name="pID0E0T1B0HA">Each secondary field (</a><span class="Code_Char">field2</span> through <span class="Code_Char">fieldN</span>) must be a field that belongs to the extent table of the prior (immediate left) link field. That is, <span class="Code_Char">field2</span> must be a field owned by the extent table of <span class="Code_Char">field1</span>, <span class="Code_Char">field3</span> must be owned by extent table of <span class="Code_Char">field2</span>, and so forth.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Bullet_inner"><a name="pID0E0S1B0HA">If the second-to-last field (</a><span class="Code_Char">fieldN-1</span>) is a timestamp field, the last field can be a timestamp subfield (<span class="Code_Char">YEAR</span>, <span class="Code_Char">HOUR</span>, etc.)</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0R1B0HA">The right-most field in the link path is the comparison field. The type of the target value(s) in the clause must match the type of the comparison field. For example, if the comparison field is an integer, the target values must be integers; if the comparison field is a link, the target values must be object IDs; etc. Implicit quantification occurs for every field in the path. Consider these examples:</a></div>
+      <div class="Code"><a name="pID0E0Q1B0HA">Manager.Name : Fred</a></div>
+      <div class="Code"><a name="pID0E0P1B0HA">Sender.MessageAddress.Domain.Name = 'hotels.com'</a></div>
+      <div class="Code"><a name="pID0E0O1B0HA">DirectReports.DirectReports.FirstName = [Fred TO Wilma}</a></div>
+      <div class="Normal"><a name="pID0E0N1B0HA">In order, these examples are interpreted as follows:</a></div>
+      <div class="List_Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Bullet_inner"><a name="pID0E0M1B0HA">A perspective object (a </a><span class="Code_Char">Person</span>) is selected if at least one of its manager’s name contains the term <span class="Code_Char">Fred</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Bullet_inner"><a name="pID0E0L1B0HA">A perspective object (a </a><span class="Code_Char">Message</span>) is selected if it has at lease one sender with at least one address with at lease one domain named <span class="Code_Char">hotels.com</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Bullet_inner"><a name="pID0E0K1B0HA">A perspective object (a </a><span class="Code_Char">Person</span>) is selected if at least one direct report has at least one second-level direct report whose <span class="Code_Char">FirstName</span> is  &gt;= <span class="Code_Char">Fred</span> but &lt; <span class="Code_Char">Wilma</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

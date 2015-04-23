@@ -1,0 +1,22 @@
+function FileData_Pairs(x)
+{
+x.t("element","empty");
+x.t("results","spider");
+x.t("results","empty");
+x.t("results","docs");
+x.t("results","docs/");
+x.t("results","query");
+x.t("spider","object");
+x.t("empty","results");
+x.t("empty","xml");
+x.t("queries","query");
+x.t("xml","results");
+x.t("docs","element");
+x.t("docs/","/results");
+x.t("query","results");
+x.t("query","returns");
+x.t("/results","json");
+x.t("json","results");
+x.t("returns","results");
+x.t("object","queries");
+}

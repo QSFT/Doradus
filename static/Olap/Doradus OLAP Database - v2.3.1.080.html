@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>DATEDIFF Function</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.074.html">OLAP Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.076.html">Metric Parameter</a> : DATEDIFF Function</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0QNB0HA">DATEDIFF Function</a></div>
+      <div class="Normal"><a name="pID0E0PNB0HA">Metric expressions can use the </a><span class="Code_Char">DATEDIFF</span> function to calculate the difference between two timestamp constants in a specific granularity. Its result is an integer that may be positive, negative, or zero. The <span class="Code_Char">DATEDIFF</span> function is similar to that used by SQL Server and uses the following syntax:</div>
+      <div class="Code"><a name="pID0E0ONB0HA">DATEDIFF(&lt;units&gt;, &lt;start date&gt;, &lt;end date&gt;)</a></div>
+      <div class="Normal"><a name="pID0E0NNB0HA">Where:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0MNB0HA">&lt;units&gt;</a></span> can be any of the following mnemonics: <span class="Code_Char">SECOND</span>, <span class="Code_Char">MINUTE</span>, <span class="Code_Char">HOUR</span>, <span class="Code_Char">DAY</span>, <span class="Code_Char">WEEK</span>, <span class="Code_Char">MONTH</span>, <span class="Code_Char">QUARTER</span>, and <span class="Code_Char">YEAR</span>. The units mnemonic must be uppercase.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0LNB0HA">&lt;start date&gt;</a></span> and <span class="Code_Char">&lt;end date&gt;</span> are timestamp literals or the <span class="Code_Char">NOW()</span> function. All date/time components are optional from right-to-left except for year. Example literal values are <span class="Code_Char">"2013-11-13 11:03:02.571"</span>, <span class="Code_Char">"2013-11-13 11:03"</span>, and "<span class="Code_Char">2013-11-13"</span>. Quotes are optional if the value has only a year component.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0KNB0HA">The two timestamp values are truncated to their </a><span class="Code_Char">&lt;units&gt;</span> precision, similar to the <span class="Code_Char">TRUNCATE</span> function. The difference between the two timestamps in then computed in the requested units, producing a numeric result:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0JNB0HA">If the truncated </a><span class="Code_Char">&lt;start date&gt;</span> is less than the truncated <span class="Code_Char">&lt;end date&gt;</span>, the result is a positive number.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0INB0HA">If the truncated </a><span class="Code_Char">&lt;start date&gt;</span> is greater than the truncated <span class="Code_Char">&lt;end date&gt;</span>, the result is a negative number.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt; margin-bottom: 12pt; margin-top: 12pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0HNB0HA">If the two truncated timestamps are the same, the result is zero.</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0GNB0HA">Common practice is to use an </a><span class="Code_Char">&lt;end date&gt;</span> &gt;= <span class="Code_Char">&lt;start date&gt;</span> to produce a positive value. Hence, when <span class="Code_Char">NOW()</span> is used, it normally appears as the <span class="Code_Char">&lt;end date&gt;</span> parameter. Since <span class="Code_Char">DATEDIFF</span> produces a constant, it is most useful when combined with other computations, e.g., to divide an average by the number of days in a query date range. For example:</div>
+      <div class="Code"><a name="pID0E0FNB0HA">.../Message?m=COUNT(*)/DATEDIFF(DAY, "2013-12-01", NOW())&amp;q=SendDate:["2013-12-01" TO NOW()]</a></div>
+      <div class="Normal"><a name="pID0E0ENB0HA">This query counts the number of messages sent between 2013-12-01 and “now”, inclusively, and divides by the number of days between these same dates.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

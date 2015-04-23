@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Scalar Fields</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.010.html">OLAP Data Model</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.3.1.017.html">Fields</a> : Scalar Fields</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0BLC0HA">Scalar Fields</a></div>
+      <div class="Normal"><a name="pID0E0ALC0HA">Scalar fields store simple data such as numbers or text. A single-valued (SV) scalar field stores a single value per object. Multi-valued (MV) scalar fields, also called scalar </a><span style="font-style: italic">collections</span>, can store multiple values per object. The scalar field types supported by Doradus are summarized below:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E06KC0HA">Text</a></span>: An arbitrary length string of Unicode characters.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E05KC0HA">Boolean</a></span>: A logical <span style="font-style: italic">true</span> or <span style="font-style: italic">false</span> value.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E04KC0HA">Integer </a></span>and <span style="font-weight: bold">Long</span>: A signed 64-bit integer value. These two types are synonyms. </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E03KC0HA">Float</a></span>: A 32-bit floating-point value.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E02KC0HA">Double</a></span>: A 64-bit floating-point value.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E01KC0HA">Timestamp</a></span>: A date/time value with millisecond precision. Doradus treats all timestamp values as occurring in the UTC time zone. Timestamp values must be given in the format:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZKC0HA">yyyy-MM-dd HH:mm:ss.SSS</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0YKC0HA">where:</a></div>
+      <div class="List_Paragraph_outer" style="margin-left: 54pt; margin-bottom: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><span class="Code_Char"><a name="pID0E0XKC0HA">yyyy</a></span> is a 4-digit year between 0000 and 9999</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 54pt; margin-bottom: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><span class="Code_Char"><a name="pID0E0WKC0HA">MM</a></span> is a 1- or 2-digit month between 1 and 12</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 54pt; margin-bottom: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><span class="Code_Char"><a name="pID0E0VKC0HA">dd</a></span> is a 1- or 2-digit day-of-month between 1 and 31</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 54pt; margin-bottom: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><span class="Code_Char"><a name="pID0E0UKC0HA">HH</a></span> is a 1- or 2-digit hour between 0 and 23</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 54pt; margin-bottom: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><span class="Code_Char"><a name="pID0E0TKC0HA">mm</a></span> is a 1- or 2-digit minute between 0 and 59</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 54pt; margin-bottom: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><span class="Code_Char"><a name="pID0E0SKC0HA">ss</a></span> is a 1- or 2-digit second between 0 and 59</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 54pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><span class="Code_Char"><a name="pID0E0RKC0HA">SSS</a></span> is a 1-to-3 digit millisecond between 0 and 999</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0QKC0HA">Only the year component is required. All other components can be omitted (along with their preceding separator character) in right-to-left order. Omitted time elements default to 0; omitted date elements default to 1. Hence, the following timestamp values are all valid:</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0PKC0HA">2011-02-01 08:50:01.123</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OKC0HA">2011-02-01 08:50:01	// same as 2011-02-01 08:50:01.000</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NKC0HA">2011-02-01 08:50	// same as 2011-02-01 08:50:00.000</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0MKC0HA">2011-02-01 08	// same as 2011-02-01 08:00:00.000</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0LKC0HA">2011-02-01	// same as 2011-02-01 00:00:00.000</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KKC0HA">2011-02	// same as 2011-02-01 00:00:00.000</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0JKC0HA">2011	// same as 2011-01-01 00:00:00.000</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0IKC0HA">Binary</a></span>: An arbitrary length sequence of bytes. A binary field definition includes an <span style="font-style: italic">encoding</span> (<span class="Code_Char">Base64</span> or <span class="Code_Char">Hex</span>) that defines how values are encoded when sent to or returned by Doradus.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0HKC0HA">When type names are used in schema definitions, they are case-insensitive (e.g., </a><span class="Code_Char">integer</span> or <span class="Code_Char">INTEGER</span>). Example field definitions in XML are shown below:</div>
+      <div class="Code"><a name="pID0E0GKC0HA">&lt;fields&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0FKC0HA">&lt;field name="</a><span style="color: #3366FF">SendDate</span>" type="TIMESTAMP"/&gt;</div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0EKC0HA">&lt;field name="</a><span style="color: #3366FF">Size</span>" type="INTEGER"/&gt;</div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0DKC0HA">&lt;field name="</a><span style="color: #3366FF">Subject</span>" type="TEXT"/&gt;</div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0CKC0HA">&lt;field name="</a><span style="color: #3366FF">IsInternal</span>" type="BOOLEAN"/&gt;</div>
+      <div class="Code"><a name="pID0E0BKC0HA">&lt;/fields&gt;</a></div>
+      <div class="Normal"><a name="pID0E0AKC0HA">By default, scalar fields are SV. Assigning an SV scalar field for an existing object replaces the existing value, if present. A scalar field can be declared MV by setting its </a><span class="Code_Char">collection</span> property to <span class="Code_Char">true</span>. Example:</div>
+      <div class="Code"><a name="pID0E06JC0HA">&lt;field name="Tags" </a><span style="color: #3366FF">collection="true"</span> type="TEXT"/&gt;</div>
+      <div class="Normal"><a name="pID0E05JC0HA">MV scalar field values are added and removed individually and treated as a </a><span style="font-style: italic">set</span>: duplicate values are not stored. This preserves idempotent update semantics: adding the same value twice is a no-op.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

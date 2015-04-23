@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Clause Connectors: AND, OR, and Parentheses</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.037.html">Doradus Query Language (DQL)</a> : Clause Connectors: AND, OR, and Parentheses</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0NCC0HA">Clause Connectors: AND, OR, and Parentheses</a></div>
+      <div class="Normal"><a name="pID0E0MCC0HA">Clauses are </a><span style="font-style: italic">implicitly</span> connected with “and” semantics by separating them with at least one whitespace character. For example:</div>
+      <div class="Code"><a name="pID0E0LCC0HA">LastName:Wright Department:Sales</a></div>
+      <div class="Normal"><a name="pID0E0KCC0HA">This query consists of two clauses and is identical to the following query expression:</a></div>
+      <div class="Code"><a name="pID0E0JCC0HA">LastName:Wright AND Department:Sales</a></div>
+      <div class="Normal"><a name="pID0E0ICC0HA">Clauses can be </a><span style="font-style: italic">explicitly</span> connected with the uppercase keywords <span class="Code_Char">AND</span> and <span class="Code_Char">OR</span>. When a DQL query has a mixture of <span class="Code_Char">AND</span> and <span class="Code_Char">OR</span> clauses, the <span class="Code_Char">AND</span> clauses have higher evaluation precedence. For example:</div>
+      <div class="Code"><a name="pID0E0HCC0HA">Origin=3 AND Platform=2 OR SendDate='2011-10-01' AND Size=1000</a></div>
+      <div class="Normal"><a name="pID0E0GCC0HA">This is evaluated as if the following parentheses were used:</a></div>
+      <div class="Code"><a name="pID0E0FCC0HA">(Origin=3 AND Platform=2) OR (SendDate='2011-10-01' AND Size=1000)</a></div>
+      <div class="Normal"><a name="pID0E0ECC0HA">Parentheses can be used to change the evaluation order. For example:</a></div>
+      <div class="Code"><a name="pID0E0DCC0HA">Origin=3 AND (Platform=2 OR SendDate='2011-10-01') AND Size=1000</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

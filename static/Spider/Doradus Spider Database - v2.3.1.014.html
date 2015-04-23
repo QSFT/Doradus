@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Application Options</title>
+    <link rel="StyleSheet" href="css/Doradus%20Spider%20Database%20-%20v2.3.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.010.html">Spider Data Model</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Spider%20Database%20-%20v2.3.1.013.html">Application</a> : Application Options</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0NLC0HA">Application Options</a></div>
+      <div class="Normal"><a name="pID0E0MLC0HA">Doradus Spider supports the application-level options described below.</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0LLC0HA">StorageService</a></span>: All applications can explicitly choose their storage service by defining the application-level option <span class="Code_Char">StorageService</span>. The storage service name for Spider applications is <span class="Code_Char">SpiderService</span>. Example:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KLC0HA">&lt;application name="Msgs"&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0JLC0HA">&lt;options&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0ILC0HA">&lt;option name="</a><span style="color: #3366FF">StorageService</span>" value="SpiderService"/&gt;</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0HLC0HA">&lt;/options&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0GLC0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0FLC0HA">&lt;/application&gt;</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0ELC0HA">If an application does not set the </a><span class="Code_Char">StorageService</span> option, it is assigned the Doradus server default. Once assigned, the <span class="Code_Char">StorageService</span> option cannot be changed.</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0DLC0HA">AutoTables</a></span>: Doradus Spider supports an application-level Boolean option called <span class="Code_Char">AutoTables</span>, which is set to <span class="Code_Char">true</span> by default. When enabled, <span class="Code_Char">AutoTables</span> allows tables to be implicitly created when objects are added to them. For example, suppose the following Add Batch command is submitted:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0CLC0HA">POST /Msgs/blogs</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0BLC0HA">If the </a><span class="Code_Char">blogs</span> table does not exist and the <span class="Code_Char">Msgs</span> application’s <span class="Code_Char">AutoTable</span> option is true, the table is automatically created and then the Add Batch request is processed. An automatically-created table has no predefined fields, hence all field assignments are treated as dynamic Text fields. To disallow the automatic creation of tables, <span class="Code_Char">AutoTables</span> must be set to <span class="Code_Char">false</span>. Example:</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ALC0HA">&lt;application name="Msgs"&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E06KC0HA">&lt;key&gt;MsgsKey&lt;/key&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E05KC0HA">&lt;options&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E04KC0HA">&lt;option name="</a><span style="color: #3366FF">AutoTables</span>" value="false"/&gt;</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E03KC0HA">&lt;/options&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E02KC0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01KC0HA">&lt;/application&gt;</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0ZKC0HA">aging-check-frequency</a></span>: This option specifies a default data aging check frequency for all tables in the application that use data aging. Any table can override this option with a table-specific option. The value of the aging-check-frequency must be in the form “&lt;number&gt; &lt;units&gt;” where &lt;number&gt; is a positive integer and &lt;units&gt; is MINUTES, HOURS, or DAYS. (Singular forms of these mnemonics are also allowed.) The following example sets the default data aging check frequency to 1 day:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0YKC0HA">&lt;application name="Msgs"&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0XKC0HA">&lt;key&gt;MsgsKey&lt;/key&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0WKC0HA">&lt;options&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0VKC0HA">&lt;option name="</a><span class="Code_Char" style="font-weight: bold">aging-check-frequency</span>" value="1 DAY"/&gt;</div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0UKC0HA">&lt;/options&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0TKC0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SKC0HA">&lt;/application&gt;</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>
