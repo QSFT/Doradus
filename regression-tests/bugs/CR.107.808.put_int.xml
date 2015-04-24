@@ -1,6 +1,0 @@
-<aggregate-search>
-   <query>*</query>
-   <metric>SUM(People)</metric>
-   <grouping-fields>Country</grouping-fields>
-   <shards>shard</shards>
-</aggregate-search>
