@@ -766,11 +766,12 @@ final public class UNode {
      */
     @Override
     public String toString() {
-        return String.format("UNode: {type=%s, name=%s, value=%s}",
-                             (m_type == null ? "<null>" : m_type.toString()),
-                             (m_name == null ? "<null>" : m_name),
-                             (m_value == null ? "<null>" : m_value)
-                            );
+        return toJSON(true);
+        //return String.format("UNode: {type=%s, name=%s, value=%s}",
+        //                     (m_type == null ? "<null>" : m_type.toString()),
+        //                     (m_name == null ? "<null>" : m_name),
+        //                     (m_value == null ? "<null>" : m_value)
+        //                    );
     }   // toString
     
     /**
