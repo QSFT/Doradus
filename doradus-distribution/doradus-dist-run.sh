@@ -1,6 +1,24 @@
 #!/bin/bash
 # Linux Script to start Cassandra and Doradus
 
+if [ ! -d cassandra ]
+then
+    echo "Installing and configuring Cassandra 2.0.7  for Doradus..."
+    curl -OL http://downloads.datastax.com/community/dsc-cassandra-2.0.7-bin.tar.gz
+    tar -xzvf dsc-cassandra-2.0.7-bin.tar.gz    
+    mv dsc-cassandra-2.0.7 cassandra
+    mkdir cassandra-data
+    cd cassandra-data
+    mkdir data
+    mkdir saved_caches
+    mkdir commitlog
+    touch system.log
+    cd ../cassandra/conf/
+    sed -e 's,/var/lib/cassandra,./cassandra-data,' -i "" cassandra.yaml 
+    sed -e 's,/var/log/cassandra,./cassandra-data,' -i "" log4j-server.properties
+    cd ../..
+fi   
+    
 #Start Cassandra
 if ! ps ax | grep -v grep | grep "cassandra" >/dev/null 2>&1
 then   
