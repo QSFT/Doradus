@@ -1711,10 +1711,27 @@ final public class Utils {
         if (str == null) {
             return null;
         }
+        //optimization for ascii strings
+        byte[] ascii = toAsciiBytes(str);
+        if(ascii != null) return ascii;
+        
         ByteBuffer bb = UTF8_CHARSET.encode(str);
         return getBytes(bb);
     }   // toBytes
 
+    
+    // return string as bytes if it has only ascii symbols, or null
+    private static byte[] toAsciiBytes(String str) {
+        for(int i = 0; i < str.length(); i++) {
+            if(str.charAt(i) > 127) return null;
+        }
+        byte[] bytes = new byte[str.length()];
+        for(int i = 0; i < str.length(); i++) {
+            bytes[i] = (byte)str.charAt(i);
+        }
+        return bytes;
+    }
+    
     /**
      * Convert a long to a byte[] using the format Cassandra wants for a column or
      * supercolumn name. The antimethod for this one is {@link #toLong(byte[])}.
@@ -1842,9 +1859,25 @@ final public class Utils {
         if (bytes == null) {
             return null;
         }
+        //optimization for ASCII string
+        String ascii = toAsciiString(bytes);
+        if(ascii != null) return ascii;
+        
         return new String(bytes, UTF8_CHARSET);
     }   // toString
 
+    // return string if bytes have only ascii symbols, or null
+    private static String toAsciiString(byte[] bytes) {
+        for(int i = 0; i < bytes.length; i++) {
+            if(bytes[i] < 0) return null;
+        }
+        char[] chars = new char[bytes.length];
+        for(int i = 0; i < bytes.length; i++) {
+            chars[i] = (char)bytes[i];
+        }
+        return new String(chars);
+    }
+    
     /**
      * Extract the byte[] within the given ByteBuffer and decode into a String using UTF-8.
      * This method calls {@link #copyBytes(ByteBuffer)}, which examines the ByteBuffer
