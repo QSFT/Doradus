@@ -6,7 +6,7 @@ if not exist cassandra (
     start .\tools\wget http://downloads.datastax.com/community/dsc-cassandra-2.0.7-bin.tar.gz
     timeout 50
  
-    echo Installing Cassandra 2.0.7 for Doradus"
+    echo Installing and configuring Cassandra 2.0.7 for Doradus"
     start .\tools\7za.exe x -tgzip dsc-cassandra-2.0.7-bin.tar.gz
     timeout 5
     echo "Decompressing Cassandra 2.0.7 for Doradus"
