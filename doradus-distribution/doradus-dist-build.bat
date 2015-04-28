@@ -5,7 +5,7 @@ set DIST_FILE_NAME=Doradus-distribution-%DIST_VERSION%.zip
  
 rem Build Doradus
 cd ..
-start mvn clean install dependency:copy-dependencies -Dgpg.skip=true -Dmaven.javadoc.skip=true
+start "" "mvn clean install dependency:copy-dependencies -Dgpg.skip=true -Dmaven.javadoc.skip=true"
  
 timeout 30
  

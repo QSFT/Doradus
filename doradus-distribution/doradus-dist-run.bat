@@ -13,8 +13,8 @@ if not exist cassandra (
     mkdir commitlog
     .\tools\touch system.log
     cd ..\cassandra\conf
-    sed -e 's,/var/lib/cassandra,./cassandra-data,' -i "" cassandra.yaml 
-    sed -e 's,/var/log/cassandra,./cassandra-data,' -i "" log4j-server.properties
+    .\tools\sed -e 's,/var/lib/cassandra,./cassandra-data,' -i "" cassandra.yaml 
+    .\tools\sed -e 's,/var/log/cassandra,./cassandra-data,' -i "" log4j-server.properties
     cd ..\..
 )   
 
