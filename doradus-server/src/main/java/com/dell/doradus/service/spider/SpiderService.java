@@ -30,8 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.cassandra.utils.Pair;
-
 import com.dell.doradus.common.AggregateResult;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.BatchResult;
@@ -40,6 +38,7 @@ import com.dell.doradus.common.DBObject;
 import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.FieldType;
+import com.dell.doradus.common.Pair;
 import com.dell.doradus.common.RetentionAge;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.TableDefinition.ShardingGranularity;
@@ -601,8 +600,8 @@ public class SpiderService extends StorageService {
                     dbObj.addFieldValue(col.getName(), fieldValue);
                 }
             // Skip links no longer present in schema
-            } else if (tableDef.isLinkField(linkCol.left)) {
-                dbObj.addFieldValue(linkCol.left, linkCol.right);
+            } else if (tableDef.isLinkField(linkCol.firstItemInPair)) {
+                dbObj.addFieldValue(linkCol.firstItemInPair, linkCol.secondItemInPair);
             }
         }
         return dbObj;

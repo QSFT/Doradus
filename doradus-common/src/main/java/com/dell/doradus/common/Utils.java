@@ -2052,22 +2052,28 @@ final public class Utils {
     }   // scanDatePart
 
 	/**
-	 * Deletes a file or directory
+	 * Deletes a directory recursively
 	 * @param dir
+	 *         directory to delete
 	 */
-	public static boolean deleteDirectory(File dir) {
+	public static boolean deleteDirectory(final File dir) {
 		boolean success = true;
 		if (dir != null && dir.exists()) {
 			try {
 				if (dir.isDirectory()) {
-					for (File file : dir.listFiles()) {
+					for (final File file : dir.listFiles()) {
+						if(file == null) {
+							return false;
+						}
 						if (!deleteDirectory(file)) {
 							success = false;
+							return success;
 						}
 					}
 				}
 				if (!dir.delete()) {
 					success = false;
+					return success;
 				}
 				return success;
 			} catch (Exception e) {
@@ -2076,5 +2082,5 @@ final public class Utils {
 		}
 		return false;
 	}
-
+	
 }   // class Utils
