@@ -90,7 +90,7 @@ public class JMapNode extends JNode {
                 for(int i = 0; i < level + 4; i++) sb.append(' ');
             }
             sb.append('\"');
-            sb.append(JStringNode.escape(entry.getKey()));
+            sb.append(JsonEscape.escape(entry.getKey()));
             sb.append('\"');
             sb.append(':');
             if(pretty) sb.append(' ');
