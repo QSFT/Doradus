@@ -5,9 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.TreeMap;
 
-import com.dell.doradus.spider2.jsonbuild.JMapNode;
-import com.dell.doradus.spider2.jsonbuild.JNode;
-
 //list of objects sorted by id and stored in Cassandra with lz4 compression
 //all objects ids are greader or equal than chunkId.
 //initially, there is only one chunk with chunkId = ""
@@ -34,10 +31,7 @@ public class Chunk {
     public byte[] toByteArray() {
         MemoryStream buffer = new MemoryStream();
         for(S2Object obj: m_objects.values()) {
-            JMapNode unode = obj.getData();
-            byte[] bytes = unode.getBytes();
-            buffer.writeVInt(bytes.length);
-            buffer.write(bytes, 0, bytes.length);
+            obj.write(buffer);
         }
         byte[] data = buffer.toArray();
         data = ChunkCompression.compress(data);
@@ -49,11 +43,7 @@ public class Chunk {
         Chunk chunk = new Chunk(chunkId);
         MemoryStream buffer = new MemoryStream(data);
         while(!buffer.end()) {
-            int length = buffer.readVInt();
-            byte[] bytes = new byte[length];
-            buffer.read(bytes, 0, length);
-            JMapNode node = (JMapNode)JNode.fromBytes(bytes);
-            S2Object obj = new S2Object(node);
+            S2Object obj = S2Object.read(buffer);
             chunk.add(obj);
         }
         return chunk;

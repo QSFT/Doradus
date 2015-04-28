@@ -21,6 +21,10 @@ public class JsonNode {
         this(new MemoryStream(data), 0);
     }
     
+    public byte[] getData() {
+        return m_stream.getBuffer();
+    }
+    
     protected JsonNode(MemoryStream stream, int position) {
         m_stream = stream;
         m_position = position;
