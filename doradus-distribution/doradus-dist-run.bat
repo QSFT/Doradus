@@ -3,8 +3,9 @@ REM Windows Script to start Cassandra and Doradus
 REM Start Cassandra
 if not exist cassandra (
     echo "Installing and configuring Cassandra 2.0.7 for Doradus"
-    .\tools\wget http://downloads.datastax.com/community/dsc-cassandra-2.0.7-bin.tar.gz
-    tools\7za.exe x -tgzip dsc-cassandra-2.0.7-bin.tar.gz  && tools\7za.exe  x dsc-cassandra-2.0.7-bin.tar    
+    start "" .\tools\wget http://downloads.datastax.com/community/dsc-cassandra-2.0.7-bin.tar.gz
+    .\tools\7za.exe x -tgzip dsc-cassandra-2.0.7-bin.tar.gz  && tools\7za.exe  x dsc-cassandra-2.0.7-bin.tar
+    timeout 20    
     ren dsc-cassandra-2.0.7 cassandra
     mkdir cassandra-data
     cd cassandra-data
