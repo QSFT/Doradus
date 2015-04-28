@@ -23,9 +23,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.cassandra.io.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.dell.doradus.common.Utils;
 
 public class FileIO implements IO {
     private static Logger LOG = LoggerFactory.getLogger(FileIO.class);
@@ -73,7 +74,7 @@ public class FileIO implements IO {
 
 	@Override public void deleteCF(String name) {
 		File dir = new File(main.getAbsoluteFile() + "/" + name);
-		if(dir.exists()) FileUtils.deleteRecursive(dir);
+		if(dir.exists()) Utils.deleteDirectory(dir);
 	}
 	
 	@Override public void write(String app, String key, List<ColumnValue> values) {
@@ -95,7 +96,7 @@ public class FileIO implements IO {
 	@Override public void delete(String columnFamily, String sKey, String columnName) {
 		if(columnName == null) {
 			File dir = new File(main.getAbsoluteFile() + "/" + columnFamily + "/" + sKey);
-			if(dir.exists()) FileUtils.deleteRecursive(dir);
+			if(dir.exists()) Utils.deleteDirectory(dir);
 		} else {
 			File file = new File(main.getAbsoluteFile() + "/" + columnFamily + "/" + sKey + "/" + columnName.replace('/', '@'));
 			if(file.exists()) file.delete();
