@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.dell.doradus.spider2.MemoryStream;
-import com.dell.doradus.spider2.json.Node;
+import com.dell.doradus.spider2.fastjson.JsonNode;
 
 public class JMapNode extends JNode {
     private LinkedHashMap<String, JNode> children = new LinkedHashMap<>(2);
@@ -44,7 +44,7 @@ public class JMapNode extends JNode {
     }
     
     @Override protected void write(MemoryStream stream) {
-        stream.writeByte(Node.TYPE_MAP);
+        stream.writeByte(JsonNode.TYPE_MAP);
         for(Map.Entry<String, JNode> entry: children.entrySet()) {
             int position = stream.position();
             stream.writeInt(0);

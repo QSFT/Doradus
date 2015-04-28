@@ -1,7 +1,7 @@
 package com.dell.doradus.spider2.jsonbuild;
 
 import com.dell.doradus.spider2.MemoryStream;
-import com.dell.doradus.spider2.json.Node;
+import com.dell.doradus.spider2.fastjson.JsonNode;
 
 
 public abstract class JNode {
@@ -24,14 +24,14 @@ public abstract class JNode {
     
     protected static JNode create(byte type) {
         switch(type) {
-        case Node.TYPE_NULL: return JNullNode.instance;
-        case Node.TYPE_FALSE: return JFalseNode.instance;
-        case Node.TYPE_TRUE: return JTrueNode.instance;
-        case Node.TYPE_LONG: return new JLongNode(0);
-        case Node.TYPE_DOUBLE: return new JDoubleNode(0);
-        case Node.TYPE_STRING: return new JStringNode(null);
-        case Node.TYPE_ARRAY: return new JArrayNode();
-        case Node.TYPE_MAP: return new JMapNode();
+        case JsonNode.TYPE_NULL: return JNullNode.instance;
+        case JsonNode.TYPE_FALSE: return JFalseNode.instance;
+        case JsonNode.TYPE_TRUE: return JTrueNode.instance;
+        case JsonNode.TYPE_LONG: return new JLongNode(0);
+        case JsonNode.TYPE_DOUBLE: return new JDoubleNode(0);
+        case JsonNode.TYPE_STRING: return new JStringNode(null);
+        case JsonNode.TYPE_ARRAY: return new JArrayNode();
+        case JsonNode.TYPE_MAP: return new JMapNode();
         default: throw new RuntimeException("Invalid json node: " + type);
         }
     }

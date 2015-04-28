@@ -1,7 +1,7 @@
 package com.dell.doradus.spider2.jsonbuild;
 
 import com.dell.doradus.spider2.MemoryStream;
-import com.dell.doradus.spider2.json.Node;
+import com.dell.doradus.spider2.fastjson.JsonNode;
 
 public class JDoubleNode extends JNode {
     private double m_value;
@@ -14,7 +14,7 @@ public class JDoubleNode extends JNode {
     }
     
     @Override protected void write(MemoryStream stream) {
-        stream.writeByte(Node.TYPE_DOUBLE);
+        stream.writeByte(JsonNode.TYPE_DOUBLE);
         stream.writeDouble(m_value);
     }
    

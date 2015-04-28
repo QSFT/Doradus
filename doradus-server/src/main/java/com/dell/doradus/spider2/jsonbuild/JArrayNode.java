@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.dell.doradus.spider2.MemoryStream;
-import com.dell.doradus.spider2.json.Node;
+import com.dell.doradus.spider2.fastjson.JsonNode;
 
 public class JArrayNode extends JNode {
     private List<JNode> children = new ArrayList<>(2);
@@ -46,7 +46,7 @@ public class JArrayNode extends JNode {
     public Collection<JNode> getChildren() { return children; }
     
     @Override protected void write(MemoryStream stream) {
-        stream.writeByte(Node.TYPE_ARRAY);
+        stream.writeByte(JsonNode.TYPE_ARRAY);
         for(JNode node: children) {
             int position = stream.position();
             stream.writeInt(0);
