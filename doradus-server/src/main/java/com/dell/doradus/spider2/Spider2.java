@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.dell.doradus.common.UNode;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.Tenant;
+import com.dell.doradus.spider2.jsonbuild.JMapNode;
 
 public class Spider2 {
     private static final int MAX_CHUNK_SIZE = 8192;
@@ -24,11 +24,11 @@ public class Spider2 {
         DBService.instance().deleteStoreIfPresent(tenant, application);
     }
    
-    public void addObjects(Tenant tenant, String application, String table, List<UNode> nodes) {
+    public void addObjects(Tenant tenant, String application, String table, List<JMapNode> nodes) {
         Schema schema = readSchema(tenant, application, table);
         
         HashMap<String, Chunk> chunks = new HashMap<>();
-        for(UNode node: nodes) {
+        for(JMapNode node: nodes) {
             S2Object obj = new S2Object(node);
             String chunkId = schema.getChunkId(obj.getId());
             Chunk chunk = chunks.get(chunkId);

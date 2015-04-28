@@ -1,6 +1,5 @@
 package com.dell.doradus.spider2;
 
-import com.dell.doradus.olap.io.BSTR;
 
 public class MemoryStream {
     private byte[] m_buffer;
@@ -121,18 +120,36 @@ public class MemoryStream {
         return u;
     }
 
-    public void read(BSTR bstr) {
-        bstr.length = readVInt();
-        bstr.assertLength(bstr.length);
-        read(bstr.buffer, 0, bstr.length);
+    public double readDouble() {
+        return Double.longBitsToDouble(readLong());
+    }
+    
+    public Binary readBinary() {
+        int length = readVInt();
+        byte[] data = new byte[length];
+        read(data, 0, length);
+        return new Binary(data);
+    }
+
+    public void skipBinary() {
+        int length = readVInt();
+        skip(length);
+    }
+    
+    public boolean compareWith(Binary bstr) {
+        byte[] data = bstr.getBuffer();
+        int length = readVInt();
+        if(length != data.length) return false;
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] != m_buffer[m_position + i]) return false;
+        }
+        m_position += length;
+        return true;
     }
     
     public String readString() {
-        int i = readVInt();
-        byte[] b = new byte[i];
-        read(b, 0, i);
-        BSTR bstr = new BSTR(b);
-        return bstr.toString();
+        Binary bstr = readBinary();
+        return bstr.getString();
     }
 
     
@@ -218,13 +235,18 @@ public class MemoryStream {
         u >>>= 8;
     }
 
-    public void write(BSTR bstr) {
-        writeVInt(bstr.length);
-        write(bstr.buffer, 0, bstr.length);
+    public void writeDouble(double value) {
+        writeLong(Double.doubleToLongBits(value));
+    }
+    
+    public void write(Binary bstr) {
+        byte[] data = bstr.getBuffer();
+        writeVInt(data.length);
+        write(data, 0, data.length);
     }
 
     public void writeString(String str) {
-        BSTR bstr = new BSTR(str);
+        Binary bstr = new Binary(str);
         write(bstr);
     }
     
