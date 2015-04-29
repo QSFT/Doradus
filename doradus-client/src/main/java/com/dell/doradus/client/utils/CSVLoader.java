@@ -261,10 +261,10 @@ public class CSVLoader {
         try {
             m_session = m_client.openApplication(m_config.app);
         } catch (RuntimeException e) {
-            logErrorThrow("Application '{}' not found after creation. Name doesn't match schema?", m_config.app); 
+            logErrorThrow("Application '{}' not found after creation: {}.", m_config.app, e.toString());
         }
         String ss = m_session.getAppDef().getStorageService();
-        if (!Utils.isEmpty(ss) && ss.equals("OLAPService")) {
+        if (!Utils.isEmpty(ss) && ss.startsWith("OLAP")) {
             m_bOLAPApp = true;
         }
         loadTables();
