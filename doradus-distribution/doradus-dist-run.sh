@@ -43,7 +43,7 @@ echo "Cassandra has started..."
 #Start Doradus
 
 cd doradus
-java -cp ./*:./resources/*:./dependency/* com.dell.doradus.core.DoradusServer > /dev/null 2>&1 &
+java -cp ./*:./resources/*:./dependency/* -Xmx1G com.dell.doradus.core.DoradusServer > /dev/null 2>&1 &
 
 while true
 do
