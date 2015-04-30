@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.dell.doradus.search.util.LRUSizeCache;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
@@ -16,6 +17,9 @@ public class Spider2 {
     private static final int MAX_CHUNK_SIZE = 8192;
     private static final Object schemaSync = new Object();
     private static final Map<String, Schema> m_schemaCache = new HashMap<>();
+    //100MB chunks cache
+    private static final LRUSizeCache<String, byte[]> m_chunksCache = new LRUSizeCache<>(0, 1024 * 1024 * 100);
+    
     //private static Logger LOG = LoggerFactory.getLogger("Spider2");
     
     public Spider2() { }
@@ -45,7 +49,18 @@ public class Spider2 {
                 chunkId = schema.getChunkId(obj.getId());
             }
             synchronized(Locking.getLock(chunkId)) {
-                Chunk chunk = readChunk(tenant, application, table, chunkId);
+
+                Chunk chunk = null;
+                
+                String key = tenant.getKeyspace() + "/" + application + "/" + table + "/" + chunkId.toString();
+                byte[] data = m_chunksCache.get(key);
+                if(data != null) {
+                    chunk = Chunk.fromByteArray(data);
+                }
+                else {
+                    chunk = readChunk(tenant, application, table, chunkId);
+                }
+                
                 Binary nextId = chunk.getNextId();
                 if(!nextId.isEmpty() && nextId.compareTo(obj.getId()) <= 0) {
                     // it's not our chunk because someone
@@ -81,12 +96,18 @@ public class Spider2 {
         }
         else {
             List<Chunk> subchunks = chunk.split(MAX_CHUNK_SIZE);
+            List<Binary> chunkIds = new ArrayList<>(subchunks.size() - 1);
+            for(int i = 1; i < subchunks.size(); i++) {
+                Chunk c = subchunks.get(i);
+                chunkIds.add(c.getChunkId());
+                writeChunk(tenant, application, table, c);
+            }
             synchronized(schemaSync) {
                 Schema schema = readSchema(tenant, application, table);
-                for(Chunk c: subchunks) {
-                    schema.addId(c.getChunkId());
-                    writeChunk(tenant, application, table, c);
+                for(Binary id: chunkIds) {
+                    schema.addId(id);
                 }
+                writeChunk(tenant, application, table, subchunks.get(0));
                 writeSchema(tenant, application, table, schema);
             }
         }
@@ -126,6 +147,10 @@ public class Spider2 {
     
     private void writeChunk(Tenant tenant, String store, String table, Chunk chunk) {
         byte[] data = chunk.toByteArray();
+
+        String key = tenant.getKeyspace() + "/" + store + "/" + table + "/" + chunk.getChunkId().toString();
+        m_chunksCache.put(key, data, data.length + key.length() * 2);
+        
         DBTransaction transaction = DBService.instance().startTransaction(tenant);
         transaction.addColumn(store, table + "_" + chunk.getChunkId(), "data", data);
         DBService.instance().commit(transaction);
