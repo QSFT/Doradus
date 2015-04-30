@@ -102,12 +102,13 @@ public class Spider2 {
                 chunkIds.add(c.getChunkId());
                 writeChunk(tenant, application, table, c);
             }
+            byte[] firstChunkData = subchunks.get(0).toByteArray(); // out of sync block
             synchronized(schemaSync) {
                 Schema schema = readSchema(tenant, application, table);
                 for(Binary id: chunkIds) {
                     schema.addId(id);
                 }
-                writeChunk(tenant, application, table, subchunks.get(0));
+                writeChunkData(tenant, application, table, subchunks.get(0).getChunkId(), firstChunkData);
                 writeSchema(tenant, application, table, schema);
             }
         }
@@ -146,14 +147,16 @@ public class Spider2 {
     }
     
     private void writeChunk(Tenant tenant, String store, String table, Chunk chunk) {
-        byte[] data = chunk.toByteArray();
+        writeChunkData(tenant, store, table, chunk.getChunkId(), chunk.toByteArray());
+    }
 
-        String key = tenant.getKeyspace() + "/" + store + "/" + table + "/" + chunk.getChunkId().toString();
+    private void writeChunkData(Tenant tenant, String store, String table, Binary chunkId, byte[] data) {
+        String key = tenant.getKeyspace() + "/" + store + "/" + table + "/" + chunkId.toString();
         m_chunksCache.put(key, data, data.length + key.length() * 2);
         
         DBTransaction transaction = DBService.instance().startTransaction(tenant);
-        transaction.addColumn(store, table + "_" + chunk.getChunkId(), "data", data);
+        transaction.addColumn(store, table + "_" + chunkId, "data", data);
         DBService.instance().commit(transaction);
     }
-
+    
 }
