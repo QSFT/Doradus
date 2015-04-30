@@ -14,16 +14,19 @@ import java.util.Map;
 //gets chunkId of the median object and last half of objects
 public class ChunkBuilder {
     private Binary m_chunkId;
+    private Binary m_nextId;
     private Map<Binary, S2Object> m_objects = new HashMap<>(); 
 
     public ChunkBuilder(Chunk chunk) {
         m_chunkId = chunk.getChunkId();
+        m_nextId = chunk.getNextId();
         for(S2Object obj: chunk.getObjects()) {
             m_objects.put(obj.getId(), obj);
         }
     }
     
     public Binary getChunkId() { return m_chunkId; }
+    public Binary getNextId() { return m_nextId; }
     
     public void add(S2Object obj) {
         m_objects.put(obj.getId(), obj);
@@ -32,7 +35,7 @@ public class ChunkBuilder {
     public Chunk getChunk() {
         List<S2Object> objects = new ArrayList<>(m_objects.values());
         Collections.sort(objects);
-        Chunk chunk = new Chunk(m_chunkId, objects);
+        Chunk chunk = new Chunk(m_chunkId, m_nextId, objects);
         return chunk;
     }
     

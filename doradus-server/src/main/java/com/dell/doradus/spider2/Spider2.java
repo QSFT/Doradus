@@ -25,6 +25,7 @@ public class Spider2 {
     }
    
     public void addObjects(Tenant tenant, String application, String table, List<JMapNode> nodes) {
+        if(nodes.size() == 0) return;
         List<S2Object> objects = new ArrayList<>();
         for(JMapNode node: nodes) {
             objects.add(new S2Object(node));
@@ -50,6 +51,22 @@ public class Spider2 {
         }
     }
 
+    public Binary getChunkId(Tenant tenant, String application, String table, Binary objectId) {
+        Schema schema = readSchema(tenant, application, table);
+        Binary chunkId = schema.getChunkId(objectId);
+        return chunkId;
+    }
+    
+    public Iterable<S2Object> objects(Tenant tenant, String application, String table) {
+        return new TableIterable(this, tenant, application, table);
+    }
+    
+    protected Chunk getObjects(Tenant tenant, String application, String table, Binary chunkId) {
+        Chunk chunk = readChunk(tenant, application, table, chunkId);
+        return chunk;
+    }
+    
+    
     private void flushChunk(Tenant tenant, String application, String table, Chunk chunk, Schema schema) {
         if(chunk.size() <= MAX_CHUNK_SIZE) {
             writeChunk(tenant, application, table, chunk);
@@ -64,25 +81,11 @@ public class Spider2 {
         }
     }
     
-    
-    public Iterable<S2Object> objects(Tenant tenant, String application, String table) {
-        return new TableIterable(this, tenant, application, table);
-    }
-    
-    protected List<S2Object> getObjects(Tenant tenant, String application, String table, Binary fromId) {
-        Schema schema = readSchema(tenant, application, table);
-        Binary chunkId = schema.getChunkIdAfter(fromId);
-        if(chunkId == null) return null;
-        Chunk chunk = readChunk(tenant, application, table, chunkId);
-        List<S2Object> objects = new ArrayList<S2Object>(chunk.getObjects());
-        return objects;
-    }
-    
     private Schema readSchema(Tenant tenant, String store, String table) {
         DColumn column = DBService.instance().getColumn(tenant, store, "schema", table);
         if(column == null) {
             Schema schema = new Schema();
-            Chunk initialChunk = new Chunk(Binary.EMPTY);
+            Chunk initialChunk = new Chunk(Binary.EMPTY, Binary.EMPTY);
             schema.addId(Binary.EMPTY);
             writeChunk(tenant, store, table, initialChunk);
             writeSchema(tenant, store, table, schema);
@@ -101,7 +104,7 @@ public class Spider2 {
     
     private Chunk readChunk(Tenant tenant, String store, String table, Binary chunkId) {
         DColumn column = DBService.instance().getColumn(tenant, store, table + "_" + chunkId, "data");
-        Chunk chunk = Chunk.fromByteArray(chunkId, column.getRawValue());
+        Chunk chunk = Chunk.fromByteArray(column.getRawValue());
         return chunk;
     }
     
