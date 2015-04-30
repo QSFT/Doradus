@@ -27,13 +27,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.cassandra.utils.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.HttpDefs;
+import com.dell.doradus.common.Pair;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.db.DBNotAvailableException;
@@ -256,22 +256,22 @@ public class RESTServlet extends HttpServlet {
         boolean bRewrite = false;
         for (String part : parts) {
             Pair<String, String> param = extractParam(part);
-            switch (param.left.toLowerCase()) {
+            switch (param.firstItemInPair.toLowerCase()) {
             case "api":
                 bRewrite = true;
-                restParams.put("api", param.right);
+                restParams.put("api", param.secondItemInPair);
                 break;
             case "format":
                 bRewrite = true;
-                if (param.right.equalsIgnoreCase("xml")) {
+                if (param.secondItemInPair.equalsIgnoreCase("xml")) {
                     restParams.put("format", "text/xml");
-                } else if (param.right.equalsIgnoreCase("json")) {
+                } else if (param.secondItemInPair.equalsIgnoreCase("json")) {
                     restParams.put("format", "application/json");
                 }
                 break;
             case "tenant":
                 bRewrite = true;
-                restParams.put("tenant", param.right);
+                restParams.put("tenant", param.secondItemInPair);
                 break;
             default:
                 unusedList.add(param);
@@ -285,10 +285,10 @@ public class RESTServlet extends HttpServlet {
                 if (buffer.length() > 0) {
                     buffer.append("&");
                 }
-                buffer.append(Utils.urlEncode(pair.left));
-                if (pair.right != null) {
+                buffer.append(Utils.urlEncode(pair.firstItemInPair));
+                if (pair.secondItemInPair != null) {
                     buffer.append("=");
-                    buffer.append(Utils.urlEncode(pair.right));
+                    buffer.append(Utils.urlEncode(pair.secondItemInPair));
                 }
             }
         }

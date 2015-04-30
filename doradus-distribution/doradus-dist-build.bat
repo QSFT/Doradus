@@ -5,9 +5,9 @@ set DIST_FILE_NAME=Doradus-distribution-%DIST_VERSION%.zip
  
 rem Build Doradus
 cd ..
-start mvn clean install dependency:copy-dependencies -Dgpg.skip=true -Dmaven.javadoc.skip=true
+start "" mvn clean install dependency:copy-dependencies -Dgpg.skip=true -Dmaven.javadoc.skip=true
  
-timeout 20
+timeout 30
  
 cd doradus-distribution
  
@@ -30,7 +30,7 @@ copy ..\..\doradus-client\target\doradus-client-*.jar dependency
 cd ..
  
 rem Create the final distribution file
-7za a %DIST_FILE_NAME% -r .
+.\tools\7za a %DIST_FILE_NAME% -r . -x!*.sh -x!*build.*
  
 echo "Doradus Distribution created"
 dir Doradus-distribution-*.zip

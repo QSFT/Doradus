@@ -259,7 +259,9 @@ public class CSVDumper {
     public void dumpSchema() {
         String fileName = m_config.root + m_config.app + ".xml";
         m_logger.info("Writing schema to: {}", fileName);
-        try (FileWriter fileWriter = new FileWriter(fileName)) {
+        File schemaFile = new File(fileName);
+        schemaFile.getParentFile().mkdirs();
+        try (FileWriter fileWriter = new FileWriter(schemaFile)) {
             fileWriter.write(m_appDef.toDoc().toXML(true));
         } catch (IOException ex) {
             m_logger.error("Unable to dump schema file '" + fileName + "'", ex);
@@ -411,9 +413,6 @@ public class CSVDumper {
      * Each DumpWorker grabs a table from CSVDumper and dumps the whole table.
      */
     final class DumpWorker extends Thread {
-        // Number of objects we should request at one time:
-        private static final int BATCH_SIZE = 1000;
-        
         // Members: 
         private final int                   m_workerNo;
         private final ApplicationSession    m_session;
@@ -469,14 +468,10 @@ public class CSVDumper {
                 }
             }
             
-            BufferedWriter writer = null;
-            try {
-                writer = new BufferedWriter(new FileWriter(csvFile));
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile))) {
                 dumpTable(tableDef, writer);
                 writer.close();
                 m_totalBytes += csvFile.length();
-            } finally {
-                Utils.close(writer);
             }
         }   // dumpTable
 
@@ -508,7 +503,7 @@ public class CSVDumper {
             Map<String, String> queryParams = new HashMap<>();
             queryParams.put("q", "*");
             queryParams.put("f", fieldParam.toString());
-            queryParams.put("s", Integer.toString(BATCH_SIZE));
+            queryParams.put("s", Integer.toString(m_config.batchsize));
             if (m_session instanceof OLAPSession) {
                 queryParams.put("shards", m_config.shard);
             }
