@@ -3,7 +3,6 @@ package com.dell.doradus.spider2;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.TreeMap;
 
 //list of objects sorted by id and stored in Cassandra with lz4 compression
 //all objects ids are greader or equal than chunkId.
@@ -13,24 +12,25 @@ import java.util.TreeMap;
 //gets chunkId of the median object and last half of objects
 public class Chunk {
     private String m_chunkId;
-    private TreeMap<String, S2Object> m_objects = new TreeMap<>();
+    private List<S2Object> m_objects = new ArrayList<>();
 
     public Chunk(String chunkId) { m_chunkId = chunkId; }
+
+    public Chunk(String chunkId, List<S2Object> objects) { m_chunkId = chunkId; m_objects = objects; }
     
     public String getChunkId() { return m_chunkId; }
     
     public int size() { return m_objects.size(); }
     
-    public TreeMap<String, S2Object> getObjectsMap() { return m_objects; }
-    public Collection<S2Object> getObjects() { return m_objects.values(); }
+    public Collection<S2Object> getObjects() { return m_objects; }
     
     public void add(S2Object obj) {
-        m_objects.put(obj.getId(), obj);
+        m_objects.add(obj);
     }
     
     public byte[] toByteArray() {
         MemoryStream buffer = new MemoryStream();
-        for(S2Object obj: m_objects.values()) {
+        for(S2Object obj: m_objects) {
             obj.write(buffer);
         }
         byte[] data = buffer.toArray();

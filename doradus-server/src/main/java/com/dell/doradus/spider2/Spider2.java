@@ -1,7 +1,7 @@
 package com.dell.doradus.spider2;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 
 import com.dell.doradus.service.db.DBService;
@@ -25,41 +25,46 @@ public class Spider2 {
     }
    
     public void addObjects(Tenant tenant, String application, String table, List<JMapNode> nodes) {
+        List<S2Object> objects = new ArrayList<>();
+        for(JMapNode node: nodes) {
+            objects.add(new S2Object(node));
+        }
+        Collections.sort(objects);
+        
         Schema schema = readSchema(tenant, application, table);
         
-        HashMap<String, Chunk> chunks = new HashMap<>();
-        for(JMapNode node: nodes) {
-            S2Object obj = new S2Object(node);
+        ChunkBuilder chunkBuilder = null;
+        for(S2Object obj: objects) {
             String chunkId = schema.getChunkId(obj.getId());
-            Chunk chunk = chunks.get(chunkId);
-            if(chunk == null) {
-                chunk = readChunk(tenant, application, table, chunkId);
-                chunks.put(chunkId, chunk);
+            if(chunkBuilder != null && !chunkId.equals(chunkBuilder.getChunkId())) {
+                flushChunk(tenant, application, table, chunkBuilder.getChunk(), schema);
+                chunkBuilder = null;
             }
-            chunk.add(obj);
-        }
-        
-        boolean schemaModified = false;
-        List<Chunk> modifiedChunks = new ArrayList<Chunk>();
-        for(Chunk chunk: chunks.values()) {
-            if(chunk.size() <= MAX_CHUNK_SIZE) {
-                modifiedChunks.add(chunk);
+            if(chunkBuilder == null) {
+                chunkBuilder = new ChunkBuilder(readChunk(tenant, application, table, chunkId));
             }
-            else {
-                schemaModified = true;
-                List<Chunk> subchunks = chunk.split(MAX_CHUNK_SIZE);
-                for(Chunk c: subchunks) {
-                    schema.addId(c.getChunkId());
-                    modifiedChunks.add(c);
-                }
-            }
+            chunkBuilder.add(obj);
         }
-        for(Chunk c: modifiedChunks) {
-            writeChunk(tenant, application, table, c);
+        if(chunkBuilder != null) {
+            flushChunk(tenant, application, table, chunkBuilder.getChunk(), schema);
         }
-        if(schemaModified) writeSchema(tenant, application, table, schema);
     }
 
+    private void flushChunk(Tenant tenant, String application, String table, Chunk chunk, Schema schema) {
+        if(chunk.size() <= MAX_CHUNK_SIZE) {
+            writeChunk(tenant, application, table, chunk);
+        }
+        else {
+            List<Chunk> subchunks = chunk.split(MAX_CHUNK_SIZE);
+            for(Chunk c: subchunks) {
+                schema.addId(c.getChunkId());
+                writeChunk(tenant, application, table, c);
+            }
+            writeSchema(tenant, application, table, schema);
+        }
+    }
+    
+    
     public Iterable<S2Object> objects(Tenant tenant, String application, String table) {
         return new TableIterable(this, tenant, application, table);
     }
