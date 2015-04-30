@@ -2,7 +2,9 @@ package com.dell.doradus.spider2;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
@@ -13,6 +15,7 @@ import com.dell.doradus.spider2.jsonbuild.JMapNode;
 public class Spider2 {
     private static final int MAX_CHUNK_SIZE = 8192;
     private static final Object schemaSync = new Object();
+    private static final Map<String, Schema> m_schemaCache = new HashMap<>();
     //private static Logger LOG = LoggerFactory.getLogger("Spider2");
     
     public Spider2() { }
@@ -47,6 +50,7 @@ public class Spider2 {
                 if(!nextId.isEmpty() && nextId.compareTo(obj.getId()) <= 0) {
                     // it's not our chunk because someone
                     // modified the schema between locks. Retry with the same object
+                    System.out.println("Retry");
                     continue;
                 }
                 ChunkBuilder chunkBuilder = new ChunkBuilder(chunk);
@@ -59,7 +63,6 @@ public class Spider2 {
                 chunk = chunkBuilder.getChunk();
                 flushChunk(tenant, application, table, chunk);
             }
-            
         }
     }
 
@@ -90,16 +93,21 @@ public class Spider2 {
     }
     
     private Schema readSchema(Tenant tenant, String store, String table) {
+        String key = tenant.getKeyspace() + "/" + store + "/" + table;
+        Schema schema = m_schemaCache.get(key);
+        if(schema != null) return schema;
+        
         DColumn column = DBService.instance().getColumn(tenant, store, "schema", table);
         if(column == null) {
-            Schema schema = new Schema();
+            schema = new Schema();
             Chunk initialChunk = new Chunk(Binary.EMPTY, Binary.EMPTY);
             schema.addId(Binary.EMPTY);
             writeChunk(tenant, store, table, initialChunk);
             writeSchema(tenant, store, table, schema);
             return schema;
         }
-        Schema schema = Schema.fromByteArray(column.getRawValue());
+        schema = Schema.fromByteArray(column.getRawValue());
+        m_schemaCache.put(key, schema);
         return schema;
     }
 
