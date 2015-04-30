@@ -35,7 +35,7 @@ public class Spider2 {
         
         ChunkBuilder chunkBuilder = null;
         for(S2Object obj: objects) {
-            String chunkId = schema.getChunkId(obj.getId());
+            Binary chunkId = schema.getChunkId(obj.getId());
             if(chunkBuilder != null && !chunkId.equals(chunkBuilder.getChunkId())) {
                 flushChunk(tenant, application, table, chunkBuilder.getChunk(), schema);
                 chunkBuilder = null;
@@ -69,9 +69,9 @@ public class Spider2 {
         return new TableIterable(this, tenant, application, table);
     }
     
-    protected List<S2Object> getObjects(Tenant tenant, String application, String table, String fromId) {
+    protected List<S2Object> getObjects(Tenant tenant, String application, String table, Binary fromId) {
         Schema schema = readSchema(tenant, application, table);
-        String chunkId = schema.getChunkIdAfter(fromId);
+        Binary chunkId = schema.getChunkIdAfter(fromId);
         if(chunkId == null) return null;
         Chunk chunk = readChunk(tenant, application, table, chunkId);
         List<S2Object> objects = new ArrayList<S2Object>(chunk.getObjects());
@@ -82,8 +82,8 @@ public class Spider2 {
         DColumn column = DBService.instance().getColumn(tenant, store, "schema", table);
         if(column == null) {
             Schema schema = new Schema();
-            Chunk initialChunk = new Chunk("");
-            schema.addId("");
+            Chunk initialChunk = new Chunk(Binary.EMPTY);
+            schema.addId(Binary.EMPTY);
             writeChunk(tenant, store, table, initialChunk);
             writeSchema(tenant, store, table, schema);
             return schema;
@@ -99,7 +99,7 @@ public class Spider2 {
         DBService.instance().commit(transaction);
     }
     
-    private Chunk readChunk(Tenant tenant, String store, String table, String chunkId) {
+    private Chunk readChunk(Tenant tenant, String store, String table, Binary chunkId) {
         DColumn column = DBService.instance().getColumn(tenant, store, table + "_" + chunkId, "data");
         Chunk chunk = Chunk.fromByteArray(chunkId, column.getRawValue());
         return chunk;

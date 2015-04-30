@@ -19,7 +19,7 @@ public class TableIterator implements Iterator<S2Object> {
         m_tenant = tenant;
         m_application = application;
         m_table = table;
-        m_currentList = s2.getObjects(tenant, application, table, "");
+        m_currentList = s2.getObjects(tenant, application, table, null);
     }
     
     @Override public boolean hasNext() {

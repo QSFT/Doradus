@@ -11,14 +11,14 @@ import java.util.List;
 //the parent chunk and its first half of objects and second chunk
 //gets chunkId of the median object and last half of objects
 public class Chunk {
-    private String m_chunkId;
+    private Binary m_chunkId;
     private List<S2Object> m_objects = new ArrayList<>();
 
-    public Chunk(String chunkId) { m_chunkId = chunkId; }
+    public Chunk(Binary chunkId) { m_chunkId = chunkId; }
 
-    public Chunk(String chunkId, List<S2Object> objects) { m_chunkId = chunkId; m_objects = objects; }
+    public Chunk(Binary chunkId, List<S2Object> objects) { m_chunkId = chunkId; m_objects = objects; }
     
-    public String getChunkId() { return m_chunkId; }
+    public Binary getChunkId() { return m_chunkId; }
     
     public int size() { return m_objects.size(); }
     
@@ -38,7 +38,7 @@ public class Chunk {
         return data;
     }
     
-    public static Chunk fromByteArray(String chunkId, byte[] data) {
+    public static Chunk fromByteArray(Binary chunkId, byte[] data) {
         data = ChunkCompression.decompress(data);
         Chunk chunk = new Chunk(chunkId);
         MemoryStream buffer = new MemoryStream(data);

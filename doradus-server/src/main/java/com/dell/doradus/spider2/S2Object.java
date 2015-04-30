@@ -7,39 +7,40 @@ import com.dell.doradus.spider2.jsonbuild.JMapNode;
 import com.dell.doradus.spider2.jsonbuild.JNode;
 
 public class S2Object implements Comparable<S2Object> {
-    private String m_id;
+    private Binary m_id;
     private byte[] m_data;
    
     public static S2Object read(MemoryStream stream) {
-        String id = stream.readString();
+        Binary id = stream.readBinary();
         int length = stream.readVInt();
         byte[] data = new byte[length];
         stream.read(data, 0, length);
         return new S2Object(id, data);
     }
     
-    private S2Object(String id, byte[] data) {
+    private S2Object(Binary id, byte[] data) {
         m_id = id;
         m_data = data;
     }
     
     public S2Object(JMapNode data) {
-        m_id = data.getString("_id");
-        if(m_id == null) {
-            m_id = Utils.base64FromBinary(IDGenerator.nextID());
-            data.addString("_id", m_id);
+        String strId = data.getString("_id");
+        if(strId == null) {
+            strId = Utils.base64FromBinary(IDGenerator.nextID());
+            data.addString("_id", strId);
         }
+        m_id = new Binary(strId);
         m_data = data.getBytes();
     }
     
     public void write(MemoryStream stream) {
-        stream.writeString(m_id);
+        stream.write(m_id);
         stream.writeVInt(m_data.length);
         stream.write(m_data, 0, m_data.length);
     }
     
     
-    public String getId() { return m_id; }
+    public Binary getId() { return m_id; }
     public JMapNode getJNode() { return (JMapNode)JNode.fromBytes(m_data); }
     public JsonNode getJsonNode() { return new JsonNode(m_data); }
 

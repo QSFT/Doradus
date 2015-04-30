@@ -13,8 +13,8 @@ import java.util.Map;
 //the parent chunk and its first half of objects and second chunk
 //gets chunkId of the median object and last half of objects
 public class ChunkBuilder {
-    private String m_chunkId;
-    private Map<String, S2Object> m_objects = new HashMap<>(); 
+    private Binary m_chunkId;
+    private Map<Binary, S2Object> m_objects = new HashMap<>(); 
 
     public ChunkBuilder(Chunk chunk) {
         m_chunkId = chunk.getChunkId();
@@ -23,7 +23,7 @@ public class ChunkBuilder {
         }
     }
     
-    public String getChunkId() { return m_chunkId; }
+    public Binary getChunkId() { return m_chunkId; }
     
     public void add(S2Object obj) {
         m_objects.put(obj.getId(), obj);

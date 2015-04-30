@@ -3,6 +3,8 @@ package com.dell.doradus.spider2;
 import com.dell.doradus.common.Utils;
 
 public class Binary implements Comparable<Binary> {
+    public static final Binary EMPTY = new Binary(""); 
+    
     private byte[] m_data;
     
     public Binary(String string) {
