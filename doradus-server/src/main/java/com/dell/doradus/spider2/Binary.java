@@ -23,6 +23,7 @@ public class Binary implements Comparable<Binary> {
     public int length() { return m_data.length; }
     public byte[] getBuffer() { return m_data; }
     public String getString() { return Utils.toString(m_data); }
+    public boolean isEmpty() { return m_data.length == 0; }
     
     @Override public String toString() {
         return Utils.toString(m_data);

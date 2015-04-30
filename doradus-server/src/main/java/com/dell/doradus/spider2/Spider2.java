@@ -12,6 +12,7 @@ import com.dell.doradus.spider2.jsonbuild.JMapNode;
 
 public class Spider2 {
     private static final int MAX_CHUNK_SIZE = 8192;
+    private static final Object schemaSync = new Object();
     //private static Logger LOG = LoggerFactory.getLogger("Spider2");
     
     public Spider2() { }
@@ -32,31 +33,36 @@ public class Spider2 {
         }
         Collections.sort(objects);
         
-        Schema schema = readSchema(tenant, application, table);
-        
-        ChunkBuilder chunkBuilder = null;
-        for(S2Object obj: objects) {
-            Binary chunkId = schema.getChunkId(obj.getId());
-            if(chunkBuilder != null && !chunkId.equals(chunkBuilder.getChunkId())) {
-                flushChunk(tenant, application, table, chunkBuilder.getChunk(), schema);
-                chunkBuilder = null;
+        int position = 0;
+        while(position < objects.size()) {
+            S2Object obj = objects.get(position);
+            Binary chunkId = null;
+            synchronized(schemaSync) {
+                Schema schema = readSchema(tenant, application, table);
+                chunkId = schema.getChunkId(obj.getId());
             }
-            if(chunkBuilder == null) {
-                chunkBuilder = new ChunkBuilder(readChunk(tenant, application, table, chunkId));
+            synchronized(Locking.getLock(chunkId)) {
+                Chunk chunk = readChunk(tenant, application, table, chunkId);
+                Binary nextId = chunk.getNextId();
+                if(!nextId.isEmpty() && nextId.compareTo(obj.getId()) <= 0) {
+                    // it's not our chunk because someone
+                    // modified the schema between locks. Retry with the same object
+                    continue;
+                }
+                ChunkBuilder chunkBuilder = new ChunkBuilder(chunk);
+                while(position < objects.size()) {
+                    obj = objects.get(position);
+                    if(!nextId.isEmpty() && nextId.compareTo(obj.getId()) <= 0) break;
+                    chunkBuilder.add(obj);
+                    position++;
+                }
+                chunk = chunkBuilder.getChunk();
+                flushChunk(tenant, application, table, chunk);
             }
-            chunkBuilder.add(obj);
-        }
-        if(chunkBuilder != null) {
-            flushChunk(tenant, application, table, chunkBuilder.getChunk(), schema);
+            
         }
     }
 
-    public Binary getChunkId(Tenant tenant, String application, String table, Binary objectId) {
-        Schema schema = readSchema(tenant, application, table);
-        Binary chunkId = schema.getChunkId(objectId);
-        return chunkId;
-    }
-    
     public Iterable<S2Object> objects(Tenant tenant, String application, String table) {
         return new TableIterable(this, tenant, application, table);
     }
@@ -66,18 +72,20 @@ public class Spider2 {
         return chunk;
     }
     
-    
-    private void flushChunk(Tenant tenant, String application, String table, Chunk chunk, Schema schema) {
+    private void flushChunk(Tenant tenant, String application, String table, Chunk chunk) {
         if(chunk.size() <= MAX_CHUNK_SIZE) {
             writeChunk(tenant, application, table, chunk);
         }
         else {
             List<Chunk> subchunks = chunk.split(MAX_CHUNK_SIZE);
-            for(Chunk c: subchunks) {
-                schema.addId(c.getChunkId());
-                writeChunk(tenant, application, table, c);
+            synchronized(schemaSync) {
+                Schema schema = readSchema(tenant, application, table);
+                for(Chunk c: subchunks) {
+                    schema.addId(c.getChunkId());
+                    writeChunk(tenant, application, table, c);
+                }
+                writeSchema(tenant, application, table, schema);
             }
-            writeSchema(tenant, application, table, schema);
         }
     }
     
