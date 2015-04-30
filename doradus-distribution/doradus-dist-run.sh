@@ -14,8 +14,11 @@ then
     mkdir commitlog
     touch system.log
     cd ../cassandra/conf/
-    sed -e 's,/var/lib/cassandra,./cassandra-data,' -i "" cassandra.yaml 
-    sed -e 's,/var/log/cassandra,./cassandra-data,' -i "" log4j-server.properties
+    sed -ig 's,/var/lib/cassandra,./cassandra-data,' cassandra.yaml 
+    sed -ig 's,${max_heap_size_in_mb}M,1G,' cassandra-env.sh
+    sed -ig 's,${max_sensible_yg_in_mb}M,200M,' cassandra-env.sh
+    sed -ig 's,${desired_yg_in_mb}M,200M,' cassandra-env.sh
+    sed -ig 's,/var/log/cassandra,./cassandra-data,' log4j-server.properties 
     cd ../..
 fi   
     
