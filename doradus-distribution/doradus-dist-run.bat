@@ -33,7 +33,7 @@ echo "Cassandra has started..."
  
 REM Start Doradus
 cd doradus
-start java -cp .\*;.\resources\*;.\dependency\* com.dell.doradus.core.DoradusServer
+start java -cp .\*;.\resources\*;.\dependency\* -Xmx1G com.dell.doradus.core.DoradusServer
  
 timeout 10
 echo "Doradus has started..."

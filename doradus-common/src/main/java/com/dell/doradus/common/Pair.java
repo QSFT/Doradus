@@ -35,6 +35,7 @@ public class Pair<T1, T2>
         return 31*hashCode + (secondItemInPair == null ? 0 : secondItemInPair.hashCode());
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public final boolean equals(Object other)
     {
