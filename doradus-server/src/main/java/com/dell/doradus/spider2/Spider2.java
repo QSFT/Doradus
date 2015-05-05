@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.dell.doradus.search.util.LRUSizeCache;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
@@ -18,8 +17,7 @@ public class Spider2 {
     private static final Object schemaSync = new Object();
     private static final Map<String, Schema> m_schemaCache = new HashMap<>();
     //100MB chunks cache
-    private static final LRUSizeCache<String, byte[]> m_chunksCache = new LRUSizeCache<>(0, 1024 * 1024 * 100);
-    
+    //private static final LRUSizeCache<String, byte[]> m_chunksCache = new LRUSizeCache<>(0, 1024 * 1024 * 100);
     //private static Logger LOG = LoggerFactory.getLogger("Spider2");
     
     public Spider2() { }
@@ -50,16 +48,7 @@ public class Spider2 {
             }
             synchronized(Locking.getLock(chunkId)) {
 
-                Chunk chunk = null;
-                
-                String key = tenant.getKeyspace() + "/" + application + "/" + table + "/" + chunkId.toString();
-                byte[] data = m_chunksCache.get(key);
-                if(data != null) {
-                    chunk = Chunk.fromByteArray(data);
-                }
-                else {
-                    chunk = readChunk(tenant, application, table, chunkId);
-                }
+                Chunk chunk = readChunk(tenant, application, table, chunkId);
                 
                 Binary nextId = chunk.getNextId();
                 if(!nextId.isEmpty() && nextId.compareTo(obj.getId()) <= 0) {
@@ -85,7 +74,7 @@ public class Spider2 {
         return new TableIterable(this, tenant, application, table);
     }
     
-    protected Chunk getObjects(Tenant tenant, String application, String table, Binary chunkId) {
+    public Chunk getObjects(Tenant tenant, String application, String table, Binary chunkId) {
         Chunk chunk = readChunk(tenant, application, table, chunkId);
         return chunk;
     }
@@ -114,7 +103,7 @@ public class Spider2 {
         }
     }
     
-    private Schema readSchema(Tenant tenant, String store, String table) {
+    public Schema readSchema(Tenant tenant, String store, String table) {
         String key = tenant.getKeyspace() + "/" + store + "/" + table;
         Schema schema = m_schemaCache.get(key);
         if(schema != null) return schema;
@@ -141,7 +130,7 @@ public class Spider2 {
     }
     
     private Chunk readChunk(Tenant tenant, String store, String table, Binary chunkId) {
-        DColumn column = DBService.instance().getColumn(tenant, store, table + "_" + chunkId, "data");
+        DColumn column = DBService.instance().getColumn(tenant, store, table + "_" + chunkId.toString(), "data");
         Chunk chunk = Chunk.fromByteArray(column.getRawValue());
         return chunk;
     }
@@ -151,11 +140,8 @@ public class Spider2 {
     }
 
     private void writeChunkData(Tenant tenant, String store, String table, Binary chunkId, byte[] data) {
-        String key = tenant.getKeyspace() + "/" + store + "/" + table + "/" + chunkId.toString();
-        m_chunksCache.put(key, data, data.length + key.length() * 2);
-        
         DBTransaction transaction = DBService.instance().startTransaction(tenant);
-        transaction.addColumn(store, table + "_" + chunkId, "data", data);
+        transaction.addColumn(store, table + "_" + chunkId.toString(), "data", data);
         DBService.instance().commit(transaction);
     }
     
