@@ -40,7 +40,6 @@ import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
-import com.google.common.collect.Lists;
 
 /**
  * A collection of helper methods for retrieving information from Cassandra database
@@ -448,7 +447,7 @@ public class SpiderHelper {
 					}
 				}
 			}
-			result.put(entry.getKey(), Lists.newArrayList(set));
+			result.put(entry.getKey(), new ArrayList<ObjectID>(set));
 		}
 		return result;
 	}
