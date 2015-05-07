@@ -5,6 +5,25 @@ import net.jpountz.lz4.LZ4Factory;
 import net.jpountz.lz4.LZ4FastDecompressor;
 
 public class ChunkCompression {
+    
+    public static byte[] compress_fast(byte[] data) {
+        LZ4Factory factory = LZ4Factory.fastestInstance();
+        final int decompressedLength = data.length;
+        //LZ4Compressor compressor = factory.highCompressor();
+        LZ4Compressor compressor = factory.fastCompressor();
+        int maxCompressedLength = compressor.maxCompressedLength(decompressedLength);
+        byte[] compressed = new byte[maxCompressedLength];
+        int compressedLength = compressor.compress(data, 0, decompressedLength, compressed, 0, maxCompressedLength);
+        byte[] array = new byte[compressedLength + 4];
+        //first 4 bytes is decompressed length
+        array[0] = (byte)decompressedLength;
+        array[1] = (byte)(decompressedLength >> 8);
+        array[2] = (byte)(decompressedLength >> 16);
+        array[3] = (byte)(decompressedLength >> 24);
+        System.arraycopy(compressed, 0, array, 4, compressedLength);
+        return array;
+    }
+    
     public static byte[] compress(byte[] data) {
         LZ4Factory factory = LZ4Factory.fastestInstance();
         final int decompressedLength = data.length;
