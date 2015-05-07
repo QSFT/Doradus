@@ -39,6 +39,7 @@ import com.dell.doradus.olap.store.FieldWriter;
 import com.dell.doradus.olap.store.FieldWriterSV;
 import com.dell.doradus.olap.store.IdReader;
 import com.dell.doradus.olap.store.IdWriter;
+import com.dell.doradus.olap.store.InverseLinkWriter;
 import com.dell.doradus.olap.store.NumSearcherMV;
 import com.dell.doradus.olap.store.NumWriter;
 import com.dell.doradus.olap.store.NumWriterMV;
@@ -314,8 +315,12 @@ public class Merger {
         Remap valRemap = remaps.get(fieldDef.getLinkExtent());
 		if(docRemap.dstSize() == 0 || valRemap.dstSize() == 0) return;
 
+		if(InverseLinkWriter.shouldWriteInverse(fieldDef)) {
+		    InverseLinkWriter.writeInverse(destination, fieldDef, stats);
+		}
         //all links are multi-valued because of referential integrity and idempotent updates
         //if(fieldDef.isCollection())
+        else
         {
 	        FieldWriter field_writer = new FieldWriter(docRemap.dstSize());
 	        
