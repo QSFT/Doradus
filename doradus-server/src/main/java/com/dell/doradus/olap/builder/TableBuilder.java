@@ -26,6 +26,7 @@ import com.dell.doradus.olap.io.VDirectory;
 import com.dell.doradus.olap.store.FieldWriter;
 import com.dell.doradus.olap.store.FieldWriterSV;
 import com.dell.doradus.olap.store.IdWriter;
+import com.dell.doradus.olap.store.InverseLinkWriter;
 import com.dell.doradus.olap.store.NumWriter;
 import com.dell.doradus.olap.store.NumWriterMV;
 import com.dell.doradus.olap.store.SegmentStats;
@@ -138,10 +139,16 @@ public class TableBuilder {
 		int docs_count = stats.getTable(table).documents;
 		for(String field: m_links.keySet()) {
 			FieldDefinition fieldDef = tableDef.getFieldDef(field);
-			FieldWriter field_writer = new FieldWriter(docs_count);
-			m_links.get(field).flush(field_writer);
-			field_writer.close(dir, table, field);
-			stats.addLinkField(fieldDef, field_writer);
+			
+	        if(InverseLinkWriter.shouldWriteInverse(fieldDef)) {
+	            InverseLinkWriter.writeInverse(dir, fieldDef, stats);
+	        }
+			else {
+    			FieldWriter field_writer = new FieldWriter(docs_count);
+    			m_links.get(field).flush(field_writer);
+    			field_writer.close(dir, table, field);
+    			stats.addLinkField(fieldDef, field_writer);
+			}
 		}
 	}
 	

@@ -29,6 +29,73 @@ public class FieldSearcher {
 	private int[] m_positions;
 	
 	public FieldSearcher(VDirectory dir, String table, String field) {
+        if(dir.fileExists(table + "." + field + ".inverse")) {
+            VInputStream input = dir.open(table + "." + field + ".inverse");
+            String inv_table = input.readString();
+            String inv_field = input.readString();
+            m_documents = input.readVInt();
+            m_fields = input.readVInt();
+            FieldSearcher searcher = new FieldSearcher(dir, inv_table, inv_field);
+            
+            m_bSingleValued = true;
+            boolean m_bEmpty = true;
+            
+            int[] lengths = new int[m_documents];
+            for(int doc = 0; doc < searcher.size(); doc++) {
+                int len = searcher.fieldsCount(doc);
+                for(int j = 0; j < len; j++) {
+                    int fld = searcher.getField(doc, j);
+                    lengths[fld]++;
+                    m_bEmpty = false;
+                    if(lengths[fld] > 1) m_bSingleValued = false;
+                }
+            }
+            
+            if(m_bEmpty) return;
+            
+            if(m_bSingleValued) {
+                m_docterms = new int[m_documents];
+                for(int i = 0; i < m_docterms.length; i++) {
+                    m_docterms[i] = -1;
+                }
+
+                for(int doc = 0; doc < searcher.size(); doc++) {
+                    int len = searcher.fieldsCount(doc);
+                    for(int j = 0; j < len; j++) {
+                        int fld = searcher.getField(doc, j);
+                        m_docterms[fld] = doc;
+                    }
+                }
+                
+            }
+            else {
+                m_positions = new int[m_documents + 1];
+                m_positions[0] = 0;
+                for(int i = 0; i < m_documents; i++) {
+                    m_positions[i + 1] = m_positions[i] + lengths[i];
+                }
+                m_docterms = new int[m_positions[m_documents]];
+                for(int i = 0; i < m_docterms.length; i++) {
+                    m_docterms[i] = -1;
+                }
+                for(int i = 0; i < m_documents; i++) {
+                    lengths[i] = 0;
+                }
+                
+                for(int doc = 0; doc < searcher.size(); doc++) {
+                    int len = searcher.fieldsCount(doc);
+                    for(int j = 0; j < len; j++) {
+                        int fld = searcher.getField(doc, j);
+                        m_docterms[m_positions[fld] + lengths[fld]] = doc;
+                        lengths[fld]++;
+                    }
+                }
+                
+            }
+            
+            return;
+        }
+	    
 		if(!dir.fileExists(table + "." + field + ".doc")) return;
 		
 		if(dir.fileExists(table + "." + field + ".pos")) {
