@@ -18,6 +18,7 @@ package com.dell.doradus.service.tenant;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,7 @@ public class TenantService extends Service {
     // Tenant name (keyspace) to TenantDefinition cache:
     private final Map<String, TenantDefinition> m_tenantMap = new HashMap<>();
     
-    // REST commands supported by the SchemaService:
+    // REST commands supported by the TenantService:
     private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
         new RESTCommand("GET    /_tenants           com.dell.doradus.service.tenant.ListTenantsCmd", true),
         new RESTCommand("GET    /_tenants/{tenant}  com.dell.doradus.service.tenant.ListTenantCmd", true),
@@ -105,6 +106,7 @@ public class TenantService extends Service {
     @Override
     protected void startService() {
         DBService.instance().waitForFullService();
+        refreshTenantMap();
     }
 
     @Override
@@ -112,6 +114,21 @@ public class TenantService extends Service {
 
     //----- Tenant management methods
 
+    /**
+     * Get the list of all known tenants. This list *might* not contain new tenants
+     * created by another Doradus instance but not yet accessed by this instance.
+     * 
+     * @return  List of all known {@link Tenant}.
+     */
+    public Collection<Tenant> getTenants() {
+        checkServiceState();
+        List<Tenant> result = new ArrayList<>();
+        for (String tenantName : m_tenantMap.keySet()) {
+            result.add(new Tenant(tenantName));
+        }
+        return result;
+    }
+    
     /**
      * Get the {@link TenantDefinition} of the tenant with the given name, if it exists.
      * 
@@ -456,6 +473,7 @@ public class TenantService extends Service {
     
     // Load a TenantDefinition from the Applications table.
     private TenantDefinition loadTenantDefinition(Tenant tenant) {
+        m_logger.debug("Loading definition for tenant: {}", tenant.getKeyspace());
         DColumn tenantDefCol =
             DBService.instance().getColumn(tenant, SchemaService.APPS_STORE_NAME, TENANT_ROW_KEY, TENANT_DEF_COL_NAME);
         if (tenantDefCol == null) {
@@ -598,5 +616,5 @@ public class TenantService extends Service {
         }
         return true;
     }
-    
+
 }   // class TenantService

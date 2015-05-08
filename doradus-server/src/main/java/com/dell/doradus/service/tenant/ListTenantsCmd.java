@@ -18,7 +18,6 @@ package com.dell.doradus.service.tenant;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.UNode;
-import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.schema.SchemaService;
@@ -31,7 +30,7 @@ public class ListTenantsCmd extends UNodeOutCallback {
     @Override
     public UNode invokeUNodeOut() {
         UNode rootNode = UNode.createMapNode("tenants");
-        for (Tenant tenant : DBService.instance().getTenants()) {
+        for (Tenant tenant : TenantService.instance().getTenants()) {
             UNode tenantNode = rootNode.addMapNode(stripQuotes(tenant.getKeyspace()), "tenant");
             UNode appNode = tenantNode.addArrayNode("applications");
             for (ApplicationDefinition appDef : SchemaService.instance().getAllApplications(tenant)) {
