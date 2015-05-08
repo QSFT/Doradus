@@ -287,29 +287,25 @@ public class SchemaService extends Service {
         Collection<Tenant> tenantList = TenantService.instance().getTenants();
         for (Tenant tenant : tenantList) {
             m_logger.info("   Tenant: {}", tenant.getKeyspace());
-            List<ApplicationDefinition> apps = new ArrayList<>();
             Iterator<DRow> rowIter =
                 DBService.instance().getAllRowsAllColumns(tenant, SchemaService.APPS_STORE_NAME);
+            if (!rowIter.hasNext()) {
+                m_logger.info("      <no applications>");
+            }
             while (rowIter.hasNext()) {
                 DRow row = rowIter.next();
                 ApplicationDefinition appDef = loadAppRow(tenant, getColumnMap(row.getColumns()));
                 if (appDef != null) {
-                    apps.add(appDef);
+                    String appName = appDef.getAppName();
+                    String ssName = getStorageServiceOption(appDef);
+                    m_logger.info("      Application '{}': StorageService={}; keyspace={}",
+                                  new Object[]{appName, ssName, tenant.getKeyspace()});
+                    if (DoradusServer.instance().findStorageService(ssName) == null) {
+                        m_logger.warn("      >>>Application '{}' uses storage service '{}' which has not been " +
+                                      "initialized; application will not be accessible via this server",
+                                      appDef.getAppName(), ssName);
+                    }
                 }
-            }
-            for (ApplicationDefinition appDef : apps) {
-                String appName = appDef.getAppName();
-                String ssName = getStorageServiceOption(appDef);
-                m_logger.info("      Application '{}': StorageService={}; keyspace={}",
-                              new Object[]{appName, ssName, tenant.getKeyspace()});
-                if (DoradusServer.instance().findStorageService(ssName) == null) {
-                    m_logger.warn("      >>>Application '{}' uses storage service '{}' which has not been " +
-                                  "initialized; application will not be accessible via this server",
-                                  appDef.getAppName(), ssName);
-                }
-            }
-            if (apps.size() == 0) {
-                m_logger.info("      <no applications>");
             }
         }
         if (tenantList.size() == 0) {
@@ -419,9 +415,6 @@ public class SchemaService extends Service {
     // Get the given application's application. If it's not in our app-to-tenant map,
     // refresh the map in case the application was just created.
     private ApplicationDefinition getApplicationDefinition(Tenant tenant, String appName) {
-        if (!TenantService.instance().tenantExists(tenant)) {
-            return null;
-        }
         Iterator<DColumn> colIter =
             DBService.instance().getAllColumns(tenant, SchemaService.APPS_STORE_NAME, appName);
         if (colIter == null) {
@@ -433,15 +426,13 @@ public class SchemaService extends Service {
     // Get all application definitions for the given Tenant.
     private Collection<ApplicationDefinition> findAllApplications(Tenant tenant) {
         List<ApplicationDefinition> result = new ArrayList<>();
-        if (TenantService.instance().tenantExists(tenant)) {
-            Iterator<DRow> rowIter =
-                DBService.instance().getAllRowsAllColumns(tenant, SchemaService.APPS_STORE_NAME);
-            while (rowIter.hasNext()) {
-                DRow row = rowIter.next();
-                ApplicationDefinition appDef = loadAppRow(tenant, getColumnMap(row.getColumns()));
-                if (appDef != null) {
-                    result.add(appDef);
-                }
+        Iterator<DRow> rowIter =
+            DBService.instance().getAllRowsAllColumns(tenant, SchemaService.APPS_STORE_NAME);
+        while (rowIter.hasNext()) {
+            DRow row = rowIter.next();
+            ApplicationDefinition appDef = loadAppRow(tenant, getColumnMap(row.getColumns()));
+            if (appDef != null) {
+                result.add(appDef);
             }
         }
         return result;
