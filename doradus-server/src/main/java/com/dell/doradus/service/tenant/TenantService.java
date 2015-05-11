@@ -16,8 +16,10 @@
 
 package com.dell.doradus.service.tenant;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -176,14 +178,30 @@ public class TenantService extends Service {
                       "This command is not valid in single-tenant mode");
         TenantDefinition oldTenantDef = getTenantDefFromCache(tenantName);
         Utils.require(oldTenantDef != null, "Tenant '%s' does not exist", tenantName);
+        newTenantDef = modifyTenantProperties(oldTenantDef, newTenantDef);
         validateTenantUpdate(oldTenantDef, newTenantDef);
         modifyTenantDefinition(oldTenantDef, newTenantDef);
         TenantDefinition updatedTenantDef = getTenantDefFromCache(tenantName);
         if (updatedTenantDef == null) {
             throw new RuntimeException("Tenant definition could not be retrieved after creation: " + tenantName);
         }
-        return updatedTenantDef;
+        return updatedTenantDef; 
     }   // modifyTenant
+    
+    
+    /**
+     * Copying existing Tenant Definition properties to the new Tenant Definition properties if any given Tenant Definition property hasn't been set during Tenant modification process
+     * 
+     * @param   oldTenantDefiniton    Old {@link TenantDefinition}.
+     * @param   newTenantDefinition  New {@link TenantDefinition}.
+     * @return  Updated {@link TenantDefinition}.
+     */
+    private TenantDefinition modifyTenantProperties(TenantDefinition oldTenantDefiniton, TenantDefinition newTenantDefinition) {
+    	if(newTenantDefinition.getProperties().get("_CreatedOn") == null) {
+    		newTenantDefinition.setProperty("_CreatedOn", oldTenantDefiniton.getProperties().get("_CreatedOn"));
+    	} 
+    	return newTenantDefinition;
+    }
     
     /**
      * Delete an existing tenant. The tenant's keyspace is dropped, which deletes all user
@@ -317,9 +335,15 @@ public class TenantService extends Service {
         Tenant tenant = new Tenant(tenantDef.getName());
         dbService.createTenant(tenant, tenantDef.getOptions());
         addTenantUsers(tenantDef);
+        tenantDef = addTenantCreationProperty(tenantDef);
         dbService.createStoreIfAbsent(tenant, SchemaService.APPS_STORE_NAME, false);
         dbService.createStoreIfAbsent(tenant, TaskManagerService.TASKS_STORE_NAME, false);
         storeTenantDefinition(tenantDef);
+    }
+    
+    private TenantDefinition addTenantCreationProperty(TenantDefinition tenantDefinition) {
+    	tenantDefinition.setProperty("_CreatedOn", new SimpleDateFormat("YYYY-MM-dd hh:mm:ss").format(Calendar.getInstance().getTime()));
+    	return tenantDefinition;
     }
 
     // Add all users in the given tenant definition to Cassandra and authorize them to use
@@ -477,6 +501,8 @@ public class TenantService extends Service {
                                       TenantDefinition newTenantDef) {
         Utils.require(oldTenantDef.getName().equals(newTenantDef.getName()),
                       "Tenant name cannot be changed: %s", newTenantDef.getName());
+        Utils.require(oldTenantDef.getProperties().get("_CreatedOn").equals(newTenantDef.getProperties().get("_CreatedOn")),
+        		      "Tenant _CreatedOn property cannot be changed: %s", newTenantDef.getProperties().get("_CreatedOn"));
         // All other changes are allowed
     }
 
