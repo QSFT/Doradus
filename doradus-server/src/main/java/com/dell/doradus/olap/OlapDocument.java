@@ -47,6 +47,7 @@ public class OlapDocument {
 	public String getFieldValue(int field) { return m_document.getFieldValue(field); } 
 	
 	public BSTR getIdBinary() { return m_document.getIdBinary(); }
+    public BSTR getFieldNameBinary(int field) { return m_document.getFieldNameBinary(field); } 
 	public BSTR getFieldValueBinary(int field) { return m_document.getFieldValueBinary(field); } 
 	public BSTR getFieldValueBinaryLowercase(int field) { return m_document.getFieldValueBinaryLowercase(field); } 
 	
