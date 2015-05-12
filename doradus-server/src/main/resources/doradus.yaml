@@ -37,7 +37,7 @@
 # tenant and provide credentials for that tenant. Non-tenant commands (system commands) do not
 # specify a tenant and must be validated using system credentials. Note that multi-tenant mode
 # requires the use of CQL, hence "use_cql" must be true. Default: false
-multitenant_mode: false
+multitenant_mode: true
 
 # disable_default_keyspace: When multitenant_mode is true, non-system commands that do not identify
 # a specific tenant are sent to the default tenant (see "keyspace" parameter). Requests to the

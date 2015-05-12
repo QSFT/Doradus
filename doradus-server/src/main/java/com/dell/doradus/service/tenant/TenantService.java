@@ -19,7 +19,11 @@ package com.dell.doradus.service.tenant;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+<<<<<<< HEAD
 import java.util.Calendar;
+=======
+import java.util.Collection;
+>>>>>>> c6f948de960abf900199cf82aa55656397a09ad7
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +40,7 @@ import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DuplicateException;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.db.UnauthorizedException;
+import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
@@ -57,7 +62,7 @@ public class TenantService extends Service {
     // Tenant name (keyspace) to TenantDefinition cache:
     private final Map<String, TenantDefinition> m_tenantMap = new HashMap<>();
     
-    // REST commands supported by the SchemaService:
+    // REST commands supported by the TenantService:
     private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
         new RESTCommand("GET    /_tenants           com.dell.doradus.service.tenant.ListTenantsCmd", true),
         new RESTCommand("GET    /_tenants/{tenant}  com.dell.doradus.service.tenant.ListTenantCmd", true),
@@ -107,6 +112,7 @@ public class TenantService extends Service {
     @Override
     protected void startService() {
         DBService.instance().waitForFullService();
+        refreshTenantMap();
     }
 
     @Override
@@ -114,6 +120,21 @@ public class TenantService extends Service {
 
     //----- Tenant management methods
 
+    /**
+     * Get the list of all known tenants. This list *might* not contain new tenants
+     * created by another Doradus instance but not yet accessed by this instance.
+     * 
+     * @return  List of all known {@link Tenant}.
+     */
+    public Collection<Tenant> getTenants() {
+        checkServiceState();
+        List<Tenant> result = new ArrayList<>();
+        for (String tenantName : m_tenantMap.keySet()) {
+            result.add(new Tenant(tenantName));
+        }
+        return result;
+    }
+    
     /**
      * Get the {@link TenantDefinition} of the tenant with the given name, if it exists.
      * 
@@ -214,7 +235,9 @@ public class TenantService extends Service {
         Utils.require(ServerConfig.getInstance().multitenant_mode,
                       "This command is not valid in single-tenant mode");
         TenantDefinition tenantDef = getTenantDefFromCache(tenantName);
-        Utils.require(tenantDef != null, "Tenant '%s' does not exist", tenantName);
+        if (tenantDef == null) {
+            return; // allow idempotent deletes
+        }
         Tenant tenant = new Tenant(tenantName);
         DBService.instance().dropTenant(tenant);
         deleteTenantFromCache(tenantName);
@@ -282,17 +305,23 @@ public class TenantService extends Service {
      * represented by the given userID and password. A {@link UnauthorizedException} is
      * thrown if the given credentials are invalid for the given tenant/command or if the
      * user has insufficient rights for the command being accessed.
+     * <p>
+     * If the given tenant does not exist, an {@link NotFoundException} is thrown.
      * 
      * @param tenant        {@link Tenant} being accessed.
      * @param userid        User ID of caller. May be null.
      * @param password      Password of caller. May be null.
      * @param cmd           {@link RESTCommand} being invoked.
+     * @throws              NotFoundException if the given tenant does not exist.
      * @throws              UnauthorizedException if the given credentials are invalid or
      *                      have insufficient rights for the given tenant and command.
      */
     public void validateTenantAuthorization(Tenant tenant, String userid, String password, RESTCommand cmd)
-            throws UnauthorizedException {
+            throws UnauthorizedException, NotFoundException {
         if (ServerConfig.getInstance().multitenant_mode) {
+            if (!tenantExists(tenant)) {
+                throw new NotFoundException("Unknown tenant: " + tenant);
+            }
             if (cmd.isPrivileged()) {
                 if (!isValidSystemCredentials(userid, password)) {
                     throw new UnauthorizedException("Unrecognized system user id/password");
@@ -480,6 +509,7 @@ public class TenantService extends Service {
     
     // Load a TenantDefinition from the Applications table.
     private TenantDefinition loadTenantDefinition(Tenant tenant) {
+        m_logger.debug("Loading definition for tenant: {}", tenant.getKeyspace());
         DColumn tenantDefCol =
             DBService.instance().getColumn(tenant, SchemaService.APPS_STORE_NAME, TENANT_ROW_KEY, TENANT_DEF_COL_NAME);
         if (tenantDefCol == null) {
@@ -624,5 +654,5 @@ public class TenantService extends Service {
         }
         return true;
     }
-    
+
 }   // class TenantService
