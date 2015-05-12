@@ -110,6 +110,17 @@ public class SegmentStats {
 		field.isSingleValued = writer.isSingleValued();
 		t.linkFields.put(field.name, field);
 	}
+
+    public void addInverseLinkField(FieldDefinition fieldDef, int fields) {
+        Table t = tables.get(fieldDef.getTableName());
+        Table.LinkField field = t.new LinkField();
+        field.name = fieldDef.getName();
+        field.linkedTableName = fieldDef.getLinkExtent();
+        field.inverseLink = fieldDef.getLinkInverse();
+        field.doclistSize = fields;
+        field.isSingleValued = false;
+        t.linkFields.put(field.name, field);
+    }
 	
 	public long memory() {
 		long mem = 0;

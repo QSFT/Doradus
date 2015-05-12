@@ -78,6 +78,7 @@ public class CQLService extends DBService {
 
     // Members:
     private Cluster m_cluster;
+    private static final String NO_KS_SESSION = "_"; 
     private final Map<String, Session> m_ksSessionMap = new HashMap<>();
     private final Map<String, CQLStatementCache> m_ksStatementCacheMap = new HashMap<>();
     
@@ -123,10 +124,9 @@ public class CQLService extends DBService {
         String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
         KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(cqlKeyspace);
         if (ksMetadata == null) {
-            try (Session session = m_cluster.connect()) {   // no-keyspace session
-                CQLSchemaManager schemaMgr = new CQLSchemaManager(session, null);
-                schemaMgr.createKeyspace(cqlKeyspace, options);
-            }
+            Session session = getOrCreateKeyspaceSession(NO_KS_SESSION); 
+            CQLSchemaManager schemaMgr = new CQLSchemaManager(session, null);
+            schemaMgr.createKeyspace(cqlKeyspace, options);
         }
     }   // createTenant
 
@@ -135,10 +135,9 @@ public class CQLService extends DBService {
         String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
         KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(cqlKeyspace);
         Utils.require(ksMetadata != null, "Tenant not found: " + tenant.toString());
-        try (Session session = m_cluster.connect()) {   // no-keyspace session
-            CQLSchemaManager schemaMgr = new CQLSchemaManager(session, null);
-            schemaMgr.modifyKeyspace(cqlKeyspace, options);
-        }
+        Session session = getOrCreateKeyspaceSession(NO_KS_SESSION); 
+        CQLSchemaManager schemaMgr = new CQLSchemaManager(session, null);
+        schemaMgr.modifyKeyspace(cqlKeyspace, options);
     }   // modifyTenant
 
     @Override
@@ -152,10 +151,9 @@ public class CQLService extends DBService {
                 m_ksSessionMap.remove(cqlKeyspace);
                 m_ksStatementCacheMap.remove(cqlKeyspace);
             }
-            try (Session noKSSession = m_cluster.connect()) {   // no-keyspace session
-                CQLSchemaManager schemaMgr = new CQLSchemaManager(noKSSession, null);
-                schemaMgr.dropKeyspace(cqlKeyspace);
-            }
+            Session noKSSession = getOrCreateKeyspaceSession(NO_KS_SESSION); 
+            CQLSchemaManager schemaMgr = new CQLSchemaManager(noKSSession, null);
+            schemaMgr.dropKeyspace(cqlKeyspace);
         }
     }   // dropTenant
     
@@ -231,20 +229,19 @@ public class CQLService extends DBService {
     public void deleteUsers(Tenant tenant, Iterable<UserDefinition> users) {
         checkState();
         // Use a no-keyspace session since the keyspace may already be gone.
-        try (Session session = m_cluster.connect()) {
-            StringBuilder cql = new StringBuilder();
-            for (UserDefinition userDef : users) {
-                String userID = userDef.getID();
-                m_logger.debug("Dropping user '{}'", userID);
-                cql.setLength(0);
-                cql.append("DROP USER ");
-                cql.append(userID);
-                cql.append(";");
-                try {
-                    session.execute(cql.toString());
-                } catch (InvalidQueryException e) {
-                    m_logger.warn("Cannot drop user '" + userID + "'; ignoring", e);
-                }
+        Session session = getOrCreateKeyspaceSession(NO_KS_SESSION); 
+        StringBuilder cql = new StringBuilder();
+        for (UserDefinition userDef : users) {
+            String userID = userDef.getID();
+            m_logger.debug("Dropping user '{}'", userID);
+            cql.setLength(0);
+            cql.append("DROP USER ");
+            cql.append(userID);
+            cql.append(";");
+            try {
+                session.execute(cql.toString());
+            } catch (InvalidQueryException e) {
+                m_logger.warn("Cannot drop user '" + userID + "'; ignoring", e);
             }
         }
     }   // deleteUsers
@@ -253,17 +250,15 @@ public class CQLService extends DBService {
     public Collection<Tenant> getTenants() {
         checkState();
         List<Tenant> tenants = new ArrayList<>();
-        try (Session session = m_cluster.connect()) {
-            List<KeyspaceMetadata> keyspaceList = m_cluster.getMetadata().getKeyspaces();
-            for (KeyspaceMetadata ksMetadata : keyspaceList) {
-                if (ksMetadata.getTable(APPS_CQL_NAME) != null) {
-                    tenants.add(new Tenant(ksMetadata.getName()));
-                }
+        List<KeyspaceMetadata> keyspaceList = m_cluster.getMetadata().getKeyspaces();
+        for (KeyspaceMetadata ksMetadata : keyspaceList) {
+            if (ksMetadata.getTable(APPS_CQL_NAME) != null) {
+                tenants.add(new Tenant(ksMetadata.getName()));
             }
         }
         return tenants;
-    }   // getTenantMap
-    
+    }   // getTenants
+
     //----- Public DBService methods: Store management
 
     @Override
@@ -613,14 +608,18 @@ public class CQLService extends DBService {
 
     // Get or create a session to the given keyspace.
     private Session getOrCreateKeyspaceSession(String cqlKeyspace) {
-        assert cqlKeyspace.charAt(0) == '"';
+        assert cqlKeyspace.charAt(0) == '"' || cqlKeyspace.equals(NO_KS_SESSION);
         Session session = m_ksSessionMap.get(cqlKeyspace);
         if (session == null) {
             synchronized (m_ksSessionMap) {
                 // Watch for race conditions outside of synchronized block
                 session = m_ksSessionMap.get(cqlKeyspace);
                 if (session == null) {
-                    session = m_cluster.connect(cqlKeyspace);
+                    if (cqlKeyspace.equals(NO_KS_SESSION)) {
+                        session = m_cluster.connect();
+                    } else {
+                        session = m_cluster.connect(cqlKeyspace);
+                    }
                     m_ksSessionMap.put(cqlKeyspace, session);
                     m_ksStatementCacheMap.put(cqlKeyspace, new CQLStatementCache(session));
                 }
@@ -639,15 +638,7 @@ public class CQLService extends DBService {
                           new Object[]{host.getAddress(), host.getDatacenter(), 
                 host.getRack(), policy.distance(host)});
         }
-        m_logger.info("Current keyspaces:");
-        List<KeyspaceMetadata> keyspaces = metadata.getKeyspaces();
-        if (keyspaces.isEmpty()) {
-            m_logger.info("   <none>");
-        }
-        for (KeyspaceMetadata keyspace : keyspaces) {
-            Collection<TableMetadata> tables = keyspace.getTables();
-            m_logger.info("   {}: contains {} ColumnFamilies", keyspace.getName(), tables.size());
-        }
+        m_logger.info("Database contains {} keyspaces", metadata.getKeyspaces().size());
     }   // displayClusterInfo
 
 }   // class CQLService

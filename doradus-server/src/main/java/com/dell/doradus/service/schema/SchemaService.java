@@ -93,7 +93,7 @@ public class SchemaService extends Service {
     // Wait for the DB service to be up and check application schemas.
     @Override
     public void startService() {
-        DBService.instance().waitForFullService();
+        TenantService.instance().waitForFullService();
         checkAppStores();
     }   // startService
 
@@ -198,6 +198,24 @@ public class SchemaService extends Service {
     }   // getStorageService
 
     /**
+     * Get the given application's StorageService option. If none is found, assign and
+     * return the default. Unlike {@link #getStorageService(ApplicationDefinition)}, this
+     * method will not throw an exception if the storage service is unknown or has not
+     * been initialized.
+     * 
+     * @param   appDef  {@link ApplicationDefinition} of an application.
+     * @return          The application's declared or assigned StorageService option.
+     */
+    public String getStorageServiceOption(ApplicationDefinition appDef) {
+        String ssName = appDef.getOption(CommonDefs.OPT_STORAGE_SERVICE);
+        if (Utils.isEmpty(ssName)) {
+            ssName = DoradusServer.instance().getDefaultStorageService();
+            appDef.setOption(CommonDefs.OPT_STORAGE_SERVICE, ssName);
+        }
+        return ssName;
+    }   // getStorageServiceOption
+
+    /**
      * Delete the given application, including all of its data, from the default tenant.
      * If the given application doesn't exist, the call is a no-op. WARNING: This method
      * deletes an application regardless of whether it has a key defined.
@@ -266,42 +284,35 @@ public class SchemaService extends Service {
     // Check to see if the storage manager is active for each application.
     private void checkAppStores() {
         m_logger.info("The following tenants and applications are defined:");
-        int totalTenants = 0;
-        for (Tenant tenant : DBService.instance().getTenants()) {
-            totalTenants++;
+        Collection<Tenant> tenantList = TenantService.instance().getTenants();
+        for (Tenant tenant : tenantList) {
             m_logger.info("   Tenant: {}", tenant.getKeyspace());
-            Collection<ApplicationDefinition> apps = findAllApplications(tenant);
-            if (apps.size() == 0) {
+            Iterator<DRow> rowIter =
+                DBService.instance().getAllRowsAllColumns(tenant, SchemaService.APPS_STORE_NAME);
+            if (!rowIter.hasNext()) {
                 m_logger.info("      <no applications>");
             }
-            for (ApplicationDefinition appDef : findAllApplications(tenant)) {
-                String appName = appDef.getAppName();
-                String ssName = getStorageServiceOption(appDef);
-                m_logger.info("      Application '{}': StorageService={}; keyspace={}",
-                              new Object[]{appName, ssName, tenant.getKeyspace()});
-                if (DoradusServer.instance().findStorageService(ssName) == null) {
-                    m_logger.warn("      >>>Application '{}' uses storage service '{}' which has not been " +
-                                    "initialized; application will not be accessible via this server",
-                                    appDef.getAppName(), ssName);
+            while (rowIter.hasNext()) {
+                DRow row = rowIter.next();
+                ApplicationDefinition appDef = loadAppRow(tenant, getColumnMap(row.getColumns()));
+                if (appDef != null) {
+                    String appName = appDef.getAppName();
+                    String ssName = getStorageServiceOption(appDef);
+                    m_logger.info("      Application '{}': StorageService={}; keyspace={}",
+                                  new Object[]{appName, ssName, tenant.getKeyspace()});
+                    if (DoradusServer.instance().findStorageService(ssName) == null) {
+                        m_logger.warn("      >>>Application '{}' uses storage service '{}' which has not been " +
+                                      "initialized; application will not be accessible via this server",
+                                      appDef.getAppName(), ssName);
+                    }
                 }
             }
         }
-        if (totalTenants == 0) {
+        if (tenantList.size() == 0) {
             m_logger.info("   <no tenants>");
         }
-    }   // checkAppStores
+    }
     
-    // Get the given application's StorageService option. If none is found, assign and
-    // return the default.
-    private String getStorageServiceOption(ApplicationDefinition appDef) {
-        String ssName = appDef.getOption(CommonDefs.OPT_STORAGE_SERVICE);
-        if (Utils.isEmpty(ssName)) {
-            ssName = DoradusServer.instance().getDefaultStorageService();
-            appDef.setOption(CommonDefs.OPT_STORAGE_SERVICE, ssName);
-        }
-        return ssName;
-    }   // getStorageServiceOption
-
     // Delete the given application's schema row from the Applications CF.
     private void deleteAppProperties(ApplicationDefinition appDef) {
         Tenant tenant = Tenant.getTenant(appDef);
@@ -404,9 +415,6 @@ public class SchemaService extends Service {
     // Get the given application's application. If it's not in our app-to-tenant map,
     // refresh the map in case the application was just created.
     private ApplicationDefinition getApplicationDefinition(Tenant tenant, String appName) {
-        if (!TenantService.instance().tenantExists(tenant)) {
-            return null;
-        }
         Iterator<DColumn> colIter =
             DBService.instance().getAllColumns(tenant, SchemaService.APPS_STORE_NAME, appName);
         if (colIter == null) {
@@ -418,15 +426,13 @@ public class SchemaService extends Service {
     // Get all application definitions for the given Tenant.
     private Collection<ApplicationDefinition> findAllApplications(Tenant tenant) {
         List<ApplicationDefinition> result = new ArrayList<>();
-        if (TenantService.instance().tenantExists(tenant)) {
-            Iterator<DRow> rowIter =
-                DBService.instance().getAllRowsAllColumns(tenant, SchemaService.APPS_STORE_NAME);
-            while (rowIter.hasNext()) {
-                DRow row = rowIter.next();
-                ApplicationDefinition appDef = loadAppRow(tenant, getColumnMap(row.getColumns()));
-                if (appDef != null) {
-                    result.add(appDef);
-                }
+        Iterator<DRow> rowIter =
+            DBService.instance().getAllRowsAllColumns(tenant, SchemaService.APPS_STORE_NAME);
+        while (rowIter.hasNext()) {
+            DRow row = rowIter.next();
+            ApplicationDefinition appDef = loadAppRow(tenant, getColumnMap(row.getColumns()));
+            if (appDef != null) {
+                result.add(appDef);
             }
         }
         return result;

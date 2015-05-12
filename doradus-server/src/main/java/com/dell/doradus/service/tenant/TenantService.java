@@ -19,11 +19,8 @@ package com.dell.doradus.service.tenant;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-<<<<<<< HEAD
 import java.util.Calendar;
-=======
 import java.util.Collection;
->>>>>>> c6f948de960abf900199cf82aa55656397a09ad7
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
