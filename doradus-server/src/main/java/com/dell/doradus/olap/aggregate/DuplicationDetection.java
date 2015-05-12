@@ -28,9 +28,7 @@ import com.dell.doradus.common.CommonDefs;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.io.FileDeletedException;
-import com.dell.doradus.olap.io.VDirectory;
-import com.dell.doradus.olap.merge.IxDoc;
-import com.dell.doradus.olap.store.IdReader;
+import com.dell.doradus.olap.merge.RestorableIxDoc;
 import com.dell.doradus.search.FieldSet;
 import com.dell.doradus.search.SearchResult;
 import com.dell.doradus.search.SearchResultList;
@@ -40,11 +38,11 @@ import com.dell.doradus.utilities.Timer;
 public class DuplicationDetection {
     private static Logger LOG = LoggerFactory.getLogger("DuplicationDetection");
 
-	public static SearchResultList getDuplicateIDs(TableDefinition tableDef, List<VDirectory> dirs, List<String> shards) {
+	public static SearchResultList getDuplicateIDs(TableDefinition tableDef, List<String> shards) {
 		// repeat if segment was merged
 		for(int i = 0; i < 5; i++) {
 			try {
-				return getDuplicateIDsInternal(tableDef, dirs, shards);
+				return getDuplicateIDsInternal(tableDef, shards);
 			}catch(FileDeletedException ex) {
 				LOG.warn(ex.getMessage() + " - retrying: " + i);
 				continue;
@@ -54,7 +52,7 @@ public class DuplicationDetection {
 		//return getDuplicateIDsInternal(tableDef, dirs, shards);
 	}
     
-	public static SearchResultList getDuplicateIDsInternal(TableDefinition tableDef, List<VDirectory> dirs, List<String> shards) {
+	public static SearchResultList getDuplicateIDsInternal(TableDefinition tableDef, List<String> shards) {
 		Timer timer = new Timer();
 		LOG.debug("Find duplicate ids in {}/{}", tableDef.getAppDef().getAppName(), tableDef.getTableName());
 		
@@ -64,10 +62,10 @@ public class DuplicationDetection {
 		BSTR last_id = new BSTR();
 		last_id.length = -1;
 		
-        HeapList<IxDoc> heap = new HeapList<IxDoc>(dirs.size() - 1);
-        IxDoc current = null;
-        for(int i = 0; i < dirs.size(); i++) {
-            current = new IxDoc(i, new IdReader(dirs.get(i), tableDef.getTableName()));
+        HeapList<RestorableIxDoc> heap = new HeapList<>(shards.size() - 1);
+        RestorableIxDoc current = null;
+        for(int i = 0; i < shards.size(); i++) {
+            current = new RestorableIxDoc(i, tableDef, shards.get(i));
             current.next();
             current = heap.AddEx(current);
         }
