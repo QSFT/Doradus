@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -196,7 +197,7 @@ public class TenantService extends Service {
                       "This command is not valid in single-tenant mode");
         TenantDefinition oldTenantDef = getTenantDefFromCache(tenantName);
         Utils.require(oldTenantDef != null, "Tenant '%s' does not exist", tenantName);
-        newTenantDef = modifyTenantProperties(oldTenantDef, newTenantDef);
+        modifyTenantProperties(oldTenantDef, newTenantDef);
         validateTenantUpdate(oldTenantDef, newTenantDef);
         modifyTenantDefinition(oldTenantDef, newTenantDef);
         TenantDefinition updatedTenantDef = getTenantDefFromCache(tenantName);
@@ -210,15 +211,13 @@ public class TenantService extends Service {
     /**
      * Copying existing Tenant Definition properties to the new Tenant Definition properties if any given Tenant Definition property hasn't been set during Tenant modification process
      * 
-     * @param   oldTenantDefiniton    Old {@link TenantDefinition}.
-     * @param   newTenantDefinition  New {@link TenantDefinition}.
-     * @return  Updated {@link TenantDefinition}.
+     * @param   oldTenantDef    Old {@link TenantDefinition}.
+     * @param   newTenantDef  New {@link TenantDefinition}.
      */
-    private TenantDefinition modifyTenantProperties(TenantDefinition oldTenantDefiniton, TenantDefinition newTenantDefinition) {
-    	if(newTenantDefinition.getProperties().get("_CreatedOn") == null) {
-    		newTenantDefinition.setProperty("_CreatedOn", oldTenantDefiniton.getProperties().get("_CreatedOn"));
+    private void modifyTenantProperties(TenantDefinition oldTenantDef, TenantDefinition newTenantDef) {
+    	if (newTenantDef.getProperties().get("_CreatedOn") == null && oldTenantDef.getProperties().get("_CreatedOn") != null) {
+    		newTenantDef.setProperty("_CreatedOn", oldTenantDef.getProperties().get("_CreatedOn"));
     	} 
-    	return newTenantDefinition;
     }
     
     /**
@@ -361,15 +360,14 @@ public class TenantService extends Service {
         Tenant tenant = new Tenant(tenantDef.getName());
         dbService.createTenant(tenant, tenantDef.getOptions());
         addTenantUsers(tenantDef);
-        tenantDef = addTenantCreationProperty(tenantDef);
+        addTenantProperties(tenantDef);
         dbService.createStoreIfAbsent(tenant, SchemaService.APPS_STORE_NAME, false);
         dbService.createStoreIfAbsent(tenant, TaskManagerService.TASKS_STORE_NAME, false);
         storeTenantDefinition(tenantDef);
     }
     
-    private TenantDefinition addTenantCreationProperty(TenantDefinition tenantDefinition) {
-    	tenantDefinition.setProperty("_CreatedOn", new SimpleDateFormat("YYYY-MM-dd hh:mm:ss").format(Calendar.getInstance().getTime()));
-    	return tenantDefinition;
+    private void addTenantProperties(TenantDefinition tenantDef) {
+    	tenantDef.setProperty("_CreatedOn", Utils.formatDate(new Date().getTime()));
     }
 
     // Add all users in the given tenant definition to Cassandra and authorize them to use
