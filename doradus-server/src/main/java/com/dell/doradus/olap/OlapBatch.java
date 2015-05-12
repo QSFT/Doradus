@@ -105,6 +105,7 @@ public class OlapBatch implements Iterable<OlapDocument> {
 		public String getFieldValue(int field) { return m_data.get(data(field + 1) + 1); } 
 		
 		public BSTR getIdBinary() { return m_data.getBinary(data(0) + 1); }
+        public BSTR getFieldNameBinary(int field) { return m_data.getBinary(data(field + 1)); } 
 		public BSTR getFieldValueBinary(int field) { return m_data.getBinary(data(field + 1) + 1); } 
 		public BSTR getFieldValueBinaryLowercase(int field) { return m_data.getBinaryLowercase(data(field + 1) + 1); } 
 		

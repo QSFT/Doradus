@@ -19,6 +19,8 @@ package com.dell.doradus.olap.io;
 import com.dell.doradus.common.Utils;
 
 public class BSTR implements Comparable<BSTR>  {
+    public static final BSTR EMPTY = new BSTR(new byte[0]);
+    
     public byte[] buffer;
     public int length;
 
