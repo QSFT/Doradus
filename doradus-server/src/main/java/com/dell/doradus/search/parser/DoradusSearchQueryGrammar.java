@@ -1174,10 +1174,18 @@ public class DoradusSearchQueryGrammar {
                 StatisticMetricFunctionName
         );
 
+        SwitchRule MetricFunctionBinary = new SwitchRule("MetricFunctionBinary",
+                new Keyword("ROUNDUP", WORD)
+        );
+        
+        
         AggregationFieldSubfieldPathWhere.body = Grammar.asRule(
                 Grammar.Rule(WHERE , OptWhiteSpaces, LEFTPAREN, OptWhiteSpaces,
                         Query, OptWhiteSpaces, RIGHTPAREN, Grammar.Semantic("EOF"), Grammar.Semantic("ENDWHERE"),
                         DOT, Grammar.SetType("DOT") , AggregationFieldSubfieldPathWhere  ),
+                Grammar.Rule(MetricFunctionBinary, Grammar.SetType("MetricFunctionBinary"), OptWhiteSpaces, LEFTPAREN, OptWhiteSpaces,
+                        AggregationFieldSubfieldPathWhere, OptWhiteSpaces,
+                        COMMA, Grammar.SetType("MetricFunctionComma"), OptWhiteSpaces, Term, Grammar.SetType("MetricFunctionParameter"), RIGHTPAREN),
                 AggregationFieldPath
         );
 

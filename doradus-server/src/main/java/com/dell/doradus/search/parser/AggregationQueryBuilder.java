@@ -391,6 +391,16 @@ public class AggregationQueryBuilder {
                 continue;
             }
 
+            if (item.item.getType().equals("MetricFunctionBinary")) {
+                metric.metricFunction = item.item.getValue();
+                continue;
+            }
+            if (item.item.getType().equals("MetricFunctionParameter")) {
+                if(metric.metricFunctionParameters == null) metric.metricFunctionParameters = new ArrayList<>();
+                metric.metricFunctionParameters.add(item.item.getValue());
+                continue;
+            }
+            
             if (item.item.getType().equals(SemanticNames.TRANSITIVE_VALUE) || item.item.getType().equals(SemanticNames.TRANSITIVE)) {
                 AggregationGroupItem agItem = metric.items.get(metric.items.size() - 1);
 
@@ -895,7 +905,6 @@ public class AggregationQueryBuilder {
                     }
                     continue;
                 }
-
                 
                 AggregationGroupItem ai = new AggregationGroupItem();
                 if (aggregationGroup.items == null)
@@ -1503,7 +1512,9 @@ public class AggregationQueryBuilder {
                         type.equals(SemanticNames.ASC) ||
                         type.equals(SemanticNames.DESC) ||
                         type.equals("IncludeList") ||
-                        type.equals("ExcludeList")
+                        type.equals("ExcludeList") ||
+                        type.equals("MetricFunctionBinary") ||
+                        type.equals("MetricFunctionParameter")
                         ) {
                     Item item = new Item();
                     item.item = grammarItem;

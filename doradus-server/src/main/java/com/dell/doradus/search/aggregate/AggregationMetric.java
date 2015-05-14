@@ -37,4 +37,6 @@ public class AggregationMetric implements MetricExpression {
     //Global WHERE filter metric starts with: e.g. m=COUNT(WHERE(Attachments IS NULL).Sender.Person.Name)
     public Query filter;
     
+    public String metricFunction; // function that can modify the value, i.e. ROUNDUP
+    public List<String> metricFunctionParameters; // metric function parameters
 }
