@@ -1904,9 +1904,26 @@ final public class Utils {
         if (bytes == null) {
             return null;
         }
+        //optimization for ASCII string
+        String ascii = toAsciiString(bytes, offset, length);
+        if(ascii != null) return ascii;
+        
         return new String(bytes, offset, length, UTF8_CHARSET);
     }   // toString
 
+    // return string if bytes have only ascii symbols, or null
+    private static String toAsciiString(byte[] bytes, int offset, int length) {
+        for(int i = 0; i < length; i++) {
+            if(bytes[offset + i] < 0) return null;
+        }
+        char[] chars = new char[length];
+        for(int i = 0; i < length; i++) {
+            chars[i] = (char)bytes[offset + i];
+        }
+        return new String(chars);
+    }
+    
+    
     /**
      * Ensure that the given string is no longer than the given max length, truncating it
      * if necessary. If string.length() is <= maxLength, the same string is returned.
