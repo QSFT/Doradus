@@ -92,6 +92,9 @@ public class MetricCounterFactory {
 				if("MINCOUNT".equals(metric.function) || "MAXCOUNT".equals(metric.function)) {
 					return new MetricCounter.NumCount(item.fieldDef, searcher);
 				}
+				else if("ROUNDUP".equals(metric.metricFunction)) {
+				    return new MetricCounter.NumRoundup(item.fieldDef, searcher, Long.parseLong(metric.metricFunctionParameters.get(0)));
+				}
 				else return new MetricCounter.Num(item.fieldDef, searcher);
 			} else if(item.fieldDef.isXLinkDirect()) {
 				return new DirectXLinkMetricCounter(searcher, item.fieldDef, (XMetrics)item.xlinkContext);

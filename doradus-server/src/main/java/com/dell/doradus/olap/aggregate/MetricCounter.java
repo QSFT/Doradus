@@ -17,6 +17,7 @@
 package com.dell.doradus.olap.aggregate;
 
 import com.dell.doradus.common.FieldDefinition;
+import com.dell.doradus.common.FieldType;
 import com.dell.doradus.olap.search.Result;
 import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.FieldSearcher;
@@ -88,6 +89,54 @@ public abstract class MetricCounter {
 		}
 	}
 
+
+    public static class NumRoundup extends MetricCounter {
+        private NumSearcherMV m_ns;
+        private boolean m_bFloat = false;
+        private boolean m_bDouble = false;
+        private long m_roundup;
+        
+        public NumRoundup(FieldDefinition fieldDef, CubeSearcher cs, long roundup) {
+            m_ns = cs.getNumSearcher(fieldDef.getTableName(), fieldDef.getName());
+            m_roundup = roundup;
+            m_bFloat = FieldType.FLOAT.equals(fieldDef.getType());
+            m_bDouble = FieldType.DOUBLE.equals(fieldDef.getType());
+        }
+        
+        private long roundup(long value) {
+            if(m_bFloat) {
+                float fValue = Float.intBitsToFloat((int)value);
+                float remainder = fValue % m_roundup;
+                fValue -= remainder;
+                if(remainder != 0) fValue += m_roundup;
+                return Float.floatToIntBits(fValue);
+            }
+            else if(m_bDouble) {
+                double dValue = Double.longBitsToDouble(value);
+                double remainder = dValue % m_roundup;
+                dValue -= remainder;
+                if(remainder != 0) dValue += m_roundup;
+                return Double.doubleToLongBits(dValue);
+            }
+            else {
+                value += m_roundup - 1;
+                value = value - value % m_roundup;
+                return value;
+            }
+        }
+        
+        @Override public void add(int doc, IMetricValue value) {
+            int fcount = m_ns.size((int)doc);
+            for(int index = 0; index < fcount; index++) {
+                long number = m_ns.get(doc, index);
+                number = roundup(number);
+                value.add(number);
+            }
+        }
+    }
+
+    
+	
 	public static class NumCount extends MetricCounter {
 		private NumSearcherMV m_ns;
 		
