@@ -135,6 +135,15 @@ public class Olap {
 	    return root;
 	}
 	
+
+	public VDirectory getDirectory(ApplicationDefinition appDef, String shard) {
+        VDirectory appDir = getRoot(appDef);
+        VDirectory shardDir = appDir.getDirectory(shard);
+        String segment = getCubeSegment(appDef, shard);
+        VDirectory segmentDir = shardDir.getDirectory(segment);
+        return segmentDir;
+	}
+	
 	/**
 	 * If tenant is null then default tenant is used.
 	 */
@@ -369,19 +378,10 @@ public class Olap {
 	}
 
 	public SearchResultList getDuplicateIDs(ApplicationDefinition appDef, String table, String shardsRange) {
-		String application = appDef.getAppName();
 		TableDefinition tableDef = appDef.getTableDef(table);
-		if(tableDef == null) throw new IllegalArgumentException("Table " + table + " not found in " + application);
+		if(tableDef == null) throw new IllegalArgumentException("Table " + table + " not found in " + appDef.getAppName());
 		List<String> shards = getShardsList(appDef, null, shardsRange);
-		VDirectory appDir = getRoot(appDef);
-		List<VDirectory> dirs = new ArrayList<VDirectory>(shards.size());
-		for(String shard : shards) {
-			String segment = getCubeSegment(appDef, shard);
-			VDirectory shardDir = appDir.getDirectory(shard);
-			VDirectory segmentDir = shardDir.getDirectory(segment);
-			dirs.add(segmentDir);
-		}
-		SearchResultList result = DuplicationDetection.getDuplicateIDs(tableDef, dirs, shards);
+		SearchResultList result = DuplicationDetection.getDuplicateIDs(tableDef, shards);
 		return result;
 	}
 	
