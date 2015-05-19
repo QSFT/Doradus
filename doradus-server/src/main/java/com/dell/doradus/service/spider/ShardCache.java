@@ -29,6 +29,7 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.db.DBService;
+import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.Tenant;
 
@@ -140,9 +141,11 @@ public class ShardCache {
     
     // Create a local transaction to add the register the given shard, then cache it.
     private void addShardStart(TableDefinition tableDef, int shardNumber, Date shardDate) {
-        SpiderTransaction dbTran = new SpiderTransaction(Tenant.getTenant(tableDef));
-        dbTran.addShardStart(tableDef, shardNumber, shardDate);
-        dbTran.commit();
+        SpiderTransaction spiderTran = new SpiderTransaction();
+        spiderTran.addShardStart(tableDef, shardNumber, shardDate);
+        DBTransaction dbTran = DBService.instance().startTransaction(Tenant.getTenant(tableDef));
+        spiderTran.applyUpdates(dbTran);
+        DBService.instance().commit(dbTran);
         synchronized (this) {
             cacheShardValue(tableDef, shardNumber, shardDate);
         }

@@ -28,15 +28,16 @@ import com.dell.doradus.common.ObjectResult;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.IDGenerator;
-import com.dell.doradus.service.db.DBTransaction;
 
 /**
- * Performs updates (add, update, or delete) for a single {@link DBObject}. The updates
- * are accummulated in a {@link SpiderTransaction}, which must be passed to the constructor.
- * The objects are not committed by ObjectUpdater and must be committed by the caller.
+ * Performs updates (add, update, or delete) for a single {@link DBObject}. The update
+ * methods are: {@link #addNewObject()}, {@link #deleteObject()}, and
+ * {@link #updateObject()}. These methods are passed a parent {@link SpiderTransaction},
+ * which is updated with the row/column changes of the update method if the it succeeds
+ * and actually has updates.
  */
 public class ObjectUpdater {
-    private final SpiderTransaction m_dbTran;
+    private final SpiderTransaction m_dbTran = new SpiderTransaction();
     private final TableDefinition   m_tableDef;
     
     // Holds target object shard numbers for sharded link field updates.
@@ -44,15 +45,14 @@ public class ObjectUpdater {
     private Map<String, Map<String, Integer>> m_targetObjectShardNoMap;
 
     // Logging interface:
-    private Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
+    private static Logger m_logger = LoggerFactory.getLogger(ObjectUpdater.class.getSimpleName());
     
     /**
-     * Create an ObjectUpdater that will store its updates in the given {@link DBTransaction}.
+     * Create an ObjectUpdater that perform updates for the given table.
      * 
-     * @param dbTran {@link DBTransaction} to receive all updates for an object.
+     * @param tableDef {@link TableDefinition} of table to update.
      */
-    public ObjectUpdater(SpiderTransaction dbTran, TableDefinition tableDef) {
-        m_dbTran = dbTran;
+    public ObjectUpdater(TableDefinition tableDef) {
         m_tableDef = tableDef;
     }   // constructor
 
@@ -64,7 +64,17 @@ public class ObjectUpdater {
     public TableDefinition getTableDef() {
         return m_tableDef;
     }   // getTableDef
-    
+
+    /**
+     * Get the {@link SpiderTransaction} to which update mutations are being added for
+     * this ObjectUpdater.
+     * 
+     * @return  The SpiderTransaction to which updates are being added.
+     */
+    public SpiderTransaction getTransaction() {
+        return m_dbTran;
+    }
+
     /**
      * Get the target object shard number assigned by {@link #setTargetObjectShardNumbers(Map)}.
      * 
@@ -91,17 +101,21 @@ public class ObjectUpdater {
     
     /**
      * Add the given DBObject to the database as a new object. No check is made to see if
-     * an object with the same ID already exists.
-     *   
-     * @param dbObj     DBObject to be added to the database.
-     * @return          {@link ObjectResult} representing the results of the update.
+     * an object with the same ID already exists. If the update is successful, updates are
+     * merged to the given parent SpiderTransaction.
+     * 
+     * @param parentTran    Parent {@link SpiderTransaction} to which updates are applied
+     *                      if the add is successful.
+     * @param dbObj         DBObject to be added to the database.
+     * @return              {@link ObjectResult} representing the results of the update.
      */
-    public ObjectResult addNewObject(DBObject dbObj) {
+    public ObjectResult addNewObject(SpiderTransaction parentTran, DBObject dbObj) {
         ObjectResult result = new ObjectResult();
         try {
             addBrandNewObject(dbObj);
             result.setObjectID(dbObj.getObjectID());
             result.setUpdated(true);
+            parentTran.mergeSubTransaction(m_dbTran);
             m_logger.trace("addNewObject(): Object added/updated for ID={}", dbObj.getObjectID());
         } catch (Throwable ex) {
             buildErrorStatus(result, dbObj.getObjectID(), ex);
@@ -111,13 +125,16 @@ public class ObjectUpdater {
     
     /**
      * Delete the object with the given object ID. Because of idempotent update semantics,
-     * it is not an error if the object does not exist.
+     * it is not an error if the object does not exist. If an object is actually deleted,
+     * updates are merged to the given parent SpiderTransaction.
      * 
-     * @param objID     ID of object to be deleted.
-     * @return          {@link ObjectResult} representing the results of the delete.
-     *                  Includes a comment if the object was not found.
+     * @param parentTran    Parent {@link SpiderTransaction} to which updates are applied
+     *                      if the delete is successful.
+     * @param objID         ID of object to be deleted.
+     * @return              {@link ObjectResult} representing the results of the delete.
+     *                      Includes a comment if the object was not found.
      */
-    public ObjectResult deleteObject(String objID) {
+    public ObjectResult deleteObject(SpiderTransaction parentTran, String objID) {
         ObjectResult result = new ObjectResult(objID);
         try {
             result.setObjectID(objID);
@@ -125,6 +142,7 @@ public class ObjectUpdater {
             if (dbObj != null) {
                 deleteObject(dbObj);
                 result.setUpdated(true);
+                parentTran.mergeSubTransaction(m_dbTran);
                 m_logger.trace("deleteObject(): object deleted with ID={}", objID);
             } else {
                 result.setComment("Object not found");
@@ -139,14 +157,20 @@ public class ObjectUpdater {
     /**
      * Update the given object, whose current values have been pre-fetched. The object
      * must exist, and the values in the given DBObject are compared to the given current
-     * values to determine which ones are being added or updated.
+     * values to determine which ones are being added or updated. If an update is actually
+     * made, updates are merged to the given parent SpiderTransaction.
      * 
-     * @param dbObj     DBObject to be updated. For MV fields, both "add" and "remove"
-     *                  updates are processed.
-     * @return          {@link ObjectResult} representing the results of the update.
-     *                  Includes a comment if no updates were made.
+     * @param parentTran    Parent {@link SpiderTransaction} to which updates are applied
+     *                      if the delete is successful.
+     * @param dbObj         DBObject to be updated.
+     * @param currScalarMap Map of the existing objects current scalar values for fields
+     *                      being updated. 
+     * @return              {@link ObjectResult} representing the results of the update.
+     *                      Includes a comment if no updates were made.
      */
-    public ObjectResult updateObject(DBObject dbObj, Map<String, String> currScalarMap) {
+    public ObjectResult updateObject(SpiderTransaction   parentTran,
+                                     DBObject            dbObj,
+                                     Map<String, String> currScalarMap) {
         ObjectResult result = new ObjectResult();
         try {
             result.setObjectID(dbObj.getObjectID());
@@ -154,6 +178,7 @@ public class ObjectUpdater {
             result.setUpdated(bUpdated);
             if (bUpdated) {
                 m_logger.trace("updateObject(): object updated for ID={}", dbObj.getObjectID());
+                parentTran.mergeSubTransaction(m_dbTran);
             } else {
                 result.setComment("No updates made");
                 m_logger.trace("updateObject(): no updates made for ID={}", dbObj.getObjectID());
@@ -172,9 +197,8 @@ public class ObjectUpdater {
             dbObj.setObjectID(Utils.base64FromBinary(IDGenerator.nextID()));
         }
         checkForNewShard(dbObj);
-        new IDFieldUpdater(m_dbTran, this, dbObj).addValuesForField();
         for (String fieldName : dbObj.getUpdatedFieldNames()) {
-            FieldUpdater fieldUpdater = FieldUpdater.createFieldUpdater(m_dbTran, this, dbObj, fieldName);
+            FieldUpdater fieldUpdater = FieldUpdater.createFieldUpdater(this, dbObj, fieldName);
             fieldUpdater.addValuesForField();
         }
         return true;
@@ -218,9 +242,8 @@ public class ObjectUpdater {
 
     // Delete term columns and inverses for field values and the object's primary row.
     private void deleteObject(DBObject dbObj) {
-        new IDFieldUpdater(m_dbTran, this, dbObj).deleteValuesForField();
         for (String fieldName : dbObj.getUpdatedFieldNames()) {
-            FieldUpdater fieldUpdater = FieldUpdater.createFieldUpdater(m_dbTran, this, dbObj, fieldName);
+            FieldUpdater fieldUpdater = FieldUpdater.createFieldUpdater(this, dbObj, fieldName);
             fieldUpdater.deleteValuesForField();
         }
         m_dbTran.deleteObjectRow(m_tableDef, dbObj.getObjectID());
@@ -242,7 +265,7 @@ public class ObjectUpdater {
         checkForNewShard(dbObj);
         checkNewlySharded(dbObj, currScalarMap);
         for (String fieldName : dbObj.getUpdatedFieldNames()) {
-            FieldUpdater fieldUpdater = FieldUpdater.createFieldUpdater(m_dbTran, this, dbObj, fieldName);
+            FieldUpdater fieldUpdater = FieldUpdater.createFieldUpdater(this, dbObj, fieldName);
             bUpdated |= fieldUpdater.updateValuesForField(currScalarMap.get(fieldName));
         }
         return bUpdated;
@@ -258,7 +281,6 @@ public class ObjectUpdater {
                                     m_tableDef.getShardNumber(dbObj)});
         
         deleteObject(currDBObj);
-        m_dbTran.commit();   // force new transaction with newer column timestsamps
         mergeAllFieldValues(dbObj, currDBObj);
         addBrandNewObject(currDBObj);
         return true;

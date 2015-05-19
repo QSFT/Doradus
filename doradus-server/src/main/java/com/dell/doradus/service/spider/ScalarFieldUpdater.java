@@ -34,8 +34,8 @@ import com.dell.doradus.fieldanalyzer.FieldAnalyzer;
  */
 public class ScalarFieldUpdater extends FieldUpdater {
 
-    protected ScalarFieldUpdater(SpiderTransaction dbTran, ObjectUpdater objUpdater, DBObject dbObj, String fieldName) {
-        super(dbTran, objUpdater, dbObj, fieldName);
+    protected ScalarFieldUpdater(ObjectUpdater objUpdater, DBObject dbObj, String fieldName) {
+        super(objUpdater, dbObj, fieldName);
     }   // constructor
 
     // Add scalar value to object record; add term columns for indexed tokens. 

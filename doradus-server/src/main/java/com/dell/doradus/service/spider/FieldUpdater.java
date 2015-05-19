@@ -21,7 +21,6 @@ import com.dell.doradus.common.DBObject;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.service.db.DBTransaction;
 
 /**
  * Base class for an object that handles all updates for a single field on behalf of a
@@ -44,8 +43,6 @@ public abstract class FieldUpdater {
     /**
      * Create a FieldUpdater that will handle updates for the given object and field.
      * 
-     * @param dbTran        {@link DBTransaction} that holds updates generated on behalf
-     *                      of this field updated.
      * @param tableDef      {@link TableDefinition} of table in which object resides.
      * @param dbObj         {@link DBObject} of object being added, updated, or deleted.
      * @param fieldName     Name of field the new FieldUpdater will handle. Can be the
@@ -54,22 +51,21 @@ public abstract class FieldUpdater {
      * @return              A FieldUpdater that can perform updates for the given object
      *                      and field.
      */
-    public static FieldUpdater createFieldUpdater(SpiderTransaction dbTran, ObjectUpdater objUpdater,
-                                                  DBObject dbObj, String fieldName) {
+    public static FieldUpdater createFieldUpdater(ObjectUpdater objUpdater, DBObject dbObj, String fieldName) {
         if (fieldName.charAt(0) == '_') {
             if (fieldName.equals(CommonDefs.ID_FIELD)) {
-                return new IDFieldUpdater(dbTran, objUpdater, dbObj);
+                return new IDFieldUpdater(objUpdater, dbObj);
             } else {
                 // Allow but skip all other system fields (e.g., "_table")
-                return new NullFieldUpdater(dbTran, objUpdater, dbObj, fieldName);
+                return new NullFieldUpdater(objUpdater, dbObj, fieldName);
             }
         }
         TableDefinition tableDef = objUpdater.getTableDef();
         if (tableDef.isLinkField(fieldName)) {
-            return new LinkFieldUpdater(dbTran, objUpdater, dbObj, fieldName);
+            return new LinkFieldUpdater(objUpdater, dbObj, fieldName);
         } else {
             Utils.require(FieldDefinition.isValidFieldName(fieldName), "Invalid field name: %s", fieldName);
-            return new ScalarFieldUpdater(dbTran, objUpdater, dbObj, fieldName);
+            return new ScalarFieldUpdater(objUpdater, dbObj, fieldName);
         }
     }   // createFieldUpdater
     
@@ -77,13 +73,12 @@ public abstract class FieldUpdater {
      * Create a FieldUpdater with the given parameters. This constructor is called by
      * concrete object constructors.
      * 
-     * @param dbTran        {@link DBTransaction} that holds updates generated on behalf
-     *                      of this field updated.
+     * @param objUpdater    {@link ObjectUpdater} for which we are updatng a field.
      * @param dbObj         DBObject of object being added, updated, or deleted.
      * @param fieldName     Name of field handled by this FieldUpdater.
      */
-    protected FieldUpdater(SpiderTransaction dbTran, ObjectUpdater objUpdater, DBObject dbObj, String fieldName) {
-        m_dbTran = dbTran;
+    protected FieldUpdater(ObjectUpdater objUpdater, DBObject dbObj, String fieldName) {
+        m_dbTran = objUpdater.getTransaction();
         m_tableDef = objUpdater.getTableDef();
         m_dbObj = dbObj;
         m_fieldName = fieldName;

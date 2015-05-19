@@ -35,6 +35,8 @@ import com.dell.doradus.common.ObjectResult;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.service.db.DBService;
+import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.Tenant;
 
 /**
@@ -47,11 +49,11 @@ import com.dell.doradus.service.db.Tenant;
  */
 public class BatchObjectUpdater {
     // Members:
-    private final SpiderTransaction m_dbTran;
+    private final SpiderTransaction m_parentTran = new SpiderTransaction();
     private final TableDefinition   m_tableDef;
 
     // Logging interface:
-    private Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
+    private static Logger m_logger = LoggerFactory.getLogger(BatchObjectUpdater.class.getSimpleName());
     
     /**
      * Create a BatchObjectUpdater that can process updates for the given table.
@@ -60,7 +62,6 @@ public class BatchObjectUpdater {
      */
     public BatchObjectUpdater(TableDefinition tableDef) {
         m_tableDef = tableDef;
-        m_dbTran = new SpiderTransaction(Tenant.getTenant(tableDef));
     }   // constructor
     
     /**
@@ -131,11 +132,11 @@ public class BatchObjectUpdater {
         try {
             for (String objID : objIDSet) {
                 checkCommit();
-                ObjectUpdater objUpdater = new ObjectUpdater(m_dbTran, m_tableDef);
-                ObjectResult objResult = objUpdater.deleteObject(objID);
+                ObjectUpdater objUpdater = new ObjectUpdater(m_tableDef);
+                ObjectResult objResult = objUpdater.deleteObject(m_parentTran, objID);
                 batchResult.addObjectResult(objResult);
             }
-            m_dbTran.commit();
+            commitTransaction();
         } catch (Throwable ex) {
             buildErrorStatus(batchResult, ex);
         }
@@ -143,6 +144,13 @@ public class BatchObjectUpdater {
     }   // deleteBatch
     
     ///// Private methods
+
+    // Post all updates in the parent transaction to the database.
+    private void commitTransaction() {
+        DBTransaction dbTran = DBService.instance().startTransaction(Tenant.getTenant(m_tableDef));
+        m_parentTran.applyUpdates(dbTran);
+        DBService.instance().commit(dbTran);
+    }
 
     // Add or update each object in the given batch as appropriate, updating BatchResult
     // accordingly.
@@ -155,7 +163,7 @@ public class BatchObjectUpdater {
             ObjectResult objResult = addOrUpdateObject(dbObj, currScalarMap, targObjShardNos);
             batchResult.addObjectResult(objResult);
         }
-        m_dbTran.commit();
+        commitTransaction();
         return true;
     }   // addOrUpdateBatch
     
@@ -169,7 +177,7 @@ public class BatchObjectUpdater {
             ObjectResult objResult = updateObject(dbObj, currScalarMap, targObjShardNos);
             batchResult.addObjectResult(objResult);
         }
-        m_dbTran.commit();
+        commitTransaction();
         return batchResult.hasUpdates();
     }   // updateBatch
     
@@ -183,11 +191,11 @@ public class BatchObjectUpdater {
         } else if (currScalarMap == null) {
             objResult = ObjectResult.newErrorResult("No object found", dbObj.getObjectID());
         } else {
-            ObjectUpdater objUpdater = new ObjectUpdater(m_dbTran, m_tableDef);
+            ObjectUpdater objUpdater = new ObjectUpdater(m_tableDef);
             if (targObjShardNos.size() > 0) {
                 objUpdater.setTargetObjectShardNumbers(targObjShardNos);
             }
-            objResult = objUpdater.updateObject(dbObj, currScalarMap);
+            objResult = objUpdater.updateObject(m_parentTran, dbObj, currScalarMap);
         }
         return objResult;
     }   // updateObject
@@ -197,14 +205,14 @@ public class BatchObjectUpdater {
                                            Map<String, String>               currScalarMap,
                                            Map<String, Map<String, Integer>> targObjShardNos)
             throws IOException {
-        ObjectUpdater objUpdater = new ObjectUpdater(m_dbTran, m_tableDef);
+        ObjectUpdater objUpdater = new ObjectUpdater(m_tableDef);
         if (targObjShardNos.size() > 0) {
             objUpdater.setTargetObjectShardNumbers(targObjShardNos);
         }
         if (currScalarMap == null) {
-            return objUpdater.addNewObject(dbObj);
+            return objUpdater.addNewObject(m_parentTran, dbObj);
         } else {
-            return objUpdater.updateObject(dbObj, currScalarMap);
+            return objUpdater.updateObject(m_parentTran, dbObj, currScalarMap);
         }
     }   // addOrUpdateObject
     
@@ -223,8 +231,8 @@ public class BatchObjectUpdater {
     
     // Commit all mutations if we've exceeded the threshold.
     private void checkCommit() throws IOException {
-        if (m_dbTran.getUpdateCount() >= ServerConfig.getInstance().batch_mutation_threshold) {
-            m_dbTran.commit();
+        if (m_parentTran.getUpdateCount() >= ServerConfig.getInstance().batch_mutation_threshold) {
+            commitTransaction();
         }
     }   // checkCommit
     

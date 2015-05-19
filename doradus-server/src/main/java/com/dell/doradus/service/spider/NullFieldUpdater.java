@@ -26,8 +26,8 @@ import com.dell.doradus.common.DBObject;
  */
 public class NullFieldUpdater extends FieldUpdater {
 
-    public NullFieldUpdater(SpiderTransaction dbTran, ObjectUpdater objUpdater, DBObject dbObj, String fieldName) {
-        super(dbTran, objUpdater, dbObj, fieldName);
+    public NullFieldUpdater(ObjectUpdater objUpdater, DBObject dbObj, String fieldName) {
+        super(objUpdater, dbObj, fieldName);
     }
 
     @Override
