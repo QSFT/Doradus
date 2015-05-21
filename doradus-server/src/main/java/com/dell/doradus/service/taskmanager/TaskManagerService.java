@@ -115,11 +115,13 @@ public class TaskManagerService extends Service {
     protected void stopService() {
         if (getState().isRunning()) {
             m_bShutdown = true;
-            m_taskManager.interrupt();
-            try {
-                m_taskManager.join();
-            } catch (InterruptedException e) {
-                // ignore
+            if (m_taskManager != null) {
+                m_taskManager.interrupt();
+                try {
+                    m_taskManager.join();
+                } catch (InterruptedException e) {
+                    // ignore
+                }
             }
         }
     }   // stopService
