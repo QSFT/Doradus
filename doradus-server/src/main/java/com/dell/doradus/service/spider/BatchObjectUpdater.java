@@ -150,6 +150,7 @@ public class BatchObjectUpdater {
         DBTransaction dbTran = DBService.instance().startTransaction(Tenant.getTenant(m_tableDef));
         m_parentTran.applyUpdates(dbTran);
         DBService.instance().commit(dbTran);
+        m_parentTran.clear();
     }
 
     // Add or update each object in the given batch as appropriate, updating BatchResult
