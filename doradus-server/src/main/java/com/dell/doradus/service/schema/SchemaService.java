@@ -94,6 +94,7 @@ public class SchemaService extends Service {
     @Override
     public void startService() {
         TenantService.instance().waitForFullService();
+        TenantService.instance().createDefaultTenant();
         checkAppStores();
     }   // startService
 

@@ -38,8 +38,8 @@ public class LinkFieldUpdater extends FieldUpdater {
     private final Map<String, Integer> m_targetObjShardNos;
 
     // Save metadata for link and its inverse.
-    protected LinkFieldUpdater(SpiderTransaction dbTran, ObjectUpdater objUpdater, DBObject dbObj, String fieldName) {
-        super(dbTran, objUpdater, dbObj, fieldName);
+    protected LinkFieldUpdater(ObjectUpdater objUpdater, DBObject dbObj, String fieldName) {
+        super(objUpdater, dbObj, fieldName);
         m_linkDef = m_tableDef.getFieldDef(m_fieldName);
         m_invTableDef = m_linkDef.getInverseTableDef();
         m_invLinkDef = m_linkDef.getInverseLinkDef();

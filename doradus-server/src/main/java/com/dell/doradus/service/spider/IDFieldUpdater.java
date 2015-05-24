@@ -26,8 +26,8 @@ import com.dell.doradus.common.Utils;
  */
 public class IDFieldUpdater extends ScalarFieldUpdater {
 
-    protected IDFieldUpdater(SpiderTransaction dbTran, ObjectUpdater objUpdater, DBObject dbObj) {
-        super(dbTran, objUpdater, dbObj, "_ID");
+    protected IDFieldUpdater(ObjectUpdater objUpdater, DBObject dbObj) {
+        super(objUpdater, dbObj, "_ID");
     }   // constructor
 
     // Overrides ScalarFieldUpdater.addValuesForField(); uses "_ID" for the column name
