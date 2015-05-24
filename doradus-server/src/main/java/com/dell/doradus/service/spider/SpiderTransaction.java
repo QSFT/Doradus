@@ -16,31 +16,42 @@
 
 package com.dell.doradus.service.spider;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.common.CommonDefs;
 import com.dell.doradus.common.DBObject;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
-import com.dell.doradus.service.db.Tenant;
 
 /**
- * Represents an update transaction for the Spider storage service. SpiderTransaction
+ * Holds a set of updates to tables owned by Spider storage service. SpiderTransaction
  * provides methods for common operations such as adding columns to an object's primary
  * row, adding and removing indexing terms, updating an "all objects" row, etc. All 
- * updates are translated into row/column updates to the appropriate ColumnFamilies and
- * stored in a {@link DBTransaction}. Updates are committed when {@link #commit()} is
- * called, at which time the DBTransaction is committed and cleared. Additional updates
- * can be added to the same SpiderTransaction object, allowing them to be committed with
- * the same timestamp as previous commits.
+ * updates are accumulated in internal maps. Column updates are de-duped so that only one
+ * update is kept for a given store name/row key/column name.
+ * <p>
+ * Updates can be applied in either of two ways:
+ * <ol>
+ * <li>A SpiderTransaction can be used as a "subtransaction" and its updated merged into
+ *     another transactiony calling {@link #mergeSubTransaction(SpiderTransaction)} on
+ *     the parent ("global") SpiderTransaction.</li>
+ * <li>The updates in a SpiderTransaction can be applied to Cassandra by calling
+ *     {@link #applyUpdates(DBTransaction)} with an appropriate DBTransaction.</li>
+ * </ol>
+ * Neither of these methods delete any of the SpiderTransaction's updates. Call
+ * {@link #clear()} to do that.
  */
 public class SpiderTransaction {
     /**
@@ -63,51 +74,109 @@ public class SpiderTransaction {
      */
     public static final String TERMS_REGISTRY_ROW_PREFIX = "_terms";
     
-    // The keyspace and the embedded DBTransaction that holds column/row updates:
-    private final Tenant m_tenant;
-    private DBTransaction m_dbTran;
+    // Logging interface:
+    private static Logger m_logger = LoggerFactory.getLogger(SpiderTransaction.class.getSimpleName());
     
-    // This map holds table/term references. It prevents duplicate updates in the same
-    // transaction. It's format is <table> -> Set<field name>
-    private final Map<TableDefinition, Set<String>> m_tableFieldRefMap = new HashMap<>();
-
-    // This map holds terms referenced for specific tables/shards/fields. The map's keys are:
-    //      <table> -> <shard number> -> <field name> -> <term>
-    // Non-sharded objects belong to shard number 0. It prevents duplicate updates.
-    private final Map<TableDefinition, Map<Integer, Map<String, Set<String>>>> m_tableTermRefMap =
-        new HashMap<TableDefinition, Map<Integer, Map<String, Set<String>>>>();
+    // Holds <table> -> <row key> -> <column name> -> <column value>, which can be null:
+    private final Map<String, Map<String, Map<String, byte[]>>> m_columnAdds = new HashMap<>();
+    
+    // Holds <table> -> <row key> -> List<colum names>:
+    private final Map<String, Map<String, List<String>>> m_columnDeletes = new HashMap<>();
+    
+    // Holds <table> -> List<row key>:
+    private final Map<String, List<String>> m_rowDeletes = new HashMap<>();
     
     /**
-     * Create a new SpiderTransaction object, which starts a new transaction with "now"
-     * as the timestamp.
+     * Create a new SpiderTransaction object.
      */
-    public SpiderTransaction(Tenant tenant) {
-        m_tenant = tenant;
-        m_dbTran  = DBService.instance().startTransaction(tenant);
+    public SpiderTransaction() { }
+    
+    /**
+     * Merge all updates accummulated by the given SpiderTransaction into this one. This
+     * allows one or more subtransactions to be merged with a master transaction so that
+     * all updates can be committed together. If the subtranaction sets a value for a 
+     * store/row key/column name that already has a value, the new value replaces the
+     * existing one.
+     * 
+     * @param subTran    {@link SpiderTransaction} containing updates to be applied to
+     *                   this one.
+     */
+    public void mergeSubTransaction(SpiderTransaction subTran) {
+        // Column adds
+        for (String storeName : subTran.m_columnAdds.keySet()) {
+            Map<String, Map<String, byte[]>> rowMap = subTran.m_columnAdds.get(storeName);
+            for (String rowKey : rowMap.keySet()) {
+                Map<String, byte[]> colMap = rowMap.get(rowKey);
+                for (String colName : colMap.keySet()) {
+                    this.addColumn(storeName, rowKey, colName, colMap.get(colName));
+                }
+            }
+        }
+        
+        // Column deletes
+        for (String storeName : subTran.m_columnDeletes.keySet()) {
+            Map<String, List<String>> rowMap = subTran.m_columnDeletes.get(storeName);
+            for (String rowKey : rowMap.keySet()) {
+                this.deleteColumns(storeName, rowKey, rowMap.get(rowKey));
+            }
+        }
+        
+        // Row deletes
+        for (String storeName : subTran.m_rowDeletes.keySet()) {
+            for (String rowKey : subTran.m_rowDeletes.get(storeName)) {
+                this.deleteRow(storeName, rowKey);
+            }
+        }
     }
     
+    /**
+     * Apply all updates accummulated by this SpiderTransaction to the given DBTransaction.
+     * {@link #clear()} must be called to reset the updates if this transction will be
+     * reused.
+     * 
+     * @param dbTran    {@link DBTransaction} to apply updates to.
+     */
+    public void applyUpdates(DBTransaction dbTran) {
+        // Column adds
+        for (String storeName : m_columnAdds.keySet()) {
+            Map<String, Map<String, byte[]>> rowMap = m_columnAdds.get(storeName);
+            for (String rowKey : rowMap.keySet()) {
+                Map<String, byte[]> colMap = rowMap.get(rowKey);
+                for (String colName : colMap.keySet()) {
+                    byte[] colValue = colMap.get(colName);
+                    if (colValue == null) {
+                        dbTran.addColumn(storeName, rowKey, colName);
+                    } else {
+                        dbTran.addColumn(storeName, rowKey, colName, colValue);
+                    }
+                }
+            }
+        }
+        
+        // Column deletes
+        for (String storeName : m_columnDeletes.keySet()) {
+            Map<String, List<String>> rowMap = m_columnDeletes.get(storeName);
+            for (String rowKey : rowMap.keySet()) {
+                dbTran.deleteColumns(storeName, rowKey, rowMap.get(rowKey));
+            }
+        }
+        
+        // Row deletes
+        for (String storeName : m_rowDeletes.keySet()) {
+            for (String rowKey : m_rowDeletes.get(storeName)) {
+                dbTran.deleteRow(storeName, rowKey);
+            }
+        }
+    }
+
     /**
      * Clear this transaction's updates without committing them.
      */
     public void clear() {
-        m_dbTran.clear();
-        m_tableFieldRefMap.clear();
+        m_columnAdds.clear();
+        m_columnDeletes.clear();
+        m_rowDeletes.clear();
     }   // clear
-    
-    /**
-     * Commit this SpiderTransaction's updates, causing them to be cleared as well. The
-     * object can be used for additional updates, which will be committed with the same
-     * timestamp.
-     */
-    public void commit() {
-        try {
-            DBService.instance().commit(m_dbTran);
-            // Re-create the transaction to renew its timestamp.
-        	m_dbTran = DBService.instance().startTransaction(m_tenant);
-        } finally {
-            clear();
-        }
-    }   // commit
     
     /**
      * Get the total number of updates (column updates/deletes and row deletes) queued
@@ -116,7 +185,10 @@ public class SpiderTransaction {
      * @return  Total number of updates queued in this transaction so far.
      */
     public int getUpdateCount() {
-        return m_dbTran.getUpdateCount();
+        return m_columnAdds.size() +
+               m_columnDeletes.size() +
+               m_rowDeletes.size();
+
     }   // getUpdateCount
 
     ///// Update methods
@@ -136,7 +208,7 @@ public class SpiderTransaction {
     	if (shardNo > 0) {
     		rowKey = shardNo + "/" + ALL_OBJECTS_ROW_KEY;
     	}
-        m_dbTran.addColumn(SpiderService.termsStoreName(tableDef), rowKey, objID);
+        addColumn(SpiderService.termsStoreName(tableDef), rowKey, objID);
     }   // addAllObjectsColumns
 
     /**
@@ -148,10 +220,7 @@ public class SpiderTransaction {
      * @see             #addScalarValueColumn(DBObject, String, String)
      */
     public void addIDValueColumn(TableDefinition tableDef, String objID) {
-        m_dbTran.addColumn(SpiderService.objectsStoreName(tableDef),
-                           objID,
-                           CommonDefs.ID_FIELD,
-                           Utils.toBytes(objID));
+        addColumn(SpiderService.objectsStoreName(tableDef), objID, CommonDefs.ID_FIELD, Utils.toBytes(objID));
     }   // addIDValueColumn
     
     /**
@@ -161,28 +230,14 @@ public class SpiderTransaction {
      * <pre>
      *      _fields = {{field 1}:null, {field 2}:null, ...}
      * </pre>
-     * Updates are added to the current transaction only for new scalar field names that
-     * have not yet been referenced.
      * 
      * @param tableDef      Table that owns referenced fields.
      * @param fieldNames    Scalar field names that received an update in the current
      *                      transaction. 
      */
     public void addFieldReferences(TableDefinition tableDef, Collection<String> fieldNames) {
-        if (fieldNames.size() == 0) {
-            return;
-        }
-        
-        // Only add fields we haven't added yet in this transaction.
-        Set<String> currFieldNames = m_tableFieldRefMap.get(tableDef);
-        if (currFieldNames == null) {
-            currFieldNames = new HashSet<String>();
-            m_tableFieldRefMap.put(tableDef, currFieldNames);
-        }
         for (String fieldName : fieldNames) {
-            if (currFieldNames.add(fieldName)) {
-                m_dbTran.addColumn(SpiderService.termsStoreName(tableDef), FIELD_REGISTRY_ROW_KEY, fieldName);
-            }
+            addColumn(SpiderService.termsStoreName(tableDef), FIELD_REGISTRY_ROW_KEY, fieldName);
         }
     }   // addFieldReferences
 
@@ -194,9 +249,9 @@ public class SpiderTransaction {
      * @param targetObjID   Referenced (target) object ID.
      */
     public void addLinkValue(String ownerObjID, FieldDefinition linkDef, String targetObjID) {
-        m_dbTran.addColumn(SpiderService.objectsStoreName(linkDef.getTableDef()),
-                           ownerObjID,
-                           SpiderService.linkColumnName(linkDef, targetObjID));
+        addColumn(SpiderService.objectsStoreName(linkDef.getTableDef()),
+                  ownerObjID,
+                  SpiderService.linkColumnName(linkDef, targetObjID));
     }   // addLinkValue
 
     /**
@@ -209,10 +264,10 @@ public class SpiderTransaction {
      * @param fieldValue    Value being added in string form.
      */
     public void addScalarValueColumn(TableDefinition tableDef, String objID, String fieldName, String fieldValue) {
-        m_dbTran.addColumn(SpiderService.objectsStoreName(tableDef),
-                           objID,
-                           fieldName,
-                           SpiderService.scalarValueToBinary(tableDef, fieldName, fieldValue));
+        addColumn(SpiderService.objectsStoreName(tableDef),
+                  objID,
+                  fieldName,
+                  SpiderService.scalarValueToBinary(tableDef, fieldName, fieldValue));
     }   // addScalarValueColumn
     
     /**
@@ -228,9 +283,9 @@ public class SpiderTransaction {
     public void addShardedLinkValue(String ownerObjID, FieldDefinition linkDef, String targetObjID, int targetShardNo) {
         assert linkDef.isSharded();
         assert targetShardNo > 0;
-        m_dbTran.addColumn(SpiderService.termsStoreName(linkDef.getTableDef()),
-                           SpiderService.shardedLinkTermRowKey(linkDef, ownerObjID, targetShardNo),
-                           targetObjID);
+        addColumn(SpiderService.termsStoreName(linkDef.getTableDef()),
+                  SpiderService.shardedLinkTermRowKey(linkDef, ownerObjID, targetShardNo),
+                  targetObjID);
     }   // addShardedLinkValue
 
     /**
@@ -250,10 +305,10 @@ public class SpiderTransaction {
      */
     public void addShardStart(TableDefinition tableDef, int shardNumber, Date startDate) {
         assert tableDef.isSharded() && shardNumber > 0;
-        m_dbTran.addColumn(SpiderService.termsStoreName(tableDef),
-                           SHARDS_ROW_KEY,
-                           Integer.toString(shardNumber),
-                           Utils.toBytes(Long.toString(startDate.getTime())));
+        addColumn(SpiderService.termsStoreName(tableDef),
+                  SHARDS_ROW_KEY,
+                  Integer.toString(shardNumber),
+                  Utils.toBytes(Long.toString(startDate.getTime())));
     }   // addShardStart
 
     /**
@@ -272,9 +327,9 @@ public class SpiderTransaction {
      * @param term      Term being indexed.
      */
     public void addTermIndexColumn(TableDefinition tableDef, DBObject dbObj, String fieldName, String term) {
-        m_dbTran.addColumn(SpiderService.termsStoreName(tableDef),
-                           SpiderService.termIndexRowKey(tableDef, dbObj, fieldName, term),
-                           dbObj.getObjectID());
+        addColumn(SpiderService.termsStoreName(tableDef),
+                  SpiderService.termIndexRowKey(tableDef, dbObj, fieldName, term),
+                  dbObj.getObjectID());
     }   // addTermIndexColumn
     
     /**
@@ -298,40 +353,18 @@ public class SpiderTransaction {
      */
     public void addTermReferences(TableDefinition tableDef, int shardNumber,
                                   Map<String, Set<String>> fieldTermsRefMap) {
-        if (fieldTermsRefMap.size() == 0) {
-            return;
-        }
-        
-        Map<Integer, Map<String, Set<String>>> currShardMap = m_tableTermRefMap.get(tableDef);
-        if (currShardMap == null) {
-            currShardMap = new HashMap<Integer, Map<String, Set<String>>>();
-            m_tableTermRefMap.put(tableDef, currShardMap);
-        }
-        
-        Map<String, Set<String>> currFieldTermMap = currShardMap.get(shardNumber);
-        if (currFieldTermMap == null) {
-            currFieldTermMap = new HashMap<String, Set<String>>();
-            currShardMap.put(shardNumber, currFieldTermMap);
-        }
-        
+        StringBuilder rowKey = new StringBuilder();
         for (String fieldName : fieldTermsRefMap.keySet()) {
-            Set<String> currTermSet = currFieldTermMap.get(fieldName);
-            if (currTermSet == null) {
-                currTermSet = new HashSet<String>();
-                currFieldTermMap.put(fieldName, currTermSet);
-            }
             for (String term : fieldTermsRefMap.get(fieldName)) {
-                if (currTermSet.add(term)) {
-                    StringBuilder rowKey = new StringBuilder();
-                    if (shardNumber > 0) {
-                        rowKey.append(shardNumber);
-                        rowKey.append("/");
-                    }
-                    rowKey.append(TERMS_REGISTRY_ROW_PREFIX);
+                rowKey.setLength(0);
+                if (shardNumber > 0) {
+                    rowKey.append(shardNumber);
                     rowKey.append("/");
-                    rowKey.append(fieldName);
-                    m_dbTran.addColumn(SpiderService.termsStoreName(tableDef), rowKey.toString(), term);
                 }
+                rowKey.append(TERMS_REGISTRY_ROW_PREFIX);
+                rowKey.append("/");
+                rowKey.append(fieldName);
+                addColumn(SpiderService.termsStoreName(tableDef), rowKey.toString(), term);
             }
         }
     }   // addTermReferences
@@ -349,9 +382,7 @@ public class SpiderTransaction {
     	if (shardNo > 0) {
     		rowKey = shardNo + "/" + ALL_OBJECTS_ROW_KEY;
     	}
-        m_dbTran.deleteColumn(SpiderService.termsStoreName(tableDef),
-                              rowKey,
-                              objID);
+        deleteColumn(SpiderService.termsStoreName(tableDef), rowKey, objID);
     }   // deleteAllObjectsColumn
 
     /**
@@ -362,7 +393,7 @@ public class SpiderTransaction {
      * @param objID     ID of object whose "objects" row is to be deleted.
      */
     public void deleteObjectRow(TableDefinition tableDef, String objID) {
-        m_dbTran.deleteRow(SpiderService.objectsStoreName(tableDef), objID);
+        deleteRow(SpiderService.objectsStoreName(tableDef), objID);
     }   // deleteObjectRow
 
     /**
@@ -374,9 +405,7 @@ public class SpiderTransaction {
      * @param fieldName Scalar field name.
      */
     public void deleteScalarValueColumn(TableDefinition tableDef, String objID, String fieldName) {
-        m_dbTran.deleteColumn(SpiderService.objectsStoreName(tableDef),
-                              objID,
-                              fieldName);
+        deleteColumn(SpiderService.objectsStoreName(tableDef), objID, fieldName);
     }   // deleteScalarValueColumn
 
     /**
@@ -389,9 +418,9 @@ public class SpiderTransaction {
      * @param term      Term being un-indexed.
      */
     public void deleteTermIndexColumn(TableDefinition tableDef, DBObject dbObj, String fieldName, String term) {
-        m_dbTran.deleteColumn(SpiderService.termsStoreName(tableDef),
-                              SpiderService.termIndexRowKey(tableDef, dbObj, fieldName, term),
-                              dbObj.getObjectID());
+        deleteColumn(SpiderService.termsStoreName(tableDef),
+                     SpiderService.termIndexRowKey(tableDef, dbObj, fieldName, term),
+                     dbObj.getObjectID());
     }   // deleteTermIndexColumn
     
     /**
@@ -402,9 +431,9 @@ public class SpiderTransaction {
      * @param targetObjID   Referenced (target) object ID.
      */
     public void deleteLinkValue(String ownerObjID, FieldDefinition linkDef, String targetObjID) {
-        m_dbTran.deleteColumn(SpiderService.objectsStoreName(linkDef.getTableDef()),
-                              ownerObjID,
-                              SpiderService.linkColumnName(linkDef, targetObjID));
+        deleteColumn(SpiderService.objectsStoreName(linkDef.getTableDef()),
+                     ownerObjID,
+                     SpiderService.linkColumnName(linkDef, targetObjID));
     }   // deleteLinkValue
 
     /**
@@ -419,8 +448,8 @@ public class SpiderTransaction {
     public void deleteShardedLinkRow(FieldDefinition linkDef, String owningObjID, int shardNumber) {
         assert linkDef.isSharded();
         assert shardNumber > 0;
-        m_dbTran.deleteRow(SpiderService.termsStoreName(linkDef.getTableDef()),
-                           SpiderService.shardedLinkTermRowKey(linkDef, owningObjID, shardNumber));
+        deleteRow(SpiderService.termsStoreName(linkDef.getTableDef()),
+                  SpiderService.shardedLinkTermRowKey(linkDef, owningObjID, shardNumber));
     }   // deleteShardedLinkRow
     
     /**
@@ -434,9 +463,78 @@ public class SpiderTransaction {
     public void deleteShardedLinkValue(String objID, FieldDefinition linkDef, String targetObjID, int shardNo) {
         assert linkDef.isSharded();
         assert shardNo > 0;
-        m_dbTran.deleteColumn(SpiderService.termsStoreName(linkDef.getTableDef()),
-                              SpiderService.shardedLinkTermRowKey(linkDef, objID, shardNo),
-                              targetObjID);
+        deleteColumn(SpiderService.termsStoreName(linkDef.getTableDef()),
+                     SpiderService.shardedLinkTermRowKey(linkDef, objID, shardNo),
+                     targetObjID);
     }   // deleteShardedLinkValue
+
+    //----- Private methods
+    
+    // Add the given column update with a null column value.
+    private void addColumn(String storeName, String rowKey, String colName) {
+        addColumn(storeName, rowKey, colName, null);
+    }
+
+    // Add the given column update; the value may be null.
+    private void addColumn(String storeName, String rowKey, String colName, byte[] colValue) {
+        Map<String, Map<String, byte[]>> rowMap = m_columnAdds.get(storeName);
+        if (rowMap == null) {
+            rowMap = new HashMap<>();
+            m_columnAdds.put(storeName, rowMap);
+        }
+        
+        Map<String, byte[]> colMap = rowMap.get(rowKey);
+        if (colMap == null) {
+            colMap = new HashMap<>();
+            rowMap.put(rowKey, colMap);
+        }
+        
+        byte[] oldValue = colMap.put(colName, colValue);
+        if (oldValue != null && !Arrays.equals(oldValue, colValue)) {
+            m_logger.debug("Warning: duplicate column mutation with different value: " +
+                           "store={}, row={}, col={}, old={}, new={}",
+                           new Object[]{storeName, rowKey, colName, oldValue, colValue});
+        }
+    }
+
+    // Add the given column deletion.
+    private void deleteColumn(String storeName, String rowKey, String colName) {
+        Map<String, List<String>> rowMap = m_columnDeletes.get(storeName);
+        if (rowMap == null) {
+            rowMap = new HashMap<>();
+            m_columnDeletes.put(storeName, rowMap);
+        }
+        List<String> colNames = rowMap.get(rowKey);
+        if (colNames == null) {
+            colNames = new ArrayList<>();
+            rowMap.put(rowKey, colNames);
+        }
+        colNames.add(colName);
+    }
+
+    // Add column deletions for all given column names.
+    private void deleteColumns(String storeName, String rowKey, Collection<String> colNames) {
+        Map<String, List<String>> rowMap = m_columnDeletes.get(storeName);
+        if (rowMap == null) {
+            rowMap = new HashMap<>();
+            m_columnDeletes.put(storeName, rowMap);
+        }
+        List<String> colList = rowMap.get(rowKey);
+        if (colList == null) {
+            colList = new ArrayList<>();
+            rowMap.put(rowKey, colList);
+        }
+        colNames.addAll(colNames);
+    }
+    
+    // Add the following row deletion.
+    private void deleteRow(String storeName, String rowKey) {
+        List<String> rowKeys = m_rowDeletes.get(storeName);
+        if (rowKeys == null) {
+            rowKeys = new ArrayList<>();
+            m_rowDeletes.put(storeName, rowKeys);
+        }
+        rowKeys.add(rowKey);
+    }
 
 }   // class SpiderTransaction
