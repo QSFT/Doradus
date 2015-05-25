@@ -2,6 +2,7 @@ package com.dell.doradus.logservice;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import com.dell.doradus.olap.OlapBatch;
 import com.dell.doradus.olap.OlapDocument;
@@ -19,6 +20,10 @@ public class ChunkWriter {
         m_temp = new Temp();
         m_fields = new HashMap<>();
         m_output = new MemoryStream();
+    }
+    
+    public Set<BSTR> getFields() {
+        return m_fields.keySet();
     }
     
     public byte[] writeChunk(OlapBatch batch) {

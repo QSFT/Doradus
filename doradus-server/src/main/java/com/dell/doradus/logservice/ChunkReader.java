@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.collections.MemoryStream;
 import com.dell.doradus.olap.io.BSTR;
 
@@ -39,7 +40,7 @@ public class ChunkReader {
         }
         //fields
         for(int f = 0; f < fieldsCount; f++) {
-            BSTR field = input.readString();
+            BSTR field = new BSTR(input.readString());
             int valuesCount = input.readVInt();
             int[] positions = new int[m_size];
             int[] lengths = new int[m_size];
@@ -124,12 +125,15 @@ public class ChunkReader {
         value.clear();
         int[] offsets = m_offsets.get(field);
         int[] lengths = m_lengths.get(field);
-        if(doc >= offsets.length || doc >= lengths.length) {
-            System.out.println("AAA");
-        }
         value.set(m_data.getBuffer(), offsets[doc], lengths[doc]);
     }
 
+    public String getFieldValue(int doc, int field) {
+        int[] offsets = m_offsets.get(field);
+        int[] lengths = m_lengths.get(field);
+        return Utils.toString(m_data.getBuffer(), offsets[doc], lengths[doc]);
+    }
+    
     public void load(int doc, LogRecord record) {
         record.setFieldsCount(fieldsCount());
         record.clear();
