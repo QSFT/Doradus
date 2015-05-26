@@ -27,12 +27,14 @@ public class Searcher {
         fieldDef.setName("Timestamp");
         tableDef.addFieldDefinition(fieldDef);
         Iterator<DColumn> it = DBService.instance().getAllColumns(tenant, application, "fields");
-        while(it.hasNext()) {
-            String field = it.next().getName();
-            fieldDef = new FieldDefinition(tableDef);
-            fieldDef.setType(FieldType.TEXT);
-            fieldDef.setName(field);
-            tableDef.addFieldDefinition(fieldDef);
+        if(it != null) {
+            while(it.hasNext()) {
+                String field = it.next().getName();
+                fieldDef = new FieldDefinition(tableDef);
+                fieldDef.setType(FieldType.TEXT);
+                fieldDef.setName(field);
+                tableDef.addFieldDefinition(fieldDef);
+            }
         }
         return tableDef;
     }

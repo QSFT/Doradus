@@ -1,6 +1,7 @@
 package com.dell.doradus.logservice;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -9,7 +10,12 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.olap.OlapBatch;
+import com.dell.doradus.olap.aggregate.AggregationResult;
+import com.dell.doradus.olap.aggregate.MetricValueCount;
+import com.dell.doradus.olap.aggregate.MetricValueSet;
+import com.dell.doradus.olap.collections.strings.BstrSet;
 import com.dell.doradus.olap.io.BSTR;
+import com.dell.doradus.olap.store.IntList;
 import com.dell.doradus.search.FieldSet;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.search.aggregate.SortOrder;
@@ -107,6 +113,82 @@ public class LogService {
         
         return list;
     }
+    
+    public AggregationResult aggregate(Tenant tenant, String application, LogAggregate logAggregate) {
+        TableDefinition tableDef = Searcher.getTableDef(tenant, application);
+        Query query = DoradusQueryBuilder.Build(logAggregate.getQuery(), tableDef);
+        String field = Aggregate.getAggregateField(tableDef, logAggregate.getFields());
+        
+        if(field == null) {
+            int count = 0;
+            List<String> partitions = getPartitions(tenant, application);
+            for(String partition: partitions) {
+                for(ChunkReader reader: getChunks(tenant, application, partition)) {
+                    for(int i = 0; i < reader.size(); i++) {
+                        if(!QueryFilter.filter(query, reader, i)) continue; 
+                        count++;
+                    }
+                }
+            }
+            
+            AggregationResult result = new AggregationResult();
+            result.documentsCount = count;
+            result.summary = new AggregationResult.AggregationGroup();
+            result.summary.id = null;
+            result.summary.name = "*";
+            result.summary.metricSet = new MetricValueSet(1);
+            MetricValueCount c = new MetricValueCount();
+            c.metric = count;
+            result.summary.metricSet.values[0] = c; 
+            return result;
+        }
+        else {
+            IntList list = new IntList();
+            BstrSet fields = new BstrSet();
+            BSTR temp = new BSTR();
+            int count = 0;
+            List<String> partitions = getPartitions(tenant, application);
+            for(String partition: partitions) {
+                for(ChunkReader reader: getChunks(tenant, application, partition)) {
+                    int index = reader.getFieldIndex(new BSTR(field));
+                    if(index < 0) continue;
+                    for(int i = 0; i < reader.size(); i++) {
+                        if(!QueryFilter.filter(query, reader, i)) continue;
+                        reader.getFieldValue(i, index, temp);
+                        int pos = fields.add(temp);
+                        if(pos == list.size()) list.add(1);
+                        else list.set(pos, list.get(pos) + 1);
+                        count++;
+                    }
+                }
+            }
+            
+            AggregationResult result = new AggregationResult();
+            result.documentsCount = count;
+            result.summary = new AggregationResult.AggregationGroup();
+            result.summary.id = null;
+            result.summary.name = "*";
+            result.summary.metricSet = new MetricValueSet(1);
+            MetricValueCount c = new MetricValueCount();
+            c.metric = count;
+            result.summary.metricSet.values[0] = c;
+            for(int i = 0; i < fields.size(); i++) {
+                AggregationResult.AggregationGroup g = new AggregationResult.AggregationGroup();
+                g.id = fields.get(i).toString();
+                g.name = g.id.toString();
+                g.metricSet = new MetricValueSet(1);
+                MetricValueCount cc = new MetricValueCount();
+                cc.metric = list.get(i);
+                g.metricSet.values[0] = cc;
+                result.groups.add(g);
+            }
+            result.groupsCount = result.groups.size();
+            Collections.sort(result.groups);
+            return result;
+            
+        }
+    }
+    
     
     public ChunkIterable getChunks(Tenant tenant, String application, String partition) {
         return new ChunkIterable(tenant, application, partition);
