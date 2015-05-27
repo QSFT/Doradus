@@ -90,9 +90,10 @@ public class LoggingService extends StorageService {
 
         @Override public UNode invokeUNodeOut() {
             ApplicationDefinition appDef = m_request.getAppDef();
+            Tenant tenant = m_request.getTenant();
             String params = m_request.getVariable("params");    // leave encoded
-            SearchResultList searchResult = new SearchResultList();
-            // xxx Oleg
+            LogQuery logQuery = new LogQuery(params);
+            SearchResultList searchResult = LoggingService.instance().m_logService.search(tenant, appDef.getAppName(), logQuery);
             return searchResult.toDoc();
         }
     }
@@ -102,9 +103,10 @@ public class LoggingService extends StorageService {
 
         @Override public UNode invokeUNodeOut() {
             ApplicationDefinition appDef = m_request.getAppDef();
+            Tenant tenant = m_request.getTenant();
             String params = m_request.getVariable("params");    // leave encoded
-            AggregationResult result = new AggregationResult();
-            // xxx Oleg
+            LogAggregate logAggregate = new LogAggregate(params);
+            AggregationResult result = LoggingService.instance().m_logService.aggregate(tenant, appDef.getAppName(), logAggregate);
             return result.toUNode();
         }
     }
