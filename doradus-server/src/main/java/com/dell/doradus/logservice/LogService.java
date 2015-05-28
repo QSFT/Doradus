@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import com.dell.doradus.common.TableDefinition;
+import com.dell.doradus.common.Utils;
+import com.dell.doradus.logservice.store.ChunkWriter;
 import com.dell.doradus.olap.OlapBatch;
 import com.dell.doradus.olap.aggregate.AggregationResult;
 import com.dell.doradus.olap.aggregate.MetricValueCount;
@@ -44,7 +45,7 @@ public class LogService {
         ChunkWriter writer = new ChunkWriter();
         byte[] data = writer.writeChunk(batch);
         String partition = batch.get(0).getId().substring(0, 10).replace("-", "");
-        String uuid = UUID.randomUUID().toString();
+        String uuid = Utils.getUniqueId();
         DBTransaction transaction = DBService.instance().startTransaction(tenant);
         transaction.addColumn(application, "partitions", partition, "");
         transaction.addColumn(application, "partitions_" + partition, uuid, "");

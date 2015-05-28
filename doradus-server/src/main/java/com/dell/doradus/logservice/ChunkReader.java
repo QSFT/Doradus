@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.logservice.store.Temp;
 import com.dell.doradus.olap.collections.MemoryStream;
 import com.dell.doradus.olap.io.BSTR;
 
@@ -121,26 +122,10 @@ public class ChunkReader {
         value.length = len;
     }
 
-    public void getFieldValue(int doc, int field, Str value) {
-        value.clear();
-        int[] offsets = m_offsets.get(field);
-        int[] lengths = m_lengths.get(field);
-        value.set(m_data.getBuffer(), offsets[doc], lengths[doc]);
-    }
-
     public String getFieldValue(int doc, int field) {
         int[] offsets = m_offsets.get(field);
         int[] lengths = m_lengths.get(field);
         return Utils.toString(m_data.getBuffer(), offsets[doc], lengths[doc]);
     }
     
-    public void load(int doc, LogRecord record) {
-        record.setFieldsCount(fieldsCount());
-        record.clear();
-        record.setTimestamp(m_timestamps[doc]);
-        for(int f = 0; f < fieldsCount(); f++) {
-            Str value = record.fieldValue(f);
-            getFieldValue(doc, f, value);
-        }
-    }
 }

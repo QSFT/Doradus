@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.logservice;
+package com.dell.doradus.logservice.store;
 
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.collections.MemoryStream;

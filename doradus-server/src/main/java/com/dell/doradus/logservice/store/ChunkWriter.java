@@ -1,4 +1,4 @@
-package com.dell.doradus.logservice;
+package com.dell.doradus.logservice.store;
 
 import java.util.HashMap;
 import java.util.Map;
