@@ -24,7 +24,7 @@ public class LogEntry implements Comparable<LogEntry> {
         m_timestamp = reader.getTimestamp(doc);
         for(int i = 0; i < m_fields.length; i++) {
             int index = reader.getFieldIndex(m_fields[i]);
-            if(index <= 0) m_values[i].length = 0;
+            if(index < 0) m_values[i].length = 0;
             else reader.getFieldValue(doc, index, m_values[i]);
         }
     }

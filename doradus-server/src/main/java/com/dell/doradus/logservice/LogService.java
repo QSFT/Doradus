@@ -41,18 +41,32 @@ public class LogService {
     }
 
     public void addBatch(Tenant tenant, String application, OlapBatch batch) {
-        if(batch.size() == 0) return;
+        int size = batch.size();
+        if(size == 0) return;
+        int start = 0;
         ChunkWriter writer = new ChunkWriter();
-        byte[] data = writer.writeChunk(batch);
-        String partition = batch.get(0).getId().substring(0, 10).replace("-", "");
-        String uuid = Utils.getUniqueId();
         DBTransaction transaction = DBService.instance().startTransaction(tenant);
-        transaction.addColumn(application, "partitions", partition, "");
-        transaction.addColumn(application, "partitions_" + partition, uuid, "");
-        for(BSTR field: writer.getFields()) {
-            transaction.addColumn(application, "fields", field.toString(), "");
+        while(start < size) {
+            String day = batch.get(start).getId().substring(0, 10);
+            int end = start + 1;
+            while(end < size) {
+                String nextDay = batch.get(end).getId().substring(0, 10);
+                if(!nextDay.equals(day)) break;
+                end++;
+            }
+            byte[] data = writer.writeChunk(batch, start, end - start);
+            String partition = day.replace("-", "");
+            String uuid = Utils.getUniqueId();
+            transaction.addColumn(application, "partitions", partition, "");
+            transaction.addColumn(application, "partitions_" + partition, uuid, "");
+            for(BSTR field: writer.getFields()) {
+                transaction.addColumn(application, "fields", field.toString(), "");
+            }
+            transaction.addColumn(application, partition, uuid, data);
+            
+            
+            start = end;
         }
-        transaction.addColumn(application, partition, uuid, data);
         DBService.instance().commit(transaction);
     }
     

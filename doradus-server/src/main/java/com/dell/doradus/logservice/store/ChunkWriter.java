@@ -27,12 +27,15 @@ public class ChunkWriter {
     }
     
     public byte[] writeChunk(OlapBatch batch) {
+        return writeChunk(batch, 0, batch.size());
+    }
+    
+    public byte[] writeChunk(OlapBatch batch, int start, int size) {
         m_fields.clear();
-        int size = batch.size();
         m_timestamps = new TimestampBuilder(size);
         
         for(int doc = 0; doc < size; doc++) {
-            OlapDocument d = batch.get(doc);
+            OlapDocument d = batch.get(start + doc);
             m_timestamps.add(doc, d.getId());
             
             for(int i = 0; i < d.getFieldsCount(); i++) {
