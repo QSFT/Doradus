@@ -48,6 +48,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.GZIPInputStream;
@@ -78,6 +79,8 @@ final public class Utils {
      * The UTC timezone (aka GMT or Zulu time).
      */
     public static final TimeZone UTC_TIMEZONE = TimeZone.getTimeZone("GMT");
+    
+    private static final char[] UID_CHARS = "0123456789abcdefghijklmnopqrstuv".toCharArray();
     
     // Static methods only
     private Utils() {
@@ -297,6 +300,45 @@ final public class Utils {
         }
     }   // getTimeMicros
 
+    
+    /**
+     * Get globally unique id as string of 36 characters (same length as UUID.toString)  
+     * Subsequent IDs are in almost increasing order (random within same millisecond)
+     * Format is the following:
+     * 
+     *  xxxxxxxxx-yyyyyyyyyyyyyzzzzzzzzzzzzz
+     *  x: timestamp in milliseconds (9 characters, encoded with 32 characters keeping the order)
+     *  y: high 8-byte value of UUID (13 characters, same encoding)
+     *  z: low 8-byte value of UUID (13 characters, same encoding)
+     */
+    public static String getUniqueId() {
+        char[] data = new char[36]; 
+        long l0 = System.currentTimeMillis();
+        UUID uuid = UUID.randomUUID();
+        long l1 = uuid.getMostSignificantBits();
+        long l2 = uuid.getLeastSignificantBits();
+        //we don't use Long.toString(long, radix) because we want to treat values as unsigned
+        for(int i = 0; i < 9; i++) {
+            data[8 - i] = UID_CHARS[(int)(l0 & 31)];
+            l0 >>>= 5;
+        }
+        if(l0 != 0) throw new RuntimeException("ERROR");
+        data[9] = '-';
+        for(int i = 0; i < 13; i++) {
+            data[22 - i] = UID_CHARS[(int)(l1 & 31)];
+            l1 >>>= 5;
+        }
+        if(l1 != 0) throw new RuntimeException("ERROR");
+        for(int i = 0; i < 13; i++) {
+            data[35 - i] = UID_CHARS[(int)(l2 & 31)];
+            l2 >>>= 5;
+        }
+        if(l2 != 0) throw new RuntimeException("ERROR");
+        
+        String v = new String(data);
+        return v;
+    }
+    
     /**
      * Turn the given iterable collection into a simple comma-separated value (CSV)
      * String. For example, ["abc", "def", "xyz"] becomes "abc, def, xyz". Each member in
