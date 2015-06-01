@@ -45,7 +45,7 @@ import com.dell.doradus.service.db.DBService;
  * <li>{@link #stop()}: This method is called once when the Doradus Server receives a
  *     shutdown request. It allows the service to gracefully clean-up resources:
  *     close sockets, stop threads, etc. This causes the service's state to transition
- *     to {@link State#STOPPING} and then back to {@link State#INACTIVE}.
+ *     to {@link State#STOPPING}.
  * </ul>
  * Concrete classes must implement the {@link #initService()}, {@link #startService()},
  * and {@link #stopService()} methods to provide its details. Any service can wait on
@@ -105,10 +105,10 @@ public abstract class Service {
         }
         
         /**
-         * True if this state is {@link #RUNNING}.
+         * True if this state is {@link #STOPPING}.
          */
         public boolean isStopping() {
-            return this == RUNNING;
+            return this == STOPPING;
         }
     }   // enum State
 
@@ -120,14 +120,11 @@ public abstract class Service {
             try {
                 setState(Service.State.STARTING);
                 startService();
-                synchronized (m_runningLock) {
-                    setState(Service.State.RUNNING);
-                    m_logger.debug("Notifying waiters");
-                    m_runningLock.notifyAll();
-                }
+                setState(Service.State.RUNNING);
             } catch (Throwable e) {
                 m_logger.error("Fatal: Failed to enter running state", e);
                 m_logger.error("Stopping process");
+                setState(Service.State.STOPPING);
                 System.exit(1);
             }
         }
@@ -135,7 +132,7 @@ public abstract class Service {
     
     // Private Member variables:
     private State           m_state = State.INACTIVE;
-    private final Object    m_runningLock = new Object();
+    private final Object    m_stateChangeLock = new Object();
     
     // Services can set this to wait after serviceStart() is called before start() returns.
     protected int m_startDelayMillis = 0;
@@ -201,7 +198,6 @@ public abstract class Service {
         } else {
             setState(State.STOPPING);
             this.stopService();
-            setState(State.INACTIVE);
         }
     }   // stop
     
@@ -215,12 +211,17 @@ public abstract class Service {
         if (!m_state.isInitialized()) {
             throw new RuntimeException("Service has not been initialized");
         }
-        synchronized (m_runningLock) {
+        synchronized (m_stateChangeLock) {
+            // Loop until state >= RUNNING
             while (!m_state.isRunning()) {
                 try {
-                    m_runningLock.wait();
+                    m_stateChangeLock.wait();
                 } catch (InterruptedException e) {
                 }
+            }
+            if (m_state.isStopping()) {
+                throw new RuntimeException("Service " + this.getClass().getSimpleName() +
+                                           " failed before reaching running state");
             }
         }
     }   // waitForFullService
@@ -283,10 +284,13 @@ public abstract class Service {
 
     //----- Private methods
 
-    // Set the service's state and log the change.
+    // Set the service's state and log the change. Notify all waiters of state change.
     private void setState(State newState) {
         m_logger.debug("Entering state: {}", newState.toString());
-        m_state = newState;
+        synchronized (m_stateChangeLock) {
+            m_state = newState;
+            m_stateChangeLock.notifyAll();
+        }
     }   // setState
     
 }   // class Service
