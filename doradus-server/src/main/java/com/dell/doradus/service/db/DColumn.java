@@ -102,4 +102,9 @@ public class DColumn {
         return Utils.toString(m_value);
     }   // getValue
     
+    @Override
+    public String toString() {
+        return getName() + "=" + getValue();
+    }
+    
 }   // interface DColumn
