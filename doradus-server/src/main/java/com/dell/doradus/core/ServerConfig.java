@@ -286,6 +286,9 @@ public class ServerConfig {
     // CQL (true) or Thrift (false) API
     public boolean use_cql = true;
     
+    // Use a specific DBService class instead of Thrift or CQL.
+    public String dbservice;
+    
     // Experimental: use async update statement execution
     public boolean async_updates = false;
     

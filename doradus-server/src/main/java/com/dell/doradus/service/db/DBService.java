@@ -16,10 +16,12 @@
 
 package com.dell.doradus.service.db;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.db.cql.CQLService;
@@ -33,9 +35,27 @@ import com.dell.doradus.service.tenant.UserDefinition;
  */
 public abstract class DBService extends Service {
     // Choose service based on doradus.yaml setting
-    private static final DBService INSTANCE =
-        ServerConfig.getInstance().use_cql ? CQLService.instance() : ThriftService.instance();
+    private static final DBService INSTANCE = selectService();
 
+    private static DBService selectService() {
+        String dbServiceName = ServerConfig.getInstance().dbservice;
+        if (!Utils.isEmpty(dbServiceName)) {
+            try {
+                @SuppressWarnings("unchecked")
+                Class<DBService> serviceClass = (Class<DBService>) Class.forName(dbServiceName);
+                Method instanceMethod = serviceClass.getMethod("instance", (Class<?>[])null);
+                DBService instance = (DBService)instanceMethod.invoke(null, (Object[])null);
+                return instance;
+            } catch (Exception e) {
+                throw new RuntimeException("Error initializing DBService: " + dbServiceName, e);
+            }
+        } else if (ServerConfig.getInstance().use_cql) {
+            return CQLService.instance();
+        } else {
+            return ThriftService.instance();
+        }
+    }
+    
     // Only subclasses can construct an object.
     protected DBService() {
         // Give up to 1 second after start() to allow startService() to succeed
