@@ -228,10 +228,38 @@ public class JSONAnnie {
                 buffer.append(ch);
                 ch = nextChar(false);
             }
-            // Accumulate digits
+            // Accumulate leading digits
             while (ch >= '0' && ch <= '9') {
                 buffer.append(ch);
                 ch = nextChar(false);
+            }
+            // Look for fractional part
+            if (ch == '.') {
+                buffer.append(ch);
+                ch = nextChar(false);
+                int fracDigits = 0;
+                while (ch >= '0' && ch <= '9') {
+                    fracDigits++;
+                    buffer.append(ch);
+                    ch = nextChar(false);
+                }
+                check(fracDigits > 0, "JSON fractional part requires at least one digit: " + buffer);
+            }
+            // Look for exponent
+            if (ch == 'e' || ch == 'E') {
+                buffer.append(ch);
+                ch = nextChar(false);
+                if (ch == '-' || ch == '+') {
+                    buffer.append(ch);
+                    ch = nextChar(false);
+                }
+                int expDigits = 0;
+                while (ch >= '0' && ch <= '9') {
+                    expDigits++;
+                    buffer.append(ch);
+                    ch = nextChar(false);
+                }
+                check(expDigits > 0, "JSON exponent part requires at least one digit: " + buffer);
             }
             // Push back the last non-digit.
             pushBack(ch);
