@@ -25,6 +25,7 @@ import com.dell.doradus.common.BatchResult;
 import com.dell.doradus.common.CommonDefs;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.RESTResponse;
+import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.OlapBatch;
@@ -46,10 +47,10 @@ public class LoggingService extends StorageService {
 
     // REST commands supported by the LoggingService:
     private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
-        new RESTCommand("POST /{application}                        com.dell.doradus.logservice.LoggingService$UpdateCmd"),
-        new RESTCommand("PUT  /{application}                        com.dell.doradus.logservice.LoggingService$UpdateCmd"),
-        new RESTCommand("GET  /{application}/_query?{params}        com.dell.doradus.logservice.LoggingService$QueryCmd"),
-        new RESTCommand("GET  /{application}/_aggregate?{params}    com.dell.doradus.logservice.LoggingService$AggregateCmd"),
+        new RESTCommand("POST /{application}/{table}                        com.dell.doradus.logservice.LoggingService$UpdateCmd"),
+        new RESTCommand("PUT  /{application}/{table}                        com.dell.doradus.logservice.LoggingService$UpdateCmd"),
+        new RESTCommand("GET  /{application}/{table}/_query?{params}        com.dell.doradus.logservice.LoggingService$QueryCmd"),
+        new RESTCommand("GET  /{application}/{table}/_aggregate?{params}    com.dell.doradus.logservice.LoggingService$AggregateCmd"),
     });
 
     private LogService m_logService = new LogService();
@@ -63,11 +64,12 @@ public class LoggingService extends StorageService {
     
     //----- Command callbacks
     
-    // Commands: POST /{application} and PUT /{application} 
+    // Commands: POST /{application}/{table} and PUT /{application}/{table} 
     public static class UpdateCmd extends ReaderCallback {
         @Override public RESTResponse invokeStreamIn(Reader reader) {
             Utils.require(reader != null, "This command requires an input entity");
-            String application = m_request.getAppDef().getAppName();
+            ApplicationDefinition appDef = m_request.getAppDef();
+            TableDefinition tableDef = m_request.getTableDef(appDef);
             Tenant tenant = m_request.getTenant();
             
             OlapBatch batch = null;
@@ -78,7 +80,7 @@ public class LoggingService extends StorageService {
                 batch = OlapBatch.fromUNode(rootNode);
             }
             
-            LoggingService.instance().m_logService.addBatch(tenant, application, batch);
+            LoggingService.instance().m_logService.addBatch(tenant, appDef.getAppName(), tableDef.getTableName(), batch);
             return new RESTResponse(HttpCode.OK,
                                     new BatchResult().toDoc().toString(m_request.getOutputContentType()),
                                     m_request.getOutputContentType());
@@ -90,10 +92,11 @@ public class LoggingService extends StorageService {
 
         @Override public UNode invokeUNodeOut() {
             ApplicationDefinition appDef = m_request.getAppDef();
+            TableDefinition tableDef = m_request.getTableDef(appDef);
             Tenant tenant = m_request.getTenant();
             String params = m_request.getVariable("params");    // leave encoded
             LogQuery logQuery = new LogQuery(params);
-            SearchResultList searchResult = LoggingService.instance().m_logService.search(tenant, appDef.getAppName(), logQuery);
+            SearchResultList searchResult = LoggingService.instance().m_logService.search(tenant, appDef.getAppName(), tableDef.getTableName(), logQuery);
             return searchResult.toDoc();
         }
     }
@@ -103,10 +106,11 @@ public class LoggingService extends StorageService {
 
         @Override public UNode invokeUNodeOut() {
             ApplicationDefinition appDef = m_request.getAppDef();
+            TableDefinition tableDef = m_request.getTableDef(appDef);
             Tenant tenant = m_request.getTenant();
             String params = m_request.getVariable("params");    // leave encoded
             LogAggregate logAggregate = new LogAggregate(params);
-            AggregationResult result = LoggingService.instance().m_logService.aggregate(tenant, appDef.getAppName(), logAggregate);
+            AggregationResult result = LoggingService.instance().m_logService.aggregate(tenant, appDef.getAppName(), tableDef.getTableName(), logAggregate);
             return result.toUNode();
         }
     }
@@ -132,12 +136,18 @@ public class LoggingService extends StorageService {
     public void deleteApplication(ApplicationDefinition appDef) {
         checkServiceState();
         m_logService.deleteApplication(Tenant.getTenant(appDef), appDef.getAppName());
+        for(TableDefinition tableDef: appDef.getTableDefinitions().values()) {
+            m_logService.deleteTable(Tenant.getTenant(appDef), appDef.getAppName(), tableDef.getTableName());
+        }
     }
 
     @Override
     public void initializeApplication(ApplicationDefinition oldAppDef, ApplicationDefinition appDef) {
         checkServiceState();
         m_logService.createApplication(Tenant.getTenant(appDef), appDef.getAppName());
+        for(TableDefinition tableDef: appDef.getTableDefinitions().values()) {
+            m_logService.createTable(Tenant.getTenant(appDef), appDef.getAppName(), tableDef.getTableName());
+        }
     }
 
     @Override
@@ -165,8 +175,10 @@ public class LoggingService extends StorageService {
             }
         }
 
-        Utils.require(appDef.getTableDefinitions().size() == 0,
-                      "Table definitions are not allowed with the LoggingService");
+        for(TableDefinition tableDef: appDef.getTableDefinitions().values()) {
+            Utils.require(tableDef.getFieldDefinitions().size() == 0,
+                      "Field definitions are not allowed with the LoggingService");
+        }
     }
 
 }   // class LoggingService

@@ -8,16 +8,16 @@ import com.dell.doradus.service.db.Tenant;
 
 public class ChunkIterator implements Iterator<ChunkReader> {
     private Tenant m_tenant;
-    private String m_application;
+    private String m_store;
     private String m_partition;
     private Iterator<DColumn> m_iterator;
     private ChunkReader m_chunk;
 
-    public ChunkIterator(Tenant tenant, String application, String partition) {
+    public ChunkIterator(Tenant tenant, String store, String partition) {
         m_tenant = tenant;
-        m_application = application;
+        m_store = store;
         m_partition = partition;
-        m_iterator = DBService.instance().getAllColumns(m_tenant, m_application, "partitions_" + m_partition);
+        m_iterator = DBService.instance().getAllColumns(m_tenant, m_store, "partitions_" + m_partition);
         m_chunk = new ChunkReader();
     }
     
@@ -25,7 +25,7 @@ public class ChunkIterator implements Iterator<ChunkReader> {
 
     @Override public ChunkReader next() {
         String chunkid = m_iterator.next().getName();
-        DColumn column = DBService.instance().getColumn(m_tenant, m_application, m_partition, chunkid);
+        DColumn column = DBService.instance().getColumn(m_tenant, m_store, m_partition, chunkid);
         m_chunk.read(column.getRawValue());
         return m_chunk;
     }

@@ -17,16 +17,17 @@ import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.Tenant;
 
 public class Searcher {
-    public static TableDefinition getTableDef(Tenant tenant, String application) {
+    public static TableDefinition getTableDef(Tenant tenant, String application, String table) {
+        String store = application + "_" + table;
         ApplicationDefinition appDef = new ApplicationDefinition();
         appDef.setAppName(application);
-        TableDefinition tableDef = new TableDefinition(appDef, "default");
+        TableDefinition tableDef = new TableDefinition(appDef, table);
         appDef.addTable(tableDef);
         FieldDefinition fieldDef = new FieldDefinition(tableDef);
         fieldDef.setType(FieldType.TIMESTAMP);
         fieldDef.setName("Timestamp");
         tableDef.addFieldDefinition(fieldDef);
-        Iterator<DColumn> it = DBService.instance().getAllColumns(tenant, application, "fields");
+        Iterator<DColumn> it = DBService.instance().getAllColumns(tenant, store, "fields");
         if(it != null) {
             while(it.hasNext()) {
                 String field = it.next().getName();

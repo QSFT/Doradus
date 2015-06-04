@@ -94,6 +94,7 @@ default_services:
 storage_services:
     - com.dell.doradus.service.spider.SpiderService
     - com.dell.doradus.service.olap.OLAPService
+    - com.dell.doradus.logservice.LoggingService
     
 # load_webserver:  When load_webserver is false, the webserver will be not loaded with Doradus server.
 # when it is true, webserver_class option needs to be defined with the full package name of the WebServer class

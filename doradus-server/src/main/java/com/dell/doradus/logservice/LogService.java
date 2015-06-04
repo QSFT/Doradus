@@ -33,14 +33,25 @@ public class LogService {
     public LogService() { }
 
     public void createApplication(Tenant tenant, String application) {
-        DBService.instance().createStoreIfAbsent(tenant, application, true);
+        //DBService.instance().createStoreIfAbsent(tenant, application, true);
+    }
+
+    public void createTable(Tenant tenant, String application, String table) {
+        String store = application + "_" + table;
+        DBService.instance().createStoreIfAbsent(tenant, store, true);
     }
 
     public void deleteApplication(Tenant tenant, String application) {
-        DBService.instance().deleteStoreIfPresent(tenant, application);
+        //DBService.instance().deleteStoreIfPresent(tenant, application);
     }
 
-    public void addBatch(Tenant tenant, String application, OlapBatch batch) {
+    public void deleteTable(Tenant tenant, String application, String table) {
+        String store = application + "_" + table;
+        DBService.instance().deleteStoreIfPresent(tenant, store);
+    }
+    
+    public void addBatch(Tenant tenant, String application, String table, OlapBatch batch) {
+        String store = application + "_" + table;
         int size = batch.size();
         if(size == 0) return;
         int start = 0;
@@ -57,12 +68,12 @@ public class LogService {
             byte[] data = writer.writeChunk(batch, start, end - start);
             String partition = day.replace("-", "");
             String uuid = Utils.getUniqueId();
-            transaction.addColumn(application, "partitions", partition, "");
-            transaction.addColumn(application, "partitions_" + partition, uuid, "");
+            transaction.addColumn(store, "partitions", partition, "");
+            transaction.addColumn(store, "partitions_" + partition, uuid, "");
             for(BSTR field: writer.getFields()) {
-                transaction.addColumn(application, "fields", field.toString(), "");
+                transaction.addColumn(store, "fields", field.toString(), "");
             }
-            transaction.addColumn(application, partition, uuid, data);
+            transaction.addColumn(store, partition, uuid, data);
             
             
             start = end;
@@ -70,9 +81,10 @@ public class LogService {
         DBService.instance().commit(transaction);
     }
     
-    public List<String> getPartitions(Tenant tenant, String application) {
+    public List<String> getPartitions(Tenant tenant, String application, String table) {
+        String store = application + "_" + table;
         List<String> partitions = new ArrayList<>();
-        Iterator<DColumn> it = DBService.instance().getAllColumns(tenant, application, "partitions");
+        Iterator<DColumn> it = DBService.instance().getAllColumns(tenant, store, "partitions");
         if(it == null) return partitions;
         while(it.hasNext()) {
             DColumn c = it.next();
@@ -82,8 +94,8 @@ public class LogService {
     }
     
     
-    public SearchResultList search(Tenant tenant, String application, LogQuery logQuery) {
-        TableDefinition tableDef = Searcher.getTableDef(tenant, application);
+    public SearchResultList search(Tenant tenant, String application, String table, LogQuery logQuery) {
+        TableDefinition tableDef = Searcher.getTableDef(tenant, application, table);
         
         Query query = DoradusQueryBuilder.Build(logQuery.getQuery(), tableDef);
         if(logQuery.getContinueAfter() != null) {
@@ -104,9 +116,9 @@ public class LogService {
         LogEntry current = null;
         HeapList<LogEntry> heap = new HeapList<>(size);
         int count = 0;
-        List<String> partitions = getPartitions(tenant, application);
+        List<String> partitions = getPartitions(tenant, application, table);
         for(String partition: partitions) {
-            for(ChunkReader reader: getChunks(tenant, application, partition)) {
+            for(ChunkReader reader: getChunks(tenant, application, table, partition)) {
                 for(int i = 0; i < reader.size(); i++) {
                     if(!QueryFilter.filter(query, reader, i)) continue; 
                     count++;
@@ -129,16 +141,16 @@ public class LogService {
         return list;
     }
     
-    public AggregationResult aggregate(Tenant tenant, String application, LogAggregate logAggregate) {
-        TableDefinition tableDef = Searcher.getTableDef(tenant, application);
+    public AggregationResult aggregate(Tenant tenant, String application, String table, LogAggregate logAggregate) {
+        TableDefinition tableDef = Searcher.getTableDef(tenant, application, table);
         Query query = DoradusQueryBuilder.Build(logAggregate.getQuery(), tableDef);
         String field = Aggregate.getAggregateField(tableDef, logAggregate.getFields());
         
         if(field == null) {
             int count = 0;
-            List<String> partitions = getPartitions(tenant, application);
+            List<String> partitions = getPartitions(tenant, application, table);
             for(String partition: partitions) {
-                for(ChunkReader reader: getChunks(tenant, application, partition)) {
+                for(ChunkReader reader: getChunks(tenant, application, table, partition)) {
                     for(int i = 0; i < reader.size(); i++) {
                         if(!QueryFilter.filter(query, reader, i)) continue; 
                         count++;
@@ -162,9 +174,9 @@ public class LogService {
             BstrSet fields = new BstrSet();
             BSTR temp = new BSTR();
             int count = 0;
-            List<String> partitions = getPartitions(tenant, application);
+            List<String> partitions = getPartitions(tenant, application, table);
             for(String partition: partitions) {
-                for(ChunkReader reader: getChunks(tenant, application, partition)) {
+                for(ChunkReader reader: getChunks(tenant, application, table, partition)) {
                     int index = reader.getFieldIndex(new BSTR(field));
                     if(index < 0) continue;
                     for(int i = 0; i < reader.size(); i++) {
@@ -205,7 +217,8 @@ public class LogService {
     }
     
     
-    public ChunkIterable getChunks(Tenant tenant, String application, String partition) {
-        return new ChunkIterable(tenant, application, partition);
+    public ChunkIterable getChunks(Tenant tenant, String application, String table, String partition) {
+        String store = application + "_" + table;
+        return new ChunkIterable(tenant, store, partition);
     }
 }
