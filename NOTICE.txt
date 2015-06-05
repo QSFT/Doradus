@@ -10,16 +10,6 @@ The Apache Cassandra client interface is used from:
 http://cassandra.apache.org/
 Copyright (c) 2009 The Apache Software Foundation
 
-This product uses the cron4j scheduling package from:
-http://www.sauronsoftware.it/projects/cron4j/index.php
-Copyright (c) Sauron Software 2007 - 2012
-The source code for this LGPL 2.1 licensed component is available here:
-http://opensource.dell.com/releases/Dell_Software/
-
-Some Google Guava library classes are used from:
-https://code.google.com/p/guava-libraries/
-Copyright (C) 2007 The Guava Authors
-
 This product embeds the Eclipse Jetty server from:
 http://www.eclipse.org/jetty/
 Copyright 1995-2014 Mort Bay Consulting Pty Ltd.
@@ -35,9 +25,6 @@ Copyright (c) 1999-2012 Apache Software Foundation
 YAML support provided by snakeyaml:
 http://code.google.com/p/snakeyaml/
 Copyright (c) 2008-2010 Andrey Somov
-
-XMLWriter is used from:
-http://www.megginson.com/downloads/
 
 The CQL Java Driver is used from:
 https://github.com/datastax/java-driver
