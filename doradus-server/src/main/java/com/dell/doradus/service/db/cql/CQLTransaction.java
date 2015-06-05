@@ -28,7 +28,6 @@ import com.datastax.driver.core.BatchStatement.Type;
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSetFuture;
-import com.datastax.driver.core.Session;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBTransaction;
@@ -49,7 +48,6 @@ public class CQLTransaction extends DBTransaction {
     private final Map<String, Map<String, List<String>>> m_deleteMap = new HashMap<>();
     
     private final String  m_keyspace;
-    private final Session m_session;
     private int m_updates;
     private long m_timestamp;   // Used for async updates only
 
@@ -59,7 +57,6 @@ public class CQLTransaction extends DBTransaction {
     public CQLTransaction(Tenant tenant) {
         // Ensure session is possible with app' keyspace.
         m_keyspace = CQLService.storeToCQLName(tenant.getKeyspace());
-        m_session = CQLService.instance().getSession(m_keyspace);
     }
 
     //----- General methods
@@ -262,7 +259,7 @@ public class CQLTransaction extends DBTransaction {
                 boundState.setLong(3, m_timestamp);
                 batchState.add(boundState);
             }
-            futureList.add(m_session.executeAsync(batchState));
+            futureList.add(CQLService.instance().getSession().executeAsync(batchState));
         }
     }   // executeTableUpdatesAsynchronous
 
@@ -302,7 +299,7 @@ public class CQLTransaction extends DBTransaction {
             boundState.setString(2, colName);
             batchState.add(boundState);
         }
-        futureList.add(m_session.executeAsync(batchState));
+        futureList.add(CQLService.instance().getSession().executeAsync(batchState));
     }   // executeTableDeleteColumnsAsynchronous
     
     // Execute a row delete asynchronously and add a future to the given list.
@@ -312,7 +309,7 @@ public class CQLTransaction extends DBTransaction {
         BoundStatement boundState = deleteRowPrepState.bind();
         boundState.setLong(0, m_timestamp);
         boundState.setString(1, key);
-        futureList.add(m_session.executeAsync(boundState));
+        futureList.add(CQLService.instance().getSession().executeAsync(boundState));
     }   // executeTableRowDeleteAsynchronously
     
     ///// Methods for synchronous updates
@@ -411,7 +408,7 @@ public class CQLTransaction extends DBTransaction {
     private void executeBatch(BatchStatement batchState) {
         if (batchState.size() > 0) {
             m_logger.debug("Executing synchronous batch with {} statements", batchState.size());
-            m_session.execute(batchState);
+            CQLService.instance().getSession().execute(batchState);
         }
     }   // executeBatch
     

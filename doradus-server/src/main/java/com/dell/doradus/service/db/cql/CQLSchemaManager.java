@@ -22,44 +22,24 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Session;
 import com.dell.doradus.core.ServerConfig;
 
 /**
- * Performs schema management operations using the CQL API. An object is created with a
- * CQL Session connected to the keyspace in which schema operations will be performed.
- * The exception is the function {@link #createKeySpace(Cluster, String)} and
- * {@link #dropKeySpace(Cluster, String)}, which should be used with a CQLSchemaManager
- * constructed with a no-keyspace session.
+ * Performs schema management operations using the CQL API. All methods are static and
+ * call the {@link CQLService} to get a session object when needed.
  */
 public class CQLSchemaManager {
     // Members:
-    private final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
-    private final Session m_session;
-    private final String m_keyspace;
+    private static final Logger m_logger = LoggerFactory.getLogger(CQLSchemaManager.class.getSimpleName());
 
-    /**
-     * Create a CQL schema manager that uses the given session for DDL commands. The name
-     * of the keyspace is passed since it may be quoted, which is difficult to ascertain
-     * from CQL's metadata.
-     *  
-     * @param session   CQL session to use for DDL commands.
-     * @param keyspace  Keyspace name that session is using. This should be quoted for
-     *                  compatibility with Thrift conventions.
-     */
-    public CQLSchemaManager(Session session, String keyspace) {
-        m_session = session;
-        m_keyspace = keyspace;
-    }
+    private CQLSchemaManager() { }
     
     //----- Public methods
     
     /**
-     * Create a new keyspace with the given name and optional options. This method should
-     * be used with a no-keyspace session. The keyspace is created with the following
-     * CQL command:
+     * Create a new keyspace with the given name and optional options. The keyspace is
+     * created with the following CQL command:
      * <pre>
      *      CREATE KEYSPACE "<i>keyspace</i>" WITH <i>prop</i>=<i>value</i> AND ...;
      * </pre>
@@ -68,7 +48,7 @@ public class CQLSchemaManager {
      * @param keyspace  Name of keyspace to create.
      * @param options   Options to use for new keyspace.
      */
-    public void createKeyspace(String keyspace, Map<String, String> options) {
+    public static void createKeyspace(String keyspace, Map<String, String> options) {
         String cqlKeyspace = CQLService.storeToCQLName(keyspace);
         m_logger.info("Creating new keyspace: {}", cqlKeyspace);
         StringBuilder cql = new StringBuilder();
@@ -76,14 +56,13 @@ public class CQLSchemaManager {
         cql.append(cqlKeyspace);
         cql.append(keyspaceDefaultsToCQLString(options));
         cql.append(";");
-        m_session.execute(cql.toString());
+        executeCQL(cql.toString());
     }   // createKeyspace
     
     /**
      * Modify the keyspace with the given name with the given options. The only option
-     * that can be modified is ReplicationFactor. This method should be used with a
-     * no-keyspace session. If the ReplicationFactor is present, the keyspace is altered
-     * with the following CQL command:
+     * that can be modified is ReplicationFactor.  If it is present, the keyspace is
+     * altered with the following CQL command:
      * <pre>
      *      ALTER KEYSPACE "<i>keyspace</i>" WITH REPLICATION = {'class':'SimpleStrategy',
      *        'replication_factor' : <i>replication_factor</i> };
@@ -93,7 +72,7 @@ public class CQLSchemaManager {
      * @param options   Modified options to use for keyspace. Only the option
      *                  "replication_factor" is examined.
      */
-    public void modifyKeyspace(String keyspace, Map<String, String> options) {
+    public static void modifyKeyspace(String keyspace, Map<String, String> options) {
         if (!options.containsKey("ReplicationFactor")) {
             return;
         }
@@ -112,12 +91,11 @@ public class CQLSchemaManager {
         cql.append("','replication_factor':");
         cql.append(options.get("ReplicationFactor"));
         cql.append("};");
-        m_session.execute(cql.toString());
+        executeCQL(cql.toString());
     }   // createKeyspace
     
     /**
-     * Drop the keyspace with the given name. The CQLSchemaManager object should be
-     * constructed with a no-keyspace session. The keyspace is dropped with the following
+     * Drop the keyspace with the given name. The keyspace is dropped with the following
      * CQL command:
      * <pre>
      *      DROP KEYSPACE "<i>keyspace</i>";
@@ -125,21 +103,21 @@ public class CQLSchemaManager {
      * 
      * @param keyspace  Name of keyspace to drop.
      */
-    public void dropKeyspace(String keyspace) {
+    public static void dropKeyspace(String keyspace) {
         String cqlKeyspace = CQLService.storeToCQLName(keyspace);
         m_logger.info("Dropping keyspace: {}", cqlKeyspace);
         StringBuilder cql = new StringBuilder();
         cql.append("DROP KEYSPACE ");
         cql.append(cqlKeyspace);
         cql.append(";");
-        m_session.execute(cql.toString());
+        executeCQL(cql.toString());
     }   // dropKeyspace
     
     /**
-     * Create a CQL table with the given template. For backward compatibility with the
+     * Create a CQL table with the given name. For backward compatibility with the
      * Thrift API, all tables look like this:
      * <pre>
-     *      CREATE TABLE "<i>name</i>" (
+     *      CREATE TABLE "<i>keyspace</i>"."<i>name</i>" (
      *          key     text,
      *          column1 text,
      *          value   text,   // or blob based on bBinaryValues
@@ -149,16 +127,18 @@ public class CQLSchemaManager {
      * Where the WITH <i>prop</i> clauses come from {@link ServerConfig#olap_cf_defaults}
      * or {@link ServerConfig#cf_defaults}.
      * 
+     * @param keyspace      Name of keyspace in which to create table.
      * @param storeName     Name of table (unquoted) to create.
      * @param bBinaryValues True if store's values will be binary.
      */
-    public void createCQLTable(String storeName, boolean bBinaryValues) {
+    public static void createCQLTable(String keyspace, String storeName, boolean bBinaryValues) {
+        String cqlKeyspace = CQLService.storeToCQLName(keyspace);
         String tableName = CQLService.storeToCQLName(storeName);
         m_logger.info("Creating CQL table {}", tableName);
         
         StringBuffer cql = new StringBuffer();
         cql.append("CREATE TABLE ");
-        cql.append(tableName);
+        cql.append(qualifiedTableName(cqlKeyspace, tableName));
         cql.append("(key text,column1 text,value ");
         if (bBinaryValues) {
             cql.append("blob,");
@@ -174,34 +154,26 @@ public class CQLSchemaManager {
     /**
      * Drop the table identified by the given template. The CQL executed is:
      * <pre>
-     *      DROP TABLE "<i>name</i>";
+     *      DROP TABLE "<i>keyspace</i>"."<i>name</i>";
      * </pre>
      * 
-     * @param template  StoreTemplate that defines table to be dropped.
+     * @param keyspace  Keyspace that owns table to be dropped.
+     * @param storeName Name of table to be dropped.
      */
-    public void dropCQLTable(String templateName) {
-        String tableName = CQLService.storeToCQLName(templateName);
+    public static void dropCQLTable(String keyspace, String storeName) {
+        String cqlKeyspace = CQLService.storeToCQLName(keyspace);
+        String tableName = CQLService.storeToCQLName(storeName);
         m_logger.info("Dropping table: {}", tableName);
-        String cql = "DROP TABLE " + tableName + ";";
+        String cql = "DROP TABLE " + qualifiedTableName(cqlKeyspace, tableName) + ";";
         executeCQL(cql);
     }   // dropCQLTable
-    
-    /**
-     * Return true if the given table name currently exists within the current keyspace.
-     * 
-     * @param tableName Table to check. Should be quoted if needed.
-     * @return          True if table exists within the keyspace.
-     */
-    public boolean tableExists(String tableName) {
-        return m_session.getCluster().getMetadata().getKeyspace(m_keyspace).getTable(tableName) != null;
-    }   // tableExists
     
     //----- Private methods
     
     // Find doradus.yaml options for the given template and turn into a CQL string:
     //      "AND <prop>=<value> AND..."
     @SuppressWarnings("unchecked")
-    private String tablePropertiesToCQLString(String storeName) {
+    private static String tablePropertiesToCQLString(String storeName) {
         StringBuilder buffer = new StringBuilder();
         
         // A little kludgey for now
@@ -302,10 +274,10 @@ public class CQLSchemaManager {
     }   // mapToCQLString
 
     // Execute and optionally log the given CQL statement.
-    private ResultSet executeCQL(String cql) {
+    private static ResultSet executeCQL(String cql) {
         m_logger.trace("Executing CQL: {}", cql);
         try {
-            return m_session.execute(cql);
+            return CQLService.instance().getSession().execute(cql);
         } catch (Exception e) {
             m_logger.error("CQL query failed", e);
             m_logger.info("   Query={}", cql);
@@ -313,4 +285,9 @@ public class CQLSchemaManager {
         }
     }   // executeCQL
     
+    private static String qualifiedTableName(String keyspace, String tableName) {
+        assert keyspace.charAt(0) == '"';
+        return keyspace + "." + tableName;
+    }
+
 }   // class CQLSchemaManager

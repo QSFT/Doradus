@@ -22,7 +22,6 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -78,9 +77,8 @@ public class CQLService extends DBService {
 
     // Members:
     private Cluster m_cluster;
-    private static final String NO_KS_SESSION = "_"; 
-    private final Map<String, Session> m_ksSessionMap = new HashMap<>();
-    private final Map<String, CQLStatementCache> m_ksStatementCacheMap = new HashMap<>();
+    private Session m_session;
+    private final CQLStatementCache m_statementCache = new CQLStatementCache();
     
     //----- Public Service methods
 
@@ -107,12 +105,8 @@ public class CQLService extends DBService {
 
     @Override
     protected void stopService() {
-        synchronized (m_ksSessionMap) {
-            for (Session session : m_ksSessionMap.values()) {
-                session.close();
-            }
-            m_ksSessionMap.clear();
-            m_ksStatementCacheMap.clear();
+        if (m_session != null) {
+            m_session.close();
         }
     }   // stopService
 
@@ -124,9 +118,7 @@ public class CQLService extends DBService {
         String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
         KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(cqlKeyspace);
         if (ksMetadata == null) {
-            Session session = getOrCreateKeyspaceSession(NO_KS_SESSION); 
-            CQLSchemaManager schemaMgr = new CQLSchemaManager(session, null);
-            schemaMgr.createKeyspace(cqlKeyspace, options);
+            CQLSchemaManager.createKeyspace(cqlKeyspace, options);
         }
     }   // createTenant
 
@@ -135,33 +127,21 @@ public class CQLService extends DBService {
         String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
         KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(cqlKeyspace);
         Utils.require(ksMetadata != null, "Tenant not found: " + tenant.toString());
-        Session session = getOrCreateKeyspaceSession(NO_KS_SESSION); 
-        CQLSchemaManager schemaMgr = new CQLSchemaManager(session, null);
-        schemaMgr.modifyKeyspace(cqlKeyspace, options);
+        CQLSchemaManager.modifyKeyspace(cqlKeyspace, options);
     }   // modifyTenant
 
     @Override
     public void dropTenant(Tenant tenant) {
         checkState();
         String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
-        synchronized (m_ksSessionMap) {
-            Session session = m_ksSessionMap.get(cqlKeyspace);
-            if (session != null) {
-                session.close();
-                m_ksSessionMap.remove(cqlKeyspace);
-                m_ksStatementCacheMap.remove(cqlKeyspace);
-            }
-            Session noKSSession = getOrCreateKeyspaceSession(NO_KS_SESSION); 
-            CQLSchemaManager schemaMgr = new CQLSchemaManager(noKSSession, null);
-            schemaMgr.dropKeyspace(cqlKeyspace);
-        }
+        m_statementCache.purgeKeyspace(cqlKeyspace);
+        CQLSchemaManager.dropKeyspace(cqlKeyspace);
     }   // dropTenant
     
     @Override
     public void addUsers(Tenant tenant, Iterable<UserDefinition> users) {
         checkState();
         String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
-        Session session = getOrCreateKeyspaceSession(cqlKeyspace);
         StringBuilder cql = new StringBuilder();
         for (UserDefinition userDef : users) {
             String userID = userDef.getID();
@@ -176,7 +156,7 @@ public class CQLService extends DBService {
             cql.append(password);   // TODO: escape embedded 's?
             cql.append("' NOSUPERUSER;");
             try {
-                session.execute(cql.toString());
+                m_session.execute(cql.toString());
             } catch (InvalidQueryException e) {
                 String errMsg = e.getLocalizedMessage();
                 if (errMsg.contains("already exists")) {
@@ -195,7 +175,7 @@ public class CQLService extends DBService {
             cql.append(" TO ");
             cql.append(userID);
             cql.append(";");
-            session.execute(cql.toString());
+            m_session.execute(cql.toString());
         }
     }   // addUsers
     
@@ -203,7 +183,6 @@ public class CQLService extends DBService {
     public void modifyUsers(Tenant tenant, Iterable<UserDefinition> users) {
         checkState();
         String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
-        Session session = getOrCreateKeyspaceSession(cqlKeyspace);
         StringBuilder cql = new StringBuilder();
         for (UserDefinition userDef : users) {
             String userID = userDef.getID();
@@ -218,7 +197,7 @@ public class CQLService extends DBService {
             cql.append(password);   // TODO: escape embedded 's?
             cql.append("';");
             try {
-                session.execute(cql.toString());
+                m_session.execute(cql.toString());
             } catch (InvalidQueryException e) {
                 m_logger.warn("Error modifying user '" + userID + "'; skipping this user", userID);
             }
@@ -228,8 +207,6 @@ public class CQLService extends DBService {
     @Override
     public void deleteUsers(Tenant tenant, Iterable<UserDefinition> users) {
         checkState();
-        // Use a no-keyspace session since the keyspace may already be gone.
-        Session session = getOrCreateKeyspaceSession(NO_KS_SESSION); 
         StringBuilder cql = new StringBuilder();
         for (UserDefinition userDef : users) {
             String userID = userDef.getID();
@@ -239,7 +216,7 @@ public class CQLService extends DBService {
             cql.append(userID);
             cql.append(";");
             try {
-                session.execute(cql.toString());
+                m_session.execute(cql.toString());
             } catch (InvalidQueryException e) {
                 m_logger.warn("Cannot drop user '" + userID + "'; ignoring", e);
             }
@@ -267,9 +244,7 @@ public class CQLService extends DBService {
         String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
         String tableName = storeToCQLName(storeName);
         if (!storeExists(cqlKeyspace, tableName)) {
-            Session session = getOrCreateKeyspaceSession(cqlKeyspace);
-            CQLSchemaManager schemaMgr = new CQLSchemaManager(session, cqlKeyspace);
-            schemaMgr.createCQLTable(storeName, bBinaryValues);
+            CQLSchemaManager.createCQLTable(cqlKeyspace, storeName, bBinaryValues);
         }
     }   // createStoreIfAbsent
     
@@ -279,9 +254,7 @@ public class CQLService extends DBService {
         String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
         String tableName = storeToCQLName(storeName);
         if (storeExists(cqlKeyspace, tableName)) {
-            Session session = getOrCreateKeyspaceSession(cqlKeyspace);
-            CQLSchemaManager schemaMgr = new CQLSchemaManager(session, cqlKeyspace);
-            schemaMgr.dropCQLTable(tableName);
+            CQLSchemaManager.dropCQLTable(cqlKeyspace, tableName);
         }
     }   // deleteStoreIfPresent
 
@@ -432,11 +405,9 @@ public class CQLService extends DBService {
      * @return              PreparedStatement for requested keyspace/table/update.
      */
     public PreparedStatement getPreparedQuery(String keyspace, Query query, String storeName) {
-        String cqlKeysapce = storeToCQLName(keyspace);
+        String cqlKeyspace = storeToCQLName(keyspace);
         String tableName = storeToCQLName(storeName);
-        CQLStatementCache statementCache = m_ksStatementCacheMap.get(cqlKeysapce);
-        assert statementCache != null;
-        return statementCache.getPreparedQuery(query, tableName);
+        return m_statementCache.getPreparedQuery(cqlKeyspace, tableName, query);
     }   // getPreparedQuery
     
     /**
@@ -452,22 +423,18 @@ public class CQLService extends DBService {
 	public PreparedStatement getPreparedUpdate(String keyspace, Update update, String storeName) {
         String cqlKeyspace = storeToCQLName(keyspace);
         String tableName = storeToCQLName(storeName);
-	    CQLStatementCache statementCache = m_ksStatementCacheMap.get(cqlKeyspace);
-	    assert statementCache != null;
-	    return statementCache.getPreparedUpdate(update, tableName);
-	}  // getPreparedUpdate
-	
-	/**
-	 * Get the CQL session being used by this CQL service.
-	 * 
-	 * @param keyspace Keyspace to which session applies.
-	 * @return         The CQL Session object connected to the appropriate keyspace.
-	 */
-	public Session getSession(String keyspace) {
-        String cqlKeyspace = storeToCQLName(keyspace);
-		return getOrCreateKeyspaceSession(cqlKeyspace);
-	}	// getSession
-	
+        return m_statementCache.getPreparedUpdate(cqlKeyspace, tableName, update);
+    }  // getPreparedUpdate
+    
+    /**
+     * Get the CQL session being used by this CQL service.
+     * 
+     * @return A CQL Session object.
+     */
+    public Session getSession() {
+        return m_session;
+    }   // getSession
+    
     /**
      * Convert the given store name into a quoted CQL name if it isn't already quoted.
      * 
@@ -494,12 +461,11 @@ public class CQLService extends DBService {
     // Execute the given query for the given table using the given values.
     private ResultSet executeQuery(Query query, String cqlKeyspace, String tableName, Object... values) {
         assert cqlKeyspace.charAt(0) == '"';
-        m_logger.debug("Executing statement {} on table {}/{}; total params={}",
+        m_logger.debug("Executing statement {} on table {}.{}; total params={}",
                        new Object[]{query, cqlKeyspace, tableName, values.length});
-        Session session = getOrCreateKeyspaceSession(cqlKeyspace);
         PreparedStatement prepState = getPreparedQuery(cqlKeyspace, query, tableName);
         BoundStatement boundState = prepState.bind(values);
-        return session.execute(boundState);
+        return m_session.execute(boundState);
     }   // executeQuery
     
     // Establish the CQL session
@@ -603,31 +569,10 @@ public class CQLService extends DBService {
     private void connectToCluster() {
         assert m_cluster != null;
         m_cluster.init();     // force connection and throw if unavailable
+        m_session = m_cluster.connect();
         displayClusterInfo();
     }   // connectToCluster
 
-    // Get or create a session to the given keyspace.
-    private Session getOrCreateKeyspaceSession(String cqlKeyspace) {
-        assert cqlKeyspace.charAt(0) == '"' || cqlKeyspace.equals(NO_KS_SESSION);
-        Session session = m_ksSessionMap.get(cqlKeyspace);
-        if (session == null) {
-            synchronized (m_ksSessionMap) {
-                // Watch for race conditions outside of synchronized block
-                session = m_ksSessionMap.get(cqlKeyspace);
-                if (session == null) {
-                    if (cqlKeyspace.equals(NO_KS_SESSION)) {
-                        session = m_cluster.connect();
-                    } else {
-                        session = m_cluster.connect(cqlKeyspace);
-                    }
-                    m_ksSessionMap.put(cqlKeyspace, session);
-                    m_ksStatementCacheMap.put(cqlKeyspace, new CQLStatementCache(session));
-                }
-            }
-        }
-        return session;
-    }   // getOrCreateKeyspaceSession
-    
     // Display configuration information for the given cluster.
     private void displayClusterInfo() {
         Metadata metadata = m_cluster.getMetadata();
