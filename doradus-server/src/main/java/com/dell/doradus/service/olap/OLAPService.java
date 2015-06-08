@@ -82,8 +82,12 @@ public class OLAPService extends StorageService {
         new RESTCommand("DELETE /{application}/_shards/{shard}              com.dell.doradus.service.olap.DeleteSegmentCmd"),
         new RESTCommand("GET    /{application}/_shards                      com.dell.doradus.service.olap.ListShardsCmd"),
         new RESTCommand("GET    /{application}/_shards/{shard}              com.dell.doradus.service.olap.ShardStatsCmd"),
+        // Troubleshooting & repair
         new RESTCommand("GET    /{application}/_statistics/{shard}?{params} com.dell.doradus.service.olap.ShardStatisticsCmd"),
         new RESTCommand("GET    /{application}/{table}/_duplicates?{params} com.dell.doradus.service.olap.DuplicatesCmd"),
+        new RESTCommand("GET    /{application}/_verify/{shard}              com.dell.doradus.service.olap.ShardVerifyCmd"),
+        new RESTCommand("DELETE /{application}/_shards/{shard}/{segment}    com.dell.doradus.service.olap.DeleteSegmentCmd2"),
+ 
                
         new RESTCommand("GET    /_olapp?{params}                             com.dell.doradus.service.olap.OlappCmd"),
     });
