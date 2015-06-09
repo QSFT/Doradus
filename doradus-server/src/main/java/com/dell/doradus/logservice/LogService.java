@@ -68,8 +68,10 @@ public class LogService {
             byte[] data = writer.writeChunk(batch, start, end - start);
             String partition = day.replace("-", "");
             String uuid = Utils.getUniqueId();
+            ChunkInfo chunkInfo = new ChunkInfo();
+            chunkInfo.set(partition, uuid, writer);
             transaction.addColumn(store, "partitions", partition, "");
-            transaction.addColumn(store, "partitions_" + partition, uuid, "");
+            transaction.addColumn(store, "partitions_" + partition, uuid, chunkInfo.getByteData());
             for(BSTR field: writer.getFields()) {
                 transaction.addColumn(store, "fields", field.toString(), "");
             }
@@ -92,7 +94,27 @@ public class LogService {
         }
         return partitions;
     }
+
+    public List<String> getPartitions(Tenant tenant, String application, String table, String minDate, String maxDate) {
+        String store = application + "_" + table;
+        if(minDate != null) minDate = minDate.substring(0, 10).replace("-", "");
+        if(maxDate != null) maxDate = maxDate.substring(0, 10).replace("-", "") + '\0';
+        List<String> partitions = new ArrayList<>();
+        Iterator<DColumn> it = DBService.instance().getColumnSlice(tenant, store, "partitions", minDate, maxDate);
+        if(it == null) return partitions;
+        while(it.hasNext()) {
+            DColumn c = it.next();
+            partitions.add(c.getName());
+        }
+        return partitions;
+    }
     
+    public void readChunk(Tenant tenant, String application, String table, ChunkInfo chunkInfo, ChunkReader chunkReader) {
+        String store = application + "_" + table;
+        DColumn column = DBService.instance().getColumn(tenant, store, chunkInfo.getPartition(), chunkInfo.getChunkId());
+        if(column == null) throw new RuntimeException("Data was deleted");
+        chunkReader.read(column.getRawValue());
+    }
     
     public SearchResultList search(Tenant tenant, String application, String table, LogQuery logQuery) {
         TableDefinition tableDef = Searcher.getTableDef(tenant, application, table);
@@ -117,15 +139,17 @@ public class LogService {
         HeapList<LogEntry> heap = new HeapList<>(size);
         int count = 0;
         List<String> partitions = getPartitions(tenant, application, table);
+        ChunkReader chunkReader = new ChunkReader();
         for(String partition: partitions) {
-            for(ChunkReader reader: getChunks(tenant, application, table, partition)) {
-                for(int i = 0; i < reader.size(); i++) {
-                    if(!QueryFilter.filter(query, reader, i)) continue; 
+            for(ChunkInfo chunkInfo: getChunks(tenant, application, table, partition)) {
+                readChunk(tenant, application, table, chunkInfo, chunkReader);
+                for(int i = 0; i < chunkReader.size(); i++) {
+                    if(!QueryFilter.filter(query, chunkReader, i)) continue; 
                     count++;
                     if(current == null) {
                         current = new LogEntry(fields, bSortDescending);
                     }
-                    current.set(reader, i);
+                    current.set(chunkReader, i);
                     current = heap.AddEx(current);
                 }
             }
@@ -149,10 +173,12 @@ public class LogService {
         if(field == null) {
             int count = 0;
             List<String> partitions = getPartitions(tenant, application, table);
+            ChunkReader chunkReader = new ChunkReader();
             for(String partition: partitions) {
-                for(ChunkReader reader: getChunks(tenant, application, table, partition)) {
-                    for(int i = 0; i < reader.size(); i++) {
-                        if(!QueryFilter.filter(query, reader, i)) continue; 
+                for(ChunkInfo chunkInfo: getChunks(tenant, application, table, partition)) {
+                    readChunk(tenant, application, table, chunkInfo, chunkReader);
+                    for(int i = 0; i < chunkReader.size(); i++) {
+                        if(!QueryFilter.filter(query, chunkReader, i)) continue; 
                         count++;
                     }
                 }
@@ -175,13 +201,15 @@ public class LogService {
             BSTR temp = new BSTR();
             int count = 0;
             List<String> partitions = getPartitions(tenant, application, table);
+            ChunkReader chunkReader = new ChunkReader();
             for(String partition: partitions) {
-                for(ChunkReader reader: getChunks(tenant, application, table, partition)) {
-                    int index = reader.getFieldIndex(new BSTR(field));
+                for(ChunkInfo chunkInfo: getChunks(tenant, application, table, partition)) {
+                    readChunk(tenant, application, table, chunkInfo, chunkReader);
+                    int index = chunkReader.getFieldIndex(new BSTR(field));
                     if(index < 0) continue;
-                    for(int i = 0; i < reader.size(); i++) {
-                        if(!QueryFilter.filter(query, reader, i)) continue;
-                        reader.getFieldValue(i, index, temp);
+                    for(int i = 0; i < chunkReader.size(); i++) {
+                        if(!QueryFilter.filter(query, chunkReader, i)) continue;
+                        chunkReader.getFieldValue(i, index, temp);
                         int pos = fields.add(temp);
                         if(pos == list.size()) list.add(1);
                         else list.set(pos, list.get(pos) + 1);

@@ -41,5 +41,23 @@ public class TimestampBuilder {
         }
         Temp.writeCompressed(output, s_st);
 	}
+
+    public int getSize() { return m_timestamps.length; }
+
+	public long getMinTimestamp() {
+	    long timestamp = m_timestamps[0];
+	    for(int i = 1; i < m_timestamps.length; i++) {
+	        if(m_timestamps[i] < timestamp) timestamp = m_timestamps[i];
+	    }
+	    return timestamp;
+	}
+	
+    public long getMaxTimestamp() {
+        long timestamp = m_timestamps[0];
+        for(int i = 1; i < m_timestamps.length; i++) {
+            if(m_timestamps[i] > timestamp) timestamp = m_timestamps[i];
+        }
+        return timestamp;
+    }
 	
 }

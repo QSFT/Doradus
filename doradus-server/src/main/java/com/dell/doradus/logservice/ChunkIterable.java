@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import com.dell.doradus.service.db.Tenant;
 
-public class ChunkIterable implements Iterable<ChunkReader> {
+public class ChunkIterable implements Iterable<ChunkInfo> {
     private Tenant m_tenant;
     private String m_store;
     private String m_partition;
@@ -15,7 +15,7 @@ public class ChunkIterable implements Iterable<ChunkReader> {
         m_partition = partition;
     }
 
-    @Override public Iterator<ChunkReader> iterator() {
+    @Override public Iterator<ChunkInfo> iterator() {
         return new ChunkIterator(m_tenant, m_store, m_partition);
     }
     

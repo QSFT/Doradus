@@ -26,6 +26,11 @@ public class ChunkWriter {
         return m_fields.keySet();
     }
     
+    
+    public int getSize() { return m_timestamps.getSize(); }
+    public long getMinTimestamp() { return m_timestamps.getMinTimestamp(); }
+    public long getMaxTimestamp() { return m_timestamps.getMaxTimestamp(); }
+    
     public byte[] writeChunk(OlapBatch batch) {
         return writeChunk(batch, 0, batch.size());
     }
