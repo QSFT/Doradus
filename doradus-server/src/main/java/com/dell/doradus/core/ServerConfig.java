@@ -112,6 +112,7 @@ public class ServerConfig {
     //Doradus WebServer
     public boolean load_webserver = false;
     public String webserver_class;      
+    public static String[] commandLineArgs;
 
     /**
      * WARN: The configuration singleton must be already initialized before to call this method (see: <code>load()</code>).
@@ -172,6 +173,7 @@ public class ServerConfig {
                 logger.info("Parsing the command line arguments...");
                 parseCommandLineArgs(args);
                 logger.info("Ok. Arguments parsed.");
+                commandLineArgs = args;
             }
         } catch (ConfigurationException e) {
             logger.error("Fatal configuration error", e);

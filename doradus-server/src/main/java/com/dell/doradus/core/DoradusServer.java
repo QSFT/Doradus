@@ -16,6 +16,9 @@
 
 package com.dell.doradus.core;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +29,8 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Set;
 
+import org.eclipse.jgit.api.DescribeCommand;
+import org.eclipse.jgit.api.Git;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,8 +77,11 @@ public final class DoradusServer {
     private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
         new RESTCommand("GET /_dump com.dell.doradus.core.TheadDumpCmd", true),
         new RESTCommand("GET /_logs?{params} com.dell.doradus.core.LogDumpCmd", true),
+        new RESTCommand("GET /_config com.dell.doradus.core.GetConfigCmd", true),
+        
     });
 
+	private static final String VERSION_FILE = "doradus.ver";
     ///// Public methods
     
     /**
@@ -202,6 +210,27 @@ public final class DoradusServer {
         return null;
     }   // findStorageService
     
+    /**
+     * Get Doradus Version from git repo if it exists; otherwise get it from the local doradus.ver file
+     * @return version
+     */
+    public String getDoradusVersion() {
+ 		Git git;
+ 		String version;
+ 		try {
+ 			//first read from the local git repository
+ 			git = Git.open(new File("../.git"));
+ 			DescribeCommand cmd = git.describe();
+ 			version = cmd.call();		 
+ 			m_logger.info("\nDoradus version found from git repo", version);
+ 		} catch (Throwable e) {
+ 			//if not found, reading from local file
+ 			version = getVersionFromVerFile();
+ 			m_logger.info("\nDoradus version found from doradus.ver file", version);
+ 		}
+ 		return version;
+ 	}
+    
     ///// Private methods
 
     // Construction via the instance() method only.
@@ -329,13 +358,30 @@ public final class DoradusServer {
             return;
         }
         Locale.setDefault(Locale.ROOT);
-        m_logger.info("Doradus Version: {}", this.getClass().getPackage().getImplementationVersion());
+        m_logger.info("Doradus Version: {}", getDoradusVersion());
         hookShutdownEvent();
         startServices();
         m_bRunning = true;
     }   // start
     
-    // Start all registered services.
+    // Get Version from local file
+	private String getVersionFromVerFile() {
+		StringBuffer sb = new StringBuffer();
+		BufferedReader br;
+		try {
+			br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/" + VERSION_FILE), "UTF-8"));
+			for (int c = br.read(); c != -1; c = br.read()) {
+				sb.append((char)c);
+			}
+			return sb.toString();
+		} catch (Exception e) {
+			m_logger.info("Error reading ver file " + e.getMessage());
+			return null;
+		}
+		
+	}
+
+	// Start all registered services.
     private void startServices() {
         m_logger.info("Starting services: {}", simpleServiceNames(m_initializedServices));
         for (Service service : m_initializedServices) {
