@@ -31,6 +31,7 @@ import com.dell.doradus.search.util.HeapList;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
+import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
 
 public class LogService {
@@ -87,20 +88,19 @@ public class LogService {
         DBService.instance().commit(transaction);
     }
     
-    public void deleteOldSegments(Tenant tenant, String application, String table, String partition, long removeBeforeTimestamp) {
+    public void deleteOldSegments(Tenant tenant, String application, String table, long removeBeforeTimestamp) {
         String store = application + "_" + table;
-        Iterator<DColumn> it = DBService.instance().getAllColumns(tenant, store, "partitions_" + partition);
-        if(it == null) return;
-        ChunkInfo info = new ChunkInfo();
-        while(it.hasNext()) {
-            DColumn c = it.next();
-            info.set(partition, c.getName(), c.getRawValue());
-            if(info.getMaxTimestamp() >= removeBeforeTimestamp) continue;
-            DBTransaction transaction = DBService.instance().startTransaction(tenant);
-            transaction.deleteColumn(store, "partitions_" + partition, info.getChunkId());
-            transaction.deleteColumn(store, partition, info.getChunkId());
-            DBService.instance().commit(transaction);
+        String partitionToCompare = new DateFormatter().format(removeBeforeTimestamp).substring(0, 10).replace("-", ""); 
+        List<String> partitions = getPartitions(tenant, application, table);
+        DBTransaction transaction = null;
+        for(String partition: partitions) {
+            if(partition.compareTo(partitionToCompare) >= 0) continue;
+            if(transaction == null) transaction = DBService.instance().startTransaction(tenant);
+            transaction.deleteColumn(store, "partitions", partition);
+            transaction.deleteRow(store, partition);
+            transaction.deleteRow(store, "partitions_" + partition);
         }
+        if(transaction != null) DBService.instance().commit(transaction);
     }
     
 
@@ -187,6 +187,31 @@ public class LogService {
         if(column == null) throw new RuntimeException("Data was deleted");
         chunkReader.read(column.getRawValue());
     }
+
+    public List<byte[]> readChunks(Tenant tenant, String application, String table, List<ChunkInfo> infos) {
+        String store = application + "_" + table;
+        List<String> chunkIds = new ArrayList<>(infos.size());
+        for(ChunkInfo info: infos) chunkIds.add(info.getChunkId());
+        List<String> rows = new ArrayList<>(1);
+        rows.add(infos.get(0).getPartition());
+        List<byte[]> data = new ArrayList<>(infos.size());
+        int SIZE = 100;
+        for(int start = 0; start < infos.size(); start += SIZE) {
+            int end = Math.min(start + SIZE, infos.size());
+            Iterator<DRow> rowIt = DBService.instance().getRowsColumns(tenant, store, rows, chunkIds.subList(start, end));
+            if(rowIt == null || !rowIt.hasNext()) throw new RuntimeException("Error merging data");
+            DRow drow = rowIt.next();
+            Iterator<DColumn> colIt = drow.getColumns();
+            if(colIt == null) throw new RuntimeException("Error merging data");
+            while(colIt.hasNext()) {
+                DColumn c = colIt.next();
+                data.add(c.getRawValue());
+            }
+        }
+        if(data.size() != infos.size()) throw new RuntimeException("Error merging data");
+        return data;
+    }
+    
     
     public SearchResultList search(Tenant tenant, String application, String table, LogQuery logQuery) {
         TableDefinition tableDef = Searcher.getTableDef(tenant, application, table);

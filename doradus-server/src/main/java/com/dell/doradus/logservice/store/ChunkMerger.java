@@ -2,13 +2,19 @@ package com.dell.doradus.logservice.store;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.dell.doradus.logservice.ChunkInfo;
 import com.dell.doradus.logservice.ChunkReader;
 import com.dell.doradus.logservice.LogService;
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.service.db.Tenant;
+import com.dell.doradus.utilities.Timer;
 
 public class ChunkMerger {
+    private static Logger LOG = LoggerFactory.getLogger("logservice.store.ChunkMerger");
+    
     private LogService m_logService;
     private Tenant m_tenant;
     private String m_application;
@@ -30,6 +36,7 @@ public class ChunkMerger {
     public ChunkWriter getWriter() { return m_writer; }
     
     public byte[] mergeChunks(List<ChunkInfo> infos) {
+        Timer t = new Timer();
         int size = 0;
         int[] docOffsets = new int[infos.size()];
         for(int i = 0; i < infos.size(); i++) {
@@ -42,10 +49,11 @@ public class ChunkMerger {
         
         m_writer.create(size);
         
+        List<byte[]> datas = m_logService.readChunks(m_tenant, m_application, m_table, infos);
+        
         for(int segment = 0; segment < infos.size(); segment++) {
-            ChunkInfo info = infos.get(segment);
             int docOffset = docOffsets[segment];
-            m_logService.readChunk(m_tenant, m_application, m_table, info, reader);
+            reader.read(datas.get(segment));
             for(int doc = 0; doc < reader.size(); doc++) {
                 m_writer.setTimestamp(docOffset + doc, reader.getTimestamp(doc));
             }
@@ -63,6 +71,9 @@ public class ChunkMerger {
             
         }
 
-        return m_writer.getData();
+        byte[] data = m_writer.getData();
+        LOG.info("Merged {} chunks ({} records) in {}/{}/{} in {}",
+                new Object[] {infos.size(), size, m_application, m_table, infos.get(0).getPartition(), t});
+        return data; 
     }
 }

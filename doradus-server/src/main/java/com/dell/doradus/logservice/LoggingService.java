@@ -70,8 +70,8 @@ public class LoggingService extends StorageService {
     public static class UpdateCmd extends ReaderCallback {
         @Override public RESTResponse invokeStreamIn(Reader reader) {
             Utils.require(reader != null, "This command requires an input entity");
-            ApplicationDefinition appDef = m_request.getAppDef();
-            TableDefinition tableDef = m_request.getTableDef(appDef);
+            String application = m_request.getVariable("application");
+            String table = m_request.getVariable("table");
             Tenant tenant = m_request.getTenant();
             
             OlapBatch batch = null;
@@ -82,7 +82,7 @@ public class LoggingService extends StorageService {
                 batch = OlapBatch.fromUNode(rootNode);
             }
             
-            LoggingService.instance().m_logService.addBatch(tenant, appDef.getAppName(), tableDef.getTableName(), batch);
+            LoggingService.instance().m_logService.addBatch(tenant, application, table, batch);
             return new RESTResponse(HttpCode.OK,
                                     new BatchResult().toDoc().toString(m_request.getOutputContentType()),
                                     m_request.getOutputContentType());
