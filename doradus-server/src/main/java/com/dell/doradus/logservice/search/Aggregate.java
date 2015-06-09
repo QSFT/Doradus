@@ -1,4 +1,4 @@
-package com.dell.doradus.logservice;
+package com.dell.doradus.logservice.search;
 
 import java.util.ArrayList;
 

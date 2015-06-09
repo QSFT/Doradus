@@ -1,4 +1,4 @@
-package com.dell.doradus.logservice;
+package com.dell.doradus.logservice.search;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -6,6 +6,7 @@ import java.util.TimeZone;
 import java.util.regex.Pattern;
 
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.logservice.ChunkReader;
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.search.query.AllQuery;
 import com.dell.doradus.search.query.AndQuery;

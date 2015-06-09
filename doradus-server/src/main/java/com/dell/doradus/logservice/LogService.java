@@ -9,6 +9,9 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.logservice.search.Aggregate;
+import com.dell.doradus.logservice.search.QueryFilter;
+import com.dell.doradus.logservice.search.Searcher;
 import com.dell.doradus.logservice.store.ChunkWriter;
 import com.dell.doradus.olap.OlapBatch;
 import com.dell.doradus.olap.aggregate.AggregationResult;
