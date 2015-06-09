@@ -24,11 +24,19 @@ import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.OlapAggregate;
 
 public class AggregateResultConverter {
-	public static AggregateResult create(AggregationResult result, OlapAggregate aggregate) {
+
+    public static AggregateResult create(AggregationResult result, OlapAggregate aggregate) {
+        String a_metrics = aggregate.getMetrics();
+        String a_query = aggregate.getQuery();
+        String a_fields = aggregate.getFields();
+        return create(result, a_metrics, a_query, a_fields);
+    }
+    
+    public static AggregateResult create(AggregationResult result, String a_metrics, String a_query, String a_fields) {
 		AggregateResult aggResult = new AggregateResult();
-		aggResult.setMetricParam(aggregate.getMetrics());
-		aggResult.setQueryParam(aggregate.getQuery());
-		aggResult.setGroupingParam(aggregate.getFields());
+		aggResult.setMetricParam(a_metrics);
+		aggResult.setQueryParam(a_query);
+		aggResult.setGroupingParam(a_fields);
 		aggResult.setTotalObjects(result.documentsCount);
 		
 		if(result.summary == null) {
@@ -38,19 +46,19 @@ public class AggregateResultConverter {
 		
 		int metricsCount = result.summary.metricSet.values.length;
 		
-		List<String> metricValues = parseMetrics(aggregate.getMetrics());
+		List<String> metricValues = parseMetrics(a_metrics);
 		Utils.require(metricValues.size() == metricsCount, "Unexpected metrics count");
 		
-		if(metricsCount == 1 && aggregate.getFields() == null) {
+		if(metricsCount == 1 && a_fields == null) {
 			aggResult.setGlobalValue(result.summary.metricSet.values[0].toString());
 			return aggResult;
 		}
 		
-		List<String> groupNames = parseAggregationGroups(aggregate.getFields());
+		List<String> groupNames = parseAggregationGroups(a_fields);
 		
 		for(int i = 0; i < metricsCount; i++) {
 			AggregateResult.AggGroupSet groupSet = aggResult.addGroupSet();
-			groupSet.setGroupingParam(aggregate.getFields());
+			groupSet.setGroupingParam(a_fields);
 			groupSet.setMetricParam(metricValues.get(i).trim());
 			groupSet.setGroupsetValue(result.summary.metricSet.values[i].toString());
 			

@@ -20,6 +20,7 @@ import java.io.Reader;
 import java.util.Arrays;
 import java.util.List;
 
+import com.dell.doradus.common.AggregateResult;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.BatchResult;
 import com.dell.doradus.common.CommonDefs;
@@ -29,6 +30,7 @@ import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.OlapBatch;
+import com.dell.doradus.olap.aggregate.AggregateResultConverter;
 import com.dell.doradus.olap.aggregate.AggregationResult;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.StorageService;
@@ -111,7 +113,8 @@ public class LoggingService extends StorageService {
             String params = m_request.getVariable("params");    // leave encoded
             LogAggregate logAggregate = new LogAggregate(params);
             AggregationResult result = LoggingService.instance().m_logService.aggregate(tenant, appDef.getAppName(), tableDef.getTableName(), logAggregate);
-            return result.toUNode();
+            AggregateResult aresult = AggregateResultConverter.create(result, "COUNT(*)", logAggregate.getQuery(), logAggregate.getFields());
+            return aresult.toDoc();
         }
     }
     
