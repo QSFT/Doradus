@@ -17,6 +17,7 @@
 package com.dell.doradus.core;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
@@ -44,7 +45,7 @@ public class GetConfigCmd extends UNodeOutCallback {
 	            cmdlineArgsNode.addValueNode(name, value, "arg");
 	        }
         }
-        Map<String, Object> serverConfigMap = ServerConfig.getInstance().toMap();
+        Map<String, Object> serverConfigMap = new TreeMap<>(ServerConfig.getInstance().toMap());
         if (serverConfigMap != null) { 
 	        UNode propsNode = rootNode.addMapNode("server-params");
 	        for (String key : serverConfigMap.keySet()) {

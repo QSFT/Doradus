@@ -18,7 +18,9 @@ package com.dell.doradus.core;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -222,11 +224,15 @@ public final class DoradusServer {
  			git = Git.open(new File("../.git"));
  			DescribeCommand cmd = git.describe();
  			version = cmd.call();		 
- 			m_logger.info("\nDoradus version found from git repo", version);
+ 			m_logger.info("Doradus version found from git repo", version);
  		} catch (Throwable e) {
  			//if not found, reading from local file
- 			version = getVersionFromVerFile();
- 			m_logger.info("\nDoradus version found from doradus.ver file", version);
+ 			try {
+				version = getVersionFromVerFile();
+	 			m_logger.info("Doradus version found from doradus.ver file", version);
+			} catch (IOException e1) {
+				version = null;
+			}
  		}
  		return version;
  	}
@@ -365,20 +371,13 @@ public final class DoradusServer {
     }   // start
     
     // Get Version from local file
-	private String getVersionFromVerFile() {
-		StringBuffer sb = new StringBuffer();
-		BufferedReader br;
-		try {
-			br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/" + VERSION_FILE), "UTF-8"));
-			for (int c = br.read(); c != -1; c = br.read()) {
-				sb.append((char)c);
-			}
-			return sb.toString();
-		} catch (Exception e) {
-			m_logger.info("Error reading ver file " + e.getMessage());
-			return null;
-		}
+	private String getVersionFromVerFile() throws IOException {
 		
+		//declared in a try-with-resource statement, it will be closed regardless of it completes normally or not
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/" + VERSION_FILE), "UTF-8"))) {
+			return br.readLine();
+		}
+
 	}
 
 	// Start all registered services.
