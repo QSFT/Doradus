@@ -12,7 +12,8 @@ import com.dell.doradus.common.Utils;
 import com.dell.doradus.logservice.search.Aggregate;
 import com.dell.doradus.logservice.search.QueryFilter;
 import com.dell.doradus.logservice.search.Searcher;
-import com.dell.doradus.logservice.store.ChunkWriter;
+import com.dell.doradus.logservice.store.BatchWriter;
+import com.dell.doradus.logservice.store.ChunkMerger;
 import com.dell.doradus.olap.OlapBatch;
 import com.dell.doradus.olap.aggregate.AggregationResult;
 import com.dell.doradus.olap.aggregate.MetricValueCount;
@@ -58,7 +59,7 @@ public class LogService {
         int size = batch.size();
         if(size == 0) return;
         int start = 0;
-        ChunkWriter writer = new ChunkWriter();
+        BatchWriter writer = new BatchWriter();
         DBTransaction transaction = DBService.instance().startTransaction(tenant);
         while(start < size) {
             String day = batch.get(start).getId().substring(0, 10);
@@ -72,7 +73,7 @@ public class LogService {
             String partition = day.replace("-", "");
             String uuid = Utils.getUniqueId();
             ChunkInfo chunkInfo = new ChunkInfo();
-            chunkInfo.set(partition, uuid, writer);
+            chunkInfo.set(partition, uuid, writer.getWriter());
             transaction.addColumn(store, "partitions", partition, "");
             transaction.addColumn(store, "partitions_" + partition, uuid, chunkInfo.getByteData());
             for(BSTR field: writer.getFields()) {
@@ -82,6 +83,74 @@ public class LogService {
             
             
             start = end;
+        }
+        DBService.instance().commit(transaction);
+    }
+    
+    public void deleteOldSegments(Tenant tenant, String application, String table, String partition, long removeBeforeTimestamp) {
+        String store = application + "_" + table;
+        Iterator<DColumn> it = DBService.instance().getAllColumns(tenant, store, "partitions_" + partition);
+        if(it == null) return;
+        ChunkInfo info = new ChunkInfo();
+        while(it.hasNext()) {
+            DColumn c = it.next();
+            info.set(partition, c.getName(), c.getRawValue());
+            if(info.getMaxTimestamp() >= removeBeforeTimestamp) continue;
+            DBTransaction transaction = DBService.instance().startTransaction(tenant);
+            transaction.deleteColumn(store, "partitions_" + partition, info.getChunkId());
+            transaction.deleteColumn(store, partition, info.getChunkId());
+            DBService.instance().commit(transaction);
+        }
+    }
+    
+
+    public void mergePartition(Tenant tenant, String application, String table, String partition) {
+        final int MERGE_SEGMENTS = 8192;
+        final int MIN_MERGE_DOCS = 8192;
+        final int MAX_MERGE_DOCS = 65536;
+        
+        String store = application + "_" + table;
+        Iterator<DColumn> it = DBService.instance().getAllColumns(tenant, store, "partitions_" + partition);
+        if(it == null) return;
+        List<ChunkInfo> infos = new ArrayList<ChunkInfo>(MERGE_SEGMENTS);
+        int totalSize = 0;
+        ChunkInfo info = new ChunkInfo();
+        ChunkMerger merger = null;
+        while(it.hasNext()) {
+            DColumn c = it.next();
+            info.set(partition, c.getName(), c.getRawValue());
+            int eventsCount = info.getEventsCount();
+            if(eventsCount > MIN_MERGE_DOCS) continue;
+            if(totalSize + eventsCount > MAX_MERGE_DOCS || infos.size() == MAX_MERGE_DOCS) {
+                if(merger == null) merger = new ChunkMerger(this, tenant, application, table);
+                mergeChunks(infos, merger);
+                infos.clear();
+                totalSize = 0;
+            }
+            infos.add(new ChunkInfo(info));
+            totalSize += eventsCount;
+        }
+        if(totalSize >= MIN_MERGE_DOCS) {
+            if(merger == null) merger = new ChunkMerger(this, tenant, application, table);
+            mergeChunks(infos, merger);
+            infos.clear();
+            totalSize = 0;
+        }
+    }
+    
+    private void mergeChunks(List<ChunkInfo> infos, ChunkMerger merger) {
+        byte[] data = merger.mergeChunks(infos);
+        String store = merger.getApplication() + "_" + merger.getTable();
+        String partition = infos.get(0).getPartition();
+        String uuid = Utils.getUniqueId();
+        ChunkInfo chunkInfo = new ChunkInfo();
+        chunkInfo.set(partition, uuid, merger.getWriter());
+        DBTransaction transaction = DBService.instance().startTransaction(merger.getTenant());
+        transaction.addColumn(store, "partitions_" + partition, uuid, chunkInfo.getByteData());
+        transaction.addColumn(store, partition, uuid, data);
+        for(ChunkInfo info: infos) {
+            transaction.deleteColumn(store, "partitions_" + partition, info.getChunkId());
+            transaction.deleteColumn(store, partition, info.getChunkId());
         }
         DBService.instance().commit(transaction);
     }

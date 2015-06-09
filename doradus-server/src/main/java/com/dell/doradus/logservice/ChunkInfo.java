@@ -13,6 +13,14 @@ public class ChunkInfo {
 
     public ChunkInfo() { }
 
+    public ChunkInfo(ChunkInfo other) {
+        m_partition = other.m_partition;
+        m_chunkId = other.m_chunkId;
+        m_eventsCount = other.m_eventsCount;
+        m_minTimestamp = other.m_minTimestamp;
+        m_maxTimestamp = other.m_maxTimestamp;
+    }
+    
     public String getPartition() { return m_partition; }
     public String getChunkId() { return m_chunkId; }
     public int getEventsCount() { return m_eventsCount; }

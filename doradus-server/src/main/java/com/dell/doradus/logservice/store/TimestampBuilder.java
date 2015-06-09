@@ -16,7 +16,6 @@
 
 package com.dell.doradus.logservice.store;
 
-import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.collections.MemoryStream;
 
 public class TimestampBuilder {
@@ -26,11 +25,10 @@ public class TimestampBuilder {
 	    m_timestamps = new long[size];
 	}
 	
-	public void add(int doc, String timestamp) {
-	    long ts = Utils.parseDate(timestamp).getTimeInMillis();
-		m_timestamps[doc] = ts;
-	}
-
+    public void add(int doc, long timestamp) {
+        m_timestamps[doc] = timestamp;
+    }
+	
 	public void flush(MemoryStream output, Temp temp) {
 	    long last = 0;
 	    MemoryStream s_st = temp.getStream(0);
