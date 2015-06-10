@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.logservice.search.Aggregate;
@@ -218,13 +216,13 @@ public class LogService {
         
         Query query = DoradusQueryBuilder.Build(logQuery.getQuery(), tableDef);
         if(logQuery.getContinueAfter() != null) {
-            throw new NotImplementedException();
+            throw new RuntimeException("Not implemented");
         }
         if(logQuery.getContinueAt() != null) {
-            throw new NotImplementedException();
+            throw new RuntimeException("Not implemented");
         }
         if(logQuery.getSkip() > 0) {
-            throw new NotImplementedException();
+            throw new RuntimeException("Not implemented");
         }
         int size = logQuery.getPageSizeWithSkip();
         FieldSet fieldSet = new FieldSet(tableDef, logQuery.getFields());

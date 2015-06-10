@@ -74,7 +74,7 @@
 
         <javac srcdir="${common.src.dir}"
               destdir="${common.bin.dir}"
-              verbose="yes" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
+              verbose="no" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
             <classpath>
                 <fileset dir="${common.lib.dir}" includes="**/*.jar" />
             </classpath>
@@ -128,7 +128,7 @@
 
         <javac srcdir="${jettywebserver.src.dir}"
               destdir="${jettywebserver.bin.dir}"
-              verbose="yes" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
+              verbose="no" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
             <classpath>
                 <fileset dir="${jettywebserver.lib.dir}" includes="**/*.jar" />
                 <fileset dir="${server.lib.dir}" includes="**/*.jar" />
@@ -204,6 +204,9 @@
 		<get dest="${server.lib.dir}">
 			<url url="http://repo1.maven.org/maven2/org/xerial/snappy/snappy-java/1.1.1-M2/snappy-java-1.1.1-M2.jar"/>
 		</get>
+		<get dest="${server.lib.dir}">
+			<url url="http://repo1.maven.org/maven2/org/eclipse/jgit/org.eclipse.jgit/4.0.0.201506020755-rc3/org.eclipse.jgit-4.0.0.201506020755-rc3.jar"/>
+		</get>
 	</target>
 	
 	<target name="ServerCompile" depends="CommonJar,ServerLoadLibs">
@@ -213,7 +216,7 @@
         	
         <javac srcdir="${server.src.dir}"
               destdir="${server.bin.dir}"
-              verbose="yes" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
+              verbose="no" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
             <classpath>
                 <fileset dir="${server.lib.dir}" includes="**/*.jar" />
                 <fileset dir="${common.lib.dir}" includes="**/*.jar" />
@@ -334,7 +337,7 @@
 		
         <javac srcdir="${client.src.dir}"
               destdir="${client.bin.dir}"
-              verbose="yes" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
+              verbose="no" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
             <classpath>
                 <fileset dir="${client.lib.dir}" includes="**/*.jar" />
                 <fileset dir="${common.lib.dir}" includes="**/*.jar" />
@@ -443,7 +446,7 @@
 		
         <javac srcdir="${test-processor.src.dir}"
               destdir="${test-processor.bin.dir}"
-              verbose="yes" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
+              verbose="no" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
             <classpath>
                 <fileset dir="${test-processor.lib.dir}" includes="**/*.jar" />
                 <fileset dir="${common.lib.dir}"         includes="**/*.jar" />
