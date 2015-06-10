@@ -82,7 +82,7 @@ public final class DoradusServer {
         
     });
 
-	private static final String VERSION_FILE = "doradus.ver";
+    private static final String VERSION_FILE = "doradus.ver";
     ///// Public methods
     
     /**
@@ -216,25 +216,25 @@ public final class DoradusServer {
      * @return version
      */
     public String getDoradusVersion() {
- 		Git git;
- 		String version;
- 		try {
- 			//first read from the local git repository
- 			git = Git.open(new File("../.git"));
- 			DescribeCommand cmd = git.describe();
- 			version = cmd.call();		 
- 			m_logger.info("Doradus version found from git repo", version);
- 		} catch (Throwable e) {
- 			//if not found, reading from local file
- 			try {
-				version = getVersionFromVerFile();
-	 			m_logger.info("Doradus version found from doradus.ver file", version);
-			} catch (IOException e1) {
-				version = null;
-			}
- 		}
- 		return version;
- 	}
+           Git git;
+        String version;
+        try {
+            //first read from the local git repository
+            git = Git.open(new File("../.git"));
+            DescribeCommand cmd = git.describe();
+            version = cmd.call();
+            m_logger.info("Doradus version found from git repo", version);
+        } catch (Throwable e) {
+            //if not found, reading from local file
+            try {
+                version = getVersionFromVerFile();
+                m_logger.info("Doradus version found from doradus.ver file", version);
+            } catch (IOException e1) {
+                version = null;
+            }
+        }
+        return version;
+    }
     
     ///// Private methods
 
@@ -370,16 +370,16 @@ public final class DoradusServer {
     }   // start
     
     // Get Version from local file
-	private String getVersionFromVerFile() throws IOException {
-		
-		//declared in a try-with-resource statement, it will be closed regardless of it completes normally or not
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/" + VERSION_FILE), "UTF-8"))) {
-			return br.readLine();
-		}
+    private String getVersionFromVerFile() throws IOException {
+        
+        //declared in a try-with-resource statement, it will be closed regardless of it completes normally or not
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/" + VERSION_FILE), "UTF-8"))) {
+            return br.readLine();
+        }
 
-	}
+    }
 
-	// Start all registered services.
+    // Start all registered services.
     private void startServices() {
         m_logger.info("Starting services: {}", simpleServiceNames(m_initializedServices));
         for (Service service : m_initializedServices) {
