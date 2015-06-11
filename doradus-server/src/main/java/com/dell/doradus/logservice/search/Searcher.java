@@ -17,6 +17,7 @@ import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.Tenant;
 
 public class Searcher {
+    
     public static TableDefinition getTableDef(Tenant tenant, String application, String table) {
         String store = application + "_" + table;
         ApplicationDefinition appDef = new ApplicationDefinition();
@@ -38,6 +39,15 @@ public class Searcher {
             }
         }
         return tableDef;
+    }
+    
+    public static void reversePartitions(List<String> partitions) {
+        for(int i = 0; i < partitions.size() / 2; i++) {
+            String p1 = partitions.get(i);
+            String p2 = partitions.get(partitions.size() - i - 1);
+            partitions.set(i, p2);
+            partitions.set(partitions.size() - i - 1, p1);
+        }
     }
     
     public static BSTR[] getFields(FieldSet fieldSet) {

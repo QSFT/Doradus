@@ -3,6 +3,7 @@ package com.dell.doradus.logservice;
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.search.FieldSet;
 import com.dell.doradus.search.SearchResult;
+import com.dell.doradus.search.aggregate.SortOrder;
 
 public class LogEntry implements Comparable<LogEntry> {
     private int m_doc;
@@ -18,6 +19,8 @@ public class LogEntry implements Comparable<LogEntry> {
         for(int i = 0; i < fields.length; i++) m_values[i] = new BSTR();
         m_bSortDescending = sortDescending;
     }
+    
+    public long getTimestamp() { return m_timestamp; }
     
     public void set(ChunkReader reader, int doc) {
         m_doc = doc;
@@ -41,9 +44,10 @@ public class LogEntry implements Comparable<LogEntry> {
         return c;
     }
     
-    public SearchResult createSearchResult(FieldSet fieldSet) {
+    public SearchResult createSearchResult(FieldSet fieldSet, SortOrder[] orders) {
         SearchResult result = new SearchResult();
         result.fieldSet = fieldSet;
+        result.orders = orders;
         String timestamp = m_formatter.format(m_timestamp);
         result.scalars.put("_ID", timestamp);
         result.scalars.put("Timestamp", timestamp);

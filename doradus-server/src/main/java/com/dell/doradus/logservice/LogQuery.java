@@ -29,6 +29,7 @@ public class LogQuery {
     private String m_sortOrder;				// &o parameter
     private String m_continueAt;			// &e parameter
     private String m_continueAfter;			// &g parameter
+    private boolean m_skipCount;            // &skipCount parameter
     
     public LogQuery(UNode searchNode) {
         assert searchNode != null;
@@ -40,6 +41,7 @@ public class LogQuery {
         m_sortOrder = parsedQuery.get("order");
         m_continueAt = parsedQuery.get("continue-at");
         m_continueAfter = parsedQuery.get("continue-after");
+        m_skipCount = parsedQuery.getBoolean("skipCount", false);
         parsedQuery.checkInvalidParameters();
         checkDefaults();
     }
@@ -54,6 +56,7 @@ public class LogQuery {
         m_sortOrder = parsedQuery.get("o");
         m_continueAt = parsedQuery.get("e");
         m_continueAfter = parsedQuery.get("g");
+        m_skipCount = parsedQuery.getBoolean("skipCount", false);
         parsedQuery.checkInvalidParameters();
         checkDefaults();
     }
@@ -65,6 +68,7 @@ public class LogQuery {
     public String getSortOrder() { return m_sortOrder; }
     public String getContinueAt() { return m_continueAt; }
     public String getContinueAfter() { return m_continueAfter; }
+    public boolean getSkipCount() { return m_skipCount; }
     
     public int getPageSizeWithSkip() {
     	if(m_pageSize < 0) return m_skip + ServerConfig.getInstance().search_default_page_size;
@@ -76,8 +80,7 @@ public class LogQuery {
     // Check required parameters and set default values.
     private void checkDefaults() {
         Utils.require(m_continueAt == null || m_continueAfter == null, "Both continue-at and continue-after parameters cannot be set");
-        Utils.require((m_continueAt == null && m_continueAfter == null) || m_sortOrder == null, "continuation oarameters cannot be set if sort order is set");
-        if (m_query == null) m_query = "*";
+        //Utils.require((m_continueAt == null && m_continueAfter == null) || m_sortOrder == null, "continuation parameters cannot be set if sort order is set");
         if (m_pageSize == -1) m_pageSize = ServerConfig.getInstance().search_default_page_size;
     }
     

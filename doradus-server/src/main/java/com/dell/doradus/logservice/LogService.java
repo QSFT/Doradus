@@ -9,7 +9,10 @@ import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.logservice.search.Aggregate;
 import com.dell.doradus.logservice.search.QueryFilter;
+import com.dell.doradus.logservice.search.SearchCollector;
+import com.dell.doradus.logservice.search.SearchRequest;
 import com.dell.doradus.logservice.search.Searcher;
+import com.dell.doradus.logservice.search.SortedChunkIterable;
 import com.dell.doradus.logservice.store.BatchWriter;
 import com.dell.doradus.logservice.store.ChunkMerger;
 import com.dell.doradus.olap.OlapBatch;
@@ -19,13 +22,9 @@ import com.dell.doradus.olap.aggregate.MetricValueSet;
 import com.dell.doradus.olap.collections.strings.BstrSet;
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.store.IntList;
-import com.dell.doradus.search.FieldSet;
 import com.dell.doradus.search.SearchResultList;
-import com.dell.doradus.search.aggregate.SortOrder;
-import com.dell.doradus.search.parser.AggregationQueryBuilder;
 import com.dell.doradus.search.parser.DoradusQueryBuilder;
 import com.dell.doradus.search.query.Query;
-import com.dell.doradus.search.util.HeapList;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
@@ -165,12 +164,20 @@ public class LogService {
         return partitions;
     }
 
-    public List<String> getPartitions(Tenant tenant, String application, String table, String minDate, String maxDate) {
+    public List<String> getPartitions(Tenant tenant, String application, String table, long minTimestamp, long maxTimestamp) {
+        DateFormatter fmt = new DateFormatter();
+        long oneDayMillis = 1000 * 3600 * 24;
+        String minDate = minTimestamp == 0 ? null : fmt.format(minTimestamp);
+        String maxDate = maxTimestamp == Long.MAX_VALUE ? null : fmt.format(maxTimestamp + oneDayMillis);
+        String minPartition = minDate == null ? "" : minDate.substring(0, 10).replace("-", "");
+        String maxPartition = maxDate == null ? "z" : maxDate.substring(0, 10).replace("-", "");
+        return getPartitions(tenant, application, table, minPartition, maxPartition);
+    }
+    
+    public List<String> getPartitions(Tenant tenant, String application, String table, String fromPartition, String toPartition) {
         String store = application + "_" + table;
-        if(minDate != null) minDate = minDate.substring(0, 10).replace("-", "");
-        if(maxDate != null) maxDate = maxDate.substring(0, 10).replace("-", "") + '\0';
         List<String> partitions = new ArrayList<>();
-        Iterator<DColumn> it = DBService.instance().getColumnSlice(tenant, store, "partitions", minDate, maxDate);
+        Iterator<DColumn> it = DBService.instance().getColumnSlice(tenant, store, "partitions", fromPartition, toPartition);
         if(it == null) return partitions;
         while(it.hasNext()) {
             DColumn c = it.next();
@@ -212,51 +219,48 @@ public class LogService {
     
     
     public SearchResultList search(Tenant tenant, String application, String table, LogQuery logQuery) {
-        TableDefinition tableDef = Searcher.getTableDef(tenant, application, table);
-        
-        Query query = DoradusQueryBuilder.Build(logQuery.getQuery(), tableDef);
-        if(logQuery.getContinueAfter() != null) {
-            throw new RuntimeException("Not implemented");
-        }
-        if(logQuery.getContinueAt() != null) {
-            throw new RuntimeException("Not implemented");
-        }
-        if(logQuery.getSkip() > 0) {
-            throw new RuntimeException("Not implemented");
-        }
-        int size = logQuery.getPageSizeWithSkip();
-        FieldSet fieldSet = new FieldSet(tableDef, logQuery.getFields());
-        fieldSet.expand();
-        BSTR[] fields = Searcher.getFields(fieldSet);
-        SortOrder[] sortOrders = AggregationQueryBuilder.BuildSortOrders(logQuery.getSortOrder(), tableDef);
-        boolean bSortDescending = Searcher.isSortDescending(sortOrders);
+        SearchRequest request = new SearchRequest(tenant, application, table, logQuery);
+        SearchCollector collector = new SearchCollector(request.getCount());
         LogEntry current = null;
-        HeapList<LogEntry> heap = new HeapList<>(size);
-        int count = 0;
-        List<String> partitions = getPartitions(tenant, application, table);
+        List<String> partitions = getPartitions(tenant, application, table, request.getMinTimestamp(), request.getMaxTimestamp());
+        //optimization: inverse partitions
+        if(request.getSkipCount() && request.getSortDescending()) {
+            Searcher.reversePartitions(partitions);
+        }
         ChunkReader chunkReader = new ChunkReader();
+        int documentsCount = 0;
         for(String partition: partitions) {
-            for(ChunkInfo chunkInfo: getChunks(tenant, application, table, partition)) {
+            Iterable<ChunkInfo> chunks = getChunks(tenant, application, table, partition);
+            if(request.getSkipCount()) chunks = new SortedChunkIterable(chunks, request.getSortDescending());
+            for(ChunkInfo chunkInfo: chunks) {
+                if(request.getSkipCount() && collector.size() >= request.getCount()) {
+                    if(request.getSortDescending()) {
+                        if(chunkInfo.getMaxTimestamp() <= collector.getMinTimestamp()) continue;
+                    } else {
+                        if(chunkInfo.getMinTimestamp() >= collector.getMaxTimestamp()) continue;
+                    }
+                }
                 readChunk(tenant, application, table, chunkInfo, chunkReader);
                 for(int i = 0; i < chunkReader.size(); i++) {
-                    if(!QueryFilter.filter(query, chunkReader, i)) continue; 
-                    count++;
-                    if(current == null) {
-                        current = new LogEntry(fields, bSortDescending);
-                    }
+                    if(chunkReader.getTimestamp(i) < request.getMinTimestamp()) continue;
+                    if(chunkReader.getTimestamp(i) >= request.getMaxTimestamp()) continue;
+                    if(!QueryFilter.filter(request.getQuery(), chunkReader, i)) continue; 
+                    if(current == null) current = new LogEntry(request.getFields(), request.getSortDescending());
                     current.set(chunkReader, i);
-                    current = heap.AddEx(current);
+                    current = collector.add(current);
+                    documentsCount++;
                 }
             }
         }
         
-        SearchResultList list = new SearchResultList();
-        list.documentsCount = count;
-        LogEntry[] entries = heap.GetValues(LogEntry.class);
-        for(LogEntry e: entries) {
-            list.results.add(e.createSearchResult(fieldSet));
+        SearchResultList list = collector.getSearchResult(request.getFieldSet(), request.getSortOrders());
+        if(!request.getSkipCount()) list.documentsCount = documentsCount;
+        if(list.results.size() == request.getCount()) list.continuation_token = list.results.get(list.results.size() - 1).id();
+        if(request.getSkip() > 0) {
+            int size = list.results.size();
+            if(request.getSkip() >= size) list.results.clear();
+            else list.results = new ArrayList<>(list.results.subList(request.getSkip(), size));
         }
-        
         return list;
     }
     

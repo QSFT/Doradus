@@ -65,6 +65,10 @@ public class HeapList<T> {
     public int getCount() {
         return m_Count;
     }
+    
+    //get current array
+    public T[] getArray() { return m_Array; }
+    
     //returns the capacity of the list
     public int getCapacity() {
         return m_Capacity;

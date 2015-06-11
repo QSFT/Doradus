@@ -1,7 +1,5 @@
 package com.dell.doradus.logservice;
 
-import java.util.Iterator;
-
 import com.dell.doradus.service.db.Tenant;
 
 public class ChunkIterable implements Iterable<ChunkInfo> {
@@ -15,7 +13,7 @@ public class ChunkIterable implements Iterable<ChunkInfo> {
         m_partition = partition;
     }
 
-    @Override public Iterator<ChunkInfo> iterator() {
+    @Override public ChunkIterator iterator() {
         return new ChunkIterator(m_tenant, m_store, m_partition);
     }
     
