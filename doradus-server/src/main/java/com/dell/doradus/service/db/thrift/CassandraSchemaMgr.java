@@ -19,12 +19,9 @@ package com.dell.doradus.service.db.thrift;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.apache.cassandra.thrift.Cassandra;
 import org.apache.cassandra.thrift.CfDef;
 import org.apache.cassandra.thrift.KsDef;
 import org.slf4j.Logger;
@@ -33,17 +30,8 @@ import org.slf4j.LoggerFactory;
 import com.dell.doradus.core.ServerConfig;
 
 /**
- * Provides methods for accessing and managing Cassandra schemas: creating keyspaces,
- * creating and deleting ColumnFamilies, single- and multi-gets, updates, etc. This class
- * should be used in the following sequence:
- * <ul>
- * <li>Create a {@link CassandraSchemaMgr} object with a Cassandra.Client connection open
- *     to the database.</li>
- * <li>Perform the desired schema operations, taking care not to use the Cassandra.Client
- *     for anything else.</li>
- * <li>Discard the {@link CassandraSchemaMgr} object so the Cassandra.Client can be used
- *     for other purposes.</li>
- * </ul>
+ * Provides static methods for accessing and managing Cassandra schemas: creating keyspaces,
+ * creating and deleting ColumnFamilies, single- and multi-gets, updates, etc.
  */
 public class CassandraSchemaMgr {
     private static final String DEFAULT_KS_STRATEGY_CLASS = "SimpleStrategy";
@@ -51,31 +39,23 @@ public class CassandraSchemaMgr {
     private static final List<CfDef> DEFAULT_KS_CF_DEFS = new ArrayList<CfDef>();
     private static final boolean DEFAULT_KS_DURABLE_WRITES = true;
     
-    private final Cassandra.Client m_client;
-    private final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
+    private static final Logger m_logger = LoggerFactory.getLogger(CassandraSchemaMgr.class.getSimpleName());
 
-    /**
-     * Create an object uses the given connection to perform schema operations. The given
-     * client connection should not be used for anything else until this object is
-     * discarded.
-     * 
-     * @param client    Client session connected to the Cassandra database.
-     */
-    public CassandraSchemaMgr(Cassandra.Client client) {
-        m_client = client;
-    }   // constructor
+    // Static methods only
+    private CassandraSchemaMgr() { }
 
     //----- Keyspace methods
 
     /**
-     * Get a list of all known keyspaces. This method can be used with any client session.
+     * Get a list of all known keyspaces. This method can be used with any DB connection.
      * 
-     * @return  List of all known keyspaces, empty if none.
+     * @param  dbConn   Database connection to use.
+     * @return          List of all known keyspaces, empty if none.
      */
-    public Collection<String> getKeyspaces() {
+    public static Collection<String> getKeyspaces(DBConn dbConn) {
         List<String> result = new ArrayList<>();
         try {
-            for (KsDef ksDef : m_client.describe_keyspaces()) {
+            for (KsDef ksDef : dbConn.getClientSession().describe_keyspaces()) {
                 result.add(ksDef.getName());
             }
         } catch (Exception e) {
@@ -88,18 +68,19 @@ public class CassandraSchemaMgr {
 
     /**
      * Create a new keyspace with the given name and optional options. This method should
-     * be used with a no-keyspace client session.
+     * be used with a no-keyspace DB connection.
      * 
+     * @param dbConn    Database connection to use.
      * @param keyspace  Name of new keyspace.
      * @param options   Optional map of new keyspace options, which override ks_defaults
      *                  in the configuration file.
      */
-    public void createKeyspace(String keyspace, Map<String, String> options) {
+    public static void createKeyspace(DBConn dbConn, String keyspace, Map<String, String> options) {
         m_logger.info("Creating Keyspace '{}'", keyspace);
         try {
             KsDef ksDef = setKeySpaceOptions(keyspace);
             overrideKSOptions(ksDef, options);
-            m_client.system_add_keyspace(ksDef);
+            dbConn.getClientSession().system_add_keyspace(ksDef);
         } catch (Exception ex) {
             String errMsg = "Failed to create Keyspace '" + keyspace + "'"; 
             m_logger.error(errMsg, ex);
@@ -109,14 +90,15 @@ public class CassandraSchemaMgr {
     
     /**
      * Return true if a keyspace with the given name exists. This method can be used with
-     * any client session.
+     * any DB connection.
      * 
+     * @param dbConn    Database connection to use.
      * @param keyspace  Keyspace name.
      * @return          True if it exists.
      */
-    public boolean keyspaceExists(String keyspace) {
+    public static boolean keyspaceExists(DBConn dbConn, String keyspace) {
         try {
-            m_client.describe_keyspace(keyspace);
+            dbConn.getClientSession().describe_keyspace(keyspace);
             return true;
         } catch (Exception e) {
             return false;   // Notfound
@@ -124,14 +106,15 @@ public class CassandraSchemaMgr {
     }   // keyspaceExists
 
     /**
-     * Delete the keyspace with the given name. This method can use any client session.
+     * Delete the keyspace with the given name. This method can use any DB connection.
      * 
+     * @param dbConn    Database connection to use.
      * @param keyspace  Name of keyspace to drop.
      */
-    public void dropKeyspace(String keyspace) {
+    public static void dropKeyspace(DBConn dbConn, String keyspace) {
         m_logger.info("Deleting Keyspace '{}'", keyspace);
         try {
-            m_client.system_drop_keyspace(keyspace);
+            dbConn.getClientSession().system_drop_keyspace(keyspace);
         } catch (Exception ex) {
             String errMsg = "Failed to delete Keyspace '" + keyspace + "'"; 
             m_logger.error(errMsg, ex);
@@ -145,13 +128,14 @@ public class CassandraSchemaMgr {
      * Create a new ColumnFamily with the given parameters. If the new CF is
      * created successfully, wait for all nodes in the cluster to receive the schema
      * change before returning. An exception is thrown if the CF create fails. The
-     * current client session can be connected to any keyspace.
+     * current DB connection can be connected to any keyspace.
      * 
+     * @param dbConn        Database connection to use.
      * @param keyspace      Keyspace that owns new CF.
      * @param cfName        name of new CF.
      * @param bBinaryValues True if column values shoud be binary.
      */
-    public void createColumnFamily(String keyspace, String cfName, boolean bBinaryValues) {
+    public static void createColumnFamily(DBConn dbConn, String keyspace, String cfName, boolean bBinaryValues) {
         m_logger.info("Creating ColumnFamily: {}:{}", keyspace, cfName);
         
         CfDef cfDef = new CfDef();
@@ -189,7 +173,8 @@ public class CassandraSchemaMgr {
         
         // Create the column familiy and wait for all nodes to agree.
         try {
-            validateSchema(m_client.system_add_column_family(cfDef));
+            String schemaVersion = dbConn.getClientSession().system_add_column_family(cfDef);
+            validateSchema(dbConn, schemaVersion);
         } catch (Exception ex) {
             throw new RuntimeException("ColumnFamily creation failed", ex);
         }
@@ -199,13 +184,14 @@ public class CassandraSchemaMgr {
      * Return true if the given store name currently exists in the given keyspace. This
      * method can be used with a connection connected to any keyspace.
      * 
+     * @param dbConn    Database connection to use.
      * @param cfName    Candidate ColumnFamily name.
      * @return          True if the CF exists in the database.
      */
-    public boolean columnFamilyExists(String keyspace, String cfName) {
+    public static boolean columnFamilyExists(DBConn dbConn, String keyspace, String cfName) {
         KsDef ksDef = null;
         try {
-            ksDef = m_client.describe_keyspace(keyspace);
+            ksDef = dbConn.getClientSession().describe_keyspace(keyspace);
         } catch (Exception ex) {
             throw new RuntimeException("Failed to get keyspace definition for '" + keyspace + "'", ex);
         }
@@ -220,45 +206,25 @@ public class CassandraSchemaMgr {
     }   // columnFamilyExists
     
     /**
-     * Delete the column family with the given name. The current client session must
-     * be connected to the keyspace in which the CF is to be deleted.
+     * Delete the column family with the given name. The given DB connection must be
+     * connected to the keyspace in which the CF is to be deleted.
      * 
+     * @param dbConn    Database connection to use.
      * @param cfName    Name of CF to delete.
      */
-    public void deleteColumnFamily(String cfName) {
+    public static void deleteColumnFamily(DBConn dbConn, String cfName) {
         m_logger.info("Deleting ColumnFamily: {}", cfName);
         try {
-            m_client.system_drop_column_family(cfName);
+            dbConn.getClientSession().system_drop_column_family(cfName);
         } catch (Exception ex) {
             throw new RuntimeException("drop_column_family failed", ex);
         }
     }   // deleteColumnFamily
 
-    /**
-     * Get the ColumnFamily names that exist within the given keyspace. This method can
-     * be used with a client session connected to any keyspace.
-     * 
-     * @return  A collection of ColumnFamily belonging to the given keyspace.
-     */
-    public Collection<String> getColumnFamilies(String keyspace) {
-        KsDef ksDef = null;
-        try {
-            ksDef = m_client.describe_keyspace(keyspace);
-        } catch (Exception ex) {
-            throw new RuntimeException("Failed to get keyspace definition for '" + keyspace + "'", ex);
-        }
-        
-        Set<String> result = new HashSet<>();
-        for (CfDef cfDef : ksDef.getCf_defs()) {
-            result.add(cfDef.getName());
-        }
-        return result;
-    }   // getColumnFamilies
-    
     //----- Private methods
     
     // Build KsDef from configuration options and defaults.
-    private KsDef setKeySpaceOptions(String keyspace) {
+    private static KsDef setKeySpaceOptions(String keyspace) {
         KsDef ksDef = new KsDef();
         ksDef.setName(keyspace);
         Map<String, Object> ksOptions = ServerConfig.getInstance().ks_defaults;
@@ -301,7 +267,7 @@ public class CassandraSchemaMgr {
     }   // setKeySpaceOptions
 
     // Override KsDef options recognized in the given option map.
-    private void overrideKSOptions(KsDef ksDef, Map<String, String> options) {
+    private static void overrideKSOptions(KsDef ksDef, Map<String, String> options) {
         if (options != null) {
             String rfOpt = options.get("ReplicationFactor");
             if (rfOpt != null) {
@@ -313,14 +279,14 @@ public class CassandraSchemaMgr {
     }   // overrideKSOptions
 
     // Check that all Cassandra nodes are in agreement on the latest schema change.
-    private void validateSchema(String currentVersionId) {
+    private static void validateSchema(DBConn dbConn, String currentVersionId) {
         Map<String, List<String>> versions = null;
 
         long limit = System.currentTimeMillis() + 5000;
         boolean inAgreement = false;
         do {
             try {
-                versions = m_client.describe_schema_versions(); // getting schema version for nodes of the ring
+                versions = dbConn.getClientSession().describe_schema_versions(); // getting schema version for nodes of the ring
             } catch (Exception e) {
                 continue;
             }
@@ -334,7 +300,8 @@ public class CassandraSchemaMgr {
         } while (limit - System.currentTimeMillis() >= 0 && !inAgreement);
 
         if (!inAgreement) {
-            throw new RuntimeException("Cannot get agreement on Cassandra schema versions");
+            throw new RuntimeException("Cannot get agreement on Cassandra schema versions; " +
+                                       "target = " + currentVersionId + ", describe_schema_versions()=" + versions);
         }
     }   // validateSchema
 

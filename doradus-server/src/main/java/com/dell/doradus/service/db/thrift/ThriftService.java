@@ -50,6 +50,9 @@ public class ThriftService extends DBService {
     // Keyspace names to DBConn queue:
     private final Map<String, Queue<DBConn>> m_dbKeyspaceDBConns = new HashMap<>();
     
+    // Single-thread all schema access:
+    private static final Object g_schemaLock = new Object();
+
     private ThriftService() { }
 
     //----- Public Service methods
@@ -88,9 +91,10 @@ public class ThriftService extends DBService {
         // Use a temporary, no-keyspace session
         String keyspace = tenant.getKeyspace();
         try (DBConn dbConn = createAndConnectConn(null)) {
-            CassandraSchemaMgr schemaMgr = new CassandraSchemaMgr(dbConn.getClientSession());
-            if (!schemaMgr.keyspaceExists(keyspace)) {
-                schemaMgr.createKeyspace(keyspace, options);
+            synchronized (g_schemaLock) {
+                if (!CassandraSchemaMgr.keyspaceExists(dbConn, keyspace)) {
+                    CassandraSchemaMgr.createKeyspace(dbConn, keyspace, options);
+                }
             }
         }
     }   // createTenant
@@ -106,9 +110,10 @@ public class ThriftService extends DBService {
         // Use a temporary, no-keyspace session
         String keyspace = tenant.getKeyspace();
         try (DBConn dbConn = createAndConnectConn(null)) {
-            CassandraSchemaMgr schemaMgr = new CassandraSchemaMgr(dbConn.getClientSession());
-            if (!schemaMgr.keyspaceExists(keyspace)) {
-                schemaMgr.dropKeyspace(keyspace);
+            synchronized (g_schemaLock) {
+                if (!CassandraSchemaMgr.keyspaceExists(dbConn, keyspace)) {
+                    CassandraSchemaMgr.dropKeyspace(dbConn, keyspace);
+                }
             }
         }
     }   // dropTenant
@@ -134,11 +139,12 @@ public class ThriftService extends DBService {
         List<Tenant> tenantList = new ArrayList<>();
         // Use a temporary, no-keyspace session
         try (DBConn dbConn = createAndConnectConn(null)) {
-            CassandraSchemaMgr schemaMgr = new CassandraSchemaMgr(dbConn.getClientSession());
-            Collection<String> keyspaceList = schemaMgr.getKeyspaces();
-            for (String keyspace : keyspaceList) {
-                if (schemaMgr.columnFamilyExists(keyspace, SchemaService.APPS_STORE_NAME)) {
-                    tenantList.add(new Tenant(keyspace));
+            synchronized (g_schemaLock) {
+                Collection<String> keyspaceList = CassandraSchemaMgr.getKeyspaces(dbConn);
+                for (String keyspace : keyspaceList) {
+                    if (CassandraSchemaMgr.columnFamilyExists(dbConn, keyspace, SchemaService.APPS_STORE_NAME)) {
+                        tenantList.add(new Tenant(keyspace));
+                    }
                 }
             }
         }
@@ -152,10 +158,11 @@ public class ThriftService extends DBService {
         checkState();
         String keyspace = tenant.getKeyspace();
         DBConn dbConn = getDBConnection(keyspace);
-        try {   
-            CassandraSchemaMgr schemaMgr = new CassandraSchemaMgr(dbConn.getClientSession());
-            if (!schemaMgr.columnFamilyExists(keyspace, storeName)) {
-                schemaMgr.createColumnFamily(keyspace, storeName, bBinaryValues);
+        try {
+            synchronized (g_schemaLock) {
+                if (!CassandraSchemaMgr.columnFamilyExists(dbConn, keyspace, storeName)) {
+                    CassandraSchemaMgr.createColumnFamily(dbConn, keyspace, storeName, bBinaryValues);
+                }
             }
         } finally {
             returnDBConnection(dbConn);
@@ -168,9 +175,10 @@ public class ThriftService extends DBService {
         String keyspace = tenant.getKeyspace();
         DBConn dbConn = getDBConnection(keyspace);
         try {
-            CassandraSchemaMgr schemaMgr = new CassandraSchemaMgr(dbConn.getClientSession());
-            if (schemaMgr.columnFamilyExists(keyspace, storeName)) {
-                schemaMgr.deleteColumnFamily(storeName);
+            synchronized (g_schemaLock) {
+                if (CassandraSchemaMgr.columnFamilyExists(dbConn, keyspace, storeName)) {
+                    CassandraSchemaMgr.deleteColumnFamily(dbConn, storeName);
+                }
             }
         } finally {
             returnDBConnection(dbConn);
@@ -450,7 +458,7 @@ public class ThriftService extends DBService {
             // Create a no-keyspace connection and fetch all keyspaces to prove that the
             // cluster is really ready.
             try (DBConn dbConn = createAndConnectConn(null)) {
-                new CassandraSchemaMgr(dbConn.getClientSession()).getKeyspaces();
+                CassandraSchemaMgr.getKeyspaces(dbConn);
                 bSuccess = true;
             } catch (DBNotAvailableException ex) {
                 m_logger.info("Database is not reachable. Waiting to retry");
