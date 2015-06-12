@@ -18,7 +18,7 @@ public class DateFormatter {
         long day = timestamp - time;
         if(day != m_lastDay) {
             m_lastDay = day;
-            String date = Utils.formatDate(timestamp);
+            String date = Utils.formatDateUTC(timestamp);
             for(int i = 0; i < date.length(); i++) {
                 m_date[i] = date.charAt(i);
             }

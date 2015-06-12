@@ -1,6 +1,6 @@
 package com.dell.doradus.logservice.store;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,7 +16,7 @@ public class ChunkWriter {
     
     public ChunkWriter() {
         m_temp = new Temp();
-        m_fields = new HashMap<>();
+        m_fields = new LinkedHashMap<>();
         m_output = new MemoryStream();
     }
     

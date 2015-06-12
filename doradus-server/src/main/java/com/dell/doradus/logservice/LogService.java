@@ -225,7 +225,7 @@ public class LogService {
         List<String> partitions = getPartitions(tenant, application, table, request.getMinTimestamp(), request.getMaxTimestamp());
         //optimization: inverse partitions
         if(request.getSkipCount() && request.getSortDescending()) {
-            Searcher.reversePartitions(partitions);
+            Collections.reverse(partitions);
         }
         ChunkReader chunkReader = new ChunkReader();
         int documentsCount = 0;

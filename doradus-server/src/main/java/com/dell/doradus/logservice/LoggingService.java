@@ -18,13 +18,16 @@ package com.dell.doradus.logservice;
 
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.dell.doradus.common.AggregateResult;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.BatchResult;
 import com.dell.doradus.common.CommonDefs;
 import com.dell.doradus.common.HttpCode;
+import com.dell.doradus.common.HttpDefs;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
@@ -35,6 +38,7 @@ import com.dell.doradus.olap.aggregate.AggregationResult;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.StorageService;
 import com.dell.doradus.service.db.Tenant;
+import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.rest.ReaderCallback;
@@ -53,6 +57,9 @@ public class LoggingService extends StorageService {
         new RESTCommand("PUT  /{application}/{table}                        com.dell.doradus.logservice.LoggingService$UpdateCmd"),
         new RESTCommand("GET  /{application}/{table}/_query?{params}        com.dell.doradus.logservice.LoggingService$QueryCmd"),
         new RESTCommand("GET  /{application}/{table}/_aggregate?{params}    com.dell.doradus.logservice.LoggingService$AggregateCmd"),
+        
+        new RESTCommand("GET  /_lsapp           com.dell.doradus.logservice.LoggingService$LogServiceAppCmd"),
+        new RESTCommand("GET  /_lsapp?{params}  com.dell.doradus.logservice.LoggingService$LogServiceAppCmd"),
     });
 
     private LogService m_logService = new LogService();
@@ -115,6 +122,18 @@ public class LoggingService extends StorageService {
             AggregationResult result = LoggingService.instance().m_logService.aggregate(tenant, appDef.getAppName(), tableDef.getTableName(), logAggregate);
             AggregateResult aresult = AggregateResultConverter.create(result, "COUNT(*)", logAggregate.getQuery(), logAggregate.getFields());
             return aresult.toDoc();
+        }
+    }
+
+    // Command: GET /_logserviceapp/?{params}
+    public static class LogServiceAppCmd extends RESTCallback {
+        @Override public RESTResponse invoke() {
+            String params = m_request.getVariable("params");
+            Map<String, String> parameters = Utils.parseURIQuery(params);
+            String html = LogServiceApp.process(m_request.getTenant(), LoggingService.instance().m_logService, parameters);
+            Map<String, String> headers = new HashMap<String, String>();
+            headers.put(HttpDefs.CONTENT_TYPE, "text/html");
+            return new RESTResponse(HttpCode.OK, Utils.toBytes(html), headers);
         }
     }
     

@@ -74,11 +74,11 @@ public class SearchRequest {
         
         if(m_bSortDescending) {
             if(m_logQuery.getContinueAfter() != null) {
-                long time = Utils.parseDate(m_logQuery.getContinueAfter()).getTimeInMillis() - 1;
+                long time = Utils.parseDate(m_logQuery.getContinueAfter()).getTimeInMillis();
                 m_maxTimestamp = Math.min(m_maxTimestamp, time);
             }
             if(m_logQuery.getContinueAt() != null) {
-                long time = Utils.parseDate(m_logQuery.getContinueAt()).getTimeInMillis();
+                long time = Utils.parseDate(m_logQuery.getContinueAt()).getTimeInMillis() + 1;
                 m_maxTimestamp = Math.min(m_maxTimestamp, time);
             }
         } else {

@@ -41,15 +41,6 @@ public class Searcher {
         return tableDef;
     }
     
-    public static void reversePartitions(List<String> partitions) {
-        for(int i = 0; i < partitions.size() / 2; i++) {
-            String p1 = partitions.get(i);
-            String p2 = partitions.get(partitions.size() - i - 1);
-            partitions.set(i, p2);
-            partitions.set(partitions.size() - i - 1, p1);
-        }
-    }
-    
     public static BSTR[] getFields(FieldSet fieldSet) {
         List<BSTR> fields = new ArrayList<>(fieldSet.ScalarFields.size());
         for(String f: fieldSet.ScalarFields) {
