@@ -233,6 +233,8 @@ public class LogService {
             Iterable<ChunkInfo> chunks = getChunks(tenant, application, table, partition);
             if(request.getSkipCount()) chunks = new SortedChunkIterable(chunks, request.getSortDescending());
             for(ChunkInfo chunkInfo: chunks) {
+                if(chunkInfo.getMaxTimestamp() < request.getMinTimestamp()) continue;
+                if(chunkInfo.getMinTimestamp() >= request.getMaxTimestamp()) continue;
                 if(request.getSkipCount() && collector.size() >= request.getCount()) {
                     if(request.getSortDescending()) {
                         if(chunkInfo.getMaxTimestamp() <= collector.getMinTimestamp()) continue;

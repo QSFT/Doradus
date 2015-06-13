@@ -46,6 +46,9 @@ public class LogServiceApp {
 	private String getParam(String name) {
 		String value = m_parameters.get(name);
 		if("null".equals(value)) return null;
+		if(value != null) {
+		    value = value.replace("'", "%27");
+		}
 		return value;
 	}
 	
