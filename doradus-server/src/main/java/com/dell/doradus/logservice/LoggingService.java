@@ -17,7 +17,9 @@
 package com.dell.doradus.logservice;
 
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +46,7 @@ import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.rest.ReaderCallback;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.schema.SchemaService;
+import com.dell.doradus.service.taskmanager.Task;
 
 /**
  * {@link StorageService} implementation for the log service.
@@ -71,7 +74,17 @@ public class LoggingService extends StorageService {
         return INSTANCE;
     }
     
+    public LogService getLogService() { return m_logService; }
     //----- Command callbacks
+    
+    
+    @Override public Collection<Task> getAppTasks(ApplicationDefinition appDef) {
+        checkServiceState();
+        List<Task> appTasks = new ArrayList<>();
+        appTasks.add(new Task(appDef.getAppName(), null, "logs-aging", "1 DAY", LogServiceAgerTask.class));
+        appTasks.add(new Task(appDef.getAppName(), null, "logs-merging", "1 HOUR", LogServiceMergerTask.class));
+        return appTasks;
+    }   // getAppTasks
     
     // Commands: POST /{application}/{table} and PUT /{application}/{table} 
     public static class UpdateCmd extends ReaderCallback {
