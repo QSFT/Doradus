@@ -56,29 +56,29 @@
         <has_updates>true</has_updates>
         <docs>
             <doc>
-                <updated>true</updated>
                 <status>OK</status>
                 <field name="_ID">1001</field>
+                <updated>true</updated>
             </doc>
             <doc>
-                <updated>true</updated>
                 <status>OK</status>
                 <field name="_ID">1002</field>
+                <updated>true</updated>
             </doc>
             <doc>
-                <updated>true</updated>
                 <status>OK</status>
                 <field name="_ID">1003</field>
+                <updated>true</updated>
             </doc>
             <doc>
-                <updated>true</updated>
                 <status>OK</status>
                 <field name="_ID">1004</field>
+                <updated>true</updated>
             </doc>
             <doc>
-                <updated>true</updated>
                 <status>OK</status>
                 <field name="_ID">1005</field>
+                <updated>true</updated>
             </doc>
         </docs>
     </batch-result>
@@ -90,42 +90,42 @@
           "docs":[
              {
                 "doc":{
-                   "updated":"false",
                    "status":"OK",
-                   "comment":"No updates made",
-                   "_ID":"1001"
+                   "_ID":"1001",
+                   "updated":"false",
+                   "comment":"No updates made"
                 }
              },
              {
                 "doc":{
-                   "updated":"false",
                    "status":"OK",
-                   "comment":"No updates made",
-                   "_ID":"1002"
+                   "_ID":"1002",
+                   "updated":"false",
+                   "comment":"No updates made"
                 }
              },
              {
                 "doc":{
-                   "updated":"false",
                    "status":"OK",
-                   "comment":"No updates made",
-                   "_ID":"1003"
+                   "_ID":"1003",
+                   "updated":"false",
+                   "comment":"No updates made"
                 }
              },
              {
                 "doc":{
-                   "updated":"false",
                    "status":"OK",
-                   "comment":"No updates made",
-                   "_ID":"1004"
+                   "_ID":"1004",
+                   "updated":"false",
+                   "comment":"No updates made"
                 }
              },
              {
                 "doc":{
-                   "updated":"false",
                    "status":"OK",
-                   "comment":"No updates made",
-                   "_ID":"1005"
+                   "_ID":"1005",
+                   "updated":"false",
+                   "comment":"No updates made"
                 }
              }
           ]

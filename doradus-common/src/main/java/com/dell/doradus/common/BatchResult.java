@@ -17,7 +17,7 @@
 package com.dell.doradus.common;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +36,7 @@ public class BatchResult {
     private static final String HAS_UPDATES = "has_updates";
     
     // Overall batch fields (status, error, etc.)
-    private final Map<String, String> m_resultFields = new HashMap<String, String>();
+    private final Map<String, String> m_resultFields = new LinkedHashMap<String, String>();
     
     // ObjectResults of individually failed objects, indexed by object ID.
     private final List<ObjectResult> m_objResultList = new ArrayList<ObjectResult>();

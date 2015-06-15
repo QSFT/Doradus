@@ -18,6 +18,7 @@ package com.dell.doradus.common;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -37,7 +38,7 @@ final public class ApplicationDefinition {
     
     // Map of options used by this application. Option names are case-sensitive.
     private final Map<String, String> m_optionMap =
-        new HashMap<String, String>();
+        new LinkedHashMap<String, String>();
     
     // Map of table names (case-sensitive) to TableDefinitions:
     private final SortedMap<String, TableDefinition> m_tableMap =

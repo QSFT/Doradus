@@ -16,7 +16,8 @@
 
 package com.dell.doradus.common;
 
-import java.util.HashMap;
+//import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -28,7 +29,7 @@ public class ObjectResult {
     public enum Status {OK, WARNING, ERROR};
     
     // All fields are stored in this simple name/value map.
-    private Map<String, String> m_resultFields = new HashMap<String, String>();
+    private Map<String, String> m_resultFields = new LinkedHashMap<String, String>();
 
     // Field keys currently used:
     private static final String COMMENT = "comment";
@@ -140,7 +141,7 @@ public class ObjectResult {
      */
     public Map<String, String> getErrorDetails() {
         // Add stacktrace and/or comment fields.
-        Map<String, String> detailMap = new HashMap<String, String>();
+        Map<String, String> detailMap = new LinkedHashMap<String, String>();
         if (m_resultFields.containsKey(COMMENT)) {
             detailMap.put(COMMENT, m_resultFields.get(COMMENT));
         }

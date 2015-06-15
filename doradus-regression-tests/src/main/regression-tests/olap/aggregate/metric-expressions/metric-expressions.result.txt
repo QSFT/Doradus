@@ -1572,7 +1572,7 @@
     <results>
         <aggregate group="Country" metric="(MAX(Double)+MIN(Double))/3" query="*"/>
         <totalobjects>12</totalobjects>
-        <summary>-3332736.666666666</summary>
+        <summary>-3332736.666666667</summary>
         <totalgroups>2</totalgroups>
         <groups>
             <group>
@@ -1595,7 +1595,7 @@
              "group":"Country"
           },
           "totalobjects":"12",
-          "summary":"-3332736.666666666",
+          "summary":"-3332736.666666667",
           "totalgroups":"2",
           "groups":[
              {
@@ -1682,7 +1682,7 @@
         <totalgroups>2</totalgroups>
         <groups>
             <group>
-                <metric>-6667859.998513334</metric>
+                <metric>-6667859.998513333</metric>
                 <field name="Country">Russia</field>
             </group>
             <group>
@@ -1706,7 +1706,7 @@
           "groups":[
              {
                 "group":{
-                   "metric":"-6667859.998513334",
+                   "metric":"-6667859.998513333",
                    "field":{
                       "Country":"Russia"
                    }
@@ -1734,7 +1734,7 @@
         <totalobjects>12</totalobjects>
         <groupsets>
             <groupset group="Country" metric="(MAX(Double)+MIN(Double))/3">
-                <summary>-3332736.666666666</summary>
+                <summary>-3332736.666666667</summary>
                 <totalgroups>2</totalgroups>
                 <groups>
                     <group>
@@ -1766,7 +1766,7 @@
                 <totalgroups>2</totalgroups>
                 <groups>
                     <group>
-                        <metric>-6667859.998513334</metric>
+                        <metric>-6667859.998513333</metric>
                         <field name="Country">Russia</field>
                     </group>
                     <group>
@@ -1792,7 +1792,7 @@
                 "groupset":{
                    "group":"Country",
                    "metric":"(MAX(Double)+MIN(Double))/3",
-                   "summary":"-3332736.666666666",
+                   "summary":"-3332736.666666667",
                    "totalgroups":"2",
                    "groups":[
                       {
@@ -1849,7 +1849,7 @@
                    "groups":[
                       {
                          "group":{
-                            "metric":"-6667859.998513334",
+                            "metric":"-6667859.998513333",
                             "field":{
                                "Country":"Russia"
                             }
@@ -3449,7 +3449,7 @@
     <results>
         <aggregate group="Country" metric="(MAX(Double)+MIN(Double))/3" query="*"/>
         <totalobjects>12</totalobjects>
-        <summary>-3332736.666666666</summary>
+        <summary>-3332736.666666667</summary>
         <totalgroups>2</totalgroups>
         <groups>
             <group>
@@ -3472,7 +3472,7 @@
              "group":"Country"
           },
           "totalobjects":"12",
-          "summary":"-3332736.666666666",
+          "summary":"-3332736.666666667",
           "totalgroups":"2",
           "groups":[
              {
@@ -3559,7 +3559,7 @@
         <totalgroups>2</totalgroups>
         <groups>
             <group>
-                <metric>-6667859.998513334</metric>
+                <metric>-6667859.998513333</metric>
                 <field name="Country">Russia</field>
             </group>
             <group>
@@ -3583,7 +3583,7 @@
           "groups":[
              {
                 "group":{
-                   "metric":"-6667859.998513334",
+                   "metric":"-6667859.998513333",
                    "field":{
                       "Country":"Russia"
                    }
@@ -3611,7 +3611,7 @@
         <totalobjects>12</totalobjects>
         <groupsets>
             <groupset group="Country" metric="(MAX(Double)+MIN(Double))/3">
-                <summary>-3332736.666666666</summary>
+                <summary>-3332736.666666667</summary>
                 <totalgroups>2</totalgroups>
                 <groups>
                     <group>
@@ -3643,7 +3643,7 @@
                 <totalgroups>2</totalgroups>
                 <groups>
                     <group>
-                        <metric>-6667859.998513334</metric>
+                        <metric>-6667859.998513333</metric>
                         <field name="Country">Russia</field>
                     </group>
                     <group>
@@ -3669,7 +3669,7 @@
                 "groupset":{
                    "group":"Country",
                    "metric":"(MAX(Double)+MIN(Double))/3",
-                   "summary":"-3332736.666666666",
+                   "summary":"-3332736.666666667",
                    "totalgroups":"2",
                    "groups":[
                       {
@@ -3726,7 +3726,7 @@
                    "groups":[
                       {
                          "group":{
-                            "metric":"-6667859.998513334",
+                            "metric":"-6667859.998513333",
                             "field":{
                                "Country":"Russia"
                             }
