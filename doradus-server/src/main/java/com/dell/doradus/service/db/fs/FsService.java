@@ -16,8 +16,13 @@
 
 package com.dell.doradus.service.db.fs;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,23 +31,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.core.ServerConfig;
-import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.tenant.UserDefinition;
-import com.dell.doradus.utilities.Timer;
 
 public class FsService extends DBService {
+    public static final String ROOT = "c:/temp/FS"; 
     protected final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
     private static final FsService INSTANCE = new FsService();
     private final Object m_sync = new Object();
-    private static final BSTR EMPTY = new BSTR(new byte[0]);
-    
-    private FsStorage m_storage = new FsStorage();
-    private Database m_database;
     
     private FsService() { }
 
@@ -55,204 +55,210 @@ public class FsService extends DBService {
     }
 
     @Override public void startService() {
-        m_database = new Database("c:/temp/doradus.dat");
-        Timer t = new Timer();
-        while(!m_database.isEnd()) {
-            int flag = m_database.readNextFlag();
-            BSTR keyspace = m_database.readNext();
-            BSTR store = m_database.readNext();
-            BSTR row = m_database.readNext();
-            BSTR column = m_database.readNext();
-            if(flag == 1) { // add
-                long offset = m_database.position();
-                BSTR value = m_database.readNext();
-                m_storage.add(keyspace, store, row, column, value, offset);
-            } else if (flag == 2) { // delete
-                m_storage.delete(keyspace, store, row, column);
-            }
-        }
-        m_logger.info("Database loaded in {}", t);
+        File root = new File(ROOT);
+        if(!root.exists()) root.mkdirs();
     }
     
-    public void flush(String dbfile) {
-        Database db = new Database(dbfile);
-        synchronized (m_sync) {
-            for(FsKeyspace keyspace: m_storage.getKeyspaces()) {
-                for(FsStore store: keyspace.getStores()) {
-                    for(FsRow row: store.getRows()) {
-                        for(FsColumn column: row.getColumns()) {
-                            BSTR value = null;
-                            if(column.hasValue()) value = column.getValue();
-                            else {
-                                value = m_database.read(column.getStoredOffset());
-                            }
-                            db.writeFlag(1); // add
-                            db.write(keyspace.getName());
-                            db.write(store.getName());
-                            db.write(row.getName());
-                            db.write(column.getName());
-                            db.write(value);
-                        }
-                    }
-                }
-            }
-        
-        }        
-        db.flush();
-        db.close();
-    }
-    
-    @Override public void stopService() {
-        m_database.close();
-        m_database = null;
-        m_database = null;
-    }
-    
-    private void add(BSTR keyspace, BSTR store, BSTR row, BSTR column, BSTR value) {
-        synchronized (m_sync) {
-            m_database.writeFlag(1); // add
-            m_database.write(keyspace);
-            m_database.write(store);
-            m_database.write(row);
-            m_database.write(column);
-            long offset = m_database.length();
-            m_database.write(value);
-            m_database.flush();
-            m_storage.add(keyspace, store, row, column, value, offset);
-        }
-    }
-
-    private void delete(BSTR keyspace, BSTR store, BSTR row, BSTR column) {
-        synchronized (m_sync) {
-            m_database.writeFlag(2); // delete
-            m_database.write(keyspace);
-            m_database.write(store);
-            m_database.write(row);
-            m_database.write(column);
-            m_storage.delete(keyspace, store, row, column);
-            m_database.flush();
-        }
-    }
+    @Override public void stopService() { }
     
     @Override public void createTenant(Tenant tenant, Map<String, String> options) {
-        BSTR keyspace = new BSTR(tenant.getKeyspace());
-        add(keyspace, EMPTY, EMPTY, EMPTY, EMPTY);
+        synchronized (m_sync) {
+            String keyspace = tenant.getKeyspace();
+            File keyspaceDir = new File(ROOT + "/" + keyspace);
+            if(!keyspaceDir.exists())keyspaceDir.mkdir();
+        }
     }
 
-    @Override public void modifyTenant(Tenant tenant, Map<String, String> options) {}
+    @Override public void modifyTenant(Tenant tenant, Map<String, String> options) {
+        throw new RuntimeException("Not implemented");
+    }
     
     @Override public void dropTenant(Tenant tenant) {
-        BSTR keyspace = new BSTR(tenant.getKeyspace());
-        delete(keyspace, EMPTY, EMPTY, EMPTY);
+        synchronized(m_sync) {
+            String keyspace = tenant.getKeyspace();
+            File keyspaceDir = new File(ROOT + "/" + keyspace);
+            deleteDirectory(keyspaceDir);
+        }
+    }
+    
+    private void deleteDirectory(File dir) {
+        for(File file: dir.listFiles()) {
+            if(file.isDirectory()) deleteDirectory(file);
+            else file.delete();
+        }
+        dir.delete();
     }
     
     @Override public void addUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        throw new RuntimeException("This method is not supported for the Memory API");
+        throw new RuntimeException("This method is not supported");
     }
     
     @Override public void modifyUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        throw new RuntimeException("This method is not supported for the Memory API");
+        throw new RuntimeException("This method is not supported");
     }
     
     @Override public void deleteUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        throw new RuntimeException("This method is not supported for the Memory API");
+        throw new RuntimeException("This method is not supported");
     }
     
     @Override public Collection<Tenant> getTenants() {
         List<Tenant> tenants = new ArrayList<>();
         synchronized (m_sync) {
-            for (FsKeyspace keyspace : m_storage.getKeyspaces()) {
-                tenants.add(new Tenant(keyspace.getName().toString()));
+            File root = new File(ROOT);
+            for(String keyspace: root.list()) {
+                tenants.add(new Tenant(keyspace));
             }
         }
         return tenants;
     }
 
     @Override public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
-        BSTR keyspace = new BSTR(tenant.getKeyspace());
-        BSTR store = new BSTR(storeName);
-        add(keyspace, store, EMPTY, EMPTY, EMPTY);
+        synchronized(m_sync) {
+            File storeDir = new File(ROOT + "/" + tenant.getKeyspace() + "/" + storeName);
+            if(!storeDir.exists()) storeDir.mkdir();
+        }
     }
     
     @Override public void deleteStoreIfPresent(Tenant tenant, String storeName) {
-        BSTR keyspace = new BSTR(tenant.getKeyspace());
-        BSTR store = new BSTR(storeName);
-        delete(keyspace, store, EMPTY, EMPTY);
+        synchronized(m_sync) {
+            File storeDir = new File(ROOT + "/" + tenant.getKeyspace() + "/" + storeName);
+            if(storeDir.exists()) deleteDirectory(storeDir);
+        }
     }
     
     @Override public DBTransaction startTransaction(Tenant tenant) {
    		return new FsTransaction(tenant.getKeyspace());
     }
     
+    public String encode(String name) {
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if(c != '_' && Character.isLetterOrDigit(c)) sb.append(c);
+            else {
+                String esc = String.format("_%02x", (int)c);
+                sb.append(esc);
+            }
+        }
+        return sb.toString();
+    }
+    
+    public String decode(String name) {
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if(c != '_') sb.append(c);
+            else {
+                c = (char)Integer.parseInt(name.substring(i + 1, i + 3), 16);
+                sb.append(c);
+                i += 2;
+            }
+        }
+        return sb.toString();
+    }
+    
     @Override public void commit(DBTransaction dbTran) {
-    	FsTransaction t = (FsTransaction)dbTran;
-    	BSTR keyspace = new BSTR(t.getKeyspace());
-		for(Map.Entry<String, Map<String, List<DColumn>>> e: t.getUpdateMap().entrySet()) {
-			BSTR store = new BSTR(e.getKey());
-			Map<String, List<DColumn>> rows = e.getValue();
-			for(Map.Entry<String, List<DColumn>> r: rows.entrySet()) {
-				BSTR row = new BSTR(r.getKey());
-				List<DColumn> columns = r.getValue();
-				for(DColumn c: columns) {
-					BSTR column = new BSTR(c.getName());
-					BSTR value = new BSTR(c.getRawValue());
-					add(keyspace, store, row, column, value);
-				}
-			}
-		}
-		for(Map.Entry<String, Map<String, List<String>>> e: t.getDeleteMap().entrySet()) {
-			BSTR store = new BSTR(e.getKey());
-			Map<String, List<String>> rows = e.getValue();
-			for(Map.Entry<String, List<String>> r: rows.entrySet()) {
-				BSTR row = new BSTR(r.getKey());
-				List<String> columns = r.getValue();
-				if(columns == null) {
-				    delete(keyspace, store, row, EMPTY);
-				} else {
-    				for(String c: columns) {
-    				    BSTR value = new BSTR(c);
-                        delete(keyspace, store, row, value);
+        synchronized(m_sync) {
+        	FsTransaction t = (FsTransaction)dbTran;
+        	String keyspace = t.getKeyspace();
+        	//1. update
+    		for(Map.Entry<String, Map<String, List<DColumn>>> e: t.getUpdateMap().entrySet()) {
+    		    String store = e.getKey();
+    			Map<String, List<DColumn>> rows = e.getValue();
+    			for(Map.Entry<String, List<DColumn>> r: rows.entrySet()) {
+    				String row = r.getKey();
+    	            row = encode(row);
+    				String rowPath = ROOT + "/" + keyspace + "/" + store + "/" + row;
+    				File rowFile = new File(rowPath);
+    				if(!rowFile.exists()) rowFile.mkdir();
+    				List<DColumn> columns = r.getValue();
+    				for(DColumn c: columns) {
+    				    String column = c.getName();
+    				    column = encode(column);
+    				    byte[] value = c.getRawValue();
+                        try {
+                            FileOutputStream stream = new FileOutputStream(rowPath + "/" + column);
+                            stream.write(value);
+                            stream.close();
+                        } catch (IOException ex) {
+                            m_logger.warn("Error", ex);
+                        }
     				}
-				}
-			}
-		}
+    			}
+    		}
+    		//2. delete
+    		for(Map.Entry<String, Map<String, List<String>>> e: t.getDeleteMap().entrySet()) {
+    			String store = e.getKey();
+    			Map<String, List<String>> rows = e.getValue();
+    			for(Map.Entry<String, List<String>> r: rows.entrySet()) {
+                    String row = r.getKey();
+                    row = encode(row);
+                    String rowPath = ROOT + "/" + keyspace + "/" + store + "/" + row;
+    				List<String> columns = r.getValue();
+                    File rowFile = new File(rowPath);
+                    if(!rowFile.exists()) continue;
+    				if(columns == null) {
+    				    deleteDirectory(rowFile);
+    				} else {
+        				for(String c: columns) {
+        				    File columnFile = new File(rowPath + "/" + encode(c));
+        				    if(columnFile.exists()) columnFile.delete();
+        				}
+    				}
+    			}
+    		}
+        }
     }
     
     @Override public Iterator<DColumn> getAllColumns(Tenant tenant, String storeName, String rowKey) {
-        return getColumnSlice(tenant, storeName, rowKey, null, null);
+        synchronized(m_sync) {
+            rowKey = encode(rowKey);
+            try {
+                ArrayList<DColumn> list = new ArrayList<>();
+                File rowFile = new File(ROOT + "/" + tenant.getKeyspace() + "/" + storeName + "/" + rowKey);
+                if(!rowFile.exists()) return list.iterator();
+                for(File columnFile: rowFile.listFiles()) {
+                    FileInputStream fis = new FileInputStream(columnFile);
+                    byte[] data = new byte[(int)columnFile.length()];
+                    fis.read(data);
+                    fis.close();
+                    list.add(new DColumn(decode(columnFile.getName()), data));
+                }
+                Collections.sort(list);
+                return list.iterator();
+            }catch(IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
 
+    
+    
     @Override public Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName, String rowKey,
                                             String startCol, String endCol, boolean reversed) {
-    	if(reversed) throw new RuntimeException("Not supported");
-        synchronized (m_sync) {
-            BSTR s_keyspace = new BSTR(tenant.getKeyspace());
-            BSTR s_store = new BSTR(storeName);
-            BSTR s_row = new BSTR(rowKey);
-            
-            FsKeyspace keyspace = m_storage.getKeyspace(s_keyspace);
-            if(keyspace == null) return new ArrayList<DColumn>(0).iterator();
-            FsStore store = keyspace.getStore(s_store);
-            if(store == null) return new ArrayList<DColumn>(0).iterator();
-            FsRow row = store.getRow(s_row);
-            if(row == null) return new ArrayList<DColumn>(0).iterator();
-            List<FsColumn> columns = row.getColumns();
-            List<DColumn> result = new ArrayList<DColumn>();
-            BSTR start = startCol == null ? null : new BSTR(startCol);
-            BSTR end = endCol == null ? null : new BSTR(endCol);
-            
-            for(FsColumn column: columns) {
-                if(start != null && BSTR.compare(start, column.getName()) > 0) continue;
-                if(end != null && BSTR.compare(end, column.getName()) <= 0) break;
-                if(column.hasValue()) {
-                    result.add(new DColumn(column.getName().toString(), column.getValue().buffer));
-                } else {
-                    BSTR value = m_database.read(column.getStoredOffset());
-                    result.add(new DColumn(column.getName().toString(), value.buffer));
+        synchronized(m_sync) {
+            rowKey = encode(rowKey);
+            try {
+                ArrayList<DColumn> list = new ArrayList<>();
+                File rowFile = new File(ROOT + "/" + tenant.getKeyspace() + "/" + storeName + "/" + rowKey);
+                if(!rowFile.exists()) return list.iterator();
+                for(File columnFile: rowFile.listFiles()) {
+                    String fileName = columnFile.getName();
+                    String colName = decode(fileName);
+                    if(colName.compareTo(startCol) < 0) continue;
+                    if(colName.compareTo(endCol) >= 0) continue;
+                    FileInputStream fis = new FileInputStream(columnFile);
+                    byte[] data = new byte[(int)columnFile.length()];
+                    fis.read(data);
+                    fis.close();
+                    list.add(new DColumn(colName, data));
                 }
+                Collections.sort(list);
+                if(reversed)Collections.reverse(list);
+                return list.iterator();
+            }catch(IOException ex) {
+                throw new RuntimeException(ex);
             }
-            
-            return result.iterator();
         }
     }
 
@@ -262,56 +268,33 @@ public class FsService extends DBService {
     }
 
     @Override public DColumn getColumn(Tenant tenant, String storeName, String rowKey, String colName) {
-    	synchronized (m_sync) {
-    	    BSTR s_keyspace = new BSTR(tenant.getKeyspace());
-    	    BSTR s_store = new BSTR(storeName);
-    	    BSTR s_row = new BSTR(rowKey);
-    	    BSTR s_column = new BSTR(colName);
-    	    
-    	    FsKeyspace keyspace = m_storage.getKeyspace(s_keyspace);
-    	    if(keyspace == null) return null;
-    	    FsStore store = keyspace.getStore(s_store);
-    	    if(store == null) return null;
-    	    FsRow row = store.getRow(s_row);
-    	    if(row == null) return null;
-    	    FsColumn column = row.getColumn(s_column);
-    	    if(column == null) return null;
-    	    if(column.hasValue()) {
-    	        return new DColumn(column.getName().toString(), column.getValue().buffer);
-    	    } else {
-    	        BSTR value = m_database.read(column.getStoredOffset());
-                return new DColumn(column.getName().toString(), value.buffer);
-    	    }
-		}
+        synchronized(m_sync) {
+            rowKey = encode(rowKey);
+            try {
+                File colFile = new File(ROOT + "/" + tenant.getKeyspace() + "/" + storeName + "/" + rowKey + "/" + encode(colName));
+                if(!colFile.exists()) return null;
+                FileInputStream fis = new FileInputStream(colFile);
+                byte[] data = new byte[(int)colFile.length()];
+                fis.read(data);
+                fis.close();
+                return new DColumn(colName, data);
+            }catch(IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
 
     @Override public Iterator<DRow> getAllRowsAllColumns(Tenant tenant, String storeName) {
         synchronized (m_sync) {
-            BSTR s_keyspace = new BSTR(tenant.getKeyspace());
-            BSTR s_store = new BSTR(storeName);
-            
-            FsKeyspace keyspace = m_storage.getKeyspace(s_keyspace);
-            if(keyspace == null) return new ArrayList<DRow>(0).iterator();
-            FsStore store = keyspace.getStore(s_store);
-            if(store == null) return new ArrayList<DRow>(0).iterator();
-            
-            List<FsRow> rows = store.getRows();
-            List<DRow> result = new ArrayList<DRow>();
-            for(FsRow row: rows) {
-                List<FsColumn> columns = row.getColumns();
-                List<DColumn> r = new ArrayList<DColumn>();
-                
-                for(FsColumn column: columns) {
-                    if(column.hasValue()) {
-                        r.add(new DColumn(column.getName().toString(), column.getValue().buffer));
-                    } else {
-                        BSTR value = m_database.read(column.getStoredOffset());
-                        r.add(new DColumn(column.getName().toString(), value.buffer));
-                    }
-                }
-                result.add(new RowIter(row.getName().toString(), r));
+            List<DRow> rows = new ArrayList<>();
+            File storeDir = new File(ROOT + "/" + tenant.getKeyspace() + "/" + storeName);
+            if(!storeDir.exists()) return rows.iterator();
+            for(File rowFile: storeDir.listFiles()) {
+                String row = rowFile.getName();
+                RowIter rowIter = new RowIter(decode(row), getAllColumns(tenant, storeName, row));
+                rows.add(rowIter);
             }
-            return result.iterator();
+            return rows.iterator();
         }
     }
     
@@ -323,7 +306,18 @@ public class FsService extends DBService {
                                          String             storeName,
                                          Collection<String> rowKeys,
                                          Collection<String> colNames) {
-    	throw new RuntimeException("Not supported");
+        synchronized (m_sync) {
+            List<DRow> rows = new ArrayList<>();
+            for(String rowKey: rowKeys) {
+                List<DColumn> cols = new ArrayList<>();
+                for(String col: colNames) {
+                    DColumn c = getColumn(tenant, storeName, rowKey, col); 
+                    if(c != null) cols.add(c);
+                }
+                rows.add(new RowIter(rowKey, cols.iterator()));
+            }
+            return rows.iterator();
+        }
     }
     
     @Override public Iterator<DRow> getRowsColumnSlice(Tenant   tenant,

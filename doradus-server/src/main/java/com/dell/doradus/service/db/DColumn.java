@@ -24,7 +24,7 @@ import com.dell.doradus.common.Utils;
  * Represents a Doradus column, which is a named value within a row. A column has a name
  * and a value.
  */
-public class DColumn {
+public class DColumn implements Comparable<DColumn> {
     private final String m_name;
     private final byte[] m_value;
 
@@ -105,6 +105,11 @@ public class DColumn {
     @Override
     public String toString() {
         return getName() + "=" + getValue();
+    }
+
+    @Override
+    public int compareTo(DColumn o) {
+        return m_name.compareTo(o.m_name);
     }
     
 }   // interface DColumn
