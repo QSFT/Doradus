@@ -1,30 +1,17 @@
 package com.dell.doradus.logservice;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.logservice.search.Aggregate;
-import com.dell.doradus.logservice.search.QueryFilter;
-import com.dell.doradus.logservice.search.SearchCollector;
-import com.dell.doradus.logservice.search.SearchRequest;
 import com.dell.doradus.logservice.search.Searcher;
-import com.dell.doradus.logservice.search.SortedChunkIterable;
 import com.dell.doradus.logservice.store.BatchWriter;
 import com.dell.doradus.logservice.store.ChunkMerger;
 import com.dell.doradus.olap.OlapBatch;
 import com.dell.doradus.olap.aggregate.AggregationResult;
-import com.dell.doradus.olap.aggregate.MetricValueCount;
-import com.dell.doradus.olap.aggregate.MetricValueSet;
-import com.dell.doradus.olap.collections.strings.BstrSet;
 import com.dell.doradus.olap.io.BSTR;
-import com.dell.doradus.olap.store.IntList;
 import com.dell.doradus.search.SearchResultList;
-import com.dell.doradus.search.parser.DoradusQueryBuilder;
-import com.dell.doradus.search.query.Query;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
@@ -34,22 +21,26 @@ import com.dell.doradus.service.db.Tenant;
 public class LogService {
     public LogService() { }
 
-    public void createApplication(Tenant tenant, String application) {
-        //DBService.instance().createStoreIfAbsent(tenant, application, true);
-    }
-
     public void createTable(Tenant tenant, String application, String table) {
         String store = application + "_" + table;
         DBService.instance().createStoreIfAbsent(tenant, store, true);
     }
 
-    public void deleteApplication(Tenant tenant, String application) {
-        //DBService.instance().deleteStoreIfPresent(tenant, application);
-    }
-
     public void deleteTable(Tenant tenant, String application, String table) {
         String store = application + "_" + table;
         DBService.instance().deleteStoreIfPresent(tenant, store);
+    }
+    
+    public String getPartition(long timestamp) {
+        String date = new DateFormatter().format(timestamp);
+        String partition = date.substring(0, 10).replace("-", "");
+        return partition;
+    }
+    
+    public long getTimestamp(String partition) {
+        String date = partition.substring(0, 4) + "-" + partition.substring(4, 6) + "-" + partition.substring(6, 8);
+        long timestamp = Utils.parseDate(date).getTimeInMillis();
+        return timestamp;
     }
     
     public void addBatch(Tenant tenant, String application, String table, OlapBatch batch) {
@@ -87,7 +78,7 @@ public class LogService {
     
     public void deleteOldSegments(Tenant tenant, String application, String table, long removeBeforeTimestamp) {
         String store = application + "_" + table;
-        String partitionToCompare = new DateFormatter().format(removeBeforeTimestamp).substring(0, 10).replace("-", ""); 
+        String partitionToCompare = getPartition(removeBeforeTimestamp); 
         List<String> partitions = getPartitions(tenant, application, table);
         DBTransaction transaction = null;
         for(String partition: partitions) {
@@ -165,12 +156,9 @@ public class LogService {
     }
 
     public List<String> getPartitions(Tenant tenant, String application, String table, long minTimestamp, long maxTimestamp) {
-        DateFormatter fmt = new DateFormatter();
         long oneDayMillis = 1000 * 3600 * 24;
-        String minDate = minTimestamp == 0 ? null : fmt.format(minTimestamp);
-        String maxDate = maxTimestamp == Long.MAX_VALUE ? null : fmt.format(maxTimestamp + oneDayMillis);
-        String minPartition = minDate == null ? "" : minDate.substring(0, 10).replace("-", "");
-        String maxPartition = maxDate == null ? "z" : maxDate.substring(0, 10).replace("-", "");
+        String minPartition = minTimestamp == 0 ? "" : getPartition(minTimestamp);
+        String maxPartition = maxTimestamp == Long.MAX_VALUE ? "z" : getPartition(maxTimestamp + oneDayMillis - 1);
         return getPartitions(tenant, application, table, minPartition, maxPartition);
     }
     
@@ -204,145 +192,26 @@ public class LogService {
         for(int start = 0; start < infos.size(); start += SIZE) {
             int end = Math.min(start + SIZE, infos.size());
             Iterator<DRow> rowIt = DBService.instance().getRowsColumns(tenant, store, rows, chunkIds.subList(start, end));
-            if(rowIt == null || !rowIt.hasNext()) throw new RuntimeException("Error merging data");
+            if(rowIt == null || !rowIt.hasNext()) throw new RuntimeException("Error reading data");
             DRow drow = rowIt.next();
             Iterator<DColumn> colIt = drow.getColumns();
-            if(colIt == null) throw new RuntimeException("Error merging data");
+            if(colIt == null) throw new RuntimeException("Error reading data");
             while(colIt.hasNext()) {
                 DColumn c = colIt.next();
                 data.add(c.getRawValue());
             }
         }
-        if(data.size() != infos.size()) throw new RuntimeException("Error merging data");
+        if(data.size() != infos.size()) throw new RuntimeException("Error reading data");
         return data;
     }
     
     
     public SearchResultList search(Tenant tenant, String application, String table, LogQuery logQuery) {
-        SearchRequest request = new SearchRequest(tenant, application, table, logQuery);
-        SearchCollector collector = new SearchCollector(request.getCount());
-        LogEntry current = null;
-        List<String> partitions = getPartitions(tenant, application, table, request.getMinTimestamp(), request.getMaxTimestamp());
-        //optimization: inverse partitions
-        if(request.getSkipCount() && request.getSortDescending()) {
-            Collections.reverse(partitions);
-        }
-        ChunkReader chunkReader = new ChunkReader();
-        int documentsCount = 0;
-        for(String partition: partitions) {
-            Iterable<ChunkInfo> chunks = getChunks(tenant, application, table, partition);
-            if(request.getSkipCount()) chunks = new SortedChunkIterable(chunks, request.getSortDescending());
-            for(ChunkInfo chunkInfo: chunks) {
-                if(chunkInfo.getMaxTimestamp() < request.getMinTimestamp()) continue;
-                if(chunkInfo.getMinTimestamp() >= request.getMaxTimestamp()) continue;
-                if(request.getSkipCount() && collector.size() >= request.getCount()) {
-                    if(request.getSortDescending()) {
-                        if(chunkInfo.getMaxTimestamp() <= collector.getMinTimestamp()) continue;
-                    } else {
-                        if(chunkInfo.getMinTimestamp() >= collector.getMaxTimestamp()) continue;
-                    }
-                }
-                readChunk(tenant, application, table, chunkInfo, chunkReader);
-                for(int i = 0; i < chunkReader.size(); i++) {
-                    if(chunkReader.getTimestamp(i) < request.getMinTimestamp()) continue;
-                    if(chunkReader.getTimestamp(i) >= request.getMaxTimestamp()) continue;
-                    if(!QueryFilter.filter(request.getQuery(), chunkReader, i)) continue; 
-                    if(current == null) current = new LogEntry(request.getFields(), request.getSortDescending());
-                    current.set(chunkReader, i);
-                    current = collector.add(current);
-                    documentsCount++;
-                }
-            }
-        }
-        
-        SearchResultList list = collector.getSearchResult(request.getFieldSet(), request.getSortOrders());
-        if(!request.getSkipCount()) list.documentsCount = documentsCount;
-        if(list.results.size() == request.getCount()) list.continuation_token = list.results.get(list.results.size() - 1).id();
-        if(request.getSkip() > 0) {
-            int size = list.results.size();
-            if(request.getSkip() >= size) list.results.clear();
-            else list.results = new ArrayList<>(list.results.subList(request.getSkip(), size));
-        }
-        return list;
+        return Searcher.search(this, tenant, application, table, logQuery);
     }
     
     public AggregationResult aggregate(Tenant tenant, String application, String table, LogAggregate logAggregate) {
-        TableDefinition tableDef = Searcher.getTableDef(tenant, application, table);
-        Query query = DoradusQueryBuilder.Build(logAggregate.getQuery(), tableDef);
-        String field = Aggregate.getAggregateField(tableDef, logAggregate.getFields());
-        
-        if(field == null) {
-            int count = 0;
-            List<String> partitions = getPartitions(tenant, application, table);
-            ChunkReader chunkReader = new ChunkReader();
-            for(String partition: partitions) {
-                for(ChunkInfo chunkInfo: getChunks(tenant, application, table, partition)) {
-                    readChunk(tenant, application, table, chunkInfo, chunkReader);
-                    for(int i = 0; i < chunkReader.size(); i++) {
-                        if(!QueryFilter.filter(query, chunkReader, i)) continue; 
-                        count++;
-                    }
-                }
-            }
-            
-            AggregationResult result = new AggregationResult();
-            result.documentsCount = count;
-            result.summary = new AggregationResult.AggregationGroup();
-            result.summary.id = null;
-            result.summary.name = "*";
-            result.summary.metricSet = new MetricValueSet(1);
-            MetricValueCount c = new MetricValueCount();
-            c.metric = count;
-            result.summary.metricSet.values[0] = c; 
-            return result;
-        }
-        else {
-            IntList list = new IntList();
-            BstrSet fields = new BstrSet();
-            BSTR temp = new BSTR();
-            int count = 0;
-            List<String> partitions = getPartitions(tenant, application, table);
-            ChunkReader chunkReader = new ChunkReader();
-            for(String partition: partitions) {
-                for(ChunkInfo chunkInfo: getChunks(tenant, application, table, partition)) {
-                    readChunk(tenant, application, table, chunkInfo, chunkReader);
-                    int index = chunkReader.getFieldIndex(new BSTR(field));
-                    if(index < 0) continue;
-                    for(int i = 0; i < chunkReader.size(); i++) {
-                        if(!QueryFilter.filter(query, chunkReader, i)) continue;
-                        chunkReader.getFieldValue(i, index, temp);
-                        int pos = fields.add(temp);
-                        if(pos == list.size()) list.add(1);
-                        else list.set(pos, list.get(pos) + 1);
-                        count++;
-                    }
-                }
-            }
-            
-            AggregationResult result = new AggregationResult();
-            result.documentsCount = count;
-            result.summary = new AggregationResult.AggregationGroup();
-            result.summary.id = null;
-            result.summary.name = "*";
-            result.summary.metricSet = new MetricValueSet(1);
-            MetricValueCount c = new MetricValueCount();
-            c.metric = count;
-            result.summary.metricSet.values[0] = c;
-            for(int i = 0; i < fields.size(); i++) {
-                AggregationResult.AggregationGroup g = new AggregationResult.AggregationGroup();
-                g.id = fields.get(i).toString();
-                g.name = g.id.toString();
-                g.metricSet = new MetricValueSet(1);
-                MetricValueCount cc = new MetricValueCount();
-                cc.metric = list.get(i);
-                g.metricSet.values[0] = cc;
-                result.groups.add(g);
-            }
-            result.groupsCount = result.groups.size();
-            Collections.sort(result.groups);
-            return result;
-            
-        }
+        return Searcher.aggregate(this, tenant, application, table, logAggregate);
     }
     
     

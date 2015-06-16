@@ -170,7 +170,6 @@ public class LoggingService extends StorageService {
     @Override
     public void deleteApplication(ApplicationDefinition appDef) {
         checkServiceState();
-        m_logService.deleteApplication(Tenant.getTenant(appDef), appDef.getAppName());
         for(TableDefinition tableDef: appDef.getTableDefinitions().values()) {
             m_logService.deleteTable(Tenant.getTenant(appDef), appDef.getAppName(), tableDef.getTableName());
         }
@@ -179,7 +178,6 @@ public class LoggingService extends StorageService {
     @Override
     public void initializeApplication(ApplicationDefinition oldAppDef, ApplicationDefinition appDef) {
         checkServiceState();
-        m_logService.createApplication(Tenant.getTenant(appDef), appDef.getAppName());
         for(TableDefinition tableDef: appDef.getTableDefinitions().values()) {
             m_logService.createTable(Tenant.getTenant(appDef), appDef.getAppName(), tableDef.getTableName());
         }

@@ -1,5 +1,8 @@
 package com.dell.doradus.logservice.search;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.logservice.LogQuery;
@@ -58,14 +61,15 @@ public class SearchRequest {
         else m_query = new AllQuery();
         
         m_count = m_logQuery.getPageSizeWithSkip();
+        Utils.require(m_count <= 10000000, "Page size is too large");
         m_skip = m_logQuery.getSkip();
         
         m_fieldSet = new FieldSet(m_tableDef, m_logQuery.getFields());
         m_fieldSet.expand();
-        m_fields = Searcher.getFields(m_fieldSet);
+        m_fields = SearchRequest.getFields(m_fieldSet);
 
         m_sortOrders = AggregationQueryBuilder.BuildSortOrders(m_logQuery.getSortOrder(), m_tableDef);
-        m_bSortDescending = Searcher.isSortDescending(m_sortOrders);
+        m_bSortDescending = SearchRequest.isSortDescending(m_sortOrders);
 
         m_minTimestamp = 0;
         m_maxTimestamp = Long.MAX_VALUE;
@@ -115,6 +119,24 @@ public class SearchRequest {
                   extractDates(subquery);
               }
           }
+    }
+    
+    
+    public static BSTR[] getFields(FieldSet fieldSet) {
+        List<BSTR> fields = new ArrayList<>(fieldSet.ScalarFields.size());
+        for(String f: fieldSet.ScalarFields) {
+            if("Timestamp".equals(f)) continue;
+            fields.add(new BSTR(f));
+        }
+        return fields.toArray(new BSTR[fields.size()]);
+    }
+    
+    public static boolean isSortDescending(SortOrder[] order) {
+        if(order == null || order.length == 0) return false;
+        Utils.require(order.length == 1, "Cannot sort by more than one value");
+        Utils.require(order[0].items.size() == 1, "Cannot sort by link path");
+        Utils.require("Timestamp".equals(order[0].items.get(0).name), "Only sort by timestamp is supported");
+        return !order[0].ascending;
     }
     
     

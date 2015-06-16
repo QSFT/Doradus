@@ -12,6 +12,10 @@ public class LogEntry implements Comparable<LogEntry> {
     private BSTR[] m_values;
     private boolean m_bSortDescending;
     private DateFormatter m_formatter = new DateFormatter();
+    // cached field indexes
+    private int[] m_fieldIndexes;
+    private ChunkReader m_reader;
+    
     
     public LogEntry(BSTR[] fields, boolean sortDescending) {
         m_fields = fields;
@@ -23,10 +27,19 @@ public class LogEntry implements Comparable<LogEntry> {
     public long getTimestamp() { return m_timestamp; }
     
     public void set(ChunkReader reader, int doc) {
+        if(reader != m_reader) {
+            m_reader = reader;
+            if(m_fieldIndexes == null) m_fieldIndexes = new int[m_fields.length];
+            for(int i = 0; i < m_fields.length; i++) {
+                m_fieldIndexes[i] = reader.getFieldIndex(m_fields[i]);
+            }
+        }
+        
+        
         m_doc = doc;
         m_timestamp = reader.getTimestamp(doc);
-        for(int i = 0; i < m_fields.length; i++) {
-            int index = reader.getFieldIndex(m_fields[i]);
+        for(int i = 0; i < m_fieldIndexes.length; i++) {
+            int index = m_fieldIndexes[i];
             if(index < 0) m_values[i].length = 0;
             else reader.getFieldValue(doc, index, m_values[i]);
         }

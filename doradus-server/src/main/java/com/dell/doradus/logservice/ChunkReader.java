@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.logservice.search.StrRef;
 import com.dell.doradus.logservice.store.Temp;
 import com.dell.doradus.olap.collections.MemoryStream;
 import com.dell.doradus.olap.io.BSTR;
@@ -126,6 +127,12 @@ public class ChunkReader {
         int[] offsets = m_offsets.get(field);
         int[] lengths = m_lengths.get(field);
         return Utils.toString(m_data.getBuffer(), offsets[doc], lengths[doc]);
+    }
+
+    public void getFieldValue(int doc, int field, StrRef value) {
+        int[] offsets = m_offsets.get(field);
+        int[] lengths = m_lengths.get(field);
+        value.set(m_data.getBuffer(), offsets[doc], lengths[doc]);
     }
     
 }
