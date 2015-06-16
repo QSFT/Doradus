@@ -215,23 +215,29 @@ public final class DoradusServer {
      * Get Doradus Version from git repo if it exists; otherwise get it from the local doradus.ver file
      * @return version
      */
-    public String getDoradusVersion() {
-           Git git;
-        String version;
+    public String getDoradusVersion() {       
+        String version = null;
         try {
             //first read from the local git repository
-            git = Git.open(new File("../.git"));
-            DescribeCommand cmd = git.describe();
-            version = cmd.call();
-            m_logger.info("Doradus version found from git repo", version);
-        } catch (Throwable e) {
-            //if not found, reading from local file
-            try {
-                version = getVersionFromVerFile();
-                m_logger.info("Doradus version found from doradus.ver file", version);
-            } catch (IOException e1) {
-                version = null;
+        	Git git = Git.open(new File("../.git"));
+            String url = git.getRepository().getConfig().getString("remote", "origin", "url");
+            m_logger.info("Remote.origin.url: {}", url);
+            if (!Utils.isEmpty(url) && url.contains("dell-oss/Doradus.git")) {
+            	DescribeCommand cmd = git.describe();
+            	version = cmd.call();
+            	m_logger.info("Doradus version found from git repo: {}", version);
             }
+        } catch (Throwable e) {
+        	m_logger.info("failed to read version from git repo");
+        }
+        //if not found, reading from local file
+        if (Utils.isEmpty(version)) {
+	        try {
+	            version = getVersionFromVerFile();
+	            m_logger.info("Doradus version found from doradus.ver file {}", version);
+	        } catch (IOException e1) {
+	            version = null;
+	        }
         }
         return version;
     }
