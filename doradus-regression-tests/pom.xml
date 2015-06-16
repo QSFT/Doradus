@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.dell.doradus</groupId>
 		<artifactId>doradus</artifactId>
-		<version>2.3.0</version>
+		<version>2.3.1</version>
 	</parent>
 	
 	<modelVersion>4.0.0</modelVersion>
@@ -14,8 +14,8 @@
     <name>doradus-regression-tests</name>
 
 	<properties>
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<maven.compiler.target>1.7</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>	
 
 	<dependencies>
