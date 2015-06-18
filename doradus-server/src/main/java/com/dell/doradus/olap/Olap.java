@@ -277,6 +277,16 @@ public class Olap {
 		}
 	}
 	
+	public void setExpirationDate(ApplicationDefinition appDef, String shard, String expDate) {
+        VDirectory shardDir = getRoot(appDef).getDirectory(shard);
+        if(expDate != null) {
+            Utils.parseDate(expDate); // check that the date is valid
+            shardDir.putProperty("expiration.txt", expDate);
+        } else {
+            shardDir.putProperty("expiration.txt", "");
+        }
+	}
+	
 	public Date getExpirationDate(ApplicationDefinition appDef, String shard) {
 		VDirectory shardDir = getRoot(appDef).getDirectory(shard);
 		String expDateStr = shardDir.getProperty("expiration.txt"); 

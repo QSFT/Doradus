@@ -79,9 +79,11 @@ public class OLAPService extends StorageService {
         // Shard management:
         new RESTCommand("POST   /{application}/_shards/{shard}              com.dell.doradus.service.olap.MergeSegmentCmd"),
         new RESTCommand("POST   /{application}/_shards/{shard}?{params}     com.dell.doradus.service.olap.MergeSegmentCmd"),
+        new RESTCommand("PUT    /{application}/_properties/{shard}?{params} com.dell.doradus.service.olap.SetShardPropertiesCmd"),
         new RESTCommand("DELETE /{application}/_shards/{shard}              com.dell.doradus.service.olap.DeleteSegmentCmd"),
         new RESTCommand("GET    /{application}/_shards                      com.dell.doradus.service.olap.ListShardsCmd"),
         new RESTCommand("GET    /{application}/_shards/{shard}              com.dell.doradus.service.olap.ShardStatsCmd"),
+        
         // Troubleshooting & repair
         new RESTCommand("GET    /{application}/_statistics/{shard}?{params} com.dell.doradus.service.olap.ShardStatisticsCmd"),
         new RESTCommand("GET    /{application}/{table}/_duplicates?{params} com.dell.doradus.service.olap.DuplicatesCmd"),
@@ -148,6 +150,11 @@ public class OLAPService extends StorageService {
         String agingFreq = appDef.getOption(CommonDefs.OPT_AGING_CHECK_FREQ);
         if (agingFreq != null) {
             Task task = new Task(appDef.getAppName(), null, "data-aging", agingFreq, OLAPDataAger.class);
+            appTasks.add(task);
+        }
+        String autoMergeFreq = appDef.getOption("auto-merge");
+        if (autoMergeFreq != null) {
+            Task task = new Task(appDef.getAppName(), null, "auto-merge", autoMergeFreq, OLAPMerger.class);
             appTasks.add(task);
         }
         return appTasks;
