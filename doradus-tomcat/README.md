@@ -32,5 +32,7 @@ Follow these simple steps to use Doradus with Tomcat 7 Web Server.
       
 - Launch Doradus Tomcat application at port 8080
 
-       the URL is  http://localhost:8080/_applications for Doradus at ROOT level
-       or http://localhost:8080/_api/_applications for Doradus at prefix level, it is
+  The URL is        
+
+       http://localhost:8080/_applications for Doradus at ROOT level
+       or http://localhost:8080/_api/_applications for Doradus at prefix level.
