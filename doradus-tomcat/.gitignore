@@ -1,0 +1,13 @@
+*/lib/*
+*.project
+*/.settings/*
+.settings/*
+doradus-client/docs/*
+.DS_Store
+*/bin/*
+.classpath
+doradus.log
+.metadata
+truststore
+keystore
+*/target/*
