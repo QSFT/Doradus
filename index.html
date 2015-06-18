@@ -1,123 +1,43 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <title>Welcome to Doradus</title>
-  <meta charset="utf-8">
-  <meta name='viewport' content='content="width=device-width, maximum-scale=1.0, minimum-scale=1.0, initial-scale=1.0' />
-  <link rel="stylesheet" href="styles.css">
-  <script src="js/three.min.js"></script>
-  <script src="js/OrbitControls.js"></script>
 </head>
-<body style="margin: 0;">
-    <div class="over"></div><img src="bg_mask.png" class="mask"/>
-    <div class="doradus">
-      <h1>Doradus</h1>
-      <aside>Doradus is a REST service that extends a Cassandra NoSQL database with a graph-based data model, advanced indexing and search features, and a REST API.</aside>
-      <a href="static/Admin/DoradusAdministration.html">Get Started</a>
-    </div>
+<body>
+	<div  style="z-index: 1; visibility: visible;background-image:url('images/banner.jpg'); width:1000; height: 215px"> 
+		<div class="text-banner">What is Doradus?</div>
+	</div> 
+    
+	<b>Doradus</b> is an open source storage and query engine that runs on top of the Cassandra NoSQL database. It provides a high-level data model, Lucene-based query language, and sophisticated aggregate queries with multi-level grouping. You can embed Doradus in an application or execute it standalone with the bundled Jetty server or another web server to provide a REST API. Multiple storage services are available that organize data using techniques designed to benefit specific application types:
+	<ul>
+	<li>
+The <b>OLAP service</b> borrows techniques from Online Analytical Processing, columnar storage, compression, and sharding to yield extremely compact databases. Doradus OLAP requires applications to organize data into time-based shards, and it prefers batch updates of semi-mutable data. For applications that can meet these constraints, databases are extremely compact, and analytic queries can search millions of objects per second.<br/>
+    </li>
+    <li>
+	The <b>Spider service</b> is suitable for data that is highly mutable, semi-structured to unstructured, and/or requires fine-grained updates. Updates are instantly reflected in searches, and objects can be updated simultaneously by different applications. Spider is ideal for applications emphasizing full text searches on irregular data.<br/>
+	</li>
+	</ul>
+<p>Both OLAP and Spider support the Doradus Query Language (DQL) for object and aggregate queries. For a more detailed overview of Doradus click here. See the topics below for links to tutorials, examples, detailed documentation, and a simple 1-2-3 getting started process.</p>
+<table>
+<tr>
+    <th>Getting Started	</th>
+	<th>Documentation </th>
+	</tr><br/>
+	<tr>
+<td><span class="bold-msg"><a href="artifacts/doradus_123.html"><u>Doradus 1-2-3</u></a></span>: Download Doradus and Cassandra, install, and run in 3 easy steps.</td>	
+<td><span class="bold-msg"><a href="static/Olap/wwhelp/wwhimpl/js/html/wwhelp.htm"><u>Doradus OLAP</u></a></span>: Detailed documentation on the OLAP service. Also available as a <a href="https://github.com/dell-oss/Doradus/raw/master/docs/Doradus%20OLAP%20Database.pdf"><u>PDF file.</u></a></td>
+</tr>
+<br/>
+<tr>
+<td><span class="bold-msg"><a href="artifacts/Hello Spider Tutorial.docx"><u>Hello Spider</u></a></span>: An introduction to Doradus Spider an how to create a schema, add data, make simple queries, and more.</td>
+<td><span class="bold-msg"><a href="static/Spider/wwhelp/wwhimpl/js/html/wwhelp.htm"><u>Doradus Spider</u></a></span>: Detailed documentation on the Spider service. Also available as a <a href="https://github.com/dell-oss/Doradus/raw/master/docs/Doradus%20Spider%20Database.pdf"><u>PDF file.</u></a></td>
+</tr>
+<br/>
+<tr>
+<td><span class="bold-msg"><a href="https://github.com/dell-oss/Doradus/wiki/The-Doradus-Story"><u>The Doradus Story</u></a></span>: What motivated Doradus, its goals, and history.</td>	
+<td><span class="bold-msg"><a href="static/Admin/wwhelp/wwhimpl/js/html/wwhelp.htm"><u>Doradus Administration</u></a></span>: Details on installing, configuring, and running the Doradus server. Also available as a <a href="https://github.com/dell-oss/Doradus/raw/master/docs/Doradus%20Administration.pdf"><u>PDF file.</u></a></td>
+</tr>
 
-  <script>
-
-    // Set up the scene, camera, and renderer as global variables.
-    var scene, camera, renderer;
-
-    init();
-    animate();
-
-    // Sets up the scene.
-    function init() {
-
-      // Create the scene and set the scene size.
-      scene = new THREE.Scene();
-      var WIDTH = window.innerWidth,
-          HEIGHT = window.innerHeight;
-
-      // Create a renderer and add it to the DOM.
-      renderer = new THREE.WebGLRenderer({antialias:true});
-      renderer.setSize(WIDTH, HEIGHT);
-      document.body.appendChild(renderer.domElement);
-
-      // Create a camera, zoom it out from the model a bit, and add it to the scene.
-      camera = new THREE.PerspectiveCamera(45, WIDTH / HEIGHT, 0.1, 20000);
-      camera.position.set(250,250,250);
-      scene.add(camera);
-
-      // Create an event listener that resizes the renderer with the browser window.
-      window.addEventListener('resize', function() {
-        var WIDTH = window.innerWidth,
-            HEIGHT = window.innerHeight;
-        renderer.setSize(WIDTH, HEIGHT);
-        camera.aspect = WIDTH / HEIGHT;
-        camera.updateProjectionMatrix();
-      });
-
-      // Set the background color of the scene.
-      renderer.setClearColorHex(0x000000, 1);
-
-      // Create a light, set its position, and add it to the scene.
-      var light = new THREE.PointLight(0xffffff);
-      light.position.set(-100,200,100);
-      scene.add(light);
-
-      // Load in the mesh and add it to the scene.
-      // var loader = new THREE.JSONLoader();
-      // loader.load( "models/treehouse_logo.js", function(geometry){
-      //   var material = new THREE.MeshLambertMaterial({color: 0x55B663});
-      //   mesh = new THREE.Mesh(geometry, material);
-      //   scene.add(mesh);
-      // });
-      // create the particle variables
-      var particleCount = 600,
-          particles = new THREE.Geometry(),
-          pMaterial = new THREE.ParticleBasicMaterial({
-            color: 0xFFFFFF,
-            size: 1
-          });
-
-      // now create the individual particles
-      for (var p = 0; p < particleCount; p++) {
-
-        // create a particle with random
-        // position values, -250 -> 250
-        var pX = Math.random() * 500 - 250,
-            pY = Math.random() * 500 - 250,
-            pZ = Math.random() * 500 - 250,
-            particle = new THREE.Vertex(
-              new THREE.Vector3(pX, pY, pZ)
-            );
-
-        // add it to the geometry
-        particles.vertices.push(particle);
-      }
-
-      // create the particle system
-      var particleSystem = new THREE.ParticleSystem(
-          particles,
-          pMaterial);
-
-      // add it to the scene
-      scene.add(particleSystem);
-      // Add OrbitControls so that we can pan around with the mouse.
-      controls = new THREE.OrbitControls(camera, renderer.domElement);
-
-    }
-
-
-    // Renders the scene and updates the render as needed.
-    function animate() {
-
-      // Read more about requestAnimationFrame at http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
-      requestAnimationFrame(animate);
-      
-      // Render the scene.
-      renderer.render(scene, camera);
-      controls.update();
-
-    }
-
-  </script>
-
-  <link href='http://fonts.googleapis.com/css?family=Lato:100,300,400' async rel='stylesheet' type='text/css'>
 </body>
 </html>
