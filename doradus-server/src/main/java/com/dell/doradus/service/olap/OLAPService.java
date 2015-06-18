@@ -458,6 +458,10 @@ public class OLAPService extends StorageService {
                 bSawAgingFreq = true;
                 break;
                 
+            case "auto-merge":
+                new TaskFrequency(optValue);
+                break;
+
             default:
                 throw new IllegalArgumentException("Unknown option for OLAPService application: " + optName);
             }
