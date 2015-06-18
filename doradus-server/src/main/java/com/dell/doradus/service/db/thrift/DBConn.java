@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.cassandra.thrift.AuthenticationRequest;
 import org.apache.cassandra.thrift.Cassandra;
 import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.thrift.ColumnOrSuperColumn;
@@ -130,7 +131,7 @@ public class DBConn implements AutoCloseable {
             throw new DBNotAvailableException(e);
         }
         
-        // Success. Set keyspace if requested.
+        // Set keyspace if requested.
         if (!Utils.isEmpty(m_keyspace)) {
             try {
                 m_client.set_keyspace(m_keyspace);
@@ -140,6 +141,22 @@ public class DBConn implements AutoCloseable {
                 throw new RuntimeException(e);
             }
         }
+        
+        // Set credentials if requested.
+        if (!Utils.isEmpty(config.dbuser)) {
+            try {
+                Map<String, String> credentials = new HashMap<>();
+                credentials.put("username", config.dbuser);
+                credentials.put("password", config.dbpassword);
+                AuthenticationRequest auth_request = new AuthenticationRequest(credentials);
+                m_client.login(auth_request);
+            } catch (Exception e) {
+                // This can't be retried, so we throw a RuntimeException
+                m_logger.error("Could not authenticate with dbuser '" + config.dbuser + "'", e);
+                throw new RuntimeException(e);
+            }
+        }
+
         m_bDBOpen = true;
         m_bFailed = false;
     }   // connect
