@@ -76,6 +76,9 @@ public class BatchBuilder {
 	    Set<String> values = new HashSet<String>();
         StringBuilder buffer = new StringBuilder();
 	    int level = 0;   // 0=batch object, 1=docs array, 2=doc object, 3+=field object
+	    final String idFieldName;
+	    
+	    Listener(String idFieldName) {this.idFieldName = idFieldName;}
 
         @Override
         public void onStartObject(String name) {
@@ -205,7 +208,7 @@ public class BatchBuilder {
         
         private void addValue(OlapDocument document, String fieldName, String value) {
             if (Utils.isEmpty(value)) return;
-            if (fieldName.equals("_ID")) {
+            if (fieldName.equals(idFieldName)) {
                 document.setId(value);
             } else if (fieldName.equals("_table")) {
                 document.setTable(value);
@@ -217,21 +220,31 @@ public class BatchBuilder {
         }   // addValue
     }   // class Listener
 	
-	// Uses SajListener to parse text directly into an OlapBatch
 	public static OlapBatch parseJSON(String text) {
-	    Listener listener = new Listener();
+	    return parseJSON(text, "_ID");
+	}
+	
+	public static OlapBatch parseJSON(String text, String idFieldName) {
+	    Listener listener = new Listener(idFieldName);
 	    new JSONAnnie(text).parse(listener);
 	    return listener.result;
 	}
 	
-	// Uses SajListener to parse data from a Reader into an OlapBatch 
 	public static OlapBatch parseJSON(Reader reader) {
-	    Listener listener = new Listener();
+	    return parseJSON(reader, "_ID");
+	}
+	
+	public static OlapBatch parseJSON(Reader reader, String idFieldName) {
+	    Listener listener = new Listener(idFieldName);
 	    new JSONAnnie(reader).parse(listener);
 	    return listener.result;
 	}
 	
-    public static OlapBatch fromUNode(UNode rootNode) {
+	public static OlapBatch fromUNode(UNode rootNode) {
+	    return fromUNode(rootNode, "_ID");
+	}
+	
+    public static OlapBatch fromUNode(UNode rootNode, String idFieldName) {
         Utils.require(rootNode.getName().equals("batch"),
                       "Root node must be 'batch': " + rootNode.getName());
         OlapBatch batch = new OlapBatch();
@@ -242,24 +255,24 @@ public class BatchBuilder {
             Utils.require(docNode.getName().equals("doc"), "'doc' node expected: " + docNode.getName());
             OlapDocument document = batch.addDoc();
             for (UNode fieldNode : docNode.getMemberList()) {
-                addFieldValues(document, fieldNode);
+                addFieldValues(document, fieldNode, idFieldName);
             }
             Utils.require(document.getTable() != null, "'doc' node missing '_table' value");
         }
         return batch;
-    }   // fromUNode
+    }
 
-    private static void addFieldValues(OlapDocument document, UNode fieldNode) {
+    private static void addFieldValues(OlapDocument document, UNode fieldNode, String idFieldName) {
         String fieldName = fieldNode.getName();
         Utils.require(fieldName != null, "'field' node missing 'name' value:" + fieldNode.getName());
         if (fieldNode.isValue()) {
             // Simple field value
-            addFieldValue(document, fieldName, fieldNode.getValue());
+            addFieldValue(document, fieldName, fieldNode.getValue(), idFieldName);
         } else if (fieldNode.isArray()) {
             // ["value 1", "value 2", ...]
             for (UNode valueNode : fieldNode.getMemberList()) {
                 Utils.require(valueNode.isValue(), "Value expected: " + valueNode);
-                addFieldValue(document, fieldName, valueNode.getValue());
+                addFieldValue(document, fieldName, valueNode.getValue(), idFieldName);
             }
         } else {
             // Field's value is MAP.
@@ -268,18 +281,18 @@ public class BatchBuilder {
                     // "add": ["value 1", "value 2", ...]
                     for (UNode valueNode : childNode.getMemberList()) {
                         Utils.require(valueNode.isValue(), "Value expected: " + valueNode);
-                        addFieldValue(document, fieldName, valueNode.getValue());
+                        addFieldValue(document, fieldName, valueNode.getValue(), idFieldName);
                     }
                 } else {
                     // Must be a nested field.
-                    addFieldValues(document, childNode);
+                    addFieldValues(document, childNode, idFieldName);
                 }
             }
         }
     }   // addFieldValues
 
-    private static void addFieldValue(OlapDocument document, String fieldName, String value) {
-        if (fieldName.equals("_ID")) {
+    private static void addFieldValue(OlapDocument document, String fieldName, String value, String idFieldName) {
+        if (fieldName.equals(idFieldName)) {
             document.setId(value);
         } else if (fieldName.equals("_table")) {
             document.setTable(value);

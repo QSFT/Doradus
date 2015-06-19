@@ -96,10 +96,10 @@ public class LoggingService extends StorageService {
             
             OlapBatch batch = null;
             if (m_request.getInputContentType().isJSON()) {
-                batch = OlapBatch.parseJSON(reader);
+                batch = OlapBatch.parseJSON(reader, "Timestamp");
             } else {
                 UNode rootNode = UNode.parse(reader, m_request.getInputContentType());
-                batch = OlapBatch.fromUNode(rootNode);
+                batch = OlapBatch.fromUNode(rootNode, "Timestamp");
             }
             
             LoggingService.instance().m_logService.addBatch(tenant, application, table, batch);
