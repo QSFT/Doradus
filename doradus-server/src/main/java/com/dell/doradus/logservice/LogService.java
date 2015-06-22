@@ -175,12 +175,18 @@ public class LogService {
     }
     
     public void readChunk(Tenant tenant, String application, String table, ChunkInfo chunkInfo, ChunkReader chunkReader) {
-        String store = application + "_" + table;
-        DColumn column = DBService.instance().getColumn(tenant, store, chunkInfo.getPartition(), chunkInfo.getChunkId());
-        if(column == null) throw new RuntimeException("Data was deleted");
-        chunkReader.read(column.getRawValue());
+        byte[] data = readChunkData(tenant, application, table, chunkInfo);
+        if(data == null) throw new RuntimeException("Data was deleted");
+        chunkReader.read(data);
     }
 
+    public byte[] readChunkData(Tenant tenant, String application, String table, ChunkInfo chunkInfo) {
+        String store = application + "_" + table;
+        DColumn column = DBService.instance().getColumn(tenant, store, chunkInfo.getPartition(), chunkInfo.getChunkId());
+        if(column == null) return null;
+        return column.getRawValue();
+    }
+    
     public List<byte[]> readChunks(Tenant tenant, String application, String table, List<ChunkInfo> infos) {
         String store = application + "_" + table;
         List<String> chunkIds = new ArrayList<>(infos.size());

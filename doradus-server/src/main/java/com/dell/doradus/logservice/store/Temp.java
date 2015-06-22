@@ -52,4 +52,12 @@ public class Temp {
         else if(type != 0) throw new RuntimeException("Invalid type");
         return new MemoryStream(data);
     }
+    
+    public static void skipCompressed(MemoryStream input) {
+        byte type = (byte)input.readByte();
+        int length = input.readVInt();
+        input.skip(length);
+        if(type != 0 && type != 1) throw new RuntimeException("Invalid type");
+    }
+    
 }
