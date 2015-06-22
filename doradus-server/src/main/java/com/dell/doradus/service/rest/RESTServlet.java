@@ -148,7 +148,13 @@ public class RESTServlet extends HttpServlet {
         Map<String, String> variableMap = new HashMap<String, String>();
         String query = extractQueryParam(request, variableMap);
         Tenant tenant = getTenant(variableMap);
-        String uri = request.getPathInfo();
+
+        // Command matching expects an encoded URI but without the servlet context, if any.
+        String uri = request.getRequestURI();
+        String context = request.getContextPath();
+        if (!Utils.isEmpty(context)) {
+            uri = uri.substring(context.length());
+        }
         ApplicationDefinition appDef = getApplication(uri, tenant);
         
         RESTCommand cmd = RESTService.instance().matchCommand(appDef, request.getMethod(), uri, query, variableMap);
