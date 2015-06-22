@@ -202,13 +202,11 @@ public class ShardCache {
         
         Iterator<DColumn> colIter =
             DBService.instance().getAllColumns(Tenant.getTenant(tableDef), SpiderService.termsStoreName(tableDef), SpiderTransaction.SHARDS_ROW_KEY);
-        if (colIter != null) {
-            while (colIter.hasNext()) {
-                DColumn col = colIter.next();
-                Integer shardNum = Integer.parseInt(col.getName());
-                Date shardDate = new Date(Long.parseLong(col.getValue()));
-                shardMap.put(shardNum, shardDate);
-            }
+        while (colIter.hasNext()) {
+            DColumn col = colIter.next();
+            Integer shardNum = Integer.parseInt(col.getName());
+            Date shardDate = new Date(Long.parseLong(col.getValue()));
+            shardMap.put(shardNum, shardDate);
         }
     }   // loadShardCache
     

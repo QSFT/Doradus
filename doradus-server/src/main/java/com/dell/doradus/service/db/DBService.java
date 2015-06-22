@@ -182,13 +182,14 @@ public abstract class DBService extends Service {
 
     /**
      * Get all columns for the row with the given key in the given store. Columns are
-     * returned as an Iterator of {@link DColumn}s. Null is returned if no row is
-     * found with the given key.
+     * returned as an Iterator of {@link DColumn}s. If no row is found with the given key,
+     * the iterator's hasNext() will be false.
      * 
      * @param tenant    {@link Tenant} that owns the store. 
      * @param storeName Name of store to query.
      * @param rowKey    Key of row to fetch.
-     * @return          Iterator of {@link DColumn}s, or null if there is no such row.
+     * @return          Iterator of {@link DColumn}s. If there is no such row, hasNext()
+     *                  will be false.
      */
     public abstract Iterator<DColumn> getAllColumns(Tenant tenant,
                                                     String storeName,
@@ -206,7 +207,8 @@ public abstract class DBService extends Service {
      * @param startCol	First name in the column names interval.
      * @param endCol	Last name in the column names interval.
      * @param reversed	Flag: reverse iteration?
-     * @return          Iterator of {@link DColumn}s, or null if there is no such row.
+     * @return          Iterator of {@link DColumn}s. If there is no such row, the
+     *                  iterator's hasNext() will be false.
      */
     public abstract Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName,
             String rowKey, String startCol, String endCol, boolean reversed);
@@ -222,7 +224,8 @@ public abstract class DBService extends Service {
      * @param rowKey    Key of row to fetch.
      * @param startCol	First name in the column names interval.
      * @param endCol	Last name in the column names interval.
-     * @return          Iterator of {@link DColumn}s, or null if there is no such row.
+     * @return          Iterator of {@link DColumn}s. If there is no such row, the
+     *                  iterator's hasNext() will be false.
      */
     public abstract Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName,
             String rowKey, String startCol, String endCol);

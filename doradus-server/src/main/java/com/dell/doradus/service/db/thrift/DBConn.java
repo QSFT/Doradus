@@ -262,7 +262,7 @@ public class DBConn implements AutoCloseable {
      */
     public Map<String, String> getAppProperties(String appName) {
         Iterator<DColumn> colIter = fetchAllColumns(COLUMN_PARENT_APPS, Utils.toBytes(appName));
-        if (colIter == null) {
+        if (colIter == null || !colIter.hasNext()) {
             return null;
         }
         Map<String, String> propMap = new HashMap<>();
@@ -303,7 +303,8 @@ public class DBConn implements AutoCloseable {
      * 
      * @param storeName Name of store to query.
      * @param rowKey    Key of row to fetch.
-     * @return          All columns for corresponding row, or null if there is no such row.
+     * @return          All columns for corresponding row. If there is no such row,
+     *                  the iterator's hasNext() will be false.
      */
     public Iterator<DColumn> getAllColumns(String storeName, String rowKey) {
         return fetchAllColumns(CassandraDefs.columnParent(storeName), Utils.toBytes(rowKey));
@@ -348,7 +349,8 @@ public class DBConn implements AutoCloseable {
      * @param store     Name of store to query.
      * @param rowKey    Key of row to read.
      * @param colName   Name of column to fetch.
-     * @return          {@link DColumn} containing the column name and value.
+     * @return          {@link DColumn} containing the column name and value or null if
+     *                  column does not exist.
      */
     public DColumn getColumn(String storeName, String rowKey, String colName) {
         return fetchColumn(CassandraDefs.columnParent(storeName), Utils.toBytes(rowKey), Utils.toBytes(colName));
@@ -773,10 +775,9 @@ public class DBConn implements AutoCloseable {
     }   // fetchRowsAllColumns
     
     // Return all columns of the row with the given key in the given ColumnFamily. If no
-    // such row is found, null is returned.
+    // such row is found, hasNext() will be null.
     private Iterator<DColumn> fetchAllColumns(ColumnParent colPar, byte[] rowKey) {
-        CassandraColumnBatch colBatch = new CassandraColumnBatch(this, colPar, rowKey, CassandraDefs.SLICE_PRED_ALL_COLS);
-        return colBatch.hasNext() ? colBatch : null;
+        return new CassandraColumnBatch(this, colPar, rowKey, CassandraDefs.SLICE_PRED_ALL_COLS);
     }   // fetchAllColumns
     
     // Return columns of the given column range in a row. If no columns found or

@@ -210,7 +210,7 @@ public class TaskManagerService extends Service {
         Iterator<DColumn> colIter =
             DBService.instance().getAllColumns(tenant, TaskManagerService.TASKS_STORE_NAME, task.getTaskID());
         TaskRecord taskRecord = null;
-        if (colIter == null) {
+        if (!colIter.hasNext()) {
             taskRecord = storeTaskRecord(tenant, task);
         } else {
             taskRecord = buildTaskRecord(task.getTaskID(), colIter);

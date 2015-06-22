@@ -169,7 +169,7 @@ public class SpiderService extends StorageService {
         checkServiceState();
         String storeName = objectsStoreName(tableDef);
         Iterator<DColumn> colIter = DBService.instance().getAllColumns(Tenant.getTenant(tableDef), storeName, objID);
-        if (colIter == null) {
+        if (!colIter.hasNext()) {
             return null;
         }
 

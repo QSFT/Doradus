@@ -524,7 +524,7 @@ public class SpiderTransaction {
             colList = new ArrayList<>();
             rowMap.put(rowKey, colList);
         }
-        colNames.addAll(colNames);
+        colList.addAll(colNames);
     }
     
     // Add the following row deletion.

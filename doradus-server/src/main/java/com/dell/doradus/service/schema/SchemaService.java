@@ -418,7 +418,7 @@ public class SchemaService extends Service {
     private ApplicationDefinition getApplicationDefinition(Tenant tenant, String appName) {
         Iterator<DColumn> colIter =
             DBService.instance().getAllColumns(tenant, SchemaService.APPS_STORE_NAME, appName);
-        if (colIter == null) {
+        if (!colIter.hasNext()) {
             return null;
         }
         return loadAppRow(tenant, getColumnMap(colIter));
