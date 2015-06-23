@@ -27,7 +27,15 @@ public class XLinksInFields {
         FieldSet fieldSet = searchResult.fieldSet;
         for(String linkField: fieldSet.getLinks()) {
             FieldDefinition linkDef = fieldSet.tableDef.getFieldDef(linkField);
+            if(linkDef.isLinkField()) {
+                List<SearchResultList> list = searchResult.links.get(linkField);
+                for(SearchResultList resultList: list) {
+                    updateXLinksInFields(olap, olapQuery, resultList);
+                }
+                continue;
+            }
             if(!linkDef.isXLinkField()) continue;
+            int pos = 0;
             for(FieldSet fs: fieldSet.getLinks(linkField)) {
                 String junction = linkDef.getXLinkJunction();
                 String value = searchResult.scalars.get(junction);
@@ -35,7 +43,7 @@ public class XLinksInFields {
                 Set<String> values = Utils.split(value, CommonDefs.MV_SCALAR_SEP_CHAR);
                 SearchResultList result = searchForXlink(values, olap, fs, linkDef, olapQuery);
                 List<SearchResultList> list = searchResult.links.get(linkField);
-                list.set(0, result);
+                list.set(pos++, result);
             }
         }
     }
@@ -53,6 +61,10 @@ public class XLinksInFields {
             for(String value: values) {
                 ((OrQuery)query).subqueries.add(new BinaryQuery(BinaryQuery.EQUALS, refField, value));    
             }
+        }
+        
+        if(fieldSet.filter != null) {
+            //query = new AndQuery(query, fieldSet.filter);
         }
         
         int pageSize = fieldSet.limit;
