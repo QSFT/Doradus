@@ -33,6 +33,7 @@ import org.apache.cassandra.thrift.ColumnOrSuperColumn;
 import org.apache.cassandra.thrift.ColumnParent;
 import org.apache.cassandra.thrift.ColumnPath;
 import org.apache.cassandra.thrift.ConsistencyLevel;
+import org.apache.cassandra.thrift.InvalidRequestException;
 import org.apache.cassandra.thrift.KeyRange;
 import org.apache.cassandra.thrift.KeySlice;
 import org.apache.cassandra.thrift.Mutation;
@@ -486,6 +487,12 @@ public class DBConn implements AutoCloseable {
                     m_logger.info("get_range_slices() succeeded on attempt #{}", attempts);
                 }
                 bSuccess = true;
+            } catch (InvalidRequestException ex) {
+                // No point in retrying this one.
+                String errMsg = "get_range_slices() failed for table: " + colParent.getColumn_family();
+                m_bFailed = true;
+                m_logger.error(errMsg, ex);
+                throw new RuntimeException(errMsg, ex);
             } catch (Exception ex) {
                 // Abort if all retries exceeded.
                 if (attempts >= ServerConfig.getInstance().max_read_attempts) {
@@ -535,6 +542,12 @@ public class DBConn implements AutoCloseable {
                     m_logger.info("get_slice() succeeded on attempt #{}", attempts);
                 }
                 bSuccess = true;
+            } catch (InvalidRequestException ex) {
+                // No point in retrying this one.
+                String errMsg = "get_slice() failed for table: " + colParent.getColumn_family();
+                m_bFailed = true;
+                m_logger.error(errMsg, ex);
+                throw new RuntimeException(errMsg, ex);
             } catch (Exception ex) {
                 // Abort if all retries exceeded.
                 if (attempts >= ServerConfig.getInstance().max_read_attempts) {
@@ -600,6 +613,12 @@ public class DBConn implements AutoCloseable {
                 bSuccess = true;
             } catch (NotFoundException ex) {
                 return null;
+            } catch (InvalidRequestException ex) {
+                // No point in retrying this one.
+                String errMsg = "get() failed for table: " + colPath.getColumn_family();
+                m_bFailed = true;
+                m_logger.error(errMsg, ex);
+                throw new RuntimeException(errMsg, ex);
             } catch (Exception ex) {
                 // Abort if all retries exceeded.
                 if (attempts >= ServerConfig.getInstance().max_read_attempts) {
@@ -643,6 +662,12 @@ public class DBConn implements AutoCloseable {
                     m_logger.info("multiget_slice() succeeded on attempt #{}", attempts);
                 }
                 bSuccess = true;
+            } catch (InvalidRequestException ex) {
+                // No point in retrying this one.
+                String errMsg = "multiget_slice() failed for table: " + colParent.getColumn_family();
+                m_bFailed = true;
+                m_logger.error(errMsg, ex);
+                throw new RuntimeException(errMsg, ex);
             } catch (Exception ex) {
                 if (attempts >= ServerConfig.getInstance().max_read_attempts) {
                     String errMsg = "All retries exceeded; abandoning multiget_slice() for table: " +
@@ -705,6 +730,11 @@ public class DBConn implements AutoCloseable {
                     m_logger.info("batch_mutate() succeeded on attempt #{}", attempts);
                 }
                 bSuccess = true;
+            } catch (InvalidRequestException ex) {
+                // No point in retrying this one.
+                m_bFailed = true;
+                m_logger.error("batch_mutate() failed", ex);
+                throw new RuntimeException("batch_mutate() failed", ex);
             } catch (Exception ex) {
                 // If we've reached the retry limit, we fail this commit.
                 if (attempts >= ServerConfig.getInstance().max_commit_attempts) {
@@ -872,6 +902,12 @@ public class DBConn implements AutoCloseable {
                     m_logger.info("remove() succeeded on attempt #{}", attempts);
                 }
                 bSuccess = true;
+            } catch (InvalidRequestException ex) {
+                // No point in retrying this one.
+                String errMsg = "remove() failed for table: " + colPath.getColumn_family(); 
+                m_bFailed = true;
+                m_logger.error(errMsg, ex);
+                throw new RuntimeException(errMsg, ex);
             } catch (Exception ex) {
                 // For a timeout exception, Cassandra may be very busy, so we retry up
                 // to the configured limit.
