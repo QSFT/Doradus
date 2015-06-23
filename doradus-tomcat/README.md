@@ -8,7 +8,8 @@ Follow these simple steps to use Doradus with Tomcat 7 Web Server.
   Download and install Tomcat 7 from https://tomcat.apache.org/tomcat-7.0-doc/appdev/installation.html on your machine at directory which will be used as <TOMCAT_HOME> in this document
   
   Start Tomcat
-      
+
+       Changed the port 80 to available port, for ex 8080      
        Go to <TOMCAT_HOME>/bin and run $./catalina.sh run for Mac/Linux 
        or $catalina run for Windows
 
