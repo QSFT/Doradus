@@ -328,8 +328,8 @@ public class SchemaService extends Service {
         if (tenant.getKeyspace().equals(ServerConfig.getInstance().keyspace)) {
             TenantService.instance().createDefaultTenant();
         }
-        storeApplicationSchema(appDef);
         getStorageService(appDef).initializeApplication(currAppDef, appDef);
+        storeApplicationSchema(appDef);
     }   // initializeApplication
 
     // Store the application row with schema, version, and format.
