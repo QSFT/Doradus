@@ -9,7 +9,7 @@ Follow these simple steps to use Doradus with Tomcat 7 Web Server.
   
   Start Tomcat
 
-       Changed the port 80 to available port, for ex 8080      
+       Changed the port 80 to available port, for ex 8080 in server.xml     
        Go to <TOMCAT_HOME>/bin and run $./catalina.sh run for Mac/Linux 
        or $catalina run for Windows
 
