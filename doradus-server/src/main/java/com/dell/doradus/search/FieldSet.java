@@ -113,6 +113,14 @@ public class FieldSet {
 				linkSet.Fixup();
 			}
 		}
+
+        for(String linkName: LinkFields.keySet()) {
+            FieldDefinition linkField = tableDef.getFieldDef(linkName);
+            if(!linkField.isXLinkField()) continue;
+            String junction = linkField.getXLinkJunction();
+            if(junction == null || "_ID".equals(junction)) continue;
+            ScalarFields.add(junction);
+        }
 		
 		ScalarFields.remove("_ID");
 	}

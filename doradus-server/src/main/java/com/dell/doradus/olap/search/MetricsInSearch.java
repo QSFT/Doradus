@@ -43,6 +43,7 @@ public class MetricsInSearch {
 		}
 		ids.setLength(ids.length() - 1);
 		
+		// include original query to respect _pair option
 		String query = "(" + olapQuery.getOriginalQuery() + ") AND _ID IN(" + ids.toString() + ")";
 		
 		OlapAggregate aggregate = new OlapAggregate("x", query, "_ID", olapQuery.getMetrics(), olapQuery.getPair());

@@ -71,10 +71,10 @@ class FieldSetTokenizer {
                 for (int i = 0; i < list.size(); i++) {
                     FieldDefinition fieldDefinition = list.get(i);
                     FieldSet current = set;
-                    if (!fieldDefinition.isLinkField() && item.children.size() > 0)
+                    if (!fieldDefinition.isLinkField() && !fieldDefinition.isXLinkField() && item.children.size() > 0)
                         throw new IllegalArgumentException(fieldDefinition + " is not a link");
 
-                    if (fieldDefinition.isLinkField()) {
+                    if (fieldDefinition.isLinkField() || fieldDefinition.isXLinkField()) {
                         //if (set.LinkFields.containsKey(fieldDefinition.getName()))
                         //    current = set.LinkFields.get(fieldDefinition.getName());
                         //else   {

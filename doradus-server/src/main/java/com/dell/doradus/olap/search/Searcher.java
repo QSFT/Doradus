@@ -32,48 +32,18 @@ import com.dell.doradus.olap.io.FileDeletedException;
 import com.dell.doradus.olap.merge.MergeResult;
 import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.xlink.XLinkContext;
-import com.dell.doradus.search.FieldSet;
 import com.dell.doradus.search.SearchResult;
 import com.dell.doradus.search.SearchResultList;
-import com.dell.doradus.search.aggregate.SortOrder;
-import com.dell.doradus.search.parser.AggregationQueryBuilder;
-import com.dell.doradus.search.parser.DoradusQueryBuilder;
-import com.dell.doradus.search.query.AndQuery;
-import com.dell.doradus.search.query.IdRangeQuery;
-import com.dell.doradus.search.query.Query;
 
 public class Searcher {
     private static Logger LOG = LoggerFactory.getLogger("Olap.Searcher");
 
     public static SearchResultList search(Olap olap, ApplicationDefinition appDef, String table, OlapQuery olapQuery) {
-        olapQuery.fixPairParameter();
         TableDefinition tableDef = appDef.getTableDef(table);
-        String application = appDef.getAppName();
         if(tableDef == null) throw new IllegalArgumentException("Table " + table + " does not exist");
-        Query query = DoradusQueryBuilder.Build(olapQuery.getQuery(), tableDef);
-        if(olapQuery.getContinueAfter() != null) {
-            query = new AndQuery(new IdRangeQuery(olapQuery.getContinueAfter(), false, null, false), query);
-        }
-        if(olapQuery.getContinueAt() != null) {
-            query = new AndQuery(new IdRangeQuery(olapQuery.getContinueAt(), true, null, false), query);
-        }
-        FieldSet fieldSet = new FieldSet(tableDef, olapQuery.getFieldSet());
-        fieldSet.expand();
-        SortOrder[] sortOrders = AggregationQueryBuilder.BuildSortOrders(olapQuery.getSortOrder(), tableDef);
-        List<String> shardsList = olapQuery.getShards(appDef, olap); 
-        List<String> xshardsList = olapQuery.getXShards(appDef, olap); 
-        XLinkContext xcontext = new XLinkContext(application, olap, xshardsList, tableDef);
-        xcontext.setupXLinkQuery(tableDef, query);
+        OlapQueryRequest olapQueryRequest = new OlapQueryRequest(olap, tableDef, olapQuery);
+        SearchResultList result = search(olap, olapQueryRequest);
         
-        SearchResultList result =
-                Olap.getSearchThreadPool() == null ?
-                    searchSinglethreaded(olap, appDef, shardsList, tableDef, query, fieldSet, olapQuery, sortOrders):
-                    searchMultithreaded(olap, appDef, shardsList, tableDef, query, fieldSet, olapQuery, sortOrders);
-        
-        if(olapQuery.getSkip() > 0) {
-            int sz = result.results.size();
-            result.results = new ArrayList<SearchResult>(result.results.subList(Math.min(olapQuery.getSkip(), sz), sz));
-        }
         //metrics in query
         if(olapQuery.getMetrics() != null) {
             MetricsInSearch.addMetricsInSearch(olap, tableDef, result, olapQuery);
@@ -81,32 +51,47 @@ public class Searcher {
         
         return result;
     }
-    
-    private static SearchResultList searchSinglethreaded(Olap olap, ApplicationDefinition appDef, List<String> shardsList, TableDefinition tableDef, Query query, FieldSet fieldSet, OlapQuery olapQuery, SortOrder[] sortOrders) {
-        List<SearchResultList> results = new ArrayList<SearchResultList>();
-        for(String shard : shardsList) {
-            results.add(search(olap, appDef, shard, tableDef, query, fieldSet, olapQuery, sortOrders));
+    public static SearchResultList search(Olap olap, OlapQueryRequest olapQuery) {
+        ApplicationDefinition appDef = olapQuery.getTableDef().getAppDef();
+        XLinkContext xcontext = new XLinkContext(appDef.getAppName(), olap, olapQuery.getXShards(), olapQuery.getTableDef());
+        xcontext.setupXLinkQuery(olapQuery.getTableDef(), olapQuery.getQuery());
+        
+        SearchResultList result =
+                Olap.getSearchThreadPool() == null ?
+                    searchSinglethreaded(olap, olapQuery):
+                    searchMultithreaded(olap, olapQuery);
+        
+        if(olapQuery.getSkip() > 0) {
+            int sz = result.results.size();
+            result.results = new ArrayList<SearchResult>(result.results.subList(Math.min(olapQuery.getSkip(), sz), sz));
         }
-        SearchResultList result = MergeResult.merge(results, fieldSet);
+
+        //xlinks in fields
+        XLinksInFields.updateXLinksInFields(olap, olapQuery, result);
+        
+        return result;
+    }
+    
+    private static SearchResultList searchSinglethreaded(Olap olap, OlapQueryRequest olapQuery) {
+        List<SearchResultList> results = new ArrayList<SearchResultList>();
+        for(String shard : olapQuery.getShards()) {
+            results.add(search(olap, shard, olapQuery));
+        }
+        SearchResultList result = MergeResult.merge(results, olapQuery.getFieldSet());
         return result;
     }
 
-    private static SearchResultList searchMultithreaded(Olap olap, ApplicationDefinition appDef, List<String> shardsList, TableDefinition tableDef, Query query, FieldSet fieldSet, OlapQuery olapQuery, SortOrder[] sortOrders) {
+    private static SearchResultList searchMultithreaded(Olap olap, OlapQueryRequest olapQuery) {
         try {
             final List<SearchResultList> results = new ArrayList<SearchResultList>();
             List<Future<?>> futures = new ArrayList<>();
-            for(String shard : shardsList) {
+            for(String shard : olapQuery.getShards()) {
                 final Olap f_olap = olap;
-                final ApplicationDefinition f_appDef = appDef;
                 final String f_shard = shard;
-                final TableDefinition f_tableDef = tableDef;
-                final Query f_query = query;
-                final FieldSet f_fieldSet = fieldSet;
-                final OlapQuery f_olapQuery = olapQuery;
-                final SortOrder[] f_sortOrders = sortOrders;
+                final OlapQueryRequest f_olapQuery = olapQuery;
                 futures.add(Olap.getSearchThreadPool().submit(new Runnable() {
                     @Override public void run() {
-                        SearchResultList r = search(f_olap, f_appDef, f_shard, f_tableDef, f_query, f_fieldSet, f_olapQuery, f_sortOrders);
+                        SearchResultList r = search(f_olap, f_shard, f_olapQuery);
                         synchronized (results) {
                             results.add(r);
                         }
@@ -115,7 +100,7 @@ public class Searcher {
             }
             for(Future<?> f: futures) f.get();
             futures.clear();
-            SearchResultList result = MergeResult.merge(results, fieldSet);
+            SearchResultList result = MergeResult.merge(results, olapQuery.getFieldSet());
             return result;
         }catch(ExecutionException ee) {
             throw new RuntimeException(ee);
@@ -125,12 +110,12 @@ public class Searcher {
     }
     
     
-    public static SearchResultList search(Olap olap, ApplicationDefinition appDef, String shard, TableDefinition tableDef, Query query, FieldSet fieldSet, OlapQuery olapQuery, SortOrder[] sortOrders) {
+    public static SearchResultList search(Olap olap, String shard, OlapQueryRequest olapQuery) {
         // repeat if segment was merged
         for(int i = 0; i <= 2; i++) {
             try {
-                CubeSearcher s = olap.getSearcher(appDef, shard);
-                SearchResultList result = search(s, tableDef, query, fieldSet, olapQuery.getPageSizeWithSkip(), sortOrders);
+                CubeSearcher s = olap.getSearcher(olapQuery.getTableDef().getAppDef(), shard);
+                SearchResultList result = search(s, olapQuery);
                 for(SearchResult sr: result.results) sr.scalars.put("_shard", shard);
                 return result;
             }catch(FileDeletedException ex) {
@@ -138,13 +123,13 @@ public class Searcher {
                 continue;
             }
         }
-        CubeSearcher s = olap.getSearcher(appDef, shard);
-        return Searcher.search(s, tableDef, query, fieldSet, olapQuery.getPageSizeWithSkip(), sortOrders);
+        CubeSearcher s = olap.getSearcher(olapQuery.getTableDef().getAppDef(), shard);
+        return Searcher.search(s, olapQuery);
     }
     
-	public static SearchResultList search(CubeSearcher searcher, TableDefinition tableDef, Query query, FieldSet fieldSet, int size, SortOrder[] sortOrders) {
-    	Result documents = ResultBuilder.search(tableDef, query, searcher);
-		SearchResultList list = SearchResultBuilder.build(searcher, documents, fieldSet, size, sortOrders);
+	public static SearchResultList search(CubeSearcher searcher, OlapQueryRequest olapQuery) {
+    	Result documents = ResultBuilder.search(olapQuery.getTableDef(), olapQuery.getQuery(), searcher);
+		SearchResultList list = SearchResultBuilder.build(searcher, documents, olapQuery.getFieldSet(), olapQuery.getPageSizeWithSkip(), olapQuery.getSortOrder());
 		return list;
 	}
 	
