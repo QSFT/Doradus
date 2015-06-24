@@ -23,13 +23,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.Utils;
@@ -60,6 +60,7 @@ public class TaskManagerService extends Service {
     private static final int SLEEP_TIME_MILLIS = 60000;
     private static final int CLAIM_WAIT_MILLIS = 1000;
     private static final int MAX_TASKS = 2;
+    private static final int DEAD_TASK_THRESHOLD_MINS = 30;
     
     // Singleton object:
     private static final TaskManagerService INSTANCE = new TaskManagerService();
@@ -72,7 +73,7 @@ public class TaskManagerService extends Service {
     
     // Task execution management:
     private final ExecutorService m_executor = Executors.newFixedThreadPool(MAX_TASKS);
-    private final AtomicInteger   m_currentTasks = new AtomicInteger();
+    private final Map<String, TaskExecutor> m_activeTasks = new HashMap<>();
     
     // REST commands registered:
     private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
@@ -126,20 +127,24 @@ public class TaskManagerService extends Service {
         }
     }   // stopService
 
-    /**
-     * Increment the number of active tasks counted. Each call to this method must be
-     * paired with a reciprical call to {@link #decrementActiveTasks()}. 
-     */
-    public void incrementActiveTasks() {
-        m_currentTasks.incrementAndGet();
+    // Called by TaskExecutor when it's thread starts
+    void registerTaskStarted(TaskExecutor taskExe) {
+        synchronized (m_activeTasks) {
+            String mapKey = createMapKey(taskExe.getTenant(), taskExe.getTaskID());
+            if (m_activeTasks.put(mapKey, taskExe) != null) {
+                m_logger.warn("Task {} registered as started but was already running", mapKey);
+            }
+        }
     }
-
-    /**
-     * Decrement the number of active tasks counted. This method must be called after
-     * {@link #incrementActiveTasks()} is called when a task finishes, good or bad.
-     */
-    public void decrementActiveTasks() {
-        m_currentTasks.decrementAndGet();
+    
+    // Called by TaskExecutor when it's thread finishes
+    void registerTaskEnded(TaskExecutor taskExe) {
+        synchronized (m_activeTasks) {
+            String mapKey = createMapKey(taskExe.getTenant(), taskExe.getTaskID());
+            if (m_activeTasks.remove(mapKey) == null) {
+                m_logger.warn("Task {} registered as ended but was not running", mapKey);
+            }
+        }
     }
     
     /**
@@ -175,6 +180,7 @@ public class TaskManagerService extends Service {
         setHostAddress();
         while (!m_bShutdown) {
             checkAllTasks();
+            checkForDeadTasks();
             try {
                 Thread.sleep(SLEEP_TIME_MILLIS);
             } catch (InterruptedException e) {
@@ -234,7 +240,8 @@ public class TaskManagerService extends Service {
             return false;
         }
         
-        long startTimeMillis = taskRecord.getStartTime().getTimeInMillis();
+        Calendar startTime = taskRecord.getTime(TaskRecord.PROP_START_TIME);
+        long startTimeMillis = startTime == null ? 0 : startTime.getTimeInMillis();
         long taskPeriodMillis = task.getTaskFreq().getValueInMinutes() * 60 * 1000;
         long nowMillis = System.currentTimeMillis();
         boolean bShouldStart = startTimeMillis + taskPeriodMillis <= nowMillis;
@@ -250,7 +257,9 @@ public class TaskManagerService extends Service {
 
     // Indicate if we have room to execute another task.
     private boolean canHandleMoreTasks() {
-        return m_currentTasks.get() < MAX_TASKS;
+        synchronized (m_activeTasks) {
+            return m_activeTasks.size() < MAX_TASKS;
+        }
     }
     
     // Attempt to start the given task by creating claim and see if we win it.
@@ -363,6 +372,76 @@ public class TaskManagerService extends Service {
         }
         return appTasks;
     }   // getAppTasks
+
+    // Look for tasks that have not reported or finished in DEAD_TASK_THRESHOLD_MINS.
+    private void checkForDeadTasks() {
+        for (Tenant tenant: DBService.instance().getTenants()) {
+            checkForDeadTenantTasks(tenant);
+            if (m_bShutdown) {
+                break;
+            }
+        }
+    }
+    
+    private void checkForDeadTenantTasks(Tenant tenant) {
+        m_logger.debug("Checking tenant {} for abandoned tasks", tenant);
+        Iterator<DRow> taskRows = DBService.instance().getAllRowsAllColumns(tenant, TASKS_STORE_NAME);
+        while (taskRows.hasNext()) {
+            DRow row = taskRows.next();
+            TaskRecord taskRecord = buildTaskRecord(row.getKey(), row.getColumns());
+            if (taskRecord.getStatus() == TaskStatus.IN_PROGRESS) {
+                checkForDeadTask(tenant, taskRecord);
+            }
+        }
+    }
+
+    private void checkForDeadTask(Tenant tenant, TaskRecord taskRecord) {
+        Calendar lastReport = taskRecord.getTime(TaskRecord.PROP_PROGRESS_TIME);
+        if (lastReport == null) {
+            lastReport = taskRecord.getTime(TaskRecord.PROP_START_TIME);
+            if (lastReport == null) {
+                return; // corrupt/incomplete task record
+            }
+        }
+        long minsSinceLastActivity = (System.currentTimeMillis() - lastReport.getTimeInMillis()) / (1000 * 60); 
+        if (minsSinceLastActivity > DEAD_TASK_THRESHOLD_MINS) {
+            String taskIdentity = createMapKey(tenant, taskRecord.getTaskID());
+            if (isOurActiveTask(tenant, taskRecord.getTaskID())) {
+                m_logger.warn("Local task {} has not reported progress in {} minutes; " +
+                              "restart the server if this continues for too long",
+                              taskIdentity, minsSinceLastActivity);
+            } else {
+                m_logger.error("Remote task {} has not reported progress in {} minutes; marking as failed",
+                               taskIdentity, minsSinceLastActivity);
+                String reason = "No progress reported in " + minsSinceLastActivity + " minutes";
+                markTaskFailed(tenant, taskRecord, reason);
+            }
+        }
+    }
+
+    private void markTaskFailed(Tenant tenant, TaskRecord taskRecord, String reason) {
+        taskRecord.setProperty(TaskRecord.PROP_FINISH_TIME, Long.toString(System.currentTimeMillis()));
+        taskRecord.setProperty(TaskRecord.PROP_FAIL_REASON, reason);
+        taskRecord.setStatus(TaskStatus.FAILED);
+        
+        String taskID = taskRecord.getTaskID();
+        DBTransaction dbTran = DBService.instance().startTransaction(tenant);
+        dbTran.addColumn(TaskManagerService.TASKS_STORE_NAME, taskID, TaskRecord.PROP_FINISH_TIME, Long.toString(System.currentTimeMillis()));
+        dbTran.addColumn(TaskManagerService.TASKS_STORE_NAME, taskID, TaskRecord.PROP_FAIL_REASON, reason);
+        dbTran.addColumn(TaskManagerService.TASKS_STORE_NAME, taskID, TaskRecord.PROP_STATUS, TaskStatus.FAILED.toString());
+        dbTran.deleteRow(TaskManagerService.TASKS_STORE_NAME, "_claim/" + taskID);
+        DBService.instance().commit(dbTran);
+    }
+
+    private static String createMapKey(Tenant tenant, String taskID) {
+        return tenant.getKeyspace() + "/" + taskID;
+    }
+
+    private boolean isOurActiveTask(Tenant tenant, String taskID) {
+        synchronized (m_activeTasks) {
+            return m_activeTasks.containsKey(createMapKey(tenant, taskID));
+        }
+    }
 
     // Get the host address to use for task claiming.
     private void setHostAddress() {

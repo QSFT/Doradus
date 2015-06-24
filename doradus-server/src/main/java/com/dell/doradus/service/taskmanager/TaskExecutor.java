@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.Tenant;
@@ -40,6 +41,8 @@ public abstract class TaskExecutor implements Runnable {
     protected Tenant                  m_tenant;
     protected ApplicationDefinition   m_appDef;
     protected TaskRecord              m_taskRecord;
+    protected long                    m_lastProgressTimestamp;
+    protected String                  m_progressMessage;
     
     /**
      * A zero-argument constructor is required so that objects can be dynamically created.
@@ -66,11 +69,41 @@ public abstract class TaskExecutor implements Runnable {
     }
 
     /**
+     * Get the tenant that owns this task executor's application.
+     * 
+     * @return  {@link Tenant} for this task execution.
+     */
+    Tenant getTenant() {
+        return m_tenant;
+    }
+    
+    /**
+     * Get the ID of the task being executed by this task executor.
+     * 
+     * @return  Task ID such as "/MyApp/MyTable/data-aging".
+     */
+    String getTaskID() {
+        return m_taskRecord.getTaskID();
+    }
+    
+    /**
      * Subclasses must implement this method, which is called to execute the task. This
      * method is only called after {@link #setParams(String, ApplicationDefinition, TaskRecord)}
      * is called.
      */
     public abstract void execute();
+    
+    /**
+     * Subclasses can call this to report progress on their task. Long-running tasks must
+     * call this periodically so that other servers don't think the task has died.
+     * 
+     * @param progressMessage   Progress report message.
+     */
+    protected final void reportProgress(String progressMessage) {
+        m_lastProgressTimestamp = System.currentTimeMillis();
+        m_progressMessage = progressMessage;
+        updateTaskProgress();
+    }
     
     /**
      * Called by the TaskManagerService to begin the execution of the task.
@@ -80,15 +113,17 @@ public abstract class TaskExecutor implements Runnable {
         String taskID = m_taskRecord.getTaskID();
         m_logger.debug("Starting task '{}' in tenant '{}'", taskID, m_tenant);
         try {
-            TaskManagerService.instance().incrementActiveTasks();
+            TaskManagerService.instance().registerTaskStarted(this);
+            m_lastProgressTimestamp = System.currentTimeMillis();
             setTaskStart();
             execute();
             setTaskFinish();
         } catch (Throwable e) {
             m_logger.error("Task '" + taskID + "' failed", e);
-            setTaskFailed();
+            String stackTrace = Utils.getStackTrace(e);
+            setTaskFailed(stackTrace);
         } finally {
-            TaskManagerService.instance().decrementActiveTasks();
+            TaskManagerService.instance().registerTaskEnded(this);
         }
     }
 
@@ -107,7 +142,19 @@ public abstract class TaskExecutor implements Runnable {
     private void setTaskStart() {
         m_taskRecord.setProperty(TaskRecord.PROP_EXECUTOR, m_hostID);
         m_taskRecord.setProperty(TaskRecord.PROP_START_TIME, Long.toString(System.currentTimeMillis()));
+        m_taskRecord.setProperty(TaskRecord.PROP_FINISH_TIME, null);
+        m_taskRecord.setProperty(TaskRecord.PROP_PROGRESS, null);
+        m_taskRecord.setProperty(TaskRecord.PROP_PROGRESS_TIME, null);
+        m_taskRecord.setProperty(TaskRecord.PROP_FAIL_REASON, null);
         m_taskRecord.setStatus(TaskStatus.IN_PROGRESS);
+        updateTaskStatus(false);
+    }
+    
+    // Update the job status record that shows this job has finished.
+    private void updateTaskProgress() {
+        m_taskRecord.setProperty(TaskRecord.PROP_EXECUTOR, m_hostID);
+        m_taskRecord.setProperty(TaskRecord.PROP_PROGRESS, m_progressMessage);
+        m_taskRecord.setProperty(TaskRecord.PROP_PROGRESS_TIME, Long.toString(m_lastProgressTimestamp));
         updateTaskStatus(false);
     }
     
@@ -120,9 +167,10 @@ public abstract class TaskExecutor implements Runnable {
     }
     
     // Update the job status record that shows this job has failed.
-    private void setTaskFailed() {
+    private void setTaskFailed(String reason) {
         m_taskRecord.setProperty(TaskRecord.PROP_EXECUTOR, m_hostID);
         m_taskRecord.setProperty(TaskRecord.PROP_FINISH_TIME, Long.toString(System.currentTimeMillis()));
+        m_taskRecord.setProperty(TaskRecord.PROP_FAIL_REASON, reason);
         m_taskRecord.setStatus(TaskStatus.FAILED);
         updateTaskStatus(true);
     }
@@ -134,7 +182,12 @@ public abstract class TaskExecutor implements Runnable {
         DBTransaction dbTran = DBService.instance().startTransaction(m_tenant);
         Map<String, String> propMap = m_taskRecord.getProperties();
         for (String name : propMap.keySet()) {
-            dbTran.addColumn(TaskManagerService.TASKS_STORE_NAME, taskID, name, propMap.get(name));
+            String value = propMap.get(name);
+            if (Utils.isEmpty(value)) {
+                dbTran.deleteColumn(TaskManagerService.TASKS_STORE_NAME, taskID, name);
+            } else {
+                dbTran.addColumn(TaskManagerService.TASKS_STORE_NAME, taskID, name, value);
+            }
         }
         if (bDeleteClaimRecord) {
             dbTran.deleteRow(TaskManagerService.TASKS_STORE_NAME, "_claim/" + taskID);

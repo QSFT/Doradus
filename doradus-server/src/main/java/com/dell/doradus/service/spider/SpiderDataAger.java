@@ -87,6 +87,7 @@ public class SpiderDataAger extends TaskExecutor {
                 contToken = null;
             }
             objsExpired += objIDSet.size();
+            reportProgress("Expired " + objsExpired + " objects");
         } while (!Utils.isEmpty(contToken));
         
         m_logger.info("Deleted {} objects for {}", objsExpired, m_tableDef.getPath());

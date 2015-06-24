@@ -31,12 +31,19 @@ import com.dell.doradus.common.Utils;
  * from the database.
  */
 public class TaskRecord {
-    // Current task status fields used:
+    // Current task status fields used; suffix time-value properties with "Time":
     public static final String PROP_EXECUTOR = "Executor";
     public static final String PROP_FINISH_TIME = "FinishTime";
     public static final String PROP_START_TIME = "StartTime";
     public static final String PROP_STATUS = "Status";
+    public static final String PROP_PROGRESS = "Progress";
+    public static final String PROP_PROGRESS_TIME = "ProgressTime";
+    public static final String PROP_FAIL_REASON = "FailReason";
     
+    // Members:
+    private final String  m_taskID;
+    private final Map<String, String> m_properties = new HashMap<>();
+
     /**
      * Status values that a task execution can have. 
      */
@@ -69,13 +76,6 @@ public class TaskRecord {
         }
     }   // enum TaskStatus
     
-    // Members:
-    private final String  m_taskID;      
-    private String        m_executor;           // IP address of Doradus node
-    private String        m_finishTime;         // millisecond time in string form 
-    private String        m_startTime;          // millisecond time in string form 
-    private TaskStatus    m_status; 
-
     /**
      * Create a TaskRecord object using the given ID. All timestamps are null, and the
      * status is set to {@link TaskStatus#NEVER_EXECUTED}.
@@ -84,7 +84,7 @@ public class TaskRecord {
      */
     public TaskRecord(String taskID) {
         m_taskID = taskID;
-        m_status = TaskStatus.NEVER_EXECUTED;
+        setProperty(PROP_STATUS, TaskStatus.NEVER_EXECUTED.toString());
     }
     
     //----- Getters
@@ -99,34 +99,19 @@ public class TaskRecord {
     }
     
     /**
-     * Get the time at which this task finished, if known. If no finish-time has been set,
-     * a Calendar object with minimal item (millis = 0) is returned.
+     * Get the value of a time property as a Calendar value. If the given property has
+     * not been set or is not a time value, null is returned.
      * 
-     * @return  Finish time as a Calendar object in the UTC time zone.
+     * @param propName  Name of a time-valued task record property to fetch. 
+     * @return          Time property value as a Calendar object in the UTC time zone.
      */
-    public Calendar getFinishTime() {
-        Calendar calendar = new GregorianCalendar(Utils.UTC_TIMEZONE);
-        if (Utils.isEmpty(m_finishTime)) {
-            calendar.setTimeInMillis(0);
-        } else {
-            calendar.setTimeInMillis(Long.parseLong(m_finishTime));
+    public Calendar getTime(String propName) {
+        assert propName.endsWith("Time");
+        if (!m_properties.containsKey(propName)) {
+            return null;
         }
-        return calendar;
-    }
-    
-    /**
-     * Get the time at which this task started, if known. If no start-time has been set,
-     * a Calendar object with minimal item (millis = 0) is returned.
-     * 
-     * @return  Start time as a Calendar object in the UTC time zone.
-     */
-    public Calendar getStartTime() {
         Calendar calendar = new GregorianCalendar(Utils.UTC_TIMEZONE);
-        if (Utils.isEmpty(m_startTime)) {
-            calendar.setTimeInMillis(0);
-        } else {
-            calendar.setTimeInMillis(Long.parseLong(m_startTime));
-        }
+        calendar.setTimeInMillis(Long.parseLong(m_properties.get(propName)));
         return calendar;
     }
     
@@ -136,20 +121,7 @@ public class TaskRecord {
      * @return  Non-null status properties such as executor, timestamps, and status.
      */
     public Map<String, String> getProperties() {
-        Map<String, String> propMap = new HashMap<>();
-        if (!Utils.isEmpty(m_executor)) {
-            propMap.put(PROP_EXECUTOR, m_executor);
-        }
-        if (!Utils.isEmpty(m_finishTime)) {
-            propMap.put(PROP_FINISH_TIME, m_finishTime);
-        }
-        if (!Utils.isEmpty(m_startTime)) {
-            propMap.put(PROP_START_TIME, m_startTime);
-        }
-        if (m_status != null) {
-            propMap.put(PROP_STATUS, m_status.toString());
-        }
-        return propMap;
+        return new HashMap<>(m_properties);
     }   // getProperties
     
     /**
@@ -158,37 +130,21 @@ public class TaskRecord {
      * @return  {@link TaskStatus} of task execution.
      */
     public TaskStatus getStatus() {
-        return m_status;
+        return TaskStatus.findStatus(m_properties.get(PROP_STATUS));
     }
     
     //----- Setters
     
     /**
-     * Set the given status property to the given value. Only properties defined in this
-     * class (see public static strings) are recognized: all unknown property names are
-     * ignored. Timestamp values must be given as an integer in string form, expressed as
-     * milliseconds since the epoch. The status property must be given as a known
-     * {@link TaskStatus} display value.
+     * Set the given status property to the given value. Timestamp values must be given as
+     * an integer in string form, expressed as milliseconds since the epoch. The status
+     * property must be given as a known {@link TaskStatus#toString()} display value.
      *  
      * @param name  Property name to add or update.
-     * @param value New value for property.
+     * @param value New value for property. May be empty/null.
      */
     public void setProperty(String name, String value) {
-        switch (name) {
-        case PROP_EXECUTOR:
-            m_executor = value;
-            break;
-        case PROP_FINISH_TIME:
-            m_finishTime = value;
-            break;
-        case PROP_START_TIME:
-            m_startTime = value;
-            break;
-        case PROP_STATUS:
-            m_status = TaskStatus.findStatus(value);
-        default:
-            // Ignore unrecognized properties.
-        }
+        m_properties.put(name, value);
     }   // setProperty
 
     /**
@@ -197,29 +153,26 @@ public class TaskRecord {
      * @param status    New {@link TaskStatus} value.
      */
     public void setStatus(TaskStatus status) {
-        m_status = status;
+        m_properties.put(PROP_STATUS, status.toString());
     }
 
     /**
      * Serialize this task record into a UNode tree. The root UNode is returned, which is
      * a map containing one child value node for each TaskRecord property. The map's name
-     * is the task ID with a tag name of "task".
+     * is the task ID with a tag name of "task". Timestamp values are formatted into
+     * friendly display format.
      * 
      * @return  Root of a {@link UNode} tree.
      */
     public UNode toDoc() {
         UNode rootNode = UNode.createMapNode(m_taskID, "task");
-        if (!Utils.isEmpty(m_executor)) {
-            rootNode.addValueNode(PROP_EXECUTOR, m_executor);
-        }
-        if (!Utils.isEmpty(m_finishTime)) {
-            rootNode.addValueNode(PROP_FINISH_TIME, formatTimestamp(m_finishTime));
-        }
-        if (!Utils.isEmpty(m_startTime)) {
-            rootNode.addValueNode(PROP_START_TIME, formatTimestamp(m_startTime));
-        }
-        if (m_status != null) {
-            rootNode.addValueNode(PROP_STATUS, m_status.toString());
+        for (String name : m_properties.keySet()) {
+            String value = m_properties.get(name);
+            if (name.endsWith("Time")) {
+                rootNode.addValueNode(name, formatTimestamp(value));
+            } else {
+                rootNode.addValueNode(name, value);
+            }
         }
         return rootNode;
     }
