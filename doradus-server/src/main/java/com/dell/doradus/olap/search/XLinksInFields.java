@@ -11,6 +11,7 @@ import com.dell.doradus.olap.Olap;
 import com.dell.doradus.search.FieldSet;
 import com.dell.doradus.search.SearchResult;
 import com.dell.doradus.search.SearchResultList;
+import com.dell.doradus.search.query.AndQuery;
 import com.dell.doradus.search.query.BinaryQuery;
 import com.dell.doradus.search.query.IdInQuery;
 import com.dell.doradus.search.query.OrQuery;
@@ -64,7 +65,7 @@ public class XLinksInFields {
         }
         
         if(fieldSet.filter != null) {
-            //query = new AndQuery(query, fieldSet.filter);
+            query = new AndQuery(query, fieldSet.filter);
         }
         
         int pageSize = fieldSet.limit;
