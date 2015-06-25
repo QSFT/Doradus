@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Predicate;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.Utils;
@@ -60,6 +61,7 @@ public class TaskManagerService extends Service {
     private static final int SLEEP_TIME_MILLIS = 60000;
     private static final int CLAIM_WAIT_MILLIS = 1000;
     private static final int MAX_TASKS = 2;
+    private static final int TASK_CHECK_MILLIS = 1000;
     
     // Threshold at which we consider our own task possibly hung:
     private static final int HUNG_TASK_THRESHOLD_MINS = 30;
@@ -133,6 +135,33 @@ public class TaskManagerService extends Service {
         }
     }   // stopService
 
+    //----- Public methods
+    
+    /**
+     * Execute the given task and return the task execution status. If the task is already
+     * running by this or another task manager, this method blocks until the task has
+     * finished. (TODO: should we put a timeout on this?) Once the task is not running, it
+     * then executed, even if we had to wait for a previous execution. In a multi-node
+     * cluster, the task may be executed by another node if just happened to be scheduled
+     * for execution, but in most cases, this task manager will execute the task.
+     * Regardless of whether this or a remote task manager executes the task, this method
+     * waits for that execution to complete and returns the final task status.
+     *   
+     * @param appDef    {@link ApplicationDefinition} that defines the task's context
+     *                  including its tenant.
+     * @param task      Application-specific {@link Task} to execute.
+     * @return          Final {@link TaskStatus} of the task's execution.
+     */
+    public TaskStatus executeTask(ApplicationDefinition appDef, Task task) {
+        Tenant tenant = Tenant.getTenant(appDef);
+        m_logger.debug("Checking that task {} in tenant {} is not running", tenant, task.getTaskID());
+        TaskRecord taskRecord = waitForTaskStatus(tenant, task, s -> s != TaskStatus.IN_PROGRESS);
+        attemptToExecuteTask(appDef, task, taskRecord);
+        m_logger.debug("Checking that task {} in tenant {} has completed", tenant, task.getTaskID());
+        taskRecord = waitForTaskStatus(tenant, task, s -> TaskStatus.isCompleted(s));
+        return taskRecord.getStatus();
+    }
+    
     //----- Package-private methods
     
     /**
@@ -220,6 +249,26 @@ public class TaskManagerService extends Service {
     }
     
     //----- Private methods
+
+    // Wait for the given task to achieve the given TaskStatus predicate, then return the
+    // latest status record. If it has never run, a never-run task record is stored.
+    private TaskRecord waitForTaskStatus(Tenant tenant, Task task, Predicate<TaskStatus> pred) {
+        TaskRecord taskRecord = null;
+        while (true) {
+            Iterator<DColumn> colIter =
+                DBService.instance().getAllColumns(tenant, TaskManagerService.TASKS_STORE_NAME, task.getTaskID());
+            if (!colIter.hasNext()) {
+                taskRecord = storeTaskRecord(tenant, task);
+            } else {
+                taskRecord = buildTaskRecord(task.getTaskID(), colIter);
+            }
+            if (pred.test(taskRecord.getStatus())) {
+                break;
+            }
+            try { Thread.sleep(TASK_CHECK_MILLIS); } catch (InterruptedException e) { }
+        };
+        return taskRecord;
+    }
 
     // Thread entrypoint when the TaskManagerService starts. Wake-up periodically and look for
     // tasks we can run. Shutdown when told to do so.

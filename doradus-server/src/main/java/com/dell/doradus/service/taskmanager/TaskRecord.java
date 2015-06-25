@@ -63,6 +63,12 @@ public class TaskRecord {
             return m_displayString;
         }
         
+        /**
+         * Convert display value to corresponding enum.
+         *  
+         * @param displayString Value from {@link #toString()}.
+         * @return              Corresponding TaskStatus or null if unknown.
+         */
         public static TaskStatus findStatus(String displayString) {
             if (Utils.isEmpty(displayString)) {
                 return NEVER_EXECUTED;
@@ -73,6 +79,16 @@ public class TaskRecord {
                 }
             }
             return null;
+        }
+
+        /**
+         * Return true if the given status is Failed or Completed.
+         * 
+         * @param status    TaskStatus to test.
+         * @return          True if the status says the task is done.
+         */
+        public static boolean isCompleted(TaskStatus status) {
+            return status == FAILED || status == COMPLETED;
         }
     }   // enum TaskStatus
     

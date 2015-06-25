@@ -145,10 +145,8 @@ public class SpiderService extends StorageService {
     public Collection<Task> getAppTasks(ApplicationDefinition appDef) {
         List<Task> appTasks = new ArrayList<>();
         for (TableDefinition tableDef : appDef.getTableDefinitions().values()) {
-            String agingFreq = tableDef.getOption(CommonDefs.OPT_AGING_CHECK_FREQ);
-            if (agingFreq != null) {
-                Task task =
-                    new Task(appDef.getAppName(), tableDef.getTableName(), "data-aging", agingFreq, SpiderDataAger.class);
+            Task task = createDataAgingTask(tableDef);
+            if (task != null) {
                 appTasks.add(task);
             }
         }
@@ -442,6 +440,20 @@ public class SpiderService extends StorageService {
     }   // termsStoreName
     
     //----- SpiderService public methods
+
+    /**
+     * Create a data-aging task for the given table, if applicable.
+     * 
+     * @param tableDef  Table that may or may not use the data aging option.
+     * @return          Executable {@link Task} if table uses data aging, otherwise null.
+     */
+    public Task createDataAgingTask(TableDefinition tableDef) {
+        String agingFreq = tableDef.getOption(CommonDefs.OPT_AGING_CHECK_FREQ);
+        if (agingFreq == null) {
+            return null;
+        }
+        return new Task(tableDef.getAppDef().getAppName(), tableDef.getTableName(), "data-aging", agingFreq, SpiderDataAger.class);
+    }
     
     /**
      * Retrieve the requested scalar fields for the given object IDs in the given table.
