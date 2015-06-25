@@ -16,15 +16,11 @@
 
 package com.dell.doradus.service.taskmanager;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.service.db.DBService;
-import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.taskmanager.TaskRecord.TaskStatus;
 
@@ -147,7 +143,7 @@ public abstract class TaskExecutor implements Runnable {
         m_taskRecord.setProperty(TaskRecord.PROP_PROGRESS_TIME, null);
         m_taskRecord.setProperty(TaskRecord.PROP_FAIL_REASON, null);
         m_taskRecord.setStatus(TaskStatus.IN_PROGRESS);
-        updateTaskStatus(false);
+        TaskManagerService.instance().updateTaskStatus(m_tenant, m_taskRecord, false);
     }
     
     // Update the job status record that shows this job has finished.
@@ -155,7 +151,7 @@ public abstract class TaskExecutor implements Runnable {
         m_taskRecord.setProperty(TaskRecord.PROP_EXECUTOR, m_hostID);
         m_taskRecord.setProperty(TaskRecord.PROP_PROGRESS, m_progressMessage);
         m_taskRecord.setProperty(TaskRecord.PROP_PROGRESS_TIME, Long.toString(m_lastProgressTimestamp));
-        updateTaskStatus(false);
+        TaskManagerService.instance().updateTaskStatus(m_tenant, m_taskRecord, false);
     }
     
     // Update the job status record that shows this job has finished.
@@ -163,7 +159,7 @@ public abstract class TaskExecutor implements Runnable {
         m_taskRecord.setProperty(TaskRecord.PROP_EXECUTOR, m_hostID);
         m_taskRecord.setProperty(TaskRecord.PROP_FINISH_TIME, Long.toString(System.currentTimeMillis()));
         m_taskRecord.setStatus(TaskStatus.COMPLETED);
-        updateTaskStatus(true);
+        TaskManagerService.instance().updateTaskStatus(m_tenant, m_taskRecord, true);
     }
     
     // Update the job status record that shows this job has failed.
@@ -172,27 +168,7 @@ public abstract class TaskExecutor implements Runnable {
         m_taskRecord.setProperty(TaskRecord.PROP_FINISH_TIME, Long.toString(System.currentTimeMillis()));
         m_taskRecord.setProperty(TaskRecord.PROP_FAIL_REASON, reason);
         m_taskRecord.setStatus(TaskStatus.FAILED);
-        updateTaskStatus(true);
+        TaskManagerService.instance().updateTaskStatus(m_tenant, m_taskRecord, true);
     }
-    
-    // Write the current job status record into the database and optionally delete the
-    // job's claim record at the same time.
-    private void updateTaskStatus(boolean bDeleteClaimRecord) {
-        String taskID = m_taskRecord.getTaskID();
-        DBTransaction dbTran = DBService.instance().startTransaction(m_tenant);
-        Map<String, String> propMap = m_taskRecord.getProperties();
-        for (String name : propMap.keySet()) {
-            String value = propMap.get(name);
-            if (Utils.isEmpty(value)) {
-                dbTran.deleteColumn(TaskManagerService.TASKS_STORE_NAME, taskID, name);
-            } else {
-                dbTran.addColumn(TaskManagerService.TASKS_STORE_NAME, taskID, name, value);
-            }
-        }
-        if (bDeleteClaimRecord) {
-            dbTran.deleteRow(TaskManagerService.TASKS_STORE_NAME, "_claim/" + taskID);
-        }
-        DBService.instance().commit(dbTran);
-    }   // updateJobStatus
     
 }   // class TaskExecutor
