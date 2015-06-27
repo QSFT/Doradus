@@ -28,12 +28,25 @@ import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.search.SearchResult;
 import com.dell.doradus.search.SearchResultList;
-import com.dell.doradus.service.taskmanager.TaskExecutor;
+import com.dell.doradus.service.taskmanager.Task;
 
 /**
- * Perform data-aging task execution for a Spider application table. 
+ * Provides a data-aging task for a Spider application tables. 
  */
-public class SpiderDataAger extends TaskExecutor {
+public class SpiderDataAger extends Task {
+    
+    /**
+     * Create a data-aging task for the given Spider table. Use the given check frequency
+     * value as the task schedule. 
+     * 
+     * @param tableDef      Spider table that requires data aging.
+     * @param checkFreq     Frequency (e.g., "1 DAY") at which data-aging should be
+     *                      checked for this table.
+     */
+    public SpiderDataAger(TableDefinition tableDef, String checkFreq) {
+        super(tableDef.getAppDef(), tableDef.getTableName(), "data-aging", checkFreq);
+    }
+
     private static final int QUERY_PAGE_SIZE = 1000;
     
     private TableDefinition m_tableDef;
@@ -60,6 +73,12 @@ public class SpiderDataAger extends TaskExecutor {
     
     // Scan the given table for expired objects relative to the given date.
     private void checkTable() {
+        // Documentation says that "0 xxx" means data-aging is disabled.
+        if (m_retentionAge.getValue() == 0) {
+            m_logger.info("Data aging disabled for table: {}", m_tableDef.getPath());
+            return;
+        }
+        
         m_logger.info("Checking expired objects for: {}", m_tableDef.getPath());
         GregorianCalendar checkDate = new GregorianCalendar(Utils.UTC_TIMEZONE);
         GregorianCalendar expireDate = m_retentionAge.getExpiredDate(checkDate);

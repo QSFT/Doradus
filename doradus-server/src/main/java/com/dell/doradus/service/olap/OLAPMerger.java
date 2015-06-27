@@ -23,12 +23,16 @@ import org.slf4j.Logger;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.olap.MergeOptions;
 import com.dell.doradus.olap.Olap;
-import com.dell.doradus.service.taskmanager.TaskExecutor;
+import com.dell.doradus.service.taskmanager.Task;
 
 /**
  * Perform automatic merge task execution for an OLAP application. 
  */
-public class OLAPMerger extends TaskExecutor {
+public class OLAPMerger extends Task {
+
+    public OLAPMerger(ApplicationDefinition appDef, String autoMergeFreq) {
+        super(appDef, null, "auto-merge", autoMergeFreq);
+    }
 
     @Override
     public void execute() {

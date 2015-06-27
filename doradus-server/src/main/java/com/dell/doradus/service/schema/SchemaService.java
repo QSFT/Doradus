@@ -40,6 +40,7 @@ import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
+import com.dell.doradus.service.taskmanager.TaskManagerService;
 import com.dell.doradus.service.tenant.TenantService;
 
 /**
@@ -274,6 +275,7 @@ public class SchemaService extends Service {
         m_logger.info("Deleting application: {}", appDef.getAppName());
         StorageService storageService = getStorageService(appDef);
         storageService.deleteApplication(appDef);
+        TaskManagerService.instance().deleteApplicationTasks(appDef);
         deleteAppProperties(appDef);
     }   // deleteApplication
     

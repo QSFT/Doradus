@@ -16,7 +16,6 @@
 
 package com.dell.doradus.service.taskmanager;
 
-import java.lang.reflect.Constructor;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -81,7 +80,8 @@ public class TaskManagerService extends Service {
     
     // Task execution management:
     private final ExecutorService m_executor = Executors.newFixedThreadPool(MAX_TASKS);
-    private final Map<String, TaskExecutor> m_activeTasks = new HashMap<>();
+    private final Map<String, Task> m_activeTasks = new HashMap<>();
+    private final Object m_executeLock = new Object();
     
     // REST commands registered:
     private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
@@ -153,41 +153,75 @@ public class TaskManagerService extends Service {
      * @return          Final {@link TaskStatus} of the task's execution.
      */
     public TaskStatus executeTask(ApplicationDefinition appDef, Task task) {
+        checkServiceState();
         Tenant tenant = Tenant.getTenant(appDef);
         m_logger.debug("Checking that task {} in tenant {} is not running", tenant, task.getTaskID());
-        TaskRecord taskRecord = waitForTaskStatus(tenant, task, s -> s != TaskStatus.IN_PROGRESS);
-        attemptToExecuteTask(appDef, task, taskRecord);
+        TaskRecord taskRecord = null;
+        synchronized (m_executeLock) {
+            taskRecord = waitForTaskStatus(tenant, task, s -> s != TaskStatus.IN_PROGRESS);
+            taskRecord.setStatus(TaskStatus.NEVER_EXECUTED);
+            updateTaskStatus(tenant, taskRecord, false);
+            attemptToExecuteTask(appDef, task, taskRecord);
+        }
         m_logger.debug("Checking that task {} in tenant {} has completed", tenant, task.getTaskID());
         taskRecord = waitForTaskStatus(tenant, task, s -> TaskStatus.isCompleted(s));
         return taskRecord.getStatus();
+    }
+
+    /**
+     * Delet all task status rows, if any, related to the given application from the Tasks
+     * table. NOTE: This method can be called even if the TaskManagerService has not been
+     * initialized so that we can always cleanup deleted applications.
+     * 
+     * @param appDef    {@link ApplicationDefinition} of application being deleted.
+     */
+    public void deleteApplicationTasks(ApplicationDefinition appDef) {
+        String prefixName = appDef.getAppName() + "/";
+        String claimPrefixName = "_claim/" + prefixName;
+        Tenant tenant = Tenant.getTenant(appDef);
+        DBTransaction dbTran = DBService.instance().startTransaction(tenant);
+        Iterator<DRow> rowIter =
+            DBService.instance().getAllRowsAllColumns(tenant, TaskManagerService.TASKS_STORE_NAME);
+        while (rowIter.hasNext()) {
+            DRow row = rowIter.next();
+            if (row.getKey().startsWith(prefixName) ||
+                row.getKey().startsWith(claimPrefixName)) {
+                dbTran.deleteRow(TASKS_STORE_NAME, row.getKey());
+            }
+        }
+        if (dbTran.getUpdateCount() > 0) {
+            m_logger.info("Deleting {} task status rows for application {}",
+                          dbTran.getUpdateCount(), appDef.getPath());
+            DBService.instance().commit(dbTran);
+        }
     }
     
     //----- Package-private methods
     
     /**
-     * Called by TaskExecutor when it's thread starts. This lets the task manager know
+     * Called by a Task when it's thread starts. This lets the task manager know
      * which tasks are its own.
      * 
-     * @param taskExe   {@link TaskExecutor} that is executing task.
+     * @param task  {@link Task} that is executing task.
      */
-    void registerTaskStarted(TaskExecutor taskExe) {
+    void registerTaskStarted(Task task) {
         synchronized (m_activeTasks) {
-            String mapKey = createMapKey(taskExe.getTenant(), taskExe.getTaskID());
-            if (m_activeTasks.put(mapKey, taskExe) != null) {
+            String mapKey = createMapKey(task.getTenant(), task.getTaskID());
+            if (m_activeTasks.put(mapKey, task) != null) {
                 m_logger.warn("Task {} registered as started but was already running", mapKey);
             }
         }
     }
     
     /**
-     * Called by TaskExecutor when it's thread finishes. This lets the task manager know
+     * Called by a Task when it's thread finishes. This lets the task manager know
      * that another slot has opened-up.
      * 
-     * @param taskExe   {@link TaskExecutor} whose task just finished.
+     * @param task   {@link Task} that just finished.
      */
-    void registerTaskEnded(TaskExecutor taskExe) {
+    void registerTaskEnded(Task task) {
         synchronized (m_activeTasks) {
-            String mapKey = createMapKey(taskExe.getTenant(), taskExe.getTaskID());
+            String mapKey = createMapKey(task.getTenant(), task.getTaskID());
             if (m_activeTasks.remove(mapKey) == null) {
                 m_logger.warn("Task {} registered as ended but was not running", mapKey);
             }
@@ -309,16 +343,18 @@ public class TaskManagerService extends Service {
     private void checkTaskForExecution(ApplicationDefinition appDef, Task task) {
         Tenant tenant = Tenant.getTenant(appDef);
         m_logger.debug("Checking task '{}' in tenant '{}'", task.getTaskID(), tenant);
-        Iterator<DColumn> colIter =
-            DBService.instance().getAllColumns(tenant, TaskManagerService.TASKS_STORE_NAME, task.getTaskID());
-        TaskRecord taskRecord = null;
-        if (!colIter.hasNext()) {
-            taskRecord = storeTaskRecord(tenant, task);
-        } else {
-            taskRecord = buildTaskRecord(task.getTaskID(), colIter);
-        }
-        if (taskShouldExecute(task, taskRecord) && canHandleMoreTasks()) {
-            attemptToExecuteTask(appDef, task, taskRecord);
+        synchronized (m_executeLock) {
+            Iterator<DColumn> colIter =
+                DBService.instance().getAllColumns(tenant, TaskManagerService.TASKS_STORE_NAME, task.getTaskID());
+            TaskRecord taskRecord = null;
+            if (!colIter.hasNext()) {
+                taskRecord = storeTaskRecord(tenant, task);
+            } else {
+                taskRecord = buildTaskRecord(task.getTaskID(), colIter);
+            }
+            if (taskShouldExecute(task, taskRecord) && canHandleMoreTasks()) {
+                attemptToExecuteTask(appDef, task, taskRecord);
+            }
         }
     }   // checkTaskForExecution
 
@@ -370,15 +406,11 @@ public class TaskManagerService extends Service {
         }
     }
 
-    // Execute the given task by creating a TaskExecutor for it and handing to the
-    // ExecutorService.
+    // Execute the given task by handing it to the ExecutorService.
     private void startTask(ApplicationDefinition appDef, Task task, TaskRecord taskRecord) {
         try {
-            Class<? extends TaskExecutor> jobClass = task.getExecutorClass();
-            Constructor<?> noArgConstructor = jobClass.getConstructor((Class<?>[])null);
-            TaskExecutor executor = (TaskExecutor) noArgConstructor.newInstance((Object[])null);
-            executor.setParams(m_localHost, appDef, taskRecord);
-            m_executor.execute(executor);
+            task.setParams(m_localHost, taskRecord);
+            m_executor.execute(task);
         } catch (Exception e) {
             m_logger.error("Failed to start task '" + task.getTaskID() + "'", e);
         }

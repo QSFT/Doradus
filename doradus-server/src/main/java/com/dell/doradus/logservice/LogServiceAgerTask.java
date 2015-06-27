@@ -27,12 +27,16 @@ import com.dell.doradus.common.RetentionAge;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.db.Tenant;
-import com.dell.doradus.service.taskmanager.TaskExecutor;
+import com.dell.doradus.service.taskmanager.Task;
 
 /**
  * Deletes old logs as specified by "retention-age" table-level option
  */
-public class LogServiceAgerTask extends TaskExecutor {
+public class LogServiceAgerTask extends Task {
+
+    public LogServiceAgerTask(ApplicationDefinition appDef) {
+        super(appDef, null, "logs-aging", "1 DAY");
+    }
 
     @Override
     public void execute() {

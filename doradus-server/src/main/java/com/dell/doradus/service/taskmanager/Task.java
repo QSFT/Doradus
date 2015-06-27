@@ -16,69 +16,125 @@
 
 package com.dell.doradus.service.taskmanager;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.service.db.Tenant;
+import com.dell.doradus.service.taskmanager.TaskRecord.TaskStatus;
 
 /**
- * Specifies a task to be performed by the {@link TaskManagerService}. Each object identifies the
- * application, table (if applicable), task type, and execution frequency of the task. 
+ * Abstract root class for tasks that can be executed by the {@link TaskManagerService}.
+ * Each object identifies task details such as application, table (if applicable), task
+ * name, and execution frequency. Subclasses must implement {@link #execute()}, which is
+ * called when the task becomes ready to run by this process's task manager. 
  */
-public class Task {
-    // Members:
-    private final String  m_appName;
-    private final String  m_tableName;
-    private final String  m_taskName;
-    private final TaskFrequency m_taskFreq;
-    private final Class<? extends TaskExecutor> m_executorClass;
+public abstract class Task implements Runnable {
+    // Protected logger available to concrete services:
+    protected final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
 
+    // Fixed parameters from constructor:
+    protected final ApplicationDefinition m_appDef;
+    protected final String m_appName;
+    protected final Tenant m_tenant;
+    protected final String m_tableName;
+    protected final String m_taskName;
+    protected final TaskFrequency m_taskFreq;
+    
+    // Parameters set while executing:
+    protected String m_hostID;
+    protected TaskRecord m_taskRecord;
+    protected long m_lastProgressTimestamp;
+    protected String m_progressMessage;
+    
     /**
      * Create a task with the given properties.
      * 
-     * @param appName       Name of the application to which the task applies.
+     * @param appDef        {@link ApplicationDefinition} of application for which task
+     *                      belongs.
      * @param tableName     Name of the table to which the task applies. Can be empty or
      *                      null if the task is not table-specific.
-     * @param taskName      Name of task. This name identifies the task type and must be
-     *                      unique within task types used by a given storage manager.
-     *                      Example: "data-aging".
-     * @param taskFreq      {@link TaskFrequency} that describes how often the task should
-     *                      be executed: "1 DAY", "30 MINUTES", etc.
-     * @param executorClass Class object for {@link TaskExecutor} subclass that executes
-     *                      this task when it is time to run.
+     * @param taskName      Task identify that must be unique among all task types used
+     *                      by a given storage manager. Example: "data-aging".
+     * @param taskFreq      {@link TaskFrequency} in display format that describes how
+     *                      often the task should be executed: "1 DAY", "30 MINUTES", etc.
+     *                      Can be empty/null when the task is being executed "now".
      */
-    public Task(String appName, String tableName, String taskName, String taskFreq, Class<? extends TaskExecutor> executorClass) {
-        m_appName = appName;
+    public Task(ApplicationDefinition appDef, String tableName, String taskName, String taskFreq) {
+        m_appDef = appDef;
+        m_appName = appDef.getAppName();
+        m_tenant = Tenant.getTenant(m_appDef);
         m_tableName = Utils.isEmpty(tableName) ? "*" : tableName;
         m_taskName = taskName;
-        m_taskFreq = new TaskFrequency(taskFreq);
-        m_executorClass = executorClass;
+        m_taskFreq = new TaskFrequency(Utils.isEmpty(taskFreq) ? "1 MINUTE" : taskFreq);
     }
 
     /**
-     * Get this task's application name.
-     * 
-     * @return  App name as a string.
+     * Set the execution parameters for this task. This method is called by the
+     * {@link TaskManagerService} immediately after constructing the job object.
+     *  
+     * @param hostID        Identifier of the executing node (IP address).
+     * @param taskRecord    {@link TaskRecord} containing the task's current execution
+     *                      properties from the Tasks table. This record is updated and
+     *                      persisted as task execution proceeds.
      */
-    public String getAppName() {
-        return m_appName;
-    }
-    
-    /**
-     * Get this task's table name, or "*" if the task is not table-specific.
-     * 
-     * @return  Table name or "*".
-     */
-    public String getTableName() {
-        return m_tableName;
-    }
-    
-    /**
-     * This task's name, such as "data-aging".
-     * 
-     * @return  This task's type name.
-     */
-    public String getTaskName() {
-        return m_taskName;
+    void setParams(String hostID, TaskRecord taskRecord) {
+        m_hostID = hostID;
+        m_taskRecord = taskRecord;
+        assert m_taskRecord.getTaskID().equals(getTaskID());
     }
 
+    /**
+     * Subclasses must implement this method, which is called to execute the task.
+     */
+    public abstract void execute();
+    
+    /**
+     * Subclasses can call this to report progress on their task. Long-running tasks
+     * should call this periodically to prevent warnings about the task potentially being
+     * hung.
+     * 
+     * @param progressMessage   Progress report message. Persisted in the Tasks table and
+     *                          visible via the "get tasks" command.
+     */
+    protected final void reportProgress(String progressMessage) {
+        m_lastProgressTimestamp = System.currentTimeMillis();
+        m_progressMessage = progressMessage;
+        updateTaskProgress();
+    }
+    
+    /**
+     * Called by the TaskManagerService to begin the execution of the task.
+     */
+    @Override
+    public final void run() {
+        String taskID = m_taskRecord.getTaskID();
+        m_logger.debug("Starting task '{}' in tenant '{}'", taskID, m_tenant);
+        try {
+            TaskManagerService.instance().registerTaskStarted(this);
+            m_lastProgressTimestamp = System.currentTimeMillis();
+            setTaskStart();
+            execute();
+            setTaskFinish();
+        } catch (Throwable e) {
+            m_logger.error("Task '" + taskID + "' failed", e);
+            String stackTrace = Utils.getStackTrace(e);
+            setTaskFailed(stackTrace);
+        } finally {
+            TaskManagerService.instance().registerTaskEnded(this);
+        }
+    }
+
+    /**
+     * Get the tenant that owns this task executor's application.
+     * 
+     * @return  {@link Tenant} for this task execution.
+     */
+    Tenant getTenant() {
+        return m_tenant;
+    }
+    
     /**
      * Get the frequency at which this task is defined to execute.
      * 
@@ -101,15 +157,6 @@ public class Task {
     }
     
     /**
-     * Get the {@link TaskExecutor} subclass that must be used to execute this task.
-     * 
-     * @return  TaskExecutor subclass {@link Class} object.
-     */
-    public Class<? extends TaskExecutor> getExecutorClass() {
-        return m_executorClass;
-    } 
-    
-    /**
      * Same as {@link #getTaskID()}.
      */
     @Override
@@ -117,4 +164,43 @@ public class Task {
         return getTaskID();
     }
 
+    //----- Private methods 
+    
+    // Update the job status record that shows this job has started.
+    private void setTaskStart() {
+        m_taskRecord.setProperty(TaskRecord.PROP_EXECUTOR, m_hostID);
+        m_taskRecord.setProperty(TaskRecord.PROP_START_TIME, Long.toString(System.currentTimeMillis()));
+        m_taskRecord.setProperty(TaskRecord.PROP_FINISH_TIME, null);
+        m_taskRecord.setProperty(TaskRecord.PROP_PROGRESS, null);
+        m_taskRecord.setProperty(TaskRecord.PROP_PROGRESS_TIME, null);
+        m_taskRecord.setProperty(TaskRecord.PROP_FAIL_REASON, null);
+        m_taskRecord.setStatus(TaskStatus.IN_PROGRESS);
+        TaskManagerService.instance().updateTaskStatus(m_tenant, m_taskRecord, false);
+    }
+    
+    // Update the job status record that shows this job has finished.
+    private void updateTaskProgress() {
+        m_taskRecord.setProperty(TaskRecord.PROP_EXECUTOR, m_hostID);
+        m_taskRecord.setProperty(TaskRecord.PROP_PROGRESS, m_progressMessage);
+        m_taskRecord.setProperty(TaskRecord.PROP_PROGRESS_TIME, Long.toString(m_lastProgressTimestamp));
+        TaskManagerService.instance().updateTaskStatus(m_tenant, m_taskRecord, false);
+    }
+    
+    // Update the job status record that shows this job has finished.
+    private void setTaskFinish() {
+        m_taskRecord.setProperty(TaskRecord.PROP_EXECUTOR, m_hostID);
+        m_taskRecord.setProperty(TaskRecord.PROP_FINISH_TIME, Long.toString(System.currentTimeMillis()));
+        m_taskRecord.setStatus(TaskStatus.COMPLETED);
+        TaskManagerService.instance().updateTaskStatus(m_tenant, m_taskRecord, true);
+    }
+    
+    // Update the job status record that shows this job has failed.
+    private void setTaskFailed(String reason) {
+        m_taskRecord.setProperty(TaskRecord.PROP_EXECUTOR, m_hostID);
+        m_taskRecord.setProperty(TaskRecord.PROP_FINISH_TIME, Long.toString(System.currentTimeMillis()));
+        m_taskRecord.setProperty(TaskRecord.PROP_FAIL_REASON, reason);
+        m_taskRecord.setStatus(TaskStatus.FAILED);
+        TaskManagerService.instance().updateTaskStatus(m_tenant, m_taskRecord, true);
+    }
+    
 }   // class Task

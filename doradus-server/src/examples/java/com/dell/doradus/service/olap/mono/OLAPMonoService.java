@@ -139,7 +139,7 @@ public class OLAPMonoService extends StorageService {
         // For now, always check to see if our shard needs merging.
         checkServiceState();
         List<Task> appTasks = new ArrayList<>();
-        appTasks.add(new Task(appDef.getAppName(), null, "shard-merging", "1 MINUTE", OLAPShardMerger.class));
+        appTasks.add(new OLAPShardMerger(appDef));
         return appTasks;
     }   // getAppTasks
     

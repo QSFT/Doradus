@@ -19,12 +19,17 @@ package com.dell.doradus.service.olap;
 import java.util.Date;
 import java.util.List;
 
-import com.dell.doradus.service.taskmanager.TaskExecutor;
+import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.service.taskmanager.Task;
 
 /**
  * Perform data-aging task execution for an OLAP application. 
  */
-public class OLAPDataAger extends TaskExecutor {
+public class OLAPDataAger extends Task {
+
+    public OLAPDataAger(ApplicationDefinition appDef, String agingFreq) {
+        super(appDef, null, "data-aging", agingFreq);
+    }
 
     @Override
     public void execute() {

@@ -149,13 +149,11 @@ public class OLAPService extends StorageService {
         List<Task> appTasks = new ArrayList<>();
         String agingFreq = appDef.getOption(CommonDefs.OPT_AGING_CHECK_FREQ);
         if (agingFreq != null) {
-            Task task = new Task(appDef.getAppName(), null, "data-aging", agingFreq, OLAPDataAger.class);
-            appTasks.add(task);
+            appTasks.add(new OLAPDataAger(appDef, agingFreq));
         }
         String autoMergeFreq = appDef.getOption("auto-merge");
         if (autoMergeFreq != null) {
-            Task task = new Task(appDef.getAppName(), null, "auto-merge", autoMergeFreq, OLAPMerger.class);
-            appTasks.add(task);
+            appTasks.add(new OLAPMerger(appDef, autoMergeFreq));
         }
         return appTasks;
     }   // getAppTasks

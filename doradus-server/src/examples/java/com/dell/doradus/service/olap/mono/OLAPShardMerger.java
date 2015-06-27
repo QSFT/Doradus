@@ -16,13 +16,18 @@
 
 package com.dell.doradus.service.olap.mono;
 
+import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.service.olap.OLAPService;
-import com.dell.doradus.service.taskmanager.TaskExecutor;
+import com.dell.doradus.service.taskmanager.Task;
 
 /**
  * Perform shard-merging task execution for an OLAPMono application. 
  */
-public class OLAPShardMerger extends TaskExecutor {
+public class OLAPShardMerger extends Task {
+
+    public OLAPShardMerger(ApplicationDefinition appDef) {
+        super(appDef, null, "shard-merging", "1 MINUTE");
+    }
 
     @Override
     public void execute() {

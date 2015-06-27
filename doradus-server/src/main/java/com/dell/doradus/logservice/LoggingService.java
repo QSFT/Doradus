@@ -81,8 +81,8 @@ public class LoggingService extends StorageService {
     @Override public Collection<Task> getAppTasks(ApplicationDefinition appDef) {
         checkServiceState();
         List<Task> appTasks = new ArrayList<>();
-        appTasks.add(new Task(appDef.getAppName(), null, "logs-aging", "1 DAY", LogServiceAgerTask.class));
-        appTasks.add(new Task(appDef.getAppName(), null, "logs-merging", "1 HOUR", LogServiceMergerTask.class));
+        appTasks.add(new LogServiceAgerTask(appDef));
+        appTasks.add(new LogServiceMergerTask(appDef));
         return appTasks;
     }   // getAppTasks
     

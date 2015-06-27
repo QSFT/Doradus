@@ -145,8 +145,9 @@ public class SpiderService extends StorageService {
     public Collection<Task> getAppTasks(ApplicationDefinition appDef) {
         List<Task> appTasks = new ArrayList<>();
         for (TableDefinition tableDef : appDef.getTableDefinitions().values()) {
-            Task task = createDataAgingTask(tableDef);
-            if (task != null) {
+            String dataAgingFreq = getDataAgingFreq(tableDef);
+            if (dataAgingFreq != null) {
+                Task task = new SpiderDataAger(tableDef, dataAgingFreq);
                 appTasks.add(task);
             }
         }
@@ -155,6 +156,20 @@ public class SpiderService extends StorageService {
     
     //----- Object query methods
     
+    // Get the aging-check-frequency value for the given table or null if not applicable.
+    // A value is returned only if the table defines an aging-field and an aging-check-
+    // frequency is defined at either the table or application level.
+    private String getDataAgingFreq(TableDefinition tableDef) {
+        if (Utils.isEmpty(tableDef.getOption(CommonDefs.OPT_AGING_FIELD))) {
+            return null;
+        }
+        String dataAgingFreq = tableDef.getOption(CommonDefs.OPT_AGING_CHECK_FREQ);
+        if (!Utils.isEmpty(dataAgingFreq)) {
+            return dataAgingFreq;
+        }
+        return tableDef.getAppDef().getOption(CommonDefs.OPT_AGING_CHECK_FREQ);
+    }
+
     /**
      * Get all scalar and link fields for the object in the given table with the given ID.
      * 
@@ -441,20 +456,6 @@ public class SpiderService extends StorageService {
     
     //----- SpiderService public methods
 
-    /**
-     * Create a data-aging task for the given table, if applicable.
-     * 
-     * @param tableDef  Table that may or may not use the data aging option.
-     * @return          Executable {@link Task} if table uses data aging, otherwise null.
-     */
-    public Task createDataAgingTask(TableDefinition tableDef) {
-        String agingFreq = tableDef.getOption(CommonDefs.OPT_AGING_CHECK_FREQ);
-        if (agingFreq == null) {
-            return null;
-        }
-        return new Task(tableDef.getAppDef().getAppName(), tableDef.getTableName(), "data-aging", agingFreq, SpiderDataAger.class);
-    }
-    
     /**
      * Retrieve the requested scalar fields for the given object IDs in the given table.
      * The map returned is object IDs -> field names -> field values. The map will be

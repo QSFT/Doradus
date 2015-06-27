@@ -23,12 +23,16 @@ import org.slf4j.Logger;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.service.db.Tenant;
-import com.dell.doradus.service.taskmanager.TaskExecutor;
+import com.dell.doradus.service.taskmanager.Task;
 
 /**
  * merges logs unless table-level option "merge" is set to false (it's true by default) 
  */
-public class LogServiceMergerTask extends TaskExecutor {
+public class LogServiceMergerTask extends Task {
+
+    public LogServiceMergerTask(ApplicationDefinition appDef) {
+        super(appDef, null, "logs-merging", "1 HOUR");
+    }
 
     @Override
     public void execute() {
