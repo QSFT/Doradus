@@ -18,12 +18,8 @@ import com.dell.doradus.logservice.LogService;
 import com.dell.doradus.logservice.search.filter.FilterBuilder;
 import com.dell.doradus.logservice.search.filter.IFilter;
 import com.dell.doradus.olap.aggregate.AggregationResult;
-import com.dell.doradus.olap.aggregate.MetricValueCount;
-import com.dell.doradus.olap.aggregate.MetricValueSet;
-import com.dell.doradus.olap.collections.strings.BstrSet;
-import com.dell.doradus.olap.io.BSTR;
-import com.dell.doradus.olap.store.IntList;
 import com.dell.doradus.search.SearchResultList;
+import com.dell.doradus.search.aggregate.AggregationGroup;
 import com.dell.doradus.search.parser.DoradusQueryBuilder;
 import com.dell.doradus.search.query.Query;
 import com.dell.doradus.service.db.DBService;
@@ -113,81 +109,33 @@ public class Searcher {
     public static AggregationResult aggregate(LogService ls, Tenant tenant, String application, String table, LogAggregate logAggregate) {
         TableDefinition tableDef = Searcher.getTableDef(tenant, application, table);
         Query query = DoradusQueryBuilder.Build(logAggregate.getQuery(), tableDef);
-        String field = Aggregate.getAggregateField(tableDef, logAggregate.getFields());
+        AggregationGroup group = Aggregate.getAggregationGroup(tableDef, logAggregate.getFields());
+        String field = Aggregate.getAggregateField(group);
         IFilter filter = FilterBuilder.build(query);
-        
-        if(field == null) {
-            int count = 0;
-            List<String> partitions = ls.getPartitions(tenant, application, table);
-            ChunkReader chunkReader = new ChunkReader();
-            for(String partition: partitions) {
-                for(ChunkInfo chunkInfo: ls.getChunks(tenant, application, table, partition)) {
-                    ls.readChunk(tenant, application, table, chunkInfo, chunkReader);
-                    for(int i = 0; i < chunkReader.size(); i++) {
-                        if(!filter.check(chunkReader, i)) continue; 
-                        count++;
-                    }
-                }
-            }
-            
-            AggregationResult result = new AggregationResult();
-            result.documentsCount = count;
-            result.summary = new AggregationResult.AggregationGroup();
-            result.summary.id = null;
-            result.summary.name = "*";
-            result.summary.metricSet = new MetricValueSet(1);
-            MetricValueCount c = new MetricValueCount();
-            c.metric = count;
-            result.summary.metricSet.values[0] = c; 
-            return result;
+        AggregateCollector collector = null;
+        if(group != null && group.batchexFilters != null) {
+            collector = new AggregateCollectorSets(filter, group.batchexFilters, group.batchexAliases);
+        }
+        else if(field == null) {
+            collector = new AggregateCollectorNoField(filter);
+        }
+        else if("Timestamp".equals(field)) {
+            collector = new AggregateCollectorTimestamp(filter, group.truncate, group.timeZone); 
         }
         else {
-            IntList list = new IntList();
-            BstrSet fields = new BstrSet();
-            BSTR temp = new BSTR();
-            int count = 0;
-            List<String> partitions = ls.getPartitions(tenant, application, table);
-            ChunkReader chunkReader = new ChunkReader();
-            for(String partition: partitions) {
-                for(ChunkInfo chunkInfo: ls.getChunks(tenant, application, table, partition)) {
-                    ls.readChunk(tenant, application, table, chunkInfo, chunkReader);
-                    int index = chunkReader.getFieldIndex(new BSTR(field));
-                    if(index < 0) continue;
-                    for(int i = 0; i < chunkReader.size(); i++) {
-                        if(!filter.check(chunkReader, i)) continue;
-                        chunkReader.getFieldValue(i, index, temp);
-                        int pos = fields.add(temp);
-                        if(pos == list.size()) list.add(1);
-                        else list.set(pos, list.get(pos) + 1);
-                        count++;
-                    }
-                }
-            }
-            
-            AggregationResult result = new AggregationResult();
-            result.documentsCount = count;
-            result.summary = new AggregationResult.AggregationGroup();
-            result.summary.id = null;
-            result.summary.name = "*";
-            result.summary.metricSet = new MetricValueSet(1);
-            MetricValueCount c = new MetricValueCount();
-            c.metric = count;
-            result.summary.metricSet.values[0] = c;
-            for(int i = 0; i < fields.size(); i++) {
-                AggregationResult.AggregationGroup g = new AggregationResult.AggregationGroup();
-                g.id = fields.get(i).toString();
-                g.name = g.id.toString();
-                g.metricSet = new MetricValueSet(1);
-                MetricValueCount cc = new MetricValueCount();
-                cc.metric = list.get(i);
-                g.metricSet.values[0] = cc;
-                result.groups.add(g);
-            }
-            result.groupsCount = result.groups.size();
-            Collections.sort(result.groups);
-            return result;
-            
+            collector = new AggregateCollectorField(filter, field);
         }
+        collector.setContext(ls, tenant, application, table);
+        
+        List<String> partitions = ls.getPartitions(tenant, application, table);
+        for(String partition: partitions) {
+            for(ChunkInfo chunkInfo: ls.getChunks(tenant, application, table, partition)) {
+                collector.addChunk(chunkInfo);
+            }
+        }
+            
+        AggregationResult result = collector.getResult();
+        return result;
     }
     
     
