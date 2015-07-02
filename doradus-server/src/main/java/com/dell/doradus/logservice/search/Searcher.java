@@ -2,6 +2,7 @@ package com.dell.doradus.logservice.search;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -135,6 +136,15 @@ public class Searcher {
         }
             
         AggregationResult result = collector.getResult();
+
+        if(group != null) {
+            Comparator<AggregationResult.AggregationGroup> comparer = AggregationGroupComparator.getComparator(group);
+            Collections.sort(result.groups, comparer);
+            if(group.selectionValue > 0 && group.selectionValue < result.groups.size()) {
+                result.groups = new ArrayList<>(result.groups.subList(0, group.selectionValue));
+            }
+        }
+        
         return result;
     }
     
