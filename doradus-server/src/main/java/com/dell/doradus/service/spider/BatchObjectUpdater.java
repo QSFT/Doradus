@@ -121,16 +121,16 @@ public class BatchObjectUpdater {
     /**
      * Delete the objects with the given IDs. The {@link BatchResult} returned has an
      * {@link ObjectResult} for each object, indicating if the object was actually deleted
-     * or not.  
+     * or not. The results are returned in the same order as the input list.
      * 
-     * @param objIDSet  Set of object IDs to delete. It is not an error if an object does
+     * @param objIDs    List of object IDs to delete. It is not an error if an object does
      *                  not exist.
      * @return
      */
-    public BatchResult deleteBatch(Set<String> objIDSet) {
+    public BatchResult deleteBatch(List<String> objIDs) {
         BatchResult batchResult = new BatchResult();
         try {
-            for (String objID : objIDSet) {
+            for (String objID : objIDs) {
                 checkCommit();
                 ObjectUpdater objUpdater = new ObjectUpdater(m_tableDef);
                 ObjectResult objResult = objUpdater.deleteObject(m_parentTran, objID);

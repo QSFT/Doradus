@@ -304,13 +304,13 @@ public class SpiderService extends StorageService {
      */
     public BatchResult deleteBatch(TableDefinition tableDef, DBObjectBatch batch) {
         checkServiceState();
-        Set<String> objIDSet = new HashSet<>();
+        List<String> objIDs = new ArrayList<>();
         for (DBObject dbObj : batch.getObjects()) {
             Utils.require(!Utils.isEmpty(dbObj.getObjectID()), "All objects must have _ID defined");
-            objIDSet.add(dbObj.getObjectID());
+            objIDs.add(dbObj.getObjectID());
         }
         BatchObjectUpdater batchUpdater = new BatchObjectUpdater(tableDef);
-        return batchUpdater.deleteBatch(objIDSet);
+        return batchUpdater.deleteBatch(objIDs);
     }   // deleteBatch
 
     //----- SpiderService-specific public static methods

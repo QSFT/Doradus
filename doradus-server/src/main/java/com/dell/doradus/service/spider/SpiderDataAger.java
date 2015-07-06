@@ -16,9 +16,9 @@
 
 package com.dell.doradus.service.spider;
 
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import com.dell.doradus.common.BatchResult;
 import com.dell.doradus.common.CommonDefs;
@@ -96,16 +96,16 @@ public class SpiderDataAger extends Task {
             }
             SearchResultList resultList =
                 SpiderService.instance().objectQueryURI(m_tableDef, uriParam.toString());
-            Set<String> objIDSet = new HashSet<>();
+            List<String> objIDs = new ArrayList<>();
             for (SearchResult result : resultList.results) {
-                objIDSet.add(result.id());
+                objIDs.add(result.id());
             }
-            if (deleteBatch(objIDSet)) {
+            if (deleteBatch(objIDs)) {
                 contToken = resultList.continuation_token;
             } else {
                 contToken = null;
             }
-            objsExpired += objIDSet.size();
+            objsExpired += objIDs.size();
             reportProgress("Expired " + objsExpired + " objects");
         } while (!Utils.isEmpty(contToken));
         
@@ -134,13 +134,13 @@ public class SpiderDataAger extends Task {
     
     // Delete a batch of objects with the given object IDs. Return false if the
     // update failed or we didn't execute an update.
-    private boolean deleteBatch(Set<String> objIDSet) {
-        if (objIDSet.size() == 0) {
+    private boolean deleteBatch(List<String> objIDs) {
+        if (objIDs.size() == 0) {
             return false;
         }
-        m_logger.debug("Deleting batch of {} objects from {}", objIDSet.size(), m_tableDef.getPath());
+        m_logger.debug("Deleting batch of {} objects from {}", objIDs.size(), m_tableDef.getPath());
         BatchObjectUpdater batchUpdater = new BatchObjectUpdater(m_tableDef);
-        BatchResult batchResult = batchUpdater.deleteBatch(objIDSet);
+        BatchResult batchResult = batchUpdater.deleteBatch(objIDs);
         if (batchResult.isFailed()) {
             m_logger.error("Batch query failed: {}", batchResult.getErrorMessage());
             return false;
