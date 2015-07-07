@@ -51,7 +51,9 @@ public class LogService {
         BatchWriter writer = new BatchWriter();
         DBTransaction transaction = DBService.instance().startTransaction(tenant);
         while(start < size) {
-            String day = batch.get(start).getId().substring(0, 10);
+            String dateStr = batch.get(start).getId();
+            Utils.parseDate(dateStr);
+            String day = dateStr.substring(0, 10);
             int end = start + 1;
             while(end < size) {
                 String nextDay = batch.get(end).getId().substring(0, 10);

@@ -1262,6 +1262,13 @@ final public class Utils {
         String str = dateString.trim();
         Utils.require(str.length() >= 0, "Invalid date format: " + dateString);
         AtomicInteger pos = new AtomicInteger();
+        //otarakanov: log4j ISO8601 format writes date as "1999-11-27 15:49:37,459"
+        //with comma instead of point (see 
+        //https://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/helpers/ISO8601DateFormat.html)
+        if(str.length() >= 20 && str.charAt(19) == ',') {
+            str = str.replace(',', '.');
+        }
+        
         try {
             // Scan elements
             int year = scanDatePart('\0', 0, str, pos, 4, 4, 1, 9999);
@@ -1283,7 +1290,7 @@ final public class Utils {
             date.set(Calendar.MILLISECOND, milli);
             return date;
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid date format");
+            throw new IllegalArgumentException("Invalid date format: " + dateString);
         }
     }   // parseDate
 
