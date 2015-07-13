@@ -1,43 +1,148 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Welcome to Doradus</title>
+<meta charset="utf-8" />
+<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+<title>Doradus Web Portal</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="scripts/main.js" type="text/javascript"></script>
+<link href="stylesheets/main.css" media="screen" rel="stylesheet" type="text/css" />
+
 </head>
-<body>
-	<div  style="z-index: 1; visibility: visible;background-image:url('images/banner.jpg'); width:1000; height: 215px"> 
-		<div class="text-banner">What is Doradus?</div>
-	</div> 
-    
-	<b>Doradus</b> is an open source storage and query engine that runs on top of the Cassandra NoSQL database. It provides a high-level data model, Lucene-based query language, and sophisticated aggregate queries with multi-level grouping. You can embed Doradus in an application or execute it standalone with the bundled Jetty server or another web server to provide a REST API. Multiple storage services are available that organize data using techniques designed to benefit specific application types:
+
+<body class="index">
+	<div id="wrapper">
+		<div id="site">
+			<p class="splitter-two">What is Doradus?</p>
+			
+			<div class="actions">		
+<b>Doradus</b> is an open source storage and query engine that runs on top of the Cassandra NoSQL database. It provides a high-level data model, Lucene-based query language, and sophisticated aggregate queries with multi-level grouping. You can embed Doradus in an application or execute it standalone with the bundled Jetty server or another web server to provide a REST API. Multiple storage services are available that organize data using techniques designed to benefit specific application types:
 	<ul>
-	<li>
-The <b>OLAP service</b> borrows techniques from Online Analytical Processing, columnar storage, compression, and sharding to yield extremely compact databases. Doradus OLAP requires applications to organize data into time-based shards, and it prefers batch updates of semi-mutable data. For applications that can meet these constraints, databases are extremely compact, and analytic queries can search millions of objects per second.<br/>
-    </li>
-    <li>
-	The <b>Spider service</b> is suitable for data that is highly mutable, semi-structured to unstructured, and/or requires fine-grained updates. Updates are instantly reflected in searches, and objects can be updated simultaneously by different applications. Spider is ideal for applications emphasizing full text searches on irregular data.<br/>
-	</li>
-	</ul>
-<p>Both OLAP and Spider support the Doradus Query Language (DQL) for object and aggregate queries. For a more detailed overview of Doradus click here. See the topics below for links to tutorials, examples, detailed documentation, and a simple 1-2-3 getting started process.</p>
-<table>
-<tr>
-    <th>Getting Started	</th>
-	<th>Documentation </th>
-	</tr><br/>
-	<tr>
-<td><span class="bold-msg"><a href="artifacts/doradus_123.html"><u>Doradus 1-2-3</u></a></span>: Download Doradus and Cassandra, install, and run in 3 easy steps.</td>	
-<td><span class="bold-msg"><a href="static/Olap/wwhelp/wwhimpl/js/html/wwhelp.htm"><u>Doradus OLAP</u></a></span>: Detailed documentation on the OLAP service. Also available as a <a href="https://github.com/dell-oss/Doradus/raw/master/docs/Doradus%20OLAP%20Database.pdf"><u>PDF file.</u></a></td>
-</tr>
-<br/>
-<tr>
-<td><span class="bold-msg"><a href="artifacts/Hello Spider Tutorial.docx"><u>Hello Spider</u></a></span>: An introduction to Doradus Spider an how to create a schema, add data, make simple queries, and more.</td>
-<td><span class="bold-msg"><a href="static/Spider/wwhelp/wwhimpl/js/html/wwhelp.htm"><u>Doradus Spider</u></a></span>: Detailed documentation on the Spider service. Also available as a <a href="https://github.com/dell-oss/Doradus/raw/master/docs/Doradus%20Spider%20Database.pdf"><u>PDF file.</u></a></td>
-</tr>
-<br/>
-<tr>
-<td><span class="bold-msg"><a href="https://github.com/dell-oss/Doradus/wiki/The-Doradus-Story"><u>The Doradus Story</u></a></span>: What motivated Doradus, its goals, and history.</td>	
-<td><span class="bold-msg"><a href="static/Admin/wwhelp/wwhimpl/js/html/wwhelp.htm"><u>Doradus Administration</u></a></span>: Details on installing, configuring, and running the Doradus server. Also available as a <a href="https://github.com/dell-oss/Doradus/raw/master/docs/Doradus%20Administration.pdf"><u>PDF file.</u></a></td>
-</tr>
+		<li>
+     The <b>OLAP service</b> borrows techniques from Online Analytical Processing, columnar storage, compression, and sharding to yield extremely compact databases. Doradus OLAP requires applications to organize data into time-based shards, and it prefers batch updates of semi-mutable data. For applications that can meet these constraints, databases are extremely compact, and analytic queries can search millions of objects per second.
+	    </li>
+        <li>
+     The <b>Spider service</b> is suitable for data that is highly mutable, semi-structured to unstructured, and/or requires fine-grained updates. Updates are instantly reflected in searches, and objects can be updated simultaneously by different applications. Spider is ideal for applications emphasizing full text searches on irregular data.
+	    </li>
+   </ul>
+<br/>Both OLAP and Spider support the Doradus Query Language (DQL) for object and aggregate queries. For a more detailed overview of Doradus click <a href="https://github.com/dell-oss/Doradus/wiki/Overview" target="_blank">here</a>. See the Topics below for links to tutorials, examples, detailed documentation, and a simple 1-2-3 getting started process.
+			</div>
+			
+			<!-- Control for driving the tabs -->
+			<div class="container">
+				<div class="splitter">
+				    Topics:
+					<ul class="tabs">
+						<li class="tab-link current" data-tab="tab-1">All</li>
+						<li class="tab-link" data-tab="tab-2">Doradus 1-2-3</li>
+						<li class="tab-link" data-tab="tab-3">Tutorials</li>
+						<li class="tab-link" data-tab="tab-4">Docs</li>
+						<li class="tab-link" data-tab="tab-5">Examples</li>
+						<li class="tab-link" data-tab="tab-6">Downloads</li>
+					</ul>
+				</div>
+				
+				<div id="tab-1" class="tab-content current">
+					Click an icon below for information about the corresponding topic. Click one of the Topic tabs above to show only icons for the corresponding topics.
+					<ul class="image-grid">
+						<li><a href="#" target="_blank"><img width="128" height="128" src="images/Blue 1.png" />Hello Spider</a></li>
+						<li><a href="#" target="_blank"><img width="128" height="128" src="images/Blue 2.png" />Hello OLAP</a></li>
+						<li><a href="#" target="_blank"><img width="128" height="128" src="images/Blue 3.png" />DQL</a></li>
+						<li><a href="#" target="_blank"><img width="128" height="128" src="images/Blue 4.png" />Time Series</a></li>
+						<li><a href="#" target="_blank"><img width="128" height="128" src="images/Blue 5.png" />Custom Services</a></li>
+						<li><a href="#" target="_blank"><img width="128" height="128" src="images/Blue 6.png" />Multi-tenant Features</a></li>
+						<li><a href="#" target="_blank"><img width="128" height="128" src="images/Blue 7.png" />Graph Features</a></li>
+						<li><a href="#" target="_blank"><img width="128" height="128" src="images/Blue 8.png" />Bulk Data Loading</a></li>
+						<li><a href="https://github.com/dell-oss/Doradus/raw/master/docs/Doradus%20Administration.pdf" target="_blank"><img width="128" height="128" src="images/Yellow 1.png"/>Administrator PDF</a></li>
+						<li><a href="https://github.com/dell-oss/Doradus/raw/master/docs/Doradus%20OLAP%20Database.pdf" target="_blank"><img width="128" height="128" src="images/Yellow 2.png"/>OLAP PDF</a></li>
+						<li><a href="https://github.com/dell-oss/Doradus/raw/master/docs/Doradus%20Spider%20Database.pdf" target="_blank"><img width="128" height="128" src="images/Yellow 3.png"/>Spider PDF</a></li>
+						<li><a href="static/Admin/DoradusAdministration.html" target="_blank"><img width="128" height="128" src="images/Yellow 4.png"/>Administration Reference</a></li>
+						<li><a href="static/Olap/DoradusOLAP.html" target="_blank"><img width="128" height="128" src="images/Yellow 5.png"/> Olap Reference</a></li>
+						<li><a href="static/Spider/DoradusSpider.html" target="_blank"><img width="128" height="128" src="images/Yellow 6.png"/> Spider Reference</a></li>
+						<li><a href="#" target="_blank"><img width="128" height="128" src="images/YG 1.png"/>Source</a></li>
+						<li><a href="#" target="_blank"><img width="128" height="128" src="images/YG 2.png"/>Binaries(tar)</a></li>
+						<li><a href="#" target="_blank"><img width="128" height="128" src="images/YG 3.png"/>Binaries(zip)</a></li>
+						<li><a href="#" target="_blank"><img width="128" height="128" src="images/Purple 1.png"/>Source</a></li>
+						<li><a href="#" target="_blank"><img width="128" height="128" src="images/Purple 2.png"/>Binaries(tar)</a></li>
+						<li><a href="#" target="_blank"><img width="128" height="128" src="images/Purple 3.png"/>Binaries(zip)</a></li>
+					</ul>
+				</div>
+				<div id="tab-3" class="tab-content">
+					The tutorials below provide step-by-step introductions to specific subjects. See the Docs tab for links to comprehensive documentation.
+					<ul class="image-grid">
+						<li><a href="artifacts/HelloSpider.html" target="_blank"><img width="128" height="128" src="images/Blue 1.png" />Hello Spider</a></li>
+					</ul>
+				</div>
+				<div id="tab-4" class="tab-content">
+					Below are links to comprehensive documentation for primary Doradus topics: the OLAP service, Spider service, and Administration. The Reference links provide online web-based documentation. The PDF links provide the same information as downloadable PDF files.
+					<ul class="image-grid">
+						<li><a href="https://github.com/dell-oss/Doradus/raw/master/docs/Doradus%20Administration.pdf" target="_blank"><img width="128" height="128" src="images/Yellow 1.png"/>Administrator PDF</a></li>
+						<li><a href="https://github.com/dell-oss/Doradus/raw/master/docs/Doradus%20OLAP%20Database.pdf" target="_blank"><img width="128" height="128" src="images/Yellow 2.png"/>OLAP PDF</a></li>
+						<li><a href="https://github.com/dell-oss/Doradus/raw/master/docs/Doradus%20Spider%20Database.pdf" target="_blank"><img width="128" height="128" src="images/Yellow 3.png"/>Spider PDF</a></li>
+						<li><a href="static/Admin/DoradusAdministration.html" target="_blank"><img width="128" height="128" src="images/Yellow 4.png"/>Administration Reference</a></li>
+						<li><a href="static/Olap/DoradusOLAP.html" target="_blank"><img width="128" height="128" src="images/Yellow 5.png"/> Olap Reference</a></li>
+						<li><a href="static/Spider/DoradusSpider.html" target="_blank"><img width="128" height="128" src="images/Yellow 6.png"/> Spider Reference</a></li>
+					</ul>
+				</div>
+				<div id="tab-5" class="tab-content">
+					The links below provide complete, prebuilt applications that demonstrate different aspects of Doradus.
+				</div>
+				<div id="tab-6" class="tab-content">
+					Use the links below to download all Source code as a zip file or precompiled Binaries for Linux/Mac (tar) or Windows (zip). See the 1-2-3 Process topic for instructions on using the binary downloads.
+					<ul class="image-grid">
+						<li><a href="https://github.com/dell-oss/Doradus/archive/master.zip" target="_blank"><img width="128" height="128" src="images/YG 1.png"/>Source</a></li>
+						<li><a href="artifacts/Doradus-distribution-2.4.tar" target="_blank"><img width="128" height="128" src="images/YG 2.png"/>Binaries(tar)</a></li>
+						<li><a href="artifacts/Doradus-distribution-2.4.zip" target="_blank"><img width="128" height="128" src="images/YG 3.png"/>Binaries(zip)</a></li>
+					</ul>	
+				</div>
+				<div id="tab-2" class="tab-content">
+					Want to get started with Doradus quickly? The steps below download precompiled releases of Doradus and Cassandra, install them, and run them. Some sample data is also installed so you can start trying out queries right away!
+					<ul class="unordered">
+					<li>For Linux and Mac:</li>
+						<ul >
+							<li>Step 1. Download the distribution by clicking the tar file icon below.</li>
+							<li>Step 2. From the directory where you downloaded the file enter: tar -xvf Doradus-distribution-x.x.tar</li>
+							<li>Step 3. Start the install/run process by entering: ./doradus-dist-run.sh</li>
+						</ul>
+					
+					<br/><li>For Windows:</li>
+					    <ul> 
+							<li>Step 1. Download the distribution by clicking the zip file icon below.</li>
+							<li>Step 2. Use Windows Explorer to unzip the file.</li>
+							<li>Step 3. From a console window, in the folder where you unzipped the download, enter: doradus-dist-run.bat</li>
+						</ul>
+										
+						<ul class="image-grid">
+							<li><a href="artifacts/Doradus-distribution-2.4.tar" target="_blank"><img width="128" height="128" src="images/Purple 1.png"/>Binaries(tar)</a></li>
+							<li><a href="artifacts/Doradus-distribution-2.4.zip" target="_blank"><img width="128" height="128" src="images/Purple 2.png"/>Binaries(zip)</a></li>
+						</ul>
+					</ul>
+				</div>
+			</div>	
+			<div  style="z-index: 1; visibility: visible;background-image:url('images/banner.jpg'); width:1000; height: 215px"> 
+			<div class="black">Additional Links</div>
+				<form action="https://github.com/dell-oss/Doradus">
+				<div class="green">
+					<input type="submit" value="Sources">
+				</div>
+				</form>
+				<form action="http://search.maven.org/#search|ga|1|Doradus">
+				<div class="green">
+					<input type="submit" value="Maven">
+				</div>
+				</form>
+				<form action="http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/38276">
+				<div class="green">
+					<input type="submit" value="Doradus at Strata+Hadoop">
+				</div>
+				</form>
+			</div> 
+		</div>
+	</div>
+	
+	<p class="footer">
+		<span>© 2015. All Rights Reserved - Doradus. </span> <span>Images taken from public domain Wikipedia photos of the Tarantula Nebula. Sources: ESA, NASA, ESO, and the Cambridge Astronomical Survey Unit.</span>
+    </p>
 
 </body>
 </html>
