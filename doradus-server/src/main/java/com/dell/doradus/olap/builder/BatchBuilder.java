@@ -77,8 +77,12 @@ public class BatchBuilder {
         StringBuilder buffer = new StringBuilder();
 	    int level = 0;   // 0=batch object, 1=docs array, 2=doc object, 3+=field object
 	    final String idFieldName;
+	    final boolean bDeleteAll; 
 	    
-	    Listener(String idFieldName) {this.idFieldName = idFieldName;}
+	    Listener(String idFieldName, boolean bDeleteAll) {
+	        this.idFieldName = idFieldName;
+	        this.bDeleteAll = bDeleteAll;
+        }
 
         @Override
         public void onStartObject(String name) {
@@ -170,6 +174,9 @@ public class BatchBuilder {
                 String[] names = dottedName.split("\\.");
                 addValue(document, names, 0, values);
             }
+            if (bDeleteAll) {
+                document.setDeleted(true);
+            }
         }   // buildObject
         
         // Possible name structures we expect:
@@ -220,31 +227,19 @@ public class BatchBuilder {
         }   // addValue
     }   // class Listener
 	
-	public static OlapBatch parseJSON(String text) {
-	    return parseJSON(text, "_ID");
-	}
-	
-	public static OlapBatch parseJSON(String text, String idFieldName) {
-	    Listener listener = new Listener(idFieldName);
+	public static OlapBatch parseJSON(String text, String idFieldName, boolean bDeleteAll) {
+	    Listener listener = new Listener(idFieldName, bDeleteAll);
 	    new JSONAnnie(text).parse(listener);
 	    return listener.result;
 	}
 	
-	public static OlapBatch parseJSON(Reader reader) {
-	    return parseJSON(reader, "_ID");
-	}
-	
-	public static OlapBatch parseJSON(Reader reader, String idFieldName) {
-	    Listener listener = new Listener(idFieldName);
+	public static OlapBatch parseJSON(Reader reader, String idFieldName, boolean bDeleteAll) {
+	    Listener listener = new Listener(idFieldName, bDeleteAll);
 	    new JSONAnnie(reader).parse(listener);
 	    return listener.result;
 	}
 	
-	public static OlapBatch fromUNode(UNode rootNode) {
-	    return fromUNode(rootNode, "_ID");
-	}
-	
-    public static OlapBatch fromUNode(UNode rootNode, String idFieldName) {
+    public static OlapBatch fromUNode(UNode rootNode, String idFieldName, boolean bDeleteAll) {
         Utils.require(rootNode.getName().equals("batch"),
                       "Root node must be 'batch': " + rootNode.getName());
         OlapBatch batch = new OlapBatch();
@@ -256,6 +251,9 @@ public class BatchBuilder {
             OlapDocument document = batch.addDoc();
             for (UNode fieldNode : docNode.getMemberList()) {
                 addFieldValues(document, fieldNode, idFieldName);
+            }
+            if (bDeleteAll) {
+                document.setDeleted(true);
             }
             Utils.require(document.getTable() != null, "'doc' node missing '_table' value");
         }

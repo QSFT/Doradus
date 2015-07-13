@@ -42,14 +42,19 @@ public class OlapBatch implements Iterable<OlapDocument> {
 	}
 	
 	// Use "_ID" as the ID field name
-	public static OlapBatch parseJSON(String text) { return BatchBuilder.parseJSON(text); }
-	public static OlapBatch parseJSON(Reader reader) { return BatchBuilder.parseJSON(reader); }
-	public static OlapBatch fromUNode(UNode rootNode) { return BatchBuilder.fromUNode(rootNode); }
+	public static OlapBatch parseJSON(String text) { return BatchBuilder.parseJSON(text, "_ID", false); }
+	public static OlapBatch parseJSON(Reader reader) { return BatchBuilder.parseJSON(reader, "_ID", false); }
+	public static OlapBatch fromUNode(UNode rootNode) { return BatchBuilder.fromUNode(rootNode, "_ID", false); }
+	
+	// Use "_ID" as the ID field name and optionally delete all objects.
+	public static OlapBatch parseJSON(String text, boolean bDeleteAll) { return BatchBuilder.parseJSON(text, "_ID", bDeleteAll); }
+	public static OlapBatch parseJSON(Reader reader, boolean bDeleteAll) { return BatchBuilder.parseJSON(reader, "_ID", bDeleteAll); }
+	public static OlapBatch fromUNode(UNode rootNode, boolean bDeleteAll) { return BatchBuilder.fromUNode(rootNode, "_ID", bDeleteAll); }
 	
 	// Use custom id name field
-	public static OlapBatch parseJSON(String text, String idNameField) { return BatchBuilder.parseJSON(text, idNameField); }
-	public static OlapBatch parseJSON(Reader reader, String idNameField) { return BatchBuilder.parseJSON(reader, idNameField); }
-	public static OlapBatch fromUNode(UNode rootNode, String idNameField) { return BatchBuilder.fromUNode(rootNode, idNameField); }
+	public static OlapBatch parseJSON(String text, String idNameField) { return BatchBuilder.parseJSON(text, idNameField, false); }
+	public static OlapBatch parseJSON(Reader reader, String idNameField) { return BatchBuilder.parseJSON(reader, idNameField, false); }
+	public static OlapBatch fromUNode(UNode rootNode, String idNameField) { return BatchBuilder.fromUNode(rootNode, idNameField, false); }
 	
 	
 	public OlapDocument addDoc() { return addDoc(null, null); }

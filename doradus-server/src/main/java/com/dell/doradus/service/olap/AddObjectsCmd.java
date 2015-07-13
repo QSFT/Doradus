@@ -31,7 +31,6 @@ import com.dell.doradus.service.rest.ReaderCallback;
 /**
  * Implements the REST command: POST /{application}/{shard}[?{params}].
  */
-// TODO: Switch back to ReaderCallback when OlapBatch.parseJSON is fixed
 public class AddObjectsCmd extends ReaderCallback {
 
     public RESTResponse invokeStreamIn(Reader reader) {

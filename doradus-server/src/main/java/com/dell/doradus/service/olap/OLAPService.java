@@ -75,6 +75,7 @@ public class OLAPService extends StorageService {
         new RESTCommand("POST   /{application}/{shard}?{params}             com.dell.doradus.service.olap.AddObjectsCmd"),
         new RESTCommand("PUT    /{application}/{shard}                      com.dell.doradus.service.olap.AddObjectsCmd"),
         new RESTCommand("PUT    /{application}/{shard}?{params}             com.dell.doradus.service.olap.AddObjectsCmd"),
+        new RESTCommand("DELETE /{application}/{shard}                      com.dell.doradus.service.olap.DeleteObjectsCmd"),
         
         // Shard management:
         new RESTCommand("POST   /{application}/_shards/{shard}              com.dell.doradus.service.olap.MergeSegmentCmd"),
@@ -496,5 +497,5 @@ public class OLAPService extends StorageService {
                           "Link and xlink fields cannot be sharded: {}", fieldDef);
         }
     }   // validateField
-    
+
 }   // class OLAPService
