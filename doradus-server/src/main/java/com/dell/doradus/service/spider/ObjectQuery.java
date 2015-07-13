@@ -21,6 +21,7 @@ import java.util.Map;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.common.rest.CommandParameter;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.search.QueryExecutor;
 import com.dell.doradus.search.SearchResultList;
@@ -43,7 +44,19 @@ public class ObjectQuery {
     private int		m_skip = 0;
     private String  m_sortOrder;
     private boolean m_l2rEnabled = ServerConfig.getInstance().l2r_enable;
-    
+
+    public static CommandParameter describeParameter() {
+        return new CommandParameter("search")
+                    .add("continue-after", "text")
+                    .add("continue-at", "text")
+                    .add("fields", "text")
+                    .add("query", "text")
+                    .add("skip", "integer")
+                    .add("order", "text")
+                    .add("size", "integer")
+                    ;
+    }
+
     /**
      * Create an object that uses the given perspective table and extracts query
      * parameters from the given "search" UNode.

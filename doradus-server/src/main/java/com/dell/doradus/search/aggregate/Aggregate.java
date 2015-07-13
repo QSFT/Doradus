@@ -40,6 +40,7 @@ import com.dell.doradus.common.FieldType;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.common.rest.CommandParameter;
 import com.dell.doradus.core.ObjectID;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.search.QueryExecutor;
@@ -139,6 +140,15 @@ public class Aggregate {
         }
     }
 
+    public static CommandParameter describeParameter() {
+        return new CommandParameter("aggregate-search")
+                        .add("query", "text")
+                        .add("metric", "text")
+                        .add("grouping-fields", "text")
+                        .add("composite-fields", "text")
+                        .add("pair", "text");
+    }
+    
 	public Aggregate(TableDefinition tableDef) {
 		assert tableDef != null;
 		m_tableDef = tableDef;

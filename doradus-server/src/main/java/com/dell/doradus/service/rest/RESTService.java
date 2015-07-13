@@ -17,11 +17,13 @@
 package com.dell.doradus.service.rest;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
-
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.rest.CommandSet;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.StorageService;
@@ -51,6 +53,11 @@ public class RESTService extends Service {
     private WebServer m_webservice;
     private final RESTCommandSet m_commandSet = new RESTCommandSet();
 
+    // REST commands supported by the the Spider service:
+    private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
+        new RESTCommand("GET /_commands com.dell.doradus.service.rest.DescribeCmd"),
+    });
+    
     /**
      * Get the singleton instance of this service. The service may or may not have been
      * initialized yet.
@@ -77,6 +84,7 @@ public class RESTService extends Service {
 		        throw new RuntimeException("Error initializing WebServer: " + ServerConfig.getInstance().webserver_class, e);
 		    }
     	}
+    	registerGlobalCommands(REST_RULES);
     }   // initService
 
     // Begin servicing REST requests.
@@ -109,6 +117,10 @@ public class RESTService extends Service {
 
     //----- RESTService public methods
     
+    public CommandSet describeCommands() {
+        return m_commandSet.describeCommands();
+    }
+    
     /**
      * Register the given callback, which will be notified each time client request
      * activity occurs. 
@@ -120,6 +132,12 @@ public class RESTService extends Service {
        		m_webservice.registerRequestCallback(callback);
        	}
     }   // registerRequestCallback
+    
+    // TODO: Experimental
+    public void registerCommands(StorageService cmdOwner,
+                                 Iterable<Class<? extends RESTCallback>> cmdClasses) {
+        m_commandSet.addCommands(cmdOwner, cmdClasses);
+    }
     
     /**
      * Register the given {@link RESTCommand}s as global commands. All such commands are
@@ -208,6 +226,43 @@ public class RESTService extends Service {
      *                      the actual values passed, not decoded (see above).
      * @return              The {@link RESTCommand} if a match was found, otherwise null.
      */
+    public Xyzzy findCommand(ApplicationDefinition appDef, String method, String uri,
+                                    String query, Map<String, String> variableMap) {
+        String cmdOwner = null;
+        if (appDef != null) {
+            StorageService ss = SchemaService.instance().getStorageService(appDef);
+            cmdOwner = ss.getClass().getSimpleName();
+        }
+        return m_commandSet.findCommand(cmdOwner, method, uri, query, variableMap);
+    }   // matchCommand
+    
+    /**
+     * See if the given REST request matches any registered commands. If it does, return
+     * corresponding {@link RESTCommand} and update the given variable map with decoded
+     * URI variables. For example, if the matching command is defined as:
+     * <pre>
+     *      GET /{application}/{table}/_query?{query}
+     * </pre>
+     * And the actual request passed is:
+     * <pre>
+     *      GET /Magellan/Stars/_query?q=Tarantula+Nebula%2A
+     * <pre>
+     * The variable map will be returned with the follow key/value pairs:
+     * <pre>
+     *      application=Magellan
+     *      table=Stars
+     *      query=Tarantula+Nebula%2A
+     * </pre>
+     * 
+     * @param appDef        {@link ApplicationDefinition} of applicaiton that provides
+     *                      context for command, if any. Null for system commands.
+     * @param method        HTTP method (case-insensitive: GET, PUT).
+     * @param uri           Request URI (case-sensitive: "/Magellan/Stars/_query")
+     * @param query         Optional query parameter (case-sensitive: "q=Tarantula+Nebula%2A").
+     * @param variableMap   Variable parameters defined in the RESTCommand substituted with
+     *                      the actual values passed, not decoded (see above).
+     * @return              The {@link RESTCommand} if a match was found, otherwise null.
+     */
     public RESTCommand matchCommand(ApplicationDefinition appDef, String method, String uri,
                                     String query, Map<String, String> variableMap) {
         String cmdOwner = null;
@@ -260,5 +315,5 @@ public class RESTService extends Service {
             }
         }
     }   // displayCommandSet
-    
+
 }   // class RESTService

@@ -17,15 +17,24 @@
 package com.dell.doradus.service.spider;
 
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.search.SearchResultList;
+import com.dell.doradus.service.rest.RESTCmdDesc;
 import com.dell.doradus.service.rest.UNodeInOutCallback;
 
 /**
  * Implements the REST commands: GET or PUT /{application}/{table}/_query. The query
  * parameters are passed in an input entity.
  */
+@RESTCmdDesc(
+             name = "Query",
+             uri = "/{application}/{table}/_query",
+             methods = HttpMethod.GET,
+             inputEntity = "search",
+             paramClasses = {ObjectQuery.class}
+            )
 public class QueryDocCmd extends UNodeInOutCallback {
 
     @Override

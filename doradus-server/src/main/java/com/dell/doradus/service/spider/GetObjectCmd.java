@@ -18,14 +18,22 @@ package com.dell.doradus.service.spider;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.DBObject;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.service.rest.NotFoundException;
+import com.dell.doradus.service.rest.RESTCmdDesc;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 
 /**
  * Implements the REST command: GET /{application}/{table}/{ID}.
  */
+@RESTCmdDesc(
+             name = "GetObject",
+             uri = "/{application}/{table}/{ID}",
+             methods = HttpMethod.GET,
+             outputEntity = "doc"
+            )
 public class GetObjectCmd extends UNodeOutCallback {
 
     @Override

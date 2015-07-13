@@ -17,13 +17,21 @@
 package com.dell.doradus.service.spider;
 
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
+import com.dell.doradus.service.rest.RESTCmdDesc;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 
 /**
  * Implements the REST command: GET /{application}/{table}/_query?{params}.
  */
+@RESTCmdDesc(
+             name = "QueryURI",
+             uri = "/{application}/{table}/_query?{params}",
+             methods = HttpMethod.GET,
+             visible = false
+            )
 public class QueryURICmd extends UNodeOutCallback {
 
     @Override

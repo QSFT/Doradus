@@ -21,10 +21,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.common.rest.CommandDescription;
+import com.dell.doradus.common.rest.CommandSet;
+import com.dell.doradus.service.StorageService;
 
 /**
  * Holds a collection of {@link RESTCommand}s and organizes them in the correct order for
@@ -66,12 +72,52 @@ public class RESTCommandSet {
     // When this is true, new commands are not allowed. This allows us to search the
     // command set without a lock after it's built.
     private boolean m_bCmdSetIsFrozen;
+
+    //----- New experimental maps -----
+    // Commands by owner and name:
+    private final Map<String, Map<String, Xyzzy>> m_cmdsByOwnerMap = new HashMap<>();
+    
+    // Commands by owner and HttpMethod, sorted by evaluation order:
+    private final Map<String, Map<HttpMethod, SortedSet<Xyzzy>>> m_cmdEvalMap = new HashMap<>();
     
     /**
      * Create a new REST command set with no commands.
      */
     public RESTCommandSet() { }
     
+    // Experimental
+    public void addCommands(StorageService storageService,
+                            Iterable<Class<? extends RESTCallback>> cmdClasses) {
+        if (m_bCmdSetIsFrozen) {
+            throw new RuntimeException("New commands cannot be added: command set is frozen");
+        }
+        
+        String cmdOwner = storageService == null ? "_system" : storageService.getClass().getSimpleName();
+        synchronized (m_cmdEvalMap) {
+            for (Class<? extends RESTCallback> cmdClass : cmdClasses) {
+                Xyzzy xyzzy = new Xyzzy(cmdClass);
+                addCommand(cmdOwner, xyzzy);
+            }
+        }
+    }
+    
+    public CommandSet describeCommands() {
+        CommandSet cmdSet = new CommandSet();
+        for (String cmdOwner : m_cmdsByOwnerMap.keySet()) {
+            Map<String, Xyzzy> cmdMap = m_cmdsByOwnerMap.get(cmdOwner);
+            SortedMap<String, CommandDescription> ownerMap = new TreeMap<>();
+            for (String cmdName : cmdMap.keySet()) {
+                Xyzzy cmd = cmdMap.get(cmdName);
+                CommandDescription cmdDesc = cmd.getDescription();
+                if (cmdDesc.isVisible()) {
+                    ownerMap.put(cmdName, cmdDesc);
+                }
+            }
+            cmdSet.addOwnerCommands(cmdOwner, ownerMap);
+        }
+        return cmdSet;
+    }
+
     /**
      * Add the given commands belonging to the given owner to this command set. If the
      * given owner is null, the commands are added to the "system" owner, which means they
@@ -86,7 +132,7 @@ public class RESTCommandSet {
         if (m_bCmdSetIsFrozen) {
             throw new RuntimeException("New commands cannot be added: command set is frozen");
         }
-        
+
         // Get or create the map for this command's HTTP method.
         synchronized (m_cmdMap) {
             for (RESTCommand command : commands) {
@@ -144,7 +190,19 @@ public class RESTCommandSet {
     public void freezeCommandSet(boolean bFreeze) {
         m_bCmdSetIsFrozen = bFreeze;
     }   // freezeCommandSet
-    
+
+    // Experimental
+    public Xyzzy findCommand(String ownerService, String method, String uri, String query,
+                             Map<String, String> variableMap) {
+        String cmdOwner = Utils.isEmpty(ownerService) ? "_system" : ownerService;
+        Xyzzy cmd = null;
+        while (cmd == null && !Utils.isEmpty(cmdOwner)) {
+            cmd = searchCommands(cmdOwner, method, uri, query, variableMap);
+            cmdOwner = m_parentMap.get(cmdOwner);
+        }
+        return cmd;
+    }
+
     /**
      * Attempt to find a command that matches the given parameters. If a match is found,
      * parameters are extracted and added to the given parameter map. If no match is found.
@@ -190,6 +248,83 @@ public class RESTCommandSet {
         return commands;
     }   // getCommands
 
+    //----- Private methods
+    
+    private void addCommand(String cmdOwner, Xyzzy cmd) {
+        Map<String, Xyzzy> nameMap = getCmdNameMap(cmdOwner);
+        String cmdName = cmd.getName();
+        Xyzzy oldCmd = nameMap.put(cmdName, cmd);
+        if (oldCmd != null) {
+            throw new RuntimeException("Duplicate REST command with same owner/name: " +
+                                       "owner=" + cmdOwner + ", name=" + cmdName +
+                                       ", [1]=" + cmd + ", [2]=" + oldCmd); 
+        }
+        
+        Map<HttpMethod, SortedSet<Xyzzy>> evalMap = getCmdEvalMap(cmdOwner);
+        for (HttpMethod method : cmd.getMethods()) {
+            SortedSet<Xyzzy> methodSet = evalMap.get(method);
+            if (methodSet == null) {
+                methodSet = new TreeSet<>();
+                evalMap.put(method, methodSet);
+            }
+            if (!methodSet.add(cmd)) {
+                throw new RuntimeException("Duplicate REST command: owner=" + cmdOwner +
+                                           ", name=" + cmdName + ", commmand=" + cmd); 
+                
+            }
+        }
+    }
+    
+    private Map<String, Xyzzy> getCmdNameMap(String cmdOwner) {
+        Map<String, Xyzzy> cmdNameMap = m_cmdsByOwnerMap.get(cmdOwner);
+        if (cmdNameMap == null) {
+            cmdNameMap = new HashMap<>();
+            m_cmdsByOwnerMap.put(cmdOwner, cmdNameMap);
+        }
+        return cmdNameMap;
+    }
+
+    private Map<HttpMethod, SortedSet<Xyzzy>> getCmdEvalMap(String cmdOwner) {
+        Map<HttpMethod, SortedSet<Xyzzy>> evalMap = m_cmdEvalMap.get(cmdOwner);
+        if (evalMap == null) {
+            evalMap = new HashMap<>();
+            m_cmdEvalMap.put(cmdOwner, evalMap);
+        }
+        return evalMap;
+    }
+    
+    // Search the given command owner for a matching command.
+    private Xyzzy searchCommands(String cmdOwner, String method, String uri,
+                                 String query, Map<String, String> variableMap) {
+        Map<HttpMethod, SortedSet<Xyzzy>> evalMap = getCmdEvalMap(cmdOwner);
+        if (evalMap == null) {
+            return null;
+        }
+        
+        // Find the sorted command set for the given HTTP method.
+        SortedSet<Xyzzy> cmdSet = evalMap.get(method.toUpperCase());
+        if (cmdSet == null) {
+            return null;
+        }
+        
+        // Split uri into a list of non-empty nodes.
+        List<String> pathNodeList = new ArrayList<>();
+        String[] pathNodes = uri.split("/");
+        for (String pathNode : pathNodes) {
+            if (pathNode.length() > 0) {
+                pathNodeList.add(pathNode);
+            }
+        }
+        
+        // Attempt to match commands in this set in order.
+        for (Xyzzy cmd : cmdSet) {
+            if (cmd.matches(pathNodeList, query, variableMap)) {
+                return cmd;
+            }
+        }
+        return null;
+    }   // searchOwnerCommands
+    
     // Search the given command owner for a matching command.
     private RESTCommand searchOwnerCommands(String ownerKey, String method, String uri,
                                             String query, Map<String, String> variableMap) {
@@ -221,6 +356,6 @@ public class RESTCommandSet {
         }
         return null;
     }   // searchOwnerCommands
-    
+
 }   // class RESTCommandSet
 

@@ -22,14 +22,22 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.BatchResult;
 import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.HttpCode;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.service.rest.RESTCmdDesc;
 import com.dell.doradus.service.rest.ReaderCallback;
 
 /**
  * Implements the REST command: POST /{application}/{table}.
  */
+@RESTCmdDesc(
+             name = "Add",
+             uri = "/{application}/{table}",
+             methods = HttpMethod.POST,
+             inputEntity = "batch"
+            )
 public class AddObjectsCmd extends ReaderCallback {
 
     @Override

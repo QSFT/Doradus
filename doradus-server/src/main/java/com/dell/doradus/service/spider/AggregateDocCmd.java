@@ -18,16 +18,26 @@ package com.dell.doradus.service.spider;
 
 import com.dell.doradus.common.AggregateResult;
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
+import com.dell.doradus.search.aggregate.Aggregate;
+import com.dell.doradus.service.rest.RESTCmdDesc;
 import com.dell.doradus.service.rest.UNodeInOutCallback;
 
 /**
  * Implements the REST commands: GET or PUT /{application}/{table}/_aggregate. The
  * aggregate query parameters are passed in an input entity.
  */
+@RESTCmdDesc(
+             name = "Aggregate",
+             uri = "/{application}/{table}/_aggregate",
+             methods = HttpMethod.GET,
+             inputEntity = "aggregate-search",
+             paramClasses = {Aggregate.class} // for input entity
+            )
 public class AggregateDocCmd extends UNodeInOutCallback {
-
+    
     @Override
     public UNode invokeUNodeInOut(UNode inNode) {
         ApplicationDefinition appDef = m_request.getAppDef();

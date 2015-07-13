@@ -52,6 +52,7 @@ import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
+import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
@@ -88,6 +89,21 @@ public class SpiderService extends StorageService {
         new RESTCommand("DELETE /{application}/{table}          com.dell.doradus.service.spider.DeleteObjectsCmd"),
     });
 
+    private static final List<Class<? extends RESTCallback>> CMD_CLASSES = new ArrayList<>();
+    static {
+        // Object retrieval:
+        CMD_CLASSES.add(GetObjectCmd.class);
+        CMD_CLASSES.add(QueryURICmd.class);
+        CMD_CLASSES.add(QueryDocCmd.class);
+        CMD_CLASSES.add(AggregateURICmd.class);
+        CMD_CLASSES.add(AggregateDocCmd.class);
+        
+        // Object updates:
+        CMD_CLASSES.add(AddObjectsCmd.class);
+        CMD_CLASSES.add(UpdateObjectsCmd.class);
+        CMD_CLASSES.add(DeleteObjectsCmd.class);
+    }
+    
     /**
      * Get the singleton instance of this service. The service may or may not have been
      * initialized yet.
@@ -103,6 +119,9 @@ public class SpiderService extends StorageService {
     @Override
     public void initService() {
         RESTService.instance().registerApplicationCommands(REST_RULES, this);
+        
+        // Experimental
+        RESTService.instance().registerCommands(this, CMD_CLASSES);
     }   // initService
 
     @Override
