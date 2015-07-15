@@ -3,7 +3,7 @@
 <project name="Doradus" default="Build" basedir=".">
 
     <property name="doradus.version"        value="2.2.0"/>
-    <property name="ant.build.javac.target" value="1.7"/>
+    <property name="ant.build.javac.target" value="1.8"/>
 
     <property name="doradus.dir" location="${basedir}"/>
     <property name="build.dir"   location="${doradus.dir}"/>
@@ -391,7 +391,7 @@
 		    packagenames="com.dell.doradus.common,
                           com.dell.doradus.client,
                           com.dell.doradus.client.utils"
-		    source="1.7"
+		    source="1.8"
 		    sourcepath="${common.src.dir}:src,${client.src.dir}:src"
 		    splitindex="true" use="true" version="true"/>
 		
