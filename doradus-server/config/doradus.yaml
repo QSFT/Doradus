@@ -209,6 +209,13 @@ dbtls_cipher_suites: [TLS_RSA_WITH_AES_128_CBC_SHA]
 dbuser: cassandra
 dbpassword: cassandra
 
+# thrift_buffer_size_mb: This value sizes the read buffer used for the Thrift API. Increase this
+# value is you see error messages in the Doradus log file such as:
+#       Frame size (xxx) larger than max length (yyy)!
+# The default value is 16 (16777216 bytes).
+thrift_buffer_size_mb: 16
+
+
 ########## Doradus REST API Parameters
 #
 # These parameters affect the Doradus REST API.
