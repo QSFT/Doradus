@@ -17,13 +17,21 @@
 package com.dell.doradus.service.schema;
 
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.service.db.Tenant;
+import com.dell.doradus.service.rest.RESTCmdDesc;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 
 /**
  * Provides the callback for the REST command: /_applications.
  */
+@RESTCmdDesc(
+             name = "ListApps",
+             uri = "/_applications",
+             methods = {HttpMethod.GET},
+             outputEntity = "applications"
+            )
 public class ListApplicationsCmd extends UNodeOutCallback {
 
     @Override

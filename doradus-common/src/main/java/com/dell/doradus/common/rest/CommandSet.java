@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-/**
- * Describes REST commands, organized by owner. System commands are owned by the special
- * owner name "_system". All other commands are application-specific and owned by a
- * storage service, whose name is the owner.  
- */
 package com.dell.doradus.common.rest;
 
 import java.util.HashMap;
@@ -28,6 +23,11 @@ import java.util.Set;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 
+/**
+ * Describes REST commands, organized by owner. System commands are owned by the special
+ * owner name "_system". All other commands are application-specific and owned by a
+ * storage service, whose name is the owner.  
+ */
 public class CommandSet {
     private final Map<String, Map<String, CommandDescription>> m_commandMap = new HashMap<>();
 

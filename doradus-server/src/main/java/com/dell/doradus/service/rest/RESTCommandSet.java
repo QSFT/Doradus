@@ -192,7 +192,7 @@ public class RESTCommandSet {
     }   // freezeCommandSet
 
     // Experimental
-    public Xyzzy findCommand(String ownerService, String method, String uri, String query,
+    public Xyzzy findCommand(String ownerService, HttpMethod method, String uri, String query,
                              Map<String, String> variableMap) {
         String cmdOwner = Utils.isEmpty(ownerService) ? "_system" : ownerService;
         Xyzzy cmd = null;
@@ -294,7 +294,7 @@ public class RESTCommandSet {
     }
     
     // Search the given command owner for a matching command.
-    private Xyzzy searchCommands(String cmdOwner, String method, String uri,
+    private Xyzzy searchCommands(String cmdOwner, HttpMethod method, String uri,
                                  String query, Map<String, String> variableMap) {
         Map<HttpMethod, SortedSet<Xyzzy>> evalMap = getCmdEvalMap(cmdOwner);
         if (evalMap == null) {
@@ -302,7 +302,7 @@ public class RESTCommandSet {
         }
         
         // Find the sorted command set for the given HTTP method.
-        SortedSet<Xyzzy> cmdSet = evalMap.get(method.toUpperCase());
+        SortedSet<Xyzzy> cmdSet = evalMap.get(method);
         if (cmdSet == null) {
             return null;
         }

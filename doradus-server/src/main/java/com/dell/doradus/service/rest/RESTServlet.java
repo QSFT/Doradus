@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.HttpDefs;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.Pair;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.Utils;
@@ -42,6 +43,7 @@ import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.db.UnauthorizedException;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.tenant.TenantService;
+import com.dell.doradus.service.tenant.UserDefinition.Permission;
 
 /**
  * An HttpServlet implementation used by the {@link RESTService} to process REST requests.
@@ -157,7 +159,22 @@ public class RESTServlet extends HttpServlet {
         }
         ApplicationDefinition appDef = getApplication(uri, tenant);
         
-        RESTCommand cmd = RESTService.instance().matchCommand(appDef, request.getMethod(), uri, query, variableMap);
+        HttpMethod method = HttpMethod.methodFromString(request.getMethod());
+        if (method == null) {
+            throw new NotFoundException("Request does not match a known URI: " + request.getRequestURL());
+        }
+        
+        // Experimental: try new command type first
+        Xyzzy command = RESTService.instance().findCommand(appDef, method, uri, query, variableMap);
+        if (command != null) {
+            validateTenantAccess(request, tenant, command);
+            
+            RESTRequest restRequest = new RESTRequest(tenant, appDef, request, variableMap);
+            RESTCallback callback = command.getNewCallback(restRequest);
+            return callback.invoke();
+        }
+        
+        RESTCommand cmd = RESTService.instance().matchCommand(appDef, method.name(), uri, query, variableMap);
         if (cmd == null) {
             throw new NotFoundException("Request does not match a known URI: " + request.getRequestURL());
         }
@@ -192,15 +209,38 @@ public class RESTServlet extends HttpServlet {
         }
     }
 
+    private void validateTenantAccess(HttpServletRequest request, Tenant tenant, Xyzzy cmd) {
+        String authString = request.getHeader("Authorization");
+        StringBuilder userID = new StringBuilder();
+        StringBuilder password = new StringBuilder();
+        decodeAuthorizationHeader(authString, userID, password);
+        TenantService.instance().validateTenantAuthorization(tenant, userID.toString(), password.toString(), 
+                                                            permissionForMethod(request.getMethod()), cmd.isPrivileged());
+    }
+
     // Extract Authorization header, if any, and validate this command for the given tenant.
     private void validateTenantAccess(HttpServletRequest request, Tenant tenant, RESTCommand cmd) {
         String authString = request.getHeader("Authorization");
         StringBuilder userID = new StringBuilder();
         StringBuilder password = new StringBuilder();
         decodeAuthorizationHeader(authString, userID, password);
-        TenantService.instance().validateTenantAuthorization(tenant, userID.toString(), password.toString(), cmd);
+        TenantService.instance().validateTenantAuthorization(tenant, userID.toString(), password.toString(), 
+                                                            permissionForMethod(cmd.getMethod()), cmd.isPrivileged());
     }
 
+    private Permission permissionForMethod(String method) {
+        switch (method.toUpperCase()) {
+        case "GET":
+            return Permission.READ;
+        case "PUT":
+        case "DELETE":
+            return Permission.UPDATE;
+        case "POST":
+            return Permission.APPEND;
+        default:
+            throw new RuntimeException("Unexpected REST method: " + method);
+        }
+    }
     // Decode the given Authorization header value into its user/password components.
     private void decodeAuthorizationHeader(String authString, StringBuilder userID, StringBuilder password) {
         userID.setLength(0);

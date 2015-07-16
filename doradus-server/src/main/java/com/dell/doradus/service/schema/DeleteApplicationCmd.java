@@ -14,19 +14,32 @@
  * limitations under the License.
  */
 
-/**
- * Handles the REST commands: DELETE /_applications/{application} and
- * DELETE /_applications/{application}/{key}.
- */
 package com.dell.doradus.service.schema;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpCode;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
+import com.dell.doradus.common.rest.CommandParameter;
 import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.RESTCallback;
+import com.dell.doradus.service.rest.RESTCmdDesc;
 
+/**
+ * Handles the REST commands: DELETE /_applications/{application} and
+ * DELETE /_applications/{application}/{key}.
+ */
+@RESTCmdDesc(
+             name = "Define",
+             uri = "/_applications/{application}/{key}",
+             methods = {HttpMethod.POST},
+             paramClasses = {DeleteApplicationCmd.class}
+            )
 public class DeleteApplicationCmd extends RESTCallback {
+    
+    public static CommandParameter describeParameter() {
+        return new CommandParameter("key", "text", false);
+    }
 
     @Override
     public RESTResponse invoke() {

@@ -39,6 +39,7 @@ import com.dell.doradus.common.ConfigurationException;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.StorageService;
+import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 
@@ -76,13 +77,20 @@ public final class DoradusServer {
     
     // System commands supported directly by the DoradusServer:
     private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
-        new RESTCommand("GET /_dump com.dell.doradus.core.TheadDumpCmd", true),
+        new RESTCommand("GET /_dump          com.dell.doradus.core.ThreadDumpCmd", true),
         new RESTCommand("GET /_logs?{params} com.dell.doradus.core.LogDumpCmd", true),
-        new RESTCommand("GET /_config com.dell.doradus.core.GetConfigCmd", true),
-        
+        new RESTCommand("GET /_config        com.dell.doradus.core.GetConfigCmd", true),
     });
 
+    private static final List<Class<? extends RESTCallback>> CMD_CLASSES = new ArrayList<>();
+    static {
+        CMD_CLASSES.add(ThreadDumpCmd.class);
+        CMD_CLASSES.add(LogDumpCmd.class);
+        CMD_CLASSES.add(GetConfigCmd.class);
+    }
+    
     private static final String VERSION_FILE = "doradus.ver";
+    
     ///// Public methods
     
     /**
@@ -283,6 +291,7 @@ public final class DoradusServer {
         initConfig(args);
         initEmbeddedServices(services);
         RESTService.instance().registerGlobalCommands(REST_RULES);
+        RESTService.instance().registerCommands(null, CMD_CLASSES);
         m_bInitialized = true;
     }   // initEmbedded
     
@@ -306,6 +315,7 @@ public final class DoradusServer {
         initConfig(args);
         initStandaAloneServices();
         RESTService.instance().registerGlobalCommands(REST_RULES);
+        RESTService.instance().registerCommands(null, CMD_CLASSES);
         m_bInitialized = true;
     }   // initStandAlone
     

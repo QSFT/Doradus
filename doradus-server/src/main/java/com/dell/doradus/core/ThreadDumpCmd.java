@@ -21,15 +21,24 @@ import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 
 import com.dell.doradus.common.HttpCode;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.rest.RESTCallback;
+import com.dell.doradus.service.rest.RESTCmdDesc;
 
 /**
  * Reply to a REST command such as: GET /_dump. Return a stack trace of all current
  * as a plain text message.
  */
-public class TheadDumpCmd extends RESTCallback {
+@RESTCmdDesc(
+             name = "Dump",
+             uri = "/_dump",
+             methods = {HttpMethod.GET},
+             privileged = true,
+             outputEntity = "{text}"
+            )
+public class ThreadDumpCmd extends RESTCallback {
 
     @Override
     public RESTResponse invoke() {
@@ -46,4 +55,4 @@ public class TheadDumpCmd extends RESTCallback {
         return new RESTResponse(HttpCode.OK, dump.toString());
     }
 
-}   // TheadDumpCmd
+}   // ThreadDumpCmd

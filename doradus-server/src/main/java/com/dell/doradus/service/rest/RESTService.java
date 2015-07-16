@@ -17,12 +17,14 @@
 package com.dell.doradus.service.rest;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.rest.CommandSet;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;
@@ -58,6 +60,11 @@ public class RESTService extends Service {
         new RESTCommand("GET /_commands com.dell.doradus.service.rest.DescribeCmd"),
     });
     
+    private static final List<Class<? extends RESTCallback>> CMD_CLASSES = new ArrayList<>();
+    static {
+        CMD_CLASSES.add(DescribeCmd.class);
+    }
+    
     /**
      * Get the singleton instance of this service. The service may or may not have been
      * initialized yet.
@@ -85,6 +92,7 @@ public class RESTService extends Service {
 		    }
     	}
     	registerGlobalCommands(REST_RULES);
+    	registerCommands(null, CMD_CLASSES);
     }   // initService
 
     // Begin servicing REST requests.
@@ -226,7 +234,7 @@ public class RESTService extends Service {
      *                      the actual values passed, not decoded (see above).
      * @return              The {@link RESTCommand} if a match was found, otherwise null.
      */
-    public Xyzzy findCommand(ApplicationDefinition appDef, String method, String uri,
+    public Xyzzy findCommand(ApplicationDefinition appDef, HttpMethod method, String uri,
                                     String query, Map<String, String> variableMap) {
         String cmdOwner = null;
         if (appDef != null) {

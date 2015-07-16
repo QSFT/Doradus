@@ -47,14 +47,13 @@ public class ObjectQuery {
 
     public static CommandParameter describeParameter() {
         return new CommandParameter("search")
-                    .add("continue-after", "text")
-                    .add("continue-at", "text")
-                    .add("fields", "text")
-                    .add("query", "text")
-                    .add("skip", "integer")
-                    .add("order", "text")
-                    .add("size", "integer")
-                    ;
+                        .add("continue-after", "text")
+                        .add("continue-at", "text")
+                        .add("fields", "text")
+                        .add("query", "text", true)
+                        .add("skip", "integer")
+                        .add("order", "text")
+                        .add("size", "integer");
     }
 
     /**

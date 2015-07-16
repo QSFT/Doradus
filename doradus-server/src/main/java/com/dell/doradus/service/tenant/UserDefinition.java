@@ -35,9 +35,9 @@ public class UserDefinition {
     // Tentative
     public enum Permission {
         ALL,    // read, write, and update schema
-        APPEND, // POST only
-        UPDATE, // POST and PUT
-        READ,   // GET only
+        APPEND, // append only
+        UPDATE, // modify, append, or delete
+        READ,   // read only
     }
     private String m_userID;
     private String m_password;

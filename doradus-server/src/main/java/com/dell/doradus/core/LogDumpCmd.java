@@ -19,17 +19,32 @@ package com.dell.doradus.core;
 import java.util.Map;
 
 import com.dell.doradus.common.HttpCode;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.common.rest.CommandParameter;
 import com.dell.doradus.service.rest.RESTCallback;
+import com.dell.doradus.service.rest.RESTCmdDesc;
 import com.dell.doradus.utilities.MemoryAppender;
 
 /**
- * Reply to a REST command such as: GET /_dump. Return a stack trace of all current
- * as a plain text message.
+ * Reply to the REST command: GET /_logs?{params}. Return log records from the
+ * MemoryAppender.
  */
+@RESTCmdDesc(
+             name = "Logs",
+             uri = "/_dump?{params}",
+             methods = {HttpMethod.GET},
+             privileged = true,
+             paramClasses = {LogDumpCmd.class},
+             outputEntity = "{text}"
+            )
 public class LogDumpCmd extends RESTCallback {
 
+    public static CommandParameter describeParameter() {
+        return new CommandParameter("params").add("level", "text", false);
+    }
+    
     @Override public RESTResponse invoke() {
         String params = m_request.getVariableDecoded("params");
         Map<String, String> paramMap = Utils.parseURIQuery(params);
@@ -38,4 +53,4 @@ public class LogDumpCmd extends RESTCallback {
         return new RESTResponse(HttpCode.OK, logs);
     }
 
-}   // TheadDumpCmd
+}   // LogDumpCmd

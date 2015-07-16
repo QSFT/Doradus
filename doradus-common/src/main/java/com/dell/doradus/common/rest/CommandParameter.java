@@ -38,8 +38,19 @@ public class CommandParameter {
         m_type = type;
     }
     
+    public CommandParameter(String name, String type, boolean isRequired) {
+        m_name = name;
+        m_type = type;
+        m_isRequired = isRequired;
+    }
+    
     public CommandParameter add(String childParamName, String childParamType) {
         addParameter(new CommandParameter(childParamName, childParamType));
+        return this;
+    }
+    
+    public CommandParameter add(String childParamName, String childParamType, boolean isRequired) {
+        addParameter(new CommandParameter(childParamName, childParamType, isRequired));
         return this;
     }
     
@@ -114,6 +125,20 @@ public class CommandParameter {
     
     public void setRequired(boolean isRequired) {
         m_isRequired = isRequired;
+    }
+    
+    //----- Getters
+    
+    public String getName() {
+        return m_name;
+    }
+    
+    public String getType() {
+        return m_type;
+    }
+    
+    public Iterable<CommandParameter> getChildren() {
+        return m_parameters;
     }
     
 }

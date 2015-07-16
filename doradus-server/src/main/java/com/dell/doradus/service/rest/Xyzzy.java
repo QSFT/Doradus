@@ -87,6 +87,20 @@ public class Xyzzy implements Comparable<Xyzzy>{
         return m_cmdDesc;
     }
     
+    public boolean isPrivileged() {
+        return m_cmdDesc.isPrivileged();
+    }
+    
+    public RESTCallback getNewCallback(RESTRequest request) {
+        try {
+            RESTCallback callback = m_commandClass.newInstance();
+            callback.setRequest(request);
+            return callback;
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to invoke callback", e);
+        }
+    }
+
     //----- Methods for comparability
     
     @Override

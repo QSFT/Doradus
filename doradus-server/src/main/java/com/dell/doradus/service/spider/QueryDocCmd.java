@@ -31,9 +31,9 @@ import com.dell.doradus.service.rest.UNodeInOutCallback;
 @RESTCmdDesc(
              name = "Query",
              uri = "/{application}/{table}/_query",
-             methods = HttpMethod.GET,
+             methods = {HttpMethod.GET,HttpMethod.PUT},
              inputEntity = "search",
-             paramClasses = {ObjectQuery.class}
+             paramClasses = {ObjectQuery.class} // for "search"
             )
 public class QueryDocCmd extends UNodeInOutCallback {
 

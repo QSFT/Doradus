@@ -32,9 +32,9 @@ import com.dell.doradus.service.rest.UNodeInOutCallback;
 @RESTCmdDesc(
              name = "Aggregate",
              uri = "/{application}/{table}/_aggregate",
-             methods = HttpMethod.GET,
+             methods = {HttpMethod.GET,HttpMethod.PUT},
              inputEntity = "aggregate-search",
-             paramClasses = {Aggregate.class} // for input entity
+             paramClasses = {Aggregate.class} // for "aggregate-search"
             )
 public class AggregateDocCmd extends UNodeInOutCallback {
     

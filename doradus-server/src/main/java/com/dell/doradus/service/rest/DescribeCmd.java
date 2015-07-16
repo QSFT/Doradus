@@ -16,15 +16,20 @@
 
 package com.dell.doradus.service.rest;
 
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.UNode;
-import com.dell.doradus.common.rest.CommandSet;
 
+@RESTCmdDesc(
+             name = "Commands",
+             uri = "/_commands",
+             methods = HttpMethod.GET,
+             outputEntity = "commands"
+            )
 public class DescribeCmd extends UNodeOutCallback {
 
     @Override
     public UNode invokeUNodeOut() {
-        CommandSet cmdSet = RESTService.instance().describeCommands();
-        return cmdSet.toUNode();
+        return RESTService.instance().describeCommands().toUNode();
     }
 
 }
