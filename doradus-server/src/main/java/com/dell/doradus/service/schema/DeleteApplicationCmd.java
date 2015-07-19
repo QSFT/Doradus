@@ -23,20 +23,23 @@ import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.rest.CommandParameter;
 import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.RESTCallback;
-import com.dell.doradus.service.rest.RESTCmdDesc;
+import com.dell.doradus.service.rest.annotation.Description;
+import com.dell.doradus.service.rest.annotation.ParamDescription;
 
 /**
  * Handles the REST commands: DELETE /_applications/{application} and
  * DELETE /_applications/{application}/{key}.
  */
-@RESTCmdDesc(
-             name = "Define",
-             uri = "/_applications/{application}/{key}",
-             methods = {HttpMethod.POST},
-             paramClasses = {DeleteApplicationCmd.class}
-            )
+@Description(
+    name = "DeleteApp",
+    summary = "Deletes an existing application including all of its data. " +
+              "The application's {key} is required if one is defined.",
+    methods = {HttpMethod.POST},
+    uri = "/_applications/{application}/{key}"
+)
 public class DeleteApplicationCmd extends RESTCallback {
     
+    @ParamDescription
     public static CommandParameter describeParameter() {
         return new CommandParameter("key", "text", false);
     }

@@ -20,18 +20,20 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
-import com.dell.doradus.service.rest.RESTCmdDesc;
 import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
 /**
  * Implements the REST command: GET /{application}/{table}/_query?{params}.
  */
-@RESTCmdDesc(
-             name = "QueryURI",
-             uri = "/{application}/{table}/_query?{params}",
-             methods = HttpMethod.GET,
-             visible = false
-            )
+@Description(
+    name = "QueryURI",
+    summary = "Performs an object query on a specific application and table. " + 
+              "This command passes all query parameters in the URI.",
+    methods = HttpMethod.GET,
+    uri = "/{application}/{table}/_query?{params}",
+    visible = false
+)
 public class QueryURICmd extends UNodeOutCallback {
 
     @Override

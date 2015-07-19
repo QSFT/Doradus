@@ -17,13 +17,24 @@
 package com.dell.doradus.service.olap;
 
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
 /**
  * Implements the REST command: GET /{application}/{table}/_aggregate?{params}.
  */
+@Description(
+    name="AggregateURI",
+    summary="Performs an aggregate query on the given application and table. " +
+            "Query parameters are passed in the URI.",
+    methods = HttpMethod.GET,
+    uri = "/{application}/{table}/_aggregate?{params}",
+    outputEntity = "results",
+    visible = false
+)
 public class AggregateURICmd extends UNodeOutCallback {
 
     @Override

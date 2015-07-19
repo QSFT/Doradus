@@ -29,8 +29,9 @@ import com.dell.doradus.common.Utils;
  */
 public class CommandDescription {
     private String m_name;
-    private String m_uri;
+    private String m_summary;
     private final List<HttpMethod> m_methods = new ArrayList<>();
+    private String m_uri;
     private boolean m_isPrivileged;
     private boolean m_isVisible;
     private String m_inputEntity;
@@ -67,6 +68,9 @@ public class CommandDescription {
                     CommandParameter param = CommandParameter.fromUNode(paramNode);
                     cmd.addParameter(param);
                 }
+            case "summary":
+                cmd.setSummary(nodeValue);
+                break;
             case "uri":
                 cmd.setURI(nodeValue);
                 break;
@@ -79,6 +83,9 @@ public class CommandDescription {
     
     public UNode toDoc() {
         UNode rootNode = UNode.createMapNode(m_name);
+        if (!Utils.isEmpty(m_summary)) {
+            rootNode.addValueNode("summary", m_summary);
+        }
         rootNode.addValueNode("uri", m_uri);
         rootNode.addValueNode("methods", getMethodList());
         if (m_isPrivileged) {
@@ -101,18 +108,14 @@ public class CommandDescription {
     
     //----- Setters
     
-    public void setInputEntity(String inputEntity) {
-        m_inputEntity = inputEntity;
-    }
-    
-    public void setOutputEntity(String outputEntity) {
-        m_outputEntity = outputEntity;
-    }
-    
     public void setName(String name) {
         m_name = name;
     }
     
+    public void setSummary(String summary) {
+        m_summary = summary;
+    }
+
     public void setURI(String uri) {
         m_uri = uri;
     }
@@ -123,6 +126,14 @@ public class CommandDescription {
     
     public void setVisibility(boolean isVisible) {
         m_isVisible = isVisible;
+    }
+    
+    public void setInputEntity(String inputEntity) {
+        m_inputEntity = inputEntity;
+    }
+    
+    public void setOutputEntity(String outputEntity) {
+        m_outputEntity = outputEntity;
     }
     
     public void addMethods(HttpMethod[] methods) {
@@ -140,12 +151,17 @@ public class CommandDescription {
     public String getName() {
         return m_name;
     }
-    public String getURI() {
-        return m_uri;
+    
+    public String getSummary() {
+        return m_summary;
     }
     
     public Collection<HttpMethod> getMethods() {
         return m_methods;
+    }
+    
+    public String getURI() {
+        return m_uri;
     }
     
     public boolean isPrivileged() {

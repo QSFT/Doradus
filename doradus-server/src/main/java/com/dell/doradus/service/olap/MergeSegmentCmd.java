@@ -18,22 +18,36 @@ package com.dell.doradus.service.olap;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpCode;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
-import com.dell.doradus.common.Utils;
+import com.dell.doradus.common.rest.CommandParameter;
 import com.dell.doradus.olap.MergeOptions;
 import com.dell.doradus.service.rest.RESTCallback;
+import com.dell.doradus.service.rest.annotation.Description;
+import com.dell.doradus.service.rest.annotation.ParamDescription;
 
 /**
  * Handle the REST commands: POST /{application}/_shards/{shard} and
  * POST /{application}/_shards/{shard}?{params}
  */
+@Description(
+    name = "Merge",
+    summary = "Merges all updates in a specific shard.",
+    methods = HttpMethod.POST,
+    uri = "/{application}/_shards/{shard}?{params}"
+)
 public class MergeSegmentCmd extends RESTCallback {
+    @ParamDescription
+    public static CommandParameter describeParams() {
+        return new CommandParameter("params")
+                        .add("expire-date", "text")
+                        .add("timeout", "integer")
+                        .add("force-merge", "boolean");
+    }
 
     @Override
     public RESTResponse invoke() {
         ApplicationDefinition appDef = m_request.getAppDef();
-        Utils.require(OLAPService.class.getSimpleName().equals(appDef.getStorageService()),
-                      "Application '%s' is not an OLAP application", appDef.getAppName());
         String shard = m_request.getVariableDecoded("shard");
         String params = m_request.getVariableDecoded("params");
         if (params == null) {

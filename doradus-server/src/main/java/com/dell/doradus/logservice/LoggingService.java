@@ -30,10 +30,12 @@ import com.dell.doradus.common.BatchResult;
 import com.dell.doradus.common.CommonDefs;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.HttpDefs;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.common.rest.CommandParameter;
 import com.dell.doradus.olap.OlapBatch;
 import com.dell.doradus.olap.aggregate.AggregateResultConverter;
 import com.dell.doradus.olap.aggregate.AggregationResult;
@@ -45,6 +47,8 @@ import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.rest.ReaderCallback;
 import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
+import com.dell.doradus.service.rest.annotation.ParamDescription;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.taskmanager.Task;
 
@@ -75,8 +79,8 @@ public class LoggingService extends StorageService {
     }
     
     public LogService getLogService() { return m_logService; }
-    //----- Command callbacks
     
+    //----- Command callbacks
     
     @Override public Collection<Task> getAppTasks(ApplicationDefinition appDef) {
         checkServiceState();
@@ -86,7 +90,14 @@ public class LoggingService extends StorageService {
         return appTasks;
     }   // getAppTasks
     
-    // Commands: POST /{application}/{table} and PUT /{application}/{table} 
+    // Commands: POST /{application}/{table} and PUT /{application}/{table}
+    @Description(
+        name = "Add",
+        summary = "Adds a batch of new objects to the given table.",
+        methods = {HttpMethod.POST, HttpMethod.PUT},
+        uri = "/{application}/{table}",
+        inputEntity = "batch"
+    )
     public static class UpdateCmd extends ReaderCallback {
         @Override public RESTResponse invokeStreamIn(Reader reader) {
             Utils.require(reader != null, "This command requires an input entity");
@@ -109,9 +120,28 @@ public class LoggingService extends StorageService {
         }
     }
 
-    // Command: GET /{application}/_query?{params}
+    // Command: GET /{application}/{table}/_query?{params}
+    @Description(
+        name = "Query",
+        summary = "Performs an object query on a specific application and table.",
+        methods = HttpMethod.GET,
+        uri = "/{application}/{table}/_query?{params}",
+        outputEntity = "results"
+    )
     public static class QueryCmd extends UNodeOutCallback {
-
+        @ParamDescription
+        public static CommandParameter describeParams() {
+            return new CommandParameter("params")
+                        .add("q", "text", true)
+                        .add("s", "integer")
+                        .add("k", "integer")
+                        .add("f", "text")
+                        .add("o", "text")
+                        .add("e", "text")
+                        .add("g", "text")
+                        .add("skipCount", "boolean");
+        }
+        
         @Override public UNode invokeUNodeOut() {
             ApplicationDefinition appDef = m_request.getAppDef();
             TableDefinition tableDef = m_request.getTableDef(appDef);
@@ -123,8 +153,22 @@ public class LoggingService extends StorageService {
         }
     }
 
-    // Command: GET /{application}/_aggregate?{params}
+    // Command: GET /{application}/{table}/_aggregate?{params}
+    @Description(
+        name = "Aggregate",
+        summary = "Performs an aggregate query on a specific application and table.",
+        methods = HttpMethod.GET,
+        uri = "/{application}/{table}/_aggregate?{params}",
+        outputEntity = "results"
+    )
     public static class AggregateCmd extends UNodeOutCallback {
+        @ParamDescription
+        public static CommandParameter describeParams() {
+            return new CommandParameter("params")
+                            .add("q", "text", true)
+                            .add("f", "text")
+                            .add("m", "text");
+        }
 
         @Override public UNode invokeUNodeOut() {
             ApplicationDefinition appDef = m_request.getAppDef();
@@ -138,8 +182,21 @@ public class LoggingService extends StorageService {
         }
     }
 
-    // Command: GET /_logserviceapp/?{params}
+    // Command: GET /_lsapp?{params}
+    @Description(
+        name = "Browse",
+        summary = "Provides a simple web browser interface for LoggingService applications.",
+        methods = HttpMethod.GET,
+        uri = "/_lsapp?{params}",
+        outputEntity = "{html}"
+    )
     public static class LogServiceAppCmd extends RESTCallback {
+        @ParamDescription
+        public static CommandParameter describeParams() {
+            // {params} are optional but details don't need to be public.
+            return new CommandParameter("params", null, false);
+        }
+        
         @Override public RESTResponse invoke() {
             String params = m_request.getVariable("params");
             Map<String, String> parameters = Utils.parseURIQuery(params);
@@ -155,6 +212,12 @@ public class LoggingService extends StorageService {
     @Override
     protected void initService() {
         RESTService.instance().registerApplicationCommands(REST_RULES, this);
+        List<Class<? extends RESTCallback>> cmdClasses = Arrays.asList(
+            UpdateCmd.class,
+            QueryCmd.class,
+            AggregateCmd.class
+        );
+        RESTService.instance().registerCommands(cmdClasses, this);
     }
 
     @Override

@@ -17,23 +17,28 @@
 package com.dell.doradus.service.olap;
 
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.UNode;
-import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.store.SegmentStats;
 import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
 /**
  * Handle the REST command: GET /{application}/_shards/{shard}
  */
+@Description(
+    name = "ShardStats",
+    summary = "Returns statistics for a specific shard.",
+    methods = HttpMethod.GET,
+    uri = "/{application}/_shards/{shard}",
+    outputEntity = "stats"
+)
 public class ShardStatsCmd extends UNodeOutCallback {
 
     @Override
     public UNode invokeUNodeOut() {
         ApplicationDefinition appDef = m_request.getAppDef();
-        Utils.require(OLAPService.class.getSimpleName().equals(appDef.getStorageService()),
-                      "Application '%s' is not an OLAP application", appDef.getAppName());
         String shard = m_request.getVariableDecoded("shard");
-
         SegmentStats stats = OLAPService.instance().getStats(appDef, shard);
         return stats.toUNode();
     }   // invokeUNodeOut

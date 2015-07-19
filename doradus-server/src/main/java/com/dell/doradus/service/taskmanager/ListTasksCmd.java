@@ -18,14 +18,23 @@ package com.dell.doradus.service.taskmanager;
 
 import java.util.Collection;
 
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
 /**
  * Handle the REST command: GET /_tasks. Lists recorded tasks for all applications in the
  * perspective tenant.
  */
+@Description(
+    name = "ListTasks",
+    summary = "Lists all known tasks and their latest status.",
+    methods = HttpMethod.GET,
+    uri = "/_tasks",
+    outputEntity = "tasks"
+)
 public class ListTasksCmd extends UNodeOutCallback {
 
     @Override

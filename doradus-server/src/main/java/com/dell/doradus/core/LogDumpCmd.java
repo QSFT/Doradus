@@ -24,23 +24,26 @@ import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.common.rest.CommandParameter;
 import com.dell.doradus.service.rest.RESTCallback;
-import com.dell.doradus.service.rest.RESTCmdDesc;
+import com.dell.doradus.service.rest.annotation.Description;
+import com.dell.doradus.service.rest.annotation.ParamDescription;
 import com.dell.doradus.utilities.MemoryAppender;
 
 /**
  * Reply to the REST command: GET /_logs?{params}. Return log records from the
  * MemoryAppender.
  */
-@RESTCmdDesc(
-             name = "Logs",
-             uri = "/_dump?{params}",
-             methods = {HttpMethod.GET},
-             privileged = true,
-             paramClasses = {LogDumpCmd.class},
-             outputEntity = "{text}"
-            )
+@Description(
+    name = "Logs",
+    summary = "Retrieves recent in-memory logs stored by the MemoryAppender. " +
+              "The results are returned as plain text.",
+    methods = {HttpMethod.GET},
+    uri = "/_dump?{params}",
+    privileged = true,
+    outputEntity = "{text}"
+)
 public class LogDumpCmd extends RESTCallback {
 
+    @ParamDescription
     public static CommandParameter describeParameter() {
         return new CommandParameter("params").add("level", "text", false);
     }

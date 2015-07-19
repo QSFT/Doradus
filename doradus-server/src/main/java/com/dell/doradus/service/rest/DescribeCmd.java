@@ -18,13 +18,15 @@ package com.dell.doradus.service.rest;
 
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.UNode;
+import com.dell.doradus.service.rest.annotation.Description;
 
-@RESTCmdDesc(
-             name = "Commands",
-             uri = "/_commands",
-             methods = HttpMethod.GET,
-             outputEntity = "commands"
-            )
+@Description(
+    name = "Describe",
+    summary = "Describes all registered REST commands.",
+    methods = HttpMethod.GET,
+    uri = "/_commands",
+    outputEntity = "commands"
+)
 public class DescribeCmd extends UNodeOutCallback {
 
     @Override

@@ -22,55 +22,42 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.common.rest.CommandDescription;
 import com.dell.doradus.common.rest.CommandParameter;
+import com.dell.doradus.service.rest.annotation.Description;
+import com.dell.doradus.service.rest.annotation.ParamDescription;
 
-// Will become the new REST command
-public class Xyzzy implements Comparable<Xyzzy>{
+/**
+ * Stores metadata for a REST command, extracted from annotations.
+ */
+public class CommandModel implements Comparable<CommandModel> {
+    private final static Logger LOGGER = LoggerFactory.getLogger(CommandModel.class.getSimpleName());
+
     private final Class<? extends RESTCallback> m_commandClass;
-    private final CommandDescription            m_cmdDesc = new CommandDescription();
+    private final CommandDescription            m_cmdDesc;
     private final List<String>                  m_pathNodes = new ArrayList<>();
-    private final String                        m_query;
+    private String                              m_query;
 
-    public Xyzzy(Class<? extends RESTCallback> commandClass) {
-        RESTCmdDesc cmdDesc = commandClass.getAnnotation(RESTCmdDesc.class);
-        if (cmdDesc == null) {
+    /**
+     * Create a CommandModel object that describes the REST command represented by the
+     * given class.
+     *  
+     * @param commandClass
+     */
+    public CommandModel(Class<? extends RESTCallback> commandClass) {
+        Description descAnnotation = commandClass.getAnnotation(Description.class);
+        if (descAnnotation == null) {
             throw new RuntimeException("REST command class '" + commandClass.getName() +
-                                       "' is missing annotation: " + RESTCmdDesc.class.getSimpleName());
+                                       "' is missing annotation: " + Description.class.getName());
         }
-        
         m_commandClass = commandClass;
-        m_cmdDesc.addMethods(cmdDesc.methods());
-        m_cmdDesc.setName(cmdDesc.name());
-        m_cmdDesc.setURI(cmdDesc.uri());
-        m_cmdDesc.setInputEntity(cmdDesc.inputEntity());
-        m_cmdDesc.setOutputEntity(cmdDesc.outputEntity());
-        m_cmdDesc.setPrivileged(cmdDesc.privileged());
-        m_cmdDesc.setVisibility(cmdDesc.visible());
-        
-        Class<?>[] paramClasses = cmdDesc.paramClasses();
-        if (paramClasses != null) {
-            for (Class<?> paramClass : paramClasses) {
-                try {
-                    Method describeMethod = paramClass.getMethod("describeParameter", (Class<?>[])null);
-                    CommandParameter cmdParam = (CommandParameter) describeMethod.invoke(null, (Object[])null);
-                    m_cmdDesc.addParameter(cmdParam);
-                } catch (Exception e) {
-                    // No describeParameter function
-                }
-            }
-        }
-        
-        List<String> pathNodeList = new ArrayList<String>();
-        StringBuilder query = new StringBuilder();
-        StringBuilder fragment = new StringBuilder();
-        Utils.parseURI(cmdDesc.uri(), pathNodeList, query, fragment);
-        for (String encodedNode : pathNodeList) {
-            m_pathNodes.add(Utils.urlDecode(encodedNode));
-        }
-        m_query = Utils.urlDecode(query.toString());
+        m_cmdDesc = createCommandDescription(descAnnotation);
+        buildCommandMetadata();
     }
     
     //----- Getters
@@ -105,13 +92,13 @@ public class Xyzzy implements Comparable<Xyzzy>{
     
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof Xyzzy)) {
+        if (!(other instanceof CommandModel)) {
             return false;
         }
 
         // As we compare, a variable {foo} is considered identical to a variable {bar}
         // if they occur in the same spot.
-        Xyzzy otherCmd = (Xyzzy)other;
+        CommandModel otherCmd = (CommandModel)other;
         if (!m_cmdDesc.getMethodList().equals(otherCmd.m_cmdDesc.getMethodList())) {
             return false;   // Different method
         }
@@ -133,7 +120,7 @@ public class Xyzzy implements Comparable<Xyzzy>{
     }
     
     @Override
-    public int compareTo(Xyzzy other) {
+    public int compareTo(CommandModel other) {
         // Compare the node list for each object.
         for (int index = 0; index < Math.min(m_pathNodes.size(), other.m_pathNodes.size()); index++) {
             String node1 = m_pathNodes.get(index);
@@ -239,4 +226,51 @@ public class Xyzzy implements Comparable<Xyzzy>{
         return component.equals(value);
     }   // matches
 
-}   // class Xyzzy
+    // Extract and save command description and parameters from the command class.
+    private void buildCommandMetadata() {
+        findParamDescMethods();
+        parseURIIntoComponents();
+    }
+    
+    // Look for ParamDescription annotations and attempt to call each annotated method.
+    private void findParamDescMethods() {
+        for (Method method : m_commandClass.getMethods()) {
+            if (method.isAnnotationPresent(ParamDescription.class)) {
+                try {
+                    CommandParameter cmdParam = (CommandParameter) method.invoke(null, (Object[])null);
+                    m_cmdDesc.addParameter(cmdParam);
+                } catch (Exception e) {
+                    LOGGER.warn("Method '{}' for ParamDescription class '{}' could not be invoked: {}",
+                                new Object[]{method.getName(), m_commandClass.getName(), e.toString()});
+                }
+            }
+        }
+    }
+    
+    // Parse the REST command URI into components for searching/comparing.
+    private void parseURIIntoComponents() {
+        List<String> pathNodeList = new ArrayList<String>();
+        StringBuilder query = new StringBuilder();
+        StringBuilder fragment = new StringBuilder();
+        Utils.parseURI(m_cmdDesc.getURI(), pathNodeList, query, fragment);
+        for (String encodedNode : pathNodeList) {
+            m_pathNodes.add(Utils.urlDecode(encodedNode));
+        }
+        m_query = Utils.urlDecode(query.toString());
+    }
+    
+    // Create a CommandDescription object for the given Description annotation.
+    private static CommandDescription createCommandDescription(Description descAnnotation) {
+        CommandDescription cmdDesc = new CommandDescription();
+        cmdDesc.setName(descAnnotation.name());
+        cmdDesc.setSummary(descAnnotation.summary());
+        cmdDesc.addMethods(descAnnotation.methods());
+        cmdDesc.setURI(descAnnotation.uri());
+        cmdDesc.setInputEntity(descAnnotation.inputEntity());
+        cmdDesc.setOutputEntity(descAnnotation.outputEntity());
+        cmdDesc.setPrivileged(descAnnotation.privileged());
+        cmdDesc.setVisibility(descAnnotation.visible());
+        return cmdDesc;
+    }
+    
+}   // class Command

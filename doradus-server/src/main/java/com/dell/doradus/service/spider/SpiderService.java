@@ -89,20 +89,16 @@ public class SpiderService extends StorageService {
         new RESTCommand("DELETE /{application}/{table}          com.dell.doradus.service.spider.DeleteObjectsCmd"),
     });
 
-    private static final List<Class<? extends RESTCallback>> CMD_CLASSES = new ArrayList<>();
-    static {
-        // Object retrieval:
-        CMD_CLASSES.add(GetObjectCmd.class);
-        CMD_CLASSES.add(QueryURICmd.class);
-        CMD_CLASSES.add(QueryDocCmd.class);
-        CMD_CLASSES.add(AggregateURICmd.class);
-        CMD_CLASSES.add(AggregateDocCmd.class);
-        
-        // Object updates:
-        CMD_CLASSES.add(AddObjectsCmd.class);
-        CMD_CLASSES.add(UpdateObjectsCmd.class);
-        CMD_CLASSES.add(DeleteObjectsCmd.class);
-    }
+    private static final List<Class<? extends RESTCallback>> CMD_CLASSES = Arrays.asList(
+        GetObjectCmd.class,
+        QueryURICmd.class,
+        QueryDocCmd.class,
+        AggregateURICmd.class,
+        AggregateDocCmd.class,
+        AddObjectsCmd.class,
+        UpdateObjectsCmd.class,
+        DeleteObjectsCmd.class
+    );
     
     /**
      * Get the singleton instance of this service. The service may or may not have been
@@ -119,9 +115,7 @@ public class SpiderService extends StorageService {
     @Override
     public void initService() {
         RESTService.instance().registerApplicationCommands(REST_RULES, this);
-        
-        // Experimental
-        RESTService.instance().registerCommands(this, CMD_CLASSES);
+        RESTService.instance().registerCommands(CMD_CLASSES, this);
     }   // initService
 
     @Override

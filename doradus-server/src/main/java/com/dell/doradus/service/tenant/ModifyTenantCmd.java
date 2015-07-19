@@ -16,12 +16,23 @@
 
 package com.dell.doradus.service.tenant;
 
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.service.rest.UNodeInOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
 /**
  * Implements the system command: PUT /_tenants/{tenant}.
  */
+@Description(
+    name = "ModifyTenant",
+    summary = "Modifies the configuration of an existing tenant.",
+    methods = HttpMethod.PUT,
+    uri = "/_tenants/{tenant}",
+    privileged = true,
+    inputEntity = "tenant",
+    outputEntity = "tenant"
+)
 public class ModifyTenantCmd extends UNodeInOutCallback {
 
     @Override

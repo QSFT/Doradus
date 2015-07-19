@@ -46,6 +46,7 @@ import com.dell.doradus.olap.store.SegmentStats;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.StorageService;
 import com.dell.doradus.service.db.Tenant;
+import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
@@ -95,6 +96,29 @@ public class OLAPService extends StorageService {
         new RESTCommand("GET    /_olapp?{params}                             com.dell.doradus.service.olap.OlappCmd"),
     });
     
+    private static final List<Class<? extends RESTCallback>> CMD_CLASSES = Arrays.asList(
+        // Object retrieval:
+        QueryURICmd.class,
+        QueryDocCmd.class,
+        AggregateURICmd.class,
+        AggregateDocCmd.class,
+        // Object updates:
+        AddObjectsCmd.class,
+        DeleteObjectsCmd.class,
+        // Shard management:
+        MergeSegmentCmd.class,
+        SetShardPropertiesCmd.class,
+        DeleteSegmentCmd.class,
+        ListShardsCmd.class,
+        ShardStatsCmd.class,
+        // Troubleshooting & repair
+        ShardStatisticsCmd.class,
+        DuplicatesCmd.class,
+        ShardVerifyCmd.class,
+        DeleteSegmentCmd2.class,
+        OlappCmd.class
+    );
+    
     //----- Service methods
     
     /**
@@ -110,6 +134,7 @@ public class OLAPService extends StorageService {
     @Override
     public void initService() {
         RESTService.instance().registerApplicationCommands(REST_RULES, this);
+        RESTService.instance().registerCommands(CMD_CLASSES, this);
     }   // initService
     
     @Override

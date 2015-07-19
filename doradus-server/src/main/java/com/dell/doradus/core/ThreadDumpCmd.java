@@ -25,19 +25,20 @@ import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.rest.RESTCallback;
-import com.dell.doradus.service.rest.RESTCmdDesc;
+import com.dell.doradus.service.rest.annotation.Description;
 
 /**
  * Reply to a REST command such as: GET /_dump. Return a stack trace of all current
  * as a plain text message.
  */
-@RESTCmdDesc(
-             name = "Dump",
-             uri = "/_dump",
-             methods = {HttpMethod.GET},
-             privileged = true,
-             outputEntity = "{text}"
-            )
+@Description(
+    name = "Dump",
+    summary = "Performs a stack dump of all threads. The results are returned as plain text.",
+    methods = {HttpMethod.GET},
+    uri = "/_dump",
+    privileged = true,
+    outputEntity = "{text}"
+)
 public class ThreadDumpCmd extends RESTCallback {
 
     @Override

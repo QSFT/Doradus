@@ -35,6 +35,7 @@ import com.dell.doradus.search.SearchResult;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.StorageService;
 import com.dell.doradus.service.olap.OLAPService;
+import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.taskmanager.Task;
@@ -65,7 +66,7 @@ public class OLAPMonoService extends StorageService {
     private static final OLAPMonoService INSTANCE = new OLAPMonoService();
     private OLAPMonoService() {};
 
-    // OLAPService-specific commands
+    // OLAPMonoService-specific commands
     private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[]{
         // Object retrieval:
         new RESTCommand("GET    /{application}/{table}/_query?{params}      com.dell.doradus.service.olap.mono.QueryURICmd"),
@@ -85,6 +86,17 @@ public class OLAPMonoService extends StorageService {
         new RESTCommand("POST   /{application}/_merge               com.dell.doradus.service.olap.mono.MergeShardCmd"),
     });
 
+    private static final List<Class<? extends RESTCallback>> CMD_CLASSES = Arrays.asList(
+        QueryURICmd.class,
+        QueryDocCmd.class,
+        AggregateURICmd.class,
+        AggregateDocCmd.class,
+        UpdateBatchCmd.class,
+        ShardStatsCmd.class,
+        ShardStatisticsCmd.class,
+        MergeShardCmd.class
+    );
+    
     //----- Service methods
     
     /**
@@ -100,6 +112,7 @@ public class OLAPMonoService extends StorageService {
     @Override
     public void initService() {
         RESTService.instance().registerApplicationCommands(REST_RULES, this, OLAPService.instance());
+        RESTService.instance().registerCommands(CMD_CLASSES, this, OLAPService.instance());
     }   // initService
     
     @Override

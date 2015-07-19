@@ -82,12 +82,11 @@ public final class DoradusServer {
         new RESTCommand("GET /_config        com.dell.doradus.core.GetConfigCmd", true),
     });
 
-    private static final List<Class<? extends RESTCallback>> CMD_CLASSES = new ArrayList<>();
-    static {
-        CMD_CLASSES.add(ThreadDumpCmd.class);
-        CMD_CLASSES.add(LogDumpCmd.class);
-        CMD_CLASSES.add(GetConfigCmd.class);
-    }
+    private static final List<Class<? extends RESTCallback>> CMD_CLASSES = Arrays.asList(
+        ThreadDumpCmd.class,
+        LogDumpCmd.class,
+        GetConfigCmd.class
+    );
     
     private static final String VERSION_FILE = "doradus.ver";
     
@@ -291,7 +290,7 @@ public final class DoradusServer {
         initConfig(args);
         initEmbeddedServices(services);
         RESTService.instance().registerGlobalCommands(REST_RULES);
-        RESTService.instance().registerCommands(null, CMD_CLASSES);
+        RESTService.instance().registerCommands(CMD_CLASSES);
         m_bInitialized = true;
     }   // initEmbedded
     
@@ -315,7 +314,7 @@ public final class DoradusServer {
         initConfig(args);
         initStandaAloneServices();
         RESTService.instance().registerGlobalCommands(REST_RULES);
-        RESTService.instance().registerCommands(null, CMD_CLASSES);
+        RESTService.instance().registerCommands(CMD_CLASSES);
         m_bInitialized = true;
     }   // initStandAlone
     

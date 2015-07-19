@@ -74,14 +74,13 @@ public class SchemaService extends Service {
         new RESTCommand("DELETE /_applications/{application}/{key} com.dell.doradus.service.schema.DeleteApplicationCmd"),
     });
 
-    private static final List<Class<? extends RESTCallback>> CMD_CLASSES = new ArrayList<>();
-    static {
-        CMD_CLASSES.add(ListApplicationsCmd.class);
-        CMD_CLASSES.add(ListApplicationCmd.class);
-        CMD_CLASSES.add(DefineApplicationCmd.class);
-        CMD_CLASSES.add(ModifyApplicationCmd.class);
-        CMD_CLASSES.add(DeleteApplicationCmd.class);
-    }
+    private static final List<Class<? extends RESTCallback>> CMD_CLASSES = Arrays.asList(
+        ListApplicationsCmd.class,
+        ListApplicationCmd.class,
+        DefineApplicationCmd.class,
+        ModifyApplicationCmd.class,
+        DeleteApplicationCmd.class
+    );
     
     //----- Service methods
     
@@ -99,7 +98,7 @@ public class SchemaService extends Service {
     @Override
     public void initService() {
         RESTService.instance().registerGlobalCommands(REST_RULES);
-        RESTService.instance().registerCommands(null, CMD_CLASSES);
+        RESTService.instance().registerCommands(CMD_CLASSES);
     }   // initService
 
     // Wait for the DB service to be up and check application schemas.

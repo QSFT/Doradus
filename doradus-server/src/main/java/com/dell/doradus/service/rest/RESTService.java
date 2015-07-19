@@ -17,7 +17,6 @@
 package com.dell.doradus.service.rest;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -55,15 +54,10 @@ public class RESTService extends Service {
     private WebServer m_webservice;
     private final RESTCommandSet m_commandSet = new RESTCommandSet();
 
-    // REST commands supported by the the Spider service:
+    // REST commands supported by the the REST service:
     private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
         new RESTCommand("GET /_commands com.dell.doradus.service.rest.DescribeCmd"),
     });
-    
-    private static final List<Class<? extends RESTCallback>> CMD_CLASSES = new ArrayList<>();
-    static {
-        CMD_CLASSES.add(DescribeCmd.class);
-    }
     
     /**
      * Get the singleton instance of this service. The service may or may not have been
@@ -92,7 +86,7 @@ public class RESTService extends Service {
 		    }
     	}
     	registerGlobalCommands(REST_RULES);
-    	registerCommands(null, CMD_CLASSES);
+    	registerCommands(Arrays.asList(DescribeCmd.class));
     }   // initService
 
     // Begin servicing REST requests.
@@ -142,9 +136,19 @@ public class RESTService extends Service {
     }   // registerRequestCallback
     
     // TODO: Experimental
-    public void registerCommands(StorageService cmdOwner,
-                                 Iterable<Class<? extends RESTCallback>> cmdClasses) {
-        m_commandSet.addCommands(cmdOwner, cmdClasses);
+    public void registerCommands(Iterable<Class<? extends RESTCallback>> cmdClasses) {
+        m_commandSet.addCommands(null, cmdClasses);
+    }
+    
+    public void registerCommands(Iterable<Class<? extends RESTCallback>> cmdClasses,
+                                 StorageService service) {
+        m_commandSet.addCommands(service, cmdClasses);
+    }
+    
+    public void registerCommands(Iterable<Class<? extends RESTCallback>> cmdClasses,
+                                 StorageService service, StorageService parentService) {
+        m_commandSet.setParent(service.getClass().getSimpleName(), parentService.getClass().getSimpleName());
+        m_commandSet.addCommands(service, cmdClasses);
     }
     
     /**
@@ -234,7 +238,7 @@ public class RESTService extends Service {
      *                      the actual values passed, not decoded (see above).
      * @return              The {@link RESTCommand} if a match was found, otherwise null.
      */
-    public Xyzzy findCommand(ApplicationDefinition appDef, HttpMethod method, String uri,
+    public CommandModel findCommand(ApplicationDefinition appDef, HttpMethod method, String uri,
                                     String query, Map<String, String> variableMap) {
         String cmdOwner = null;
         if (appDef != null) {

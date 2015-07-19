@@ -18,21 +18,27 @@ package com.dell.doradus.service.olap;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpCode;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
-import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.CheckDatabase;
 import com.dell.doradus.service.rest.RESTCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
 /**
  * Handle the REST command: DELETE /{application}/_shards/{shard}/{segment}.
  */
+@Description(
+    name = "DeleteSegment",
+    summary = "Deletes a segment in a specific shard. For experts only!",
+    methods = HttpMethod.DELETE,
+    uri = "/{application}/_shards/{shard}/{segment}",
+    visible = false
+)
 public class DeleteSegmentCmd2 extends RESTCallback {
 
     @Override
     public RESTResponse invoke() {
         ApplicationDefinition appDef = m_request.getAppDef();
-        Utils.require(OLAPService.class.getSimpleName().equals(appDef.getStorageService()),
-                      "Application '%s' is not an OLAP application", appDef.getAppName());
         String shard = m_request.getVariableDecoded("shard");
         String segment = m_request.getVariableDecoded("segment");
         CheckDatabase.deleteSegment(OLAPService.instance().getOlap(), appDef, shard, segment);

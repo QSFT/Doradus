@@ -27,18 +27,20 @@ import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.service.rest.RESTCmdDesc;
 import com.dell.doradus.service.rest.ReaderCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
 /**
  * Implements the REST command: DELETE /{application}/{table}.
  */
-@RESTCmdDesc(
-             name = "Delete",
-             uri = "/{application}/{table}",
-             methods = HttpMethod.DELETE,
-             inputEntity = "batch"
-            )
+@Description(
+    name = "Delete",
+    summary = "Deletes objects from a specific application and table. " +
+              "The _ID field must be set for each object.",
+    methods = HttpMethod.DELETE,
+    uri = "/{application}/{table}",
+    inputEntity = "batch"
+)
 public class DeleteObjectsCmd extends ReaderCallback {
 
     @Override

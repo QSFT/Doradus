@@ -22,19 +22,20 @@ import java.util.TreeMap;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.service.rest.RESTCmdDesc;
 import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
 /**
  * Reply to the REST command: GET /_config. 
  */
-@RESTCmdDesc(
-             name = "Config",
-             uri = "/_config",
-             methods = {HttpMethod.GET},
-             privileged = true,
-             outputEntity = "configuration"
-            )
+@Description(
+    name = "Config",
+    summary = "Retrieves configuration and runtime parameters for this server process.",
+    methods = {HttpMethod.GET},
+    uri = "/_config",
+    privileged = true,
+    outputEntity = "configuration"
+)
 public class GetConfigCmd extends UNodeOutCallback {
 
     @Override

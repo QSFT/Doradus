@@ -17,20 +17,26 @@
 package com.dell.doradus.service.olap;
 
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.UNode;
-import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
 /**
  * Handle the REST command: GET /{application}/_shards
  */
+@Description(
+    name = "ListShards",
+    summary = "List all shards that currently have data.",
+    methods = HttpMethod.GET,
+    uri = "/{application}/_shards",
+    outputEntity = "result"
+)
 public class ListShardsCmd extends UNodeOutCallback {
 
     @Override
     public UNode invokeUNodeOut() {
         ApplicationDefinition appDef = m_request.getAppDef();
-        Utils.require(OLAPService.class.getSimpleName().equals(appDef.getStorageService()),
-                      "Application '%s' is not an OLAP application", appDef.getAppName());
         
         // "result": {"<app name>": {"shards": [*<shard name>]}}
         UNode resultNode = UNode.createMapNode("result");

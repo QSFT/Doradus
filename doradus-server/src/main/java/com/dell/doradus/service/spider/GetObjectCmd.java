@@ -22,18 +22,19 @@ import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.service.rest.NotFoundException;
-import com.dell.doradus.service.rest.RESTCmdDesc;
 import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
 /**
  * Implements the REST command: GET /{application}/{table}/{ID}.
  */
-@RESTCmdDesc(
-             name = "GetObject",
-             uri = "/{application}/{table}/{ID}",
-             methods = HttpMethod.GET,
-             outputEntity = "doc"
-            )
+@Description(
+    name = "GetObject",
+    summary = "Fetches all field values for an object with a specific object ID.",
+    methods = HttpMethod.GET,
+    uri = "/{application}/{table}/{ID}",
+    outputEntity = "doc"
+)
 public class GetObjectCmd extends UNodeOutCallback {
 
     @Override

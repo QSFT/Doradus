@@ -106,6 +106,7 @@ public class TaskManagerService extends Service {
     @Override
     protected void initService() {
         RESTService.instance().registerGlobalCommands(REST_RULES);
+        RESTService.instance().registerCommands(Arrays.asList(ListTasksCmd.class));
     }
 
     @Override

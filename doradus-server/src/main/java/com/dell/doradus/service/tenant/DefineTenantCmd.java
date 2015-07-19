@@ -16,14 +16,25 @@
 
 package com.dell.doradus.service.tenant;
 
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.rest.UNodeInOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
 /**
  * Processes the system REST command: POST /_tenants.
  */
+@Description(
+    name = "DefineTenant",
+    summary = "Creates a new tenant with a specific configuration.",
+    methods = HttpMethod.POST,
+    uri = "/_tenants",
+    privileged = true,
+    inputEntity = "tenant",
+    outputEntity = "tenant"
+)
 public class DefineTenantCmd extends UNodeInOutCallback {
 
     @Override

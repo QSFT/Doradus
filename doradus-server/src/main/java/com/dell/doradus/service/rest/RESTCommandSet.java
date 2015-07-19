@@ -75,10 +75,10 @@ public class RESTCommandSet {
 
     //----- New experimental maps -----
     // Commands by owner and name:
-    private final Map<String, Map<String, Xyzzy>> m_cmdsByOwnerMap = new HashMap<>();
+    private final Map<String, Map<String, CommandModel>> m_cmdsByOwnerMap = new HashMap<>();
     
     // Commands by owner and HttpMethod, sorted by evaluation order:
-    private final Map<String, Map<HttpMethod, SortedSet<Xyzzy>>> m_cmdEvalMap = new HashMap<>();
+    private final Map<String, Map<HttpMethod, SortedSet<CommandModel>>> m_cmdEvalMap = new HashMap<>();
     
     /**
      * Create a new REST command set with no commands.
@@ -95,8 +95,8 @@ public class RESTCommandSet {
         String cmdOwner = storageService == null ? "_system" : storageService.getClass().getSimpleName();
         synchronized (m_cmdEvalMap) {
             for (Class<? extends RESTCallback> cmdClass : cmdClasses) {
-                Xyzzy xyzzy = new Xyzzy(cmdClass);
-                addCommand(cmdOwner, xyzzy);
+                CommandModel commandModel = new CommandModel(cmdClass);
+                addCommand(cmdOwner, commandModel);
             }
         }
     }
@@ -104,11 +104,11 @@ public class RESTCommandSet {
     public CommandSet describeCommands() {
         CommandSet cmdSet = new CommandSet();
         for (String cmdOwner : m_cmdsByOwnerMap.keySet()) {
-            Map<String, Xyzzy> cmdMap = m_cmdsByOwnerMap.get(cmdOwner);
+            Map<String, CommandModel> cmdMap = m_cmdsByOwnerMap.get(cmdOwner);
             SortedMap<String, CommandDescription> ownerMap = new TreeMap<>();
             for (String cmdName : cmdMap.keySet()) {
-                Xyzzy cmd = cmdMap.get(cmdName);
-                CommandDescription cmdDesc = cmd.getDescription();
+                CommandModel cmdModel = cmdMap.get(cmdName);
+                CommandDescription cmdDesc = cmdModel.getDescription();
                 if (cmdDesc.isVisible()) {
                     ownerMap.put(cmdName, cmdDesc);
                 }
@@ -192,15 +192,15 @@ public class RESTCommandSet {
     }   // freezeCommandSet
 
     // Experimental
-    public Xyzzy findCommand(String ownerService, HttpMethod method, String uri, String query,
-                             Map<String, String> variableMap) {
+    public CommandModel findCommand(String ownerService, HttpMethod method, String uri, String query,
+                                    Map<String, String> variableMap) {
         String cmdOwner = Utils.isEmpty(ownerService) ? "_system" : ownerService;
-        Xyzzy cmd = null;
-        while (cmd == null && !Utils.isEmpty(cmdOwner)) {
-            cmd = searchCommands(cmdOwner, method, uri, query, variableMap);
+        CommandModel cmdModel = null;
+        while (cmdModel == null && !Utils.isEmpty(cmdOwner)) {
+            cmdModel = searchCommands(cmdOwner, method, uri, query, variableMap);
             cmdOwner = m_parentMap.get(cmdOwner);
         }
-        return cmd;
+        return cmdModel;
     }
 
     /**
@@ -250,33 +250,33 @@ public class RESTCommandSet {
 
     //----- Private methods
     
-    private void addCommand(String cmdOwner, Xyzzy cmd) {
-        Map<String, Xyzzy> nameMap = getCmdNameMap(cmdOwner);
-        String cmdName = cmd.getName();
-        Xyzzy oldCmd = nameMap.put(cmdName, cmd);
+    private void addCommand(String cmdOwner, CommandModel cmdModel) {
+        Map<String, CommandModel> nameMap = getCmdNameMap(cmdOwner);
+        String cmdName = cmdModel.getName();
+        CommandModel oldCmd = nameMap.put(cmdName, cmdModel);
         if (oldCmd != null) {
             throw new RuntimeException("Duplicate REST command with same owner/name: " +
                                        "owner=" + cmdOwner + ", name=" + cmdName +
-                                       ", [1]=" + cmd + ", [2]=" + oldCmd); 
+                                       ", [1]=" + cmdModel + ", [2]=" + oldCmd); 
         }
         
-        Map<HttpMethod, SortedSet<Xyzzy>> evalMap = getCmdEvalMap(cmdOwner);
-        for (HttpMethod method : cmd.getMethods()) {
-            SortedSet<Xyzzy> methodSet = evalMap.get(method);
+        Map<HttpMethod, SortedSet<CommandModel>> evalMap = getCmdEvalMap(cmdOwner);
+        for (HttpMethod method : cmdModel.getMethods()) {
+            SortedSet<CommandModel> methodSet = evalMap.get(method);
             if (methodSet == null) {
                 methodSet = new TreeSet<>();
                 evalMap.put(method, methodSet);
             }
-            if (!methodSet.add(cmd)) {
+            if (!methodSet.add(cmdModel)) {
                 throw new RuntimeException("Duplicate REST command: owner=" + cmdOwner +
-                                           ", name=" + cmdName + ", commmand=" + cmd); 
+                                           ", name=" + cmdName + ", commmand=" + cmdModel); 
                 
             }
         }
     }
     
-    private Map<String, Xyzzy> getCmdNameMap(String cmdOwner) {
-        Map<String, Xyzzy> cmdNameMap = m_cmdsByOwnerMap.get(cmdOwner);
+    private Map<String, CommandModel> getCmdNameMap(String cmdOwner) {
+        Map<String, CommandModel> cmdNameMap = m_cmdsByOwnerMap.get(cmdOwner);
         if (cmdNameMap == null) {
             cmdNameMap = new HashMap<>();
             m_cmdsByOwnerMap.put(cmdOwner, cmdNameMap);
@@ -284,8 +284,8 @@ public class RESTCommandSet {
         return cmdNameMap;
     }
 
-    private Map<HttpMethod, SortedSet<Xyzzy>> getCmdEvalMap(String cmdOwner) {
-        Map<HttpMethod, SortedSet<Xyzzy>> evalMap = m_cmdEvalMap.get(cmdOwner);
+    private Map<HttpMethod, SortedSet<CommandModel>> getCmdEvalMap(String cmdOwner) {
+        Map<HttpMethod, SortedSet<CommandModel>> evalMap = m_cmdEvalMap.get(cmdOwner);
         if (evalMap == null) {
             evalMap = new HashMap<>();
             m_cmdEvalMap.put(cmdOwner, evalMap);
@@ -294,15 +294,15 @@ public class RESTCommandSet {
     }
     
     // Search the given command owner for a matching command.
-    private Xyzzy searchCommands(String cmdOwner, HttpMethod method, String uri,
-                                 String query, Map<String, String> variableMap) {
-        Map<HttpMethod, SortedSet<Xyzzy>> evalMap = getCmdEvalMap(cmdOwner);
+    private CommandModel searchCommands(String cmdOwner, HttpMethod method, String uri,
+                                        String query, Map<String, String> variableMap) {
+        Map<HttpMethod, SortedSet<CommandModel>> evalMap = getCmdEvalMap(cmdOwner);
         if (evalMap == null) {
             return null;
         }
         
         // Find the sorted command set for the given HTTP method.
-        SortedSet<Xyzzy> cmdSet = evalMap.get(method);
+        SortedSet<CommandModel> cmdSet = evalMap.get(method);
         if (cmdSet == null) {
             return null;
         }
@@ -317,7 +317,7 @@ public class RESTCommandSet {
         }
         
         // Attempt to match commands in this set in order.
-        for (Xyzzy cmd : cmdSet) {
+        for (CommandModel cmd : cmdSet) {
             if (cmd.matches(pathNodeList, query, variableMap)) {
                 return cmd;
             }

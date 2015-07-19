@@ -18,24 +18,28 @@ package com.dell.doradus.service.olap;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpCode;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
-import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.CheckDatabase;
 import com.dell.doradus.service.rest.RESTCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
 /**
  * Handle the REST command: GET /{application}/_verify/{shard}
  * Verify that all segments in the shard are correct
- * Handle the REST command: GET /{application}/_statistics/{shard}?file={file}
- * Get contents of a file 
  */
+@Description(
+    name = "Verify",
+    summary = "Performs an integrity check on a given shard. " +
+              "Results are written to the Doradus log file.",
+    methods = HttpMethod.GET,
+    uri = "/{application}/_verify/{shard}"
+)
 public class ShardVerifyCmd extends RESTCallback {
 
     @Override
     public RESTResponse invoke() {
         ApplicationDefinition appDef = m_request.getAppDef();
-        Utils.require(OLAPService.class.getSimpleName().equals(appDef.getStorageService()),
-        		      "Application '%s' is not an OLAP application", appDef.getAppName());
         String shard = m_request.getVariableDecoded("shard");
         CheckDatabase.checkShard(OLAPService.instance().getOlap(), appDef, shard);
         return new RESTResponse(HttpCode.OK);

@@ -165,12 +165,12 @@ public class RESTServlet extends HttpServlet {
         }
         
         // Experimental: try new command type first
-        Xyzzy command = RESTService.instance().findCommand(appDef, method, uri, query, variableMap);
-        if (command != null) {
-            validateTenantAccess(request, tenant, command);
+        CommandModel cmdModel = RESTService.instance().findCommand(appDef, method, uri, query, variableMap);
+        if (cmdModel != null) {
+            validateTenantAccess(request, tenant, cmdModel);
             
             RESTRequest restRequest = new RESTRequest(tenant, appDef, request, variableMap);
-            RESTCallback callback = command.getNewCallback(restRequest);
+            RESTCallback callback = cmdModel.getNewCallback(restRequest);
             return callback.invoke();
         }
         
@@ -209,13 +209,13 @@ public class RESTServlet extends HttpServlet {
         }
     }
 
-    private void validateTenantAccess(HttpServletRequest request, Tenant tenant, Xyzzy cmd) {
+    private void validateTenantAccess(HttpServletRequest request, Tenant tenant, CommandModel cmdModel) {
         String authString = request.getHeader("Authorization");
         StringBuilder userID = new StringBuilder();
         StringBuilder password = new StringBuilder();
         decodeAuthorizationHeader(authString, userID, password);
         TenantService.instance().validateTenantAuthorization(tenant, userID.toString(), password.toString(), 
-                                                            permissionForMethod(request.getMethod()), cmd.isPrivileged());
+                                                            permissionForMethod(request.getMethod()), cmdModel.isPrivileged());
     }
 
     // Extract Authorization header, if any, and validate this command for the given tenant.

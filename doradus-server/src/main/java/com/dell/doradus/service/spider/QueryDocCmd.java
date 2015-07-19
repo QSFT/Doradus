@@ -20,22 +20,36 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
+import com.dell.doradus.common.rest.CommandParameter;
 import com.dell.doradus.search.SearchResultList;
-import com.dell.doradus.service.rest.RESTCmdDesc;
 import com.dell.doradus.service.rest.UNodeInOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
+import com.dell.doradus.service.rest.annotation.ParamDescription;
 
 /**
  * Implements the REST commands: GET or PUT /{application}/{table}/_query. The query
  * parameters are passed in an input entity.
  */
-@RESTCmdDesc(
-             name = "Query",
-             uri = "/{application}/{table}/_query",
-             methods = {HttpMethod.GET,HttpMethod.PUT},
-             inputEntity = "search",
-             paramClasses = {ObjectQuery.class} // for "search"
-            )
+@Description(
+    name = "Query",
+    summary = "Performs an object query on a specific application and table.",
+    methods = {HttpMethod.GET, HttpMethod.PUT},
+    uri = "/{application}/{table}/_query",
+    inputEntity = "search"
+)
 public class QueryDocCmd extends UNodeInOutCallback {
+
+    @ParamDescription
+    public static CommandParameter describeParameter() {
+        return new CommandParameter("search")
+                        .add("continue-after", "text")
+                        .add("continue-at", "text")
+                        .add("fields", "text")
+                        .add("query", "text", true)
+                        .add("skip", "integer")
+                        .add("order", "text")
+                        .add("size", "integer");
+    }
 
     @Override
     public UNode invokeUNodeInOut(UNode inNode) {

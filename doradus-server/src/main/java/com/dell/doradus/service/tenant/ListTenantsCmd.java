@@ -17,14 +17,24 @@
 package com.dell.doradus.service.tenant;
 
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 import com.dell.doradus.service.schema.SchemaService;
 
 /**
- * Implements the system REST commands: /_tenants
+ * Implements the system REST command: GET /_tenants
  */
+@Description(
+    name = "ListTenants",
+    summary = "Lists all tenants and their application names.",
+    methods = HttpMethod.GET,
+    uri = "/_tenants",
+    privileged = true,
+    outputEntity = "tenants"
+)
 public class ListTenantsCmd extends UNodeOutCallback {
 
     @Override

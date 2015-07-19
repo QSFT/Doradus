@@ -17,12 +17,21 @@
 package com.dell.doradus.service.tenant;
 
 import com.dell.doradus.common.HttpCode;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.service.rest.RESTCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
 /**
  * Handles the system command: DELETE /_tenants/{tenant}.
  */
+@Description(
+    name = "DeleteTenant",
+    summary = "Deletes a new tenant and its applications.",
+    methods = HttpMethod.DELETE,
+    uri = "/_tenants/{tenant}",
+    privileged = true
+)
 public class DeleteTenantCmd extends RESTCallback {
 
     @Override

@@ -37,6 +37,7 @@ import com.dell.doradus.service.db.DuplicateException;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.db.UnauthorizedException;
 import com.dell.doradus.service.rest.NotFoundException;
+import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
@@ -67,6 +68,14 @@ public class TenantService extends Service {
         new RESTCommand("DELETE /_tenants/{tenant}  com.dell.doradus.service.tenant.DeleteTenantCmd", true),
     });
 
+    List<Class<? extends RESTCallback>> CMD_CLASSES = Arrays.asList(
+        ListTenantsCmd.class,
+        ListTenantCmd.class,
+        DefineTenantCmd.class,
+        ModifyTenantCmd.class,
+        DeleteTenantCmd.class
+    );
+    
     // Singleton creation only.
     private TenantService() {};
 
@@ -103,6 +112,7 @@ public class TenantService extends Service {
             throw new RuntimeException("Multitenant_mode currently requires use_cql=true");
         }
         RESTService.instance().registerGlobalCommands(REST_RULES);
+        RESTService.instance().registerCommands(CMD_CLASSES);
     }
 
     @Override
