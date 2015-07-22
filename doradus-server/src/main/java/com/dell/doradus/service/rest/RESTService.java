@@ -20,8 +20,8 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
 
-
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.StorageService;
@@ -66,17 +66,18 @@ public class RESTService extends Service {
     // Initialize WebService so it's ready to run.
     @Override
     public void initService() {
-    	boolean loadWebServer = ServerConfig.getInstance().load_webserver;
-    	if (loadWebServer) {
-	    	try {
-			    Class<?> serviceClass = Class.forName(ServerConfig.getInstance().webserver_class);
-		        Method instanceMethod = serviceClass.getMethod("instance", (Class<?>[])null);
-		        m_webservice = (WebServer)instanceMethod.invoke(null, (Object[])null);
-		        m_webservice.init(RESTServlet.class.getName());
-		    } catch (Exception e) {
-		        throw new RuntimeException("Error initializing WebServer: " + ServerConfig.getInstance().webserver_class, e);
-		    }
-    	}
+        if (!Utils.isEmpty(ServerConfig.getInstance().load_webserver)) {
+            m_logger.warn("Parameter 'load_webserver' is obsolete. Use 'default_services' " +
+                          "to enable/disable the RESTService. Option ignored.");
+        }
+    	try {
+		    Class<?> serviceClass = Class.forName(ServerConfig.getInstance().webserver_class);
+	        Method instanceMethod = serviceClass.getMethod("instance", (Class<?>[])null);
+	        m_webservice = (WebServer)instanceMethod.invoke(null, (Object[])null);
+	        m_webservice.init(RESTServlet.class.getName());
+	    } catch (Exception e) {
+	        throw new RuntimeException("Error initializing WebServer: " + ServerConfig.getInstance().webserver_class, e);
+	    }
     }   // initService
 
     // Begin servicing REST requests.
