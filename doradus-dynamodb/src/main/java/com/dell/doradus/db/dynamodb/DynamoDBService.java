@@ -102,6 +102,7 @@ public class DynamoDBService extends DBService {
         }
         
         try {
+            m_logger.info("Using profile: {}", profileName);
             ProfilesConfigFile profilesConfigFile = new ProfilesConfigFile();
             ProfileCredentialsProvider proCredProvider = new ProfileCredentialsProvider(profilesConfigFile, profileName);
             AWSCredentials credentials = proCredProvider.getCredentials();
@@ -116,12 +117,14 @@ public class DynamoDBService extends DBService {
             if (regionEnum == null) {
                 throw new RuntimeException("Unknown 'DDB_REGION': " + regionName);
             }
+            m_logger.info("Using region: {}", regionName);
             m_ddbClient.setRegion(Region.getRegion(regionEnum));
         } else {
             String ddbEndpoint = System.getProperty("DDB_ENDPOINT");
             if (ddbEndpoint == null) {
                 throw new RuntimeException("Either 'DDB_REGION' or 'DDB_ENDPOINT' must be set");
             }
+            m_logger.info("Using endpoint: {}", ddbEndpoint);
             m_ddbClient.setEndpoint(ddbEndpoint);
         }
         

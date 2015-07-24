@@ -150,7 +150,12 @@ public class DDBTransaction extends DBTransaction {
                         } else {
                             AttributeValue attrValue = new AttributeValue();
                             if (colValue instanceof byte[]) {
-                                attrValue.setB(ByteBuffer.wrap((byte[])colValue));
+                                byte[] byteVal = (byte[])colValue;
+                                if (byteVal.length == 0) {
+                                    attrValue.setS(DynamoDBService.NULL_COLUMN_MARKER);
+                                } else {
+                                    attrValue.setB(ByteBuffer.wrap((byte[])colValue));
+                                }
                             } else {
                                 String strValue = (String)colValue;
                                 if (strValue.length() == 0) {
@@ -161,7 +166,12 @@ public class DDBTransaction extends DBTransaction {
                             attributeUpdates.put(colName, new AttributeValueUpdate(attrValue, AttributeAction.PUT));
                         }
                     }
-                    updateRow(ddbClient, tableName, key, attributeUpdates);
+                    try {
+                        updateRow(ddbClient, tableName, key, attributeUpdates);
+                    } catch (Throwable e) {
+                        m_logger.error("Commit failed: {}; transaction={}", e.toString(), traceString());
+                        throw e;
+                    }
                 }
             }
         }
@@ -172,6 +182,7 @@ public class DDBTransaction extends DBTransaction {
         return m_updateCount + " updates for " + m_updateMap.size() + " tables";
     }
     
+    // Return a diagnostic string with this transaction's updates.
     public String traceString() {
         StringBuilder buffer = new StringBuilder();
         for (String tableName : m_updateMap.keySet()) {
@@ -190,14 +201,9 @@ public class DDBTransaction extends DBTransaction {
                             colDeletes.add(colName);
                         } else {
                             if (colValue instanceof byte[]) {
-                                colAdds.put(colName, Utils.toString((byte[])colValue));
+                                colAdds.put(colName, dataTaste((byte[])colValue));
                             } else {
-                                String strValue = (String)colValue;
-                                if (strValue.length() == 0) {
-                                    colAdds.put(colName, "<null>");
-                                } else {
-                                    colAdds.put(colName, strValue);
-                                }
+                                colAdds.put(colName, dataTaste((String)colValue));
                             }
                         }
                     }
@@ -248,7 +254,7 @@ public class DDBTransaction extends DBTransaction {
                 }
                 bSuccess = true;
             } catch (ProvisionedThroughputExceededException e) {
-                if (attempts >= ServerConfig.getInstance().max_read_attempts) {
+                if (attempts >= ServerConfig.getInstance().max_commit_attempts) {
                     String errMsg = "All retries exceeded; abandoning updateRow() for table: " + tableName;
                     m_logger.error(errMsg, e);
                     throw new RuntimeException(errMsg, e);
@@ -278,7 +284,7 @@ public class DDBTransaction extends DBTransaction {
                 }
                 bSuccess = true;
             } catch (ProvisionedThroughputExceededException e) {
-                if (attempts >= ServerConfig.getInstance().max_read_attempts) {
+                if (attempts >= ServerConfig.getInstance().max_commit_attempts) {
                     String errMsg = "All retries exceeded; abandoning deleteRow() for table: " + tableName;
                     m_logger.error(errMsg, e);
                     throw new RuntimeException(errMsg, e);
@@ -291,6 +297,28 @@ public class DDBTransaction extends DBTransaction {
                 }
             }
         }
+    }
+    
+    private static final int TASTE_SIZE = 30;   // chars or bytes
+    
+    private static String dataTaste(String data) {
+        if (data == null) {
+            return "<NULL>";
+        }
+        if (data.length() > TASTE_SIZE) {
+            return data.substring(0, TASTE_SIZE) + "...(" + data.length() + " chars)";
+        }
+        return data;
+    }
+    
+    private static String dataTaste(byte[] data) {
+        if (data == null) {
+            return "<NULL>";
+        }
+        if (data.length > TASTE_SIZE) {
+            return Utils.toHexBytes(data, 0, TASTE_SIZE) + "...(" + data.length + " bytes)";
+        }
+        return Utils.toHexBytes(data);
     }
     
 }   // class DDBTransaction
