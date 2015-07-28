@@ -17,23 +17,22 @@
 package com.dell.doradus.db.dynamodb;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.model.AttributeAction;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughputExceededException;
-import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBTransaction;
+import com.dell.doradus.utilities.Timer;
 
 /**
  * Holds a set of column and row updates that can be committed to DynamoDB.
@@ -46,7 +45,7 @@ public class DDBTransaction extends DBTransaction {
     //      add/update column: DDBColumn name and value are both set
     //          if value is empty, this is "null" to DynamoDB
     //      delete column: DDBColumn value is null
-    //      delete row: List<DDBColumn> is null or empty
+    //      delete row: List<DDBColumn> is null
     private final Map<String, Map<String, Map<String, Object>>> m_updateMap = new HashMap<>();
     private int m_updateCount;
     
@@ -97,8 +96,9 @@ public class DDBTransaction extends DBTransaction {
             colMap = new HashMap<>();
             rowMap.put(rowKey, colMap);
         }
-        colMap.put(colName, null);
-        m_updateCount++;
+        if (colMap.put(colName, null) == null) {
+            m_updateCount++;
+        }
     }
     
     @Override
@@ -114,8 +114,9 @@ public class DDBTransaction extends DBTransaction {
             rowMap.put(rowKey, colMap);
         }
         for (String colName : columns) {
-            colMap.put(colName, null);
-            m_updateCount++;
+            if (colMap.put(colName, null) == null) {
+                m_updateCount++;
+            }
         }
     }
     
@@ -126,54 +127,30 @@ public class DDBTransaction extends DBTransaction {
             rowMap = new HashMap<>();
             m_updateMap.put(storeName, rowMap);
         }
-        rowMap.put(rowKey, null);
-        m_updateCount++;
+        if (rowMap.put(rowKey, null) == null) {
+            m_updateCount++;
+        }
     }
 
     //----- DDBTransaction-specific methods
     
+    // Apply all updates in m_updateMap.
     public void commit(AmazonDynamoDBClient ddbClient) {
-        for (String tableName : m_updateMap.keySet()) {
-            Map<String, Map<String, Object>> rowMap = m_updateMap.get(tableName);
-            for (String rowKey : rowMap.keySet()) {
-                Map<String, AttributeValue> key = DynamoDBService.makeDDBKey(rowKey);
-                
-                Map<String, Object> colMap = rowMap.get(rowKey);
-                if (colMap == null) {
-                    deleteRow(ddbClient, tableName, key);
-                } else {
-                    Map<String, AttributeValueUpdate> attributeUpdates = new HashMap<>();
-                    for (String colName : colMap.keySet()) {
-                        Object colValue = colMap.get(colName);
-                        if (colValue == null) {
-                            attributeUpdates.put(colName, new AttributeValueUpdate().withAction(AttributeAction.DELETE));
-                        } else {
-                            AttributeValue attrValue = new AttributeValue();
-                            if (colValue instanceof byte[]) {
-                                byte[] byteVal = (byte[])colValue;
-                                if (byteVal.length == 0) {
-                                    attrValue.setS(DynamoDBService.NULL_COLUMN_MARKER);
-                                } else {
-                                    attrValue.setB(ByteBuffer.wrap((byte[])colValue));
-                                }
-                            } else {
-                                String strValue = (String)colValue;
-                                if (strValue.length() == 0) {
-                                    strValue = DynamoDBService.NULL_COLUMN_MARKER;
-                                }
-                                attrValue.setS(strValue);
-                            }
-                            attributeUpdates.put(colName, new AttributeValueUpdate(attrValue, AttributeAction.PUT));
-                        }
-                    }
-                    try {
-                        updateRow(ddbClient, tableName, key, attributeUpdates);
-                    } catch (Throwable e) {
-                        m_logger.error("Commit failed: {}; transaction={}", e.toString(), traceString());
-                        throw e;
-                    }
-                }
+        try {
+            for (String tableName : m_updateMap.keySet()) {
+                Map<String, Map<String, Object>> rowMap = m_updateMap.get(tableName);
+                updateTable(ddbClient, tableName, rowMap);
             }
+        } catch (Throwable e) {
+            // All retries, if needed, failed.
+            if (e instanceof AmazonServiceException) {
+                String rawMessage = ((AmazonServiceException)e).getRawResponseContent();
+                m_logger.error("Commit failed: {}; rawResponseContent={}", e, rawMessage);
+                m_logger.debug("Failed transaction: {}", traceString());
+            } else {
+                m_logger.error("Commit failed", e);
+            }
+            throw e;
         }
     }
 
@@ -182,44 +159,40 @@ public class DDBTransaction extends DBTransaction {
         return m_updateCount + " updates for " + m_updateMap.size() + " tables";
     }
     
-    // Return a diagnostic string with this transaction's updates.
-    public String traceString() {
-        StringBuilder buffer = new StringBuilder();
-        for (String tableName : m_updateMap.keySet()) {
-            buffer.append("Table " + tableName + ":\n");
-            Map<String, Map<String, Object>> rowMap = m_updateMap.get(tableName);
-            for (String rowKey : rowMap.keySet()) {
-                Map<String, Object> colMap = rowMap.get(rowKey);
-                if (colMap == null) {
-                    buffer.append("   delete row " + "[" + rowKey + "]\n");
-                } else {
-                    List<String> colDeletes = new ArrayList<>();
-                    Map<String, String> colAdds = new HashMap<>();
-                    for (String colName : colMap.keySet()) {
-                        Object colValue = colMap.get(colName);
-                        if (colValue == null) {
-                            colDeletes.add(colName);
-                        } else {
-                            if (colValue instanceof byte[]) {
-                                colAdds.put(colName, dataTaste((byte[])colValue));
-                            } else {
-                                colAdds.put(colName, dataTaste((String)colValue));
-                            }
-                        }
-                    }
-                    if (colAdds.size() > 0) {
-                        buffer.append("   update row " + "[" + rowKey + "] add: " + colAdds.toString() + "\n");
-                    }
-                    if (colDeletes.size() > 0) {
-                        buffer.append(tableName + "   update row " + "[" + rowKey + "] delete: " + colDeletes.toString() + "\n");
-                    }
-                }
+    //----- Private methods
+    
+    // Apply all updates for the given table.
+    private void updateTable(AmazonDynamoDBClient ddbClient,
+                             String tableName,
+                             Map<String, Map<String, Object>> rowMap) {
+        for (String rowKey : rowMap.keySet()) {
+            Map<String, AttributeValue> key = DynamoDBService.makeDDBKey(rowKey);
+            Map<String, Object> colMap = rowMap.get(rowKey);
+            if (colMap == null) {
+                deleteRow(ddbClient, tableName, key);
+            } else {
+                updateColumns(ddbClient, tableName, key, colMap);
             }
         }
-        return buffer.toString();
     }
     
-    //----- Private methods
+    // Add or delete columns for the given table and row.
+    private void updateColumns(AmazonDynamoDBClient ddbClient,
+                               String tableName,
+                               Map<String, AttributeValue> key,
+                               Map<String, Object> colMap) {
+        Map<String, AttributeValueUpdate> attributeUpdates = new HashMap<>();
+        for (String colName : colMap.keySet()) {
+            Object colValue = colMap.get(colName);
+            if (colValue == null) {
+                attributeUpdates.put(colName, new AttributeValueUpdate().withAction(AttributeAction.DELETE));
+            } else {
+                AttributeValue attrValue = mapColumnValue(colValue);
+                attributeUpdates.put(colName, new AttributeValueUpdate(attrValue, AttributeAction.PUT));
+            }
+        }
+        updateRow(ddbClient, tableName, key, attributeUpdates);
+    }
     
     // Store the given table/row/column update. The column value may be empty.
     private void addColumnValue(String tableName, String rowKey, String colName, Object colValue) {
@@ -234,8 +207,9 @@ public class DDBTransaction extends DBTransaction {
             colMap = new HashMap<>();
             rowMap.put(rowKey, colMap);
         }
-        colMap.put(colName, colValue);
-        m_updateCount++;
+        if (colMap.put(colName, colValue) == null) {
+            m_updateCount++;
+        }
     }
     
     // Update item and back off if ProvisionedThroughputExceededException occurs.
@@ -245,6 +219,7 @@ public class DDBTransaction extends DBTransaction {
                            Map<String, AttributeValueUpdate> attributeUpdates) {
         m_logger.debug("Updating row in table {}, key={}", tableName, DynamoDBService.getDDBKey(key));
         
+        Timer timer = new Timer();
         boolean bSuccess = false;
         for (int attempts = 1; !bSuccess; attempts++) {
             try {
@@ -253,6 +228,8 @@ public class DDBTransaction extends DBTransaction {
                     m_logger.info("updateRow() succeeded on attempt #{}", attempts);
                 }
                 bSuccess = true;
+                m_logger.debug("Time to update table {}, key={}: {}",
+                               new Object[]{tableName, DynamoDBService.getDDBKey(key), timer.toString()});
             } catch (ProvisionedThroughputExceededException e) {
                 if (attempts >= ServerConfig.getInstance().max_commit_attempts) {
                     String errMsg = "All retries exceeded; abandoning updateRow() for table: " + tableName;
@@ -275,6 +252,7 @@ public class DDBTransaction extends DBTransaction {
                            Map<String, AttributeValue> key) {
         m_logger.debug("Deleting row from table {}, key={}", tableName, DynamoDBService.getDDBKey(key));
         
+        Timer timer = new Timer();
         boolean bSuccess = false;
         for (int attempts = 1; !bSuccess; attempts++) {
             try {
@@ -283,6 +261,8 @@ public class DDBTransaction extends DBTransaction {
                     m_logger.info("deleteRow() succeeded on attempt #{}", attempts);
                 }
                 bSuccess = true;
+                m_logger.debug("Time to delete table {}, key={}: {}",
+                               new Object[]{tableName, DynamoDBService.getDDBKey(key), timer.toString()});
             } catch (ProvisionedThroughputExceededException e) {
                 if (attempts >= ServerConfig.getInstance().max_commit_attempts) {
                     String errMsg = "All retries exceeded; abandoning deleteRow() for table: " + tableName;
@@ -299,26 +279,51 @@ public class DDBTransaction extends DBTransaction {
         }
     }
     
-    private static final int TASTE_SIZE = 30;   // chars or bytes
-    
-    private static String dataTaste(String data) {
-        if (data == null) {
-            return "<NULL>";
+    // Create the appropriate AttributeVakue for the given column value type and length.
+    private static AttributeValue mapColumnValue(Object colValue) {
+        AttributeValue attrValue = new AttributeValue();
+        if (colValue instanceof byte[]) {
+            byte[] byteVal = (byte[])colValue;
+            if (byteVal.length == 0) {
+                attrValue.setS(DynamoDBService.NULL_COLUMN_MARKER);
+            } else {
+                attrValue.setB(ByteBuffer.wrap((byte[])colValue));
+            }
+        } else {
+            String strValue = (String)colValue;
+            if (strValue.length() == 0) {
+                strValue = DynamoDBService.NULL_COLUMN_MARKER;
+            }
+            attrValue.setS(strValue);
         }
-        if (data.length() > TASTE_SIZE) {
-            return data.substring(0, TASTE_SIZE) + "...(" + data.length() + " chars)";
-        }
-        return data;
+        return attrValue;
     }
     
-    private static String dataTaste(byte[] data) {
-        if (data == null) {
-            return "<NULL>";
+    // Return a diagnostic string summarizing this transaction's updates.
+    private String traceString() {
+        StringBuilder buffer = new StringBuilder();
+        for (String tableName : m_updateMap.keySet()) {
+            buffer.append("Table " + tableName + ":\n");
+            Map<String, Map<String, Object>> rowMap = m_updateMap.get(tableName);
+            for (String rowKey : rowMap.keySet()) {
+                Map<String, Object> colMap = rowMap.get(rowKey);
+                if (colMap == null) {
+                    buffer.append("   row " + "[" + rowKey + "]: deleted\n");
+                } else {
+                    int totalAdds = 0;
+                    int totalDeletes = 0;
+                    for (String colName : colMap.keySet()) {
+                        if (colMap.get(colName) == null) {
+                            totalDeletes++;
+                        } else {
+                            totalAdds++;
+                        }
+                    }
+                    buffer.append("   row " + "[" + rowKey + "] adds: " + totalAdds + ", deletes: " + totalDeletes + "\n");
+                }
+            }
         }
-        if (data.length > TASTE_SIZE) {
-            return Utils.toHexBytes(data, 0, TASTE_SIZE) + "...(" + data.length + " bytes)";
-        }
-        return Utils.toHexBytes(data);
+        return buffer.toString();
     }
     
 }   // class DDBTransaction
