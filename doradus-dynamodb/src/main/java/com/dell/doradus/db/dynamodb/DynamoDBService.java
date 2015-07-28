@@ -23,9 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
-import com.amazonaws.auth.profile.ProfilesConfigFile;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
@@ -65,9 +62,39 @@ import com.dell.doradus.service.tenant.UserDefinition;
  * <li>DynamoDB doesn't seem to allow null string values, despite its documentation. So,
  *     we store "null" columns by storing the value {@link #NULL_COLUMN_MARKER}.
  * </ol>
+ * The connection to a DynamoDB is established on AWS SDK standard Java properties and
+ * environment variables where possible. However, we define two additional Java properties
+ * to define the database endpoint. Below is a summary of what must be set:
+ * <ul>
+ * <li>Credentials: There are two ways to define the credentials to use:
+ *     <ol>
+ *     <li>An access key and secret key can be explicitly provided by setting either the
+ *         Java properties <code>aws.accessKeyId</code> and <code>aws.secretKey</code> or
+ *         the environment variables <code>AWS_ACCESS_KEY_ID</code> and <code>
+ *         AWS_SECRET_ACCESS_KEY</code>.
+ *     <li>A profile name can be provided by setting the environment variable <code>
+ *         AWS_PROFILE</code>. By default, the profile lives in the file ~/.aws/credentials
+ *         but this can be overridden by setting the environment variable <code>
+ *         AWS_CREDENTIAL_FILE</code>.
+ *     </ol>
+ *     The AWS SDK discoveries the credentials settings automatically.
+ * <li>Endpoint: There are two ways to define the database endpoint:
+ *     <ol>
+ *     <li>Set the Java property <code>ddb.region</code>, which implies the endpoint.
+ *     <li>Set the Java property <code>ddb.endpoint</code>. This technique works when
+ *         using a local DynamoDB instance for testing.
+ *     </ol>
+ * </ul>
  *
  */
 public class DynamoDBService extends DBService {
+    // Java properties we define:
+    public static final String DDB_REGION = "ddb.region";
+    public static final String DDB_ENDPOINT = "ddb.endpoint";
+    private static final String DDB_DEFAULT_READ_CAPACITY = "ddb.default.read.capacity";
+    private static final String DDB_DEFAULT_WRITE_CAPACITY = "ddb.default.write.capacity";
+    
+    // Special marker values:
     public static final String ROW_KEY_ATTR_NAME = "_key";
     public static final String NULL_COLUMN_MARKER = "\u0000";
     
@@ -96,47 +123,9 @@ public class DynamoDBService extends DBService {
      */
     @Override
     protected void initService() {
-        String profileName = System.getProperty("DDB_PROFILE_NAME");
-        if (profileName == null) {
-            throw new RuntimeException("Property 'DDB_PROFILE_NAME' must be set to the desired DynamoDB profile name");
-        }
-        
-        try {
-            m_logger.info("Using profile: {}", profileName);
-            ProfilesConfigFile profilesConfigFile = new ProfilesConfigFile();
-            ProfileCredentialsProvider proCredProvider = new ProfileCredentialsProvider(profilesConfigFile, profileName);
-            AWSCredentials credentials = proCredProvider.getCredentials();
-            m_ddbClient = new AmazonDynamoDBClient(credentials);
-        } catch (Exception e) {
-            throw new RuntimeException("Cannot validate DynamoDB credentials", e);
-        }
-        
-        String regionName = System.getProperty("DDB_REGION");
-        if (regionName != null) {
-            Regions regionEnum = Regions.fromName(regionName);
-            if (regionEnum == null) {
-                throw new RuntimeException("Unknown 'DDB_REGION': " + regionName);
-            }
-            m_logger.info("Using region: {}", regionName);
-            m_ddbClient.setRegion(Region.getRegion(regionEnum));
-        } else {
-            String ddbEndpoint = System.getProperty("DDB_ENDPOINT");
-            if (ddbEndpoint == null) {
-                throw new RuntimeException("Either 'DDB_REGION' or 'DDB_ENDPOINT' must be set");
-            }
-            m_logger.info("Using endpoint: {}", ddbEndpoint);
-            m_ddbClient.setEndpoint(ddbEndpoint);
-        }
-        
-        String capacity = System.getProperty("DDB_DEFAULT_READ_CAPACITY");
-        if (capacity != null) {
-            READ_CAPACITY_UNITS = Integer.parseInt(capacity);
-        }
-        capacity = System.getProperty("DDB_DEFAULT_WRITE_CAPACITY");
-        if (capacity != null) {
-            WRITE_CAPACITY_UNITS = Integer.parseInt(capacity);
-        }
-        m_logger.info("Default table capacity: read={}, write={}", READ_CAPACITY_UNITS, WRITE_CAPACITY_UNITS);
+        m_ddbClient = new AmazonDynamoDBClient();
+        setRegionOrEndPoint();
+        setDefaultCapacity();
     }
 
     @Override
@@ -370,4 +359,37 @@ public class DynamoDBService extends DBService {
                         "Only the default is currently supported");
     }
     
+    // Set the region or endpoint in m_ddbClient
+    private void setRegionOrEndPoint() {
+        String regionName = System.getProperty(DDB_REGION);
+        if (regionName != null) {
+            Regions regionEnum = Regions.fromName(regionName);
+            if (regionEnum == null) {
+                throw new RuntimeException("Unknown '" + DDB_REGION + "': " + regionName);
+            }
+            m_logger.info("Using region: {}", regionName);
+            m_ddbClient.setRegion(Region.getRegion(regionEnum));
+        } else {
+            String ddbEndpoint = System.getProperty(DDB_ENDPOINT);
+            if (ddbEndpoint == null) {
+                throw new RuntimeException("Either '" + DDB_REGION + "' or '" + DDB_ENDPOINT + "' must be set");
+            }
+            m_logger.info("Using endpoint: {}", ddbEndpoint);
+            m_ddbClient.setEndpoint(ddbEndpoint);
+        }
+    }
+
+    // Set READ_CAPACITY_UNITS and WRITE_CAPACITY_UNITS if overridden.
+    private void setDefaultCapacity() {
+        String capacity = System.getProperty(DDB_DEFAULT_READ_CAPACITY);
+        if (capacity != null) {
+            READ_CAPACITY_UNITS = Integer.parseInt(capacity);
+        }
+        capacity = System.getProperty(DDB_DEFAULT_WRITE_CAPACITY);
+        if (capacity != null) {
+            WRITE_CAPACITY_UNITS = Integer.parseInt(capacity);
+        }
+        m_logger.info("Default table capacity: read={}, write={}", READ_CAPACITY_UNITS, WRITE_CAPACITY_UNITS);
+    }
+
 }   // class DynamoDBService
