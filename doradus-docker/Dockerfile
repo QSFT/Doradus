@@ -33,12 +33,8 @@ WORKDIR /opt/doradus
 RUN cd /opt/doradus
 RUN mvn clean install dependency:copy-dependencies -Dgpg.skip=true -Dmaven.javadoc.skip=true
 
-
 # start scripts
 ADD start.sh /usr/local/bin/start.sh
 RUN chmod a+x /usr/local/bin/start.sh
-
-# porst used by Doradus/Cassandra
-EXPOSE 1123 8080
 
 ENTRYPOINT ["start.sh"]

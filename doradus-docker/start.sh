@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-#PORT=$1
-#REGION=$2
 
 CLASSPATH="./target/classes:./target/dependency/*:../doradus-jetty/target/classes:../doradus-jetty/target/dependency/*"
 JVM_PARAMS="-Xmx1G -Dddb.region=$REGION"
