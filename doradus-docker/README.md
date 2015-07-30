@@ -17,7 +17,7 @@ Running on Docker
         
         where --name is to give the container name and  -d is to run Doradus server in the back ground. 
         
-        You can use $docker logs docker logs -f doradus to tail the logs of Doradus server
+        You can use $docker logs -f doradus to tail the logs of Doradus server
               
 2. Test
 
