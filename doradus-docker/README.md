@@ -12,7 +12,7 @@ http://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html#in
 Running on Docker
 ----------------
 
-1. Launch a container called doradus in the background at the port you prefer
+1. Launch a container called "doradus" in the background at the port you prefer
 
         $ docker run -p <DOCKER_HOST_PORT>:<RESTPORT> -d --name doradus -e "AWS_ACCESS_KEY_ID=XXXXXX” -e "AWS_SECRET_ACCESS_KEY=XXXXXX” -e "RESTPORT=<RESTPORT>" -e "REGION=<REGION>” traduong1/docker-doradus
 
@@ -27,8 +27,8 @@ Running on Docker
               
 2. Test
 
-   Invoke this URL to test if server is up and runing
+   Invoke this URL to test if Doradus server is up and running
 
         http://<docker_host>:<PORT>/_config
         
-        For the example above, it is available at the 8080 port http:///<docker_host>:8080/_config
+        For the example container above, it is available at the 8080 port http:///<docker_host>:8080/_config
