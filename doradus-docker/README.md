@@ -31,4 +31,4 @@ Running on Docker
 
         http://<docker_host>:<PORT>/_config
         
-        For the example container above, it is available at the 8080 port http:///<docker_host>:8080/_config
+        For the example container above, it is available at the 8080 port http://<docker_host>:8080/_config
