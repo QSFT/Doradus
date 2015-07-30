@@ -3,6 +3,12 @@ Doradus Docker image on Amazon ECS
 
 This demonstrates how to deploy and use Doradus (https://github.com/dell-oss/Doradus) as an Docker image with external Dynamo DB.
 
+Install Docker
+----------------
+Follow this doc if you want to install Docker on EC2 Amazon instance
+
+http://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html#install_docker
+
 Running on Docker
 ----------------
 
@@ -21,7 +27,7 @@ Running on Docker
               
 2. Test
 
-   Invoke this URL to list all applications under Doradus
+   Invoke this URL to test if server is up and runing
 
         http://<docker_host>:<PORT>/_config
         
