@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -215,31 +216,49 @@ public final class DoradusServer {
      * Get Doradus Version from git repo if it exists; otherwise get it from the local doradus.ver file
      * @return version
      */
-    public String getDoradusVersion() {       
+    public static String getDoradusVersion() {       
         String version = null;
         try {
             //first read from the local git repository
         	Git git = Git.open(new File("../.git"));
             String url = git.getRepository().getConfig().getString("remote", "origin", "url");
-            m_logger.info("Remote.origin.url: {}", url);
+            instance().m_logger.info("Remote.origin.url: {}", url);
             if (!Utils.isEmpty(url) && url.contains("dell-oss/Doradus.git")) {
             	DescribeCommand cmd = git.describe();
             	version = cmd.call();
-            	m_logger.info("Doradus version found from git repo: {}", version);
+            	instance().m_logger.info("Doradus version found from git repo: {}", version);
+            	writeVersionToVerFile(version);
             }
         } catch (Throwable e) {
-        	m_logger.info("failed to read version from git repo");
+        	instance().m_logger.info("failed to read version from git repo");
         }
         //if not found, reading from local file
         if (Utils.isEmpty(version)) {
 	        try {
 	            version = getVersionFromVerFile();
-	            m_logger.info("Doradus version found from doradus.ver file {}", version);
+	            instance().m_logger.info("Doradus version found from doradus.ver file {}", version);
 	        } catch (IOException e1) {
 	            version = null;
 	        }
         }
         return version;
+    }
+    
+    // Write version to local file
+    private static void writeVersionToVerFile(String version) throws IOException {
+        //declared in a try-with-resource statement, it will be closed regardless of it completes normally or not      
+    	try (PrintWriter writer = new PrintWriter(new File(DoradusServer.class.getResource("/" + VERSION_FILE).getPath()))) {
+    		writer.write(version);
+    	}
+
+    }    
+    // Get version from local file
+    private static String getVersionFromVerFile() throws IOException {
+        //declared in a try-with-resource statement, it will be closed regardless of it completes normally or not
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(DoradusServer.class.getResourceAsStream("/" + VERSION_FILE), "UTF-8"))) {
+            return br.readLine();
+        }
+
     }
     
     ///// Private methods
@@ -375,16 +394,6 @@ public final class DoradusServer {
         m_bRunning = true;
     }   // start
     
-    // Get Version from local file
-    private String getVersionFromVerFile() throws IOException {
-        
-        //declared in a try-with-resource statement, it will be closed regardless of it completes normally or not
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/" + VERSION_FILE), "UTF-8"))) {
-            return br.readLine();
-        }
-
-    }
-
     // Start all registered services.
     private void startServices() {
         m_logger.info("Starting services: {}", simpleServiceNames(m_initializedServices));
