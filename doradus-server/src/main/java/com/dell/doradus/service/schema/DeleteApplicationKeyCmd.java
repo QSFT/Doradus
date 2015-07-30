@@ -20,28 +20,22 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
-import com.dell.doradus.common.rest.CommandParameter;
 import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.annotation.Description;
-import com.dell.doradus.service.rest.annotation.ParamDescription;
 
 /**
- * Handles the REST command: DELETE /_applications/{application}.
+ * Handles the REST command: DELETE /_applications/{application}/{key}.
  */
 @Description(
-    name = "DeleteApp",
-    summary = "Deletes an existing application including all of its data.",
+    name = "DeleteAppKey",
+    summary = "Deletes an existing application including all of its data " +
+              "using the application's schema-defined {key}.",
     methods = {HttpMethod.DELETE},
-    uri = "/_applications/{application}"
+    uri = "/_applications/{application}/{key}"
 )
-public class DeleteApplicationCmd extends RESTCallback {
+public class DeleteApplicationKeyCmd extends RESTCallback {
     
-    @ParamDescription
-    public static CommandParameter describeParameter() {
-        return new CommandParameter("key", "text", false);
-    }
-
     @Override
     public RESTResponse invoke() {
         String appName = m_request.getVariableDecoded("application");
@@ -50,7 +44,8 @@ public class DeleteApplicationCmd extends RESTCallback {
         if (appDef == null) {
             throw new NotFoundException("Unknown application: " + appName);
         }
-        SchemaService.instance().deleteApplication(appDef, null);
+        String key = m_request.getVariableDecoded("key");
+        SchemaService.instance().deleteApplication(appDef, key);
         return new RESTResponse(HttpCode.OK);
     }   // invoke
 

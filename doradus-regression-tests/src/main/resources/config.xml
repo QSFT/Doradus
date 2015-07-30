@@ -20,7 +20,7 @@ limitations under the License.
     <output-enabled>true</output-enabled>
     <response-format>xml</response-format>
 
-	<DEFINE name="tests.root" value=".\src\main\regression-tests"/>
+	<DEFINE name="tests.root" value="./src/main/regression-tests"/>
 
     <test-suite root="${tests.root}">
         <include>
@@ -29,6 +29,6 @@ limitations under the License.
         </exclude>
     </test-suite>
 
-    <report>${tests.root}\report.html</report>
-    <log>${tests.root}\log.txt</log>
+    <report>${tests.root}/report.html</report>
+    <log>${tests.root}/log.txt</log>
 </config>

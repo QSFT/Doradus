@@ -96,9 +96,8 @@ storage_services:
     - com.dell.doradus.service.olap.OLAPService
     - com.dell.doradus.logservice.LoggingService
     
-# load_webserver:  When load_webserver is false, the webserver will be not loaded with Doradus server.
-# when it is true, webserver_class option needs to be defined with the full package name of the WebServer class
-load_webserver: true
+# webserver_class: When the RESTService is included in default_services, this parameter defines the
+# the full package name of the WebServer class that provides the web server integration.
 webserver_class: com.dell.doradus.server.JettyWebServer
 
 ########## Cassandra Keyspace Parameters
@@ -222,6 +221,13 @@ dbtls_cipher_suites: [TLS_RSA_WITH_AES_128_CBC_SHA]
 # can be passed-in dynamically as run-time arguments. 
 dbuser: cassandra
 dbpassword: cassandra
+
+# thrift_buffer_size_mb: This value sizes the read buffer used for the Thrift API. Increase this
+# value is you see error messages in the Doradus log file such as:
+#       Frame size (xxx) larger than max length (yyy)!
+# The default value is 16 (16777216 bytes).
+thrift_buffer_size_mb: 16
+
 
 ########## Doradus REST API Parameters
 #

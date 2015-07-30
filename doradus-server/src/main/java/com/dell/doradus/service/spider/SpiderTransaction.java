@@ -86,6 +86,9 @@ public class SpiderTransaction {
     // Holds <table> -> List<row key>:
     private final Map<String, List<String>> m_rowDeletes = new HashMap<>();
     
+    // Total updates: column adds + column deletes + row deletes:
+    private int m_totalUpdates;
+    
     /**
      * Create a new SpiderTransaction object.
      */
@@ -176,6 +179,7 @@ public class SpiderTransaction {
         m_columnAdds.clear();
         m_columnDeletes.clear();
         m_rowDeletes.clear();
+        m_totalUpdates = 0;
     }   // clear
     
     /**
@@ -185,10 +189,7 @@ public class SpiderTransaction {
      * @return  Total number of updates queued in this transaction so far.
      */
     public int getUpdateCount() {
-        return m_columnAdds.size() +
-               m_columnDeletes.size() +
-               m_rowDeletes.size();
-
+        return m_totalUpdates;
     }   // getUpdateCount
 
     ///// Update methods
@@ -490,7 +491,9 @@ public class SpiderTransaction {
         }
         
         byte[] oldValue = colMap.put(colName, colValue);
-        if (oldValue != null && !Arrays.equals(oldValue, colValue)) {
+        if (oldValue == null) {
+            m_totalUpdates++;
+        } else if (!Arrays.equals(oldValue, colValue)) {
             m_logger.debug("Warning: duplicate column mutation with different value: " +
                            "store={}, row={}, col={}, old={}, new={}",
                            new Object[]{storeName, rowKey, colName, oldValue, colValue});
@@ -510,6 +513,7 @@ public class SpiderTransaction {
             rowMap.put(rowKey, colNames);
         }
         colNames.add(colName);
+        m_totalUpdates++;
     }
 
     // Add column deletions for all given column names.
@@ -525,6 +529,7 @@ public class SpiderTransaction {
             rowMap.put(rowKey, colList);
         }
         colList.addAll(colNames);
+        m_totalUpdates += colNames.size();
     }
     
     // Add the following row deletion.
@@ -535,6 +540,7 @@ public class SpiderTransaction {
             m_rowDeletes.put(storeName, rowKeys);
         }
         rowKeys.add(rowKey);
+        m_totalUpdates++;
     }
 
 }   // class SpiderTransaction

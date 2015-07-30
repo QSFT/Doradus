@@ -652,13 +652,28 @@ final public class Utils {
      * @return Hexadecimal string
      */
     public static String toHexBytes(byte[] bytes) {
-    	StringBuilder builder = new StringBuilder();
-    	for (byte b : bytes) {
-    		int first = (b >> 4) & 15;
-    		int second = b & 15;
-    		builder.append(hexChars.charAt(first)).append(hexChars.charAt(second));
-    	}
-    	return builder.toString();
+        return toHexBytes(bytes, 0, bytes.length);
+    }   // toHexBytes
+    
+    /**
+     * Converts the given bytes into a hexadecimal representation. bytes[offset] through
+     * bytes[offset + length - 1] are converted, although the given array's length is
+     * never exceeded.
+     *
+     * @param offset    Index of first byte to convert.
+     * @param length    Number of bytes to convert.
+     * @param bytes     Source bytes.
+     * @return          Hexadecimal string.
+     */
+    public static String toHexBytes(byte[] bytes, int offset, int length) {
+        StringBuilder builder = new StringBuilder();
+        for (int index = offset; index < bytes.length && index < (offset + length); index++) {
+            byte b = bytes[index];
+            int first = (b >> 4) & 15;
+            int second = b & 15;
+            builder.append(hexChars.charAt(first)).append(hexChars.charAt(second));
+        }
+        return builder.toString();
     }   // toHexBytes
     
     ///// Calendar formatting
@@ -2148,5 +2163,5 @@ final public class Utils {
 		}
 		return false;
 	}
-	
+
 }   // class Utils

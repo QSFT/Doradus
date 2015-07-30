@@ -171,12 +171,18 @@ public class CassandraSchemaMgr {
             }
         }
         
-        // Create the column familiy and wait for all nodes to agree.
-        try {
-            String schemaVersion = dbConn.getClientSession().system_add_column_family(cfDef);
-            validateSchema(dbConn, schemaVersion);
-        } catch (Exception ex) {
-            throw new RuntimeException("ColumnFamily creation failed", ex);
+        // In a multi-node startup, multiple nodes may be trying to create the same CF.
+        for (int attempt = 1; !columnFamilyExists(dbConn, keyspace, cfName); attempt++) {
+            try {
+                dbConn.getClientSession().system_add_column_family(cfDef);
+            } catch (Exception ex) {
+                if (attempt > ServerConfig.getInstance().max_commit_attempts) {
+                    String msg = String.format("%d attempts to create ColumnFamily %s:%s failed",
+                                               attempt, keyspace, cfName);
+                    throw new RuntimeException(msg, ex);
+                }
+                try { Thread.sleep(1000); } catch (InterruptedException e) { }
+            }
         }
     }   // createColumnFamily
     
@@ -277,32 +283,5 @@ public class CassandraSchemaMgr {
             }
         }
     }   // overrideKSOptions
-
-    // Check that all Cassandra nodes are in agreement on the latest schema change.
-    private static void validateSchema(DBConn dbConn, String currentVersionId) {
-        Map<String, List<String>> versions = null;
-
-        long limit = System.currentTimeMillis() + 5000;
-        boolean inAgreement = false;
-        do {
-            try {
-                versions = dbConn.getClientSession().describe_schema_versions(); // getting schema version for nodes of the ring
-            } catch (Exception e) {
-                continue;
-            }
-
-            for (String version : versions.keySet()) {
-                if (version.equals(currentVersionId)) {
-                    inAgreement = true;
-                    break;
-                }
-            }
-        } while (limit - System.currentTimeMillis() >= 0 && !inAgreement);
-
-        if (!inAgreement) {
-            throw new RuntimeException("Cannot get agreement on Cassandra schema versions; " +
-                                       "target = " + currentVersionId + ", describe_schema_versions()=" + versions);
-        }
-    }   // validateSchema
 
 }   // class CassandraSchemaMgr

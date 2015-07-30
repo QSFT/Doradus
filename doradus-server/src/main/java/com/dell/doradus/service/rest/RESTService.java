@@ -19,12 +19,12 @@ package com.dell.doradus.service.rest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.rest.CommandSet;
+import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.StorageService;
@@ -54,11 +54,6 @@ public class RESTService extends Service {
     private WebServer m_webservice;
     private final RESTCommandSet m_commandSet = new RESTCommandSet();
 
-    // REST commands supported by the the REST service:
-    private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
-        new RESTCommand("GET /_commands com.dell.doradus.service.rest.DescribeCmd"),
-    });
-    
     /**
      * Get the singleton instance of this service. The service may or may not have been
      * initialized yet.
@@ -74,18 +69,7 @@ public class RESTService extends Service {
     // Initialize WebService so it's ready to run.
     @Override
     public void initService() {
-    	boolean loadWebServer = ServerConfig.getInstance().load_webserver;
-    	if (loadWebServer) {
-	    	try {
-			    Class<?> serviceClass = Class.forName(ServerConfig.getInstance().webserver_class);
-		        Method instanceMethod = serviceClass.getMethod("instance", (Class<?>[])null);
-		        m_webservice = (WebServer)instanceMethod.invoke(null, (Object[])null);
-		        m_webservice.init(RESTServlet.class.getName());
-		    } catch (Exception e) {
-		        throw new RuntimeException("Error initializing WebServer: " + ServerConfig.getInstance().webserver_class, e);
-		    }
-    	}
-    	registerGlobalCommands(REST_RULES);
+        loadWebServer();
     	registerCommands(Arrays.asList(DescribeCmd.class));
     }   // initService
 
@@ -135,16 +119,37 @@ public class RESTService extends Service {
        	}
     }   // registerRequestCallback
     
-    // TODO: Experimental
+    /**
+     * Register the given REST commands as global (system) commands.
+     * 
+     * @param cmdClasses    REST command classes.
+     */
     public void registerCommands(Iterable<Class<? extends RESTCallback>> cmdClasses) {
         m_commandSet.addCommands(null, cmdClasses);
     }
     
+    /**
+     * Register the given REST commands as application commands belonging to the given
+     * storage service.
+     * 
+     * @param cmdClasses    REST command classes.
+     * @param service       {@link StorageService} that owns commands. 
+     */
     public void registerCommands(Iterable<Class<? extends RESTCallback>> cmdClasses,
                                  StorageService service) {
         m_commandSet.addCommands(service, cmdClasses);
     }
     
+    /**
+     * Register the given REST commands as application commands belonging to the given
+     * storage service, which extends and/or overrides commands for the given parent
+     * storage service.
+     * 
+     * @param cmdClasses    REST command classes.
+     * @param service       {@link StorageService} that owns commands.
+     * @param parentService {@link StorageService} whose commands are extended/overridden
+     *                      by these new services.
+     */
     public void registerCommands(Iterable<Class<? extends RESTCallback>> cmdClasses,
                                  StorageService service, StorageService parentService) {
         m_commandSet.setParent(service.getClass().getSimpleName(), parentService.getClass().getSimpleName());
@@ -316,6 +321,21 @@ public class RESTService extends Service {
     // Singleton construction only
     private RESTService() {}
    
+    // Attempt to load the WebServer instance defined by webserver_class.
+    private void loadWebServer() {
+        if (!Utils.isEmpty(ServerConfig.getInstance().load_webserver)) {
+            m_logger.warn("Parameter 'load_webserver' is obsolete. Use 'default_services' " +
+                            "to enable/disable the RESTService. Option ignored.");
+        }
+        try {
+            Class<?> serviceClass = Class.forName(ServerConfig.getInstance().webserver_class);
+            Method instanceMethod = serviceClass.getMethod("instance", (Class<?>[])null);
+            m_webservice = (WebServer)instanceMethod.invoke(null, (Object[])null);
+            m_webservice.init(RESTServlet.class.getName());
+        } catch (Exception e) {
+            throw new RuntimeException("Error initializing WebServer: " + ServerConfig.getInstance().webserver_class, e);
+        }
+    }
 
     // If DEBUG logging is enabled, log all REST commands in sorted order.
     private void displayCommandSet() {

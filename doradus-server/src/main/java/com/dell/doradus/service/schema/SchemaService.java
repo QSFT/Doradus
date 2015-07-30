@@ -71,7 +71,7 @@ public class SchemaService extends Service {
         new RESTCommand("POST   /_applications                     com.dell.doradus.service.schema.DefineApplicationCmd"),
         new RESTCommand("PUT    /_applications/{application}       com.dell.doradus.service.schema.ModifyApplicationCmd"),
         new RESTCommand("DELETE /_applications/{application}       com.dell.doradus.service.schema.DeleteApplicationCmd"),
-        new RESTCommand("DELETE /_applications/{application}/{key} com.dell.doradus.service.schema.DeleteApplicationCmd"),
+        new RESTCommand("DELETE /_applications/{application}/{key} com.dell.doradus.service.schema.DeleteApplicationKeyCmd"),
     });
 
     private static final List<Class<? extends RESTCallback>> CMD_CLASSES = Arrays.asList(
@@ -79,7 +79,8 @@ public class SchemaService extends Service {
         ListApplicationCmd.class,
         DefineApplicationCmd.class,
         ModifyApplicationCmd.class,
-        DeleteApplicationCmd.class
+        DeleteApplicationCmd.class,
+        DeleteApplicationKeyCmd.class
     );
     
     //----- Service methods

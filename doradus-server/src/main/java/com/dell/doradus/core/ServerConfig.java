@@ -100,6 +100,7 @@ public class ServerConfig {
     public static final int DEFAULT_MAX_RECONNECT_ATTEMPTS = 3;
     public static final int DEFAULT_DB_CONNECT_RETRY_WAIT_MILLIS = 5000;
     public static final int DEFAULT_BATCH_MUTATION_THRESHOLD = 10000;
+    public static final int DEFAULT_THRIFT_BUFFER_SIZE_MB = 16;
     // Default modified objects shard value:
     public static final String DEFAULT_DATA_CHECK_SHARD_GRAN = "1 DAY";
 
@@ -110,7 +111,7 @@ public class ServerConfig {
     public Map<String, Object> cf_defaults = new HashMap<>();
     
     //Doradus WebServer
-    public boolean load_webserver = false;
+    public String load_webserver;
     public String webserver_class;      
     public static String[] commandLineArgs;
 
@@ -272,6 +273,7 @@ public class ServerConfig {
     public int max_reconnect_attempts = DEFAULT_MAX_RECONNECT_ATTEMPTS;
     public int db_connect_retry_wait_millis = DEFAULT_DB_CONNECT_RETRY_WAIT_MILLIS;
     public int batch_mutation_threshold = DEFAULT_BATCH_MUTATION_THRESHOLD;
+    public int thrift_buffer_size_mb = DEFAULT_THRIFT_BUFFER_SIZE_MB; 
 
     //OLAP
     public Map<String, Object> olap_cf_defaults = new HashMap<>();

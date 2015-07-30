@@ -113,6 +113,7 @@ public class DBConn implements AutoCloseable {
     public void connect(String dbhost) throws DBNotAvailableException, RuntimeException {
         assert !m_bDBOpen;
         ServerConfig config = ServerConfig.getInstance();
+        int bufferSize = config.thrift_buffer_size_mb * 1024 * 1024;
         
         // Attempt to open the requested dbhost.
         try {
@@ -125,7 +126,7 @@ public class DBConn implements AutoCloseable {
                 socket = new TSocket(dbhost, config.dbport, config.db_timeout_millis);
                 socket.open();
             }
-            TTransport transport = new TFramedTransport(socket);
+            TTransport transport = new TFramedTransport(socket, bufferSize);
             TProtocol protocol = new TBinaryProtocol(transport);
             m_client = new Cassandra.Client(protocol);
         } catch (Exception e) {

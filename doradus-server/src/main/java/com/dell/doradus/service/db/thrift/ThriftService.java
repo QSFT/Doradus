@@ -366,7 +366,7 @@ public class ThriftService extends DBService {
         DBNotAvailableException lastException = null;
         if (!m_bUseSecondaryHosts) {
             String[] dbHosts = ServerConfig.getInstance().dbhost.split(",");
-            for (int attempt = 1; attempt <= dbHosts.length; attempt++) {
+            for (int attempt = 1; !dbConn.isOpen() && attempt <= dbHosts.length; attempt++) {
                 try {
                     dbConn.connect(chooseHost(dbHosts));
                 } catch (DBNotAvailableException ex) {
@@ -384,7 +384,7 @@ public class ThriftService extends DBService {
                 m_logger.info("All connections to 'dbhost' failed; trying 'secondary_dbhost'");
             }
             String[] dbHosts = ServerConfig.getInstance().secondary_dbhost.split(",");
-            for (int attempt = 1; attempt <= dbHosts.length; attempt++) {
+            for (int attempt = 1; !dbConn.isOpen() && attempt <= dbHosts.length; attempt++) {
                 try {
                     dbConn.connect(chooseHost(dbHosts));
                 } catch (DBNotAvailableException e) {

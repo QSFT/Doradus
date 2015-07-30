@@ -33,7 +33,7 @@ import com.dell.doradus.service.rest.annotation.ParamDescription;
 @Description(
     name="Aggregate",
     summary="Performs an aggregate query on the given application and table.",
-    methods = HttpMethod.GET,
+    methods = {HttpMethod.GET, HttpMethod.PUT},
     uri = "/{application}/{table}/_aggregate",
     inputEntity = "aggregate-search",
     outputEntity = "results"
