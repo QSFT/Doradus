@@ -19,23 +19,33 @@ package com.dell.doradus.service.olap;
 import java.util.Map;
 
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.common.rest.RESTParameter;
 import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
+import com.dell.doradus.service.rest.annotation.ParamDescription;
 
-/**
- * Handle the REST command: GET /{application}/_statistics/{shard}
- * Extended statistics for a shard
- * Handle the REST command: GET /{application}/_statistics/{shard}?file={file}
- * Get contents of a file 
- */
+@Description(
+    name = "ShardStatistics",
+    summary = "Returns detailed statistics for a specific shard.",
+    methods = HttpMethod.GET,
+    uri = "/{application}/_statistics/{shard}?{params}",
+    outputEntity = "statistics"
+)
 public class ShardStatisticsCmd extends UNodeOutCallback {
+    @ParamDescription
+    public static RESTParameter describeParams() {
+        return new RESTParameter("params", null, false)
+                        .add("file", "text")
+                        .add("sort", "text")
+                        .add("mem", "boolean");
+    }
 
     @Override
     public UNode invokeUNodeOut() {
         ApplicationDefinition appDef = m_request.getAppDef();
-        Utils.require(OLAPService.class.getSimpleName().equals(appDef.getStorageService()),
-        		      "Application '%s' is not an OLAP application", appDef.getAppName());
         String shard = m_request.getVariableDecoded("shard");
         String params = m_request.getVariableDecoded("params");
         Map<String, String> paramMap = Utils.parseURIQuery(params);

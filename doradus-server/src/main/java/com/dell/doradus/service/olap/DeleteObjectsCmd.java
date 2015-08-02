@@ -21,15 +21,21 @@ import java.io.Reader;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.BatchResult;
 import com.dell.doradus.common.HttpCode;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.OlapBatch;
 import com.dell.doradus.service.rest.ReaderCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Implements REST command: DELETE /{application}/{shard}
- */
+@Description(
+    name = "Delete",
+    summary = "Deletes a batch of objects from a specific shard.",
+    methods = HttpMethod.DELETE,
+    uri = "/{application}/{shard}",
+    inputEntity = "batch"
+)
 public class DeleteObjectsCmd extends ReaderCallback {
 
     @Override

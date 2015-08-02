@@ -37,7 +37,7 @@ import com.dell.doradus.service.db.DuplicateException;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.db.UnauthorizedException;
 import com.dell.doradus.service.rest.NotFoundException;
-import com.dell.doradus.service.rest.RESTCommand;
+import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.taskmanager.TaskManagerService;
@@ -59,14 +59,14 @@ public class TenantService extends Service {
     private final Map<String, TenantDefinition> m_tenantMap = new HashMap<>();
     
     // REST commands supported by the TenantService:
-    private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
-        new RESTCommand("GET    /_tenants           com.dell.doradus.service.tenant.ListTenantsCmd", true),
-        new RESTCommand("GET    /_tenants/{tenant}  com.dell.doradus.service.tenant.ListTenantCmd", true),
-        new RESTCommand("POST   /_tenants           com.dell.doradus.service.tenant.DefineTenantCmd", true),
-        new RESTCommand("PUT    /_tenants/{tenant}  com.dell.doradus.service.tenant.ModifyTenantCmd", true),
-        new RESTCommand("DELETE /_tenants/{tenant}  com.dell.doradus.service.tenant.DeleteTenantCmd", true),
-    });
-
+    private static final List<Class<? extends RESTCallback>> CMD_CLASSES = Arrays.asList(
+        ListTenantsCmd.class,
+        ListTenantCmd.class,
+        DefineTenantCmd.class,
+        ModifyTenantCmd.class,
+        DeleteTenantCmd.class
+    );
+    
     // Singleton creation only.
     private TenantService() {};
 
@@ -102,7 +102,7 @@ public class TenantService extends Service {
         if (ServerConfig.getInstance().multitenant_mode && !ServerConfig.getInstance().use_cql) {
             throw new RuntimeException("Multitenant_mode currently requires use_cql=true");
         }
-        RESTService.instance().registerGlobalCommands(REST_RULES);
+        RESTService.instance().registerCommands(CMD_CLASSES);
     }
 
     @Override
@@ -295,7 +295,7 @@ public class TenantService extends Service {
     }
     
     /**
-     * Verify that the given tenant and RESTCommand can be accessed using by the user
+     * Verify that the given tenant and command can be accessed using by the user
      * represented by the given userID and password. A {@link UnauthorizedException} is
      * thrown if the given credentials are invalid for the given tenant/command or if the
      * user has insufficient rights for the command being accessed.
@@ -305,18 +305,20 @@ public class TenantService extends Service {
      * @param tenant        {@link Tenant} being accessed.
      * @param userid        User ID of caller. May be null.
      * @param password      Password of caller. May be null.
-     * @param cmd           {@link RESTCommand} being invoked.
+     * @param permNeeded    {@link Permission} needed by the invoking command.
+     * @param isPrivileged  True if the command being accessed is privileged.
      * @throws              NotFoundException if the given tenant does not exist.
      * @throws              UnauthorizedException if the given credentials are invalid or
      *                      have insufficient rights for the given tenant and command.
      */
-    public void validateTenantAuthorization(Tenant tenant, String userid, String password, RESTCommand cmd)
+    public void validateTenantAuthorization(Tenant tenant, String userid, String password,
+                                            Permission permNeeded, boolean isPrivileged)
             throws UnauthorizedException, NotFoundException {
         if (ServerConfig.getInstance().multitenant_mode) {
             if (!tenantExists(tenant)) {
                 throw new NotFoundException("Unknown tenant: " + tenant);
             }
-            if (cmd.isPrivileged()) {
+            if (isPrivileged) {
                 if (!isValidSystemCredentials(userid, password)) {
                     throw new UnauthorizedException("Unrecognized system user id/password");
                 }
@@ -329,7 +331,7 @@ public class TenantService extends Service {
             } else {
                 // From here on, the DB connection must be established.
                 checkServiceState();
-                if (!isValidTenantUserAccess(tenant.getKeyspace(), userid, password, cmd.getMethod())) {
+                if (!isValidTenantUserAccess(tenant.getKeyspace(), userid, password, permNeeded)) {
                     throw new UnauthorizedException("Invalid tenant credentials or insufficient permission");
                 }
             }
@@ -419,7 +421,7 @@ public class TenantService extends Service {
     }
     
     // Validate the given user ID and password.
-    private boolean isValidTenantUserAccess(String tenantName, String userid, String password, String method) {
+    private boolean isValidTenantUserAccess(String tenantName, String userid, String password, Permission permNeeded) {
         if (isValidSystemCredentials(userid, password)) {
             return true;
         }
@@ -427,30 +429,18 @@ public class TenantService extends Service {
         if (tenantDef != null) {
             UserDefinition userDef = tenantDef.getUser(userid);
             if (userDef != null && userDef.getPassword().equals(password)) {
-                return isValidUserAccess(userDef, method);
+                return isValidUserAccess(userDef, permNeeded);
             }
         }
         return false;
     }
 
-    // Validate user's permission vs. the given access method.
-    private boolean isValidUserAccess(UserDefinition userDef, String method) {
+    // Validate user's permission vs. the given required permission.
+    private boolean isValidUserAccess(UserDefinition userDef, Permission permNeeded) {
         Set<Permission> permList = userDef.getPermissions();
-        if (permList.size() == 0 || permList.contains(Permission.ALL)) {
-            return true;    // No defined permissions == ALL
-        }
-        
-        switch (method.toUpperCase()) {
-        case "GET":
-            return permList.contains(Permission.READ);
-        case "POST":
-            return permList.contains(Permission.APPEND) || permList.contains(Permission.UPDATE);
-        case "DELETE":
-        case "PUT":
-            return permList.contains(Permission.UPDATE);
-        default:
-            throw new RuntimeException("Unexpected 'method': " + method);
-        }
+        return permList.size() == 0 ||
+               permList.contains(Permission.ALL) || // No defined permissions == ALL
+               permList.contains(permNeeded);
     }
 
     // Add the given new or updated tenant definition to the cache.

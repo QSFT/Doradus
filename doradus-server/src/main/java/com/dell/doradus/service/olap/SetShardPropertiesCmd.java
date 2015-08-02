@@ -20,20 +20,32 @@ import java.util.Map;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpCode;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.common.rest.RESTParameter;
 import com.dell.doradus.service.rest.RESTCallback;
+import com.dell.doradus.service.rest.annotation.Description;
+import com.dell.doradus.service.rest.annotation.ParamDescription;
 
-/**
- * Handle the REST commands: PUT /{application}/_properties/{shard}?{params}
- */
+@Description(
+    name = "ShardProperties",
+    summary = "Sets properties for a shard without performing a merge.",
+    methods = HttpMethod.PUT,
+    uri = "/{application}/_properties/{shard}?{params}"
+)
 public class SetShardPropertiesCmd extends RESTCallback {
+    @ParamDescription
+    public static RESTParameter describeParams() {
+        return new RESTParameter("params", null, false)
+                        .add("expire-date", "text")
+                        .add("timeout", "integer")
+                        .add("force-merge", "boolean");
+    }
 
     @Override
     public RESTResponse invoke() {
         ApplicationDefinition appDef = m_request.getAppDef();
-        Utils.require(OLAPService.class.getSimpleName().equals(appDef.getStorageService()),
-                      "Application '%s' is not an OLAP application", appDef.getAppName());
         String shard = m_request.getVariableDecoded("shard");
         String params = m_request.getVariableDecoded("params");
         Map<String, String> paramsMap = Utils.parseURIQuery(params);

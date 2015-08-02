@@ -14,19 +14,30 @@
  * limitations under the License.
  */
 
-/**
- * Handles the REST commands: DELETE /_applications/{application} and
- * DELETE /_applications/{application}/{key}.
- */
 package com.dell.doradus.service.schema;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpCode;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
+import com.dell.doradus.common.rest.RESTParameter;
 import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.RESTCallback;
+import com.dell.doradus.service.rest.annotation.Description;
+import com.dell.doradus.service.rest.annotation.ParamDescription;
 
+@Description(
+    name = "DeleteApp",
+    summary = "Deletes an existing application including all of its data.",
+    methods = {HttpMethod.DELETE},
+    uri = "/_applications/{application}"
+)
 public class DeleteApplicationCmd extends RESTCallback {
+    
+    @ParamDescription
+    public static RESTParameter describeParameter() {
+        return new RESTParameter("key", "text", false);
+    }
 
     @Override
     public RESTResponse invoke() {
@@ -36,8 +47,7 @@ public class DeleteApplicationCmd extends RESTCallback {
         if (appDef == null) {
             throw new NotFoundException("Unknown application: " + appName);
         }
-        String key = m_request.getVariableDecoded("key");   // may be null
-        SchemaService.instance().deleteApplication(appDef, key);
+        SchemaService.instance().deleteApplication(appDef, null);
         return new RESTResponse(HttpCode.OK);
     }   // invoke
 

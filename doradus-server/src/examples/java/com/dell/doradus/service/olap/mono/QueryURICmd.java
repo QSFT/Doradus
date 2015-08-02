@@ -17,15 +17,24 @@
 package com.dell.doradus.service.olap.mono;
 
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.olap.OLAPService;
 import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Implements the REST command: GET /{application}/{table}/_query?{params}.
- */
+@Description(
+    name = "QueryURI",
+    summary = "Performs an object query for a specific application and table using " +
+              "the data in the 'mono' shard. This command passes query parameters " +
+              "in the URI.",
+    methods = HttpMethod.GET,
+    uri = "/{application}/{table}/_query?{params}",
+    visible = false,
+    outputEntity = "results"
+)
 public class QueryURICmd extends UNodeOutCallback {
 
     @Override

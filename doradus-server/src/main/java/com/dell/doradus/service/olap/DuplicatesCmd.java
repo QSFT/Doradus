@@ -19,22 +19,32 @@ package com.dell.doradus.service.olap;
 import java.util.Map;
 
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.common.rest.RESTParameter;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
+import com.dell.doradus.service.rest.annotation.ParamDescription;
 
-/**
- * Handle the REST command: GET /{application}/{table}/_duplicates?{params}
- */
+@Description(
+    name = "Duplicates",
+    summary = "Returns object IDs duplicated across a set of shards.",
+    methods = HttpMethod.GET,
+    uri = "/{application}/{table}/_duplicates?{params}",
+    outputEntity = "results"
+)
 public class DuplicatesCmd extends UNodeOutCallback {
+    @ParamDescription
+    public static RESTParameter describeParams() {
+        return new RESTParameter("params").add("range", "text", false);
+    }
 
     @Override
     public UNode invokeUNodeOut() {
         ApplicationDefinition appDef = m_request.getAppDef();
-        Utils.require(OLAPService.class.getSimpleName().equals(appDef.getStorageService()),
-                      "Application '%s' is not an OLAP application", appDef.getAppName());
         TableDefinition tableDef = m_request.getTableDef(appDef);
         String queryParams = m_request.getVariable("params");	// leave encoded
         Map<String, String> params = Utils.parseURIQuery(queryParams);

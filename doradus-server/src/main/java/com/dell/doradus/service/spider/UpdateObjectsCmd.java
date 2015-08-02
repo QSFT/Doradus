@@ -22,14 +22,22 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.BatchResult;
 import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.HttpCode;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.rest.ReaderCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Implements the REST commands: PUT /{application}/{table}.
- */
+@Description(
+    name = "Update",
+    summary = "Updates objects in a specific application and table. " +
+              "Each object in the batch must define the _ID field.",
+    methods = HttpMethod.PUT,
+    uri = "/{application}/{table}",
+    inputEntity = "batch",
+    outputEntity = "batch-result"
+)
 public class UpdateObjectsCmd extends ReaderCallback {
 
     @Override

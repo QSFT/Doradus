@@ -17,10 +17,13 @@
 package com.dell.doradus.service.rest;
 
 import com.dell.doradus.common.RESTResponse;
+import com.dell.doradus.service.rest.annotation.Description;
 
 /**
- * Defines a callback object that is invoked for a specific REST request. A callback
- * object is used by following these steps:
+ * Defines a callback for a REST command. Concrete instances of this class must use the
+ * {@link Description} annotation to provide metadata about the command. When a REST
+ * request matches this command, an instance of this class is created and invoked as
+ * follows:
  * <ol>
  * <li>Create an object of the appropriate subclass using the nullary constructor.</li>
  * <li>Call {@link #setRequest(RESTRequest)} passing the {@link RESTRequest} that defines

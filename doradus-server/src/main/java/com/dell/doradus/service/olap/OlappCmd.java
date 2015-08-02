@@ -21,18 +21,21 @@ import java.util.Map;
 
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.HttpDefs;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.rest.RESTCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Handles the REST command: GET /_olapp?{params}
- * 
- * simple application that allows browse OLAP data and build simple aggregation queries
- * using simple HTML interface 
- */
+@Description(
+    name = "Browse",
+    summary = "Provides a simple web browser interface for OLAP applications.",
+    methods = HttpMethod.GET,
+    uri = "/_olapp?{params}",
+    visible = false
+)
 public class OlappCmd extends RESTCallback {
-
+    
     @Override
     public RESTResponse invoke() {
         String params = m_request.getVariable("params");

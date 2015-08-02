@@ -17,30 +17,33 @@
 package com.dell.doradus.service.schema;
 
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.HttpMethod;
-import com.dell.doradus.common.UNode;
+import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.service.rest.NotFoundException;
-import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
 @Description(
-    name = "ListApp",
-    summary = "Returns the schema of a specific application.",
-    methods = {HttpMethod.GET},
-    uri = "/_applications/{application}",
-    outputEntity = "ApplicationDefinition"
+    name = "DeleteAppWithKey",
+    summary = "Deletes an existing application including all of its data " +
+              "using the application's schema-defined {key}.",
+    methods = {HttpMethod.DELETE},
+    uri = "/_applications/{application}/{key}"
 )
-public class ListApplicationCmd extends UNodeOutCallback {
-
+public class DeleteApplicationKeyCmd extends RESTCallback {
+    
     @Override
-    public UNode invokeUNodeOut() {
+    public RESTResponse invoke() {
         String appName = m_request.getVariableDecoded("application");
         ApplicationDefinition appDef =
             SchemaService.instance().getApplication(m_request.getTenant(), appName);
         if (appDef == null) {
             throw new NotFoundException("Unknown application: " + appName);
         }
-        return appDef.toDoc();
-    }   // invokeUNodeOut
+        String key = m_request.getVariableDecoded("key");
+        SchemaService.instance().deleteApplication(appDef, key);
+        return new RESTResponse(HttpCode.OK);
+    }   // invoke
 
-}   // class ListApplicationCmd
+}   // class DeleteApplicationCmd

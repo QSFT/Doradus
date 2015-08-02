@@ -17,7 +17,6 @@
 package com.sritraka.customservice;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import com.dell.doradus.common.ApplicationDefinition;
@@ -25,17 +24,20 @@ import com.dell.doradus.common.BatchResult;
 import com.dell.doradus.common.DBObject;
 import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.HttpCode;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.common.rest.RESTParameter;
 import com.dell.doradus.search.SearchResult;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.StorageService;
-import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.rest.UNodeInCallback;
+import com.dell.doradus.service.rest.annotation.Description;
+import com.dell.doradus.service.rest.annotation.ParamDescription;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.spider.SpiderService;
 
@@ -88,7 +90,22 @@ public class UpdateWhereService extends Service {
     private static final UpdateWhereService INSTANCE = new UpdateWhereService();
     private UpdateWhereService() {}
     
+    @Description(
+        name = "UpdateWhere",
+        summary = "Updates all objects in a Spider application table selected by a query " +
+                  "with the same update. Specify a query with 'q' in {params} and provide " +
+                  "a 'doc' object with updates in the input entity.",
+        methods = HttpMethod.PUT,
+        uri = "/{application}/{table}/_update?{params}",
+        inputEntity = "doc",
+        outputEntity = "results"
+    )
     public static class UpdateWhereCmd extends UNodeInCallback {
+        @ParamDescription
+        public static RESTParameter describeParams() {
+            return new RESTParameter("params").add("q", "text", true);
+        }
+        
         @Override
         public RESTResponse invokeUNodeIn(UNode inNode) {
             // Parse request parameters
@@ -131,13 +148,8 @@ public class UpdateWhereService extends Service {
     
     @Override
     protected void initService() {
-        List<RESTCommand> cmdList = Arrays.asList(new RESTCommand[] {
-            new RESTCommand("PUT /{application}/{table}/_update?{params} " +
-                            "com.sritraka.customservice.UpdateWhereService$UpdateWhereCmd"),
-        });
-        
         // Add a REST command registered for the SpiderService.
-        RESTService.instance().registerApplicationCommands(cmdList, SpiderService.instance());
+        RESTService.instance().registerCommands(Arrays.asList(UpdateWhereCmd.class), SpiderService.instance());
     }
 
     // Nothing extra to do for start/stop service.

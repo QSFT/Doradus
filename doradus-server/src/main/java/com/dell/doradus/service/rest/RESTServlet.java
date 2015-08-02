@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.HttpDefs;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.Pair;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.Utils;
@@ -42,12 +43,14 @@ import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.db.UnauthorizedException;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.tenant.TenantService;
+import com.dell.doradus.service.tenant.UserDefinition.Permission;
 
 /**
  * An HttpServlet implementation used by the {@link RESTService} to process REST requests.
- * Each request is mapped to a {@link RESTCommand} and processed via its callback. If the
- * the request is unknown or the callback creates 
- *
+ * Each request is matched to a registered REST command and, if found, is executed by
+ * invoking the command's callback. If the the request is unknown, a 404 response is
+ * return. Exceptions thrown by the callback are mapped to 4xx or 5xx responses as 
+ * appropriate.
  */
 public class RESTServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -157,14 +160,19 @@ public class RESTServlet extends HttpServlet {
         }
         ApplicationDefinition appDef = getApplication(uri, tenant);
         
-        RESTCommand cmd = RESTService.instance().matchCommand(appDef, request.getMethod(), uri, query, variableMap);
-        if (cmd == null) {
+        HttpMethod method = HttpMethod.methodFromString(request.getMethod());
+        if (method == null) {
             throw new NotFoundException("Request does not match a known URI: " + request.getRequestURL());
         }
-        validateTenantAccess(request, tenant, cmd);
         
-        RESTRequest restRequest = new RESTRequest(tenant, appDef, request, variableMap);
-        RESTCallback callback = cmd.getNewCallback(restRequest);
+        RegisteredCommand cmdModel = RESTService.instance().findCommand(appDef, method, uri, query, variableMap);
+        if (cmdModel == null) {
+            throw new NotFoundException("Request does not match a known URI: " + request.getRequestURL());
+        }
+        validateTenantAccess(request, tenant, cmdModel);
+        
+        RESTCallback callback = cmdModel.getNewCallback();
+        callback.setRequest(new RESTRequest(tenant, appDef, request, variableMap));
         return callback.invoke();
     }
     
@@ -193,14 +201,30 @@ public class RESTServlet extends HttpServlet {
     }
 
     // Extract Authorization header, if any, and validate this command for the given tenant.
-    private void validateTenantAccess(HttpServletRequest request, Tenant tenant, RESTCommand cmd) {
+    private void validateTenantAccess(HttpServletRequest request, Tenant tenant, RegisteredCommand cmdModel) {
         String authString = request.getHeader("Authorization");
         StringBuilder userID = new StringBuilder();
         StringBuilder password = new StringBuilder();
         decodeAuthorizationHeader(authString, userID, password);
-        TenantService.instance().validateTenantAuthorization(tenant, userID.toString(), password.toString(), cmd);
+        TenantService.instance().validateTenantAuthorization(tenant, userID.toString(), password.toString(), 
+                                                            permissionForMethod(request.getMethod()), cmdModel.isPrivileged());
     }
 
+    // Map an HTTP method to the permission needed to execute it.
+    private Permission permissionForMethod(String method) {
+        switch (method.toUpperCase()) {
+        case "GET":
+            return Permission.READ;
+        case "PUT":
+        case "DELETE":
+            return Permission.UPDATE;
+        case "POST":
+            return Permission.APPEND;
+        default:
+            throw new RuntimeException("Unexpected REST method: " + method);
+        }
+    }
+    
     // Decode the given Authorization header value into its user/password components.
     private void decodeAuthorizationHeader(String authString, StringBuilder userID, StringBuilder password) {
         userID.setLength(0);

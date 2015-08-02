@@ -18,14 +18,21 @@ package com.dell.doradus.service.schema;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpCode;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.rest.UNodeInCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Handle the REST command: POST /_applications
- */
+@Description(
+    name = "DefineApp",
+    summary = "Defines a new application or modifies an existing one. The input entity " +
+              "must be a serialized ApplicationDefinition object.",
+    methods = {HttpMethod.POST},
+    uri = "/_applications",
+    inputEntity = "ApplicationDefinition"
+)
 public class DefineApplicationCmd extends UNodeInCallback {
 
     @Override

@@ -40,7 +40,7 @@ import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
-import com.dell.doradus.service.rest.RESTCommand;
+import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.taskmanager.TaskRecord.TaskStatus;
@@ -84,9 +84,9 @@ public class TaskManagerService extends Service {
     private final Object m_executeLock = new Object();
     
     // REST commands registered:
-    private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
-        new RESTCommand("GET /_tasks com.dell.doradus.service.taskmanager.ListTasksCmd"),
-    });
+    private static final List<Class<? extends RESTCallback>> CMD_CLASSES = Arrays.asList(
+        ListTasksCmd.class
+    );
     
     // Singleton creation only
     private TaskManagerService() {}
@@ -105,7 +105,7 @@ public class TaskManagerService extends Service {
     
     @Override
     protected void initService() {
-        RESTService.instance().registerGlobalCommands(REST_RULES);
+        RESTService.instance().registerCommands(CMD_CLASSES);
     }
 
     @Override

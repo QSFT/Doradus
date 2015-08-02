@@ -120,8 +120,8 @@ public class RESTRequest {
     }   // getTenant
     
     /**
-     * Get the variables extracted for this REST request. For example, if the
-     * {@link RESTCommand} for this request specified the URI:
+     * Get the variables extracted for this REST request. For example, if the request has
+     * the URI:
      * <pre>
      *      /{application}/{table}/_query?{query}
      * </pre>
@@ -140,7 +140,7 @@ public class RESTRequest {
      *  
      * @return  A map of variables extracted for this REST request, if any, URI-encoded.
      *          The map will be empty if there are no variables defined by this request's
-     *          {@link RESTCommand}. 
+     *          URI.
      */
     public Map<String, String> getVariables() {
         return m_variableMap;

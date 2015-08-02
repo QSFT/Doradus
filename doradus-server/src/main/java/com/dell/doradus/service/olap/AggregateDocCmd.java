@@ -18,16 +18,38 @@ package com.dell.doradus.service.olap;
 
 import com.dell.doradus.common.AggregateResult;
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
+import com.dell.doradus.common.rest.RESTParameter;
 import com.dell.doradus.service.rest.UNodeInOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
+import com.dell.doradus.service.rest.annotation.ParamDescription;
 
-/**
- * Implements the REST commands: GET or PUT /{application}/{table}/_aggregate. The
- * aggregate query parameters are passed in an input entity.
- */
+@Description(
+    name="Aggregate",
+    summary="Performs an aggregate query on the given application and table.",
+    methods = {HttpMethod.GET, HttpMethod.PUT},
+    uri = "/{application}/{table}/_aggregate",
+    inputEntity = "aggregate-search",
+    outputEntity = "results"
+)
 public class AggregateDocCmd extends UNodeInOutCallback {
-
+    @ParamDescription
+    public static RESTParameter describeParameter() {
+        return new RESTParameter("aggregate-search")
+                        .add("query", "text")
+                        .add("grouping-fields", "text")
+                        .add("metric", "text", true)
+                        .add("shards", "text")
+                        .add("shards-range", "text")
+                        .add("pair", "text")
+                        .add("x-shards", "text")
+                        .add("x-shards-range", "text")
+                        .add("composite-fields", "text")
+                        .add("flat", "boolean");
+    }
+    
     @Override
     public UNode invokeUNodeInOut(UNode inNode) {
         ApplicationDefinition appDef = m_request.getAppDef();

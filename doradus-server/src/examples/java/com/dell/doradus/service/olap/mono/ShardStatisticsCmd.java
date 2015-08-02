@@ -19,16 +19,31 @@ package com.dell.doradus.service.olap.mono;
 import java.util.Map;
 
 import com.dell.doradus.common.ApplicationDefinition;
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.common.rest.RESTParameter;
 import com.dell.doradus.service.olap.OLAPService;
 import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
+import com.dell.doradus.service.rest.annotation.ParamDescription;
 
-/**
- * Handle the REST command: GET /{application}/_statistics?{params}
- */
+@Description(
+    name = "Statistics",
+    summary = "Returns detailed storage statistics for the data in the 'mono' shard.",
+    methods = HttpMethod.GET,
+    uri = "/{application}/_statistics?{params}",
+    outputEntity = "statistics"
+)
 public class ShardStatisticsCmd extends UNodeOutCallback {
-
+    @ParamDescription
+    public static RESTParameter describeParams() {
+        return new RESTParameter("params", null, false)
+                        .add("file", "text")
+                        .add("sort", "text")
+                        .add("mem", "boolean");
+    }
+    
     @Override
     public UNode invokeUNodeOut() {
         ApplicationDefinition appDef = m_request.getAppDef();

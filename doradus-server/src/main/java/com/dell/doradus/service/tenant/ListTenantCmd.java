@@ -16,14 +16,20 @@
 
 package com.dell.doradus.service.tenant;
 
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Implements the system REST command: /_tenants/{tenant}. All tenant details including
- * user ids/passwords are returned.
- */
+@Description(
+    name = "ListTenant",
+    summary = "List a specific tenant's details.",
+    methods = HttpMethod.GET,
+    uri = "/_tenant/{tenant}",
+    privileged = true,
+    outputEntity = "tenant"
+)
 public class ListTenantCmd extends UNodeOutCallback {
 
     @Override

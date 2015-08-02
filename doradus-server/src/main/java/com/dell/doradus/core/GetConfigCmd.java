@@ -19,15 +19,21 @@ package com.dell.doradus.core;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.rest.UNodeOutCallback;
+import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Reply to a REST command such as: GET /_config. 
- */
+@Description(
+    name = "Config",
+    summary = "Retrieves configuration and runtime parameters for this server process.",
+    methods = {HttpMethod.GET},
+    uri = "/_config",
+    privileged = true,
+    outputEntity = "configuration"
+)
 public class GetConfigCmd extends UNodeOutCallback {
-
 
     @Override
     public UNode invokeUNodeOut() {

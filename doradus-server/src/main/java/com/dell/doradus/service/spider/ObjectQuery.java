@@ -43,7 +43,7 @@ public class ObjectQuery {
     private int		m_skip = 0;
     private String  m_sortOrder;
     private boolean m_l2rEnabled = ServerConfig.getInstance().l2r_enable;
-    
+
     /**
      * Create an object that uses the given perspective table and extracts query
      * parameters from the given "search" UNode.
