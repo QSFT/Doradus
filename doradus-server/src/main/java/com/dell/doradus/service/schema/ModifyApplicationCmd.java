@@ -26,15 +26,12 @@ import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.UNodeInCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Handle the REST command: PUT /_applications/{application}
- */
 @Description(
     name = "ModifyApp",
     summary = "Modifies the schema of an existing application.",
     methods = {HttpMethod.PUT},
-    uri = "/_applications",
-    inputEntity = "{application}"
+    uri = "/_applications/{application}",
+    inputEntity = "ApplicationDefinition"
 )
 public class ModifyApplicationCmd extends UNodeInCallback {
 

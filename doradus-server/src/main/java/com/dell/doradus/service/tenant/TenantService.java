@@ -38,7 +38,6 @@ import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.db.UnauthorizedException;
 import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.RESTCallback;
-import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.taskmanager.TaskManagerService;
@@ -60,15 +59,7 @@ public class TenantService extends Service {
     private final Map<String, TenantDefinition> m_tenantMap = new HashMap<>();
     
     // REST commands supported by the TenantService:
-    private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
-        new RESTCommand("GET    /_tenants           com.dell.doradus.service.tenant.ListTenantsCmd", true),
-        new RESTCommand("GET    /_tenants/{tenant}  com.dell.doradus.service.tenant.ListTenantCmd", true),
-        new RESTCommand("POST   /_tenants           com.dell.doradus.service.tenant.DefineTenantCmd", true),
-        new RESTCommand("PUT    /_tenants/{tenant}  com.dell.doradus.service.tenant.ModifyTenantCmd", true),
-        new RESTCommand("DELETE /_tenants/{tenant}  com.dell.doradus.service.tenant.DeleteTenantCmd", true),
-    });
-
-    List<Class<? extends RESTCallback>> CMD_CLASSES = Arrays.asList(
+    private static final List<Class<? extends RESTCallback>> CMD_CLASSES = Arrays.asList(
         ListTenantsCmd.class,
         ListTenantCmd.class,
         DefineTenantCmd.class,
@@ -111,7 +102,6 @@ public class TenantService extends Service {
         if (ServerConfig.getInstance().multitenant_mode && !ServerConfig.getInstance().use_cql) {
             throw new RuntimeException("Multitenant_mode currently requires use_cql=true");
         }
-        RESTService.instance().registerGlobalCommands(REST_RULES);
         RESTService.instance().registerCommands(CMD_CLASSES);
     }
 

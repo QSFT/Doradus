@@ -20,20 +20,20 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import com.dell.doradus.common.HttpMethod;
-import com.dell.doradus.common.rest.CommandParameter;
+import com.dell.doradus.common.rest.RESTParameter;
 
 /**
  * Defines annotations that describe a REST command. If a command uses a {@link #uri()}
  * that includes parameters, each parameter is assumed to be text and required by default.
  * To describe parameters that are not text, optional, or compound, the command should
- * create one or more public static methods that return a {@link CommandParameter} object.
- * Also, the method should be marked with the {@link ParamDescription} annotation. Each
+ * create one or more public static methods that return a {@link RESTParameter} object,
+ * and the method(s) should be marked with the {@link ParamDescription} annotation. Each
  * such "parameter describer" method will be called to build the metadata for the
  * corresponding parameter. Below is an example parameter describer method:
  * <pre>
  *      {@literal @}ParamDescription
- *      public static CommandParameter describeParam() {
- *          return CommandParameter("size", "integer", false);
+ *      public static RESTParameter describeParam() {
+ *          return RESTParameter("size", "integer", false);
  *      }
  * </pre>
  * This example describes {size} as an optional integer parameter.

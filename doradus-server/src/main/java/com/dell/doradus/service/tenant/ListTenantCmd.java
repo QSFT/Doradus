@@ -22,10 +22,6 @@ import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Implements the system REST command: GET /_tenants/{tenant}. All tenant details including
- * user ids/passwords are returned.
- */
 @Description(
     name = "ListTenant",
     summary = "List a specific tenant's details.",

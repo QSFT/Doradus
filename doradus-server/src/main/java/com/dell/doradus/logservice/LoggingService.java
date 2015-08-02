@@ -35,7 +35,7 @@ import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.common.rest.CommandParameter;
+import com.dell.doradus.common.rest.RESTParameter;
 import com.dell.doradus.olap.OlapBatch;
 import com.dell.doradus.olap.aggregate.AggregateResultConverter;
 import com.dell.doradus.olap.aggregate.AggregationResult;
@@ -43,7 +43,6 @@ import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.StorageService;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.RESTCallback;
-import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.rest.ReaderCallback;
 import com.dell.doradus.service.rest.UNodeOutCallback;
@@ -59,15 +58,11 @@ public class LoggingService extends StorageService {
     private static final LoggingService INSTANCE = new LoggingService();
 
     // REST commands supported by the LoggingService:
-    private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
-        new RESTCommand("POST /{application}/{table}                        com.dell.doradus.logservice.LoggingService$UpdateCmd"),
-        new RESTCommand("PUT  /{application}/{table}                        com.dell.doradus.logservice.LoggingService$UpdateCmd"),
-        new RESTCommand("GET  /{application}/{table}/_query?{params}        com.dell.doradus.logservice.LoggingService$QueryCmd"),
-        new RESTCommand("GET  /{application}/{table}/_aggregate?{params}    com.dell.doradus.logservice.LoggingService$AggregateCmd"),
-        
-        new RESTCommand("GET  /_lsapp           com.dell.doradus.logservice.LoggingService$LogServiceAppCmd"),
-        new RESTCommand("GET  /_lsapp?{params}  com.dell.doradus.logservice.LoggingService$LogServiceAppCmd"),
-    });
+    private static final List<Class<? extends RESTCallback>> cmdClasses = Arrays.asList(
+        UpdateCmd.class,
+        QueryCmd.class,
+        AggregateCmd.class
+    );
 
     private LogService m_logService = new LogService();
     
@@ -130,8 +125,8 @@ public class LoggingService extends StorageService {
     )
     public static class QueryCmd extends UNodeOutCallback {
         @ParamDescription
-        public static CommandParameter describeParams() {
-            return new CommandParameter("params")
+        public static RESTParameter describeParams() {
+            return new RESTParameter("params")
                         .add("q", "text", true)
                         .add("s", "integer")
                         .add("k", "integer")
@@ -163,8 +158,8 @@ public class LoggingService extends StorageService {
     )
     public static class AggregateCmd extends UNodeOutCallback {
         @ParamDescription
-        public static CommandParameter describeParams() {
-            return new CommandParameter("params")
+        public static RESTParameter describeParams() {
+            return new RESTParameter("params")
                             .add("q", "text", true)
                             .add("f", "text")
                             .add("m", "text");
@@ -192,9 +187,9 @@ public class LoggingService extends StorageService {
     )
     public static class LogServiceAppCmd extends RESTCallback {
         @ParamDescription
-        public static CommandParameter describeParams() {
+        public static RESTParameter describeParams() {
             // {params} are optional but details don't need to be public.
-            return new CommandParameter("params", null, false);
+            return new RESTParameter("params", null, false);
         }
         
         @Override public RESTResponse invoke() {
@@ -211,12 +206,6 @@ public class LoggingService extends StorageService {
     
     @Override
     protected void initService() {
-        RESTService.instance().registerApplicationCommands(REST_RULES, this);
-        List<Class<? extends RESTCallback>> cmdClasses = Arrays.asList(
-            UpdateCmd.class,
-            QueryCmd.class,
-            AggregateCmd.class
-        );
         RESTService.instance().registerCommands(cmdClasses, this);
     }
 

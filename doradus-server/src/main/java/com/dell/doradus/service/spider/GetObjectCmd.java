@@ -25,12 +25,9 @@ import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Implements the REST command: GET /{application}/{table}/{ID}.
- */
 @Description(
     name = "GetObject",
-    summary = "Fetches all field values for an object with a specific object ID.",
+    summary = "Fetches all field values of an object with a specific object ID.",
     methods = HttpMethod.GET,
     uri = "/{application}/{table}/{ID}",
     outputEntity = "doc"

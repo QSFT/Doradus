@@ -24,11 +24,6 @@ import com.dell.doradus.service.olap.OLAPService;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Handle the REST command: GET /{application}/_stats. Is is the same as
- * GET /{application}/_shards/{shard} for the OLAPService except that the shard name is
- * the mono shard name.
- */
 @Description(
     name = "Stats",
     summary = "Returns statistics for the data in the 'mono' shard.",

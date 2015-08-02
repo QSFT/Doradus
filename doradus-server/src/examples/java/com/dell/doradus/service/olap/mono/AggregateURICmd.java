@@ -24,9 +24,6 @@ import com.dell.doradus.service.olap.OLAPService;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Implements the REST command: GET /{application}/{table}/_aggregate?{params}.
- */
 @Description(
     name = "AggregateURI",
     summary = "Performs an aggregate query for a specific application and table using " +

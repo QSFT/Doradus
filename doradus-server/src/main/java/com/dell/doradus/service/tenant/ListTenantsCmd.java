@@ -24,9 +24,6 @@ import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 import com.dell.doradus.service.schema.SchemaService;
 
-/**
- * Implements the system REST command: GET /_tenants
- */
 @Description(
     name = "ListTenants",
     summary = "Lists all tenants and their application names.",

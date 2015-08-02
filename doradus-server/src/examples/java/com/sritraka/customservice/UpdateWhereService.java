@@ -17,7 +17,6 @@
 package com.sritraka.customservice;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import com.dell.doradus.common.ApplicationDefinition;
@@ -30,12 +29,11 @@ import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.common.rest.CommandParameter;
+import com.dell.doradus.common.rest.RESTParameter;
 import com.dell.doradus.search.SearchResult;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.StorageService;
-import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.rest.UNodeInCallback;
 import com.dell.doradus.service.rest.annotation.Description;
@@ -104,8 +102,8 @@ public class UpdateWhereService extends Service {
     )
     public static class UpdateWhereCmd extends UNodeInCallback {
         @ParamDescription
-        public static CommandParameter describeParams() {
-            return new CommandParameter("params").add("q", "text", true);
+        public static RESTParameter describeParams() {
+            return new RESTParameter("params").add("q", "text", true);
         }
         
         @Override
@@ -150,13 +148,7 @@ public class UpdateWhereService extends Service {
     
     @Override
     protected void initService() {
-        List<RESTCommand> cmdList = Arrays.asList(new RESTCommand[] {
-            new RESTCommand("PUT /{application}/{table}/_update?{params} " +
-                            "com.sritraka.customservice.UpdateWhereService$UpdateWhereCmd"),
-        });
-        
         // Add a REST command registered for the SpiderService.
-        RESTService.instance().registerApplicationCommands(cmdList, SpiderService.instance());
         RESTService.instance().registerCommands(Arrays.asList(UpdateWhereCmd.class), SpiderService.instance());
     }
 

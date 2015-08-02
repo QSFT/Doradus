@@ -22,9 +22,6 @@ import com.dell.doradus.common.UNode;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Handle the REST command: GET /{application}/_shards
- */
 @Description(
     name = "ListShards",
     summary = "List all shards that currently have data.",

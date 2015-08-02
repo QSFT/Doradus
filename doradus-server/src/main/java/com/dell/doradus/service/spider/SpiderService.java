@@ -53,7 +53,6 @@ import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.RESTCallback;
-import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.taskmanager.Task;
@@ -73,29 +72,16 @@ public class SpiderService extends StorageService {
     private final ShardCache m_shardCache = new ShardCache();
 
     // REST commands supported by the the Spider service:
-    private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
-        // Object retrieval:
-        new RESTCommand("GET    /{application}/{table}/{ID}                 com.dell.doradus.service.spider.GetObjectCmd"),
-        new RESTCommand("GET    /{application}/{table}/_query?{params}      com.dell.doradus.service.spider.QueryURICmd"),
-        new RESTCommand("GET    /{application}/{table}/_query               com.dell.doradus.service.spider.QueryDocCmd"),
-        new RESTCommand("PUT    /{application}/{table}/_query               com.dell.doradus.service.spider.QueryDocCmd"),
-        new RESTCommand("GET    /{application}/{table}/_aggregate?{params}  com.dell.doradus.service.spider.AggregateURICmd"),
-        new RESTCommand("GET    /{application}/{table}/_aggregate           com.dell.doradus.service.spider.AggregateDocCmd"),
-        new RESTCommand("PUT    /{application}/{table}/_aggregate           com.dell.doradus.service.spider.AggregateDocCmd"),
-        
-        // Object updates:
-        new RESTCommand("POST   /{application}/{table}          com.dell.doradus.service.spider.AddObjectsCmd"),
-        new RESTCommand("PUT    /{application}/{table}          com.dell.doradus.service.spider.UpdateObjectsCmd"),
-        new RESTCommand("DELETE /{application}/{table}          com.dell.doradus.service.spider.DeleteObjectsCmd"),
-    });
-
     private static final List<Class<? extends RESTCallback>> CMD_CLASSES = Arrays.asList(
+        // Object retrieval:
         GetObjectCmd.class,
         QueryURICmd.class,
         QueryDocCmd.class,
         AggregateURICmd.class,
         AggregateDocCmd.class,
         AddObjectsCmd.class,
+        
+        // Object updates:
         UpdateObjectsCmd.class,
         DeleteObjectsCmd.class
     );
@@ -114,7 +100,6 @@ public class SpiderService extends StorageService {
     
     @Override
     public void initService() {
-        RESTService.instance().registerApplicationCommands(REST_RULES, this);
         RESTService.instance().registerCommands(CMD_CLASSES, this);
     }   // initService
 

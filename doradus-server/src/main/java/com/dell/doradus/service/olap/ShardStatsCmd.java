@@ -23,9 +23,6 @@ import com.dell.doradus.olap.store.SegmentStats;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Handle the REST command: GET /{application}/_shards/{shard}
- */
 @Description(
     name = "ShardStats",
     summary = "Returns statistics for a specific shard.",

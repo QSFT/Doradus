@@ -47,7 +47,6 @@ import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.StorageService;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.RESTCallback;
-import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.taskmanager.Task;
@@ -62,55 +61,24 @@ public class OLAPService extends StorageService {
     private Olap m_olap = null;
 
     // OLAPService-specific commands
-    private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[]{
-        // Object retrieval:
-        new RESTCommand("GET    /{application}/{table}/_query?{params}      com.dell.doradus.service.olap.QueryURICmd"),
-        new RESTCommand("GET    /{application}/{table}/_query               com.dell.doradus.service.olap.QueryDocCmd"),
-        new RESTCommand("PUT    /{application}/{table}/_query               com.dell.doradus.service.olap.QueryDocCmd"),
-        new RESTCommand("GET    /{application}/{table}/_aggregate?{params}  com.dell.doradus.service.olap.AggregateURICmd"),
-        new RESTCommand("GET    /{application}/{table}/_aggregate           com.dell.doradus.service.olap.AggregateDocCmd"),
-        new RESTCommand("PUT    /{application}/{table}/_aggregate           com.dell.doradus.service.olap.AggregateDocCmd"),
-        
-        // Object updates:
-        new RESTCommand("POST   /{application}/{shard}                      com.dell.doradus.service.olap.AddObjectsCmd"),
-        new RESTCommand("POST   /{application}/{shard}?{params}             com.dell.doradus.service.olap.AddObjectsCmd"),
-        new RESTCommand("PUT    /{application}/{shard}                      com.dell.doradus.service.olap.AddObjectsCmd"),
-        new RESTCommand("PUT    /{application}/{shard}?{params}             com.dell.doradus.service.olap.AddObjectsCmd"),
-        new RESTCommand("DELETE /{application}/{shard}                      com.dell.doradus.service.olap.DeleteObjectsCmd"),
-        
-        // Shard management:
-        new RESTCommand("POST   /{application}/_shards/{shard}              com.dell.doradus.service.olap.MergeSegmentCmd"),
-        new RESTCommand("POST   /{application}/_shards/{shard}?{params}     com.dell.doradus.service.olap.MergeSegmentCmd"),
-        new RESTCommand("PUT    /{application}/_properties/{shard}?{params} com.dell.doradus.service.olap.SetShardPropertiesCmd"),
-        new RESTCommand("DELETE /{application}/_shards/{shard}              com.dell.doradus.service.olap.DeleteSegmentCmd"),
-        new RESTCommand("GET    /{application}/_shards                      com.dell.doradus.service.olap.ListShardsCmd"),
-        new RESTCommand("GET    /{application}/_shards/{shard}              com.dell.doradus.service.olap.ShardStatsCmd"),
-        
-        // Troubleshooting & repair
-        new RESTCommand("GET    /{application}/_statistics/{shard}?{params} com.dell.doradus.service.olap.ShardStatisticsCmd"),
-        new RESTCommand("GET    /{application}/{table}/_duplicates?{params} com.dell.doradus.service.olap.DuplicatesCmd"),
-        new RESTCommand("GET    /{application}/_verify/{shard}              com.dell.doradus.service.olap.ShardVerifyCmd"),
-        new RESTCommand("DELETE /{application}/_shards/{shard}/{segment}    com.dell.doradus.service.olap.DeleteSegmentCmd2"),
- 
-               
-        new RESTCommand("GET    /_olapp?{params}                             com.dell.doradus.service.olap.OlappCmd"),
-    });
-    
     private static final List<Class<? extends RESTCallback>> CMD_CLASSES = Arrays.asList(
         // Object retrieval:
         QueryURICmd.class,
         QueryDocCmd.class,
         AggregateURICmd.class,
         AggregateDocCmd.class,
+        
         // Object updates:
         AddObjectsCmd.class,
         DeleteObjectsCmd.class,
+        
         // Shard management:
         MergeSegmentCmd.class,
         SetShardPropertiesCmd.class,
         DeleteSegmentCmd.class,
         ListShardsCmd.class,
         ShardStatsCmd.class,
+        
         // Troubleshooting & repair
         ShardStatisticsCmd.class,
         DuplicatesCmd.class,
@@ -133,7 +101,6 @@ public class OLAPService extends StorageService {
 
     @Override
     public void initService() {
-        RESTService.instance().registerApplicationCommands(REST_RULES, this);
         RESTService.instance().registerCommands(CMD_CLASSES, this);
     }   // initService
     

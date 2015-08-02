@@ -26,15 +26,12 @@ import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.common.rest.CommandParameter;
+import com.dell.doradus.common.rest.RESTParameter;
 import com.dell.doradus.olap.OlapBatch;
 import com.dell.doradus.service.rest.ReaderCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 import com.dell.doradus.service.rest.annotation.ParamDescription;
 
-/**
- * Implements the REST commands: PUT or POST /{application}/{shard}[?{params}].
- */
 @Description(
     name = "Update",
     summary = "Adds, updates, and/or deletes objects for a specific shard.",
@@ -44,8 +41,8 @@ import com.dell.doradus.service.rest.annotation.ParamDescription;
 )
 public class AddObjectsCmd extends ReaderCallback {
     @ParamDescription
-    public static CommandParameter describeParams() {
-        return new CommandParameter("params", null, false).add("overwrite", "boolean");
+    public static RESTParameter describeParams() {
+        return new RESTParameter("params", null, false).add("overwrite", "boolean");
     }
 
     public RESTResponse invokeStreamIn(Reader reader) {

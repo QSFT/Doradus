@@ -24,9 +24,6 @@ import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Implements the REST command: GET /{application}/{table}/_query?{params}.
- */
 @Description(
     name="QueryURI",
     summary="Performs an object query on the given application and table. " +

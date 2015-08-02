@@ -20,28 +20,25 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
-import com.dell.doradus.common.rest.CommandParameter;
+import com.dell.doradus.common.rest.RESTParameter;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.rest.UNodeInOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 import com.dell.doradus.service.rest.annotation.ParamDescription;
 
-/**
- * Implements the REST commands: GET or PUT /{application}/{table}/_query. The query
- * parameters are passed in an input entity.
- */
 @Description(
     name = "Query",
     summary = "Performs an object query on a specific application and table.",
     methods = {HttpMethod.GET, HttpMethod.PUT},
     uri = "/{application}/{table}/_query",
-    inputEntity = "search"
+    inputEntity = "search",
+    outputEntity = "results"
 )
 public class QueryDocCmd extends UNodeInOutCallback {
 
     @ParamDescription
-    public static CommandParameter describeParameter() {
-        return new CommandParameter("search")
+    public static RESTParameter describeParameter() {
+        return new RESTParameter("search")
                         .add("continue-after", "text")
                         .add("continue-at", "text")
                         .add("fields", "text")

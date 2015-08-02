@@ -24,30 +24,17 @@ import com.dell.doradus.common.HttpDefs;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.common.rest.CommandParameter;
 import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.annotation.Description;
-import com.dell.doradus.service.rest.annotation.ParamDescription;
 
-/**
- * Handles the REST command: GET /_olapp?{params}
- * 
- * simple application that allows browse OLAP data and build simple aggregation queries
- * using simple HTML interface 
- */
 @Description(
     name = "Browse",
     summary = "Provides a simple web browser interface for OLAP applications.",
     methods = HttpMethod.GET,
-    uri = "GET /_olapp?{params}",
+    uri = "/_olapp?{params}",
     visible = false
 )
 public class OlappCmd extends RESTCallback {
-    @ParamDescription
-    public static CommandParameter describeParams() {
-        // {params} are optional but details don't need to be public.
-        return new CommandParameter("params", null, false);
-    }
     
     @Override
     public RESTResponse invoke() {

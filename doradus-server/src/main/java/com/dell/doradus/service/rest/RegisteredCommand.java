@@ -27,19 +27,45 @@ import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.common.rest.CommandDescription;
-import com.dell.doradus.common.rest.CommandParameter;
+import com.dell.doradus.common.rest.RESTCommand;
+import com.dell.doradus.common.rest.RESTParameter;
 import com.dell.doradus.service.rest.annotation.Description;
 import com.dell.doradus.service.rest.annotation.ParamDescription;
 
 /**
- * Stores metadata for a REST command, extracted from annotations.
+ * Holds information about a registered REST command. Provides methods that determine if
+ * a REST request matches this command and, if it does, extracts variables from the
+ * request's URL according to the command's URI template. The URI is a pattern that
+ * defines fixed and variable parts. For example, consider the following command:
+ * <pre>
+ *      GET /{application}/{table}/_query?{query}
+ * </pre>
+ * This command matches HTTP GET requests that have 3 nodes in the URI path and optionally
+ * a query (?) parameter. For example, suppose the following REST request is received:
+ * <pre>
+ *      GET /Magellan/documents/_query?q=foo+f=body
+ * </pre>
+ * {@link #matches(List, String, Map)} will match this request, and it will extract the
+ * following variables:
+ * <pre>      
+ *      application = "Magellan"
+ *      table = "documents"
+ *      query = "q=foo+f=body"
+ * </pre>
+ * The path nodes and the query component, if any, are not decoded in case they contain
+ * any escaped characters.
+ * <p>
+ * The following REST request will also match, causing the {query} variable to be empty:
+ * <pre>
+ *      GET /Magellan/documents/_query
+ * </pre>
+ * This class implements the {@link Comparable} interface, using a {@link #compareTo()}
+ * method that sorts commands in the proper evaluation sequence.
  */
-public class CommandModel implements Comparable<CommandModel> {
-    private final static Logger LOGGER = LoggerFactory.getLogger(CommandModel.class.getSimpleName());
+public class RegisteredCommand extends RESTCommand implements Comparable<RegisteredCommand> {
+    private final static Logger LOGGER = LoggerFactory.getLogger(RegisteredCommand.class.getSimpleName());
 
     private final Class<? extends RESTCallback> m_commandClass;
-    private final CommandDescription            m_cmdDesc;
     private final List<String>                  m_pathNodes = new ArrayList<>();
     private String                              m_query;
 
@@ -47,42 +73,74 @@ public class CommandModel implements Comparable<CommandModel> {
      * Create a CommandModel object that describes the REST command represented by the
      * given class.
      *  
-     * @param commandClass
+     * @param commandClass  Subclass of {@link RESTCallback} that describes a REST
+     *                      command. The class must use the {@link Description} annotation
+     *                      to describe its method(s), URI, and other components.
      */
-    public CommandModel(Class<? extends RESTCallback> commandClass) {
+    public RegisteredCommand(Class<? extends RESTCallback> commandClass) {
         Description descAnnotation = commandClass.getAnnotation(Description.class);
         if (descAnnotation == null) {
             throw new RuntimeException("REST command class '" + commandClass.getName() +
                                        "' is missing annotation: " + Description.class.getName());
         }
         m_commandClass = commandClass;
-        m_cmdDesc = createCommandDescription(descAnnotation);
+        createCommandDescription(descAnnotation);
         buildCommandMetadata();
     }
     
-    //----- Getters
-    
-    public String getName() {
-        return m_cmdDesc.getName();
+    /**
+     * Attempt to match the given REST request to this command and, if it does, extract
+     * the requests variables. See the class description for an example. Note that this
+     * method assumes the {@link HttpMethod} used by the command has already been checked.
+     *  
+     * @param pathNodeList  In-order URI path elements as a list. If any path nodes are
+     *                      URI-encoded, they should remain that way.
+     * @param query         The query expression (after the '?' sign), if any. May be null
+     *                      or empty. Should remain URI-encoded.
+     * @param variableMap   Variables extracted from the URI template if the request
+     *                      matches. For example, if the URI template is:
+     * <pre>
+     *                          /{application}/_query?q={params}
+     * </pre>
+     *                      And the actual request passed is:
+     * <pre>
+     *                          /Books/_query?q=Author:smith
+     * </pre>
+     *                      Two elements are added to the map: {application=Books,
+     *                      params=Author:smith}. URI encoding is *not* removed.
+     * @return              True if the given request matches this command and variables
+     *                      have been added. If the result is false, the variableMap will
+     *                      not be touched.
+     */
+    public boolean matches(List<String> pathNodeList, String query, Map<String, String> variableMap) {
+        if (pathNodeList.size() != m_pathNodes.size()) {
+            return false;
+        }
+        Map<String, String> matchedVarMap = new HashMap<>();
+        for (int index = 0; index < pathNodeList.size(); index++) {
+            if (!matches(pathNodeList.get(index), m_pathNodes.get(index), matchedVarMap)) {
+                return false;
+            }
+        }
+        if (matches(query, m_query, matchedVarMap)) {
+            variableMap.putAll(matchedVarMap);
+            return true;
+        }
+        return false;
     }
 
-    public Iterable<HttpMethod> getMethods() {
-        return m_cmdDesc.getMethods();
-    }
+    //----- Getters
     
-    public CommandDescription getDescription() {
-        return m_cmdDesc;
-    }
-    
-    public boolean isPrivileged() {
-        return m_cmdDesc.isPrivileged();
-    }
-    
-    public RESTCallback getNewCallback(RESTRequest request) {
+    /**
+     * Create a new REST command instance, which can be invoked to process a single REST
+     * request.
+     * 
+     * @return  A new object that can be invoked to handle a single REST request. The
+     *          object will be a concrete subclass of {@link RESTCallback}. 
+     */
+    public RESTCallback getNewCallback() {
         try {
-            RESTCallback callback = m_commandClass.newInstance();
-            callback.setRequest(request);
-            return callback;
+            return m_commandClass.newInstance();
         } catch (Exception e) {
             throw new RuntimeException("Unable to invoke callback", e);
         }
@@ -92,14 +150,14 @@ public class CommandModel implements Comparable<CommandModel> {
     
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof CommandModel)) {
+        if (!(other instanceof RegisteredCommand)) {
             return false;
         }
 
         // As we compare, a variable {foo} is considered identical to a variable {bar}
         // if they occur in the same spot.
-        CommandModel otherCmd = (CommandModel)other;
-        if (!m_cmdDesc.getMethodList().equals(otherCmd.m_cmdDesc.getMethodList())) {
+        RegisteredCommand otherCmd = (RegisteredCommand)other;
+        if (!getMethodList().equals(otherCmd.getMethodList())) {
             return false;   // Different method
         }
         if (m_pathNodes.size() != otherCmd.m_pathNodes.size()) {
@@ -113,14 +171,29 @@ public class CommandModel implements Comparable<CommandModel> {
         return samePattern(m_query, otherCmd.m_query);
     }   // equals
     
+    // When comparing path nodes or query parts, two values are considered equal if either
+    // (1) they are both empty, (2) they both start with '{' or, (3) neither start with
+    // '{' and they have the same value (case-sensitive).
+    private static boolean samePattern(String value1, String value2) {
+        if (value1.length() == 0) {
+            return value2.length() == 0;
+        }
+        if (value1.charAt(0) == '{') {
+            return value2.length() > 0 && value2.charAt(0) == '{';
+        }
+        return value1.equals(value2);
+    }   // samePattern
+
+    /**
+     * Returns a string such as "[GET,PUT] /{application}/{table}/_query -> com.foo.bar.QueryCmd". 
+     */
     @Override
     public String toString() {
-        return m_cmdDesc.getMethodList() + " " + m_cmdDesc.getURI() + " " +
-               m_commandClass.getName();
+        return "[" + getMethodList() + "] " + getURI() + " -> " + m_commandClass.getName();
     }
     
     @Override
-    public int compareTo(CommandModel other) {
+    public int compareTo(RegisteredCommand other) {
         // Compare the node list for each object.
         for (int index = 0; index < Math.min(m_pathNodes.size(), other.m_pathNodes.size()); index++) {
             String node1 = m_pathNodes.get(index);
@@ -144,26 +217,6 @@ public class CommandModel implements Comparable<CommandModel> {
         return diff;
     }
     
-    // Experimental: method must already be matched.
-    public boolean matches(List<String> pathNodeList, String query, Map<String, String> variableMap) {
-        if (pathNodeList.size() != m_pathNodes.size()) {
-            return false;
-        }
-        Map<String, String> matchedVarMap = new HashMap<>();
-        for (int index = 0; index < pathNodeList.size(); index++) {
-            if (!matches(pathNodeList.get(index), m_pathNodes.get(index), matchedVarMap)) {
-                return false;
-            }
-        }
-        if (matches(query, m_query, matchedVarMap)) {
-            variableMap.putAll(matchedVarMap);
-            return true;
-        }
-        return false;
-    }
-
-    //----- Private methods
-    
     // Compare the given nodes and return -1 if the first node should appear first, 1 if
     // the second should appear first, and 0 if they are identical. The nodes can be
     // path nodes are query parameters. Either node can be empty, but not null.
@@ -186,28 +239,6 @@ public class CommandModel implements Comparable<CommandModel> {
         return node1.compareTo(node2);  // neither node is a parameter
     }   // compareNodes
 
-    // Extract the variable name from the given URI component value. For example, if the
-    // value is {application}, the variable name "application" is returned. An error is
-    // thrown if the trailing '}' is missing.
-    private static String getVariableName(String value) {
-        assert value.charAt(0) == '{';
-        assert value.charAt(value.length() - 1) == '}';
-        return value.substring(1, value.length() - 1);
-    }   // getVariableName
-    
-    // When comparing path nodes or query parts, two values are considered equal if either
-    // (1) they are both empty, (2) they both start with '{' or, (3) neither start with
-    // '{' and they have the same value (case-sensitive).
-    private static boolean samePattern(String value1, String value2) {
-        if (value1.length() == 0) {
-            return value2.length() == 0;
-        }
-        if (value1.charAt(0) == '{') {
-            return value2.length() > 0 && value2.charAt(0) == '{';
-        }
-        return value1.equals(value2);
-    }   // samePattern
-
     // Similar to samePattern(), except that we are matching a candidate URI component
     // value to a component. If a match is made and the component is a variable, the
     // variable value is extracted and added to the given map.
@@ -226,6 +257,15 @@ public class CommandModel implements Comparable<CommandModel> {
         return component.equals(value);
     }   // matches
 
+    // Extract the variable name from the given URI component value. For example, if the
+    // value is {application}, the variable name "application" is returned. An error is
+    // thrown if the trailing '}' is missing.
+    private static String getVariableName(String value) {
+        assert value.charAt(0) == '{';
+        assert value.charAt(value.length() - 1) == '}';
+        return value.substring(1, value.length() - 1);
+    }   // getVariableName
+    
     // Extract and save command description and parameters from the command class.
     private void buildCommandMetadata() {
         findParamDescMethods();
@@ -237,10 +277,10 @@ public class CommandModel implements Comparable<CommandModel> {
         for (Method method : m_commandClass.getMethods()) {
             if (method.isAnnotationPresent(ParamDescription.class)) {
                 try {
-                    CommandParameter cmdParam = (CommandParameter) method.invoke(null, (Object[])null);
-                    m_cmdDesc.addParameter(cmdParam);
+                    RESTParameter cmdParam = (RESTParameter) method.invoke(null, (Object[])null);
+                    addParameter(cmdParam);
                 } catch (Exception e) {
-                    LOGGER.warn("Method '{}' for ParamDescription class '{}' could not be invoked: {}",
+                    LOGGER.warn("Method '{}' for class '{}' could not be invoked: {}",
                                 new Object[]{method.getName(), m_commandClass.getName(), e.toString()});
                 }
             }
@@ -252,7 +292,7 @@ public class CommandModel implements Comparable<CommandModel> {
         List<String> pathNodeList = new ArrayList<String>();
         StringBuilder query = new StringBuilder();
         StringBuilder fragment = new StringBuilder();
-        Utils.parseURI(m_cmdDesc.getURI(), pathNodeList, query, fragment);
+        Utils.parseURI(getURI(), pathNodeList, query, fragment);
         for (String encodedNode : pathNodeList) {
             m_pathNodes.add(Utils.urlDecode(encodedNode));
         }
@@ -260,17 +300,15 @@ public class CommandModel implements Comparable<CommandModel> {
     }
     
     // Create a CommandDescription object for the given Description annotation.
-    private static CommandDescription createCommandDescription(Description descAnnotation) {
-        CommandDescription cmdDesc = new CommandDescription();
-        cmdDesc.setName(descAnnotation.name());
-        cmdDesc.setSummary(descAnnotation.summary());
-        cmdDesc.addMethods(descAnnotation.methods());
-        cmdDesc.setURI(descAnnotation.uri());
-        cmdDesc.setInputEntity(descAnnotation.inputEntity());
-        cmdDesc.setOutputEntity(descAnnotation.outputEntity());
-        cmdDesc.setPrivileged(descAnnotation.privileged());
-        cmdDesc.setVisibility(descAnnotation.visible());
-        return cmdDesc;
+    private void createCommandDescription(Description descAnnotation) {
+        setName(descAnnotation.name());
+        setSummary(descAnnotation.summary());
+        setMethods(descAnnotation.methods());
+        setURI(descAnnotation.uri());
+        setInputEntity(descAnnotation.inputEntity());
+        setOutputEntity(descAnnotation.outputEntity());
+        setPrivileged(descAnnotation.privileged());
+        setVisibility(descAnnotation.visible());
     }
     
 }   // class Command

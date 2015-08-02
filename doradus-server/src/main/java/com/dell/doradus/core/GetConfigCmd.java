@@ -25,9 +25,6 @@ import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Reply to the REST command: GET /_config. 
- */
 @Description(
     name = "Config",
     summary = "Retrieves configuration and runtime parameters for this server process.",

@@ -39,7 +39,6 @@ import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.RESTCallback;
-import com.dell.doradus.service.rest.RESTCommand;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.taskmanager.TaskManagerService;
 import com.dell.doradus.service.tenant.TenantService;
@@ -65,15 +64,6 @@ public class SchemaService extends Service {
     private static final int CURRENT_SCHEMA_LEVEL = 2;
 
     // REST commands supported by the SchemaService:
-    private static final List<RESTCommand> REST_RULES = Arrays.asList(new RESTCommand[] {
-        new RESTCommand("GET    /_applications                     com.dell.doradus.service.schema.ListApplicationsCmd"),
-        new RESTCommand("GET    /_applications/{application}       com.dell.doradus.service.schema.ListApplicationCmd"),
-        new RESTCommand("POST   /_applications                     com.dell.doradus.service.schema.DefineApplicationCmd"),
-        new RESTCommand("PUT    /_applications/{application}       com.dell.doradus.service.schema.ModifyApplicationCmd"),
-        new RESTCommand("DELETE /_applications/{application}       com.dell.doradus.service.schema.DeleteApplicationCmd"),
-        new RESTCommand("DELETE /_applications/{application}/{key} com.dell.doradus.service.schema.DeleteApplicationKeyCmd"),
-    });
-
     private static final List<Class<? extends RESTCallback>> CMD_CLASSES = Arrays.asList(
         ListApplicationsCmd.class,
         ListApplicationCmd.class,
@@ -98,7 +88,6 @@ public class SchemaService extends Service {
     // Called once before startService. 
     @Override
     public void initService() {
-        RESTService.instance().registerGlobalCommands(REST_RULES);
         RESTService.instance().registerCommands(CMD_CLASSES);
     }   // initService
 

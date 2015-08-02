@@ -18,10 +18,10 @@ package com.dell.doradus.service.rest.annotation;
 
 import java.lang.annotation.*;
 
-import com.dell.doradus.common.rest.CommandParameter;
+import com.dell.doradus.common.rest.RESTParameter;
 
 /** 
- * This marks a static method as one that returns a {@link CommandParameter} to descrube
+ * This marks a static method as one that returns a {@link RESTParameter} to describe
  * a parameter used in a REST command. The parameter may be used in the URI or in an
  * input parameter. Such "parameter describers" are only needed for parameters that need
  * extra semantics such as being optional, having a type other than text, or being

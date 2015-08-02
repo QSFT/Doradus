@@ -29,9 +29,6 @@ import com.dell.doradus.olap.OlapBatch;
 import com.dell.doradus.service.rest.ReaderCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Implements REST command: DELETE /{application}/{shard}
- */
 @Description(
     name = "Delete",
     summary = "Deletes a batch of objects from a specific shard.",

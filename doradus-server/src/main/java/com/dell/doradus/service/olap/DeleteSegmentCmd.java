@@ -23,9 +23,6 @@ import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Handle the REST command: DELETE /{application}/_shards/{shard}.
- */
 @Description(
     name = "DeleteShard",
     summary = "Deletes all data for a shard.",

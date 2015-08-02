@@ -24,9 +24,6 @@ import com.dell.doradus.olap.CheckDatabase;
 import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Handle the REST command: DELETE /{application}/_shards/{shard}/{segment}.
- */
 @Description(
     name = "DeleteSegment",
     summary = "Deletes a segment in a specific shard. For experts only!",

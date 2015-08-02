@@ -24,11 +24,8 @@ import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Handles the REST command: DELETE /_applications/{application}/{key}.
- */
 @Description(
-    name = "DeleteAppKey",
+    name = "DeleteAppWithKey",
     summary = "Deletes an existing application including all of its data " +
               "using the application's schema-defined {key}.",
     methods = {HttpMethod.DELETE},

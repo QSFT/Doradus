@@ -20,16 +20,12 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
-import com.dell.doradus.common.rest.CommandParameter;
+import com.dell.doradus.common.rest.RESTParameter;
 import com.dell.doradus.olap.MergeOptions;
 import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 import com.dell.doradus.service.rest.annotation.ParamDescription;
 
-/**
- * Handle the REST commands: POST /{application}/_shards/{shard} and
- * POST /{application}/_shards/{shard}?{params}
- */
 @Description(
     name = "Merge",
     summary = "Merges all updates in a specific shard.",
@@ -38,8 +34,8 @@ import com.dell.doradus.service.rest.annotation.ParamDescription;
 )
 public class MergeSegmentCmd extends RESTCallback {
     @ParamDescription
-    public static CommandParameter describeParams() {
-        return new CommandParameter("params")
+    public static RESTParameter describeParams() {
+        return new RESTParameter("params", null, false)
                         .add("expire-date", "text")
                         .add("timeout", "integer")
                         .add("force-merge", "boolean");

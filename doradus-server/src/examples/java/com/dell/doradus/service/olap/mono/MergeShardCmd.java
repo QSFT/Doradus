@@ -24,9 +24,6 @@ import com.dell.doradus.service.olap.OLAPService;
 import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Handle the REST command: POST /{application}/_merge
- */
 @Description(
     name = "Merge",
     summary = "Merges new batch data, if any, for a specific application to the mono shard.",

@@ -24,10 +24,6 @@ import com.dell.doradus.olap.CheckDatabase;
 import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Handle the REST command: GET /{application}/_verify/{shard}
- * Verify that all segments in the shard are correct
- */
 @Description(
     name = "Verify",
     summary = "Performs an integrity check on a given shard. " +

@@ -20,22 +20,18 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
-import com.dell.doradus.common.rest.CommandParameter;
+import com.dell.doradus.common.rest.RESTParameter;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.olap.OLAPService;
 import com.dell.doradus.service.rest.UNodeInOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 import com.dell.doradus.service.rest.annotation.ParamDescription;
 
-/**
- * Implements the REST commands: GET or PUT /{application}/{table}/_query. The query
- * parameters are passed in an input entity.
- */
 @Description(
     name = "Query",
     summary = "Performs an object query for a specific application and table using " +
               "the data in the 'mono' shard.",
-    methods = HttpMethod.GET,
+    methods = {HttpMethod.GET, HttpMethod.PUT},
     uri = "/{application}/{table}/_query",
     inputEntity = "search",
     outputEntity = "results"
@@ -43,8 +39,8 @@ import com.dell.doradus.service.rest.annotation.ParamDescription;
 public class QueryDocCmd extends UNodeInOutCallback {
 
     @ParamDescription
-    public static CommandParameter describeSearchParam() {
-        return new CommandParameter("search")
+    public static RESTParameter describeSearchParam() {
+        return new RESTParameter("search")
                         .add("query", "text", true)
                         .add("size", "integer")
                         .add("skip", "integer")

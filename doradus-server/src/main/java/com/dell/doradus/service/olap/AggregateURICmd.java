@@ -23,9 +23,6 @@ import com.dell.doradus.common.UNode;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Implements the REST command: GET /{application}/{table}/_aggregate?{params}.
- */
 @Description(
     name="AggregateURI",
     summary="Performs an aggregate query on the given application and table. " +

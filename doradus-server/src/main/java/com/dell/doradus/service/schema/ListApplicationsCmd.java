@@ -23,12 +23,9 @@ import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Provides the callback for the REST command: GET /_applications.
- */
 @Description(
     name = "ListApps",
-    summary = "Returns the schema of all existing applications.",
+    summary = "Returns the schema of all current applications.",
     methods = {HttpMethod.GET},
     uri = "/_applications",
     outputEntity = "applications"

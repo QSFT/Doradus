@@ -23,19 +23,18 @@ import java.util.Map;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpMethod;
-import com.dell.doradus.common.rest.CommandSet;
+import com.dell.doradus.common.rest.RESTCatalog;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.StorageService;
+import com.dell.doradus.service.rest.annotation.Description;
 import com.dell.doradus.service.schema.SchemaService;
 
 /**
- * The REST Service for Doradus. This singleton class creates and runs an
- * instance of the Web server. It maintains a mapping from REST requests to callbacks
- * that handle each command via {@link #registerRESTCommands(Iterable)}. The servlet
- * that examines each request calls {@link #matchCommand(String, String, String, Map)} to
- * find the appropriate callback for each request, if one exists.
+ * The REST Service for Doradus. This singleton class creates and runs an instance of the
+ * {@link WebServer}. It maintains a set of registered REST commands and matches requests
+ * to the appropriate command.
  */
 public class RESTService extends Service {
     /**
@@ -52,7 +51,7 @@ public class RESTService extends Service {
 	
     private static final RESTService INSTANCE = new RESTService();
     private WebServer m_webservice;
-    private final RESTCommandSet m_commandSet = new RESTCommandSet();
+    private final RESTRegistry m_cmdRegistry = new RESTRegistry();
 
     /**
      * Get the singleton instance of this service. The service may or may not have been
@@ -69,19 +68,17 @@ public class RESTService extends Service {
     // Initialize WebService so it's ready to run.
     @Override
     public void initService() {
-        loadWebServer();
+        m_webservice = loadWebServer();
     	registerCommands(Arrays.asList(DescribeCmd.class));
     }   // initService
 
     // Begin servicing REST requests.
     @Override
     public void startService() {
-        m_commandSet.freezeCommandSet(true);
+        m_cmdRegistry.freezeCommandSet(true);
         displayCommandSet();
         try {
-           	if (m_webservice != null) {
-           		m_webservice.start();
-           	}
+       		m_webservice.start();
         } catch (Exception e) {
             throw new RuntimeException("Failed to start WebService", e);
         }
@@ -91,25 +88,27 @@ public class RESTService extends Service {
     @Override
     public void stopService() {
         try {
-           	if (m_webservice != null) {
-           		m_webservice.stop();
-           	}
+       		m_webservice.stop();
         } catch (Exception e) {
             m_logger.warn("WebService stop failed", e);
         }
-        m_commandSet.clear();
-
     }   // stopService
 
     //----- RESTService public methods
     
-    public CommandSet describeCommands() {
-        return m_commandSet.describeCommands();
+    /**
+     * Return the current set of visible, registered commands as a {@link RESTCatalog}.
+     * This object can be serialized, returned via the REST API, and deserialized.
+     *  
+     * @return  A {@link RESTCatalog} of all visible, registered commands.
+     */
+    public RESTCatalog describeCommands() {
+        return m_cmdRegistry.describeCommands();
     }
     
     /**
-     * Register the given callback, which will be notified each time client request
-     * activity occurs. 
+     * Register the given activity callback, which will be notified each time client
+     * request activity occurs. 
      * 
      * @param callback  {@link RequestCallback} object.
      */
@@ -120,106 +119,57 @@ public class RESTService extends Service {
     }   // registerRequestCallback
     
     /**
-     * Register the given REST commands as global (system) commands.
+     * Register a set of REST commands as global (system) commands. The commands are
+     * defined via a set of {@link RESTCallback} objects, which must use the
+     * {@link Description} annotation to provide metadata about the commands.
      * 
-     * @param cmdClasses    REST command classes.
+     * @param callbackClasses   Iterable collection of {@link RESTCallback} classes
+     *                          that define the REST commands to be registered.
      */
-    public void registerCommands(Iterable<Class<? extends RESTCallback>> cmdClasses) {
-        m_commandSet.addCommands(null, cmdClasses);
+    public void registerCommands(Iterable<Class<? extends RESTCallback>> callbackClasses) {
+        m_cmdRegistry.registerCallbacks(null, callbackClasses);
     }
     
     /**
-     * Register the given REST commands as application commands belonging to the given
-     * storage service.
+     * Register a set of application REST commands as belonging to the given storage
+     * service owner. The commands are defined via a set of {@link RESTCallback} objects,
+     * which must use the {@link Description} annotation to provide metadata about the
+     * commands.
      * 
-     * @param cmdClasses    REST command classes.
-     * @param service       {@link StorageService} that owns commands. 
+     * @param callbackClasses   Iterable collection of {@link RESTCallback} classes
+     *                          that define application-specific REST commands to be
+     *                          registered.
+     * @param service           {@link StorageService} that owns the commands. 
      */
     public void registerCommands(Iterable<Class<? extends RESTCallback>> cmdClasses,
                                  StorageService service) {
-        m_commandSet.addCommands(service, cmdClasses);
+        m_cmdRegistry.registerCallbacks(service, cmdClasses);
     }
     
     /**
-     * Register the given REST commands as application commands belonging to the given
-     * storage service, which extends and/or overrides commands for the given parent
-     * storage service.
+     * Register a set of application REST commands as belonging to the given storage
+     * service owner, which extends another storage service. The commands are defined
+     * via a set of {@link RESTCallback} objects, which must use the {@link Description}
+     * annotation to provide metadata about the commands.
      * 
-     * @param cmdClasses    REST command classes.
-     * @param service       {@link StorageService} that owns commands.
-     * @param parentService {@link StorageService} whose commands are extended/overridden
-     *                      by these new services.
+     * @param callbackClasses   Iterable collection of {@link RESTCallback} classes
+     *                          that define application-specific REST commands to be
+     *                          registered.
+     * @param service           {@link StorageService} that owns the commands.
+     * @param parentService     {@link StorageService} whose commands are extended and/or
+     *                          overridden by the given service's new commands.
      */
     public void registerCommands(Iterable<Class<? extends RESTCallback>> cmdClasses,
-                                 StorageService service, StorageService parentService) {
-        m_commandSet.setParent(service.getClass().getSimpleName(), parentService.getClass().getSimpleName());
-        m_commandSet.addCommands(service, cmdClasses);
+                                 StorageService service,
+                                 StorageService parentService) {
+        m_cmdRegistry.setParent(service.getClass().getSimpleName(), parentService.getClass().getSimpleName());
+        m_cmdRegistry.registerCallbacks(service, cmdClasses);
     }
     
     /**
-     * Register the given {@link RESTCommand}s as global commands. All such commands are
-     * registered and recognized at global level. This method throws an exception if any
-     * command is a duplicate of another global RESTCommand.
-     *
-     * @param restCommands  {@link RESTCommand}s to be registered. Any collection type
-     *                      can be passed, for example.
-     */
-    public void registerGlobalCommands(Iterable<RESTCommand> restCommands) {
-        m_commandSet.addCommands(null, restCommands);
-    }
-    
-    /**
-     * Register the given {@link RESTCommand}s as application commands belonging to the
-     * given storage service. Only commands whose URI begins with "/{application}/" are
-     * actually registered as application commands; all others are registered as system
-     * (global) commands. Application commands are recognized and routed to the storage
-     * service for the actual application name passed for each invocation.
-     * <p>
-     * This method throws an exception if any command is a duplicate of another
-     * RESTCommand registered for the same scope.
-     *
-     * @param restCommands  {@link RESTCommand}s to be registered. Any collection type
-     *                      can be passed, for example.
-     * @param service       {@link StorageService} that owns the given commands.
-     */
-    public void registerApplicationCommands(Iterable<RESTCommand> restCommands, StorageService service) {
-        assert service != null;
-        m_commandSet.addCommands(service.getClass().getSimpleName(), restCommands);
-    }
-    
-    /**
-     * Register the given {@link RESTCommand}s as application commands belonging to the
-     * given storage service, which extends the given parent storage service. Only
-     * commands whose URI begins with "/{application}/" are registered as application
-     * commands; all others are registered as system (global) commands.
-     * <p>
-     * This method allows a storage service to extend the commands of another storage
-     * service. An application command is first routed to the storage service declared as
-     * the owner of that application. However, if no matching command is registered for
-     * that storage service, the parent service is then searched. This happens recursively
-     * so that a hierarchy of storage services can be defined.
-     * <p>
-     * This method throws an exception if any command is a duplicate of another
-     * RESTCommand registered for the same owner.
-     *
-     * @param restCommands  {@link RESTCommand}s to be registered. Any collection type
-     *                      can be passed, for example.
-     * @param service       {@link StorageService} that owns the given commands.
-     * @param parentService Parent {@link StorageService} that the given service extends
-     *                      with new commands.
-     */
-    public void registerApplicationCommands(Iterable<RESTCommand> restCommands,
-                                            StorageService service,
-                                            StorageService parentService) {
-        assert service != null;
-        m_commandSet.setParent(service.getClass().getSimpleName(), parentService.getClass().getSimpleName());
-        m_commandSet.addCommands(service.getClass().getSimpleName(), restCommands);
-    }
-    
-    /**
-     * See if the given REST request matches any registered commands. If it does, return
-     * corresponding {@link RESTCommand} and update the given variable map with decoded
-     * URI variables. For example, if the matching command is defined as:
+     * Attempt to match the given REST request to a registered command. If it does, return
+     * the corresponding {@link RegisteredCommand} and update the given variable map with
+     * decoded URI variables. For example, if the matching command is defined as:
      * <pre>
      *      GET /{application}/{table}/_query?{query}
      * </pre>
@@ -233,87 +183,43 @@ public class RESTService extends Service {
      *      table=Stars
      *      query=Tarantula+Nebula%2A
      * </pre>
+     * Note that URI-encoded parameter values remain encoded in the variable map.
      * 
-     * @param appDef        {@link ApplicationDefinition} of applicaiton that provides
+     * @param appDef        {@link ApplicationDefinition} of application that provides
      *                      context for command, if any. Null for system commands.
-     * @param method        HTTP method (case-insensitive: GET, PUT).
+     * @param method        {@link HttpMethod} of the request.
      * @param uri           Request URI (case-sensitive: "/Magellan/Stars/_query")
      * @param query         Optional query parameter (case-sensitive: "q=Tarantula+Nebula%2A").
-     * @param variableMap   Variable parameters defined in the RESTCommand substituted with
+     * @param variableMap   Variable parameters defined in the REST command substituted with
      *                      the actual values passed, not decoded (see above).
-     * @return              The {@link RESTCommand} if a match was found, otherwise null.
+     * @return              The {@link RegisteredCommand} if a match was found, otherwise null.
      */
-    public CommandModel findCommand(ApplicationDefinition appDef, HttpMethod method, String uri,
-                                    String query, Map<String, String> variableMap) {
+    public RegisteredCommand findCommand(ApplicationDefinition appDef, HttpMethod method, String uri,
+                                         String query, Map<String, String> variableMap) {
         String cmdOwner = null;
         if (appDef != null) {
             StorageService ss = SchemaService.instance().getStorageService(appDef);
             cmdOwner = ss.getClass().getSimpleName();
         }
-        return m_commandSet.findCommand(cmdOwner, method, uri, query, variableMap);
-    }   // matchCommand
-    
-    /**
-     * See if the given REST request matches any registered commands. If it does, return
-     * corresponding {@link RESTCommand} and update the given variable map with decoded
-     * URI variables. For example, if the matching command is defined as:
-     * <pre>
-     *      GET /{application}/{table}/_query?{query}
-     * </pre>
-     * And the actual request passed is:
-     * <pre>
-     *      GET /Magellan/Stars/_query?q=Tarantula+Nebula%2A
-     * <pre>
-     * The variable map will be returned with the follow key/value pairs:
-     * <pre>
-     *      application=Magellan
-     *      table=Stars
-     *      query=Tarantula+Nebula%2A
-     * </pre>
-     * 
-     * @param appDef        {@link ApplicationDefinition} of applicaiton that provides
-     *                      context for command, if any. Null for system commands.
-     * @param method        HTTP method (case-insensitive: GET, PUT).
-     * @param uri           Request URI (case-sensitive: "/Magellan/Stars/_query")
-     * @param query         Optional query parameter (case-sensitive: "q=Tarantula+Nebula%2A").
-     * @param variableMap   Variable parameters defined in the RESTCommand substituted with
-     *                      the actual values passed, not decoded (see above).
-     * @return              The {@link RESTCommand} if a match was found, otherwise null.
-     */
-    public RESTCommand matchCommand(ApplicationDefinition appDef, String method, String uri,
-                                    String query, Map<String, String> variableMap) {
-        String cmdOwner = null;
-        if (appDef != null) {
-            StorageService ss = SchemaService.instance().getStorageService(appDef);
-            cmdOwner = ss.getClass().getSimpleName();
-        }
-        return m_commandSet.findMatch(cmdOwner, method, uri, query, variableMap);
+        return m_cmdRegistry.findCommand(cmdOwner, method, uri, query, variableMap);
     }   // matchCommand
     
     //----- Package-private methods (used by RESTServlet)
 
     void onNewrequest() {
-    	if (m_webservice != null) {
-    		m_webservice.notifyNewRequest(); 
-    	}
+		m_webservice.notifyNewRequest(); 
     } 
     
     void onRequestSuccess(long startTimeNanos) {
-       	if (m_webservice != null) {
-       		m_webservice.notifyRequestSuccess(startTimeNanos);
-       	}
+   		m_webservice.notifyRequestSuccess(startTimeNanos);
     }   
     
     void onRequestRejected(String reason) {
-       	if (m_webservice != null) {
-       		m_webservice.notifyRequestRejected(reason);
-       	}
+   		m_webservice.notifyRequestRejected(reason);
     }   
     
     void onRequestFailed(Throwable e) {
-       	if (m_webservice != null) {
-       		m_webservice.notifyRequestFailed(e);
-       	}
+   		m_webservice.notifyRequestFailed(e);
     } 
     
     //----- Private methods
@@ -322,7 +228,8 @@ public class RESTService extends Service {
     private RESTService() {}
    
     // Attempt to load the WebServer instance defined by webserver_class.
-    private void loadWebServer() {
+    private WebServer loadWebServer() {
+        WebServer webServer = null;
         if (!Utils.isEmpty(ServerConfig.getInstance().load_webserver)) {
             m_logger.warn("Parameter 'load_webserver' is obsolete. Use 'default_services' " +
                             "to enable/disable the RESTService. Option ignored.");
@@ -330,18 +237,19 @@ public class RESTService extends Service {
         try {
             Class<?> serviceClass = Class.forName(ServerConfig.getInstance().webserver_class);
             Method instanceMethod = serviceClass.getMethod("instance", (Class<?>[])null);
-            m_webservice = (WebServer)instanceMethod.invoke(null, (Object[])null);
-            m_webservice.init(RESTServlet.class.getName());
+            webServer = (WebServer)instanceMethod.invoke(null, (Object[])null);
+            webServer.init(RESTServlet.class.getName());
         } catch (Exception e) {
             throw new RuntimeException("Error initializing WebServer: " + ServerConfig.getInstance().webserver_class, e);
         }
+        return webServer;
     }
 
     // If DEBUG logging is enabled, log all REST commands in sorted order.
     private void displayCommandSet() {
         if (m_logger.isDebugEnabled()) {
             m_logger.debug("Registered REST Commands:");
-            Collection<String> commands = m_commandSet.getCommands();
+            Collection<String> commands = m_cmdRegistry.getCommands();
             for (String command : commands) {
                 m_logger.debug(command);
             }

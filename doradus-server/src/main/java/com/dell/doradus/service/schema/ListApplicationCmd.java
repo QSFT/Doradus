@@ -23,15 +23,12 @@ import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
-/**
- * Handle the REST command: GET /_applications/{application}
- */
 @Description(
     name = "ListApp",
-    summary = "Returns the schema of an existing application.",
+    summary = "Returns the schema of a specific application.",
     methods = {HttpMethod.GET},
     uri = "/_applications/{application}",
-    outputEntity = "{application}"
+    outputEntity = "ApplicationDefinition"
 )
 public class ListApplicationCmd extends UNodeOutCallback {
 

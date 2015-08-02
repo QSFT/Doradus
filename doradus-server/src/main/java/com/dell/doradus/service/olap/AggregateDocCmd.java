@@ -21,15 +21,11 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
-import com.dell.doradus.common.rest.CommandParameter;
+import com.dell.doradus.common.rest.RESTParameter;
 import com.dell.doradus.service.rest.UNodeInOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 import com.dell.doradus.service.rest.annotation.ParamDescription;
 
-/**
- * Implements the REST commands: GET or PUT /{application}/{table}/_aggregate. The
- * aggregate query parameters are passed in an input entity.
- */
 @Description(
     name="Aggregate",
     summary="Performs an aggregate query on the given application and table.",
@@ -40,8 +36,8 @@ import com.dell.doradus.service.rest.annotation.ParamDescription;
 )
 public class AggregateDocCmd extends UNodeInOutCallback {
     @ParamDescription
-    public static CommandParameter describeParameter() {
-        return new CommandParameter("aggregate-search")
+    public static RESTParameter describeParameter() {
+        return new RESTParameter("aggregate-search")
                         .add("query", "text")
                         .add("grouping-fields", "text")
                         .add("metric", "text", true)
