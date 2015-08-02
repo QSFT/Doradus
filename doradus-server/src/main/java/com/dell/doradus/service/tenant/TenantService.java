@@ -438,9 +438,19 @@ public class TenantService extends Service {
     // Validate user's permission vs. the given required permission.
     private boolean isValidUserAccess(UserDefinition userDef, Permission permNeeded) {
         Set<Permission> permList = userDef.getPermissions();
-        return permList.size() == 0 ||
-               permList.contains(Permission.ALL) || // No defined permissions == ALL
-               permList.contains(permNeeded);
+        if (permList.size() == 0 || permList.contains(Permission.ALL)) {
+            return true;
+        }
+        switch (permNeeded) {
+        case APPEND:
+            return permList.contains(Permission.APPEND) || permList.contains(Permission.UPDATE);
+        case READ:
+            return permList.contains(Permission.READ);
+        case UPDATE:
+            return permList.contains(Permission.UPDATE);
+        default:
+            return false;
+        }
     }
 
     // Add the given new or updated tenant definition to the cache.
