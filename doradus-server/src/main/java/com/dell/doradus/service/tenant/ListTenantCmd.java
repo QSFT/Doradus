@@ -26,7 +26,7 @@ import com.dell.doradus.service.rest.annotation.Description;
     name = "ListTenant",
     summary = "List a specific tenant's details.",
     methods = HttpMethod.GET,
-    uri = "/_tenant/{tenant}",
+    uri = "/_tenants/{tenant}",
     privileged = true,
     outputEntity = "tenant"
 )
