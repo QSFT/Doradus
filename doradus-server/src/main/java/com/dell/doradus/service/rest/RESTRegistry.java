@@ -118,7 +118,7 @@ public class RESTRegistry extends RESTCatalog {
             SortedMap<String, RESTCommand> cmdMap = ownerMap.get(cmdOwner);
             Iterator<RESTCommand> iter = cmdMap.values().iterator();
             while (iter.hasNext()) {
-                if (!iter.next().isPrivileged()) {
+                if (!iter.next().isVisible()) {
                     iter.remove();
                 }
             }
