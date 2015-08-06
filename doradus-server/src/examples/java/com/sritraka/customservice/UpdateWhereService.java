@@ -25,6 +25,7 @@ import com.dell.doradus.common.DBObject;
 import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.HttpMethod;
+import com.dell.doradus.common.ObjectResult;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
@@ -68,7 +69,7 @@ import com.dell.doradus.service.spider.SpiderService;
  *         "ThreadID": null
  *      }}</pre>
  * This update adds the value "Customer" to the multi-valued field "Tags" and sets the
- * "ThreadID" field to null. All updates are performed in a single batch commit. For a
+ * "ThreadID" field to null. Updates are performed in batches of 100 objects each. For a
  * selected object, the update is a no-op if the object already possesses the indicated
  * field values.
  * <p>
@@ -83,8 +84,8 @@ import com.dell.doradus.service.spider.SpiderService;
  *          - com.dell.doradus.mbeans.MBeanService
  *          ...
  *          <b>- com.sritraka.customservice.UpdateWhereService</b></pre>
- * Note that, although this sample service is functional, it is rudimentary. For example,
- * updates to large batches use too much memory (which could be fixed with some paging).
+ * Note that, although this sample service is functional, it is meant for demonstration
+ * purposes.
  */
 public class UpdateWhereService extends Service {
     private static final UpdateWhereService INSTANCE = new UpdateWhereService();
@@ -122,23 +123,44 @@ public class UpdateWhereService extends Service {
             Map<String, String> paramMap = Utils.parseURIQuery(params);
             Utils.require(paramMap.containsKey("q"), "Missing URI parameter: q");
             Utils.require(paramMap.size() == 1, "Only the 'q' parameter is allowed");
-            params = params + "&f=_ID&s=0";
+            params = params + "&f=_ID&s=100";
             
             // Parse the input entity into a DBObject
             Utils.require(inNode != null, "This command requires an input entity");
             DBObject modelObj = new DBObject();
             modelObj.parse(inNode);
 
-            // Execute the query and apply the update to each object, creating a batch. 
-            SearchResultList searchSet = SpiderService.instance().objectQueryURI(tableDef, params);
-            DBObjectBatch dbObjBatch = new DBObjectBatch();
-            for (SearchResult searchResult : searchSet.results) {
-                dbObjBatch.addObject(modelObj.makeCopy(searchResult.id()));
-            }
+            // Find and update batch-at-a-time.
+            String contToken = null;
+            BatchResult masterResult = null;
+            do {
+                // Add continuation character for next page if needed.
+                String uriQuery = params;
+                if (contToken != null) {
+                    uriQuery = uriQuery + "&g=" + Utils.urlEncode(contToken);
+                }
+                
+                // Execute the query and apply the update to each object, creating a batch.
+                SearchResultList searchSet = SpiderService.instance().objectQueryURI(tableDef, uriQuery);
+                DBObjectBatch dbObjBatch = new DBObjectBatch();
+                for (SearchResult searchResult : searchSet.results) {
+                    dbObjBatch.addObject(modelObj.makeCopy(searchResult.id()));
+                }
+                
+                // Submit the update batch and save the batch update result.
+                BatchResult batchResult = SpiderService.instance().addBatch(appDef, tableName, dbObjBatch);
+                if (masterResult == null) {
+                    masterResult = batchResult;
+                } else {
+                    for (ObjectResult objResult : batchResult.getResultObjects()) {
+                        masterResult.addObjectResult(objResult);
+                    }
+                }
+                contToken = searchSet.continuation_token;
+            } while (contToken != null);
             
-            // Submit the update batch and return the batch update result.
-            BatchResult batchResult = SpiderService.instance().addBatch(appDef, tableName, dbObjBatch);
-            String body = batchResult.toDoc().toString(m_request.getOutputContentType());
+            // Return the master BatchResult.
+            String body = masterResult.toDoc().toString(m_request.getOutputContentType());
             return new RESTResponse(HttpCode.OK, body, m_request.getOutputContentType());
         }   // invokeUNodeIn
         
