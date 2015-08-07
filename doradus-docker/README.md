@@ -3,7 +3,7 @@ Doradus Docker image
 
 This demonstrates how to deploy and use Doradus (https://github.com/dell-oss/Doradus) as an Docker image with external NOSQL DB server.
 
-Running Doradus connecting to Dynamo DB on ECS
+Running Doradus container connecting to Dynamo DB on ECS
 ----------------------------------------------
 1. Follow this doc if you want to install Docker on EC2 Amazon instance
 
@@ -23,7 +23,7 @@ Running Doradus connecting to Dynamo DB on ECS
         
         You can use $docker logs -f doradus to tail the logs of Doradus server
         
-Running Doradus connecting to external Cassandra
+Running Doradus container connecting to external Cassandra
 ------------------------------------------------
 1. Launch an external Cassandra DB instance
 
