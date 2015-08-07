@@ -82,6 +82,7 @@ public class ChunkReader {
     }
     
     private void readField(int fieldIndex) {
+        m_data.seek(m_data.length());
         m_input.seek(m_fieldOffsets.get(fieldIndex));
         int[] positions = new int[m_size];
         int[] lengths = new int[m_size];
