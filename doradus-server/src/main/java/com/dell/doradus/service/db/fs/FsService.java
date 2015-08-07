@@ -30,13 +30,13 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
-import com.dell.doradus.service.tenant.UserDefinition;
 
 public class FsService extends DBService {
     public static final String ROOT = "c:/temp/FS"; 

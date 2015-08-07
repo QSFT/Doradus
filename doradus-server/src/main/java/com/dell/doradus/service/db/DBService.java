@@ -21,12 +21,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.db.cql.CQLService;
 import com.dell.doradus.service.db.thrift.ThriftService;
-import com.dell.doradus.service.tenant.UserDefinition;
 
 /**
  * Provides methods that access the physical database. This is currently Cassandra but

@@ -46,6 +46,7 @@ import com.datastax.driver.core.SocketOptions;
 import com.datastax.driver.core.TableMetadata;
 import com.datastax.driver.core.exceptions.InvalidQueryException;
 import com.datastax.driver.core.policies.RoundRobinPolicy;
+import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBService;
@@ -56,7 +57,6 @@ import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.db.cql.CQLStatementCache.Query;
 import com.dell.doradus.service.db.cql.CQLStatementCache.Update;
 import com.dell.doradus.service.schema.SchemaService;
-import com.dell.doradus.service.tenant.UserDefinition;
 
 /**
  * Implements the DBService interface using the CQL API to communicate with Cassandra. A

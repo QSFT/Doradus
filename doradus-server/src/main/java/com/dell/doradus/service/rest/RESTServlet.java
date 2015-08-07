@@ -36,6 +36,7 @@ import com.dell.doradus.common.HttpDefs;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.Pair;
 import com.dell.doradus.common.RESTResponse;
+import com.dell.doradus.common.UserDefinition.Permission;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.db.DBNotAvailableException;
 import com.dell.doradus.service.db.DuplicateException;
@@ -43,7 +44,6 @@ import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.db.UnauthorizedException;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.tenant.TenantService;
-import com.dell.doradus.service.tenant.UserDefinition.Permission;
 
 /**
  * An HttpServlet implementation used by the {@link RESTService} to process REST requests.

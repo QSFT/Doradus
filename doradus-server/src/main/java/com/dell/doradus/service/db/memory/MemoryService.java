@@ -25,13 +25,13 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
-import com.dell.doradus.service.tenant.UserDefinition;
 
 public class MemoryService extends DBService {
 	public static class Row implements DRow {
