@@ -7,12 +7,12 @@ A lightweight generic command based Java Client that allows any java client to a
 
 * Requires no update on the Client as the time it connects to the server which can be updated with new REST APIs or DB services.
 * Validates the requirements of the command such as name or parameters
-* Inquire the command description that contains the required parameters that would be helpful for building the command correctly
+* Inquires the command description that contains the required parameters that would be helpful for building the command correctly
 * Connects to as many as Doradus server as you want in any non-tenant/multi-tenant modes and opens a session for a specific app to run sequential commands
 
 
 [More Usage Samples in Unit Tests]
-https://github.com/dell-oss/Doradus/tree/master/doradus-client/src/test)
+(https://github.com/dell-oss/Doradus/blob/master/doradus-client/src/test/java/com/dell/doradus/dory/DoradusClientTest.java)
 
 For example
 
@@ -21,7 +21,7 @@ For example
 ```java
     JsonObject jsonResult = client.describeCommand("SpiderService", "Add"); 
 ```   
-Then it returns the description of the command. This will help give the idea that client needs to build the Add command with application params such as application, table and batch object
+In turn, it returns the description of the command. This will help give the client the idea to to build the Add command correctly with application params such as application, table and batch object
 ```json
     {
     "summary": "Adds a batch of updates for a specific application and table. The batch can contain new and updated objects.",
