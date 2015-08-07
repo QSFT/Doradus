@@ -14,7 +14,7 @@ Running on Docker
 
 1. Launch a container called "doradus" in the background at the port you prefer
 
-        $ docker run -p <DOCKER_HOST_PORT>:<RESTPORT> -d --name doradus -e "AWS_ACCESS_KEY_ID=XXXXXX” -e "AWS_SECRET_ACCESS_KEY=XXXXXX” -e "RESTPORT=<RESTPORT>" -e "REGION=<REGION>” traduong1/docker-doradus
+        $ docker run -p <DOCKER_HOST_PORT>:<RESTPORT> -d --name doradus -e "AWS_ACCESS_KEY_ID=XXXXXX” -e "AWS_SECRET_ACCESS_KEY=XXXXXX” -e "RESTPORT=<RESTPORT>" -e "REGION=<REGION>” traduong1/doradus-docker
 
         For ex:
         docker run -p 8080:1234 -d --name doradus -e "XXXXX" -e "AWS_SECRET_ACCESS_KEY=XXXXX" -e "RESTPORT=1234" -e "REGION=XXXXX" traduong1/docker-doradus
