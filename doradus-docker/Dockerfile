@@ -31,7 +31,7 @@ RUN git clone https://github.com/dell-oss/Doradus.git /opt/doradus
 # build Doradus
 WORKDIR /opt/doradus
 RUN cd /opt/doradus
-RUN mvn clean install dependency:copy-dependencies -Dgpg.skip=true -Dmaven.javadoc.skip=true
+RUN mvn clean install dependency:copy-dependencies -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
 
 # start scripts
 ADD start.sh /usr/local/bin/start.sh
