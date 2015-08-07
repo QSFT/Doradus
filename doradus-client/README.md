@@ -14,7 +14,7 @@ A lightweight generic command based Java Client that allows any java client to a
 [More Usage Samples in Unit Tests]
 (https://github.com/dell-oss/Doradus/blob/master/doradus-client/src/test/java/com/dell/doradus/dory/DoradusClientTest.java)
 
-For example
+For examples,
 
 - Inquire
    
