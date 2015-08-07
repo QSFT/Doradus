@@ -22,13 +22,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.dell.doradus.common.DBObject.Builder;
+
 /**
  * Represents a batch of {@link DBObject}s being added or updated. If all objects belong
  * to the same table, m_tableDef will be defined. If objects may belong to different
  * tables, m_tableDef will be null, and each DBObject points to the table to which it
  * belongs.
  */
-public class DBObjectBatch {
+public class DBObjectBatch implements JSONable{
     // Members:
     private final List<DBObject> m_dbObjList = new ArrayList<DBObject>();
     
@@ -313,4 +315,43 @@ public class DBObjectBatch {
         m_dbObjList.clear();
     }   // clear
     
+	@Override
+	public String toJSON() {
+		return toDoc().toJSON();
+	}
+	
+	/**
+	  * Creates a new {@link DBObjectBatch.Builder} instance.
+	  * <p>
+	  * This is a convenience method for {@code new DBObjectBatch.Builder()}.
+	  *
+	  * @return the new DBObjectBatch builder.
+	  */
+	 public static DBObjectBatch.Builder builder() {
+	     return new DBObjectBatch.Builder();
+	 }
+	 	
+	 /**
+     * Helper class to build {@link DBObjectBatch} instances.
+     */
+	 public static class Builder {
+    	private DBObjectBatch dbObjectBatch = new DBObjectBatch();
+    			   	
+        /**
+         * Builds the DBObjectBatch 
+         *
+         * @return the newly built DBObjectBatch instance.
+         */
+        public DBObjectBatch build() {
+        	return this.dbObjectBatch;
+        }
+
+
+		public Builder add(DBObject dbObject) {
+			if (dbObject != null) {
+				dbObjectBatch.addObject(dbObject);
+			}
+			return this;
+		}
+    }	
 }   // class DBObjectBatch

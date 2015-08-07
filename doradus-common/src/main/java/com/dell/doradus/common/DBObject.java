@@ -88,7 +88,7 @@ import java.util.TreeSet;
  *      {@link #toGroupedDoc(TableDefinition)}
  * </pre>
  */
-final public class DBObject {
+final public class DBObject implements JSONable{
     // Known system field keys:
     private static final String _ID = "_ID";  
     private static final String _TABLE = "_table";
@@ -616,4 +616,43 @@ final public class DBObject {
         m_valueMap.put(fieldName, Arrays.asList(value));
     }   // setSystemField
     
+	@Override
+	public String toJSON() {
+		return toDoc().toJSON();
+	}   
+	
+	/**
+	  * Creates a new {@link Command.Builder} instance.
+	  * <p>
+	  * This is a convenience method for {@code new Command.Builder()}.
+	  *
+	  * @return the new Command builder.
+	  */
+	 public static DBObject.Builder builder() {
+	     return new DBObject.Builder();
+	 }
+	 
+	 /**
+     * Helper class to build {@link DBObject} instances.
+     */
+	 public static class Builder {
+    	private DBObject dbObject = new DBObject();
+    			   	
+        /**
+         * Builds the DBObject 
+         *
+         * @return the newly built DBObject instance.
+         */
+        public DBObject build() {
+        	return this.dbObject;
+        }
+
+
+		public Builder add(String name, String value) {
+			if (!Utils.isEmpty(name)) {
+				dbObject.addFieldValue(name, value);
+			}
+			return this;
+		}
+    }	 
 }   // class DBObject

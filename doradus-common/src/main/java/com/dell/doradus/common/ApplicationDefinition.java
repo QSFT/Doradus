@@ -29,7 +29,7 @@ import java.util.TreeMap;
  * Holds the definition of an application, including its options, tables, and their
  * fields.
  */
-final public class ApplicationDefinition {
+final public class ApplicationDefinition implements JSONable{
     // Application name (case-sensitive):
     private String m_appName;
     
@@ -561,6 +561,11 @@ final public class ApplicationDefinition {
 			str = newstring;
 		}
 		return str;
+	}
+
+	@Override
+	public String toJSON() {
+		return toDoc().toJSON();
 	}
 
 }   // class ApplicationDefinition
