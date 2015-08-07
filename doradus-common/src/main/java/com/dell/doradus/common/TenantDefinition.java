@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.service.tenant;
+package com.dell.doradus.common;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,8 +22,19 @@ import java.util.Map;
 
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.service.db.Tenant;
 
+/**
+ * Holds the definition of a Doradus tenant, which consists of the following: 
+ * <ul>
+ * <li>Name: The unique tenant name within a Doradus database instance.
+ * <li>Users: A set of {@link UserDefinition}s, which also define the (non-super) users
+ *     allowed to access the applications in the tenant.
+ * <li>Options: These are system-defined key/value pairs that control various aspects of
+ *     the tenant such as replication factor.
+ * <li>Properties: There are application-defined key/value pairs that are not meaningful
+ *     to Doradus but help identify or track the tenant.
+ * </ul>
+ */
 public class TenantDefinition {
     // Members:
     private String m_name;
@@ -39,20 +50,6 @@ public class TenantDefinition {
     //----- Getters
 
     /**
-     * Return a {@link Tenant} object that corresponds to this tenant definition's name.
-     * If the no tenant name has been defined yet, a RuntimeException is thrown. This is a
-     * convenience method for {@link Tenant#Tenant(String)}.
-     * 
-     * @return  A Tenant object that corresponds to this tenant definition's name.
-     */
-    public Tenant getTenant() {
-        if (Utils.isEmpty(m_name)) {
-            throw new RuntimeException("No tenant name defined");
-        }
-        return new Tenant(m_name);
-    }
-    
-    /**
      * Get the tenant's name. The tenant name is the same as the keyspace created for the
      * tenant.
      * 
@@ -60,17 +57,6 @@ public class TenantDefinition {
      */
     public String getName() {
         return m_name;
-    }
-    
-    /**
-     * Get this tenant definition's options, if any. Options are system-defined such as
-     * settings for the tenant's keyspace. 
-     * 
-     * @return  Tenant definition options as key/value pairs. The map is read-only and
-     *          may be empty but will not be null.
-     */
-    public Map<String, String> getOptions() {
-        return Collections.unmodifiableMap(m_options);
     }
     
     /**
@@ -105,16 +91,27 @@ public class TenantDefinition {
     }
 
     /**
-     * Get the value of the property with the given name if defined. Compared to options,
-     * which are system-defined, options are application-defined.
+     * Get this tenant definition's options, if any. Options are system-defined such as
+     * settings for the tenant's keyspace. 
      * 
-     * @param  propName Name of a property.
-     * @return          Property value or null if the property is not defined.
+     * @return  Tenant definition options as key/value pairs. The map is read-only and
+     *          may be empty but will not be null.
      */
-    public String getProperty(String propName) {
-        return m_properties.get(propName);
+    public Map<String, String> getOptions() {
+        return Collections.unmodifiableMap(m_options);
     }
-
+    
+    /**
+     * Get the value of the option with the given name, if defined. Compared to
+     * properties, which are application-defined, options are system-defined.
+     * 
+     * @param optName   Name of option to fetch.
+     * @return          Option value or null if not defined.
+     */
+    public String getOption(String optName) {
+        return m_options.get(optName);
+    }
+    
     /**
      * Get the properties defined for this tenant definition as a key value map. Compared
      * to options, which are system-defined, options are application-defined.
@@ -126,6 +123,17 @@ public class TenantDefinition {
         return Collections.unmodifiableMap(m_properties);
     }
     
+    /**
+     * Get the value of the property with the given name if defined. Compared to options,
+     * which are system-defined, options are application-defined.
+     * 
+     * @param  propName Name of a property.
+     * @return          Property value or null if the property is not defined.
+     */
+    public String getProperty(String propName) {
+        return m_properties.get(propName);
+    }
+
     /**
      * Return this Tenant definition as a UNode tree, which can be serialized into text
      * via {@link UNode#toJSON()} or {@link UNode#toXML()}.
@@ -185,6 +193,17 @@ public class TenantDefinition {
         Utils.require(!Utils.isEmpty(userID), "User ID must be set");
         Utils.require(!m_users.containsKey(userID), "Duplicate user ID: " + userID);
         m_users.put(userID, userDef);
+    }
+    
+    /**
+     * Set the given option. If the option was previously defined, the value is
+     * overwritten.
+     * 
+     * @param optName   Option name.
+     * @param optValue  Option value.
+     */
+    public void setOption(String optName, String optValue) {
+        m_options.put(optName, optValue);
     }
     
     /**

@@ -26,7 +26,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import com.dell.doradus.common.TenantDefinition;
 import com.dell.doradus.common.UNode;
+import com.dell.doradus.common.UserDefinition;
+import com.dell.doradus.common.UserDefinition.Permission;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;
@@ -41,7 +44,6 @@ import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.taskmanager.TaskManagerService;
-import com.dell.doradus.service.tenant.UserDefinition.Permission;
 
 /**
  * Provides tenant management services such as creating new tenants, listing tenants, and

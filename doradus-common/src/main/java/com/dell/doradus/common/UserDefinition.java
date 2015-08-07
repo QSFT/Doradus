@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-/**
- * Holds the definition of a tenant user.
- */
-package com.dell.doradus.service.tenant;
+package com.dell.doradus.common;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,28 +25,47 @@ import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 
 /**
- * Represents a defined user for a specific tenant. Holds the user's name, password, and
- * defined permissions.
+ * Represents a defined user for a specific tenant. Holds the user's ID (name), password,
+ * and defined permissions.
  */
 public class UserDefinition {
-    // Tentative
+    /**
+     * The permissions that can be assigned to a user. A user with no explicit permission
+     * is considered to have the ALL permission.
+     */
     public enum Permission {
-        ALL,    // read, write, and update schema
-        APPEND, // append only
-        UPDATE, // modify, append, or delete
-        READ,   // read only
+        /**
+         * Can read and write data and add/update schemas.
+         */
+        ALL,
+        
+        /**
+         * Can only append (POST) data. 
+         */
+        APPEND,
+        
+        /**
+         * Can append, modify, or delete data.
+         */
+        UPDATE,
+        
+        /**
+         * Can read (query) data.
+         */
+        READ,
     }
     private String m_userID;
     private String m_password;
     private final Set<Permission> m_permissions = new HashSet<Permission>();
 
     /**
-     * Create a new object with all null values.
+     * Create a new user with all null values.
      */
     public UserDefinition() {}
     
     /**
      * Create a new object setting the user ID only.
+     * 
      * @param userID
      */
     public UserDefinition(String userID) {
@@ -87,6 +103,15 @@ public class UserDefinition {
     }
     
     //----- Setters
+    
+    /**
+     * Set this user's ID (name).
+     * 
+     * @param userID    New user ID.
+     */
+    public void setID(String userID) {
+        m_userID = userID;
+    }
     
     /**
      * Set this user definition's password.

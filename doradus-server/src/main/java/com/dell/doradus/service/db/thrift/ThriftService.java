@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 
+import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBNotAvailableException;
@@ -36,7 +37,6 @@ import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.schema.SchemaService;
-import com.dell.doradus.service.tenant.UserDefinition;
 
 public class ThriftService extends DBService {
     private static final ThriftService INSTANCE = new ThriftService();
