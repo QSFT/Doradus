@@ -1,6 +1,9 @@
-#Doradus at Strata 2015
-Doradus was presented at [Strata+Hadoop World 2015](http://strataconf.com/big-data-conference-ca-2015/) in San Jose, CA. Slides for the session, titled *[One Billion Objects in 2GB: Big Data Analytics on Small Clusters with Doradus OLAP](http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/38276)*, can be found here: [http://www.slideshare.net/randyguck/strata-presentation-doradus](http://www.slideshare.net/randyguck/strata-presentation-doradus). Be sure to check out the slide notes, which provide extra details. If you attended the conference or have an
-O'Reilly acccount, you can watch the video of the session [here](http://player.oreilly.com/videos/9781491924143).
+#Doradus In The Wild
+Just learning about Doradus? Here are some links to recent presentations:
+
+- **Doradus at Strata+Hadoop World**: Doradus was presented at [Strata+Hadoop World 2015](http://strataconf.com/big-data-conference-ca-2015/) in San Jose, CA. Slides for the session, titled *[One Billion Objects in 2GB: Big Data Analytics on Small Clusters with Doradus OLAP](http://strataconf.com/big-data-conference-ca-2015/public/schedule/detail/38276)*, can be found here: [http://www.slideshare.net/randyguck/strata-presentation-doradus](http://www.slideshare.net/randyguck/strata-presentation-doradus). Be sure to check out the slide notes, which provide extra details. If you attended the conference or have an O'Reilly acccount, you can watch the video of the session [here](http://player.oreilly.com/videos/9781491924143).
+
+- **O'Reilly Webcast**: Doradus OLAP was highlighted in an [O'Reilly webcast](http://www.oreilly.com/pub/e/3478). If you missed the session, you can still register and get access to the recorded session.
 
 #What is Doradus?
 New to Doradus? There's a quick overview in this wiki page:
