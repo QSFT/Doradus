@@ -38,7 +38,7 @@ public class GetConfigCmd extends UNodeOutCallback {
     @Override
     public UNode invokeUNodeOut() {
         UNode rootNode = UNode.createMapNode("configuration");
-        String version = DoradusServer.instance().getDoradusVersion();
+        String version = DoradusServer.getDoradusVersion();
         if (!Utils.isEmpty(version)) {
         	rootNode.addValueNode("version", version);
         }

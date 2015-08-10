@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.dell.doradus.common.DBObject.Builder;
-
 /**
  * Represents a batch of {@link DBObject}s being added or updated. If all objects belong
  * to the same table, m_tableDef will be defined. If objects may belong to different
