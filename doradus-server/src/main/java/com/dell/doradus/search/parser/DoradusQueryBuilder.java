@@ -671,6 +671,9 @@ public class DoradusQueryBuilder {
                         for (int k = 0; k < bi.items.size(); k++) {
                             LinkItem next = bi.items.get(k);
                             next.operation= function.operation;
+                            if(function.operation.equals("NONE") && k > 0) {
+                                next.operation = "ANY";
+                            }
                         }
                     }
                     items.add(function);
