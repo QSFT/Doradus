@@ -31,6 +31,7 @@ import java.util.Map;
 
 import javax.json.JsonObject;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.dell.doradus.client.Credentials;
@@ -38,8 +39,11 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.DBObject;
 import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.RESTResponse;
+import com.dell.doradus.common.TenantDefinition;
+import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.dory.command.Command;
 
+@Ignore
 public class DoradusClientTest {
     private static final String HOST = "localhost";
     private static final int PORT = 1111;
@@ -93,6 +97,8 @@ public class DoradusClientTest {
     	catch (Exception e) {
     		assertTrue(e.getMessage().equals("Unknown application: Foo"));
     	}   
+    	
+    	createApp("MyApp");
     	
       	//open session with existing app
     	client = DoradusClient.open(HOST, PORT, credentials, "MyApp");
@@ -149,16 +155,33 @@ public class DoradusClientTest {
     	client.close();  	
     	
     }
-  
+
+    @Test
+    public void testTenantManagmentCommands() throws Exception {
+    	Credentials credentials = new Credentials(null, "cassandra", "cassandra");    	
+    	DoradusClient client = new DoradusClient(HOST, PORT, credentials);
+    	
+    	//test ListTenant
+    	RESTResponse response = client.runCommand(Command.builder().withName("ListTenant").withParam("tenant", "HelloKitty").build());
+    	if (response.getCode().getCode() == 200) {
+        	//test DeleteTenant
+        	response = client.runCommand(Command.builder().withName("DeleteTenant").withParam("tenant", "HelloKitty").build());   		
+    	}
+   		//test DefineTenant
+		TenantDefinition tenantDef = new TenantDefinition();
+		tenantDef.setName("HelloKitty");
+		UserDefinition userDef = new UserDefinition("Katniss");
+		userDef.setPassword("Everdeen");
+		tenantDef.addUser(userDef);
+		response = client.runCommand(Command.builder().withName("DefineTenant").withParam("TenantDefinition", tenantDef).build());
+		assertTrue(response.getCode().getCode() == 200); 
+		assertTrue(response.getBody().contains("HelloKitty"));
+	
+    	client.close();
+    }
+    
     @Test
     public void testSchemaSystemCommands() throws Exception {
-    	//test create Tenant
-//    	Credentials credentials = new Credentials(null, "cassandra", "cassandra");
-//    	DoradusClient client = new DoradusClient(HOST, PORT, credentials);
-//    	TenantDefinition tenantDef = new TenantDefinition();
-//		RESTResponse response = client.runCommand(Command.builder().withName("DefineTenant").withParam("TenantDefinition", tenantDef).build());
-//		assertTrue(response.getBody().contains("200"));
-//    	
     	Credentials credentials = new Credentials("HelloKitty", "Katniss", "Everdeen");      	
     	DoradusClient client = new DoradusClient(HOST, PORT, credentials);
     	

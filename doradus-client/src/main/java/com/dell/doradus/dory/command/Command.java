@@ -155,8 +155,8 @@ public class Command extends BaseCommand<RESTResponse> {
     
 
 	private String substitute(String uri, String tenant) {
-		if (uri.contains("{tenant}")) {
-			uri = uri.replace("{tenant}", tenant);
+		if (uri.contains("{tenant}")) {			
+			uri = uri.replace("{tenant}", tenant != null ? tenant : getTenant());
 		}
 		if (uri.contains("{application}")) {
 			uri = uri.replace("{application}", Utils.urlEncode(getApplicationName()));

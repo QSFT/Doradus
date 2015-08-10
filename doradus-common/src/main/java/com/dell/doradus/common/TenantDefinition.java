@@ -35,7 +35,7 @@ import com.dell.doradus.common.Utils;
  *     to Doradus but help identify or track the tenant.
  * </ul>
  */
-public class TenantDefinition {
+public class TenantDefinition implements JSONable{
     // Members:
     private String m_name;
     private final Map<String, UserDefinition> m_users = new HashMap<>();
@@ -257,4 +257,8 @@ public class TenantDefinition {
         }            
     }   // parse
 
+	@Override
+	public String toJSON() {
+		return toDoc().toJSON();
+	}    
 }   // class TenantDefinition
