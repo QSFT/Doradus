@@ -57,7 +57,8 @@ public class XLinkGroupContext {
 		return false;
 	}
 	
-	public void setupXLinkGroup(AggregationGroup group) {
+	public XGroups setupXLinkGroup(AggregationGroup group) {
+	    XGroups lastGroup = null;
 		if(group.filter != null) context.setupXLinkQuery(group.tableDef, group.filter);
 		List<AggregationGroupItem> items = group.items;
 		TableDefinition tableDef = group.tableDef;
@@ -71,6 +72,7 @@ public class XLinkGroupContext {
 			}
 			group.tableDef = item.tableDef;
 			XGroups xgroups = setup(item.fieldDef, group, item.query);
+			lastGroup = xgroups;
 			//XGroups xgroups = new XGroups();
 			//if(item.fieldDef.isXLinkDirect()) setupDirect(xgroups, item.fieldDef, group, item.query);
 			//else setupInverse(xgroups, item.fieldDef, group, item.query);
@@ -79,7 +81,7 @@ public class XLinkGroupContext {
 			group.items = items;
 			group.tableDef = tableDef;
 		}
-		
+		return lastGroup;
 	}
 	
 	private XGroups setup(FieldDefinition fieldDef, AggregationGroup group, Query filter) {

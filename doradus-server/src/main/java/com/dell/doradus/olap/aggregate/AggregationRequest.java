@@ -23,6 +23,7 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.Olap;
+import com.dell.doradus.olap.xlink.XGroups;
 import com.dell.doradus.olap.xlink.XLinkContext;
 import com.dell.doradus.olap.xlink.XLinkGroupContext;
 import com.dell.doradus.olap.xlink.XLinkMetricContext;
@@ -82,13 +83,16 @@ public class AggregationRequest {
     	XLinkContext xcontext = new XLinkContext(requestData.application, olap, xshards, tableDef);
     	XLinkGroupContext xgroupContext = new XLinkGroupContext(xcontext);
     	XLinkMetricContext xmetriccontext = new XLinkMetricContext(xcontext);
+    	List<XGroups> allGroups = new ArrayList<XGroups>();
     	for(int i = 0; i < parts.length; i++) {
 	    	xcontext.setupXLinkQuery(tableDef, parts[i].query);
 	    	for(AggregationGroup group: parts[i].groups) {
-	    		xgroupContext.setupXLinkGroup(group);
+	    		XGroups grp = xgroupContext.setupXLinkGroup(group);
+	    		if(grp != null) allGroups.add(grp);
 	    	}
 	    	xmetriccontext.setupXLinkMetric(parts[i].metrics);
     	}
+    	XGroups.mergeGroups(allGroups);
 	}
 	
 	public boolean isOnlyCountStar() {
