@@ -207,19 +207,27 @@ public class RESTService extends Service {
     //----- Package-private methods (used by RESTServlet)
 
     void onNewrequest() {
-		m_webservice.notifyNewRequest(); 
+       	if (m_webservice != null) {
+       		m_webservice.notifyNewRequest(); 
+       	}
     } 
     
     void onRequestSuccess(long startTimeNanos) {
-   		m_webservice.notifyRequestSuccess(startTimeNanos);
+       	if (m_webservice != null) {
+       		m_webservice.notifyRequestSuccess(startTimeNanos);
+       	}
     }   
     
     void onRequestRejected(String reason) {
-   		m_webservice.notifyRequestRejected(reason);
+       	if (m_webservice != null) {
+       		m_webservice.notifyRequestRejected(reason);
+       	}
     }   
     
     void onRequestFailed(Throwable e) {
-   		m_webservice.notifyRequestFailed(e);
+       	if (m_webservice != null) {
+       		m_webservice.notifyRequestFailed(e);
+       	}
     } 
     
     //----- Private methods
