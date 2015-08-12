@@ -51,6 +51,7 @@ import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.taskmanager.Task;
 import com.dell.doradus.service.taskmanager.TaskFrequency;
+import com.dell.doradus.service.taskmanager.TaskManagerService;
 
 /**
  * The OLAP storage service for Doradus.
@@ -361,10 +362,12 @@ public class OLAPService extends StorageService {
     
     /**
      * Merge loaded batches for the given shard name and application, optionally assigning
-     * an expire-date. An exception is thrown if a merge is already underway for the
-     * shard. If the given expireDate is not null, the shard is updated with the given
-     * expire-date. If the given expireDate is null, the shard will be updated to not have
-     * an expire-date.
+     * an expire-date. If "auto-merge" is not set for the application and a merge is
+     * already underway for the shard, an exception is thrown. If "auto-merge" is set, the
+     * shard is merged via a {@link TaskManagerService} task, waiting for an existing
+     * merge task, if any, to complete. If the given expireDate is not null, the shard is
+     * updated with the given expire-date. If the given expireDate is null, the shard is
+     * updated to not have an expire-date.
      * 
      * @param appDef        OLAP application definition.
      * @param shard         Shard name.
@@ -372,7 +375,11 @@ public class OLAPService extends StorageService {
      */
     public void mergeShard(ApplicationDefinition appDef, String shard, MergeOptions options) {
         checkServiceState();
-        m_olap.merge(appDef, shard, options);
+        if (appDef.getOption("auto-merge") != null) {
+            TaskManagerService.instance().executeTask(appDef, new OLAPMerger(appDef, shard, options));
+        } else {
+            m_olap.merge(appDef, shard, options);
+        }
     }
     
     /**

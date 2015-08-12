@@ -155,7 +155,7 @@ public class TaskManagerService extends Service {
     public TaskStatus executeTask(ApplicationDefinition appDef, Task task) {
         checkServiceState();
         Tenant tenant = Tenant.getTenant(appDef);
-        m_logger.debug("Checking that task {} in tenant {} is not running", tenant, task.getTaskID());
+        m_logger.debug("Checking that task {} in tenant {} is not running", task.getTaskID(), tenant);
         TaskRecord taskRecord = null;
         synchronized (m_executeLock) {
             taskRecord = waitForTaskStatus(tenant, task, s -> s != TaskStatus.IN_PROGRESS);

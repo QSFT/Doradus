@@ -16,9 +16,8 @@
 
 package com.dell.doradus.service.olap;
 
+import java.util.Arrays;
 import java.util.List;
-
-import org.slf4j.Logger;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.olap.MergeOptions;
@@ -29,24 +28,30 @@ import com.dell.doradus.service.taskmanager.Task;
  * Perform automatic merge task execution for an OLAP application. 
  */
 public class OLAPMerger extends Task {
+    private final List<String> shards;
+    private final MergeOptions options;
 
+    // Scheduled merge for all shards
     public OLAPMerger(ApplicationDefinition appDef, String autoMergeFreq) {
         super(appDef, null, "auto-merge", autoMergeFreq);
+        shards = OLAPService.instance().listShards(appDef);
+        options = new MergeOptions();
     }
 
-    @Override
-    public void execute() {
-        doTask(m_appDef, m_logger);
+    // Immediate merge of a single shard
+    public OLAPMerger(ApplicationDefinition appDef, String shard, MergeOptions opts) {
+        super(appDef, null, "auto-merge", null);
+        shards = Arrays.asList(shard);
+        options = opts;
     }
     
-    public static void doTask(ApplicationDefinition appDef, Logger logger) {
-        logger.info("Merging shards {}", appDef.getPath());
-        MergeOptions options = new MergeOptions();
+    @Override
+    public void execute() {
+        m_logger.info("Merging shards {}", m_appDef.getPath());
         Olap olap = OLAPService.instance().getOlap();
-        List<String> shards = olap.listShards(appDef);
         for (String shard : shards) {
-            olap.merge(appDef, shard, options);
-            logger.info("Merged shard '{}/{}'", shard, appDef.getAppName());
+            olap.merge(m_appDef, shard, options);
+            m_logger.info("Merged shard '{}/{}'", shard, m_appDef.getAppName());
         }
     }
 
