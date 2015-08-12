@@ -339,7 +339,13 @@ public class DoradusClientTest {
 			URISyntaxException, Exception {
 		DoradusClient client = new DoradusClient(HOST, PORT, credentials);
     	
-    	//test create OLAP app 
+		//delete "Email" app if it does exist
+    	RESTResponse response = client.runCommand(Command.builder().withName("ListApps").build());
+    	if (response.getBody().contains("Email")) {   		
+    		RESTResponse response1 = client.runCommand(Command.builder().withName("DeleteApp").withParam("application", "Email").build());
+    		assertTrue(response1.getCode().getCode() == 200);    
+    	}    	
+    	//create OLAP app 
      	ApplicationDefinition appDef = new ApplicationDefinition();
      	appDef.parse(UNode.parseJSON(getOLAPSchemaJson()));
      	client.runCommand(Command.builder().withName("DefineApp").withParam("ApplicationDefinition", appDef).build());
