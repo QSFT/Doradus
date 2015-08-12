@@ -26,6 +26,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -40,13 +43,16 @@ import com.dell.doradus.common.DBObject;
 import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.TenantDefinition;
+import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.dory.command.Command;
 
 @Ignore
 public class DoradusClientTest {
+	
     private static final String HOST = "localhost";
     private static final int PORT = 1111;
+	private static final String OLAP_SCHEMA_FILE = "OLAPSchema.json";
 
     @Test
     public void testRequiredCommandName() throws Exception {
@@ -98,7 +104,7 @@ public class DoradusClientTest {
     		assertTrue(e.getMessage().equals("Unknown application: Foo"));
     	}   
     	
-    	createApp("MyApp");
+    	createSpiderApp("MyApp");
     	
       	//open session with existing app
     	client = DoradusClient.open(HOST, PORT, credentials, "MyApp");
@@ -181,7 +187,7 @@ public class DoradusClientTest {
     }
     
     @Test
-    public void testSchemaSystemCommands() throws Exception {
+    public void testSpiderSchemaSystemCommands() throws Exception {
     	Credentials credentials = new Credentials("HelloKitty", "Katniss", "Everdeen");      	
     	DoradusClient client = new DoradusClient(HOST, PORT, credentials);
     	
@@ -229,9 +235,9 @@ public class DoradusClientTest {
     }
     
     @Test
-    public void testDataServiceCommands() throws Exception { 
+    public void testSpiderDataServiceCommands() throws Exception { 
     	
-     	Credentials credentials = createApp("HelloByeApp");
+     	Credentials credentials = createSpiderApp("HelloByeApp");
 
       	//open session with existing app
      	DoradusClient client = DoradusClient.open(HOST, PORT, credentials, "HelloByeApp");
@@ -245,7 +251,7 @@ public class DoradusClientTest {
     	assertTrue(jsonResult.getString("uri").equals("/{application}/{table}"));
     	assertTrue(jsonResult.getString("input-entity").equals("batch"));
 
-      	//update data on the same application
+      	//test add data 
 	   	DBObject dbObject1 = DBObject.builder().add("Subject", "Hello").add("Body", "Hello there!").build();      	
 	  	DBObject dbObject2 = DBObject.builder().add("Subject", "Bye").add("Body", "Good bye!").build();
 			
@@ -268,7 +274,79 @@ public class DoradusClientTest {
     	client.close();
     }
 
-	private Credentials createApp(String app) throws IOException, Exception {
+    
+    @Test
+    public void testOLAPSchemaSystemCommands() throws Exception {
+    	Credentials credentials = new Credentials("HelloKitty", "Katniss", "Everdeen");      	
+    	DoradusClient client = new DoradusClient(HOST, PORT, credentials);
+    	
+    	//test find and DeleteApp
+    	RESTResponse response = client.runCommand(Command.builder().withName("ListApps").build());
+    	if (response.getBody().contains("Email")) {   		
+    		RESTResponse response1 = client.runCommand(Command.builder().withName("DeleteApp").withParam("application", "Email").build());
+    		assertTrue(response1.getCode().getCode() == 200);    
+    	}  	
+    	//test create OLAP app 
+     	ApplicationDefinition appDef = new ApplicationDefinition();
+     	appDef.parse(UNode.parseJSON(getOLAPSchemaJson()));
+     	client.runCommand(Command.builder().withName("DefineApp").withParam("ApplicationDefinition", appDef).build());
+     	
+    	//test list app
+		response = client.runCommand(Command.builder().withName("ListApp").withParam("application", "Email").build());
+		assertTrue(response.getCode().getCode() == 200);
+		client.close();   
+    }	
+ 
+    @Test
+    public void testOLAPDataServiceCommands() throws Exception { 
+    	
+    	Credentials credentials = new Credentials("HelloKitty", "Katniss", "Everdeen");      	
+		createOLAPApp(credentials);
+     	
+      	//open session with OLAP app
+		DoradusClient client = DoradusClient.open(HOST, PORT, credentials, "Email");
+ 
+    	//test get description of the command before building. This will help give the idea that client needs to build the Add command with application params, for ex
+    	JsonObject jsonResult = client.describeCommand("OLAPService", "Update"); 
+    	assertTrue(jsonResult.getString("uri").equals("/{application}/{shard}?{params}"));
+    	assertTrue(jsonResult.getString("input-entity").equals("batch"));
+
+      	//test add data 
+	   	DBObject dbObject1 = DBObject.builder().add("SendDate", "2010-07-17 15:21:12").add("Size", "1254").add("Subject", "Today message").add("Tags", "AfterHours").build();      	
+	   	dbObject1.setTableName("Message");
+	   	
+	 	DBObjectBatch dbObjectBatch =  DBObjectBatch.builder().add(dbObject1).build();
+	 	RESTResponse response = client.runCommand(Command.builder().withName("Update").withParam("shard","s1").withParam("overwrite", "true").withParam("batch", dbObjectBatch).build());
+   	 	
+	 	//test merge shard
+	 	response = client.runCommand(Command.builder().withName("Merge").withParam("shard","s1").withParam("force-merge", "true").build());	 	
+		assertTrue(response.getCode().getCode() == 200);  
+		
+		//test query
+		Command command2 = Command.builder().withName("Query")
+				.withParam("table","Message")
+				.withParam("shards", "s1")				
+				.withParam("query", "*")
+				.withParam("fields", "SendDate,Subject")
+				.withParam("size", "10")
+				.build();
+		RESTResponse response2 = client.runCommand(command2);
+		assertTrue(response2.getCode().getCode() == 200);
+		assertTrue(response2.getBody().contains("Today message"));
+    }
+
+	private void createOLAPApp(Credentials credentials) throws IOException,
+			URISyntaxException, Exception {
+		DoradusClient client = new DoradusClient(HOST, PORT, credentials);
+    	
+    	//test create OLAP app 
+     	ApplicationDefinition appDef = new ApplicationDefinition();
+     	appDef.parse(UNode.parseJSON(getOLAPSchemaJson()));
+     	client.runCommand(Command.builder().withName("DefineApp").withParam("ApplicationDefinition", appDef).build());
+     	client.close();
+	}
+    
+	private Credentials createSpiderApp(String app) throws IOException, Exception {
 		Credentials credentials = new Credentials("HelloKitty", "Katniss", "Everdeen");
      	DoradusClient client = new DoradusClient(HOST, PORT, credentials);
      	ApplicationDefinition appDef = new ApplicationDefinition();
@@ -278,4 +356,7 @@ public class DoradusClientTest {
 		return credentials;
 	}
     
+    private static String getOLAPSchemaJson() throws IOException, URISyntaxException {
+    	return new String(Files.readAllBytes(Paths.get(DoradusClientTest.class.getResource("/"+OLAP_SCHEMA_FILE).toURI())));
+    }
 }   // class DoradusClientTest

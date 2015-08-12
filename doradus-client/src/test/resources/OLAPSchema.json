@@ -1,0 +1,78 @@
+{"Email": {
+   "options": {"StorageService": "OLAPService"},
+   "tables": {
+      "Message": {
+         "fields": {
+            "InReplyTo": {"type": "XLINK", "table": "Message", "inverse": "Responses", "junction": "ThreadID"},
+            "Participants": {
+               "fields": {
+                  "Sender": {"type": "LINK", "table": "Participant", "inverse": "MessageAsSender"},
+                  "Recipients": {
+                     "fields": {
+                        "ExternalRecipients": {"type": "LINK", "table": "Participant", "inverse": "MessageAsExternalRecipient"},
+                        "InternalRecipients": {"type": "LINK", "table": "Participant", "inverse": "MessageAsInternalRecipient"}
+                     }
+                  }
+               }
+            },
+            "Responses": {"type": "XLINK", "table": "Message", "inverse": "InReplyTo", "junction": "_ID"},
+            "SendDate": {"type": "TIMESTAMP"},
+            "Size": {"type": "INTEGER"},
+            "Subject": {"type": "TEXT"},
+            "Tags": {"collection": "true", "type": "TEXT"},
+            "ThreadID": {"type": "TEXT"}
+         },
+         "aliases": {
+            "$SalesEmails": {"expression": "Sender.Person.WHERE(Department:Sales)"}
+         }         
+      },
+      "Participant": {
+         "fields": {
+            "MessageAddress": {"type": "LINK", "table": "Address", "inverse": "Messages"},
+            "MessageAsExternalRecipient": {"type": "LINK", "table": "Message", "inverse": "ExternalRecipients"},
+            "MessageAsInternalRecipient": {"type": "LINK", "table": "Message", "inverse": "InternalRecipients"},
+            "MessageAsSender": {"type": "LINK", "table": "Message", "inverse": "Sender"},
+            "Person": {"type": "LINK", "table": "Person", "inverse": "Messages"},
+            "ReceiptDate": {"type": "TIMESTAMP"}               
+         }
+      },
+      "Address": {
+         "fields": {
+            "Domain": {"type": "LINK", "table": "Domain", "inverse": "Addresses"},
+            "Messages": {"type": "LINK", "table": "Participant", "inverse": "MessageAddress"},
+            "Name": {"type": "TEXT"},
+            "Person": {"type": "LINK", "table": "Person", "inverse": "MessageAddresses"}
+         }
+      },
+      "Person": {
+         "fields": {
+            "DirectReports": {"type": "LINK", "table": "Person", "inverse": "Manager"},
+            "FirstName": {"type": "TEXT"},
+            "LastName": {"type": "TEXT"},
+            "Location": {
+               "fields": {
+                  "Department": {"type": "TEXT"},
+                  "Office": {"type": "TEXT"}
+               }
+            },
+            "Manager": {"type": "LINK", "table": "Person", "inverse": "DirectReports"},
+            "MessageAddresses": {"type": "LINK", "table": "Address", "inverse": "Person"},
+            "Messages": {"type": "LINK", "table": "Participant", "inverse": "Person"},
+            "Name": {"type": "TEXT"}
+         },
+         "aliases": {
+            "$SalesPeople": {"expression": "WHERE(Department:sales)"}
+         }         
+      },
+      "Domain": {
+         "fields": {
+            "Addresses": {"type": "LINK", "table": "Address", "inverse": "Domain"},
+            "IsInternal": {"type": "BOOLEAN"},
+            "Name": {"type": "TEXT"}
+         }
+      }
+   },
+   "schedules": [
+      {"schedule": {"type": "data-aging", "value": "0 0 3 * *"}}
+   ]
+}}

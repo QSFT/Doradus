@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2014 Dell, Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.dell.doradus.dory.command;
 
 import java.io.IOException;
@@ -123,9 +138,13 @@ public class Command extends BaseCommand<RESTResponse> {
 			Utils.require(commandParams.containsKey("table"), "missing param: table");		
 		}
 		if (uri.contains("{shard}")) {
-			Utils.require(commandParams.containsKey("table"), "missing param: shard");		
+			Utils.require(commandParams.containsKey("shard"), "missing param: shard");		
+		}
+		if (uri.contains("{key}")) {
+			Utils.require(commandParams.containsKey("key"), "missing param: key");		
 		}
 	}
+	
 
 	public void setCompound(boolean compound) {
 		this.compound = compound;
@@ -164,6 +183,9 @@ public class Command extends BaseCommand<RESTResponse> {
 		if (uri.contains("{table}")) {
 			uri = uri.replace("{table}", Utils.urlEncode(getTableName()));
 		}
+		if (uri.contains("{key}")) {
+			uri = uri.replace("{key}", Utils.urlEncode(getKey()));
+		}		
 		if (uri.contains("{shard}")) {
 			uri = uri.replace("{shard}", Utils.urlEncode(getShardName()));
 		}
@@ -209,10 +231,12 @@ public class Command extends BaseCommand<RESTResponse> {
     			body = Utils.toBytes(getQueryInputEntity());
     		}
     		else {
-	    		JSONable data = (JSONable)commandParams.get(metadataJson.getString("input-entity"));
-	    		if (data != null) {
-	    			body = Utils.toBytes(data.toJSON());
-	    		}
+    			if (metadataJson.containsKey("input-entity")) {
+		    		JSONable data = (JSONable)commandParams.get(metadataJson.getString("input-entity"));
+		    		if (data != null) {
+		    			body = Utils.toBytes(data.toJSON());
+		    		}
+    			}
     		}
     	}
     	return body;
@@ -229,11 +253,20 @@ public class Command extends BaseCommand<RESTResponse> {
 	private String getShardName() {
 		return (String)commandParams.get("shard");
 	}
-	
+	private String getKey() {
+		return (String)commandParams.get("key");
+	}
+		
 	private String getParamsURI() {
 		StringBuilder uriBuilder = new StringBuilder();
-		for (String param : commandParams.keySet()) {
-			uriBuilder.append(param).append("=").append(commandParams.get(param));
+		JsonObject parametersNode = metadataJson.getJsonObject("parameters");
+		if (parametersNode != null) {
+			JsonObject paramDetail = parametersNode.getJsonObject("params");
+			for (String param: paramDetail.keySet()) {
+				if (commandParams.containsKey(param)) {
+					uriBuilder.append(param).append("=").append(commandParams.get(param));
+				}
+			}
 		}
 		return uriBuilder.toString();
 	}
