@@ -57,6 +57,10 @@ public class Command extends BaseCommand<RESTResponse> {
 		commandParams.put("storageservice", storageService);			
 	}
 	
+	public void setCompound(boolean compound) {
+		this.compound = compound;
+		
+	}
 	//getters
 	public Map<String, Object> getParams() {
 		return commandParams;
@@ -66,7 +70,13 @@ public class Command extends BaseCommand<RESTResponse> {
 		return commandName;
 	}
 
-	
+	public boolean isCompound() {
+		return this.compound;
+	}
+	/**
+	 * command call method implementation
+	 * @param restClient 
+	 */
 	@Override
 	public RESTResponse call(RESTClient restClient){		
 		
@@ -92,7 +102,7 @@ public class Command extends BaseCommand<RESTResponse> {
      * @return command in json
      * @throws IOException 
      */
-	public void validate(RESTClient restClient) throws IOException {
+	public void validate(RESTClient restClient) {
 		Utils.require(this.commandName != null, "missing command name");
 		
 		//validate command name	
@@ -146,13 +156,6 @@ public class Command extends BaseCommand<RESTResponse> {
 	}
 	
 
-	public void setCompound(boolean compound) {
-		this.compound = compound;
-		
-	}
-	public boolean isCompound() {
-		return this.compound;
-	}
 	
 	//convenient methods
     private String getMethod() {

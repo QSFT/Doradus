@@ -48,11 +48,23 @@ public abstract class BaseCommand<T>  {
 	public BaseCommand() {
 
 	}
-	
+	/**
+	 * set RestMetadataJson
+	 * @param restMetadataJson
+	 */
 	public void setRestMetadataJson(JsonObject restMetadataJson) {
 		this.restMetadataJson = restMetadataJson;
 	}
 	
+	/**
+	 * Make RESTful calls to Doradus server
+	 * @param restClient
+	 * @param methodName
+	 * @param uri
+	 * @param body
+	 * @return
+	 * @throws IOException
+	 */
 	protected RESTResponse sendRequest(RESTClient restClient, String methodName,
 			String uri, byte[] body) throws IOException {
 		RESTResponse response = restClient.sendRequest(HttpMethod.methodFromString(methodName), 
@@ -115,6 +127,13 @@ public abstract class BaseCommand<T>  {
     }   // getUNodeResult    
     
     
+    /**
+     * Finds out if a command is supported by Doradus
+     * @param commandsJson
+     * @param commandName
+     * @param storageService
+     * @return
+     */
     public static JsonObject matchCommand(JsonObject commandsJson, String commandName, String storageService) {
     	for (String key : commandsJson.keySet())  {
     		if (key.equals(storageService)) {

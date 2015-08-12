@@ -54,7 +54,21 @@ public class DoradusClient implements AutoCloseable {
 	public DoradusClient(String host, int port, Credentials credentials) {
         this(host, port, "", credentials, null);	        
 	}
-		
+	
+	/**
+	 * static factory method to open a 'dory' client session
+	 * @param host
+	 * @param port
+	 * @param applicationName
+	 * @return
+	 */
+	public static DoradusClient open(String host, int port, Credentials credentials, String applicationName) {	
+		DoradusClient doradusClient = new DoradusClient(host, port, null, credentials, applicationName);	
+		doradusClient.setCredentials(credentials);
+		String storageService = lookupStorageServiceByApp(doradusClient.getRestClient(), applicationName);
+		doradusClient.setStorageService(storageService);
+		return doradusClient;
+	}		
     /**
      * setCredentials
      * @param credentials
@@ -76,7 +90,7 @@ public class DoradusClient implements AutoCloseable {
 	
 	/**
 	 * retrieve the map of commands by service name
-	 * @return
+	 * @return map of commands 
 	 */
 	public Map<String, List<String>> listCommands() {
 		Map<String, List<String>> result = new HashMap<String, List<String>>();
@@ -103,7 +117,13 @@ public class DoradusClient implements AutoCloseable {
 		
 	}
 	
-	public RESTResponse runCommand(Command command) throws IOException {
+	/**
+	 * Execute any client command
+	 * @param command
+	 * @return RESTResponse
+	 * 
+	 */
+	public RESTResponse runCommand(Command command)  {
 		if (this.applicationName != null) {
 			command.setApplicationName(this.applicationName);
 		}
@@ -122,6 +142,13 @@ public class DoradusClient implements AutoCloseable {
 		return restClient;
 	}
 	
+	@Override
+	public void close() throws Exception {
+		if (this.restClient != null) {
+			this.restClient.close();
+		}
+		
+	}	
 	/**
 	 * private constructor
 	 * @param host
@@ -137,21 +164,6 @@ public class DoradusClient implements AutoCloseable {
 	}
 
 
-	/**
-	 * static factory method
-	 * @param host
-	 * @param port
-	 * @param applicationName
-	 * @return
-	 */
-	public static DoradusClient open(String host, int port, Credentials credentials, String applicationName) {	
-		DoradusClient doradusClient = new DoradusClient(host, port, null, credentials, applicationName);	
-		doradusClient.setCredentials(credentials);
-		String storageService = lookupStorageServiceByApp(doradusClient.getRestClient(), applicationName);
-		doradusClient.setStorageService(storageService);
-		return doradusClient;
-	}
-
 	private static String lookupStorageServiceByApp(RESTClient restClient, String applicationName) {
 		Utils.require(applicationName != null, "Missing application name");
 		if (applicationName != null) {
@@ -162,25 +174,30 @@ public class DoradusClient implements AutoCloseable {
 		return null;
 	}
 	
+	/**
+	 * setStorageService
+	 * @param storageService
+	 */
 	private void setStorageService(String storageService) {
 		this.storageService = storageService;
 		
 	}
 
-	@Override
-	public void close() throws Exception {
-		if (this.restClient != null) {
-			this.restClient.close();
-		}
-		
-	}
-
-	protected synchronized void loadRESTRulesIfNotExist(RESTClient restClient)  {		
+	/**
+	 * load RESTRules once
+	 * @param restClient
+	 */
+	private synchronized void loadRESTRulesIfNotExist(RESTClient restClient)  {		
 		if (restMetadataJson == null || restMetadataJson.isEmpty()) {
 			restMetadataJson = loadRestRulesFromServer(restClient);
 		}		
 	}
 	
+	/**
+	 * Calls describe server command
+	 * @param restClient
+	 * @return
+	 */
 	private JsonObject loadRestRulesFromServer(RESTClient restClient) {
 		RESTResponse response = null;
 		try {
@@ -198,8 +215,4 @@ public class DoradusClient implements AutoCloseable {
 			throw new RuntimeException("Describe command error: " + response.getBody());
 		}
 	}
-
-
-
-
 }

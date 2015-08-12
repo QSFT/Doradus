@@ -47,6 +47,13 @@ import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.dory.command.Command;
 
+
+/**
+ * Doradus 'dory' client unit tests as examples of how to use the client APIs for all CRUDs operations on Doradus.
+ * 
+ * NOTES: Make sure to modify the HOST/PORT below to the running Doradus server instance 
+ *
+ */
 @Ignore
 public class DoradusClientTest {
 	
