@@ -35,6 +35,7 @@ public class OlapAggregate {
     private String m_xshards;  				// &xshards parameter
     private String m_xshardsRange;			// &xrange parameter
     private boolean m_flat;
+    private boolean m_uncommitted;          // &uncommitted parameter: true to search in all segments
     
     
     /**
@@ -56,6 +57,7 @@ public class OlapAggregate {
         m_xshards = parsedQuery.get("x-shards");
         m_xshardsRange = parsedQuery.get("x-shards-range");
         m_flat = parsedQuery.getBoolean("flat", false);
+        m_uncommitted = parsedQuery.getBoolean("uncommitted", false);
         parsedQuery.checkInvalidParameters();
         checkDefaults();
     }
@@ -84,6 +86,7 @@ public class OlapAggregate {
         m_xshards = parsedQuery.get("xshards");
         m_xshardsRange = parsedQuery.get("xrange");
         m_flat = parsedQuery.getBoolean("flat", false);
+        m_uncommitted = parsedQuery.getBoolean("uncommitted", false);
         parsedQuery.checkInvalidParameters();
         checkDefaults();
     }
@@ -121,6 +124,7 @@ public class OlapAggregate {
 		requestData.xshards = olap.getShardsList(appDef, m_xshards, m_xshardsRange);
 		requestData.table = table;
 		requestData.flat = m_flat;
+		requestData.uncommitted = m_uncommitted;
 		
 		if(m_pair == null) {
 			requestData.parts = new AggregationRequestData.Part[1];

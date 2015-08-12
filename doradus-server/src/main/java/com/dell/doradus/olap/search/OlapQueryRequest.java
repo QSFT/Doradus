@@ -38,6 +38,7 @@ public class OlapQueryRequest {
     private SortOrder[] m_sortOrder;
     private List<String> m_shards;
     private List<String> m_xshards;
+    private boolean m_uncommitted;
     
     public OlapQueryRequest() {}
     
@@ -59,6 +60,8 @@ public class OlapQueryRequest {
         
         m_pageSizeWithSkip = olapQuery.getPageSizeWithSkip();
         m_skip = olapQuery.getSkip();
+        
+        m_uncommitted = olapQuery.getUncommitted();
     }
 
     public TableDefinition getTableDef() { return m_tableDef; }
@@ -69,6 +72,7 @@ public class OlapQueryRequest {
     public SortOrder[] getSortOrder() { return m_sortOrder; }
     public List<String> getShards() { return m_shards; }
     public List<String> getXShards() { return m_xshards; }
+    public boolean getUncommitted() { return m_uncommitted; }
 
     public void setTableDef(TableDefinition tableDef) { m_tableDef = tableDef; }
     public void setQuery(Query query) { m_query = query; }
@@ -78,5 +82,6 @@ public class OlapQueryRequest {
     public void setSortOrder(SortOrder[] sortOrder) { m_sortOrder = sortOrder; }
     public void setShards(List<String> shards) { m_shards = shards; }
     public void setXShards(List<String> xshards) { m_xshards = xshards; }
+    public void setUncommitted(boolean uncommitted) { m_uncommitted = uncommitted; }
     
 }

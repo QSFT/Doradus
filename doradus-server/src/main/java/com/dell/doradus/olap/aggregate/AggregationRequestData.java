@@ -23,6 +23,7 @@ public class AggregationRequestData {
 	public String table;
 	public List<String> shards;
 	public List<String> xshards;
+	public boolean uncommitted;
 	public boolean flat;
 	//if true metrics will be added for _pair.first and _pair.second; otherwise only one value will be added
 	public boolean differentMetricsForPairs;

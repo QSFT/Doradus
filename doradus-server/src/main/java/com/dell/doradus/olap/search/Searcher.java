@@ -112,10 +112,9 @@ public class Searcher {
     
     public static SearchResultList search(Olap olap, String shard, OlapQueryRequest olapQuery) {
         // repeat if segment was merged
-        for(int i = 0; i <= 2; i++) {
+        for(int i = 0; i <= 3; i++) {
             try {
-                CubeSearcher s = olap.getSearcher(olapQuery.getTableDef().getAppDef(), shard);
-                SearchResultList result = search(s, olapQuery);
+                SearchResultList result = searchInternal(olap, shard, olapQuery);
                 for(SearchResult sr: result.results) sr.scalars.put("_shard", shard);
                 return result;
             }catch(FileDeletedException ex) {
@@ -123,10 +122,26 @@ public class Searcher {
                 continue;
             }
         }
-        CubeSearcher s = olap.getSearcher(olapQuery.getTableDef().getAppDef(), shard);
-        return Searcher.search(s, olapQuery);
+        throw new FileDeletedException("All retries failed");
     }
     
+    private static SearchResultList searchInternal(Olap olap, String shard, OlapQueryRequest olapQuery) {
+        ApplicationDefinition appDef = olapQuery.getTableDef().getAppDef();
+        if(!olapQuery.getUncommitted()) {
+            CubeSearcher s = olap.getSearcher(appDef, shard);
+            SearchResultList result = search(s, olapQuery);
+            return result;
+        } else {
+            List<SearchResultList> results = new ArrayList<SearchResultList>();
+            for(String segment: olap.listSegments(appDef, shard)) {
+                CubeSearcher searcher = olap.getSearcher(appDef, shard, segment);
+                results.add(search(searcher, olapQuery));
+            }
+            SearchResultList result = MergeResult.merge(results, olapQuery.getFieldSet());
+            return result;
+        }
+    }
+
 	public static SearchResultList search(CubeSearcher searcher, OlapQueryRequest olapQuery) {
     	Result documents = ResultBuilder.search(olapQuery.getTableDef(), olapQuery.getQuery(), searcher);
 		SearchResultList list = SearchResultBuilder.build(searcher, documents, olapQuery.getFieldSet(), olapQuery.getPageSizeWithSkip(), olapQuery.getSortOrder());

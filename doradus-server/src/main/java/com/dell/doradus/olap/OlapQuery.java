@@ -42,6 +42,7 @@ public class OlapQuery {
     private String m_continueAfter;			// &g parameter
     private String m_metrics;				// &m parameter
     private String m_originalQuery;			// m_query before fixQueryParameter
+    private boolean m_uncommitted;          // &uncommitted parameter: true to search in all segments
     
     /**
      * Create an OlapQuery with query parameters extracted from the given "search" UNode.
@@ -64,6 +65,7 @@ public class OlapQuery {
         m_continueAt = parsedQuery.get("continue-at");
         m_continueAfter = parsedQuery.get("continue-after");
         m_metrics = parsedQuery.get("metric");
+        m_uncommitted = parsedQuery.getBoolean("uncommitted", false);
         parsedQuery.checkInvalidParameters();
         checkDefaults();
     }
@@ -94,6 +96,7 @@ public class OlapQuery {
         m_continueAt = parsedQuery.get("e");
         m_continueAfter = parsedQuery.get("g");
         m_metrics = parsedQuery.get("m");
+        m_uncommitted = parsedQuery.getBoolean("uncommitted", false);
         parsedQuery.checkInvalidParameters();
         checkDefaults();
     }
@@ -137,6 +140,7 @@ public class OlapQuery {
     public String getXShardsRange() { return m_xshardsRange; }
     public String getPair() { return m_pair; }
     public String getOriginalQuery() { return m_originalQuery == null ? m_query : m_originalQuery; }
+    public boolean getUncommitted() { return m_uncommitted; }
     
     public List<String> getShards(ApplicationDefinition appDef, Olap olap) {
     	return olap.getShardsList(appDef, m_shards, m_shardsRange);

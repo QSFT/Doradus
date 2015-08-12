@@ -46,6 +46,7 @@ public class AggregationRequest {
 	public boolean flat;
 	//if true metrics will be added for _pair.first and _pair.second; otherwise only one value will be added
 	public boolean differentMetricsForPairs;
+	public boolean uncommitted;
 	
 	public static class Part {
 		public Query query;
@@ -67,6 +68,7 @@ public class AggregationRequest {
 		xshards = requestData.xshards;
 		flat = requestData.flat;
 		differentMetricsForPairs = requestData.differentMetricsForPairs;
+		uncommitted = requestData.uncommitted;
 		
 		parts = new AggregationRequest.Part[requestData.parts.length];
 		for(int i = 0; i < parts.length; i++) {

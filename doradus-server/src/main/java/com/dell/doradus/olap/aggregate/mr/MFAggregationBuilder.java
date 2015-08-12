@@ -135,18 +135,33 @@ public class MFAggregationBuilder {
 	
 	private static AggregationCollector aggregate(Olap olap, ApplicationDefinition appDef, String shard, AggregationRequest request) {
 		// repeat if segment was merged
-		for(int i = 0; i < 2; i++) {
+		for(int i = 0; i <= 3; i++) {
 			try {
-				CubeSearcher searcher = olap.getSearcher(appDef, shard);
-				return aggregate(searcher, request);
+			    return aggregateInternal(olap, appDef, shard, request);
 			}catch(FileDeletedException ex) {
 				LOG.warn(ex.getMessage() + " - retrying: " + i);
 				continue;
 			}
 		}
-		CubeSearcher searcher = olap.getSearcher(appDef, shard);
-		return aggregate(searcher, request);
+        throw new FileDeletedException("All retries failed");
 	}
+	
+    private static AggregationCollector aggregateInternal(Olap olap, ApplicationDefinition appDef, String shard, AggregationRequest request) {
+        if(!request.uncommitted) {
+            CubeSearcher searcher = olap.getSearcher(appDef, shard);
+            return aggregate(searcher, request);
+        } else {
+            AggregationCollector collector = null;
+            for(String segment: olap.listSegments(appDef, shard)) {
+                CubeSearcher searcher = olap.getSearcher(appDef, shard, segment);
+                AggregationCollector agg = aggregate(searcher, request);
+                if(collector == null) collector = agg;
+                else collector.merge(agg);
+            }
+            return collector;
+        }
+    }
+	
 	
 	public static AggregationCollector aggregate(CubeSearcher searcher, AggregationRequest request) {
 		for(AggregationRequest.Part p : request.parts) {

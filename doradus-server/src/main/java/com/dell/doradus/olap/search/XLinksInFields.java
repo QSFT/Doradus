@@ -78,6 +78,7 @@ public class XLinksInFields {
         xRequest.setPageSizeWithSkip(pageSize);
         xRequest.setShards(shards);
         xRequest.setXShards(shards);
+        xRequest.setUncommitted(olapQuery.getUncommitted());
         
         SearchResultList result = Searcher.search(olap, xRequest);
         

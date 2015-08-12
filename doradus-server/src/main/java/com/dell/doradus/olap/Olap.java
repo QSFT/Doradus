@@ -294,7 +294,7 @@ public class Olap {
 		else return Utils.dateFromString(expDateStr);
 	}
 	
-	private CubeSearcher getSearcher(ApplicationDefinition appDef, String shard, String segment) {
+	public CubeSearcher getSearcher(ApplicationDefinition appDef, String shard, String segment) {
 		synchronized(m_cachedSearchers) {
 			String key = appDef.getAppName() + "/" + shard + "/" + segment;
 			CubeSearcher s = m_cachedSearchers.get(key);
