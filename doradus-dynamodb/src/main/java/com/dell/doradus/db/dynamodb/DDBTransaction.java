@@ -21,26 +21,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.model.AttributeAction;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
-import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughputExceededException;
-import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBTransaction;
-import com.dell.doradus.utilities.Timer;
 
 /**
  * Holds a set of column and row updates that can be committed to DynamoDB.
  */
 public class DDBTransaction extends DBTransaction {
-    // Protected logger available to concrete services:
-    protected final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
-    
     // Map of table name -> row key -> column name -> column value. Updates are represented as follows:
     //      add/update column: DDBColumn name and value are both set
     //          if value is empty, this is "null" to DynamoDB
@@ -135,11 +125,11 @@ public class DDBTransaction extends DBTransaction {
     //----- DDBTransaction-specific methods
     
     // Apply all updates in m_updateMap.
-    public void commit(AmazonDynamoDBClient ddbClient) {
+    public void commit() {
         try {
             for (String tableName : m_updateMap.keySet()) {
                 Map<String, Map<String, Object>> rowMap = m_updateMap.get(tableName);
-                updateTable(ddbClient, tableName, rowMap);
+                updateTable(tableName, rowMap);
             }
         } catch (Throwable e) {
             // All retries, if needed, failed.
@@ -162,25 +152,20 @@ public class DDBTransaction extends DBTransaction {
     //----- Private methods
     
     // Apply all updates for the given table.
-    private void updateTable(AmazonDynamoDBClient ddbClient,
-                             String tableName,
-                             Map<String, Map<String, Object>> rowMap) {
+    private void updateTable(String tableName, Map<String, Map<String, Object>> rowMap) {
         for (String rowKey : rowMap.keySet()) {
             Map<String, AttributeValue> key = DynamoDBService.makeDDBKey(rowKey);
             Map<String, Object> colMap = rowMap.get(rowKey);
             if (colMap == null) {
-                deleteRow(ddbClient, tableName, key);
+                DynamoDBService.instance().deleteRow(tableName, key);
             } else {
-                updateColumns(ddbClient, tableName, key, colMap);
+                updateColumns(tableName, key, colMap);
             }
         }
     }
     
     // Add or delete columns for the given table and row.
-    private void updateColumns(AmazonDynamoDBClient ddbClient,
-                               String tableName,
-                               Map<String, AttributeValue> key,
-                               Map<String, Object> colMap) {
+    private void updateColumns(String tableName, Map<String, AttributeValue> key, Map<String, Object> colMap) {
         Map<String, AttributeValueUpdate> attributeUpdates = new HashMap<>();
         for (String colName : colMap.keySet()) {
             Object colValue = colMap.get(colName);
@@ -191,7 +176,7 @@ public class DDBTransaction extends DBTransaction {
                 attributeUpdates.put(colName, new AttributeValueUpdate(attrValue, AttributeAction.PUT));
             }
         }
-        updateRow(ddbClient, tableName, key, attributeUpdates);
+        DynamoDBService.instance().updateRow(tableName, key, attributeUpdates);
     }
     
     // Store the given table/row/column update. The column value may be empty.
@@ -209,73 +194,6 @@ public class DDBTransaction extends DBTransaction {
         }
         if (colMap.put(colName, colValue) == null) {
             m_updateCount++;
-        }
-    }
-    
-    // Update item and back off if ProvisionedThroughputExceededException occurs.
-    private void updateRow(AmazonDynamoDBClient ddbClient,
-                           String tableName,
-                           Map<String, AttributeValue> key,
-                           Map<String, AttributeValueUpdate> attributeUpdates) {
-        m_logger.debug("Updating row in table {}, key={}", tableName, DynamoDBService.getDDBKey(key));
-        
-        Timer timer = new Timer();
-        boolean bSuccess = false;
-        for (int attempts = 1; !bSuccess; attempts++) {
-            try {
-                ddbClient.updateItem(tableName, key, attributeUpdates);
-                if (attempts > 1) {
-                    m_logger.info("updateRow() succeeded on attempt #{}", attempts);
-                }
-                bSuccess = true;
-                m_logger.debug("Time to update table {}, key={}: {}",
-                               new Object[]{tableName, DynamoDBService.getDDBKey(key), timer.toString()});
-            } catch (ProvisionedThroughputExceededException e) {
-                if (attempts >= ServerConfig.getInstance().max_commit_attempts) {
-                    String errMsg = "All retries exceeded; abandoning updateRow() for table: " + tableName;
-                    m_logger.error(errMsg, e);
-                    throw new RuntimeException(errMsg, e);
-                }
-                m_logger.warn("updateRow() attempt #{} failed: {}", attempts, e);
-                try {
-                    Thread.sleep(attempts * ServerConfig.getInstance().retry_wait_millis);
-                } catch (InterruptedException ex2) {
-                    // ignore
-                }
-            }
-        }
-    }
-
-    // Delete row and back off if ProvisionedThroughputExceededException occurs.
-    private void deleteRow(AmazonDynamoDBClient ddbClient,
-                           String tableName,
-                           Map<String, AttributeValue> key) {
-        m_logger.debug("Deleting row from table {}, key={}", tableName, DynamoDBService.getDDBKey(key));
-        
-        Timer timer = new Timer();
-        boolean bSuccess = false;
-        for (int attempts = 1; !bSuccess; attempts++) {
-            try {
-                ddbClient.deleteItem(tableName, key);
-                if (attempts > 1) {
-                    m_logger.info("deleteRow() succeeded on attempt #{}", attempts);
-                }
-                bSuccess = true;
-                m_logger.debug("Time to delete table {}, key={}: {}",
-                               new Object[]{tableName, DynamoDBService.getDDBKey(key), timer.toString()});
-            } catch (ProvisionedThroughputExceededException e) {
-                if (attempts >= ServerConfig.getInstance().max_commit_attempts) {
-                    String errMsg = "All retries exceeded; abandoning deleteRow() for table: " + tableName;
-                    m_logger.error(errMsg, e);
-                    throw new RuntimeException(errMsg, e);
-                }
-                m_logger.warn("deleteRow() attempt #{} failed: {}", attempts, e);
-                try {
-                    Thread.sleep(attempts * ServerConfig.getInstance().retry_wait_millis);
-                } catch (InterruptedException ex2) {
-                    // ignore
-                }
-            }
         }
     }
     

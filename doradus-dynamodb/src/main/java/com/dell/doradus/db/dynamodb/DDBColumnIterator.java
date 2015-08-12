@@ -146,6 +146,10 @@ public class DDBColumnIterator implements Iterator<DColumn> {
 
     @Override
     public String toString() {
+        return m_columns.size() + " columns";
+    }
+    
+    public String toVerboseString() {
         StringBuilder buffer = new StringBuilder();
         boolean bFirst = true;
         for (int index = 0; index < m_columns.size(); index++) {

@@ -28,13 +28,19 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
+import com.amazonaws.services.dynamodbv2.model.BatchGetItemRequest;
+import com.amazonaws.services.dynamodbv2.model.BatchGetItemResult;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.KeyType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
+import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughputExceededException;
 import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.util.Tables;
 import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.common.Utils;
@@ -44,6 +50,7 @@ import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
+import com.dell.doradus.utilities.Timer;
 
 /**
  * Implements a {@link DBService} for Amazon's DynamoDB. This implementation is currently
@@ -243,7 +250,7 @@ public class DynamoDBService extends DBService {
     public void commit(DBTransaction dbTran) {
         checkState();
         m_logger.debug("Committing transaction: {}", dbTran.toString());
-        ((DDBTransaction)dbTran).commit(m_ddbClient);
+        ((DDBTransaction)dbTran).commit();
     }
 
     //----- Public DBService methods: Queries
@@ -279,9 +286,9 @@ public class DynamoDBService extends DBService {
     @Override
     public Iterator<DRow> getAllRowsAllColumns(Tenant tenant, String storeName) {
         checkTenant(tenant);
-        DDBRowIterator ddbRow = new DDBRowIterator(m_ddbClient, storeName);
-        m_logger.debug("getAllRowsAllColumns({}) returning {}", storeName, ddbRow.toString());
-        return ddbRow;
+        DDBRowIterator ddbRowIter = new DDBRowIterator(storeName);
+        m_logger.debug("getAllRowsAllColumns({}) returning {}", storeName, ddbRowIter.toString());
+        return ddbRowIter;
     }
 
     @Override
@@ -314,28 +321,28 @@ public class DynamoDBService extends DBService {
     @Override
     public Iterator<DRow> getRowsAllColumns(Tenant tenant, String storeName, Collection<String> rowKeys) {
         checkTenant(tenant);
-        DDBRowIterator ddbRow = new DDBRowIterator(m_ddbClient, storeName, rowKeys);
-        m_logger.debug("getRowsAllColumns({}, {}) returning {}",
-                      new Object[]{storeName, rowKeys, ddbRow.toString()});
-        return ddbRow;
+        DDBRowIterator ddbRowIter = new DDBRowIterator(storeName, rowKeys);
+        m_logger.debug("getRowsAllColumns({}, {} keys) returning {}",
+                      new Object[]{storeName, rowKeys.size(), ddbRowIter.toString()});
+        return ddbRowIter;
     }
 
     @Override
     public Iterator<DRow> getRowsColumns(Tenant tenant, String storeName, Collection<String> rowKeys, Collection<String> colNames) {
         checkTenant(tenant);
-        DDBRowIterator ddbRow = new DDBRowIterator(m_ddbClient, storeName, rowKeys, colNames);
-        m_logger.debug("getRowsColumns({}, {}, {}) returning {}",
-                      new Object[]{storeName, rowKeys, colNames, ddbRow.toString()});
-        return ddbRow;
+        DDBRowIterator ddbRowIter = new DDBRowIterator(storeName, rowKeys, colNames);
+        m_logger.debug("getRowsColumns({}, {} keys, {} cols) returning {}",
+                      new Object[]{storeName, rowKeys.size(), colNames.size(), ddbRowIter.toString()});
+        return ddbRowIter;
     }
 
     @Override
     public Iterator<DRow> getRowsColumnSlice(Tenant tenant, String storeName, Collection<String> rowKeys, String startCol, String endCol) {
         checkTenant(tenant);
-        DDBRowIterator ddbRow = new DDBRowIterator(m_ddbClient, storeName, rowKeys, startCol, endCol);
-        m_logger.debug("getRowsColumnSlice({}, {}, {}, {}) returning {}",
-                      new Object[]{storeName, rowKeys, startCol, endCol, ddbRow.toString()});
-        return ddbRow;
+        DDBRowIterator ddbRowIter = new DDBRowIterator(storeName, rowKeys, startCol, endCol);
+        m_logger.debug("getRowsColumnSlice({}, {} keys, {}, {}) returning {}",
+                      new Object[]{storeName, rowKeys.size(), startCol, endCol, ddbRowIter.toString()});
+        return ddbRowIter;
     }
 
     //----- Package methods
@@ -350,6 +357,134 @@ public class DynamoDBService extends DBService {
         return key;
     }
     
+    // Perform a batchGetItem request and retry if ProvisionedThroughputExceededException occurs.
+    BatchGetItemResult batchGetItem(BatchGetItemRequest batchRequest) {
+        m_logger.debug("Performing batchGetItem request on {} items", batchRequest.getRequestItems().size());
+        
+        BatchGetItemResult batchResult = null;
+        Timer timer = new Timer();
+        boolean bSuccess = false;
+        for (int attempts = 1; !bSuccess; attempts++) {
+            try {
+                batchResult = m_ddbClient.batchGetItem(batchRequest);
+                if (attempts > 1) {
+                    m_logger.info("batchGetItem() succeeded on attempt #{}", attempts);
+                }
+                bSuccess = true;
+                m_logger.debug("Time process batchGetItem() request: {}", timer.toString());
+            } catch (ProvisionedThroughputExceededException e) {
+                if (attempts >= ServerConfig.getInstance().max_read_attempts) {
+                    String errMsg = "All retries exceeded; abandoning batchGetItem()";
+                    m_logger.error(errMsg, e);
+                    throw new RuntimeException(errMsg, e);
+                }
+                m_logger.warn("batchGetItem() attempt #{} failed: {}", attempts, e);
+                try {
+                    Thread.sleep(attempts * ServerConfig.getInstance().retry_wait_millis);
+                } catch (InterruptedException ex2) {
+                    // ignore
+                }
+            }
+        }
+        return batchResult;
+    }
+    
+    // Perform a scan request and retry if ProvisionedThroughputExceededException occurs.
+    ScanResult scan(ScanRequest scanRequest) {
+        m_logger.debug("Performing scan() request on table {}", scanRequest.getTableName());
+        
+        Timer timer = new Timer();
+        boolean bSuccess = false;
+        ScanResult scanResult = null;
+        for (int attempts = 1; !bSuccess; attempts++) {
+            try {
+                scanResult = m_ddbClient.scan(scanRequest);
+                if (attempts > 1) {
+                    m_logger.info("scan() succeeded on attempt #{}", attempts);
+                }
+                bSuccess = true;
+                m_logger.debug("Time to scan table {}: {}", scanRequest.getTableName(), timer.toString());
+            } catch (ProvisionedThroughputExceededException e) {
+                if (attempts >= ServerConfig.getInstance().max_read_attempts) {
+                    String errMsg = "All retries exceeded; abandoning scan() for table: " + scanRequest.getTableName();
+                    m_logger.error(errMsg, e);
+                    throw new RuntimeException(errMsg, e);
+                }
+                m_logger.warn("scan() attempt #{} failed: {}", attempts, e);
+                try {
+                    Thread.sleep(attempts * ServerConfig.getInstance().retry_wait_millis);
+                } catch (InterruptedException ex2) {
+                    // ignore
+                }
+            }
+        }
+        return scanResult;
+    }
+    
+    // Delete row and back off if ProvisionedThroughputExceededException occurs.
+    void deleteRow(String tableName, Map<String, AttributeValue> key) {
+        m_logger.debug("Deleting row from table {}, key={}", tableName, DynamoDBService.getDDBKey(key));
+        
+        Timer timer = new Timer();
+        boolean bSuccess = false;
+        for (int attempts = 1; !bSuccess; attempts++) {
+            try {
+                m_ddbClient.deleteItem(tableName, key);
+                if (attempts > 1) {
+                    m_logger.info("deleteRow() succeeded on attempt #{}", attempts);
+                }
+                bSuccess = true;
+                m_logger.debug("Time to delete table {}, key={}: {}",
+                               new Object[]{tableName, DynamoDBService.getDDBKey(key), timer.toString()});
+            } catch (ProvisionedThroughputExceededException e) {
+                if (attempts >= ServerConfig.getInstance().max_commit_attempts) {
+                    String errMsg = "All retries exceeded; abandoning deleteRow() for table: " + tableName;
+                    m_logger.error(errMsg, e);
+                    throw new RuntimeException(errMsg, e);
+                }
+                m_logger.warn("deleteRow() attempt #{} failed: {}", attempts, e);
+                try {
+                    Thread.sleep(attempts * ServerConfig.getInstance().retry_wait_millis);
+                } catch (InterruptedException ex2) {
+                    // ignore
+                }
+            }
+        }
+    }
+    
+    // Update item and back off if ProvisionedThroughputExceededException occurs.
+    void updateRow(String tableName,
+                   Map<String, AttributeValue> key,
+                   Map<String, AttributeValueUpdate> attributeUpdates) {
+        m_logger.debug("Updating row in table {}, key={}", tableName, DynamoDBService.getDDBKey(key));
+        
+        Timer timer = new Timer();
+        boolean bSuccess = false;
+        for (int attempts = 1; !bSuccess; attempts++) {
+            try {
+                m_ddbClient.updateItem(tableName, key, attributeUpdates);
+                if (attempts > 1) {
+                    m_logger.info("updateRow() succeeded on attempt #{}", attempts);
+                }
+                bSuccess = true;
+                m_logger.debug("Time to update table {}, key={}: {}",
+                               new Object[]{tableName, DynamoDBService.getDDBKey(key), timer.toString()});
+            } catch (ProvisionedThroughputExceededException e) {
+                if (attempts >= ServerConfig.getInstance().max_commit_attempts) {
+                    String errMsg = "All retries exceeded; abandoning updateRow() for table: " + tableName;
+                    m_logger.error(errMsg, e);
+                    throw new RuntimeException(errMsg, e);
+                }
+                m_logger.warn("updateRow() attempt #{} failed: {}", attempts, e);
+                try {
+                    Thread.sleep(attempts * ServerConfig.getInstance().retry_wait_millis);
+                } catch (InterruptedException ex2) {
+                    // ignore
+                }
+            }
+        }
+    }
+
     //----- Private methods
     
     // Throw if not running or tenant is not default.

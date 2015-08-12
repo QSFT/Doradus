@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.BatchGetItemRequest;
 import com.amazonaws.services.dynamodbv2.model.BatchGetItemResult;
@@ -46,11 +45,11 @@ public class DDBRowIterator implements Iterator<DRow> {
      * @param ddbClient Client for accessing DynamoDB API. 
      * @param tableName Name for which to get all rows.
      */
-    public DDBRowIterator(AmazonDynamoDBClient ddbClient, String tableName) {
+    public DDBRowIterator(String tableName) {
         // Use a scan request.
         ScanRequest scanRequest = new ScanRequest(tableName);
         while (true) {
-            ScanResult scanResult = ddbClient.scan(scanRequest);
+            ScanResult scanResult = DynamoDBService.instance().scan(scanRequest);
             List<Map<String, AttributeValue>> itemList = scanResult.getItems();
             if (itemList.size() == 0) {
                 break;
@@ -75,22 +74,20 @@ public class DDBRowIterator implements Iterator<DRow> {
      * @param tableName Name for which to get rows for.
      * @param rowKeys   Collection of row keys to get.
      */
-    public DDBRowIterator(AmazonDynamoDBClient ddbClient, String tableName, Collection<String> rowKeys) {
-        this(ddbClient, tableName, rowKeys, null);
+    public DDBRowIterator(String tableName, Collection<String> rowKeys) {
+        this(tableName, rowKeys, null);
     }
     
     /**
      * Create a row iterator that returns specific rows and columns for the given table. A
      * series of batch requests are made if needed.
      * 
-     * @param ddbClient Client for accessing DynamoDB API. 
      * @param tableName Name for which to get rows for.
      * @param rowKeys   Collection of row keys to get.
      * @param colNames  Set of column names to fetch. If null or empty, all columns are
      *                  fetched.
      */
-    public DDBRowIterator(AmazonDynamoDBClient ddbClient, String tableName,
-                          Collection<String> rowKeys, Collection<String> colNames) {
+    public DDBRowIterator(String tableName, Collection<String> rowKeys, Collection<String> colNames) {
         Iterator<String> rowKeyIter = rowKeys.iterator();
         KeysAndAttributes keysAndAttributes = makeKeyBatch(rowKeyIter);
         
@@ -98,7 +95,7 @@ public class DDBRowIterator implements Iterator<DRow> {
             BatchGetItemRequest batchRequest = new BatchGetItemRequest();
             batchRequest.addRequestItemsEntry(tableName, keysAndAttributes);
             
-            BatchGetItemResult batchResult = ddbClient.batchGetItem(batchRequest);
+            BatchGetItemResult batchResult = DynamoDBService.instance().batchGetItem(batchRequest);
             Map<String, List<Map<String, AttributeValue>>> responseMap = batchResult.getResponses();
             
             List<Map<String, AttributeValue>> itemsList = responseMap.get(tableName);
@@ -125,7 +122,6 @@ public class DDBRowIterator implements Iterator<DRow> {
      * Create a row iterator that returns specific rows and column ranges for the given
      * table. A series of batch item requests are made if needed.
      * 
-     * @param ddbClient Client for accessing DynamoDB API. 
      * @param tableName Name for which to get rows for.
      * @param rowKeys   Collection of row keys to get.
      * @param startCol  If non-null/empty, only column names greater than or equal to this
@@ -133,15 +129,14 @@ public class DDBRowIterator implements Iterator<DRow> {
      * @param endCol    If non-null/empty, only column names less than or equal to this
      *                  name are captured.
      */
-    public DDBRowIterator(AmazonDynamoDBClient ddbClient, String tableName,
-                          Collection<String> rowKeys, String startCol, String endCol) {
+    public DDBRowIterator(String tableName, Collection<String> rowKeys, String startCol, String endCol) {
         Iterator<String> rowKeyIter = rowKeys.iterator();
         KeysAndAttributes keysAndAttributes = makeKeyBatch(rowKeyIter);
         while (true) {
             BatchGetItemRequest batchRequest = new BatchGetItemRequest();
             batchRequest.addRequestItemsEntry(tableName, keysAndAttributes);
             
-            BatchGetItemResult batchResult = ddbClient.batchGetItem(batchRequest);
+            BatchGetItemResult batchResult = DynamoDBService.instance().batchGetItem(batchRequest);
             Map<String, List<Map<String, AttributeValue>>> responseMap = batchResult.getResponses();
             
             List<Map<String, AttributeValue>> itemsList = responseMap.get(tableName);
@@ -181,6 +176,17 @@ public class DDBRowIterator implements Iterator<DRow> {
 
     @Override
     public String toString() {
+        StringBuilder buffer = new StringBuilder("Rows: ");
+        if (m_rowList.size() == 0) {
+            buffer.append("<none>");
+        }
+        for (int index = 0; index < m_rowList.size(); index++) {
+            buffer.append(m_rowList.get(index).toString() + "; ");
+        }
+        return buffer.toString();
+    }
+    
+    public String toVerboseString() {
         StringBuilder buffer = new StringBuilder();
         if (m_rowList.size() == 0) {
             buffer.append("Rows: <none>");
@@ -191,7 +197,7 @@ public class DDBRowIterator implements Iterator<DRow> {
             if (index > 0) {
                 buffer.append("\n");
             }
-            buffer.append("   " + m_rowList.toString());
+            buffer.append("   " + m_rowList.get(index).toVerboseString());
         }
         return buffer.toString();
     }

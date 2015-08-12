@@ -46,9 +46,13 @@ public class DDBRow implements DRow {
 
     @Override
     public String toString() {
+        return "Row [" + m_key + "]: " + m_ddbColIter.toString();
+    }
+    
+    public String toVerboseString() {
         StringBuilder buffer = new StringBuilder();
         buffer.append("Row [" + m_key + "]: ");
-        buffer.append(m_ddbColIter.toString());
+        buffer.append(m_ddbColIter.toVerboseString());
         return buffer.toString();
     }
     
