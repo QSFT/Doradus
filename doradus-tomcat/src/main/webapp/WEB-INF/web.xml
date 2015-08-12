@@ -32,18 +32,19 @@
         <servlet-class>com.dell.doradus.servlet.DoradusRestServlet</servlet-class>
     </servlet>  
     
-	<!--Doradus running as ROOT level -->
+    <!--Doradus running as ROOT level (no URI prefix)-->
     <servlet-mapping>
         <servlet-name>DoradusRestServlet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
-    <!--Doradus running as URL prefix level -->
-   <servlet-mapping>
+    
+    <!--Doradus running with URI prefix "_api" -->
+    <servlet-mapping>
         <servlet-name>DoradusRestServlet</servlet-name>
         <url-pattern>/_api/*</url-pattern>
     </servlet-mapping>
 
-    <!--Starting Doradus server via web application initialization -->		
+    <!--Starting Doradus server via web application initialization -->    
    <listener>
         <listener-class>com.dell.doradus.servlet.DoradusServletContextListener</listener-class>
     </listener>
