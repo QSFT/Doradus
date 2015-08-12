@@ -111,7 +111,6 @@ public class ServerConfig {
     public Map<String, Object> cf_defaults = new HashMap<>();
     
     //Doradus WebServer
-    public String load_webserver;
     public String webserver_class;      
     public static String[] commandLineArgs;
 

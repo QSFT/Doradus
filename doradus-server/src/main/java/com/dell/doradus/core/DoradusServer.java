@@ -121,14 +121,32 @@ public final class DoradusServer {
 
     /**
      * Entrypoint method when Doradus is run as a Windows service. Currently, does the
-     * same thing as {@link #main(String[])}.
+     * same thing as {@link #main(String[])}. This method blocks until a shutdown is
+     * received via Ctrl-C or {@link #shutDown()} is called in another thread.
      * 
-     * @param args  See {@link #main(String[])} for examples;
+     * @param args  See {@link #main(String[])} for examples.
      */
     public static void startServer(String[] args) {
         main(args);
     }   // startServer
     
+    /**
+     * Start the Doradus Server in stand-alone mode but return as soon as all internal
+     * services are started. doradus.yaml file options are overridden by the args, if any.
+     * All required services plus default_services and storage_services configured in
+     * doradus.yaml are started. When the method returns, all internal services are
+     * started by may not be ready to use.
+     * 
+     * @param args  Optional arguments that override doradus.yaml file options. Arguments
+     *              should be provided in the form "-option value" where "option" is a
+     *              doradus.yaml option name and "value" is the overriding value. For
+     *              example: "-restport 1223" sets the REST API listening port to 1223.
+     */
+    public static void startServerUnblocked(String[] args) {
+        instance().initStandAlone(args);
+        instance().start();
+    }   // startServerUnblocked
+
     /**
      * Entrypoint method to embed a Doradus server in an application. The args parameter
      * is the same as {@link #startServer(String[])} and {@link #main(String[])}, which

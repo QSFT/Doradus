@@ -68,7 +68,7 @@ public class RESTService extends Service {
     // Initialize WebService so it's ready to run.
     @Override
     public void initService() {
-        m_webservice = loadWebServer();
+        m_webservice = loadWebServer(); // could be null
     	registerCommands(Arrays.asList(DescribeCmd.class));
     }   // initService
 
@@ -77,10 +77,12 @@ public class RESTService extends Service {
     public void startService() {
         m_cmdRegistry.freezeCommandSet(true);
         displayCommandSet();
-        try {
-       		m_webservice.start();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to start WebService", e);
+        if (m_webservice != null) {
+            try {
+                m_webservice.start();
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to start WebService", e);
+            }
         }
     }   // startService
 
@@ -88,7 +90,9 @@ public class RESTService extends Service {
     @Override
     public void stopService() {
         try {
-       		m_webservice.stop();
+            if (m_webservice != null) {
+                m_webservice.stop();
+            }
         } catch (Exception e) {
             m_logger.warn("WebService stop failed", e);
         }
@@ -238,17 +242,15 @@ public class RESTService extends Service {
     // Attempt to load the WebServer instance defined by webserver_class.
     private WebServer loadWebServer() {
         WebServer webServer = null;
-        if (!Utils.isEmpty(ServerConfig.getInstance().load_webserver)) {
-            m_logger.warn("Parameter 'load_webserver' is obsolete. Use 'default_services' " +
-                            "to enable/disable the RESTService. Option ignored.");
-        }
-        try {
-            Class<?> serviceClass = Class.forName(ServerConfig.getInstance().webserver_class);
-            Method instanceMethod = serviceClass.getMethod("instance", (Class<?>[])null);
-            webServer = (WebServer)instanceMethod.invoke(null, (Object[])null);
-            webServer.init(RESTServlet.class.getName());
-        } catch (Exception e) {
-            throw new RuntimeException("Error initializing WebServer: " + ServerConfig.getInstance().webserver_class, e);
+        if (!Utils.isEmpty(ServerConfig.getInstance().webserver_class)) {
+            try {
+                Class<?> serviceClass = Class.forName(ServerConfig.getInstance().webserver_class);
+                Method instanceMethod = serviceClass.getMethod("instance", (Class<?>[])null);
+                webServer = (WebServer)instanceMethod.invoke(null, (Object[])null);
+                webServer.init(RESTServlet.class.getName());
+            } catch (Exception e) {
+                throw new RuntimeException("Error initializing WebServer: " + ServerConfig.getInstance().webserver_class, e);
+            }
         }
         return webServer;
     }

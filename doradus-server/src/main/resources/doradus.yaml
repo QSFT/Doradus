@@ -96,8 +96,11 @@ storage_services:
     - com.dell.doradus.service.olap.OLAPService
     - com.dell.doradus.logservice.LoggingService
     
-# webserver_class: When the RESTService is included in default_services, this parameter defines the
-# the full package name of the WebServer class that provides the web server integration.
+# webserver_class: This parameter is the full package name of a WebServer class that provides an
+# embedded web server. When this parameter is non-null and the RESTService is enabled, the
+# corresponding class is started and stopped along with the RESTService. To use the embedded Jetty
+# server, set this to: com.dell.doradus.server.JettyWebServer. When Doradus is used with an external
+# web server such as Tomcat, enable the RESTService but leave this parameter undefined.
 webserver_class: com.dell.doradus.server.JettyWebServer
 
 ########## Cassandra Keyspace Parameters
@@ -227,7 +230,6 @@ dbpassword: cassandra
 #       Frame size (xxx) larger than max length (yyy)!
 # The default value is 16 (16777216 bytes).
 thrift_buffer_size_mb: 16
-
 
 ########## Doradus REST API Parameters
 #
