@@ -355,7 +355,7 @@
     <property name="server.zip.file"                 value="doradus-server.zip" />
     <property name="server-cassandra.zip.file"       value="doradus-server-cassandra.zip" />
     
-    <target name="ServerRelease" depends="ServerZip,ServerCassandraZip"/>
+    <target name="ServerRelease" depends="ServerZip,ServerCassandraZip,DoradusVersion"/>
     
     <target name="ServerZip" depends="ServerJar">
         <mkdir   dir="${release.dir}" />
@@ -520,4 +520,18 @@
         </zip>
     </target>
 
+	<!-- ============================================================================== -->
+	<!--           Doradus version update task                                          -->
+	<!-- ============================================================================== -->	
+	<available file=".git" type="dir" property="git.present"/>
+
+	<target name="DoradusVersion" description="Store doradus version in doradus.ver" if="git.present">
+	    <exec executable="git" output="${server.dir}/src/main/resources/doradus.ver" failifexecutionfails="false" errorproperty="">
+	        <arg value="describe"/>
+	        <arg value="--tags"/>
+	        <arg value="--long"/>
+	        <arg value="--always"/>
+	        <arg value="HEAD"/> 	
+	    </exec>
+	</target>	
 </project>
