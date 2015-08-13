@@ -461,6 +461,9 @@
         <copy todir="${client.lib.dir}">
             <fileset dir="${common.lib.dir}"/>
         </copy>
+        <copy todir="${client.config.dir}">
+             <fileset dir="${client.dir}/src/main/resources"/>
+         </copy>
     </target>
 
     <target name="ClientCleanup">
