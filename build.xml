@@ -28,7 +28,7 @@
     
     <!-- ============================================================================== -->
     <!-- ============================================================================== -->
-    <target name="Release" depends="create-empty-release-dir,ServerRelease,ClientRelease,DoradusVersion">
+    <target name="Release" depends="create-empty-release-dir,ServerRelease,ClientRelease">
     </target>
     
     <target name="create-empty-release-dir">
@@ -355,7 +355,7 @@
     <property name="server.zip.file"                 value="doradus-server.zip" />
     <property name="server-cassandra.zip.file"       value="doradus-server-cassandra.zip" />
     
-    <target name="ServerRelease" depends="ServerZip,ServerCassandraZip"/>
+    <target name="ServerRelease" depends="ServerZip,ServerCassandraZip,DoradusVersion"/>
     
     <target name="ServerZip" depends="ServerJar">
         <mkdir   dir="${release.dir}" />
