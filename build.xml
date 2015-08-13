@@ -28,7 +28,7 @@
     
     <!-- ============================================================================== -->
     <!-- ============================================================================== -->
-    <target name="Release" depends="create-empty-release-dir,ServerRelease,ClientRelease">
+    <target name="Release" depends="create-empty-release-dir,ServerRelease,ClientRelease,DoradusVersion">
     </target>
     
     <target name="create-empty-release-dir">
@@ -355,7 +355,7 @@
     <property name="server.zip.file"                 value="doradus-server.zip" />
     <property name="server-cassandra.zip.file"       value="doradus-server-cassandra.zip" />
     
-    <target name="ServerRelease" depends="ServerZip,ServerCassandraZip,DoradusVersion"/>
+    <target name="ServerRelease" depends="ServerZip,ServerCassandraZip"/>
     
     <target name="ServerZip" depends="ServerJar">
         <mkdir   dir="${release.dir}" />
@@ -429,6 +429,9 @@
     <target name="ClientLoadLibs" depends="_setProxy">
         <delete dir="${client.lib.dir}" failonerror="false"/>
         <mkdir  dir="${client.lib.dir}"/>
+        <get dest="${client.lib.dir}">
+           <url url="http://repo1.maven.org/maven2/org/glassfish/javax.json/1.0.4/javax.json-1.0.4.jar"/> 
+        </get>  
     </target>
     
     <target name="ClientCompile" depends="CommonJar,ClientLoadLibs">
@@ -520,18 +523,18 @@
         </zip>
     </target>
 
-	<!-- ============================================================================== -->
-	<!--           Doradus version update task                                          -->
-	<!-- ============================================================================== -->	
+    <!-- ============================================================================== -->
+    <!--           Doradus version update task                                          -->
+    <!-- ============================================================================== -->	
 	<available file=".git" type="dir" property="git.present"/>
 
-	<target name="DoradusVersion" description="Store doradus version in doradus.ver" if="git.present">
-	    <exec executable="git" output="${server.dir}/src/main/resources/doradus.ver" failifexecutionfails="false" errorproperty="">
-	        <arg value="describe"/>
+    <target name="DoradusVersion" description="Store doradus version in doradus.ver" if="git.present">
+         <exec executable="git" output="${server.dir}/src/main/resources/doradus.ver" failifexecutionfails="false" errorproperty="">
+            <arg value="describe"/>
 	        <arg value="--tags"/>
 	        <arg value="--long"/>
 	        <arg value="--always"/>
 	        <arg value="HEAD"/> 	
-	    </exec>
-	</target>	
+         </exec>
+    </target>	
 </project>
