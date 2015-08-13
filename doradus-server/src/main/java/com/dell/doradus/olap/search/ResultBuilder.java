@@ -98,6 +98,7 @@ public class ResultBuilder {
 			for(Query qu : ((AndQuery)query).subqueries) {
 				Result c = search(tableDef, qu, searcher);
 				r.and(c);
+				if(r.countSet() == 0) return r;
 			}
 		} else if(query instanceof NoneQuery) {
 		} else if(query instanceof OrQuery) {
@@ -165,6 +166,7 @@ public class ResultBuilder {
 								vr.set(i);
 							}
 						}
+						if(vr.countSet() == 0) return r;
 						FieldSearcher field_searcher = searcher.getFieldSearcher(tableDef.getTableName(), field);
 						field_searcher.fillDocs(vr, r);
 					}
@@ -174,6 +176,7 @@ public class ResultBuilder {
 						int term_min = vs.find(term, false);
 						term = new BSTR(value + "\uFFFF");
 						int term_max = vs.find(term, false);
+                        if(term_max < term_min) return r;
 						FieldSearcher field_searcher = searcher.getFieldSearcher(tableDef.getTableName(), field);
 						field_searcher.fill(term_min, term_max, r);
 					}
@@ -192,6 +195,7 @@ public class ResultBuilder {
 						String str = vs.getValue(i).toString();
 						if(FilterContains.compare(str, value)) vr.set(i);
 					}
+                    if(vr.countSet() == 0) return r;
 					FieldSearcher field_searcher = searcher.getFieldSearcher(tableDef.getTableName(), field);
 					field_searcher.fillDocs(vr, r);
 				}
@@ -201,6 +205,7 @@ public class ResultBuilder {
 						String str = vs.getValue(i).toString();
 						if(Pattern.matches(value, str)) vr.set(i);
 					}
+                    if(vr.countSet() == 0) return r;
 					FieldSearcher field_searcher = searcher.getFieldSearcher(tableDef.getTableName(), field);
 					field_searcher.fillDocs(vr, r);
 				}
@@ -383,12 +388,22 @@ public class ResultBuilder {
 			Utils.require(field.isLinkField(), lq.link + " is not a link field");
 			TableDefinition extent = tableDef.getAppDef().getTableDef(field.getLinkExtent());
 			Result inner = search(extent, lq.innerQuery, searcher);
+			
+            if(!LinkQuery.NONE.equals(lq.quantifier) && inner.countSet() == 0) {
+                return r;
+            }
+			
 			if(LinkQuery.ALL.equals(lq.quantifier)) inner.not();
 			Result filter = null;
 			if(lq.filter != null) {
 				filter = search(extent, lq.filter, searcher);
 				inner.and(filter);
 			}
+			
+			if(LinkQuery.ANY.equals(lq.quantifier) && inner.countSet() == 0) {
+			    return r;
+			}
+			
 			//Result inner = search(extent, lq.getInnerQuery(), searcher);
 			FieldSearcher field_searcher = searcher.getFieldSearcher(field.getLinkExtent(), field.getLinkInverse());
 			field_searcher.fields(inner, r);

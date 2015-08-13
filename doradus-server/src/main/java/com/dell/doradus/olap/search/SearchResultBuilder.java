@@ -38,6 +38,13 @@ import com.dell.doradus.search.aggregate.SortOrder;
 public class SearchResultBuilder {
 	
 	public static SearchResultList build(CubeSearcher searcher, Result documents, FieldSet fieldSet, int size, SortOrder[] orders) {
+	    
+	    if(documents.countSet() == 0) {
+	        SearchResultList empty = new SearchResultList();
+	        empty.documentsCount = 0;
+	        return empty;
+	    }
+	    
 		if(size == 0) size = Integer.MAX_VALUE;
 		fieldSet.limit = size;
 		FieldSetCreator fieldSetCreator = new FieldSetCreator(searcher, fieldSet, orders);
