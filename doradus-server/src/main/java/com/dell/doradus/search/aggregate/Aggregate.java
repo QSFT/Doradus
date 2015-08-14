@@ -151,7 +151,7 @@ public class Aggregate {
 	// Executes the request and returns the total group.
 	// The total group may contain subgroups
 	@SuppressWarnings("unchecked")
-	public void execute() throws IOException {
+	public void execute() {
 		Utils.require(m_metricPaths != null && m_metricPaths.length != 0, "Metric ('m') parameter is required");
         List<String> allfieldNames = new ArrayList<String>();
 		for (GroupSetEntry groupSetEntry : m_groupSet) {

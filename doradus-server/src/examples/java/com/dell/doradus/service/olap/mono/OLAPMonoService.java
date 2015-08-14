@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import com.dell.doradus.common.AggregateResult;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.BatchResult;
 import com.dell.doradus.common.CommonDefs;
@@ -31,8 +30,6 @@ import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.OlapBatch;
-import com.dell.doradus.search.SearchResult;
-import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.StorageService;
 import com.dell.doradus.service.olap.OLAPService;
 import com.dell.doradus.service.rest.RESTCallback;
@@ -135,39 +132,9 @@ public class OLAPMonoService extends StorageService {
         return appTasks;
     }   // getAppTasks
     
-    //----- StorageService: Object query methods
-    
-    public SearchResultList objectQueryURI(TableDefinition tableDef, String uriQuery) {
-        String monoURIQuery = addMonoShard(uriQuery);
-        SearchResultList resultList = OLAPService.instance().objectQueryURI(tableDef, monoURIQuery);
-        for (SearchResult result : resultList.results) {
-            result.scalars.remove("_shard");
-        }
-        return resultList;
-    }   // objectQueryURI
-    
-    public SearchResultList objectQueryDoc(TableDefinition tableDef, UNode rootNode) {
-        UNode monoRootNode = addMonoShard(rootNode);
-        SearchResultList resultList = OLAPService.instance().objectQueryDoc(tableDef, monoRootNode);
-        for (SearchResult result : resultList.results) {
-            result.scalars.remove("_shard");
-        }
-        return resultList;
-    }   // objectQueryDoc
-    
-    public AggregateResult aggregateQueryURI(TableDefinition tableDef, String uriQuery) {
-        String monoURIQuery = addMonoShard(uriQuery);
-        return OLAPService.instance().aggregateQueryURI(tableDef, monoURIQuery);
-    }
-    
-    public AggregateResult aggregateQueryDoc(TableDefinition tableDef, UNode rootNode) {
-        UNode monoRootNode = addMonoShard(rootNode);
-        return OLAPService.instance().aggregateQueryDoc(tableDef, monoRootNode);
-    }
-    
     //----- StorageService: Object update methods
 
-    // Store name should alwauys be MONO_SHARD_NAME for OLAPMono.
+    // Store name should always be MONO_SHARD_NAME for OLAPMono.
     
     public BatchResult addBatch(ApplicationDefinition appDef, String shardName, OlapBatch batch) {
         Utils.require(shardName.equals(MONO_SHARD_NAME), "Shard name must be: " + MONO_SHARD_NAME);

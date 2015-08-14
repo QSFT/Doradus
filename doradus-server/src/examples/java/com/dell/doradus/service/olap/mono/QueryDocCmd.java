@@ -21,6 +21,7 @@ import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.rest.RESTParameter;
+import com.dell.doradus.olap.OlapQuery;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.service.olap.OLAPService;
 import com.dell.doradus.service.rest.UNodeInOutCallback;
@@ -58,7 +59,8 @@ public class QueryDocCmd extends UNodeInOutCallback {
         TableDefinition tableDef = m_request.getTableDef(appDef);
         UNode rootNode = UNode.parse(m_request.getInputBody(), m_request.getInputContentType());
         UNode monoNode = OLAPMonoService.addMonoShard(rootNode);
-        SearchResultList searchResult = OLAPService.instance().objectQueryDoc(tableDef, monoNode);
+        OlapQuery olapQuery = new OlapQuery(monoNode);
+        SearchResultList searchResult = OLAPService.instance().objectQuery(tableDef, olapQuery);
         return searchResult.toDoc();
     }   // invokeUNodeOut
 

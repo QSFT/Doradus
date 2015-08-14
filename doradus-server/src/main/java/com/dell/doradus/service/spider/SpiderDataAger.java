@@ -94,8 +94,9 @@ public class SpiderDataAger extends Task {
                 uriParam.append("&g=");
                 uriParam.append(contToken);
             }
+            ObjectQuery objQuery = new ObjectQuery(m_tableDef, uriParam.toString());
             SearchResultList resultList =
-                SpiderService.instance().objectQueryURI(m_tableDef, uriParam.toString());
+                SpiderService.instance().objectQuery(m_tableDef, objQuery);
             List<String> objIDs = new ArrayList<>();
             for (SearchResult result : resultList.results) {
                 objIDs.add(result.id());

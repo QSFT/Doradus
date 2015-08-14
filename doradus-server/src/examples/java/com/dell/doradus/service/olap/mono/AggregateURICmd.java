@@ -20,6 +20,7 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
+import com.dell.doradus.olap.OlapAggregate;
 import com.dell.doradus.service.olap.OLAPService;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
@@ -41,7 +42,8 @@ public class AggregateURICmd extends UNodeOutCallback {
         TableDefinition tableDef = m_request.getTableDef(appDef);
         String params = m_request.getVariable("params");    // leave encoded
         String monoParams = OLAPMonoService.addMonoShard(params);
-        return OLAPService.instance().aggregateQueryURI(tableDef, monoParams).toDoc();
+        OlapAggregate request = new OlapAggregate(monoParams);
+        return OLAPService.instance().aggregateQuery(tableDef, request).toDoc();
     }   // invoke
 
 }   // class AggregateURICmd 

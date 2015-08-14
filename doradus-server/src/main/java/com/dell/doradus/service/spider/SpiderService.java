@@ -16,7 +16,6 @@
 
 package com.dell.doradus.service.spider;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -42,7 +41,6 @@ import com.dell.doradus.common.Pair;
 import com.dell.doradus.common.RetentionAge;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.TableDefinition.ShardingGranularity;
-import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.fieldanalyzer.FieldAnalyzer;
 import com.dell.doradus.search.SearchResultList;
@@ -190,75 +188,28 @@ public class SpiderService extends StorageService {
     }   // getObject
     
     /**
-     * Perform an object query on the given table using query parameters encoded as a URI
-     * query parameter. Example:
-     * <pre>
-     *      q=Size%3E3+AND+Name:smith&size=50
-     * </pre>
+     * Perform an object query on the given table using the given query parameters.
      * 
-     * @param tableDef  {@link TableDefinition} of table to query.
-     * @param uriQuery  URI-encoded query parameters.
-     * @return          {@link SearchResultList} containing search results.
+     * @param tableDef      {@link TableDefinition} of table to query.
+     * @param objectQuery   {@link ObjectQuery} containing query parameters.
+     * @return              {@link SearchResultList} containing search results.
      */
-    public SearchResultList objectQueryURI(TableDefinition tableDef, String uriQuery) {
+    public SearchResultList objectQuery(TableDefinition tableDef, ObjectQuery objectQuery) {
         checkServiceState();
-        return new ObjectQuery(tableDef, uriQuery).query();
-    }   // objectQueryURI
+        return objectQuery.query();
+    }   // objectQuery    
     
     /**
-     * Perform an object query on the given table using query parameters parsed into a
-     * UNode tree.
+     * Perform an aggregate query on the given table using the given query parameters.
      * 
      * @param tableDef  {@link TableDefinition} of table to query.
-     * @param rootNode  Root {@link UNode} of an object query parameter document.
-     * @return          {@link SearchResultList} containing search results.
-     */
-    public SearchResultList objectQueryDoc(TableDefinition tableDef, UNode rootNode) {
-        checkServiceState();
-        return new ObjectQuery(tableDef, rootNode).query();
-    }   // objectQueryDoc    
-
-    /**
-     * Perform an aggregate query on the given table using query parameters encoded as a
-     * URI query parameter. Example:
-     * <pre>
-     *      q=Size%3E3+AND+Name:smith&m=COUNT(*)
-     * </pre>
-     * 
-     * @param tableDef  {@link TableDefinition} of table to query.
-     * @param uriQuery  URI-encoded query parameters.
+     * @param aggParams {@link Aggregate} containing query parameters.
      * @return          {@link AggregateResult} containing search results.
      */
-    public AggregateResult aggregateQueryURI(TableDefinition tableDef, String uriQuery) {
+    public AggregateResult aggregateQuery(TableDefinition tableDef, Aggregate aggParams) {
         checkServiceState();
-        Aggregate aggregate = new Aggregate(tableDef);
-        aggregate.parseParameters(uriQuery);
-        try {
-        	aggregate.execute();
-        } catch (IOException e) {
-        	throw new RuntimeException("Aggregation failed with " + e);
-        }
-        return aggregate.getResult();
-    }   // aggregateQuery
-    
-    /**
-     * Perform an aggregate query on the given table using query parameters parsed into a
-     * UNode tree.
-     * 
-     * @param tableDef  {@link TableDefinition} of table to query.
-     * @param rootNode  Root {@link UNode} of an aggregate query parameter document.
-     * @return          {@link AggregateResult} containing search results.
-     */
-    public AggregateResult aggregateQueryDoc(TableDefinition tableDef, UNode rootNode) {
-        checkServiceState();
-        Aggregate aggregate = new Aggregate(tableDef);
-        aggregate.parseParameters(rootNode);
-        try {
-        	aggregate.execute();
-        } catch (IOException e) {
-        	throw new RuntimeException("Aggregation failed with " + e);
-        }
-        return aggregate.getResult();
+        aggParams.execute();
+        return aggParams.getResult();
     }   // aggregateQuery
     
     //----- StorageService object update methods

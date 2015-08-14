@@ -155,65 +155,26 @@ public class OLAPService extends StorageService {
     //----- Object query methods
     
     /**
-     * Perform an object query on the given table using query parameters encoded as a URI
-     * query parameter. Example:
-     * <pre>
-     *      q=Size%3E3+AND+Name:smith&shards=Fox,Charlie
-     * </pre>
+     * Perform an object query on the given table using the given query parameters.
      * 
      * @param tableDef  {@link TableDefinition} of table to query.
-     * @param uriQuery  URI-encoded query parameters.
+     * @param olapQuery {@link OlapQuery} containing query parameters.
      * @return          {@link SearchResultList} containing search results.
      */
-    public SearchResultList objectQueryURI(TableDefinition tableDef, String uriQuery) {
+    public SearchResultList objectQuery(TableDefinition tableDef, OlapQuery olapQuery) {
         checkServiceState();
-        OlapQuery olapQuery = new OlapQuery(uriQuery);
-        return m_olap.search(tableDef.getAppDef(), tableDef.getTableName(), olapQuery);
-    }   // objectQueryURI
-    
-    /**
-     * Perform an object query on the given table using query parameters parsed into a
-     * UNode tree.
-     * 
-     * @param tableDef  {@link TableDefinition} of table to query.
-     * @param rootNode  Root {@link UNode} of an object query parameter document.
-     * @return          {@link SearchResultList} containing search results.
-     */
-    public SearchResultList objectQueryDoc(TableDefinition tableDef, UNode rootNode) {
-        checkServiceState();
-        OlapQuery olapQuery = new OlapQuery(rootNode);
         return m_olap.search(tableDef.getAppDef(), tableDef.getTableName(), olapQuery);
     }   // objectQueryDoc
     
     /**
-     * Perform an aggregate query on the given table using query parameters encoded as a
-     * URI query parameter. Example:
-     * <pre>
-     *      q=Size%3E3+AND+Name:smith&shards=Fox,Charlie&m=COUNT(*)
-     * </pre>
+     * Perform an aggregate query on the given table using the given request.
      * 
      * @param tableDef  {@link TableDefinition} of table to query.
-     * @param uriQuery  URI-encoded query parameters.
+     * @param request   {@link OlapAggregate} that defines query parameters.
      * @return          {@link AggregateResult} containing search results.
      */
-    public AggregateResult aggregateQueryURI(TableDefinition tableDef, String uriQuery) {
+    public AggregateResult aggregateQuery(TableDefinition tableDef, OlapAggregate request) {
         checkServiceState();
-        OlapAggregate request = new OlapAggregate(uriQuery);
-        AggregationResult result = m_olap.aggregate(tableDef.getAppDef(), tableDef.getTableName(), request);
-        return AggregateResultConverter.create(result, request);
-    }
-    
-    /**
-     * Perform an aggregate query on the given table using query parameters parsed into a
-     * UNode tree.
-     * 
-     * @param tableDef  {@link TableDefinition} of table to query.
-     * @param rootNode  Root {@link UNode} of an aggregate query parameter document.
-     * @return          {@link AggregateResult} containing search results.
-     */
-    public AggregateResult aggregateQueryDoc(TableDefinition tableDef, UNode rootNode) {
-        checkServiceState();
-        OlapAggregate request = new OlapAggregate(rootNode);
         AggregationResult result = m_olap.aggregate(tableDef.getAppDef(), tableDef.getTableName(), request);
         return AggregateResultConverter.create(result, request);
     }

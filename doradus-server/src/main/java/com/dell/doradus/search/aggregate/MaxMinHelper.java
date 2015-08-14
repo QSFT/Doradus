@@ -16,7 +16,6 @@
 
 package com.dell.doradus.search.aggregate;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Date;
@@ -38,7 +37,7 @@ public class MaxMinHelper {
         return Utils.toString(bytes);
     }
     
-    public static Date getMaxDate(TableDefinition tableDefinition, String dateField) throws IOException {
+    public static Date getMaxDate(TableDefinition tableDefinition, String dateField) {
     	Collection<Integer> shards = SpiderHelper.getShards(tableDefinition);
     	String max = "";
     	List<String> res = null;
@@ -50,7 +49,7 @@ public class MaxMinHelper {
     	else return new DateTrie().parse(max);
     }
     
-    public static Date getMinDate(TableDefinition tableDefinition, String dateField) throws IOException {
+    public static Date getMinDate(TableDefinition tableDefinition, String dateField) {
     	List<String> dates = SpiderHelper.getTerms(tableDefinition, dateField, "", 1);
     	if(dates.size() == 0) return null;
     	return new DateTrie().parse(dates.get(0));

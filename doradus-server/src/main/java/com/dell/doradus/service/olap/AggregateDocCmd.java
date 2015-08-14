@@ -22,6 +22,7 @@ import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.rest.RESTParameter;
+import com.dell.doradus.olap.OlapAggregate;
 import com.dell.doradus.service.rest.UNodeInOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 import com.dell.doradus.service.rest.annotation.ParamDescription;
@@ -55,7 +56,8 @@ public class AggregateDocCmd extends UNodeInOutCallback {
         ApplicationDefinition appDef = m_request.getAppDef();
         TableDefinition tableDef = m_request.getTableDef(appDef);
         UNode rootNode = UNode.parse(m_request.getInputBody(), m_request.getInputContentType());
-        AggregateResult aggResult = OLAPService.instance().aggregateQueryDoc(tableDef, rootNode);
+        OlapAggregate request = new OlapAggregate(rootNode);
+        AggregateResult aggResult = OLAPService.instance().aggregateQuery(tableDef, request);
         return aggResult.toDoc();
     }   // invokeUNodeOut
 

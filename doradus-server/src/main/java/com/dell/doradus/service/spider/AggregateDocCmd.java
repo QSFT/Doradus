@@ -22,6 +22,7 @@ import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.rest.RESTParameter;
+import com.dell.doradus.search.aggregate.Aggregate;
 import com.dell.doradus.service.rest.UNodeInOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 import com.dell.doradus.service.rest.annotation.ParamDescription;
@@ -50,7 +51,9 @@ public class AggregateDocCmd extends UNodeInOutCallback {
         ApplicationDefinition appDef = m_request.getAppDef();
         TableDefinition tableDef = m_request.getTableDef(appDef);
         UNode rootNode = UNode.parse(m_request.getInputBody(), m_request.getInputContentType());
-        AggregateResult aggResult = SpiderService.instance().aggregateQueryDoc(tableDef, rootNode);
+        Aggregate aggQuery = new Aggregate(tableDef);
+        aggQuery.parseParameters(rootNode);
+        AggregateResult aggResult = SpiderService.instance().aggregateQuery(tableDef, aggQuery);
         return aggResult.toDoc();
     }   // invokeUNodeOut
 

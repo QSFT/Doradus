@@ -53,7 +53,8 @@ public class QueryDocCmd extends UNodeInOutCallback {
         ApplicationDefinition appDef = m_request.getAppDef();
         TableDefinition tableDef = m_request.getTableDef(appDef);
         UNode rootNode = UNode.parse(m_request.getInputBody(), m_request.getInputContentType());
-        SearchResultList searchResult = SpiderService.instance().objectQueryDoc(tableDef, rootNode);
+        ObjectQuery objQuery = new ObjectQuery(tableDef, rootNode);
+        SearchResultList searchResult = SpiderService.instance().objectQuery(tableDef, objQuery);
         return searchResult.toDoc();
     }   // invokeUNodeOut
 

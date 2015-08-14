@@ -20,6 +20,7 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
+import com.dell.doradus.search.aggregate.Aggregate;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
@@ -39,7 +40,9 @@ public class AggregateURICmd extends UNodeOutCallback {
         ApplicationDefinition appDef = m_request.getAppDef();
         TableDefinition tableDef = m_request.getTableDef(appDef);
         String params = m_request.getVariable("params");    // leave encoded
-        return SpiderService.instance().aggregateQueryURI(tableDef, params).toDoc();
+        Aggregate aggParams = new Aggregate(tableDef);
+        aggParams.parseParameters(params);
+        return SpiderService.instance().aggregateQuery(tableDef, aggParams).toDoc();
     }   // invoke
 
 }   // class AggregateURICmd 

@@ -37,10 +37,7 @@ import com.dell.doradus.service.rest.annotation.ParamDescription;
 public class SetShardPropertiesCmd extends RESTCallback {
     @ParamDescription
     public static RESTParameter describeParams() {
-        return new RESTParameter("params", null, false)
-                        .add("expire-date", "text")
-                        .add("timeout", "integer")
-                        .add("force-merge", "boolean");
+        return new RESTParameter("params", null, false).add("expire-date", "text");
     }
 
     @Override

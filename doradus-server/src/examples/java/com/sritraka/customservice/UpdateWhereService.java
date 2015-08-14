@@ -40,6 +40,7 @@ import com.dell.doradus.service.rest.UNodeInCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 import com.dell.doradus.service.rest.annotation.ParamDescription;
 import com.dell.doradus.service.schema.SchemaService;
+import com.dell.doradus.service.spider.ObjectQuery;
 import com.dell.doradus.service.spider.SpiderService;
 
 /**
@@ -141,7 +142,8 @@ public class UpdateWhereService extends Service {
                 }
                 
                 // Execute the query and apply the update to each object, creating a batch.
-                SearchResultList searchSet = SpiderService.instance().objectQueryURI(tableDef, uriQuery);
+                ObjectQuery objQuery = new ObjectQuery(tableDef, uriQuery.toString());
+                SearchResultList searchSet = SpiderService.instance().objectQuery(tableDef, objQuery);
                 DBObjectBatch dbObjBatch = new DBObjectBatch();
                 for (SearchResult searchResult : searchSet.results) {
                     dbObjBatch.addObject(modelObj.makeCopy(searchResult.id()));

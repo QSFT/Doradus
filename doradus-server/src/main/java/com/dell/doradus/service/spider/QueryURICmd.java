@@ -39,7 +39,8 @@ public class QueryURICmd extends UNodeOutCallback {
         ApplicationDefinition appDef = m_request.getAppDef();
         TableDefinition tableDef = m_request.getTableDef(appDef);
         String params = m_request.getVariable("params");    // leave encoded
-        return SpiderService.instance().objectQueryURI(tableDef, params).toDoc();
+        ObjectQuery objQuery = new ObjectQuery(tableDef, params);
+        return SpiderService.instance().objectQuery(tableDef, objQuery).toDoc();
     }   // invoke
 
 }   // class QueryURICmd
