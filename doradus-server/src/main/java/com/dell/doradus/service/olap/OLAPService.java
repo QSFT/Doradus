@@ -84,7 +84,10 @@ public class OLAPService extends StorageService {
         ShardStatisticsCmd.class,
         DuplicatesCmd.class,
         ShardVerifyCmd.class,
-        DeleteSegmentCmd2.class,
+        DeleteSegmentCmd2.class
+    );
+    
+    private static final List<Class<? extends RESTCallback>> SYSTEM_CMD_CLASSES = Arrays.asList(
         OlappCmd.class
     );
     
@@ -103,6 +106,7 @@ public class OLAPService extends StorageService {
     @Override
     public void initService() {
         RESTService.instance().registerCommands(CMD_CLASSES, this);
+        RESTService.instance().registerCommands(SYSTEM_CMD_CLASSES);
     }   // initService
     
     @Override

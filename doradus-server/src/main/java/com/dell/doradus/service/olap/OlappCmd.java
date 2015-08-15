@@ -28,7 +28,7 @@ import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
 @Description(
-    name = "Browse",
+    name = "OLAPBrowser",
     summary = "Provides a simple web browser interface for OLAP applications.",
     methods = HttpMethod.GET,
     uri = "/_olapp?{params}",

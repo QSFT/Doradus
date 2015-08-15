@@ -179,7 +179,7 @@ public class LoggingService extends StorageService {
 
     // Command: GET /_lsapp?{params}
     @Description(
-        name = "Browse",
+        name = "LoggingBrowser",
         summary = "Provides a simple web browser interface for LoggingService applications.",
         methods = HttpMethod.GET,
         uri = "/_lsapp?{params}",
@@ -206,6 +206,7 @@ public class LoggingService extends StorageService {
     
     @Override
     protected void initService() {
+        RESTService.instance().registerCommands(Arrays.asList(LogServiceAppCmd.class));
         RESTService.instance().registerCommands(cmdClasses, this);
     }
 
