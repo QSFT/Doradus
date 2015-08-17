@@ -29,7 +29,7 @@ public class LogQuery {
     private String m_sortOrder;				// &o parameter
     private String m_continueAt;			// &e parameter
     private String m_continueAfter;			// &g parameter
-    private boolean m_skipCount;            // &skipCount parameter
+    private boolean m_skipCount = true;     // &skipCount parameter
     
     public LogQuery(UNode searchNode) {
         assert searchNode != null;
@@ -41,7 +41,7 @@ public class LogQuery {
         m_sortOrder = parsedQuery.get("order");
         m_continueAt = parsedQuery.get("continue-at");
         m_continueAfter = parsedQuery.get("continue-after");
-        m_skipCount = parsedQuery.getBoolean("skipCount", false);
+        m_skipCount = parsedQuery.getBoolean("skipCount", true);
         parsedQuery.checkInvalidParameters();
         checkDefaults();
     }
@@ -56,7 +56,7 @@ public class LogQuery {
         m_sortOrder = parsedQuery.get("o");
         m_continueAt = parsedQuery.get("e");
         m_continueAfter = parsedQuery.get("g");
-        m_skipCount = parsedQuery.getBoolean("skipCount", false);
+        m_skipCount = parsedQuery.getBoolean("skipCount", true);
         parsedQuery.checkInvalidParameters();
         checkDefaults();
     }
