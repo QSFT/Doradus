@@ -40,3 +40,44 @@ In turn, it returns the description of the command. This will help give the clie
     DBObjectBatch dbObjectBatch =  DBObjectBatch.builder().add(dbObject1).add(dbObject2).build();
     RESTResponse response = client.runCommand(Command.builder().withName("Add").withParam("table","Messages").withParam("batch", dbObjectBatch).build());
 ```
+
+- Schema commands
+
+```java
+    //create client instance with server connection info
+    Credentials credentials = new Credentials(`TENANT_NAME`, `USER_NAME`, `USER_PASSWORD`);         
+    DoradusClient client = new DoradusClient(HOST, PORT, credentials);
+    
+    //create Spider application
+    ApplicationDefinition appDef1 = new ApplicationDefinition();
+    appDef1.setAppName("Stuff");
+    client.runCommand(Command.builder().withName("DefineApp").withParam("ApplicationDefinition", appDef1).build());
+    
+    //create OLAP application
+    ApplicationDefinition appDef = new ApplicationDefinition();
+    appDef.parse(UNode.parseJSON(`JSON_SCHEMA`));
+    client.runCommand(Command.builder().withName("DefineApp").withParam("ApplicationDefinition", appDef).build());
+```   
+
+- Data commands
+
+```java
+   //open client session for subsequent commands on the same Spider application
+   DoradusClient client = DoradusClient.open(HOST, PORT, credentials, "Stuff");
+   
+   //add data operation
+   DBObject dbObject1 = DBObject.builder().add("Subject", "Hello").add("Body", "Hello there!").build();        
+   DBObject dbObject2 = DBObject.builder().add("Subject", "Bye").add("Body", "Good bye!").build();
+            
+   DBObjectBatch dbObjectBatch =  DBObjectBatch.builder().add(dbObject1).add(dbObject2).build();
+   client.runCommand(Command.builder().withName("Add").withParam("table","Messages").withParam("batch", dbObjectBatch).build());
+         
+   //retrieve data operation
+   Command command = Command.builder().withName("Query")
+                                        .withParam("table", "Messages")             
+                                        .withParam("query", "*")
+                                        .withParam("fields", "Body")
+                                        .withParam("size", "10")
+                                        .build();
+   client.runCommand(command2);
+```     
