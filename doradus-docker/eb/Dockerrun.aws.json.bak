@@ -1,0 +1,40 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "authentication": {
+         "bucket": "doradus",
+         "key": "dockercfg"
+  },
+  "containerDefinitions": [
+    {
+      "name": "doradus",
+      "image": "docker.labs.dell.com/base/doradus",
+      "environment": [
+        {
+	"name": "AWS_ACCESS_KEY_ID",
+         "value": "AKIAIWPBGWIJTE45BRVQ"
+        },
+        {
+        "name": "AWS_SECRET_ACCESS_KEY",
+         "value": "sXJtJi8+/3dFWGA6etRACgMxvb1eRv080Uaz0irb"
+        },
+        {
+         "name": "RESTPORT",
+         "value": "80"
+        },
+        {
+         "name": "AWS_REGION",
+         "value": "us-west-1"
+        }
+      ],
+      "portMappings": [
+        {
+          "hostPo1024: 80,
+          "containerPort": 80
+        }
+      ],
+      "essential": true,
+      "memory": 1024
+    }
+  ]
+ 
+}
