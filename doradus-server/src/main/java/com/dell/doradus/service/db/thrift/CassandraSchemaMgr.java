@@ -81,6 +81,7 @@ public class CassandraSchemaMgr {
             KsDef ksDef = setKeySpaceOptions(keyspace);
             overrideKSOptions(ksDef, options);
             dbConn.getClientSession().system_add_keyspace(ksDef);
+            Thread.sleep(1000);  // wait for gossip to other Cassandra nodes
         } catch (Exception ex) {
             String errMsg = "Failed to create Keyspace '" + keyspace + "'"; 
             m_logger.error(errMsg, ex);
