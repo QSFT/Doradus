@@ -1,7 +1,7 @@
 Doradus Docker image 
 ====================
 
-This demonstrates how to deploy and use Doradus (https://github.com/dell-oss/Doradus) as an Docker image with external NOSQL DB server.
+This demonstrates how to deploy and use Doradus (https://github.com/dell-oss/Doradus) as a Docker image with external NoSQL DB server.
 
 Running Doradus container connecting to Dynamo DB on ECS
 --------------------------------------------------------
@@ -12,14 +12,14 @@ Running Doradus container connecting to Dynamo DB on ECS
 
 2. Launch a container called "doradus" in the background at the port you prefer
 
-        $ docker run -p <DOCKER_HOST_PORT>:<RESTPORT> -d --name doradus -e "AWS_ACCESS_KEY_ID=XXXXXX” -e "AWS_SECRET_ACCESS_KEY=XXXXXX” -e "RESTPORT=<RESTPORT>" -e "REGION=<REGION>” traduong1/doradus-docker
+        $ docker run -p <DOCKER_HOST_PORT>:<RESTPORT> -d --name doradus -e "AWS_ACCESS_KEY_ID=XXXXXX" -e "AWS_SECRET_ACCESS_KEY=XXXXXX" -e "RESTPORT=<RESTPORT>" -e "AWS_REGION=<REGION>" traduong1/doradus-docker
 
-        For ex:
-        docker run -p 8080:1234 -d --name doradus -e "XXXXX" -e "AWS_SECRET_ACCESS_KEY=XXXXX" -e "RESTPORT=1234" -e "REGION=XXXXX" traduong1/docker-doradus
+        For example:
+        docker run -p 8080:1234 -d --name doradus -e "AWS_ACCESS_KEY_ID=XXXXXX" -e "AWS_SECRET_ACCESS_KEY=XXXXX" -e "RESTPORT=1234" -e "AWS_REGION=XXXXX" traduong1/docker-doradus
         
         This would map port 1234 inside our container to port 8080 on the docker host. 
         
-        where --name is to give the container name and  -d is to run Doradus server in the back ground. 
+        where --name is to give the container name and  -d is to run Doradus server in the background. 
         
         You can use $docker logs -f doradus to tail the logs of Doradus server
         
