@@ -1,11 +1,11 @@
 package com.dell.doradus.logservice.search;
 
 import com.dell.doradus.logservice.ChunkInfo;
-import com.dell.doradus.logservice.search.filter.FilterAll;
 import com.dell.doradus.logservice.search.filter.IFilter;
 import com.dell.doradus.olap.aggregate.AggregationResult;
 import com.dell.doradus.olap.aggregate.MetricValueCount;
 import com.dell.doradus.olap.aggregate.MetricValueSet;
+import com.dell.doradus.olap.store.BitVector;
 
 public class AggregateCollectorNoField extends AggregateCollector {
     private IFilter m_filter;
@@ -16,18 +16,16 @@ public class AggregateCollectorNoField extends AggregateCollector {
     }
 
     @Override public void addChunk(ChunkInfo info) {
-        //optimization for count-star query.
-        //todo: make filter check ChunkInfo to get rid of this
-        if(m_filter instanceof FilterAll) {
+        int c = m_filter.check(info);
+        if(c == -1) return;
+        if(c == 1) {
             m_documents += info.getEventsCount();
             return;
         }
-        
+        BitVector bv = new BitVector(info.getEventsCount());
         super.read(info);
-        for(int i = 0; i < m_reader.size(); i++) {
-            if(!m_filter.check(m_reader, i)) continue;
-            m_documents++;
-        }
+        m_filter.check(m_reader, bv);
+        m_documents += bv.bitsSet();
     }
 
     @Override public AggregationResult getResult() {

@@ -4,7 +4,9 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.logservice.ChunkInfo;
 import com.dell.doradus.logservice.ChunkReader;
+import com.dell.doradus.olap.store.BitVector;
 import com.dell.doradus.search.query.BinaryQuery;
 import com.dell.doradus.search.query.DatePartBinaryQuery;
 
@@ -27,9 +29,19 @@ public class FilterDatePart implements IFilter {
         m_cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     }
     
-    @Override public boolean check(ChunkReader reader, int doc) {
-        m_cal.setTimeInMillis(reader.getTimestamp(doc));
-        return m_cal.get(m_datePart) == m_partValue;
+    @Override public void check(ChunkReader reader, BitVector docs) {
+        long[] timestamps = reader.getTimestampField().getTimestamps();
+        for(int i = 0; i < timestamps.length; i++) {
+            long timestamp = timestamps[i];
+            m_cal.setTimeInMillis(timestamp);
+            if(m_cal.get(m_datePart) == m_partValue) {
+                docs.set(i);
+            }
+        }
+    }
+    
+    @Override public int check(ChunkInfo info) {
+        return 0;
     }
     
 }

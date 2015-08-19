@@ -19,6 +19,7 @@ import com.dell.doradus.logservice.LogService;
 import com.dell.doradus.logservice.search.filter.FilterBuilder;
 import com.dell.doradus.logservice.search.filter.IFilter;
 import com.dell.doradus.olap.aggregate.AggregationResult;
+import com.dell.doradus.olap.store.BitVector;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.search.aggregate.AggregationGroup;
 import com.dell.doradus.search.parser.DoradusQueryBuilder;
@@ -49,13 +50,19 @@ public class Searcher {
             chunks = new SortedChunkIterable(chunks, request.getSortDescending());
             for(ChunkInfo chunkInfo: chunks) {
                 if(!checkInRange(chunkInfo.getMinTimestamp(), chunkInfo.getMaxTimestamp(), request, collector)) continue;
+                int c = filter.check(chunkInfo);
+                if(c == -1) continue;
+                BitVector bv = new BitVector(chunkInfo.getEventsCount());
                 ls.readChunk(tenant, application, table, chunkInfo, chunkReader);
+                if(c == 1) bv.setAll();
+                else filter.check(chunkReader, bv);
+                
                 if(request.getSortDescending()) {
                     for(int i = chunkReader.size() - 1; i >= 0; i--) {
+                        if(!bv.get(i)) continue;
                         long timestamp = chunkReader.getTimestamp(i);
                         if(timestamp < request.getMinTimestamp()) continue;
                         if(timestamp >= request.getMaxTimestamp()) continue;
-                        if(!filter.check(chunkReader, i)) continue;
                         //optimization: avoid instantiating LogEntry if it won't go to the results
                         if(collector.size() < request.getCount() || timestamp > collector.getMinTimestamp()) {
                             if(current == null) current = new LogEntry(request.getFields(), request.getSortDescending());
@@ -66,10 +73,10 @@ public class Searcher {
                     }
                 } else {
                     for(int i = 0; i < chunkReader.size(); i++) {
+                        if(!bv.get(i)) continue;
                         long timestamp = chunkReader.getTimestamp(i);
                         if(timestamp < request.getMinTimestamp()) continue;
                         if(timestamp >= request.getMaxTimestamp()) continue;
-                        if(!filter.check(chunkReader, i)) continue; 
                         //optimization: avoid instantiating LogEntry if it won't go to the results
                         if(collector.size() < request.getCount() || timestamp < collector.getMaxTimestamp()) {
                             if(current == null) current = new LogEntry(request.getFields(), request.getSortDescending());

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.logservice.pattern.IncompatibleCaseException;
 import com.dell.doradus.search.query.AllQuery;
 import com.dell.doradus.search.query.AndQuery;
 import com.dell.doradus.search.query.BinaryQuery;
@@ -59,7 +60,7 @@ public class FilterBuilder {
             if("Timestamp".equals(field)) {
                 return new FilterTimestampRange(rq);
             } else {
-                return new FilterFieldRange(rq);
+                return new FilterField(rq.field, new FilterFieldRange(rq));
             }
         }
         
@@ -78,61 +79,34 @@ public class FilterBuilder {
         Utils.require(!"Timestamp".equals(field), "Timestamp can be only in range query");
         
         boolean isAnyField = field == null || "*".equals(field);
-        boolean isPattern = value.indexOf('*') >= 0 || value.indexOf('?') >= 0;
+        boolean isPattern = value.indexOf('*') >= 0;
         
         boolean isEquals = BinaryQuery.EQUALS.equals(operation);
         boolean isContains = BinaryQuery.CONTAINS.equals(operation);
         boolean isRegexp = BinaryQuery.REGEXP.equals(operation);
         
-        if(isAnyField) {
+        IValuesFilter valuesFilter = null;
+        try {
             if(isRegexp) {
-                return new FilterAnyFieldRegex(value);
+                valuesFilter = new FilterRegex(value);
             } else if(isEquals) {
-                try {
-                    if(isPattern) return new FilterAnyFieldPatternFast(value);
-                    else return new FilterAnyFieldEqualsFast(value); 
-                } catch(IncompatibleCaseException e) {
-                    LOG.info("incompatible case: " + value);
-                    if(isPattern) return new FilterAnyFieldPatternGeneral(value);
-                    else return new FilterAnyFieldEqualsGeneral(value); 
-                }
+                valuesFilter = new FilterPattern(value);
             } else if(isContains) {
-                try {
-                    if(isPattern) return new FilterAnyFieldPatternFast("*" + value + "*");
-                    else return new FilterAnyFieldContainsFast(value); 
-                } catch(IncompatibleCaseException e) {
-                    LOG.info("incompatible case: " + value);
-                    if(isPattern) return new FilterAnyFieldPatternGeneral("*" + value + "*");
-                    else return new FilterAnyFieldContainsGeneral(value); 
+                if(isPattern) {
+                    valuesFilter = new FilterPattern("*" + value + "*");
+                } else {
+                    valuesFilter = new FilterContains(value);
                 }
             } else {
                 throw new IllegalArgumentException("Unknown operation: " + operation);
             }
-        } else {
-            if(isRegexp) {
-                return new FilterFieldRegex(field, value);
-            } else if(isEquals) {
-                try {
-                    if(isPattern) return new FilterFieldPatternFast(field, value);
-                    else return new FilterFieldEqualsFast(field, value); 
-                } catch(IncompatibleCaseException e) {
-                    LOG.info("incompatible case: " + value);
-                    if(isPattern) return new FilterFieldPatternGeneral(field, value);
-                    else return new FilterFieldEqualsGeneral(field, value);
-                }
-            } else if(isContains) {
-                try {
-                    if(isPattern) return new FilterFieldPatternFast(field, "*" + value + "*");
-                    else return new FilterFieldContainsFast(field, value); 
-                } catch(IncompatibleCaseException e) {
-                    LOG.info("incompatible case: " + value);
-                    if(isPattern) return new FilterFieldPatternGeneral(field, "*" + value + "*");
-                    else return new FilterFieldContainsGeneral(field, value); 
-                }
-            } else {
-                throw new IllegalArgumentException("Unknown operation: " + operation);
-            }
+        } catch(IncompatibleCaseException e) {
+            LOG.info("incompatible case: " + value);
+            if(isEquals) valuesFilter = new FilterPattern(value);
+            else valuesFilter = new FilterPatternSlow("*" + value + "*");
         }
+
+        return isAnyField ? new FilterAnyField(valuesFilter) : new FilterField(field, valuesFilter);
     }
     
 }

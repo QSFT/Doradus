@@ -68,6 +68,28 @@ public class BitVector {
 		return cnt;
 	}
 	
+	public boolean isAllBitsCleared() { 
+        for(int i = 0; i < m_buffer.length; i++) {
+            if(m_buffer[i] != 0) return false;
+        }
+        return true;
+	}
+
+    public boolean isAllBitsSet() {
+        if(m_lastMask == 0) {
+            for(int i = 0; i < m_buffer.length; i++) {
+                if(m_buffer[i] != -1) return false;
+            }
+            return true;
+        } else {
+            for(int i = 0; i < m_buffer.length - 1; i++) {
+                if(m_buffer[i] != -1) return false;
+            }
+            return m_buffer[m_buffer.length - 1] == m_lastMask;        
+        }
+
+    }
+	
 	public void and(BitVector bv) {
 		for(int i = 0; i < m_buffer.length; i++) m_buffer[i] &= bv.m_buffer[i];
 	}
@@ -86,6 +108,7 @@ public class BitVector {
 	}
 	public void setAll() {
 		for(int i = 0; i < m_buffer.length; i++) m_buffer[i] = -1;
+        if(m_lastMask != 0) m_buffer[m_buffer.length - 1] &= m_lastMask;
 	}
 	
 	public IntList getList() {
