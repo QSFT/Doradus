@@ -12,7 +12,7 @@ Running Doradus container connecting to Dynamo DB on ECS
 
 2. Launch a container called "doradus" in the background at the port you prefer
 
-        $ docker run -p <DOCKER_HOST_PORT>:<RESTPORT> -d --name doradus -e "AWS_ACCESS_KEY_ID=XXXXXX” -e "AWS_SECRET_ACCESS_KEY=XXXXXX” -e "RESTPORT=<RESTPORT>" -e "AWS_REGION=<AWS_REGION>” traduong1/doradus-docker
+        $ docker run -p <DOCKER_HOST_PORT>:<RESTPORT> -d --name doradus -e "AWS_ACCESS_KEY_ID=XXXXXX" -e "AWS_SECRET_ACCESS_KEY=XXXXXX" -e "RESTPORT=<RESTPORT>" -e "AWS_REGION=<AWS_REGION>" traduong1/doradus-docker
 
         For ex:
         docker run -p 8080:1234 -d --name doradus -e "XXXXX" -e "AWS_SECRET_ACCESS_KEY=XXXXX" -e "RESTPORT=1234" -e "AWS_REGION=XXXXX" traduong1/doradus
