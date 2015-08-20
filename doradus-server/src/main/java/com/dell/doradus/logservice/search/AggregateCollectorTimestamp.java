@@ -12,6 +12,7 @@ import com.dell.doradus.olap.aggregate.AggregationResult;
 import com.dell.doradus.olap.aggregate.MetricValueCount;
 import com.dell.doradus.olap.aggregate.MetricValueSet;
 import com.dell.doradus.olap.collections.BdLongSet;
+import com.dell.doradus.olap.store.BitVector;
 import com.dell.doradus.olap.store.IntList;
 
 public class AggregateCollectorTimestamp extends AggregateCollector {
@@ -41,9 +42,17 @@ public class AggregateCollectorTimestamp extends AggregateCollector {
     }
     
     @Override public void addChunk(ChunkInfo info) {
+        int c = m_filter.check(info);
+        if(c == -1) return;
+        super.read(info);
+        BitVector bv = new BitVector(info.getEventsCount());
+        if(c == 1) bv.setAll();
+        else m_filter.check(m_reader, bv);
+        m_documents += bv.bitsSet();
+        
         super.read(info);
         for(int i = 0; i < m_reader.size(); i++) {
-            if(!m_filter.check(m_reader, i)) continue;
+            if(!bv.get(i)) continue;
             long timestamp = m_reader.getTimestamp(i);
             long value = timestamp / m_divisor;
             int pos = m_fields.add(value);

@@ -9,6 +9,7 @@ import com.dell.doradus.olap.aggregate.MetricValueCount;
 import com.dell.doradus.olap.aggregate.MetricValueSet;
 import com.dell.doradus.olap.collections.strings.BstrSet;
 import com.dell.doradus.olap.io.BSTR;
+import com.dell.doradus.olap.store.BitVector;
 import com.dell.doradus.olap.store.IntList;
 
 public class AggregateCollectorField extends AggregateCollector {
@@ -26,11 +27,22 @@ public class AggregateCollectorField extends AggregateCollector {
     }
 
     @Override public void addChunk(ChunkInfo info) {
+        int c = m_filter.check(info);
+        if(c == -1) return;
+        BitVector bv = new BitVector(info.getEventsCount());
         super.read(info);
+        
+        if(c == 1) {
+            bv.setAll();
+        } else {
+            m_filter.check(m_reader, bv);
+        }
+        
         int index = m_reader.getFieldIndex(m_field);
         if(index < 0) return;
-        for(int i = 0; i < m_reader.size(); i++) {
-            if(!m_filter.check(m_reader, i)) continue;
+        
+        for(int i = 0; i < bv.size(); i++) {
+            if(!bv.get(i)) continue;
             m_reader.getFieldValue(i, index, temp);
             int pos = m_fields.add(temp);
             if(pos == m_list.size()) m_list.add(1);

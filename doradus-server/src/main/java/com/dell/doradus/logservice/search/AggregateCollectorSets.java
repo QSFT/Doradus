@@ -10,6 +10,7 @@ import com.dell.doradus.logservice.search.filter.IFilter;
 import com.dell.doradus.olap.aggregate.AggregationResult;
 import com.dell.doradus.olap.aggregate.MetricValueCount;
 import com.dell.doradus.olap.aggregate.MetricValueSet;
+import com.dell.doradus.olap.store.BitVector;
 import com.dell.doradus.search.query.Query;
 
 public class AggregateCollectorSets extends AggregateCollector {
@@ -30,14 +31,24 @@ public class AggregateCollectorSets extends AggregateCollector {
     }
     
     @Override public void addChunk(ChunkInfo info) {
+        int c = m_filter.check(info);
+        if(c == -1) return;
         super.read(info);
-        for(int i = 0; i < m_reader.size(); i++) {
-            if(!m_filter.check(m_reader, i)) continue;
-            for(int j = 0; j < m_counts.length; j++) {
-                if(m_filters.get(j).check(m_reader, i)) m_counts[j]++;
-            }
-            m_documents++;
+        BitVector bv = new BitVector(info.getEventsCount());
+        if(c == 1) bv.setAll();
+        else m_filter.check(m_reader, bv);
+        m_documents += bv.bitsSet();
+
+        BitVector bv2 = new BitVector(info.getEventsCount());
+        for(int i = 0; i < m_counts.length; i++) {
+            bv2.clearAll();
+            c = m_filters.get(i).check(info);
+            if(c == 1) bv2.setAll();
+            else if(c == 0) m_filters.get(i).check(m_reader, bv2);
+            bv2.and(bv);
+            m_counts[i] += bv2.bitsSet();
         }
+        bv.clearAll();
     }
 
     @Override public AggregationResult getResult() {

@@ -105,7 +105,7 @@ public class MergeResult {
 		}
 		
 		List<SearchResult> res = searchResultList.results;
-		if(res.size() < searchResultList.documentsCount && res.size() > 0) {
+		if(res.size() >= fieldSet.limit && res.size() > 0) {
 			searchResultList.continuation_token = res.get(res.size() - 1).id();
 		}
 		

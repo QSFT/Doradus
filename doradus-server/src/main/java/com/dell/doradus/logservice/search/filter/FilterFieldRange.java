@@ -1,14 +1,12 @@
 package com.dell.doradus.logservice.search.filter;
 
-import com.dell.doradus.logservice.ChunkReader;
+import com.dell.doradus.logservice.ChunkField;
 import com.dell.doradus.logservice.search.StrRef;
 import com.dell.doradus.olap.io.BSTR;
+import com.dell.doradus.olap.store.BitVector;
 import com.dell.doradus.search.query.RangeQuery;
 
-public class FilterFieldRange implements IFilter {
-    private BSTR m_field;
-    private int m_lastFieldIndex = -1;
-    private ChunkReader m_lastReader = null;
+public class FilterFieldRange implements IValuesFilter {
     private BSTR m_min;
     private BSTR m_max;
     private boolean m_minInclusive;
@@ -16,8 +14,6 @@ public class FilterFieldRange implements IFilter {
     private StrRef m_value;
     
     public FilterFieldRange(RangeQuery rq) {
-        m_field = new BSTR(rq.field);
-        
         if(rq.min != null) {
             m_min = new BSTR(rq.min);
             m_minInclusive = rq.minInclusive;
@@ -29,17 +25,21 @@ public class FilterFieldRange implements IFilter {
         
         m_value = new StrRef();
     }
-    
-    @Override public boolean check(ChunkReader reader, int doc) {
-        if(reader != m_lastReader) {
-            m_lastReader = reader;
-            m_lastFieldIndex = reader.getFieldIndex(m_field);
+
+
+    @Override public void check(ChunkField field, BitVector values) {
+        int[] offsets = field.getOffsets();
+        int[] lengths = field.getLengths();
+        byte[] buffer = field.getBuffer();
+        for(int i = 0; i < offsets.length; i++) {
+            m_value.set(buffer, offsets[i], lengths[i]);
+            if(check(m_value)) {
+                values.set(i);
+            }
         }
-        
-        if(m_lastFieldIndex < 0) return false;
-        
-        reader.getFieldValue(doc, m_lastFieldIndex, m_value);
-        
+    }
+    
+    private boolean check(StrRef value) {
         if(m_min != null) {
             int c = m_value.compare(m_min);
             if(m_minInclusive && c < 0) return false;
@@ -52,5 +52,6 @@ public class FilterFieldRange implements IFilter {
         }
         return true;
     }
-    
+
+
 }
