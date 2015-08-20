@@ -66,7 +66,7 @@ public class SearchResultBuilder {
 			List<SearchResult> subList = list.results.subList(0, size);
 			list.results = new ArrayList<SearchResult>(subList); 
 		}
-		if(list.results.size() < list.documentsCount && list.results.size() > 0) {
+		if(list.results.size() >= size && list.results.size() > 0) {
 			list.continuation_token = list.results.get(list.results.size() - 1).id();
 		}
 		return list;
