@@ -18,7 +18,9 @@ package com.dell.doradus.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -390,8 +392,8 @@ final public class DBObject implements JSONable{
 
     /**
      * Add the given value to the field with the given name. For a system field, its
-     * existing value, if any, is replaced. If the given value is null or empty,
-     * this method is a no-op.
+     * existing value, if any, is replaced. If a null or empty field is added for an
+     * SV scalar, the field is nullified.
      * 
      * @param fieldName Name of a field.
      * @param value     Value to add to field. Ignored if null or empty.
@@ -399,17 +401,15 @@ final public class DBObject implements JSONable{
     public void addFieldValue(String fieldName, String value) {
         Utils.require(!Utils.isEmpty(fieldName), "fieldName");
         
-        if (!Utils.isEmpty(value)) {
-            if (fieldName.charAt(0) == '_') {
-                setSystemField(fieldName, value);
-            } else {
-                List<String> currValues = m_valueMap.get(fieldName);
-                if (currValues == null) {
-                    currValues = new ArrayList<>();
-                    m_valueMap.put(fieldName, currValues);
-                }
-                currValues.add(value);
+        if (fieldName.charAt(0) == '_') {
+            setSystemField(fieldName, value);
+        } else {
+            List<String> currValues = m_valueMap.get(fieldName);
+            if (currValues == null) {
+                currValues = new ArrayList<>();
+                m_valueMap.put(fieldName, currValues);
             }
+            currValues.add(value);
         }
     }   // addFieldValue
 
@@ -613,46 +613,217 @@ final public class DBObject implements JSONable{
     // Set the given field to the given single value. Note that the array returned by
     // Arrays.asList() cannot be expanded.
     private void setSystemField(String fieldName, String value) {
-        m_valueMap.put(fieldName, Arrays.asList(value));
+        if (Utils.isEmpty(value)) {
+            m_valueMap.remove(fieldName);
+        } else {
+            m_valueMap.put(fieldName, Arrays.asList(value));
+        }
     }   // setSystemField
     
-	@Override
-	public String toJSON() {
-		return toDoc().toJSON();
-	}   
-	
-	/**
-	  * Creates a new {@link Command.Builder} instance.
-	  * <p>
-	  * This is a convenience method for {@code new Command.Builder()}.
-	  *
-	  * @return the new Command builder.
-	  */
-	 public static DBObject.Builder builder() {
-	     return new DBObject.Builder();
-	 }
-	 
-	 /**
-     * Helper class to build {@link DBObject} instances.
-     */
-	 public static class Builder {
-    	private DBObject dbObject = new DBObject();
-    			   	
+    @Override
+    public String toJSON() {
+        return toDoc().toJSON();
+    }
+    
+    ///// Builder
+    
+    /**
+      * Creates a new {@link Builder} instance. This is a convenience method for
+      * {@code new Builder()}.
+      *
+      * @return New {@link Builder}.
+      */
+     public static DBObject.Builder builder() {
+         return new DBObject.Builder();
+     }
+     
+     /**
+      * Helper class to build {@link DBObject} instances.
+      */
+     public static class Builder {
+        private DBObject dbObject = new DBObject();
+                    
         /**
-         * Builds the DBObject 
+         * Return the completed {@link DBObject} instance. 
          *
-         * @return the newly built DBObject instance.
+         * @return Completed {@link DBObject} instance.
          */
         public DBObject build() {
-        	return this.dbObject;
+            return this.dbObject;
         }
 
+        /**
+         * Set the object ID, replacing the current one if any.
+         * 
+         * @param objID Object ID.
+         * @return      This {@link Builder}.
+         */
+        public Builder withID(String objID) {
+            dbObject.setObjectID(objID);
+            return this;
+        }
 
-		public Builder add(String name, String value) {
-			if (!Utils.isEmpty(name)) {
-				dbObject.addFieldValue(name, value);
-			}
-			return this;
-		}
-    }	 
+        /**
+         * Set the "_table" system field, replacing the current value if set. Only batches
+         * that allow DBObjects from different tables require this property.
+         *  
+         * @param tableName New value for "_table" system field.
+         * @return          This {@link Builder}.
+         */
+        public Builder withTable(String tableName) {
+            dbObject.setTableName(tableName);
+            return this;
+        }
+        
+        /**
+         * Set the "_deleted" system field, replacing the current value if set. Only
+         * batches that allow a mixture of updated and deleted objects need this field to
+         * identify objects to be deleted.
+         * 
+         * @param isDeleted New value for "_deleted" system field.
+         * @return          This {@link Builder}.
+         */
+        public Builder withDeleted(boolean isDeleted) {
+            dbObject.setDeleted(isDeleted);
+            return this;
+        }
+        
+        /**
+         * Add the given string value to the scalar or link field with the given name.
+         * Only one value should be assigned to SV scalar fields. If an empty or null
+         * value is used for an SV scalar, the field is nullified if an existing object
+         * is updated with this DBObject. Multiple values can be assigned to MV scalar and
+         * link fields. For a link field, values must be ID(s) of object(s) to which the
+         * link will point. Inverse link values are set automatically. 
+         *  
+         * @param fieldName     Name of scalar or link field.
+         * @param fieldValue    String value to add to the field.
+         * @return              This {@link Builder}.
+         */
+        public Builder withValue(String fieldName, String fieldValue) {
+            dbObject.addFieldValue(fieldName, fieldValue);
+            return this;
+        }
+        
+        /**
+         * Add the given value to the Boolean scalar field with the given name. Only
+         * one value should be assigned to SV scalar fields. Multiple values can be
+         * assigned to MV scalar fields.
+         *  
+         * @param fieldName     Name of Boolean scalar field.
+         * @param fieldValue    Boolean value to add to the field.
+         * @return              This {@link Builder}.
+         */
+        public Builder withValue(String fieldName, boolean fieldValue) {
+            dbObject.addFieldValue(fieldName, Boolean.toString(fieldValue));
+            return this;
+        }
+        
+        /**
+         * Add the given value to the numeric scalar field with the given name. Only
+         * one value should be assigned to SV scalar fields. Multiple values can be
+         * assigned to MV scalar fields.
+         *  
+         * @param fieldName     Name of a numberic scalar field (integer, long, float,
+         *                      or double).
+         * @param fieldValue    Long value to add to the field.
+         * @return              This {@link Builder}.
+         */
+        public Builder withValue(String fieldName, long fieldValue) {
+            dbObject.addFieldValue(fieldName, Long.toString(fieldValue));
+            return this;
+        }
+        
+        /**
+         * Add the given value to the float or double scalar field with the given name.
+         * Only one value should be assigned to SV scalar fields. Multiple values can be
+         * assigned to MV scalar fields.
+         *  
+         * @param fieldName     Name of a float or double scalar field.
+         * @param fieldValue    Double value to add to the field.
+         * @return              This {@link Builder}.
+         */
+        public Builder withValue(String fieldName, double fieldValue) {
+            dbObject.addFieldValue(fieldName, Double.toString(fieldValue));
+            return this;
+        }
+        
+        /**
+         * Add the given Date value to the scalar field with the given name. This method
+         * is intended for use with timestamp fields, though it can also be used with text
+         * fields. Only one value should be assigned to SV scalar fields. Multiple values
+         * can be assigned to MV scalar fields. The Date value is formatted into a string
+         * in the format "YYYY-MM-DD hh:mm:ss.SSS" using the UTC time zone and then added
+         * to the field. {@link Builder#withValue(String, String)} can also be used to add
+         * values to a timestamp field using any of the allowed timestamp formats.
+         *  
+         * @param fieldName     Name of a timestamp or text scalar field.
+         * @param fieldValue    Date value to add to the field.
+         * @return              This {@link Builder}.
+         */
+        public Builder withValue(String fieldName, Date fieldValue) {
+            Utils.require(fieldValue != null, "fieldValue");
+            dbObject.addFieldValue(fieldName, Utils.formatDateUTC(fieldValue, Calendar.MILLISECOND));
+            return this;
+        }
+        
+        /**
+         * Add an array of values to the MV scalar or link field with the given name. This
+         * method works for any scalar field type, though values must be converted to
+         * strings. For a link field, values must be IDs of objects to which the link will
+         * point. Inverse link values are set automatically.
+         *  
+         * @param fieldName     Name of MV scalar or link field to update.
+         * @param fieldValues   Array of one or more string values to add.
+         * @return              This {@link Builder}.
+         */
+        public Builder withValues(String fieldName, String... fieldValues) {
+            dbObject.addFieldValues(fieldName, Arrays.asList(fieldValues));
+            return this;
+        }
+        
+        /**
+         * Add a collection of values to the MV scalar or link field with the given name.
+         * This method works for any scalar field type, though values must be converted to
+         * strings. For a link field, values must be IDs of objects to which the link will
+         * point. Inverse link values are set automatically.
+         *  
+         * @param fieldName     Name of MV scalar or link field to update.
+         * @param fieldValues   Collection of one or more string values to add.
+         * @return              This {@link Builder}.
+         */
+        public Builder withValues(String fieldName, Collection<String> fieldValues) {
+            dbObject.addFieldValues(fieldName, fieldValues);
+            return this;
+        }
+        
+        /**
+         * Remove values from an MV scalar or link field. When the DBObject is applied as
+         * an update to an existing object, the given values are removed, if present, from
+         * the existing MV scalar or link field. Link field values must be object IDs.
+         *  
+         * @param fieldName     Name of MV scalar or link field to update.
+         * @param fieldValues   Array of values to be removed.
+         * @return              This {@link Builder}.
+         */
+        public Builder removeValues(String fieldName, String... fieldValues) {
+            dbObject.removeFieldValues(fieldName, Arrays.asList(fieldValues));
+            return this;
+        }
+        
+        /**
+         * Remove values from an MV scalar or link field. When the DBObject is applied as
+         * an update to an existing object, the given values are removed, if present, from
+         * the existing MV scalar or link field. Link field values must be object IDs.
+         *  
+         * @param fieldName     Name of MV scalar or link field to update.
+         * @param fieldValues   Collection of values to be removed.
+         * @return              This {@link Builder}.
+         */
+        public Builder removeValues(String fieldName, Collection<String> fieldValues) {
+            dbObject.removeFieldValues(fieldName, fieldValues);
+            return this;
+        }
+    }
+
 }   // class DBObject

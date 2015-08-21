@@ -147,6 +147,15 @@ public class RESTResponse {
     }   // getHeaders
     
     /**
+     * Return true if this response's code is considered an error case.
+     * 
+     * @return  True if {@link #getCode()} is 400 or higher.
+     */
+    public boolean isFailed() {
+        return m_statusCode.isError();
+    }
+    
+    /**
      * Return a summary of this response object. If the response's HTTP code is
      * {@link HttpCode#OK}, then just just "{code}" is returned. If any other code is
      * present, the result is "{code}: {body}". In both cases, {code} is whatever is
@@ -161,5 +170,5 @@ public class RESTResponse {
         }
         return m_statusCode.toString();
     }   // toString
-    
+
 }   // class RESTResponse

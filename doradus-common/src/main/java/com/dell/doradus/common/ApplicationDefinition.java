@@ -16,9 +16,10 @@
 
 package com.dell.doradus.common;
 
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -62,8 +63,7 @@ final public class ApplicationDefinition implements JSONable{
      * Create a new empty ApplicationDefinition object. The object is not valid until
      * members have been set from parsing or set methods.
      */
-    public ApplicationDefinition() {
-    }   // constructor
+    public ApplicationDefinition() { }
 
     /**
      * Parse the application definition rooted at given UNode tree and copy its contents
@@ -77,14 +77,7 @@ final public class ApplicationDefinition implements JSONable{
         assert appNode != null;
         
         // Verify application name and save it.
-        Utils.require(isValidName(appNode.getName()),
-                      "Invalid application name: " + appNode.getName());
-        m_appName = appNode.getName();
-        
-        // Create an external link map, which will hold links defined in each table whose
-        // extent is some other table. After parsing all tables, we'll verify these.
-        Map<String, Map<String, FieldDefinition>> externalLinkMap =
-            new HashMap<String, Map<String, FieldDefinition>>();
+        setAppName(appNode.getName());
         
         // Iterate through the application object's members.
         for (String childName : appNode.getMemberNames()) {
@@ -121,8 +114,8 @@ final public class ApplicationDefinition implements JSONable{
                 // the external link map as we go.
                 for (UNode tableNode : childNode.getMemberList()) {
                     // This will throw if the table definition has an error.
-                    TableDefinition tableDef = new TableDefinition(this);
-                    tableDef.parse(tableNode, externalLinkMap);
+                    TableDefinition tableDef = new TableDefinition();
+                    tableDef.parse(tableNode);
                     addTable(tableDef);
                 }
                 
@@ -138,8 +131,7 @@ final public class ApplicationDefinition implements JSONable{
             }
         }
         
-        // Finalize this application definition, including external link validation.
-        finalizeDefinition(externalLinkMap);
+        verify();
     }   // parse(UNode)
 
     ///// Getters
@@ -337,12 +329,6 @@ final public class ApplicationDefinition implements JSONable{
      * @param  tableDef {@link TableDefinition} of a new table.
      */
     public void addTable(TableDefinition tableDef) {
-        // Ensure this table was constructed with us as the target.
-        if (!tableDef.getAppDef().getAppName().equals(this.getAppName())) {
-            throw new IllegalArgumentException("Attempt to define table in wrong application: " +
-                                               tableDef.getTableName());
-        }
-        
         // Ensure this table is unique.
         if (m_tableMap.containsKey(tableDef.getTableName())) {
             throw new IllegalArgumentException("Attempt to add duplicate table: " +
@@ -367,6 +353,90 @@ final public class ApplicationDefinition implements JSONable{
         m_tableMap.remove(tableDef.getTableName());
     }   // removeTableDef
 
+    ///// Builder interface
+    
+    /**
+     * Create a new {@link Builder} object. This is a convenience method that calls
+     * {@code new Builder()}.
+     * 
+     * @return  New {@link Builder} object.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+    
+    /**
+     * Helper class for building an {@link ApplicationDefinition} object using the
+     * builder pattern.
+     */
+    public static class Builder {
+        private final ApplicationDefinition m_appDef = new ApplicationDefinition();
+        
+        /**
+         * Create a new {@link Builder} object to begin the construction of a new
+         * {@link ApplicationDefinition}.
+         */
+        public Builder() {}
+        
+        /**
+         * Verify and return the completed {@link ApplicationDefinition}. An exception is
+         * thrown if any inconsistencies are detected in definition such as links that do
+         * not agree with each other.
+         *  
+         * @return  Verified and completed {@link ApplicationDefinition}.
+         */
+        public ApplicationDefinition build() {
+            m_appDef.verify();
+            return m_appDef;
+        }
+        /**
+         * Set the application's name.
+         * 
+         * @param appName   Application name.
+         * @return          This {@link Builder}.
+         */
+        public Builder withName(String appName) {
+            m_appDef.setAppName(appName);
+            return this;
+        }
+        
+        /**
+         * Set the application's key. Note that applications do not require a key: when
+         * specified, a key provides extra protection when the application is deleted or
+         * its schema is changed.
+         * 
+         * @param key       Application key.
+         * @return          This {@link Builder}.
+         */
+        public Builder withKey(String key) {
+            m_appDef.setKey(key);
+            return this;
+        }
+        
+        /**
+         * Set the given application option. If the option is already defined, it's value
+         * is replaced unless the given value is null, in which case the option is unset.
+         * 
+         * @param optName   Application option name.
+         * @param optValue  New value for option or null to unset the option.
+         * @return          This {@link Builder}.
+         */
+        public Builder withOption(String optName, String optValue) {
+            m_appDef.setOption(optName, optValue);
+            return this;
+        }
+        
+        /**
+         * Add the given table definition to the application.
+         * 
+         * @param tableDef  {@link TableDefinition} of table to add.
+         * @return          This {@link Builder}.
+         */
+        public Builder withTable(TableDefinition tableDef) {
+            m_appDef.addTable(tableDef);
+            return this;
+        }
+    }   // class Builder
     
     ///// Private Methods
     
@@ -472,61 +542,51 @@ final public class ApplicationDefinition implements JSONable{
         return true;
     }   // isAllDigits
 
-    // Make final application fix-ups and integrity checks.
-    private void finalizeDefinition(Map<String, Map<String, FieldDefinition>> externalLinkMap) {
-        // Verify all external link references.
-        processExternalLinks(externalLinkMap);
-    }   // finalizeDefinition
-
-    // Verify all external links found, if any, while parsing an application definition.
-    // We implicitly add tables and inverse links mentioned by cross-table table links,
-    // and we look for contradictions.
-    private void processExternalLinks(Map<String, Map<String, FieldDefinition>> externalLinkMap) {
-        // Examine externally-referenced links in order of the table in which they were
-        // mentioned.
-        for (String tableName : externalLinkMap.keySet()) {
-            // See if this table was defined in this application definition.
-            TableDefinition tableDef = getTableDef(tableName);
-            if (tableDef == null) {
-                // Create an implicit table definition and add it to the application.
-                tableDef = new TableDefinition(this, tableName);
-                addTable(tableDef);
-            }
-            
-            // Check this table to see if it defines each forward-referenced link field.
-            Map<String, FieldDefinition> forwardLinks = externalLinkMap.get(tableName);
-            for (String fieldName : forwardLinks.keySet()) {
-                // inverseDef is the explicitly-defined link (in some other table) that
-                // inferred this link field.
-                FieldDefinition inverseDef = forwardLinks.get(fieldName);
-                FieldDefinition linkDef = tableDef.getFieldDef(fieldName);
-                if (linkDef == null) {
-                    // Link was not been explicitly defined, so implicitly define it.
-                    linkDef = new FieldDefinition(tableDef);
-                    linkDef.setType(inverseDef.getType());  // link or xlink
-                    linkDef.setName(fieldName);
-                    linkDef.setLinkInverse(inverseDef.getName());
-                    linkDef.setLinkExtent(inverseDef.getTableName());
-                    linkDef.setCollection(true);
-                    if (inverseDef.getType() == FieldType.XLINK) {
-                        linkDef.setXLinkJunction("_ID");
-                    }
-                    tableDef.addFieldDefinition(linkDef);
-                } else {
-                    // The link was explicitly defined. Ensure it matches the inverse link
-                    // that inferred it.
-                    if (!linkDef.getLinkExtent().equals(inverseDef.getTableName()) ||
-                        !linkDef.getLinkInverse().equals(inverseDef.getName()) ||
-                        linkDef.getType() != inverseDef.getType()) {
-                        throw new IllegalArgumentException(
-                            "Link '" + linkDef.getName() +  "' in table '" + tableName +
-                            "' conflicts with inverse link '" + inverseDef.getName() +
-                            "' in table '" + inverseDef.getTableName() + "'");
-                    }
+    // Verify that the application is complete by checking that all link fields are
+    // complete and in agreement.
+    private void verify() {
+        // Copy table defs to avoid ConcurrentModificationException if we add a table.
+        List<TableDefinition> definedTables = new ArrayList<>(m_tableMap.values());
+        for (TableDefinition tableDef : definedTables) {
+            // Copy field defs for same reason
+            List<FieldDefinition> definedFields = new ArrayList<>(tableDef.getFieldDefinitions());
+            for (FieldDefinition fieldDef : definedFields) {
+                if (fieldDef.isLinkType()) {
+                    verifyLink(tableDef, fieldDef);
                 }
-            }   // for link fields
-        }   // for table names
-    }   // processExternalLinks
+            }
+        }
+    }
+    
+    // Verify the the given link agrees with its inverse. If it references a table that
+    // has not been defined, define it automatically. If it refers to an inverse that
+    // has not been defined, add it automatically.
+    private void verifyLink(TableDefinition tableDef, FieldDefinition linkDef) {
+        String extent = linkDef.getLinkExtent();
+        TableDefinition extentTableDef = getTableDef(extent);
+        if (extentTableDef == null) {
+            extentTableDef = new TableDefinition();
+            extentTableDef.setTableName(extent);
+            tableDef.getAppDef().addTable(extentTableDef);
+        }
+        
+        String inverse = linkDef.getLinkInverse();
+        FieldDefinition inverseLinkDef = extentTableDef.getFieldDef(inverse);
+        if (inverseLinkDef == null) {
+            inverseLinkDef = new FieldDefinition(inverse);
+            inverseLinkDef.setType(linkDef.getType());
+            inverseLinkDef.setLinkInverse(linkDef.getName());
+            inverseLinkDef.setLinkExtent(tableDef.getTableName());
+            extentTableDef.addFieldDefinition(inverseLinkDef);
+        } else {
+            Utils.require(inverseLinkDef.getType() == linkDef.getType() &&  // both link or xlink
+                          inverseLinkDef.getLinkExtent().equals(tableDef.getTableName()) &&
+                          inverseLinkDef.getLinkInverse().equals(linkDef.getName()),
+                          "Link '%s' in table '%s' conflicts with inverse field '%s' in table '%s'",
+                          linkDef.getName(), tableDef.getTableName(),
+                          inverseLinkDef.getName(), extentTableDef.getTableName());
+        }
+    }
     
     /**
      * Replaces of all occurences of aliases defined with this table, by their expressions.

@@ -32,60 +32,47 @@ import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 
 public abstract class BaseCommand<T>  {
-	
-	protected static final Logger logger = LoggerFactory.getLogger(BaseCommand.class.getSimpleName());
-	   
-	protected JsonObject restMetadataJson = null;
-
-	/**
-	 * Executes the command
-	 *
-	 * @return T a result. Each command has its own return type
-	 */	
-	public abstract RESTResponse call(RESTClient restClient);
-	
-
-	public BaseCommand() {
-
-	}
-	/**
-	 * set RestMetadataJson
-	 * @param restMetadataJson
-	 */
-	public void setRestMetadataJson(JsonObject restMetadataJson) {
-		this.restMetadataJson = restMetadataJson;
-	}
-	
-	/**
-	 * Make RESTful calls to Doradus server
-	 * @param restClient
-	 * @param methodName
-	 * @param uri
-	 * @param body
-	 * @return
-	 * @throws IOException
-	 */
-	protected RESTResponse sendRequest(RESTClient restClient, String methodName,
-			String uri, byte[] body) throws IOException {
-		RESTResponse response = restClient.sendRequest(HttpMethod.methodFromString(methodName), 
-													   uri, ContentType.APPLICATION_JSON, body);		
-		logger.debug("response: {}", response.toString());
-		throwIfErrorResponse(response);
-		return response;
-	}
-
-		
-    // If the given response shows an error, throw a RuntimeException using its text.
-	private void throwIfErrorResponse(RESTResponse response) {
-        if (response.getCode().isError()) {
-            String errMsg = response.getBody();
-            if (Utils.isEmpty(errMsg)) {
-                errMsg = "Unknown error; response code: " + response.getCode();
-            }
-            throw new RuntimeException(errMsg);
-        }
-    }   // throwIfErrorResponse
     
+    protected static final Logger logger = LoggerFactory.getLogger(BaseCommand.class.getSimpleName());
+       
+    protected JsonObject restMetadataJson = null;
+
+    /**
+     * Executes the command
+     *
+     * @return T a result. Each command has its own return type
+     */ 
+    public abstract RESTResponse call(RESTClient restClient);
+    
+
+    public BaseCommand() {
+
+    }
+    /**
+     * set RestMetadataJson
+     * @param restMetadataJson
+     */
+    public void setRestMetadataJson(JsonObject restMetadataJson) {
+        this.restMetadataJson = restMetadataJson;
+    }
+    
+    /**
+     * Make RESTful calls to Doradus server
+     * @param restClient
+     * @param methodName
+     * @param uri
+     * @param body
+     * @return
+     * @throws IOException
+     */
+    protected RESTResponse sendRequest(RESTClient restClient, String methodName,
+            String uri, byte[] body) throws IOException {
+        RESTResponse response = restClient.sendRequest(HttpMethod.methodFromString(methodName), 
+                                                       uri, ContentType.APPLICATION_JSON, body);        
+        logger.debug("response: {}", response.toString());
+        return response;
+    }
+
     /**
      * Get the {@link ApplicationDefinition} for the given application name. If the
      * connected Doradus server has no such application defined, null is returned.
@@ -95,13 +82,13 @@ public abstract class BaseCommand<T>  {
      *                  otherwise null.
      */
     public static ApplicationDefinition getAppDef(RESTClient restClient, String appName)  {
-    	
-    	// GET /_applications/{application}
+        
+        // GET /_applications/{application}
         Utils.require(!restClient.isClosed(), "Client has been closed");
         Utils.require(appName != null && appName.length() > 0, "appName");
 
         try {           
-            StringBuilder uri = new StringBuilder(Utils.isEmpty(restClient.getApiPrefix()) ? "" : "/" + restClient.getApiPrefix());          			
+            StringBuilder uri = new StringBuilder(Utils.isEmpty(restClient.getApiPrefix()) ? "" : "/" + restClient.getApiPrefix());                     
             uri.append("/_applications/");
             uri.append(Utils.urlEncode(appName));
             RESTResponse response = restClient.sendRequest(HttpMethod.GET, uri.toString());
@@ -135,14 +122,14 @@ public abstract class BaseCommand<T>  {
      * @return
      */
     public static JsonObject matchCommand(JsonObject commandsJson, String commandName, String storageService) {
-    	for (String key : commandsJson.keySet())  {
-    		if (key.equals(storageService)) {
-	    		JsonObject commandCats = commandsJson.getJsonObject(key);
-	    		if (commandCats.containsKey(commandName)) {
-		    		return commandCats.getJsonObject(commandName);
-		    	}    			 
-    		}
-    	}
-    	return null;
+        for (String key : commandsJson.keySet())  {
+            if (key.equals(storageService)) {
+                JsonObject commandCats = commandsJson.getJsonObject(key);
+                if (commandCats.containsKey(commandName)) {
+                    return commandCats.getJsonObject(commandName);
+                }                
+            }
+        }
+        return null;
     }
 }

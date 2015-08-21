@@ -89,7 +89,12 @@ final public class TableDefinition {
     }   // enum ShardingGranularity
     
     /**
-     * Create a new empty TableDefinition that belongs to the given application. It will
+     * Create a new {@link TableDefinition} with all null properties.
+     */
+    public TableDefinition() { }
+    
+    /**
+     * Create a new TableDefinition that belongs to the given application. It will
      * not have a name or any fields until they parsed or added.
      * 
      * @param appDef    Application to which table belongs.
@@ -111,65 +116,27 @@ final public class TableDefinition {
         assert appDef != null;
         assert tableName != null && tableName.length() > 0;
         
-        // Validate table name.
-        if (!isValidTableName(tableName)) {
-            throw new IllegalArgumentException("Invalid table name: " + tableName);
-        }
-        
         // Save parameters
         m_appDef = appDef;
-        m_tableName = tableName;
+        setTableName(tableName);
     }   // constructor
     
     /**
      * Parse a table definition rooted at the given UNode. The given node is the table
      * definition, hence its name is the table name. The node must be a MAP whose child
-     * nodes are table definitions such as "options" and "fields". This method is used
-     * when the table definition is not part of a larger application definition that may
-     * contain link forward-references.
-     * 
-     * @param tableNode         {@link UNode} whose name is the table's name and whose
-     *                          child nodes define the tables features.
-     */
-    public void parse(UNode tableNode) {
-        parse(tableNode, null);
-    }   // parse
-    
-    /**
-     * Parse a table definition in rooted at the given UNode. The given node is the table
-     * definition, hence its name is the table name. The node must be a MAP whose child
      * nodes are table definitions such as "options" and "fields".
      * 
-     * @param tableNode         {@link UNode} whose name is the table's name and whose
-     *                          child nodes define the tables features.
-     * @param externalLinkMap   Optional map of external link references. If this map is
-     *                          null, we do not attempt to generate or validate external
-     *                          link references.
-     * <p> 
-     *                          If this map is not null, it may have values when we're
-     *                          called, and we may add it it. The map is <table name>-to-
-     *                          <link name>-to-<field definition> where <table name>
-     *                          appears to own the <link name>, which was defined as the
-     *                          'inverse' of the link <field definition>. The caller must
-     *                          verify that each <table name> and <link name> is valid
-     *                          and/or implicitly defined.
+     * @param tableNode {@link UNode} whose name is the table's name and whose
+     *                  child nodes define the tables features.
      */
-    public void parse(UNode                                     tableNode,
-                      Map<String, Map<String, FieldDefinition>> externalLinkMap) {
+    public void parse(UNode tableNode) {
         assert tableNode != null;
-        assert m_appDef != null;
-        assert m_fieldDefMap.isEmpty();
-        assert m_optionMap.isEmpty();
-        assert m_tableName == null;
         
         // Verify table name and save it.
-        Utils.require(isValidTableName(tableNode.getName()),
-                      "Invalid table name: " + tableNode.getName());
-        m_tableName = tableNode.getName();
+        setTableName(tableNode.getName());
         
         // Examine table node's children.
         for (String childName : tableNode.getMemberNames()) {
-            // See if we recognize it.
             UNode childNode = tableNode.getMember(childName);
             
             // "fields"
@@ -178,17 +145,11 @@ final public class TableDefinition {
                 for (String fieldName : childNode.getMemberNames()) {
                     // Create a FieldDefinition and parse the node's value into it.
                     // This will throw if the definition is invalid.
-                    FieldDefinition fieldDef = new FieldDefinition(this);
+                    FieldDefinition fieldDef = new FieldDefinition();
                     fieldDef.parse(childNode.getMember(fieldName));
                     
                     // Ensure field name is unique and add it to the table's field map.
                     addFieldDefinition(fieldDef);
-                    
-                    // If the field is a group, verify that all nested field names are
-                    // unique and add them to the field definition map.
-                    if (fieldDef.isGroupField()) {
-                        validateNestedFields(fieldDef);
-                    }
                 }
                 
             // "options"
@@ -220,9 +181,7 @@ final public class TableDefinition {
                 Utils.require(false, "Unrecognized 'table' element: " + childName);
             }
         }
-        
-        // Finialize this table definition, including external link validation.
-        finalizeTableDefinition(externalLinkMap);
+        verify();
     }   // parse
 
     /**
@@ -365,6 +324,7 @@ final public class TableDefinition {
      * @return {@link ApplicationDefinition} to which this table definition applies.
      */
     public ApplicationDefinition getAppDef() {
+        Utils.require(m_appDef != null, "Table has not been assigned to an application");
         return m_appDef;
     }   // getAppDef
 
@@ -374,6 +334,7 @@ final public class TableDefinition {
      * @return  String in the form {application path}/Table:{table}
      */
     public String getPath() {
+        Utils.require(m_appDef != null, "Table has not been added to an application");
         return m_appDef.getPath() + "/Table:" + m_tableName;
     }   // getPath
     
@@ -668,17 +629,26 @@ final public class TableDefinition {
     }   // setOption
 
     /**
-     * Add the given {@link FieldDefinition} object to this table's list of known fields.
-     * The field should already be validated. If the field is a Link field, it is assigned
-     * the next available link ID for this table.
+     * Add the given {@link FieldDefinition} object to this table's list of fields. This
+     * method recursively validates and adds the given field and its nested fields, if
+     * any, to this table. 
      * 
      * @param fieldDef  New {@link FieldDefinition} to add to this table.
      */
     public void addFieldDefinition(FieldDefinition fieldDef) {
         // Assure field name is unique and add the definition to the map.
+        Utils.require(!Utils.isEmpty(fieldDef.getName()), "Field name is required");
         Utils.require(!m_fieldDefMap.containsKey(fieldDef.getName()),
                       "Field names must be unique: " + fieldDef.getName());
         m_fieldDefMap.put(fieldDef.getName(), fieldDef);
+        fieldDef.setTableDefinition(this);
+
+        // Recurse to nested fields, if any.
+        if (fieldDef.isGroupField()) {
+            for (FieldDefinition nestedFieldDef : fieldDef.getNestedFields()) {
+                addFieldDefinition(nestedFieldDef);
+            }
+        }
     }   // addFieldDefinition
 
     /**
@@ -690,6 +660,7 @@ final public class TableDefinition {
     public TableDefinition getLinkExtentTableDef(FieldDefinition linkDef) {
         assert linkDef != null;
         assert linkDef.isLinkType();
+        assert m_appDef != null;
         
         TableDefinition tableDef = m_appDef.getTableDef(linkDef.getLinkExtent());
         assert tableDef != null;
@@ -735,6 +706,79 @@ final public class TableDefinition {
         return true;
     }   // extractLinkValue
     
+    ///// Builder interface
+    
+    /**
+     * Create a new {@link Builder} object. This is a convenience method, which calls
+     * {@code new Builder()}.
+     * 
+     * @return  A new {@link Builder} object for building a {@link TableDefinition}
+     *          using the builder pattern.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+    
+    /**
+     * Helper class for building {@link TableDefinition} objects using the builder
+     * pattern.
+     */
+    public static class Builder {
+        private final TableDefinition m_tableDef = new TableDefinition();
+        
+        /**
+         * Create a new {@link Builder} object to begin construction of a new
+         * {@link TableDefinition}.
+         */
+        public Builder() {};
+        
+        /**
+         * Verify and return the completed {@link TableDefinition} object.
+         * 
+         * @return  The completed {@link TableDefinition} object.
+         */
+        public TableDefinition build() {
+            m_tableDef.verify();
+            return m_tableDef;
+        }
+        
+        /**
+         * Set the table's name.
+         * 
+         * @param tableName Table name.
+         * @return          This {@link Builder}.
+         */
+        public Builder withName(String tableName) {
+            m_tableDef.setTableName(tableName);
+            return this;
+        }
+        
+        /**
+         * Set the given table option. If the given option is already set, its value is
+         * replaced with the new value or unset if the given value is null.
+         * 
+         * @param optName   Table option name.
+         * @param optValue  New option value or null to unset the option.
+         * @return          This {@link Builder}.
+         */
+        public Builder withOption(String optName, String optValue) {
+            m_tableDef.setOption(optName, optValue);
+            return this;
+        }
+        
+        /**
+         * Add the given {@link FieldDefinition} to the table.
+         * 
+         * @param fieldDef  {@link FieldDefinition} of a field to add to this table.
+         * @return          This {@link Builder}.
+         */
+        public Builder withField(FieldDefinition fieldDef) {
+            m_tableDef.addFieldDefinition(fieldDef);
+            return this;
+        }
+        
+    }   // class Builder
+    
     ///// Private methods
     
     // Add the given alias definition to this table definition.
@@ -747,17 +791,6 @@ final public class TableDefinition {
         m_aliasDefMap.put(aliasDef.getName(), aliasDef);
     }   // addAliasDefinition
 
-    // Perform final validation checks for the table definition we just pased.
-    private void finalizeTableDefinition(Map<String, Map<String, FieldDefinition>> externalLinkMap) {
-        // Options are validated by the assigned storage manager.
-        
-        // Validate implicit inverse links, if any.
-        if (externalLinkMap != null) {
-            // Examine all Link fields and make sure each 'inverse' is specified.
-            validateInverseLinks(externalLinkMap);
-        }
-    }   // finalizeTableDefinition
-    
     // Verify that the given shard-starting date is in the format YYYY-MM-DD. If the format
     // is bad, just return false.
     private boolean isValidShardDate(String shardDate) {
@@ -770,75 +803,14 @@ final public class TableDefinition {
         }
     }   // isValidShardDate
 
-    // Examine all links defined in this table to ensure they are complete. If a link's
-    // inverse is in this table but not explicitly defined, add it to the table's field
-    // definitions. If a link's inverse is in another table, add it to the given
-    // external link map. In the latter case, we also ensure that two different links are
-    // not trying to declare the same link as their inverse.
-    private void validateInverseLinks(Map<String, Map<String, FieldDefinition>> externalLinkMap) {
-        // Take a snapshot of field names so we can add fields as iterate.
-        Set<String> fieldNames = new HashSet<>(m_fieldDefMap.keySet());
-        for (String fieldName : fieldNames) {
-            // Skip non-Link fields.
-            FieldDefinition fieldDef = m_fieldDefMap.get(fieldName);
-            if (!fieldDef.isLinkType()) {
-                continue;
-            }
-            
-            // If the link is an xlink, validate the junction field.
-            FieldType linkType = fieldDef.getType();
-            if (linkType == FieldType.XLINK) {
+    // Verify that the table is complete. Currently, only xlinks require checking.
+    private void verify() {
+        for (FieldDefinition fieldDef : m_fieldDefMap.values()) {
+            if (fieldDef.isXLinkField()) {
                 verifyJunctionField(fieldDef);
             }
-            
-            // See if link inverse is in this table or another.
-            String linkInverse = fieldDef.getLinkInverse();
-            assert linkInverse != null;
-            String linkExtent = fieldDef.getLinkExtent();
-            assert linkExtent != null;
-            if (linkExtent.equals(m_tableName)) {
-                // Inverse is in this table. See if the inverse field was explicitly defined.
-                FieldDefinition inverseFieldDef = m_fieldDefMap.get(linkInverse);
-                if (inverseFieldDef == null) {
-                    inverseFieldDef = new FieldDefinition(this);
-                    inverseFieldDef.setType(linkType);
-                    inverseFieldDef.setName(linkInverse);
-                    inverseFieldDef.setLinkInverse(fieldName);
-                    inverseFieldDef.setLinkExtent(m_tableName);
-                    // by default, links are multi-valued
-                    inverseFieldDef.setCollection(true);
-                    addFieldDefinition(inverseFieldDef);
-                } else {
-                    // Inverse was explicitly defined. Ensure it points back to this link
-                    // and this table.
-                    Utils.require(inverseFieldDef.getLinkInverse().equals(fieldName),
-                                  "Conflicting 'inverse' clauses for Link fields '" + fieldName +
-                                  "' and '" + linkInverse + "'");
-                    Utils.require(inverseFieldDef.getLinkExtent().equals(m_tableName), 
-                                  "Conflicting 'table' options for Link fields '" + fieldName +
-                                  "' and '" + linkInverse + "'");
-                }
-            } else {
-                // Another table is the target for this link. See if the other table is
-                // already externally-referenced.
-                Map<String, FieldDefinition> forwardLinks = externalLinkMap.get(linkExtent);
-                if (forwardLinks == null) {
-                    // First external reference to this table.
-                    forwardLinks = new HashMap<String, FieldDefinition>();
-                    externalLinkMap.put(linkExtent, forwardLinks);
-                }
-                
-                // See if the extent table already has a forward reference to this link.
-                // If it does, this means two links both name the same link as their inverse!
-                Utils.require(!forwardLinks.containsKey(linkInverse),
-                              "Only one link field can define '" + linkInverse + "' in table '" +
-                              linkExtent + "' as its 'inverse'");
-                
-                // Map the inverse link's name to us as its (eventual) inverse.
-                forwardLinks.put(linkInverse, fieldDef);
-            }
         }
-    }   // validateInverseLinks
+    }
     
     // Verify that the given xlink's junction field is either _ID or an SV text field.
     private void verifyJunctionField(FieldDefinition xlinkDef) {
@@ -846,35 +818,13 @@ final public class TableDefinition {
         if (!"_ID".equals(juncField)) {
             FieldDefinition juncFieldDef = m_fieldDefMap.get(juncField);
             Utils.require(juncFieldDef != null,
-                            String.format("Junction field for xlink '%s' has not been defined: %s",
-                                          xlinkDef.getName(), xlinkDef.getXLinkJunction()));
-            //Utils.require(juncFieldDef.getType() == FieldType.TEXT && !juncFieldDef.isCollection(),
-            //                String.format("Junction field for xlink '%s' must be an SV text field: ",
-            //                              xlinkDef.getName(), xlinkDef.getXLinkJunction()));
+                          String.format("Junction field for xlink '%s' has not been defined: %s",
+                                        xlinkDef.getName(), xlinkDef.getXLinkJunction()));
             Utils.require(juncFieldDef.getType() == FieldType.TEXT,
-                    String.format("Junction field for xlink '%s' must be a text field: ",
-                                  xlinkDef.getName(), xlinkDef.getXLinkJunction()));
+                          String.format("Junction field for xlink '%s' must be a text field: ",
+                                        xlinkDef.getName(), xlinkDef.getXLinkJunction()));
         }
     }   // verifyJunctionField
-
-    // Verify that this group field's nested fields are uniquely named among all fields in
-    // this table, and add each nested field to the global field map. This allows us to
-    // treat nested fields individually as well as qualified via their group fields.
-    private void validateNestedFields(FieldDefinition groupFieldDef) {
-        assert groupFieldDef.isGroupField();
-        
-        for (FieldDefinition nestedFieldDef : groupFieldDef.getNestedFields()) {
-            // addFieldDefinition() ensures that the field name is unique, adds the nested
-            // field to the field map and, if it is a link, adds it to the link map if the
-            // link has a field number.
-            addFieldDefinition(nestedFieldDef);
-
-            // If this nested field is a group, recurse to it.
-            if (nestedFieldDef.isGroupField()) {
-                validateNestedFields(nestedFieldDef);
-            }
-        }
-    }   // validateNestedFields
 
     /**
      * Replaces of all occurences of aliases defined with this table, by their expressions.

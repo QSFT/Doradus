@@ -28,8 +28,10 @@ import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.UNode;
 
 /**
- * Demonstrates a Java client application accessing a Doradus Spider database. See
- * {@link #usage()} for parameter details. This application does the following:
+ * Demonstrates a Java client application accessing a Doradus Spider database. This
+ * example shows application creation and data loading by parsing JSON into UNode
+ * objects that are sent in REST commands. See {@link #usage()} for parameter details.
+ * This application does the following:
  * <p>
  * <ol>
  * <li>Creates a {@link Client} connection to a database database.</li>

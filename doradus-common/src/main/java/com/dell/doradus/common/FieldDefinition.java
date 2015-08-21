@@ -59,6 +59,20 @@ final public class FieldDefinition {
                Utils.isLetter(fieldName.charAt(0)) &&
                Utils.allAlphaNumUnderscore(fieldName);
     }   // isValidFieldName
+
+    /**
+     * Create a new FieldDefinition with all null properties.
+     */
+    public FieldDefinition() {}
+    
+    /**
+     * Create a new field definition with the given name and no other properties.
+     * 
+     * @param fieldName Name of new field definition.
+     */
+    public FieldDefinition(String fieldName) {
+        setName(fieldName);
+    }
     
     /**
      * Create an empty FieldDefinition that belongs to the given table. The object is not
@@ -82,18 +96,11 @@ final public class FieldDefinition {
     public void parse(UNode fieldNode) {
         assert fieldNode != null;
         
-        // Verify the field name and save it.
-        Utils.require(isValidFieldName(fieldNode.getName()),
-                      "Invalid field name: " + fieldNode.getName());
-        m_name = fieldNode.getName();
-        
-        // Specifies if the collection attribute was explicitly set:
-        boolean bCollectionSet = false;
+        // Set field name.
+        setName(fieldNode.getName());
         
         // Parse the nodes child nodes. If we find a "fields" definition, just save it
         // for later.
-        UNode nestedFieldsNode = null;
-        String analyzerName = null;
         for (String childName : fieldNode.getMemberNames()) {
             // See if we recognize it.
             UNode childNode = fieldNode.getMember(childName);
@@ -115,16 +122,15 @@ final public class FieldDefinition {
                 Utils.require(childNode.isValue(),
                               "Value of 'collection' must be a string: " + childNode);
                 m_bIsCollection = Utils.getBooleanValue(childNode.getValue());
-                bCollectionSet = true;
                 
             // "analyzer"
             } else if (childName.equals("analyzer")) {
                 // Value must be a string.
                 Utils.require(childNode.isValue(),
                               "Value of 'analyzer' must be a string: " + childNode);
-                Utils.require(analyzerName == null,
+                Utils.require(m_analyzerName == null,
                               "'analyzer' can only be specified once");
-                analyzerName = childNode.getValue();
+                m_analyzerName = childNode.getValue();
             
             // "inverse"
             } else if (childName.equals("inverse")) {
@@ -149,13 +155,20 @@ final public class FieldDefinition {
                 // This field must be (or can become) a group.
                 Utils.require(m_type == null || m_type == FieldType.GROUP,
                               "Only group fields can have nested elements: " + m_name);
+                m_type = FieldType.GROUP;
                 
                 // Value can only be specified once.
-                Utils.require(nestedFieldsNode == null,
+                Utils.require(m_nestedFieldMap.size() == 0,
                               "'fields' can only be specified once: " + m_name);
-
-                // Save the node for later processing.
-                nestedFieldsNode = childNode;
+                Utils.require(childNode.hasMembers(),
+                              "Group field must have at least one nested field defined: " + m_name);
+                for (String nestedFieldName : childNode.getMemberNames()) {
+                    // Create a FieldDefinition for the nested field and parse details into it.
+                    UNode nestedFieldNode = childNode.getMember(nestedFieldName);
+                    FieldDefinition nestedField = new FieldDefinition();
+                    nestedField.parse(nestedFieldNode);
+                    addNestedField(nestedField);
+                }
                 
             // "sharded"
             } else if (childName.equals("sharded")) {
@@ -168,8 +181,9 @@ final public class FieldDefinition {
             } else if (childName.equals("encoding")) {
                 Utils.require(childNode.isValue(),
                               "Value of 'encoding' must be a string: " + childNode);
-                m_encoding = EncodingType.fromString(childNode.getValue());
-                Utils.require(m_encoding != null, "Unrecognized 'encoding': " + childNode.getValue());
+                EncodingType encoding = EncodingType.fromString(childNode.getValue());
+                Utils.require(encoding != null, "Unrecognized 'encoding': " + childNode.getValue());
+                setEncoding(encoding);
                 
             // "junction"
             } else if (childName.equals("junction")) {
@@ -184,75 +198,25 @@ final public class FieldDefinition {
 
         // If we didn't get a 'type', default to "text".
         if (m_type == null) {
-            if (nestedFieldsNode == null) {
-                m_type = FieldType.TEXT;
-            } else {
-                m_type = FieldType.GROUP;
-            }
+            m_type = FieldType.TEXT;
         }
-        
-        // If an 'inverse' or 'table' was specified, type must be LINK or XLINK.
-        Utils.require(m_linkInverse == null || m_type.isLinkType(),
-                      "'inverse' not allowed for this field type: " + m_name);
-        Utils.require(m_linkExtent == null || m_type.isLinkType(),
-                      "'table' not allowed for this field type: " + m_name);
-        
-        // LINK and XLINK require an 'inverse'.
-        Utils.require(!m_type.isLinkType() || m_linkInverse != null,
-                      "Missing 'inverse' option: " + m_name);
-        
-        // LINK and XLINK 'table' defaults to same table.
-        if (m_type.isLinkType() && Utils.isEmpty(m_linkExtent)) {
-            m_linkExtent = m_tableDef.getTableName();
-        }
-        
-        // XLINK requires a junction field: default is "_ID".
-        if (!Utils.isEmpty(m_junctionField)) {
-            Utils.require(m_type == FieldType.XLINK, "'junction' is only allowed for xlinks");
-        } else if (m_type == FieldType.XLINK) {
-            m_junctionField = "_ID";
-        }
-        
-        // If collection was not explicitly set, set to true for links and false for scalars
-        if (!bCollectionSet) {
-            m_bIsCollection = m_type.isLinkType();
-        }
-        
-        // Set or verify 'analyzer' for scalar field types.
-        if (analyzerName != null) {
-            // Assure this is a scalar, but don't verify the analyzer here.
-            Utils.require(m_type.isScalarType(),
-                          "'analyzer' can only be specified for scalar field types: " + analyzerName);
-            m_analyzerName = analyzerName;
-        }
-        
-        // If this is a binary field, ensure "encoding" is set.
-        if (m_encoding != null) {
-            Utils.require(m_type == FieldType.BINARY, "'encoding' is only valid for binary fields");
-        } else {
-            m_encoding = EncodingType.getDefaultEncoding();
-        }
-        
-        // Binary fields cannot be collections.
-        Utils.require(m_type != FieldType.BINARY || !m_bIsCollection,
-                      "Binary fields cannot be collections (multi-valued)");
-        
-        // If this is a group, ensure nested fields were declared.
-        if (m_type == FieldType.GROUP) {
-            Utils.require(nestedFieldsNode != null &&
-                          nestedFieldsNode.hasMembers(),
-                          "Group field must have at least one nested field defined: " + m_name);
-            for (String nestedFieldName : nestedFieldsNode.getMemberNames()) {
-                // Create a FieldDefinition for the nested field and parse details into it.
-                UNode nestedFieldNode = nestedFieldsNode.getMember(nestedFieldName);
-                FieldDefinition nestedField = new FieldDefinition(m_tableDef);
-                nestedField.parse(nestedFieldNode);
-                addNestedField(nestedField);
-            }
-        } else {
-            Utils.require(nestedFieldsNode == null, "Only group fields can have nested elements: " + m_name);
-        }
+        verify();
     }   // parse(UNode)
+    
+    /**
+     * Make the given table the owner of this field definition and any nested fields it
+     * owns.
+     * 
+     * @param tableDef  {@link TableDefinition} that owns this field.
+     */
+    public void setTableDefinition(TableDefinition tableDef) {
+        m_tableDef = tableDef;
+        
+        // LINK and XLINK 'table' defaults to owning table.
+        if (m_type.isLinkType() && Utils.isEmpty(m_linkExtent)) {
+            m_linkExtent = tableDef.getTableName();
+        }
+    }    
     
     ///// Getters
 
@@ -283,6 +247,7 @@ final public class FieldDefinition {
      * @return Name of table to which this field belongs.
      */
     public String getTableName() {
+        Utils.require(m_tableDef != null, "Field has not been assigned to a table");
         return m_tableDef.getTableName();
     }   // getTableName
     
@@ -292,6 +257,7 @@ final public class FieldDefinition {
      * @return This table's {@link TableDefinition}.
      */
     public TableDefinition getTableDef() {
+        Utils.require(m_tableDef != null, "Field has not been assigned to a table");
         return m_tableDef;
     }   // getTableDef
     
@@ -433,6 +399,7 @@ final public class FieldDefinition {
      */
     public TableDefinition getInverseTableDef() {
         assert isLinkType();
+        Utils.require(m_tableDef != null, "Field has not been assigned to a table");
         return m_tableDef.getAppDef().getTableDef(m_linkExtent);
     }   // getInverseTableDef
 
@@ -550,27 +517,6 @@ final public class FieldDefinition {
     ///// Setters
 
     /**
-     * Add the given FieldDefiniton as a child (nested field) of this field. This method
-     * also sets the given field's "parent field" pointer to point to us.
-     * 
-     * @param nestedFieldDef    {@link FieldDefinition} of a scalar field to become a
-     *                          nested field of this group.
-     */
-    public void addNestedField(FieldDefinition nestedFieldDef) {
-        // Prerequisites
-        assert nestedFieldDef != null;
-        assert m_type == FieldType.GROUP;
-        assert !m_nestedFieldMap.containsKey(nestedFieldDef.getName());
-        
-        // Add it to us and point it at us.
-        m_nestedFieldMap.put(nestedFieldDef.getName(), nestedFieldDef);
-        nestedFieldDef.m_parentField = this;
-        
-        // Ensure the nested field is owned by the same TableDefinition in case
-        nestedFieldDef.setOwningTable(m_tableDef);
-    }   // addNestedField
-
-    /**
      * Set the analyzer name for this field to the given value. This can only be called
      * for scalar fields.
      * 
@@ -591,6 +537,16 @@ final public class FieldDefinition {
     public void setCollection(boolean isCollection) {
         m_bIsCollection = isCollection;
     }   // setCollection
+    
+    /**
+     * Set this binary field's {@link EncodingType}. If a binary field is defined and an
+     * encoding is not defined, it defaults to {@link EncodingType#getDefaultEncoding()}.
+     * 
+     * @param encoding  {@link EncodingType} for a binary field.
+     */
+    public void setEncoding(EncodingType encoding) {
+        m_encoding = encoding;
+    }
     
     /**
      * Set the field's inverse property to the given field name.
@@ -627,20 +583,6 @@ final public class FieldDefinition {
         }
         m_name = fieldName;
     }   // setName
-    
-    /**
-     * Change the table that owns this field to the given {@link TableDefinition}. This
-     * method should only be used to "transfer" ownership of a table during schema
-     * processing, e.g., when a new field is parsed in an existing table and is "moved"
-     * to the existing TableDefinition when the schema change is committed.
-     * 
-     * @param tableDef  {@link TableDefinition} of field's new owning table.
-     */
-    public void setOwningTable(TableDefinition tableDef) {
-        // Table name should not change.
-        assert m_tableDef.getTableName().equals(tableDef.getTableName());
-        m_tableDef = tableDef;
-    }   // setOwningTable
     
     /**
      * Set this field's type to the given FieldType. An IllegalArgumentException is thrown
@@ -726,4 +668,191 @@ final public class FieldDefinition {
         return fieldNode;
     }   // toDoc
 
+    ///// Builder interface
+    
+    /**
+     * Create a new {@link Builder} object for building a {@link FieldDefinition} using
+     * the builder pattern. This is a convenience methods for calling
+     * {@code new Builder()}.
+     * 
+     * @return  New {@link Builder} object.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+    
+    /**
+     * Helper class for building {@link FieldDefinition} objects.
+     */
+    public static class Builder {
+        private final FieldDefinition m_fieldDef = new FieldDefinition();
+        
+        /**
+         * Create a new {@link Builder} instance.
+         */
+        public Builder() {}
+        
+        /**
+         * Verify the {@link FieldDefinition} built for correctness and return it.
+         *  
+         * @return  The completed {@link FieldDefinition}.
+         */
+        public FieldDefinition build() {
+            m_fieldDef.verify();
+            return m_fieldDef;
+        }
+        
+        /**
+         * Set the field name, replacing the existing name if any. All fields require a
+         * name.
+         * 
+         * @param fieldName Field name.
+         * @return          This {@link Builder}.
+         */
+        public Builder withName(String fieldName) {
+            m_fieldDef.setName(fieldName);
+            return this;
+        }
+        
+        /**
+         * Set the field type, replacint the existing type if any.
+         * 
+         * @param type      {@link FieldType} that identifies the field's type.
+         * @return          This {@link Builder}.
+         */
+        public Builder withType(FieldType type) {
+            m_fieldDef.setType(type);
+            return this;
+        }
+        
+        /**
+         * Set the field's analyzer property, replacing the exising value if any. Only
+         * scalar fields for certain storage services use the analyzer property, and an
+         * explicit value is needed only when the non-default analyzer is needed. 
+         * 
+         * @param  analyzerName Name of analyzer to use. It must be a recognized analyzer
+         *                      name such as "NullAnalyzer" or "OpaqueTextAnalyzer", and it
+         *                      must be compatible with the field's type.
+         * @return              This {@link Builder}.
+         */
+        public Builder withAnalyzer(String analyzerName) {
+            m_fieldDef.setAnalyzer(analyzerName);
+            return this;
+        }
+        
+        /**
+         * Set the field's "collection" property. For a scalar field, collection defaults
+         * to "false", which makes it a single-valued (SV) field. Setting collection to
+         * "true" makes the field a multi-valued (MV) field. Link fields are always
+         * considered MV, so the collection property is ignored.
+         * 
+         * @param isCollection  Collection property value: true for MV, false for SV.
+         * @return              This {@link Builder}.
+         */
+        public Builder withCollection(boolean isCollection) {
+            m_fieldDef.setCollection(isCollection);
+            return this;
+        }
+        
+        /**
+         * Set the field's "encoding" property. An encoding value is only used for binary
+         * fields. If no encoding is defined for a binary field, a default is assigned.
+         * The encoding property defines how binary values are encoded in input and output
+         * messages.
+         * 
+         * @param encoding  {@link EncodingType} to use for a binary field.
+         * @return          This {@link Builder}.
+         */
+        public Builder withEncoding(EncodingType encoding) {
+            m_fieldDef.setEncoding(encoding);
+            return this;
+        }
+        
+        /**
+         * Set a link field's "extent" (table) property. This property is required and can
+         * only be set for link fields.
+         * 
+         * @param linkExtent    Name of link field's extent, which is the table to which
+         *                      it points. 
+         * @return              This {@link Builder}.
+         */
+        public Builder withExtent(String linkExtent) {
+            m_fieldDef.setLinkExtent(linkExtent);
+            return this;
+        }
+        
+        /**
+         * Set a link field's "inverse" property. This property is required and can only
+         * be set for link fields. It defines the link field name in the extent table that
+         * is the inverse of this link. The inverse link's definition must be set to this
+         * link field's name so that they are in agreement. A link can be its own inverse
+         * (e.g., "spouse" or "friends").
+         * 
+         * @param linkInverse   Name of inverse link of this link.
+         * @return              This {@link Builder}.
+         */
+        public Builder withInverse(String linkInverse) {
+            m_fieldDef.setLinkInverse(linkInverse);
+            return this;
+        }
+    }
+    
+    ///// Private methods
+    
+    // Add the given FieldDefiniton as a child (nested field) of this field.
+    private void addNestedField(FieldDefinition nestedFieldDef) {
+        // Prerequisites
+        assert nestedFieldDef != null;
+        assert m_type == FieldType.GROUP;
+        Utils.require(!m_nestedFieldMap.containsKey(nestedFieldDef.getName()),
+                      "Duplicate nested field name: %s", nestedFieldDef.getName());
+        
+        // Add it to us and point it at us.
+        m_nestedFieldMap.put(nestedFieldDef.getName(), nestedFieldDef);
+        nestedFieldDef.m_parentField = this;
+    }   // addNestedField
+
+    // Verify that this field definition is complete and coherent.
+    private void verify() {
+        Utils.require(!Utils.isEmpty(m_name), "Field name is required");
+        Utils.require(m_type != null, "Field type is required");
+        
+        // If an 'inverse' or 'table' was specified, type must be LINK or XLINK.
+        Utils.require(m_linkInverse == null || m_type.isLinkType(),
+                      "'inverse' not allowed for this field type: " + m_name);
+        Utils.require(m_linkExtent == null || m_type.isLinkType(),
+                      "'table' not allowed for this field type: " + m_name);
+        
+        // LINK and XLINK require an 'inverse'.
+        Utils.require(!m_type.isLinkType() || m_linkInverse != null,
+                      "Missing 'inverse' option: " + m_name);
+        
+        // XLINK requires a junction field: default is "_ID".
+        if (!Utils.isEmpty(m_junctionField)) {
+            Utils.require(m_type == FieldType.XLINK, "'junction' is only allowed for xlinks");
+        } else if (m_type == FieldType.XLINK) {
+            m_junctionField = "_ID";
+        }
+        
+        // If collection was not explicitly set, set to true for links and false for scalars
+        if (!m_bIsCollection && m_type.isLinkType()) {
+            m_bIsCollection = true;
+        }
+        
+        // 'analyzer' can only be set for scalar field types, but don't verify value here.
+        Utils.require(m_analyzerName == null || m_type.isScalarType(),
+                      "'analyzer' can only be specified for scalar field types: " + m_analyzerName);
+        
+        // If this is a binary field, ensure "encoding" is set.
+        if (m_encoding != null) {
+            Utils.require(m_type == FieldType.BINARY, "'encoding' is only valid for binary fields");
+        } else if (m_type == FieldType.BINARY) {
+            m_encoding = EncodingType.getDefaultEncoding();
+        }
+        
+        // Binary fields cannot be collections.
+        Utils.require(m_type != FieldType.BINARY || !m_bIsCollection,
+                      "Binary fields cannot be collections (multi-valued)");
+    }
+    
 }   // FieldDefinition

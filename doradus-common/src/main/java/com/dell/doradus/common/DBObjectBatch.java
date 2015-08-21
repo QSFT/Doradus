@@ -313,43 +313,48 @@ public class DBObjectBatch implements JSONable{
         m_dbObjList.clear();
     }   // clear
     
-	@Override
-	public String toJSON() {
-		return toDoc().toJSON();
-	}
-	
-	/**
-	  * Creates a new {@link DBObjectBatch.Builder} instance.
-	  * <p>
-	  * This is a convenience method for {@code new DBObjectBatch.Builder()}.
-	  *
-	  * @return the new DBObjectBatch builder.
-	  */
-	 public static DBObjectBatch.Builder builder() {
-	     return new DBObjectBatch.Builder();
-	 }
-	 	
-	 /**
-     * Helper class to build {@link DBObjectBatch} instances.
-     */
-	 public static class Builder {
-    	private DBObjectBatch dbObjectBatch = new DBObjectBatch();
-    			   	
+    @Override
+    public String toJSON() {
+        return toDoc().toJSON();
+    }
+    
+    ///// Builder 
+    
+    /**
+      * Creates a new {@link Builder} instance. This is a convenience method for
+      * {@code new Builder()}.
+      *
+      * @return New DBObjectBatch {@link Builder}.
+      */
+     public static DBObjectBatch.Builder builder() {
+         return new DBObjectBatch.Builder();
+     }
+        
+     /**
+      * Helper class to build {@link DBObjectBatch} instances.
+      */
+     public static class Builder {
+        private DBObjectBatch dbObjectBatch = new DBObjectBatch();
+                    
         /**
-         * Builds the DBObjectBatch 
+         * Returns the completed {@link DBObjectBatch}. 
          *
-         * @return the newly built DBObjectBatch instance.
+         * @return The newly built DBObjectBatch instance.
          */
         public DBObjectBatch build() {
-        	return this.dbObjectBatch;
+            return this.dbObjectBatch;
         }
 
+        /**
+         * Add the given DBObject to the builder.
+         * 
+         * @param dbObject  New {@link DBObject}.
+         * @return          This {@link Builder}.
+         */
+        public Builder withObject(DBObject dbObject) {
+            dbObjectBatch.addObject(dbObject);
+            return this;
+        }   
+    }
 
-		public Builder add(DBObject dbObject) {
-			if (dbObject != null) {
-				dbObjectBatch.addObject(dbObject);
-			}
-			return this;
-		}
-    }	
 }   // class DBObjectBatch
