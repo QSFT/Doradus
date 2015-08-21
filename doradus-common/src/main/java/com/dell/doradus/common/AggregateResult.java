@@ -47,19 +47,19 @@ import java.util.List;
  *              *group (recursive)
  * </pre>
  * Objects marked with "*" are multi-valued. Rules for setting AggregateResult fields are
- * summarized below:<p>
+ * summarized below:
+ * <H2>Global properties</H2>
  * <dl>
- * <p>**** Global properties *****<p>
  * <dt>metric-param</dt>
- *  <dd>This is always set to the aggregate's "metric" (&m) parameter. It can be a list
+ *  <dd>This is always set to the aggregate's "metric" ({@literal &}m) parameter. It can be a list
  *      for multi-metric queries (e.g., "COUNT(*),MAX(Sise),MIN(SendDate)").</dd>
  *      
  * <dt>grouping-param</dt>
- *  <dd>This is null for global aggregates, otherwise it holds the "grouping" (&f)
+ *  <dd>This is null for global aggregates, otherwise it holds the "grouping" ({@literal &}f)
  *      parameter.</dd>
  *      
  * <dt>query-param</dt>
- *  <dd>This holds the aggregate's "query" (&q) parameter and may be null.</dd>
+ *  <dd>This holds the aggregate's "query" ({@literal &}q) parameter and may be null.</dd>
  *  
  * <dt>global-value</dt>
  *  <dd>This holds the metric value for a global aggregate or the summary value for single
@@ -68,8 +68,9 @@ import java.util.List;
  * <dt>total-objects</dt>
  *  <dd>This holds the total number of objects counted for queries that compute this
  *      value.</dd>
- * 
- * <p>***** groupset properties *****<p>
+ * </dl>
+ * <H2>Groupset properties</H2>
+ * <dl>
  * <dt>groupset</dt>
  *  <dd>A single groupset is used for grouped aggregates that have a single tree of groups
  *      (single- or multi-level). Multiple groupset objects are used for multi-tree
@@ -98,8 +99,9 @@ import java.util.List;
  *  <dd>A groupset's total-groups is used when the groupset uses a TOP or BOTTOM function.
  *      It holds the total number of groups found independent of the limit imposed by the
  *      TOP/BOTTOM function.</dd>
- *      
- * <p>***** group properties *****<p>
+ * </dl>
+ * <H2>Group properties</H2>
+ * <dl>
  * <dt>group</dt>
  *  <dd>Each groupset has one or more groups. A group can be a "leaf" group and hold a
  *      simple value, or it can be a parent group and hold lower-level groups.</dd>
@@ -126,7 +128,7 @@ import java.util.List;
  *      groups found for this grouping level independent of the limit imposed by the
  *      TOP/BOTTOM function.</dd>
  * </dl>
- * To summarize, the basic aggregate structures are represented as follows:<p>
+ * To summarize, the basic aggregate structures are represented as follows:
  * <ul>
  * <li>A global aggregate has no groupset objects.
  * <li>A single-tree aggregate is represented by a single groupset object with no
@@ -185,6 +187,7 @@ public class AggregateResult {
         
         /**
          * This group set's computed metric value.
+         * @return Computed metric value.
          */
         public String getGroupsetValue() {
             return m_groupsetValue;
@@ -192,6 +195,7 @@ public class AggregateResult {
         
         /**
          * This group set's grouping parameter, if used.
+         * @return Grouping parameter.
          */
         public String getGroupingParam() {
             return m_groupingParam; 
@@ -199,6 +203,7 @@ public class AggregateResult {
         
         /**
          * This group set's metric parameter.
+         * @return Metric parameter.
          */
         public String getMetricParam() {
             return m_metricParam; 
@@ -207,6 +212,7 @@ public class AggregateResult {
         /**
          * The total number of groups found for this group set when a TOP or BOTTOM was
          * used to limit the number of groups returned.
+         * @return Total number of groups found.
          */
         public long getTotalGroups() {
             return m_totalGroups;
@@ -214,6 +220,7 @@ public class AggregateResult {
 
         /**
          * The number of groups contained by this group set. 0 if none.
+         * @return Embedded group count.
          */
         public int getEmbeddedGroupCount() {
             return m_groupList == null ? 0 : m_groupList.size();
@@ -222,6 +229,7 @@ public class AggregateResult {
         /**
          * An Iterable object that returns this group sets embedded groups. If there are
          * no embedded groups, the iterator will return nothing.
+         * @return Iterable {@link AggGroup}.
          */
         public Iterable<AggGroup> getGroups() {
             if (m_groupList == null) {
@@ -429,6 +437,7 @@ public class AggregateResult {
         
         /**
          * The field name for which this group pertains.
+         * @return Field name.
          */
         public String getFieldName() {
             return m_fieldName;
@@ -436,6 +445,7 @@ public class AggregateResult {
         
         /**
          * The field value to which this group pertains.
+         * @return Field value.
          */
         public String getFieldValue() {
             return m_fieldValue;
@@ -443,6 +453,7 @@ public class AggregateResult {
         
         /**
          * The computed metric value for this group.
+         * @return Metric value.
          */
         public String getGroupValue() {
             return m_groupValue;
@@ -451,6 +462,7 @@ public class AggregateResult {
         /**
          * If the number of child groups computed for this group when the number of child
          * groups was limited due to a TOP or BOTTOM function.
+         * @return Total groups.
          */
         public long getTotalGroups() {
             return m_totalGroups;
@@ -458,6 +470,7 @@ public class AggregateResult {
 
         /**
          * The number of child groups nested within this group. 0 if none.
+         * @return Embedded group count.
          */
         public int getEmbeddedGroupCount() {
             return m_groupList == null ? 0 : m_groupList.size();
@@ -466,6 +479,7 @@ public class AggregateResult {
         /**
          * An Iterable object that provides access to nested groups. If there are no
          * nested groups, the object will return nothing.
+         * @return Nested groups as an Iterable {@link AggGroup}.
          */
         public Iterable<AggGroup> getGroups() {
             if (m_groupList == null) {
@@ -477,6 +491,7 @@ public class AggregateResult {
         
         /**
          * Whether this group corresponds to a <i>composite</i> group.
+         * @return True if this is a composite group.
          */
         public boolean isComposite() {
             return m_bComposite;
@@ -863,7 +878,7 @@ public class AggregateResult {
     
     /**
      * Set this AggregateResult's grouping-param. This is null for global aggregates,
-     * otherwise it holds the "grouping" (&f) parameter.
+     * otherwise it holds the "grouping" ({@literal &}f) parameter.
      * 
      * @param groupingParam New value for this AggregateResult's grouping-param.
      */
@@ -873,7 +888,7 @@ public class AggregateResult {
     
     /**
      * Set this AggregateResult's metric-param. This is always set to the aggregate's
-     * "metric" (&m) parameter. It can be a list for multi-metric queries (e.g.,
+     * "metric" ({@literal &}m) parameter. It can be a list for multi-metric queries (e.g.,
      * "COUNT(*),MAX(Sise),MIN(SendDate)).
      * 
      * @param metricParam   New value for this AggregateResult's metric-param.
@@ -883,7 +898,7 @@ public class AggregateResult {
     }   // setMetricParam
 
     /**
-     * Set this AggregateResult's query-param. This holds the aggregate's "query" (&q)
+     * Set this AggregateResult's query-param. This holds the aggregate's "query" ({@literal &}q)
      * parameter and may be null.
      *  
      * @param queryParam    New value for this AggregateResult's query-param.

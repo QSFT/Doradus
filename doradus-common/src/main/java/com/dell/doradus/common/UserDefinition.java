@@ -66,7 +66,7 @@ public class UserDefinition {
     /**
      * Create a new object setting the user ID only.
      * 
-     * @param userID
+     * @param userID    User ID (name) of new user.
      */
     public UserDefinition(String userID) {
         m_userID = userID;

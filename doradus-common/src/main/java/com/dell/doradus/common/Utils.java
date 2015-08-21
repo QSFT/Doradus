@@ -299,17 +299,21 @@ final public class Utils {
             return newValue;
         }
     }   // getTimeMicros
-
     
     /**
-     * Get globally unique id as string of 36 characters (same length as UUID.toString)  
-     * Subsequent IDs are in almost increasing order (random within same millisecond)
+     * Get globally unique id as string of 36 characters (same length as UUID.toString).  
+     * Subsequent IDs are in almost increasing order (random within same millisecond).
      * Format is the following:
-     * 
+     * <pre>
      *  xxxxxxxxx-yyyyyyyyyyyyyzzzzzzzzzzzzz
-     *  x: timestamp in milliseconds (9 characters, encoded with 32 characters keeping the order)
-     *  y: high 8-byte value of UUID (13 characters, same encoding)
-     *  z: low 8-byte value of UUID (13 characters, same encoding)
+     * </pre>
+     * where:
+     * <ul>
+     * <li>x: timestamp in milliseconds (9 characters, encoded with 32 characters keeping the order)
+     * <li>y: high 8-byte value of UUID (13 characters, same encoding)
+     * <li>z: low 8-byte value of UUID (13 characters, same encoding)
+     * </ul>
+     * @return Globally unique ID in the format described above.
      */
     public static String getUniqueId() {
         char[] data = new char[36]; 
@@ -344,8 +348,8 @@ final public class Utils {
      * String. For example, ["abc", "def", "xyz"] becomes "abc, def, xyz". Each member in
      * the collection is turned into a string using its toString() method.
      * 
-     * @param strIterable   List<String>.
-     * @return          Comma-separated list of values.
+     * @param strIterable   Iterable collection of values.
+     * @return              Comma-separated list of values.
      */
     public static String collToCSVString(Iterable<?> strIterable) {
         StringBuilder buffer = new StringBuilder();
@@ -361,7 +365,7 @@ final public class Utils {
     /**
      * Compress the given message using GZIP, returning the compressed result as a byte[].
      *
-     * @param  message      Message to be compressed (must be non-null and length > 0).
+     * @param  message      Message to be compressed (must be non-null and length &gt; 0).
      * @return              Decompressed message.
      * @throws IOException  If an error occurs such as a corrupt GZIP format.
      */
@@ -382,6 +386,7 @@ final public class Utils {
      * with the given separation string added between values (but not before the first
      * value or after the last value).
      *
+     * @param <T>       Type of object to concatenate.
      * @param values    A Collection of objects.
      * @param sepStr    Separator string to use between values.
      * @return          The Strings concatenated together with the given separate string
@@ -1642,16 +1647,16 @@ final public class Utils {
 
     /**
      * Split the given query component of a URI into its decoded parts. First, parts
-     * delimited by non-encoded '&'s are separated. Then, each unencoded '+' is replaced
+     * delimited by non-encoded '{@literal &}'s are separated. Then, each unencoded '+' is replaced
      * with a space within each part. Finally, the parts are URL-decoded and stored in the
      * result string array. For example, if the URI is:
      * <pre>
-     *      "/foo/bar?a=cat&b=dog+%24sheep"
+     *      "/foo/bar?a=cat{@literal &}b=dog+%24sheep"
      * </pre>
      * The query component can be extracted using
      * {@link #splitURI(String, StringBuilder, StringBuilder, StringBuilder)}, yielding:
      * <pre>
-     *    "a=cat&b=dog+%24sheep".
+     *    "a=cat{@literal &}b=dog+%24sheep".
      * </pre>
      * If this string is then passed to this method, it would return the following length-
      * two array of Strings:
@@ -1677,17 +1682,17 @@ final public class Utils {
 
     /**
      * Split the given query component of a URI into its decoded parts and return them as
-     * a name/value map. First, parts delimited by non-encoded '&'s are separated. Then,
+     * a name/value map. First, parts delimited by non-encoded '{@literal &}'s are separated. Then,
      * each unencoded '+' is replaced with a space within each part. Finally, the parts
      * are URL-decoded and stored in the result map keyed by name. For example, if the URI
      * is:
      * <pre>
-     *      "/foo/bar?a=cat&b=dog+%24sheep&c"
+     *      "/foo/bar?a=cat{@literal &}b=dog+%24sheep{@literal &}c"
      * </pre>
      * The query component can be extracted using
      * {@link #splitURI(String, StringBuilder, StringBuilder, StringBuilder)}, yielding:
      * <pre>
-     *    "a=cat&b=dog+%24sheep&c".
+     *    "a=cat{@literal &}b=dog+%24sheep{@literal &}c".
      * </pre>
      * If this string is then passed to this method, it would return the following Map:
      * <pre>
@@ -1723,7 +1728,7 @@ final public class Utils {
      * This method is the complement of {@link #parseURIQuery(String)}.
      * 
      * @param uriParams Unencoded name/value pairs.    
-     * @return          URI query in the form {name 1}={value 1}&...&{name}={value n}.
+     * @return          URI query in the form {name 1}={value 1}{@literal &}...{@literal &}{name}={value n}.
      */
     public static String joinURIQuery(Map<String, String> uriParams) {
         StringBuilder buffer = new StringBuilder();
@@ -1990,7 +1995,7 @@ final public class Utils {
     
     /**
      * Ensure that the given string is no longer than the given max length, truncating it
-     * if necessary. If string.length() is <= maxLength, the same string is returned.
+     * if necessary. If string.length() is &lt;= maxLength, the same string is returned.
      * Otherwise, a substring of the first maxLength characters is returned.
      * 
      * @param string       String to test.
@@ -2133,9 +2138,10 @@ final public class Utils {
     }   // scanDatePart
 
 	/**
-	 * Deletes a directory recursively
-	 * @param dir
-	 *         directory to delete
+	 * Deletes a directory recursively.
+	 * 
+	 * @param dir  Directory to delete.
+	 * @return     True if the delete was successful.
 	 */
 	public static boolean deleteDirectory(final File dir) {
 		boolean success = true;

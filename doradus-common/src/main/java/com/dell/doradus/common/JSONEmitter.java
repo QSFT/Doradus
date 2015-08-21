@@ -68,7 +68,7 @@ final public class JSONEmitter {
     /**
      * Create a JSONEmitter that writes JSON text to an internal StringWriter. After
      * {@link #endDocument()} is called, the final JSON text an be obtained by calling
-     * {@link #toString()}. If the given indent value is > 0, the JSON formatting is
+     * {@link #toString()}. If the given indent value is &gt; 0, the JSON formatting is
      * "pretty printed" using the given indentation.
      * 
      * @param indent    Indentation level for pretty printing. 0 disables pretty printing.

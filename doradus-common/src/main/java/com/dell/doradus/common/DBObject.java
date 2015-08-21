@@ -293,7 +293,7 @@ final public class DBObject implements JSONable{
      * </pre>
      * 
      * @return The root node of a UNode tree.
-     * @see    #toGroupedDoc(TableDefinition).
+     * @see    #toGroupedDoc(TableDefinition)
      */
     public UNode toDoc() {
         UNode resultNode = UNode.createMapNode("doc");
@@ -324,7 +324,9 @@ final public class DBObject implements JSONable{
      *     }}
      * </pre>
      * 
-     * @return The root node of a UNode tree.
+     * @param  tableDef TableDefinition that defines group and nested field names, which
+     *                  are used to create the nested UNode structure.
+     * @return          The root node of a UNode tree.
      */
     public UNode toGroupedDoc(TableDefinition tableDef) {
         Utils.require(tableDef != null, "tableDef");

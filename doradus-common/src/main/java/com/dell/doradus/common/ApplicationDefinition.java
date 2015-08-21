@@ -177,7 +177,7 @@ final public class ApplicationDefinition implements JSONable{
     }   // getOption
     
     /**
-     * Get a Set<String> of all option names currently defined for this application. For
+     * Get a Set of all option names currently defined for this application. For
      * each option name in the returned set, {@link #getOption(String)} can be called to
      * get the value of that option.
      * 

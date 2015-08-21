@@ -162,6 +162,7 @@ final public class UNode {
      * Create a MAP UNode with the given node name.
      * 
      * @param name  Name for new MAP node.
+     * @return      New MAP UNode.
      */
     public static UNode createMapNode(String name) {
         return new UNode(name, NodeType.MAP, null, false, "");
@@ -172,6 +173,7 @@ final public class UNode {
      * 
      * @param name      Name for new MAP node.
      * @param tagName   Tag name.
+     * @return          New MAP UNode.
      */
     public static UNode createMapNode(String name, String tagName) {
         return new UNode(name, NodeType.MAP, null, false, tagName);
@@ -181,6 +183,7 @@ final public class UNode {
      * Create an ARRAY UNode with the given node name.
      * 
      * @param name  Name for new ARRAY node.
+     * @return      New ARRAY UNode.
      */
     public static UNode createArrayNode(String name) {
         return new UNode(name, NodeType.ARRAY, null, false, "");
@@ -191,6 +194,7 @@ final public class UNode {
      * 
      * @param name      Name for new ARRAY node.
      * @param tagName   Tag name.
+     * @return          New ARRAY UNode.
      */
     public static UNode createArrayNode(String name, String tagName) {
         return new UNode(name, NodeType.ARRAY, null, false, tagName);
@@ -201,6 +205,7 @@ final public class UNode {
      * 
      * @param name  Node name.
      * @param value Node value.
+     * @return      New VALUE UNode.
      */
     public static UNode createValueNode(String name, String value) {
         String nodeValue = value == null ? "" : value;
@@ -214,6 +219,7 @@ final public class UNode {
      * @param name          Node name.
      * @param value         Node value.
      * @param bAttribute    True to mark the node as an attribute.
+     * @return              New VALUE UNode.
      */
     public static UNode createValueNode(String name, String value, boolean bAttribute) {
         String nodeValue = value == null ? "" : value;
@@ -226,6 +232,7 @@ final public class UNode {
      * @param name      Node name.
      * @param value     Node value.
      * @param tagName   Tag name.
+     * @return          New VALUE UNode.
      */
     public static UNode createValueNode(String name, String value, String tagName) {
         String nodeValue = value == null ? "" : value;
@@ -477,10 +484,10 @@ final public class UNode {
     }   // getMemberCount
     
     /**
-     * Get the member (child) names of this UNode, if any, as an Iterable<String> object.
+     * Get the member (child) names of this UNode, if any, as an Iterable String object.
      * If this UNode is not a MAP or has no children, there will be no child names.
      * 
-     * @return  An Iterable<String> object that returns this node's member names if it is
+     * @return  An Iterable String object that returns this node's member names if it is
      *          a map. The result won't be null but there may not be any child members.
      */
     public Iterable<String> getMemberNames() {
@@ -522,10 +529,10 @@ final public class UNode {
     }   // getMember
     
     /**
-     * Get the list of child nodes of this collection UNode as an Iterable<UNode> object.
+     * Get the list of child nodes of this collection UNode as an Iterable UNode object.
      * The UNode must be a MAP or an ARRAY.
      * 
-     * @return  An Iterable<UNode> object that iterates through this node's children. The
+     * @return  An Iterable UNode object that iterates through this node's children. The
      *          result will never be null, but there might not be any child nodes.
      */
     public Iterable<UNode> getMemberList() {

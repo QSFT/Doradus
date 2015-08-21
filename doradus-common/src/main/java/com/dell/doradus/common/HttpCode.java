@@ -69,7 +69,7 @@ public enum HttpCode {
     /**
      * Return true if this HttpCode represents an error.
      * 
-     * @return  True if this HttpCode's is >= 400.
+     * @return  True if this HttpCode's is &gt;= 400.
      */
     public boolean isError() {
         return code >= 400;

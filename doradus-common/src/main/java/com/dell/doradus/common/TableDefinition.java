@@ -206,8 +206,8 @@ final public class TableDefinition {
      * on this table's sharding options. For example, if sharding-granularity is MONTH
      * and the sharding-start is 2012-10-15, then shard 2 starts on 2012-11-01.
      * 
-     * @param shardNumber   Shard number (> 0).
-     * @return              Date on which the given shard starts. It will >= this table's
+     * @param shardNumber   Shard number (&gt; 0).
+     * @return              Date on which the given shard starts. It will &gt;= this table's
      *                      sharding-start option.
      */
     public Date computeShardStart(int shardNumber) {
@@ -257,7 +257,7 @@ final public class TableDefinition {
      * sharding-field value. This method should only be called on a sharded table for
      * which the sharding-field, sharding-granularity, and sharding-start options have
      * been set. The value returned will be 0 if the given date falls before the
-     * sharding-start date. Otherwise it will be >= 1, representing the shard in which
+     * sharding-start date. Otherwise it will be &gt;= 1, representing the shard in which
      * the object should reside.
      *  
      * @param shardingFieldValue    Value of an object's sharding-field as a Date in the
@@ -392,7 +392,7 @@ final public class TableDefinition {
     }   // getOption
     
     /**
-     * Get a Set<String> of all option names currently defined for this table. For each
+     * Get a Set of all option names currently defined for this table. For each
      * option name in the returned set, {@link #getOption(String)} can be called to get
      * the value of that option.
      * 
@@ -436,7 +436,7 @@ final public class TableDefinition {
      * @param dbObj     {@link DBObject} to determine shard number.
      * @return          0 if the object's owning table is not sharded, the object has no
      *                  sharding-field value, or the object's sharding field value places
-     *                  it before sharding was started. Otherwise, the value is > 0.
+     *                  it before sharding was started. Otherwise, the value is &gt; 0.
      */
     public int getShardNumber(DBObject dbObj) {
         if (!isSharded()) {

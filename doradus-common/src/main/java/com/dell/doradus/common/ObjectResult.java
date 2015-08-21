@@ -45,6 +45,7 @@ public class ObjectResult {
      * 
      * @param errMsg    Error message.
      * @param objID     Optional object ID.
+     * @return          {@link ObjectResult} with an error status and message.
      */
     public static ObjectResult newErrorResult(String errMsg, String objID) {
         ObjectResult result = new ObjectResult();

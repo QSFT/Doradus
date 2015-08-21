@@ -49,9 +49,9 @@ public class RetentionAge {
      * Create a RetentionAge by parsing the given retention-age option in string form. It
      * must follow the format:
      * <code>
-     *      <number> [<units>]
+     *      {number} [{units}]
      * </code>
-     * where <number> is an integer and <units> is a valid {@link RetentionUnits} mnemonic
+     * where {number} is an integer and {units} is a valid {@link RetentionUnits} mnemonic
      * (case-insensitive). If not present, the default unit is DAYS. Example:
      * <code>
      *      "1000 days"
@@ -92,6 +92,7 @@ public class RetentionAge {
      * retention age specified in this object. The given date is cloned and then adjusted
      * downward by the units and value in this RetentionAge.
      *
+     * @param   relativeDate    Reference date.
      * @return  The date relative to the given one at which objects should be considered
      *          expired based on this RetentionAge.
      */
