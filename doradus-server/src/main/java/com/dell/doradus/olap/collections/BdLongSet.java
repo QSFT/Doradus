@@ -102,6 +102,15 @@ public class BdLongSet {
 		}
 	}
 	
+	public boolean intersects(BdLongSet other) {
+	    if(size() > other.size()) return other.intersects(this);
+        for(int i = 0; i < size(); i++) {
+            long value = get(i);
+            if(other.indexOf(value) >= 0) return true;
+        }
+        return false;
+	}
+	
 	private int findSlot(long value) {
 		int hash = getHash(value);
 		int pos = hash & m_mask;

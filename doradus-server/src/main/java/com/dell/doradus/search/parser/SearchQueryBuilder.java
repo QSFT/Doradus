@@ -20,9 +20,13 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import com.dell.doradus.common.TableDefinition;
+import com.dell.doradus.common.Utils;
+import com.dell.doradus.search.aggregate.AggregationGroup;
+import com.dell.doradus.search.aggregate.AggregationGroupItem;
 import com.dell.doradus.search.parser.grammar.GrammarItem;
 import com.dell.doradus.search.query.AndQuery;
 import com.dell.doradus.search.query.BinaryQuery;
+import com.dell.doradus.search.query.EqualsQuery;
 import com.dell.doradus.search.query.FieldCountQuery;
 import com.dell.doradus.search.query.FieldCountRangeQuery;
 import com.dell.doradus.search.query.LinkCountQuery;
@@ -913,11 +917,11 @@ public class SearchQueryBuilder {
                 if (op.equals("COUNT")) {
                     result = new LinkQuery(op, item.item.getValue(), null);
                 } else {
-                if (item.operation == null)
-                    result = new LinkQuery(LinkQuery.ANY, item.item.getValue(), null);
-                else
-                    result = new LinkQuery(op, item.item.getValue(), null);
-                }
+                    if (item.operation == null)
+                        result = new LinkQuery(LinkQuery.ANY, item.item.getValue(), null);
+                    else
+                        result = new LinkQuery(op, item.item.getValue(), null);
+                    }
                 op = operation;
             }
         }
@@ -1006,6 +1010,13 @@ public class SearchQueryBuilder {
             }
 
             if (grammarItem.getType().equals("token")) {
+                if(grammarItem.getValue().equals("EQUALS")) {
+                    AggregationGroup group1 = getLinkPath(items.get(i + 1), builderContext);
+                    AggregationGroup group2 = getLinkPath(items.get(i + 2), builderContext);
+                    pushQuery(builderContext, new EqualsQuery(group1, group2));
+                    i += 2;
+                    continue;
+                }
                 pushOperation(builderContext, grammarItem.getValue());
             }
         }
@@ -1029,6 +1040,45 @@ public class SearchQueryBuilder {
         return query;
     }
 
+    
+    private static AggregationGroup getLinkPath(LinkItem item, BuilderContext context) {
+        AggregationGroup group = new AggregationGroup(context.definition);
+        group.items = new ArrayList<>();
+        TableDefinition currentTable = context.definition;
+        if(item.filters != null && item.filters.size() > 0) {
+            AndQuery filter = new AndQuery();
+            for(ArrayList<LinkItem> f: item.filters) {
+                Query q = build(f, new BuilderContext(currentTable));
+                filter.subqueries.add(q);
+            }
+            group.filter = filter;
+        }
+        for(int i = 0; i < item.items.size(); i++) {
+            LinkItem child = item.items.get(i);
+            String name = child.item.getValue();
+            AggregationGroupItem it = new AggregationGroupItem();
+            it.fieldDef = currentTable.getFieldDef(name);
+            Utils.require(it.fieldDef != null, "Invalid field: " + name);
+            it.name = name;
+            it.isLink = it.fieldDef.isLinkField();
+            group.items.add(it);
+            if(i != item.items.size() - 1) {
+                Utils.require(it.fieldDef.isLinkField(), "Not a link: " + name);
+                currentTable = it.fieldDef.getInverseTableDef();
+                it.tableDef = currentTable;
+            }
+            if(child.filters != null && child.filters.size() > 0) {
+                AndQuery filter = new AndQuery();
+                for(ArrayList<LinkItem> f: child.filters) {
+                    Query q = build(f, new BuilderContext(currentTable));
+                    filter.subqueries.add(q);
+                }
+                it.query = filter;
+            }
+        }
+        return group;
+    }
+    
     //////////////////////TODO  Create factory methods
     public static AndQuery CreateAndQuery(Query first, Query second) {
         AndQuery and = new AndQuery();

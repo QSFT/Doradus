@@ -28,6 +28,8 @@ import com.dell.doradus.common.FieldType;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.olap.aggregate.mr.MFCollectorSet;
+import com.dell.doradus.olap.collections.BdLongSet;
 import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.store.CubeSearcher;
 import com.dell.doradus.olap.store.FieldSearcher;
@@ -36,11 +38,13 @@ import com.dell.doradus.olap.store.NumSearcherMV;
 import com.dell.doradus.olap.store.ValueSearcher;
 import com.dell.doradus.olap.xlink.XLinkContext;
 import com.dell.doradus.olap.xlink.XLinkQuery;
+import com.dell.doradus.search.aggregate.AggregationGroup;
 import com.dell.doradus.search.filter.FilterContains;
 import com.dell.doradus.search.query.AllQuery;
 import com.dell.doradus.search.query.AndQuery;
 import com.dell.doradus.search.query.BinaryQuery;
 import com.dell.doradus.search.query.DatePartBinaryQuery;
+import com.dell.doradus.search.query.EqualsQuery;
 import com.dell.doradus.search.query.FieldCountQuery;
 import com.dell.doradus.search.query.FieldCountRangeQuery;
 import com.dell.doradus.search.query.IdInQuery;
@@ -645,6 +649,26 @@ public class ResultBuilder {
 			for(int i = term_min; i < term_max; i++) {
 				r.set(i);
 			}
+        } else if(query instanceof EqualsQuery) {
+            EqualsQuery eq = (EqualsQuery)query;
+            ArrayList<AggregationGroup> groups = new ArrayList<>();
+            groups.add(eq.group1);
+            groups.add(eq.group2);
+            MFCollectorSet collector = new MFCollectorSet(searcher, groups, false);
+            BdLongSet[] sets = new BdLongSet[2];
+            for(int i = 0; i < sets.length; i++) {
+                sets[i] = new BdLongSet(1024);
+                sets[i].enableClearBuffer();
+            }
+            for(int i = 0; i < r.size(); i++) {
+                collector.collect(i, sets);
+                //check for intersection
+                if(sets[0].intersects(sets[1])) {
+                    r.set(i);
+                }
+                sets[0].clear();
+                sets[1].clear();
+            }
 		} else throw new IllegalArgumentException("Query " + query.getClass().getSimpleName() + " not supported");
 		return r;
 	}
