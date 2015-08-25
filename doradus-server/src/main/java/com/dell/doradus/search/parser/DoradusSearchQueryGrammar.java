@@ -645,8 +645,15 @@ public class DoradusSearchQueryGrammar {
         );
 
 
+        GrammarRule QuantifierToken = new SwitchRule("QuantifierToken", 
+                new Keyword("EQUALS", WORD),
+                new Keyword("INTERSECTS", WORD),
+                new Keyword("CONTAINS", WORD),
+                new Keyword("DISJOINT", WORD)
+        );
+        
         GrammarRule EqualsExpression = Grammar.Rule("EqualsExpression",
-                new Keyword("EQUALS", WORD), Grammar.MustMatchAction, OptWhiteSpaces, LEFTPAREN, Grammar.DropLexem, OptWhiteSpaces,
+                QuantifierToken, Grammar.MustMatchAction, OptWhiteSpaces, LEFTPAREN, Grammar.DropLexem, OptWhiteSpaces,
                 CountExpressionFieldPath, OptWhiteSpaces, COMMA, Grammar.DropLexem, OptWhiteSpaces, CountExpressionFieldPath, RIGHTPAREN, Grammar.DropLexem, OptWhiteSpaces
         );
         

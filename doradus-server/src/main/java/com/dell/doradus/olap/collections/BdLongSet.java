@@ -110,7 +110,29 @@ public class BdLongSet {
         }
         return false;
 	}
-	
+
+    public boolean equals(BdLongSet other) {
+        if(size() != other.size()) return false;
+        for(int i = 0; i < size(); i++) {
+            long value = get(i);
+            if(other.indexOf(value) < 0) return false;
+        }
+        return true;
+    }
+
+    public boolean containsIn(BdLongSet other) {
+        if(size() > other.size()) return false;
+        for(int i = 0; i < size(); i++) {
+            long value = get(i);
+            if(other.indexOf(value) < 0) return false;
+        }
+        return true;
+    }
+
+    public boolean disjoint(BdLongSet other) {
+        return !intersects(other);
+    }
+    
 	private int findSlot(long value) {
 		int hash = getHash(value);
 		int pos = hash & m_mask;

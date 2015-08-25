@@ -26,7 +26,7 @@ import com.dell.doradus.search.aggregate.AggregationGroupItem;
 import com.dell.doradus.search.parser.grammar.GrammarItem;
 import com.dell.doradus.search.query.AndQuery;
 import com.dell.doradus.search.query.BinaryQuery;
-import com.dell.doradus.search.query.EqualsQuery;
+import com.dell.doradus.search.query.PathComparisonQuery;
 import com.dell.doradus.search.query.FieldCountQuery;
 import com.dell.doradus.search.query.FieldCountRangeQuery;
 import com.dell.doradus.search.query.LinkCountQuery;
@@ -1010,10 +1010,11 @@ public class SearchQueryBuilder {
             }
 
             if (grammarItem.getType().equals("token")) {
-                if(grammarItem.getValue().equals("EQUALS")) {
+                String value = grammarItem.getValue();
+                if("EQUALS".equals(value) || "INTERSECTS".equals(value) || "CONTAINS".equals(value) || "DISJOINT".equals(value)) {
                     AggregationGroup group1 = getLinkPath(items.get(i + 1), builderContext);
                     AggregationGroup group2 = getLinkPath(items.get(i + 2), builderContext);
-                    pushQuery(builderContext, new EqualsQuery(group1, group2));
+                    pushQuery(builderContext, new PathComparisonQuery(value, group1, group2));
                     i += 2;
                     continue;
                 }
