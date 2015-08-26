@@ -38,6 +38,7 @@ import com.dell.doradus.common.Pair;
 import com.dell.doradus.common.RESTResponse;
 import com.dell.doradus.common.UserDefinition.Permission;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.core.DoradusServer;
 import com.dell.doradus.service.db.DBNotAvailableException;
 import com.dell.doradus.service.db.DuplicateException;
 import com.dell.doradus.service.db.Tenant;
@@ -110,6 +111,13 @@ public class RESTServlet extends HttpServlet {
                           restResponse.toString(), getFullURI(request));
             RESTService.instance().onRequestRejected(restResponse.getCode().toString());
             sendResponse(response, restResponse);
+        } catch (OutOfMemoryError e) {
+            // Report a fatal exception then shutdown. This is considered a better
+            // response to OOM then than continuing in an unstable state.
+            m_logger.error("Fatal: shutting down. Consider increasing memory or reducing " +
+                           "the size of large input batches or queries.", e);
+            DoradusServer.shutDown();
+            System.exit(1);
         } catch (Throwable e) {
             // 500 Internal Error: include a stack trace and report in log.
             m_logger.error("Unexpected exception handling request: " + getFullURI(request), e);
