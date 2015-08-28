@@ -120,11 +120,11 @@ public class BdLongSet {
         return true;
     }
 
-    public boolean containsIn(BdLongSet other) {
-        if(size() > other.size()) return false;
-        for(int i = 0; i < size(); i++) {
-            long value = get(i);
-            if(other.indexOf(value) < 0) return false;
+    public boolean contains(BdLongSet other) {
+        if(other.size() > size()) return false;
+        for(int i = 0; i < other.size(); i++) {
+            long value = other.get(i);
+            if(this.indexOf(value) < 0) return false;
         }
         return true;
     }

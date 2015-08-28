@@ -682,7 +682,7 @@ public class ResultBuilder {
             } else if("CONTAINS".equals(eq.quantifier)) {
                 for(int i = 0; i < r.size(); i++) {
                     collector.collect(i, sets);
-                    if(sets[0].containsIn(sets[1])) {
+                    if(sets[0].contains(sets[1])) {
                         r.set(i);
                     }
                     sets[0].clear();

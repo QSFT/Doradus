@@ -1046,6 +1046,14 @@ public class SearchQueryBuilder {
         AggregationGroup group = new AggregationGroup(context.definition);
         group.items = new ArrayList<>();
         TableDefinition currentTable = context.definition;
+
+        // is one-link path special case
+        if(item.item != null) {
+            AggregationGroupItem it = createItem(item, currentTable);
+            group.items.add(it);
+            return group;
+        }
+        
         if(item.filters != null && item.filters.size() > 0) {
             AndQuery filter = new AndQuery();
             for(ArrayList<LinkItem> f: item.filters) {
@@ -1054,30 +1062,38 @@ public class SearchQueryBuilder {
             }
             group.filter = filter;
         }
+        
         for(int i = 0; i < item.items.size(); i++) {
             LinkItem child = item.items.get(i);
-            String name = child.item.getValue();
-            AggregationGroupItem it = new AggregationGroupItem();
-            it.fieldDef = currentTable.getFieldDef(name);
-            Utils.require(it.fieldDef != null, "Invalid field: " + name);
-            it.name = name;
-            it.isLink = it.fieldDef.isLinkField();
-            group.items.add(it);
+            AggregationGroupItem it = createItem(child, currentTable);
             if(i != item.items.size() - 1) {
-                Utils.require(it.fieldDef.isLinkField(), "Not a link: " + name);
+                Utils.require(it.fieldDef.isLinkField(), "Not a link: " + it.name);
                 currentTable = it.fieldDef.getInverseTableDef();
-                it.tableDef = currentTable;
             }
-            if(child.filters != null && child.filters.size() > 0) {
-                AndQuery filter = new AndQuery();
-                for(ArrayList<LinkItem> f: child.filters) {
-                    Query q = build(f, new BuilderContext(currentTable));
-                    filter.subqueries.add(q);
-                }
-                it.query = filter;
-            }
+            group.items.add(it);
         }
         return group;
+    }
+    
+    private static AggregationGroupItem createItem(LinkItem child, TableDefinition currentTable) {
+        String name = child.item.getValue();
+        AggregationGroupItem it = new AggregationGroupItem();
+        it.fieldDef = currentTable.getFieldDef(name);
+        Utils.require(it.fieldDef != null, "Invalid field: " + name);
+        it.name = name;
+        it.isLink = it.fieldDef.isLinkField();
+        if(it.isLink) {
+            it.tableDef = it.fieldDef.getInverseTableDef();
+        }
+        if(child.filters != null && child.filters.size() > 0) {
+            AndQuery filter = new AndQuery();
+            for(ArrayList<LinkItem> f: child.filters) {
+                Query q = build(f, new BuilderContext(it.tableDef));
+                filter.subqueries.add(q);
+            }
+            it.query = filter;
+        }
+        return it;
     }
     
     //////////////////////TODO  Create factory methods
