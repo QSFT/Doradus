@@ -113,6 +113,10 @@ public class RESTCommand {
                     RESTParameter param = RESTParameter.fromUNode(paramNode);
                     cmd.addParameter(param);
                 }
+                break;
+            case "privileged":
+                cmd.setPrivileged(Boolean.parseBoolean(nodeValue));
+                break;
             case "summary":
                 cmd.setSummary(nodeValue);
                 break;
@@ -120,7 +124,7 @@ public class RESTCommand {
                 cmd.setURI(nodeValue);
                 break;
             default:
-                Utils.require(false, "Uknown command property: " + childNode);
+                Utils.require(false, "Unknown command property: " + childNode);
             }
         }
         return cmd;
