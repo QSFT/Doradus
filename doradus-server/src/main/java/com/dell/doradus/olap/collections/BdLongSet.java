@@ -103,6 +103,7 @@ public class BdLongSet {
 	}
 	
 	public boolean intersects(BdLongSet other) {
+	    if(size() == 0 && other.size() == 0) return true;
 	    if(size() > other.size()) return other.intersects(this);
         for(int i = 0; i < size(); i++) {
             long value = get(i);
