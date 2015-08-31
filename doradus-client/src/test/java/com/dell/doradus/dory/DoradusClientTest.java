@@ -51,10 +51,11 @@ import com.dell.doradus.dory.command.Command;
 /**
  * Doradus 'dory' client unit tests as examples of how to use the client APIs for all CRUDs operations on Doradus.
  * 
- * NOTES: Make sure to modify the HOST/PORT below to the running Doradus server instance 
+ * NOTES: Make sure to modify the HOST/PORT below to the running Doradus server instance and comment out the @Ignore
  *
  */
 
+@Ignore
 public class DoradusClientTest {
     
     private static final String HOST = "localhost";
