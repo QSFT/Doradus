@@ -125,13 +125,12 @@ public class RESTParameter {
         param.setName(name);
         
         for (UNode childNode : paramNode.getMemberList()) {
-            String value = childNode.getValue();
-            switch (value) {
+            switch (childNode.getName()) {
             case "_required":
-                param.setRequired(Boolean.parseBoolean(value));
+                param.setRequired(Boolean.parseBoolean(childNode.getValue()));
                 break;
             case "_type":
-                param.setType(value);
+                param.setType(childNode.getValue());
                 break;
             default:
                 // Ignore system properties we don't recognize.
@@ -234,7 +233,7 @@ public class RESTParameter {
      *              or "integer". A compound parameter's type should be null.
      */
     public void setType(String type) {
-        m_name = type;
+        m_type = type;
     }
     
     /**
