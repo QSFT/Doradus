@@ -54,7 +54,7 @@ import com.dell.doradus.dory.command.Command;
  * NOTES: Make sure to modify the HOST/PORT below to the running Doradus server instance 
  *
  */
-@Ignore
+
 public class DoradusClientTest {
     
     private static final String HOST = "localhost";
@@ -118,7 +118,7 @@ public class DoradusClientTest {
         
         //"batch" param required for "Add" 
         try {
-            client.runCommand(Command.builder().withName("Add").build());
+            client.runCommand(Command.builder().withName("Add").withParam("table", "Messages").build());
             fail("should throw exception");
         }
         catch (Exception e) {

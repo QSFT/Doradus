@@ -37,30 +37,44 @@ import com.dell.doradus.dory.command.Command;
 
 public class DoradusClient implements AutoCloseable {
         
-    private final RESTClient restClient;
+    //constants
+	private static final String _DESCRIBE_URI = "/_commands";
+    
+	//members
+	private final RESTClient restClient;
     private String applicationName;
     private String storageService;
     private JsonObject restMetadataJson = null;
     
     /**
-     * Constructor
-     * @param host
-     * @param port
+     * Create a new DoradusClient that will communicate with the Doradus server using the given
+     * host and port. 
+     * 
+     * @param host  Doradus Server host name or IP address.
+     * @param port  Doradus Server port number.
      */
     public DoradusClient(String host, int port) {
         this(host, port, "", null, null);   
     }
     
+    /**
+     * Create a new DoradusClient that will communicate with the Doradus server using the given
+     * host and port and tenant credentials
+     * 
+     * @param host  Doradus Server host name or IP address.
+     * @param port  Doradus Server port number.
+     * @param credentials  Credentials for use with a Doradus application.
+     */   
     public DoradusClient(String host, int port, Credentials credentials) {
         this(host, port, "", credentials, null);            
     }
     
     /**
-     * static factory method to open a 'dory' client session
-     * @param host
-     * @param port
+     * Static factory method to open a 'dory' client session
+     * @param host Doradus Server host name or IP address.
+     * @param port Doradus Server port number.
      * @param applicationName
-     * @return
+     * @return the instance of the DoradusClient session
      */
     public static DoradusClient open(String host, int port, Credentials credentials, String applicationName) {  
         DoradusClient doradusClient = new DoradusClient(host, port, null, credentials, applicationName);    
@@ -84,7 +98,7 @@ public class DoradusClient implements AutoCloseable {
     }
     
     /**
-     * setCredentials
+     * Set credentials for use with a Doradus application.
      * @param credentials
      */
     public void setCredentials(Credentials credentials) {
@@ -92,10 +106,10 @@ public class DoradusClient implements AutoCloseable {
     }   
     
     /**
-     * setCredentials such as tenant, username, password
-     * @param tenant
-     * @param username
-     * @param userpassword
+     * Set credentials such as tenant, username, password for use with a Doradus application.
+     * @param tenant tenant name
+     * @param username user name use when accessing applications within the specified tenant.
+     * @param userpassword user password
      */
     public void setCredentials(String tenant, String username, String userpassword) {
         Credentials credentials = new Credentials(tenant, username, userpassword);
@@ -103,7 +117,15 @@ public class DoradusClient implements AutoCloseable {
     }
     
     /**
-     * retrieve the map of commands by service name
+     * set JSON Object that contains all REST commands descriptions
+     * @param restMetadataJson
+     */
+    public void setRestMetadataJson(JsonObject restMetadataJson) {
+        this.restMetadataJson = restMetadataJson;
+    }
+    
+    /**
+     * Retrieve the map of commands keyed by service name
      * @return map of commands 
      */
     public Map<String, List<String>> listCommands() {
@@ -121,10 +143,10 @@ public class DoradusClient implements AutoCloseable {
     
     
     /**
-     * describeCommand
-     * @param service
-     * @param command
-     * @return JsonObject
+     * Describe command that helps give the idea what client needs to build the command
+     * @param service service name such as 'SpiderService' for application commands or '_systems' for system commands
+     * @param command command name
+     * @return JsonObject result in JSON that contains the description of the command
      */
     public JsonObject describeCommand(String service, String command) {
         return Command.matchCommand(restMetadataJson, command, service);
@@ -132,9 +154,9 @@ public class DoradusClient implements AutoCloseable {
     }
     
     /**
-     * Execute any client command
-     * @param command
-     * @return RESTResponse
+     * Execute any client command after it gets built properly with all required param and their values
+     * @param command the command to execute
+     * @return RESTResponse result object
      * 
      */
     public RESTResponse runCommand(Command command)  {
@@ -150,12 +172,11 @@ public class DoradusClient implements AutoCloseable {
         command.validate(restClient);
         return command.call(restClient);        
     }
-    
-    
-    public RESTClient getRestClient() {
-        return restClient;
-    }
-    
+       
+
+    /**
+     * Close the client
+     */
     @Override
     public void close() {
         if (this.restClient != null) {
@@ -178,6 +199,12 @@ public class DoradusClient implements AutoCloseable {
     }
 
 
+    /**
+     * Convenient method to lookup storageService of the application
+     * @param restClient
+     * @param applicationName
+     * @return storage service name
+     */
     private static String lookupStorageServiceByApp(RESTClient restClient, String applicationName) {
         Utils.require(applicationName != null, "Missing application name");
         if (applicationName != null) {
@@ -189,7 +216,7 @@ public class DoradusClient implements AutoCloseable {
     }
     
     /**
-     * setStorageService
+     * set storage service
      * @param storageService
      */
     private void setStorageService(String storageService) {
@@ -198,24 +225,25 @@ public class DoradusClient implements AutoCloseable {
     }
 
     /**
-     * load RESTRules once
+     * Load RESTRules once
      * @param restClient
      */
     private synchronized void loadRESTRulesIfNotExist(RESTClient restClient)  {     
         if (restMetadataJson == null || restMetadataJson.isEmpty()) {
-            restMetadataJson = loadRestRulesFromServer(restClient);
+            restMetadataJson = loadRESTCommandsFromServer(restClient);
         }       
     }
     
+ 
     /**
-     * Calls describe server command
+     * Load REST commands by calling describe command
      * @param restClient
-     * @return
+     * @return JsonObject that contains all the descriptions of all REST commands
      */
-    private JsonObject loadRestRulesFromServer(RESTClient restClient) {
+    private JsonObject loadRESTCommandsFromServer(RESTClient restClient) {
         RESTResponse response = null;
         try {
-            response = restClient.sendRequest(HttpMethod.GET, "/_commands", ContentType.APPLICATION_JSON, null);
+            response = restClient.sendRequest(HttpMethod.GET, _DESCRIBE_URI, ContentType.APPLICATION_JSON, null);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -229,4 +257,13 @@ public class DoradusClient implements AutoCloseable {
             throw new RuntimeException("Describe command error: " + response.getBody());
         }
     }
+    
+    /**
+     * Returns the RESTClient object
+     * @return
+     */
+    private RESTClient getRestClient() {
+        return restClient;
+    }    
+    
 }
