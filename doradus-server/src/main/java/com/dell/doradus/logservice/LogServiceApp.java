@@ -41,6 +41,7 @@ public class LogServiceApp {
 	public String getQuery() { return getParam("query"); }
     public String getFields() { return getParam("fields"); }
     public String getContinue() { return getParam("continue"); }
+    public String getPageSize() { String v = getParam("s"); return v == null ? "25" : v; }
     public boolean getInverse() { return "true".equals(getParam("inverse")); }
 	
 	private String getParam(String name) {
@@ -98,7 +99,7 @@ public class LogServiceApp {
 	            "skipCount", "true",
 	            "f", getFields(),
 	            "q", getQuery(),
-	            "s", "25",
+	            "s", getPageSize(),
 	            "o", getInverse() ? "Timestamp DESC" : "Timestamp",
 	            "e", getContinue());
 	    LogQuery logQuery = new LogQuery(queryParam);
