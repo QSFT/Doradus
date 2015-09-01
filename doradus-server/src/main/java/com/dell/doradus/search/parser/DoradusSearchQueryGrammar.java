@@ -654,7 +654,7 @@ public class DoradusSearchQueryGrammar {
         
         GrammarRule EqualsExpression = Grammar.Rule("EqualsExpression",
                 QuantifierToken, Grammar.MustMatchAction, OptWhiteSpaces, LEFTPAREN, Grammar.DropLexem, OptWhiteSpaces,
-                CountExpressionFieldPath, OptWhiteSpaces, COMMA, Grammar.DropLexem, OptWhiteSpaces, CountExpressionFieldPath, RIGHTPAREN, Grammar.DropLexem, OptWhiteSpaces
+                CountExpressionFieldPath, OptWhiteSpaces, COMMA, Grammar.DropLexem, OptWhiteSpaces, CountExpressionFieldPath, RIGHTPAREN, Grammar.DropLexem
         );
         
         
