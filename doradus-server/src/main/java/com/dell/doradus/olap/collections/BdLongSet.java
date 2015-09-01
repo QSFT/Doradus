@@ -123,6 +123,8 @@ public class BdLongSet {
 
     public boolean contains(BdLongSet other) {
         if(other.size() > size()) return false;
+        //special case: CONTAINS(X, null) should return false
+        if(other.size() == 0 && size() != 0) return false;
         for(int i = 0; i < other.size(); i++) {
             long value = other.get(i);
             if(this.indexOf(value) < 0) return false;
