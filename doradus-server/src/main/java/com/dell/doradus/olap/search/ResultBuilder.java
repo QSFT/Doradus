@@ -652,6 +652,11 @@ public class ResultBuilder {
         } else if(query instanceof PathComparisonQuery) {
             PathComparisonQuery eq = (PathComparisonQuery)query;
             ArrayList<AggregationGroup> groups = new ArrayList<>();
+            FieldDefinition f1 = eq.group1.getLastField();
+            FieldDefinition f2 = eq.group2.getLastField();
+            if(f1 != null && f2 != null && (!NumSearcherMV.isNumericType(f1.getType()) || NumSearcherMV.isNumericType(f2.getType()))) {
+                Utils.require(f1.getTableName().equals(f2.getTableName()) && f1.getName().equals(f2.getName()), "Set operations on text/link fields are only allowed on link paths ending with the same field");
+            }
             groups.add(eq.group1);
             groups.add(eq.group2);
             MFCollectorSet collector = new MFCollectorSet(searcher, groups, false);
