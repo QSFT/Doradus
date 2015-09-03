@@ -207,7 +207,7 @@ public class DoradusClientTest {
         JsonObject jsonResult = client.describeCommand("_system", "DeleteApp"); 
         assertTrue(jsonResult.getString("uri").equals("/_applications/{application}"));
         
-        //test find and DeleteApp
+        //test ListApps and DeleteApp
         RESTResponse response = client.runCommand(Command.builder().withName("ListApps").build());
         if (response.getBody().contains("Stuff1")) {        
             RESTResponse response1 = client.runCommand(Command.builder().withName("DeleteApp").withParam("application", "Stuff1").build());
@@ -234,7 +234,7 @@ public class DoradusClientTest {
         response = client.runCommand(Command.builder().withName("DefineApp").withParam("ApplicationDefinition", appDef2).build());  
         assertTrue(response.getCode().getCode() == 200);
         
-        //test list apps
+        //verify 2 apps created
         response = client.runCommand(Command.builder().withName("ListApps").build());
         assertTrue(response.getCode().getCode() == 200);
         assertTrue(response.getBody().contains("Stuff1")); 
