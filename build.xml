@@ -20,7 +20,7 @@
     </target>
     <!-- ============================================================================== -->
     <!-- ============================================================================== -->
-    <target name="Build" depends="JettyWebServerJar,DynamoDBJar,ClientJar,ClientDoc">
+    <target name="Build" depends="DoradusVersion,JettyWebServerJar,DynamoDBJar,ClientJar,ClientDoc">
     </target>
     
     <target name="Cleanup" depends="CommonCleanup,ServerCleanup,JettyWebServerCleanup,ClientCleanup,ClientDocCleanup">
@@ -355,7 +355,7 @@
     <property name="server.zip.file"                 value="doradus-server.zip" />
     <property name="server-cassandra.zip.file"       value="doradus-server-cassandra.zip" />
     
-    <target name="ServerRelease" depends="ServerZip,ServerCassandraZip,DoradusVersion"/>
+    <target name="ServerRelease" depends="ServerZip,ServerCassandraZip"/>
     
     <target name="ServerZip" depends="ServerJar">
         <mkdir   dir="${release.dir}" />
