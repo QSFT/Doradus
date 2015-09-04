@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.olap.collections.MemoryStream;
 import com.dell.doradus.olap.io.BSTR;
@@ -43,6 +44,7 @@ public class ChunkWriter {
     public FieldBuilder getFieldBulider(BSTR field) {
         FieldBuilder fb = m_fields.get(field);
         if(fb == null) {
+            Utils.require(FieldDefinition.isValidFieldName(field.toString()), "Field " + field + " is not valid");
             field = new BSTR(field);
             fb = new FieldBuilder(field, getSize());
             m_fields.put(field, fb);
