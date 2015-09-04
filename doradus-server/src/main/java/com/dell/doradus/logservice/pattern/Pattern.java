@@ -9,15 +9,15 @@ public class Pattern {
     public boolean matchEnd = true;
 
     public Pattern(String pattern) {
-        if(pattern.charAt(0) == '*') {
+        if(pattern.length() > 0 && pattern.charAt(0) == '*') {
             pattern = pattern.substring(1);
             matchStart = false;
         }
-        if(pattern.charAt(pattern.length() - 1) == '*') {
+        if(pattern.length() > 0 && pattern.charAt(pattern.length() - 1) == '*') {
             pattern = pattern.substring(0, pattern.length() - 1);
             matchEnd = false;
         }
-        String[] parts = pattern.split("\\*");
+        String[] parts = pattern.length() == 0 ? new String[0] : pattern.split("\\*");
         this.parts = new Substr[parts.length];
         for(int i = 0; i < parts.length; i++) {
             this.parts[i] = new Substr(parts[i]);
@@ -28,7 +28,8 @@ public class Pattern {
         //empty string
         if(parts.length == 0) {
             if(matchStart && matchEnd) return beginIndex == endIndex;
-            else return true;
+            else return endIndex > beginIndex; // * matches non-empty fields!
+            //else return true;
         }
         else if(parts.length == 1) {
             return parts[0].match(data, beginIndex, endIndex, matchStart, matchEnd) >= 0;
