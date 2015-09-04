@@ -41,6 +41,7 @@ public class SearchResult implements Comparable<SearchResult> {
 	public TreeMap<String, String> scalars = new TreeMap<String, String>();
 	public TreeMap<String, List<SearchResultList>> links = new TreeMap<String, List<SearchResultList>>();
 	private List<List<BSTR>> sortKeys = null;
+	public boolean hideID;
 	
     public SearchResult() { }
 
@@ -59,6 +60,7 @@ public class SearchResult implements Comparable<SearchResult> {
                     fieldNode.addValueNode("value", value);
                 }
             } else {
+                if(hideID && CommonDefs.ID_FIELD.equals(scalar.getKey())) continue;
                 docNode.addValueNode(scalar.getKey(), scalar.getValue(), "field");
             }
         }

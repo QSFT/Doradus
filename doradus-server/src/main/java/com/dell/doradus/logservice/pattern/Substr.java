@@ -66,4 +66,7 @@ public class Substr {
         return true;
     }
     
+    @Override public String toString() {
+        return Utils.toString(lower);
+    }
 }

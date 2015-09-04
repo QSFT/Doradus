@@ -61,6 +61,7 @@ public class LogEntry implements Comparable<LogEntry> {
         SearchResult result = new SearchResult();
         result.fieldSet = fieldSet;
         result.orders = orders;
+        result.hideID = true;
         String timestamp = m_formatter.format(m_timestamp);
         result.scalars.put("_ID", timestamp);
         result.scalars.put("Timestamp", timestamp);
