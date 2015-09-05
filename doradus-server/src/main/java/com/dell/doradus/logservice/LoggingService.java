@@ -32,6 +32,7 @@ import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.HttpDefs;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
+import com.dell.doradus.common.RetentionAge;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
@@ -262,9 +263,22 @@ public class LoggingService extends StorageService {
         }
 
         for(TableDefinition tableDef: appDef.getTableDefinitions().values()) {
-            Utils.require(tableDef.getFieldDefinitions().size() == 0,
-                      "Field definitions are not allowed with the LoggingService");
+            validateTable(tableDef);
         }
+    }
+
+    private void validateTable(TableDefinition tableDef) {
+        for (String optName : tableDef.getOptionNames()) {
+            switch (optName) {
+            case CommonDefs.OPT_RETENTION_AGE:
+                new RetentionAge(tableDef.getOption(optName));
+                break;
+            default:
+                Utils.require(false, "Unknown LoggingService table option: %s", optName);
+            }
+        }
+        Utils.require(tableDef.getFieldDefinitions().size() == 0,
+                      "Field definitions are not allowed with the LoggingService");
     }
 
 }   // class LoggingService
