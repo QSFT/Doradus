@@ -273,6 +273,10 @@ public class LoggingService extends StorageService {
             case CommonDefs.OPT_RETENTION_AGE:
                 new RetentionAge(tableDef.getOption(optName));
                 break;
+            case "merge":
+                Utils.require("true".equalsIgnoreCase(tableDef.getOption(optName)) || "false".equalsIgnoreCase(tableDef.getOption(optName)),
+                        "merge parameter can be true or false");
+                break;
             default:
                 Utils.require(false, "Unknown LoggingService table option: %s", optName);
             }
