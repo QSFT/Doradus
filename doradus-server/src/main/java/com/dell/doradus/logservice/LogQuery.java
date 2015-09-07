@@ -30,6 +30,7 @@ public class LogQuery {
     private String m_continueAt;			// &e parameter
     private String m_continueAfter;			// &g parameter
     private boolean m_skipCount = true;     // &skipCount parameter
+    private String m_pattern;               // &pattern parameter
     
     public LogQuery(UNode searchNode) {
         assert searchNode != null;
@@ -42,6 +43,7 @@ public class LogQuery {
         m_continueAt = parsedQuery.get("continue-at");
         m_continueAfter = parsedQuery.get("continue-after");
         m_skipCount = parsedQuery.getBoolean("skipCount", true);
+        m_pattern = parsedQuery.get("pattern");
         parsedQuery.checkInvalidParameters();
         checkDefaults();
     }
@@ -57,6 +59,7 @@ public class LogQuery {
         m_continueAt = parsedQuery.get("e");
         m_continueAfter = parsedQuery.get("g");
         m_skipCount = parsedQuery.getBoolean("skipCount", true);
+        m_pattern = parsedQuery.get("pattern");
         parsedQuery.checkInvalidParameters();
         checkDefaults();
     }
@@ -69,6 +72,7 @@ public class LogQuery {
     public String getContinueAt() { return m_continueAt; }
     public String getContinueAfter() { return m_continueAfter; }
     public boolean getSkipCount() { return m_skipCount; }
+    public String getPattern() { return m_pattern; }
     
     public int getPageSizeWithSkip() {
     	if(m_pageSize < 0) return m_skip + ServerConfig.getInstance().search_default_page_size;

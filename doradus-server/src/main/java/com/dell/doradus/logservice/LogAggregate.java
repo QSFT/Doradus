@@ -24,15 +24,17 @@ public class LogAggregate {
     private String  m_query;
     private String  m_fields;
     private String  m_metrics;
+    private String  m_pattern;
     
     public LogAggregate(UNode searchNode) {
         assert searchNode != null;
         ParsedQuery parsedQuery = new ParsedQuery("aggregate-search", searchNode);
         m_query = parsedQuery.get("query");
         m_fields = parsedQuery.get("grouping-fields");
-        Utils.require(parsedQuery.get("composite-fields") == null,
-        		"OLAP queries cannot use composite grouping composite-fields parameter");
         m_metrics = parsedQuery.get("metric");
+        m_pattern = parsedQuery.get("pattern");
+        Utils.require(parsedQuery.get("composite-fields") == null,
+                "OLAP queries cannot use composite grouping composite-fields parameter");
         parsedQuery.checkInvalidParameters();
         checkDefaults();
     }
@@ -42,9 +44,10 @@ public class LogAggregate {
         ParsedQuery parsedQuery = new ParsedQuery(queryParam);
         m_query = parsedQuery.get("q");
         m_fields = parsedQuery.get("f");
-        Utils.require(parsedQuery.get("cf") == null,
-        		"OLAP queries cannot use composite grouping composite-fields parameter");
         m_metrics = parsedQuery.get("m");
+        m_pattern = parsedQuery.get("pattern");
+        Utils.require(parsedQuery.get("cf") == null,
+                "OLAP queries cannot use composite grouping composite-fields parameter");
         parsedQuery.checkInvalidParameters();
         checkDefaults();
     }
@@ -52,6 +55,7 @@ public class LogAggregate {
     public String getQuery() { return m_query; }
     public String getFields() { return m_fields; }
     public String getMetrics() { return m_metrics; }
+    public String getPattern() { return m_pattern; }
     
     private void checkDefaults() {
         if (m_query == null) m_query = "*";

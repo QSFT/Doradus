@@ -35,7 +35,7 @@ public class SearchRequest {
     public SearchRequest(Tenant tenant, String application, String table, LogQuery logQuery) {
         m_logQuery = logQuery;
         m_tenant = tenant;
-        m_tableDef = Searcher.getTableDef(tenant, application, table);
+        m_tableDef = Searcher.getTableDef(tenant, application, table, logQuery.getPattern());
         fillRequest();
     }
 

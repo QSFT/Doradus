@@ -16,9 +16,11 @@ import com.dell.doradus.logservice.LogAggregate;
 import com.dell.doradus.logservice.LogEntry;
 import com.dell.doradus.logservice.LogQuery;
 import com.dell.doradus.logservice.LogService;
+import com.dell.doradus.logservice.SyntheticFields;
 import com.dell.doradus.logservice.search.filter.FilterBuilder;
 import com.dell.doradus.logservice.search.filter.IFilter;
 import com.dell.doradus.olap.aggregate.AggregationResult;
+import com.dell.doradus.olap.io.BSTR;
 import com.dell.doradus.olap.store.BitVector;
 import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.search.aggregate.AggregationGroup;
@@ -41,6 +43,8 @@ public class Searcher {
         }
         IFilter filter = FilterBuilder.build(request.getQuery());
         ChunkReader chunkReader = new ChunkReader();
+        if(logQuery.getPattern() != null) chunkReader.setSyntheticFields(logQuery.getPattern());
+        
         int documentsCount = 0;
         for(String partition: partitions) {
             long minPartitionTimestamp = ls.getTimestamp(partition);
@@ -115,7 +119,7 @@ public class Searcher {
     
     
     public static AggregationResult aggregate(LogService ls, Tenant tenant, String application, String table, LogAggregate logAggregate) {
-        TableDefinition tableDef = Searcher.getTableDef(tenant, application, table);
+        TableDefinition tableDef = Searcher.getTableDef(tenant, application, table, logAggregate.getPattern());
         Query query = DoradusQueryBuilder.Build(logAggregate.getQuery(), tableDef);
         AggregationGroup group = Aggregate.getAggregationGroup(tableDef, logAggregate.getFields());
         String field = Aggregate.getAggregateField(group);
@@ -133,7 +137,7 @@ public class Searcher {
         else {
             collector = new AggregateCollectorField(filter, field);
         }
-        collector.setContext(ls, tenant, application, table);
+        collector.setContext(ls, tenant, application, table, logAggregate.getPattern());
         
         List<String> partitions = ls.getPartitions(tenant, application, table);
         for(String partition: partitions) {
@@ -157,27 +161,43 @@ public class Searcher {
     
     
     
-    public static TableDefinition getTableDef(Tenant tenant, String application, String table) {
+    public static TableDefinition getTableDef(Tenant tenant, String application, String table, String pattern) {
         String store = application + "_" + table;
         ApplicationDefinition appDef = new ApplicationDefinition();
         appDef.setAppName(application);
         TableDefinition tableDef = new TableDefinition(appDef, table);
         appDef.addTable(tableDef);
-        FieldDefinition fieldDef = new FieldDefinition(tableDef);
-        fieldDef.setType(FieldType.TIMESTAMP);
-        fieldDef.setName("Timestamp");
-        tableDef.addFieldDefinition(fieldDef);
+        addField(tableDef, "Timestamp", FieldType.TIMESTAMP);
         Iterator<DColumn> it = DBService.instance().getAllColumns(tenant, store, "fields");
         if(it != null) {
             while(it.hasNext()) {
                 String field = it.next().getName();
-                fieldDef = new FieldDefinition(tableDef);
-                fieldDef.setType(FieldType.TEXT);
-                fieldDef.setName(field);
-                tableDef.addFieldDefinition(fieldDef);
+                addField(tableDef, field);
+            }
+        }
+        
+        if(pattern != null) {
+            SyntheticFields synth = new SyntheticFields(pattern);
+            addField(tableDef, synth.getBaseFieldName().toString());
+            for(BSTR field: synth.getFieldNames()) {
+                addField(tableDef, field.toString());
             }
         }
         return tableDef;
+    }
+    
+    private static FieldDefinition addField(TableDefinition tableDef, String field) {
+        return addField(tableDef, field, FieldType.TEXT);
+    }
+    
+    private static FieldDefinition addField(TableDefinition tableDef, String field, FieldType type) {
+        FieldDefinition fieldDef = tableDef.getFieldDef(field);
+        if(fieldDef != null) return fieldDef;
+        fieldDef = new FieldDefinition(tableDef);
+        fieldDef.setType(type);
+        fieldDef.setName(field);
+        tableDef.addFieldDefinition(fieldDef);
+        return fieldDef;
     }
     
 }

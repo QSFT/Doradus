@@ -43,6 +43,7 @@ public class LogServiceApp {
     public String getContinue() { return getParam("continue"); }
     public String getPageSize() { String v = getParam("s"); return v == null ? "25" : v; }
     public boolean getInverse() { return "true".equals(getParam("inverse")); }
+    public String getPattern() { return getParam("pattern"); }
 	
 	private String getParam(String name) {
 		String value = m_parameters.get(name);
@@ -101,7 +102,8 @@ public class LogServiceApp {
 	            "q", getQuery(),
 	            "s", getPageSize(),
 	            "o", getInverse() ? "Timestamp DESC" : "Timestamp",
-	            "e", getContinue());
+	            "e", getContinue(),
+	            "pattern", getPattern());
 	    LogQuery logQuery = new LogQuery(queryParam);
 	    SearchResultList result = m_logService.search(m_tenant, getApplication(), getTable(), logQuery);
         m_builder.append("<html><body>");

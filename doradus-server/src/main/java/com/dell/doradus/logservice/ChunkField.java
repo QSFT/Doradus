@@ -20,6 +20,7 @@ public class ChunkField {
     private int[] m_prefixes;
     private int[] m_suffixes;
     private int[] m_indexes;
+    private SyntheticFields m_synth;
     
     public ChunkField(int size, int fieldIndex, MemoryStream input, MemoryStream data) {
         m_size = size;
@@ -44,9 +45,22 @@ public class ChunkField {
             Temp.skipCompressed(m_input);
         }
     }
+
+    public ChunkField(SyntheticFields synth, BSTR fieldName, int fieldIndex, MemoryStream data) {
+        m_synth = synth;
+        m_fieldIndex = fieldIndex;
+        m_data = data;
+        m_fieldName = fieldName;
+    }
+    
     
     public void readValues() {
         if(m_offsets != null) return;
+        
+        if(m_synth != null) {
+            m_synth.createFields();
+            return;
+        }
         
         m_data.seek(m_data.length());
         m_input.seek(m_valuesOffset);
@@ -85,6 +99,11 @@ public class ChunkField {
     public void readIndexes() {
         if(m_indexes != null) return;
         
+        if(m_synth != null) {
+            m_synth.createFields();
+            return;
+        }
+        
         m_indexes = new int[m_size];
         m_input.seek(m_indexesOffset);
         if(m_valuesCount >= 256) {
@@ -103,6 +122,19 @@ public class ChunkField {
         }
     }
     
+
+    //for synthetic fields
+    public void set(int[] indexes, int[] offsets, int[] lengths) {
+        m_size = indexes.length;
+        m_valuesCount = offsets.length;
+        m_offsets = offsets;
+        m_lengths = lengths;
+        m_prefixes = new int[offsets.length];
+        m_suffixes = new int[offsets.length];
+        m_indexes = indexes;
+    }
+    
+    
     public int size() { return m_size; }
     
     public byte[] getBuffer() { return m_data.getBuffer(); }
@@ -111,7 +143,10 @@ public class ChunkField {
     
     public int getFieldIndex() { return m_fieldIndex; }
     
-    public int getValuesCount() { return m_valuesCount; }
+    public int getValuesCount() {
+        if(m_synth != null) readValues();
+        return m_valuesCount;
+    }
     
     public int[] getOffsets() { 
         readValues();

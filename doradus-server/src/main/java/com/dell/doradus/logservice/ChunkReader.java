@@ -3,8 +3,8 @@ package com.dell.doradus.logservice;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
-import com.dell.doradus.logservice.search.StrRef;
 import com.dell.doradus.olap.collections.MemoryStream;
 import com.dell.doradus.olap.io.BSTR;
 
@@ -16,8 +16,13 @@ public class ChunkReader {
     private ChunkTimestampField m_timestamps;
     private ArrayList<ChunkField> m_fields = new ArrayList<>(); 
     private HashMap<BSTR, Integer> m_fieldsMap = new HashMap<>();
+    private SyntheticFields m_synth;
     
     public ChunkReader() {}
+
+    public void setSyntheticFields(String pattern) {
+        m_synth = new SyntheticFields(pattern); 
+    }
     
     public void read(byte[] data) {
         m_size = 0;
@@ -38,6 +43,10 @@ public class ChunkReader {
             m_fieldsMap.put(field.getFieldName(), new Integer(f));
         }
         if(!m_input.end()) throw new RuntimeException("Unexpected data");
+        
+        if(m_synth != null) {
+            addSyntheticField();
+        }
     }
 
     public void readAll() {
@@ -80,8 +89,27 @@ public class ChunkReader {
         return m_fields.get(field).getFieldValue(doc);
     }
 
-    public void getFieldValue(int doc, int field, StrRef value) {
-        m_fields.get(field).getFieldValue(doc, value);
+    private void addSyntheticField() {
+        int baseFieldIndex = getFieldIndex(m_synth.getBaseFieldName());
+        if(baseFieldIndex < 0) return;
+        ChunkField baseField = getField(baseFieldIndex); 
+        List<BSTR> fieldNames = m_synth.getFieldNames();
+        List<ChunkField> chunkFields = new ArrayList<>();
+        for(int i = 0; i < fieldNames.size(); i++) {
+            ChunkField field = null;
+            BSTR fieldName = fieldNames.get(i);
+            int fieldIndex = getFieldIndex(fieldName);
+            if(fieldIndex > 0) field = getField(fieldIndex);
+            else {
+                int f = m_fieldsCount;
+                field = new ChunkField(m_synth, fieldName, f, m_data);
+                m_fields.add(field);
+                m_fieldsMap.put(field.getFieldName(), new Integer(f));
+                m_fieldsCount++;
+            }
+            chunkFields.add(field);
+        }
+        m_synth.setFields(baseField, chunkFields);
     }
     
 }
