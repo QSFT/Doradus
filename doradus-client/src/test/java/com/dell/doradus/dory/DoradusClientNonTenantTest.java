@@ -34,7 +34,6 @@ import java.util.Map;
 
 import javax.json.JsonObject;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.dell.doradus.client.Credentials;
@@ -42,9 +41,7 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.DBObject;
 import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.RESTResponse;
-import com.dell.doradus.common.TenantDefinition;
 import com.dell.doradus.common.UNode;
-import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.dory.command.Command;
 
 
@@ -65,8 +62,7 @@ public class DoradusClientNonTenantTest {
     @Test
     public void testRequiredCommandName() throws Exception {
         DoradusClient client = new DoradusClient(HOST, PORT);
-        //client.setCredentials("HelloKitty", "Katniss", "Everdeen");
-
+  
         //no commandName        
         try {
             client.runCommand(Command.builder().withParam("table", "Messages").build());
@@ -89,9 +85,7 @@ public class DoradusClientNonTenantTest {
     
     @Test
     public void testRequiredParams() throws Exception {
-        //Credentials credentials = new Credentials("HelloKitty", "Katniss", "Everdeen");
-    	Credentials credentials = null;
-        DoradusClient client = new DoradusClient(HOST, PORT, credentials);
+        DoradusClient client = new DoradusClient(HOST, PORT);
         
         //application required for "Define"
         try {
@@ -105,7 +99,7 @@ public class DoradusClientNonTenantTest {
         
         //open session with unknown app
         try {
-            client = DoradusClient.open(HOST, PORT, credentials, "Foo");
+            client = DoradusClient.open(HOST, PORT, null, "Foo");
             client.runCommand(Command.builder().withName("Add").build());
             fail("should throw exception");
         }
@@ -116,7 +110,7 @@ public class DoradusClientNonTenantTest {
         createSpiderApp("MyApp");
         
         //open session with existing app
-        client = DoradusClient.open(HOST, PORT, credentials, "MyApp");
+        client = DoradusClient.open(HOST, PORT, null, "MyApp");
         
         //"batch" param required for "Add" 
         try {
@@ -157,8 +151,7 @@ public class DoradusClientNonTenantTest {
     @Test
     public void testLogsSystemCommand() throws Exception {
        
-        Credentials superUserCredentials = new Credentials(null, "cassandra", "cassandra");             
-        DoradusClient client = new DoradusClient(HOST, PORT, superUserCredentials);     
+        DoradusClient client = new DoradusClient(HOST, PORT);     
         
         //test retrieve the map of commands by service name 
         Map<String, List<String>> commands = client.listCommands();
@@ -171,35 +164,10 @@ public class DoradusClientNonTenantTest {
         
     }
 
-//    @Test
-//    public void testTenantManagmentCommands() throws Exception {
-//        Credentials credentials = new Credentials(null, "cassandra", "cassandra");      
-//        DoradusClient client = new DoradusClient(HOST, PORT, credentials);
-//        
-//        //test ListTenant
-//        RESTResponse response = client.runCommand(Command.builder().withName("ListTenant").withParam("tenant", "HelloKitty").build());
-//        if (response.getCode().getCode() == 200) {
-//            //test DeleteTenant
-//            response = client.runCommand(Command.builder().withName("DeleteTenant").withParam("tenant", "HelloKitty").build());         
-//        }
-//        //test DefineTenant
-//        TenantDefinition tenantDef = new TenantDefinition();
-//        tenantDef.setName("HelloKitty");
-//        UserDefinition userDef = new UserDefinition("Katniss");
-//        userDef.setPassword("Everdeen");
-//        tenantDef.addUser(userDef);
-//        response = client.runCommand(Command.builder().withName("DefineTenant").withParam("TenantDefinition", tenantDef).build());
-//        assertTrue(response.getCode().getCode() == 200); 
-//        assertTrue(response.getBody().contains("HelloKitty"));
-//    
-//        client.close();
-//    }
-    
+ 
     @Test
     public void testSpiderSchemaSystemCommands() throws Exception {
-        //Credentials credentials = new Credentials("HelloKitty", "Katniss", "Everdeen");         
-       	Credentials credentials = null;
-        DoradusClient client = new DoradusClient(HOST, PORT, credentials);
+        DoradusClient client = new DoradusClient(HOST, PORT);
         
         //test retrieve the map of commands by service name 
         Map<String, List<String>> commands = client.listCommands();
@@ -247,10 +215,10 @@ public class DoradusClientNonTenantTest {
     @Test
     public void testSpiderDataServiceCommands() throws Exception { 
         
-        Credentials credentials = createSpiderApp("HelloByeApp");
+        createSpiderApp("HelloByeApp");
 
         //open session with existing app
-        DoradusClient client = DoradusClient.open(HOST, PORT, credentials, "HelloByeApp");
+        DoradusClient client = DoradusClient.open(HOST, PORT, null, "HelloByeApp");
     
         //test retrieve the map of commands by service name 
         Map<String, List<String>> commands = client.listCommands();
@@ -364,15 +332,12 @@ public class DoradusClientNonTenantTest {
         client.close();
     }
     
-    private Credentials createSpiderApp(String app) throws IOException, Exception {
-        //Credentials credentials = new Credentials("HelloKitty", "Katniss", "Everdeen");
-       	Credentials credentials = null;
-        DoradusClient client = new DoradusClient(HOST, PORT, credentials);
+    private void createSpiderApp(String app) throws IOException, Exception {
+        DoradusClient client = new DoradusClient(HOST, PORT);
         ApplicationDefinition appDef = new ApplicationDefinition();
         appDef.setAppName(app);
         client.runCommand(Command.builder().withName("DefineApp").withParam("ApplicationDefinition", appDef).build());
         client.close();
-        return credentials;
     }
     
     private static String getOLAPSchemaJson() throws IOException, URISyntaxException {
