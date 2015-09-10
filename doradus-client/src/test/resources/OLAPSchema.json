@@ -1,4 +1,4 @@
-{"Email": {
+{"EmailApp": {
    "options": {"StorageService": "OLAPService"},
    "tables": {
       "Message": {

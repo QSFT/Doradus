@@ -55,17 +55,17 @@ import com.dell.doradus.dory.command.Command;
  *
  */
 
-@Ignore
-public class DoradusClientTest {
+
+public class DoradusClientNonTenantTest {
     
-    private static final String HOST = "localhost";
-    private static final int PORT = 1111;
+    private static final String HOST = "doradus.prep.us.platform.dell.com";
+    private static final int PORT = 80;
     private static final String OLAP_SCHEMA_FILE = "OLAPSchema.json";
 
     @Test
     public void testRequiredCommandName() throws Exception {
         DoradusClient client = new DoradusClient(HOST, PORT);
-        client.setCredentials("HelloKitty", "Katniss", "Everdeen");
+        //client.setCredentials("HelloKitty", "Katniss", "Everdeen");
 
         //no commandName        
         try {
@@ -89,7 +89,8 @@ public class DoradusClientTest {
     
     @Test
     public void testRequiredParams() throws Exception {
-        Credentials credentials = new Credentials("HelloKitty", "Katniss", "Everdeen");
+        //Credentials credentials = new Credentials("HelloKitty", "Katniss", "Everdeen");
+    	Credentials credentials = null;
         DoradusClient client = new DoradusClient(HOST, PORT, credentials);
         
         //application required for "Define"
@@ -170,33 +171,34 @@ public class DoradusClientTest {
         
     }
 
-    @Test
-    public void testTenantManagmentCommands() throws Exception {
-        Credentials credentials = new Credentials(null, "cassandra", "cassandra");      
-        DoradusClient client = new DoradusClient(HOST, PORT, credentials);
-        
-        //test ListTenant
-        RESTResponse response = client.runCommand(Command.builder().withName("ListTenant").withParam("tenant", "HelloKitty").build());
-        if (response.getCode().getCode() == 200) {
-            //test DeleteTenant
-            response = client.runCommand(Command.builder().withName("DeleteTenant").withParam("tenant", "HelloKitty").build());         
-        }
-        //test DefineTenant
-        TenantDefinition tenantDef = new TenantDefinition();
-        tenantDef.setName("HelloKitty");
-        UserDefinition userDef = new UserDefinition("Katniss");
-        userDef.setPassword("Everdeen");
-        tenantDef.addUser(userDef);
-        response = client.runCommand(Command.builder().withName("DefineTenant").withParam("TenantDefinition", tenantDef).build());
-        assertTrue(response.getCode().getCode() == 200); 
-        assertTrue(response.getBody().contains("HelloKitty"));
-    
-        client.close();
-    }
+//    @Test
+//    public void testTenantManagmentCommands() throws Exception {
+//        Credentials credentials = new Credentials(null, "cassandra", "cassandra");      
+//        DoradusClient client = new DoradusClient(HOST, PORT, credentials);
+//        
+//        //test ListTenant
+//        RESTResponse response = client.runCommand(Command.builder().withName("ListTenant").withParam("tenant", "HelloKitty").build());
+//        if (response.getCode().getCode() == 200) {
+//            //test DeleteTenant
+//            response = client.runCommand(Command.builder().withName("DeleteTenant").withParam("tenant", "HelloKitty").build());         
+//        }
+//        //test DefineTenant
+//        TenantDefinition tenantDef = new TenantDefinition();
+//        tenantDef.setName("HelloKitty");
+//        UserDefinition userDef = new UserDefinition("Katniss");
+//        userDef.setPassword("Everdeen");
+//        tenantDef.addUser(userDef);
+//        response = client.runCommand(Command.builder().withName("DefineTenant").withParam("TenantDefinition", tenantDef).build());
+//        assertTrue(response.getCode().getCode() == 200); 
+//        assertTrue(response.getBody().contains("HelloKitty"));
+//    
+//        client.close();
+//    }
     
     @Test
     public void testSpiderSchemaSystemCommands() throws Exception {
-        Credentials credentials = new Credentials("HelloKitty", "Katniss", "Everdeen");         
+        //Credentials credentials = new Credentials("HelloKitty", "Katniss", "Everdeen");         
+       	Credentials credentials = null;
         DoradusClient client = new DoradusClient(HOST, PORT, credentials);
         
         //test retrieve the map of commands by service name 
@@ -285,7 +287,8 @@ public class DoradusClientTest {
     
     @Test
     public void testOLAPSchemaSystemCommands() throws Exception {
-        Credentials credentials = new Credentials("HelloKitty", "Katniss", "Everdeen");         
+        //Credentials credentials = new Credentials("HelloKitty", "Katniss", "Everdeen"); 
+       	Credentials credentials = null;
         DoradusClient client = new DoradusClient(HOST, PORT, credentials);
         
         //test find and DeleteApp
@@ -308,7 +311,8 @@ public class DoradusClientTest {
     @Test
     public void testOLAPDataServiceCommands() throws Exception { 
         
-        Credentials credentials = new Credentials("HelloKitty", "Katniss", "Everdeen");         
+        //Credentials credentials = new Credentials("HelloKitty", "Katniss", "Everdeen");   
+       	Credentials credentials = null;
         createOLAPApp(credentials);
         
         //open session with OLAP app
@@ -361,7 +365,8 @@ public class DoradusClientTest {
     }
     
     private Credentials createSpiderApp(String app) throws IOException, Exception {
-        Credentials credentials = new Credentials("HelloKitty", "Katniss", "Everdeen");
+        //Credentials credentials = new Credentials("HelloKitty", "Katniss", "Everdeen");
+       	Credentials credentials = null;
         DoradusClient client = new DoradusClient(HOST, PORT, credentials);
         ApplicationDefinition appDef = new ApplicationDefinition();
         appDef.setAppName(app);
@@ -371,6 +376,6 @@ public class DoradusClientTest {
     }
     
     private static String getOLAPSchemaJson() throws IOException, URISyntaxException {
-        return new String(Files.readAllBytes(Paths.get(DoradusClientTest.class.getResource("/"+OLAP_SCHEMA_FILE).toURI())));
+        return new String(Files.readAllBytes(Paths.get(DoradusClientNonTenantTest.class.getResource("/"+OLAP_SCHEMA_FILE).toURI())));
     }
 }   // class DoradusClientTest
