@@ -134,7 +134,7 @@ public class HelloDory {
             .build();
         RESTResponse response = client.runCommand(command);
         if (response.isFailed()) {
-            throw new RuntimeException("DefineApp failed: " + response.getBody());
+            throw new RuntimeException("DefineApp failed: " + response);
         }
     }
 

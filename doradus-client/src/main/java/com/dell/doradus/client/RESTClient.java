@@ -508,7 +508,11 @@ public class RESTClient implements Closeable {
         try {
             // Attempt to convert the return code into an enum.
             int code = Integer.parseInt(parts[1]);
-            return HttpCode.findByCode(code);
+            HttpCode result = HttpCode.findByCode(code);
+            if (result == null) {
+                throw new IOException("Unrecognized result code: " + code);
+            }
+            return result;
         } catch (NumberFormatException e) {
             // Turn into a bad response line error.
             throw new IOException("Badly formed response status line: " + statusLine);

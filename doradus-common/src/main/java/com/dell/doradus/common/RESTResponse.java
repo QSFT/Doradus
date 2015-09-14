@@ -165,7 +165,7 @@ public class RESTResponse {
      */
     @Override
     public String toString() {
-        if (m_statusCode != HttpCode.OK && m_bodyBytes.length > 0) {
+        if (m_statusCode != HttpCode.OK && m_bodyBytes != null && m_bodyBytes.length > 0) {
             return m_statusCode.toString() + ": " + Utils.toString(m_bodyBytes);
         }
         return m_statusCode.toString();
