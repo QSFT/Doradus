@@ -21,11 +21,14 @@
 		<li>
      The <b>OLAP service</b> borrows techniques from Online Analytical Processing, columnar storage, compression, and sharding to yield extremely compact databases. Doradus OLAP requires applications to organize data into time-based shards, and it prefers batch updates of semi-mutable data. For applications that can meet these constraints, databases are extremely compact, and analytic queries can search millions of objects per second.
 	    </li>
+		<li>
+     The <b>Logging service</b> is optimized to manage immutable, time-series data such as log records and events. 
+	    </li>
         <li>
      The <b>Spider service</b> is suitable for data that is highly mutable, semi-structured to unstructured, and/or requires fine-grained updates. Updates are instantly reflected in searches, and objects can be updated simultaneously by different applications. Spider is ideal for applications emphasizing full text searches on irregular data.
 	    </li>
    </ul>
-<br/>Both OLAP and Spider support the Doradus Query Language (DQL) for object and aggregate queries. For a more detailed overview of Doradus click <a href="https://github.com/dell-oss/Doradus/wiki/Overview" target="_blank">here</a>. See the Topics below for links to tutorials, examples, detailed documentation, and a simple 1-2-3 getting started process.
+<br/>Both OLAP, Logging and Spider support the Doradus Query Language (DQL) for object and aggregate queries. For a more detailed overview of Doradus click <a href="https://github.com/dell-oss/Doradus/wiki/Overview" target="_blank">here</a>. See the Topics below for links to tutorials, examples, detailed documentation, and a simple 1-2-3 getting started process.
 			</div>
 			
 			<!-- Control for driving the tabs -->
