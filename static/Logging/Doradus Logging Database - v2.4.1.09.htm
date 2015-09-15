@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Choosing Logging Object Fields</title>
+    <link rel="StyleSheet" href="css/Doradus%20Logging%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Logging%20Database%20-%20v2.4.1.05.htm">Logging Data Model</a> : Choosing Logging Object Fields</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E04S0HA">Choosing Logging Object Fields</a></div>
+      <div class="Normal"><a name="pID0E03S0HA">Other than </a><span class="Code_Char">Timestamp</span>, which fields should you assign to objects? Below is an example batch that shows a minimalistic approach, using as few fields as possible. Suppose we want to create an object for the following log record:</div>
+      <div class="Code"><a name="pID0E02S0HA">2015-03-24 14:05:42.893 INFO MBeanProvider: Unregistering the StorageManager MXBean</a></div>
+      <div class="Normal"><a name="pID0E01S0HA">Within a batch, this record could be loaded with the following URI and JSON message:</a></div>
+      <div class="Code"><a name="pID0E0ZS0HA">POST /LogDepot/AppLogs</a></div>
+      <div class="Code"><a name="pID0E0YS0HA">{"batch": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0XS0HA">"docs": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0WS0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0VS0HA">"Timestamp": "2015-03-24 14:05:42.893",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0US0HA">"Message": "INFO MBeanProvider: Unregistering the StorageManager MXBean"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TS0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SS0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0RS0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QS0HA">}},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0PS0HA">]</a></div>
+      <div class="Code"><a name="pID0E0OS0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0NS0HA">Other than the </a><span class="Code_Char">Timestamp</span>, the rest of the log record is stored in a single field called <span class="Code_Char">Message</span>. This allows us to find, for example, all log records that contain the term “info” with a query such as the following:</div>
+      <div class="Code"><a name="pID0E0MS0HA">GET /LogDepot/AppLogs/_query?q=Message:info</a></div>
+      <div class="Normal"><a name="pID0E0LS0HA">However, this query will return all objects that contain the term </a><span style="font-style: italic">info</span>—not INFO-level records. To allow more granular queries, we could separate the log <span class="Code_Char">Level</span> and <span class="Code_Char">Module</span> info separate fields:</div>
+      <div class="Code"><a name="pID0E0KS0HA">...</a></div>
+      <div class="Code"><a name="pID0E0JS0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0IS0HA">"Timestamp": "2015-03-24 14:05:42.893",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0HS0HA">"Level": "INFO",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0GS0HA">"Module": "MBeanProvider",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0FS0HA">"Message": "Unregistering the StorageManager MXBean"</a></div>
+      <div class="Code"><a name="pID0E0ES0HA">}}</a></div>
+      <div class="Code"><a name="pID0E0DS0HA">...</a></div>
+      <div class="Normal"><a name="pID0E0CS0HA">Now we can query for all INFO level records using the query:</a></div>
+      <div class="Code"><a name="pID0E0BS0HA">GET /LogDepot/AppLogs/_query?q=Level=info</a></div>
+      <div class="Normal"><a name="pID0E0AS0HA">To search for INFO level records that were created with a module whose name begins with </a><span class="Code_Char">MBean</span>, we can add a wildcard clause:</div>
+      <div class="Code"><a name="pID0E06R0HA">GET /LogDepot/AppLogs/_query?q=Level=info AND Module="mbean*"</a></div>
+      <div class="Normal"><a name="pID0E05R0HA">Note that field names such as </a><span class="Code_Char">Level</span> and <span class="Code_Char">Module</span> are case-sensitive whereas text field values are not.</div>
+      <div class="Normal"><a name="pID0E04R0HA">Sometimes it makes sense to store both the original, raw log record </a><span style="text-decoration: underline">and</span> separate individual values into their own fields. Then we can use fine-grained queries but also see the full, original log record if needed. For example, here’s a typical Apache log record with both the raw message stored in the message field and many other fields extracted:</div>
+      <div class="Code"><a name="pID0E03R0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E02R0HA">"Timestamp": "2011-05-18 19:40:18.000",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E01R0HA">"agent": "\"Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; InfoPath.2; .NET4.0C; .NET4.0E)\"",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0ZR0HA">"auth": "-",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0YR0HA">"bytes": "1189",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0XR0HA">"clientip": "134.39.72.245",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0WR0HA">"datetime": "2011-05-18T19:40:18.000Z",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0VR0HA">"enccred": "U3VwZXJNYW46TG9pcwo=",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0UR0HA">"filename": "access",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0TR0HA">"host": "node2.origin.dev.us.platform.dell.com",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0SR0HA">"httpversion": "1.1",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0RR0HA">"ident": "-",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0QR0HA">"message": "134.39.72.245 - - [18/May/2011:12:40:18 -0700] \"GET /favicon.ico HTTP/1.1\" 200 1189 \"-\" \"Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; InfoPath.2; .NET4.0C; .NET4.0E)\"",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0PR0HA">"path": "/var/lib/openshift/55b6908dd229e7d004000008/app-root/logs/access.log",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0OR0HA">"referrer": "\"-\"",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0NR0HA">"request": "/favicon.ico",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0MR0HA">"response": "200",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0LR0HA">"timestamp": "18/May/2011:12:40:18 -0700",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0KR0HA">"type": "apache",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0JR0HA">"verb": "GET"</a></div>
+      <div class="Code"><a name="pID0E0IR0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0HR0HA">Notice that message contains fields that are also extracted to other fields such as </a><span class="Code_Char">clientip</span>, <span class="Code_Char">request</span>, and <span class="Code_Char">verb</span>.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>ROUNDUP Function</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.4.1.078.html">OLAP Aggregate Queries</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.4.1.080.html">Metric Parameter</a> : ROUNDUP Function</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E05LB0HA">ROUNDUP Function</a></div>
+      <div class="Normal"><a name="pID0E04LB0HA">Numeric field values can be rounded to a specified value before passing to passed to a metric function by using the </a><span class="Code_Char">ROUNDUP</span> function. The general syntax for using the <span class="Code_Char">ROUNDUP</span> function is:</div>
+      <div class="Code"><span style="font-style: italic"><a name="pID0E03LB0HA">metric</a></span>(ROUNDUP(<span style="font-style: italic">field</span>,<span style="font-style: italic">value</span>))</div>
+      <div class="Normal"><a name="pID0E02LB0HA">Where:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-style: italic"><a name="pID0E01LB0HA">metric</a></span> is the metric function such as <span class="Code_Char">SUM</span> or <span class="Code_Char">MAX</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-style: italic"><a name="pID0E0ZLB0HA">field</a></span> is an <span class="Code_Char">integer</span>, <span class="Code_Char">long</span>, <span class="Code_Char">float</span>, or <span class="Code_Char">double</span> scalar field.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-style: italic"><a name="pID0E0YLB0HA">value</a></span> is an integer rounding value.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0XLB0HA">If the rounding value is positive, each field value is rounded </a><span style="font-style: italic">up</span> to the nearest multiple of the rounding value. If the rounding value is negative, each field value is rounded <span style="font-style: italic">down</span> to the nearest multiple of the rounding value. The ROUNDUP function is useful, for example, when using metric expressions where actual field values should be converted to some other, nearest value. For example:</div>
+      <div class="Code"><a name="pID0E0WLB0HA">&amp;m=SUM(ROUND(Session.Duration,90)) * 0.03</a></div>
+      <div class="Normal"><a name="pID0E0VLB0HA">This metric expression rounds each </a><span class="Code_Char">Session.Duration</span> value to the nearest multiple of 90, sums the rounded values, then multiplies the total by 0.03.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

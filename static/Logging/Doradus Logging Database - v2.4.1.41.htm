@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Object Query Command</title>
+    <link rel="StyleSheet" href="css/Doradus%20Logging%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Logging%20Database%20-%20v2.4.1.26.htm">REST Commands</a> : Object Query Command</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E06I0HA">Object Query Command</a></div>
+      <div class="Normal"><a name="pID0E05I0HA">An </a><span style="font-style: italic">object query</span> is a DQL query that selects and returns selected fields for objects in the perspective table. With Doradus Logging, all query parameters are passed in the URI of a GET request. The general form is:</div>
+      <div class="Code"><a name="pID0E04I0HA">GET /{application}/{table}/_query?{params}</a></div>
+      <div class="Normal"><a name="pID0E03I0HA">where </a><span class="Code_Char">{application}</span> is the application name, <span class="Code_Char">{table}</span> is the perspective table to be queried, and <span class="Code_Char">{params}</span> are URI parameters, separated by ampersands (&amp;) and encoded as necessary. The following parameters are supported:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E02I0HA">q=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">expression</span> (required): A DQL query expression that defines which objects to select. The special expression “*” selects all objects. Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01I0HA">q=*		// selects all objects</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZI0HA">q=EventID=512</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0YI0HA">q=Description:(Fail* Error)</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0XI0HA">s=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">size</span> (optional): Limits the number of objects returned. If absent, the page size defaults to the <span class="Code_Char">search_default_page_size</span> option in the doradus.yaml file. The page size can be set to 0 to disable paging, causing all results to be returned in a single page. Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0WI0HA">s=50</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VI0HA">s=0		// return all objects -- be careful!</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0UI0HA">f=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">fields</span> (optional): A comma-separated list of fields to return for each selected object. Without this parameter, all scalar fields of each object are returned. This is the same as using the special value <span class="Code_Char">*</span> or <span class="Code_Char">_all</span>. Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TI0HA">f=*</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SI0HA">f=Size,EventID</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0RI0HA">k=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">count</span> (optional): Causes the first <span style="font-style: italic">count</span> objects in the query results to be skipped. If the <span class="Code_Char">&amp;k</span> parameter is omitted or set to 0, the first page of objects is returned. Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QI0HA">k=100</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0PI0HA">k=0		// returns first page</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="color: #000000; font-family: &quot;Times New Roman&quot;; font-size: 11pt">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0OI0HA">o=Timestamp [ASC | DESC]</a></span><span class="Code_Char" style="color: #000000; font-family: &quot;Times New Roman&quot;; font-size: 11pt"> (optional): Causes the object query results to be sorted by ascending or descending </span><span class="Code_Char">Timestamp</span><span class="Code_Char" style="color: #000000; font-family: &quot;Times New Roman&quot;; font-size: 11pt"> order. By default, object query results are sorted in descending </span><span class="Code_Char">Timestamp</span><span class="Code_Char" style="color: #000000; font-family: &quot;Times New Roman&quot;; font-size: 11pt"> order (newest objects first). Specifying </span><span class="Code_Char">o=Timestamp ASC</span><span class="Code_Char" style="color: #000000; font-family: &quot;Times New Roman&quot;; font-size: 11pt"> causes oldest objects to be returned first.</span></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0NI0HA">g=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">timestamp</span> (optional): Returns a secondary page of objects starting “at” the given timestamp. When a query returns a full page of objects, a <span class="Code_Char">continue</span> element is included in the results to indicate what value can be used for this parameter. The objects returned in the secondary page are “greater than or equal to” the <span class="Code_Char">continue</span> value. The <span class="Code_Char">&amp;g</span> and <span class="Code_Char">&amp;e</span> parameters cannot both be used in the same query.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0MI0HA">e=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">timestamp</span> (optional): Returns a secondary page of objects “after” the given timestamp. When a query returns a full page of objects, a <span class="Code_Char">continue</span> element is included in the results to indicate what value can be used for this parameter. The objects returned in the secondary page are “greater than” the <span class="Code_Char">continue</span> value. The <span class="Code_Char">&amp;g</span> and <span class="Code_Char">&amp;e</span> parameters cannot both be used in the same query.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0LI0HA">An object query always returns an output entity even if there are no objects matching the query request. The outer element is </a><span class="Code_Char">results</span>, which contains a single <span class="Code_Char">docs</span> element. If the query returns no results, the <span class="Code_Char">docs</span> element is empty. In XML:</div>
+      <div class="Code"><a name="pID0E0KI0HA">&lt;results&gt;</a></div>
+      <div class="Code"><a name="pID0E0JI0HA">   &lt;docs/&gt;</a></div>
+      <div class="Code"><a name="pID0E0II0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0HI0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E0GI0HA">{"results": {</a></div>
+      <div class="Code"><a name="pID0E0FI0HA">   "docs": []</a></div>
+      <div class="Code"><a name="pID0E0EI0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0DI0HA">When objects are selected by an object query, each object is returned in a </a><span class="Code_Char">doc</span> element with each requested <span class="Code_Char">field</span>. For example:</div>
+      <div class="Code"><a name="pID0E0CI0HA">GET /LogDepot/AppLogs/_query?q=*&amp;f=EventID,Timestamp,UserSID</a></div>
+      <div class="Normal"><a name="pID0E0BI0HA">This query returns all objects in the </a><span class="Code_Char">AppLogs</span> table and produces a result such as this:</div>
+      <div class="Code"><a name="pID0E0AI0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E06H0HA">&lt;docs&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E05H0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E04H0HA">&lt;field name="EventID"&gt;672&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E03H0HA">&lt;field name="Timestamp"&gt;2006-01-13 00:00:00.000&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E02H0HA">&lt;field name="UserSID"&gt;S-1-5-18&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01H0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZH0HA">&lt;doc&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YH0HA">&lt;field name="EventID"&gt;538&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0XH0HA">&lt;field name="Timestamp"&gt;2006-01-13 00:00:00.000&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0WH0HA">&lt;field name="UserSID"&gt;S-1-5-21-1874068349-1688302950-636360099-52692&lt;/field&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VH0HA">&lt;/doc&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0UH0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0TH0HA">&lt;/docs&gt;</a></div>
+      <div class="Code"><a name="pID0E0SH0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E0RH0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E0QH0HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0PH0HA">"docs": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OH0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0NH0HA">"EventID": "672",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0MH0HA">"Timestamp": "2006-01-13 00:00:00.000",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0LH0HA">"UserSID": "S-1-5-18"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KH0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0JH0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0IH0HA">"EventID": "538",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0HH0HA">"Timestamp": "2006-01-13 00:00:00.000",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0GH0HA">"UserSID": "S-1-5-21-1874068349-1688302950-636360099-52692"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0FH0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0EH0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0DH0HA">]</a></div>
+      <div class="Code"><a name="pID0E0CH0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0BH0HA">Each requested field is returned even if it has no value.</a></div>
+      <div class="Normal"><a name="pID0E0AH0HA">If a query returns a full page of results, a “continue” value is returned, which can be used with the “continue at” or “continue after” parameters to get a secondary page. Example:</a></div>
+      <div class="Code"><a name="pID0E06G0HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E05G0HA">"docs": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E04G0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03G0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E02G0HA">"EventID": "673",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E01G0HA">"Timestamp": "2006-01-13 00:00:03.000",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ZG0HA">"UserSID": "S-1-5-18"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0YG0HA">}}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0XG0HA">],</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0WG0HA">"continue": "2006-01-13 00:00:03.000"</a></div>
+      <div class="Code"><a name="pID0E0VG0HA">}}</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

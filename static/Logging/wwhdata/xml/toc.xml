@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WebWorksHelpTOC version="5.0" xmlns="urn:WebWorks-Help-TOC-Schema">
+  <i t="Introduction" l="0" />
+  <i t="Logging Database Overview" l="1">
+    <i t="Logging Service Features" l="2" />
+    <i t="Starting the Logging Service" l="3" />
+  </i>
+  <i t="Logging Data Model" l="4">
+    <i t="Applications" l="5" />
+    <i t="Tables" l="6" />
+    <i t="Objects and Fields" l="7" />
+    <i t="Choosing Logging Object Fields" l="8" />
+  </i>
+  <i t="Doradus Query Language (DQL)" l="9">
+    <i t="Query Perspective" l="10" />
+    <i t="Clauses" l="11" />
+    <i t="Clause Negation: NOT" l="12" />
+    <i t="Clause Connectors: AND, OR, and Parentheses" l="13" />
+    <i t="Literals" l="14" />
+    <i t="Null Values" l="15" />
+    <i t="IS NULL Clause" l="16" />
+    <i t="Contains Clauses" l="17">
+      <i t="Term Clauses" l="18" />
+      <i t="Phrase Clauses" l="19" />
+      <i t="Any-field Clauses" l="20" />
+    </i>
+    <i t="Range Clauses" l="21" />
+    <i t="Equality Clauses" l="22" />
+    <i t="IN Clause" l="23" />
+    <i t="Timestamp Clauses" l="24" />
+  </i>
+  <i t="REST Commands" l="25">
+    <i t="Command Summary" l="26" />
+    <i t="REST API Overview" l="27">
+      <i t="Common REST Headers" l="28" />
+      <i t="Common REST URI Parameters" l="29" />
+      <i t="REST Commands in Multi-Tenant Mode" l="30" />
+      <i t="Common JSON Rules" l="31" />
+      <i t="Illegal Characters in XML Content" l="32" />
+      <i t="Common REST Responses" l="33" />
+    </i>
+    <i t="Application Management Commands" l="34">
+      <i t="Create Application" l="35" />
+      <i t="Modify Application" l="36" />
+      <i t="List Application" l="37" />
+      <i t="Delete Application" l="38" />
+    </i>
+    <i t="Add Objects Command" l="39" />
+    <i t="Object Query Command" l="40" />
+    <i t="Aggregate Query Command" l="41">
+      <i t="Global Aggregates" l="42" />
+      <i t="Grouped Aggregates" l="43" />
+      <i t="Grouping Field Aliases" l="44" />
+      <i t="Special Grouping Functions" l="45">
+        <i t="TOP and BOTTOM Functions" l="46" />
+        <i t="FIRST and LAST Functions" l="47" />
+        <i t="TRUNCATE Function" l="48" />
+      </i>
+    </i>
+    <i t="Task Status Command" l="49" />
+    <i t="Browse Objects Command" l="50" />
+  </i>
+</WebWorksHelpTOC>

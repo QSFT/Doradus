@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Modify Tenant</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.22.html">Multi-Tenant Configuration</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.26.html">Managing Tenants</a> : Modify Tenant</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0CJ0HA">Modify Tenant</a></div>
+      <div class="Normal"><a name="pID0E0BJ0HA">An existing tenant can be modified via the following REST command:</a></div>
+      <div class="Code"><a name="pID0E0AJ0HA">PUT /_tenants/{tenant}</a></div>
+      <div class="Normal"><a name="pID0E06I0HA">Where {tenant} is the tenant name. All changes are allowed including adding, modifying, and deleting properties, options, and users. (However, the value of the </a><span class="Code_char">_CreatedOn</span> property cannot be changed.) The command must include an XML or JSON document with the same format used to create a tenant. The tenant document is interpreted as follows:</div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E05I0HA">Any options, properties, or users not in the current tenant definition are added.</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E04I0HA">Any options, properties, or users in the current tenant definition but not repeated in the modified tenant definition are deleted. However:</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 36pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E03I0HA">The </a><span class="Code_char">_CreatedOn</span> property cannot be deleted.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 36pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E02I0HA">If the </a><span class="Code_char">ReplicationFactor</span> option is deleted, the keyspace’s replication factor is not modified.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E01I0HA">Existing options, properties, and users can be modified by specifying a new option value, property value, user password, etc.</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 36pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0ZI0HA">If the </a><span class="Code_char">ReplicationFactor</span> option is modified, the keyspace’s replication factor modified accordingly. This action should be followed by the administrative command “nodetool repair &lt;keyspace&gt;” to redistribute data according to the keyspace’s new replication factor.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0YI0HA">An existing user’s permissions can be modified without respecifying the user’s current password. In this case, the password is not changed.</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0XI0HA">Example:</a></div>
+      <div class="Code"><a name="pID0E0WI0HA">{"HelloKitty": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0VI0HA">"options": {"ReplicationFactor": "3"},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0UI0HA">"properties": {"Owner_Organiztion": "Cats, Inc."},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0TI0HA">"users": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SI0HA">"Asparagus": {"permissions": "APPEND"},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0RI0HA">"Skimbleshanks": {"permissions": "READ"},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QI0HA">"Katniss": {"password": "MockingJay", "permissions": "ALL"},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0PI0HA">"Rumpleteazer": {"password": "Mongojerrie"}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0OI0HA">}</a></div>
+      <div class="Code"><a name="pID0E0NI0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0MI0HA">In this example, the password for user </a><span class="Code_char">Katniss</span> is modified and a new user <span class="Code_char">Rumpleteazer</span> is added.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

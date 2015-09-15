@@ -38,75 +38,60 @@
     <h7 weight="2" />
   </ScoringPrefs>
   <DocumentInfo>
-    <Document title="Doradus Administration" href="Doradus%20Administration%20-%20v2.3.1.01.html" />
-    <Document title="Overview" href="Doradus%20Administration%20-%20v2.3.1.02.html" />
-    <Document title="Recent Changes" href="Doradus%20Administration%20-%20v2.3.1.03.html" />
-    <Document title="Installing and Running Doradus" href="Doradus%20Administration%20-%20v2.3.1.04.html" />
-    <Document title="Downloading Cassandra" href="Doradus%20Administration%20-%20v2.3.1.05.html" />
-    <Document title="Downloading Doradus" href="Doradus%20Administration%20-%20v2.3.1.06.html" />
-    <Document title="Running Doradus Stand-Alone" href="Doradus%20Administration%20-%20v2.3.1.07.html" />
-    <Document title="Running Doradus as a Windows Service" href="Doradus%20Administration%20-%20v2.3.1.08.html" />
-    <Document title="Running Doradus as a Daemon" href="Doradus%20Administration%20-%20v2.3.1.09.html" />
-    <Document title="Embedding Doradus In Another Application" href="Doradus%20Administration%20-%20v2.3.1.10.html" />
-    <Document title="Deployment Guidelines" href="Doradus%20Administration%20-%20v2.3.1.11.html" />
-    <Document title="Basic Architecture" href="Doradus%20Administration%20-%20v2.3.1.12.html" />
-    <Document title="Minimal Configuration" href="Doradus%20Administration%20-%20v2.3.1.13.html" />
-    <Document title="Two Node Configuration" href="Doradus%20Administration%20-%20v2.3.1.14.html" />
-    <Document title="Expanding the Cluster" href="Doradus%20Administration%20-%20v2.3.1.15.html" />
-    <Document title="Multi-Data Center Deployments" href="Doradus%20Administration%20-%20v2.3.1.16.html" />
-    <Document title="Hardware Recommendations" href="Doradus%20Administration%20-%20v2.3.1.17.html" />
-    <Document title="Security Considerations" href="Doradus%20Administration%20-%20v2.3.1.18.html" />
-    <Document title="Protocols" href="Doradus%20Administration%20-%20v2.3.1.19.html" />
-    <Document title="Configuration and Data Files" href="Doradus%20Administration%20-%20v2.3.1.20.html" />
-    <Document title="Best Practices" href="Doradus%20Administration%20-%20v2.3.1.21.html" />
-    <Document title="Multi-Tenant Configuration" href="Doradus%20Administration%20-%20v2.3.1.22.html" />
-    <Document title="Tenant Mapping to Cassandra" href="Doradus%20Administration%20-%20v2.3.1.23.html" />
-    <Document title="Single-Tenant Operation" href="Doradus%20Administration%20-%20v2.3.1.24.html" />
-    <Document title="Multi-Tenant Operation" href="Doradus%20Administration%20-%20v2.3.1.25.html" />
-    <Document title="Managing Tenants" href="Doradus%20Administration%20-%20v2.3.1.26.html" />
-    <Document title="Creating a New Tenant" href="Doradus%20Administration%20-%20v2.3.1.27.html" />
-    <Document title="List All Tenants" href="Doradus%20Administration%20-%20v2.3.1.28.html" />
-    <Document title="List Tenant" href="Doradus%20Administration%20-%20v2.3.1.29.html" />
-    <Document title="Modify Tenant" href="Doradus%20Administration%20-%20v2.3.1.30.html" />
-    <Document title="Delete Tenant" href="Doradus%20Administration%20-%20v2.3.1.31.html" />
-    <Document title="Application Commands in Multi-Tenant Mode" href="Doradus%20Administration%20-%20v2.3.1.32.html" />
-    <Document title="System Commands in Multi-Tenant Mode" href="Doradus%20Administration%20-%20v2.3.1.33.html" />
-    <Document title="Doradus Configuration and Operation" href="Doradus%20Administration%20-%20v2.3.1.34.html" />
-    <Document title="Runtime Memory" href="Doradus%20Administration%20-%20v2.3.1.35.html" />
-    <Document title="Doradus Configuration Files" href="Doradus%20Administration%20-%20v2.3.1.36.html" />
-    <Document title="Setting Doradus Logging Options" href="Doradus%20Administration%20-%20v2.3.1.37.html" />
-    <Document title="Doradus Security Options" href="Doradus%20Administration%20-%20v2.3.1.38.html" />
-    <Document title="Securing the Doradus REST API" href="Doradus%20Administration%20-%20v2.3.1.39.html" />
-    <Document title="Securing the Doradus JMX API" href="Doradus%20Administration%20-%20v2.3.1.40.html" />
-    <Document title="Using a Secured CQL API" href="Doradus%20Administration%20-%20v2.3.1.41.html" />
-    <Document title="Configuring Doradus for Clusters" href="Doradus%20Administration%20-%20v2.3.1.42.html" />
-    <Document title="Configuration Parameters in doradus.yaml" href="Doradus%20Administration%20-%20v2.3.1.43.html" />
-    <Document title="Multi-tenant Mode Parameters" href="Doradus%20Administration%20-%20v2.3.1.44.html" />
-    <Document title="Default Services Parameter" href="Doradus%20Administration%20-%20v2.3.1.45.html" />
-    <Document title="Storage Services Parameter" href="Doradus%20Administration%20-%20v2.3.1.46.html" />
-    <Document title="Cassandra ColumnFamily Parameters" href="Doradus%20Administration%20-%20v2.3.1.47.html" />
-    <Document title="Cassandra Connection Parameters" href="Doradus%20Administration%20-%20v2.3.1.48.html" />
-    <Document title="Doradus REST API Parameters" href="Doradus%20Administration%20-%20v2.3.1.49.html" />
-    <Document title="Doradus Query Parameters" href="Doradus%20Administration%20-%20v2.3.1.50.html" />
-    <Document title="OLAP Parameters" href="Doradus%20Administration%20-%20v2.3.1.51.html" />
-    <Document title="Spider Parameters" href="Doradus%20Administration%20-%20v2.3.1.52.html" />
-    <Document title="Managing Doradus via JMX" href="Doradus%20Administration%20-%20v2.3.1.53.html" />
-    <Document title="ServerMonitor" href="Doradus%20Administration%20-%20v2.3.1.54.html" />
-    <Document title="StorageManager" href="Doradus%20Administration%20-%20v2.3.1.55.html" />
-    <Document title="Cassandra Configuration and Operation" href="Doradus%20Administration%20-%20v2.3.1.56.html" />
-    <Document title="Cassandra Script Files" href="Doradus%20Administration%20-%20v2.3.1.57.html" />
-    <Document title="Setting Cassandra Runtime Memory" href="Doradus%20Administration%20-%20v2.3.1.58.html" />
-    <Document title="Disabling Assertions" href="Doradus%20Administration%20-%20v2.3.1.59.html" />
-    <Document title="Cassandra Configuration Files" href="Doradus%20Administration%20-%20v2.3.1.60.html" />
-    <Document title="Setting Cassandra Logging Options" href="Doradus%20Administration%20-%20v2.3.1.61.html" />
-    <Document title="Setting Cassandra Data File Locations" href="Doradus%20Administration%20-%20v2.3.1.62.html" />
-    <Document title="Cassandra Security Options" href="Doradus%20Administration%20-%20v2.3.1.63.html" />
-    <Document title="Securing the Cassandra API" href="Doradus%20Administration%20-%20v2.3.1.64.html" />
-    <Document title="Securing the Cassandra JMX Protocol" href="Doradus%20Administration%20-%20v2.3.1.65.html" />
-    <Document title="Securing the Cassandra Gossip Protocol" href="Doradus%20Administration%20-%20v2.3.1.66.html" />
-    <Document title="Configuring Cassandra for Clusters" href="Doradus%20Administration%20-%20v2.3.1.67.html" />
-    <Document title="Other Cassandra Configuration Options" href="Doradus%20Administration%20-%20v2.3.1.68.html" />
-    <Document title="Monitoring Cassandra" href="Doradus%20Administration%20-%20v2.3.1.69.html" />
+    <Document title="Overview" href="Doradus%20Administration%20-%20v2.4.1.01.html" />
+    <Document title="Recent Changes" href="Doradus%20Administration%20-%20v2.4.1.02.html" />
+    <Document title="Architecture Overview" href="Doradus%20Administration%20-%20v2.4.1.03.html" />
+    <Document title="Installing and Running Doradus" href="Doradus%20Administration%20-%20v2.4.1.04.html" />
+    <Document title="Downloading Cassandra" href="Doradus%20Administration%20-%20v2.4.1.05.html" />
+    <Document title="Downloading Doradus" href="Doradus%20Administration%20-%20v2.4.1.06.html" />
+    <Document title="Compiling Doradus" href="Doradus%20Administration%20-%20v2.4.1.07.html" />
+    <Document title="Compiling with Maven" href="Doradus%20Administration%20-%20v2.4.1.08.html" />
+    <Document title="Compiling with Ant" href="Doradus%20Administration%20-%20v2.4.1.09.html" />
+    <Document title="Running Doradus Standalone" href="Doradus%20Administration%20-%20v2.4.1.10.html" />
+    <Document title="Running Doradus using Tomcat" href="Doradus%20Administration%20-%20v2.4.1.11.html" />
+    <Document title="Running Doradus as a Windows Service" href="Doradus%20Administration%20-%20v2.4.1.12.html" />
+    <Document title="Running Doradus as a Daemon" href="Doradus%20Administration%20-%20v2.4.1.13.html" />
+    <Document title="Embedding Doradus In Another Application" href="Doradus%20Administration%20-%20v2.4.1.14.html" />
+    <Document title="DoradusServer.main() and DoradusServer.startServer()" href="Doradus%20Administration%20-%20v2.4.1.15.html" />
+    <Document title="DoradusServer.startEmbedded()" href="Doradus%20Administration%20-%20v2.4.1.16.html" />
+    <Document title="Administrative REST Commands" href="Doradus%20Administration%20-%20v2.4.1.17.html" />
+    <Document title="Deployment Guidelines" href="Doradus%20Administration%20-%20v2.4.1.18.html" />
+    <Document title="Deployment Options" href="Doradus%20Administration%20-%20v2.4.1.19.html" />
+    <Document title="Hardware Recommendations" href="Doradus%20Administration%20-%20v2.4.1.20.html" />
+    <Document title="Security Best Practices" href="Doradus%20Administration%20-%20v2.4.1.21.html" />
+    <Document title="Multi-Tenant Configuration" href="Doradus%20Administration%20-%20v2.4.1.22.html" />
+    <Document title="Tenant Mapping to Cassandra" href="Doradus%20Administration%20-%20v2.4.1.23.html" />
+    <Document title="Single-Tenant Operation" href="Doradus%20Administration%20-%20v2.4.1.24.html" />
+    <Document title="Multi-Tenant Operation" href="Doradus%20Administration%20-%20v2.4.1.25.html" />
+    <Document title="Managing Tenants" href="Doradus%20Administration%20-%20v2.4.1.26.html" />
+    <Document title="Creating a New Tenant" href="Doradus%20Administration%20-%20v2.4.1.27.html" />
+    <Document title="List All Tenants" href="Doradus%20Administration%20-%20v2.4.1.28.html" />
+    <Document title="List Tenant" href="Doradus%20Administration%20-%20v2.4.1.29.html" />
+    <Document title="Modify Tenant" href="Doradus%20Administration%20-%20v2.4.1.30.html" />
+    <Document title="Delete Tenant" href="Doradus%20Administration%20-%20v2.4.1.31.html" />
+    <Document title="Application Commands in Multi-Tenant Mode" href="Doradus%20Administration%20-%20v2.4.1.32.html" />
+    <Document title="System Commands in Multi-Tenant Mode" href="Doradus%20Administration%20-%20v2.4.1.33.html" />
+    <Document title="Doradus Configuration and Operation" href="Doradus%20Administration%20-%20v2.4.1.34.html" />
+    <Document title="Setting Runtime Memory" href="Doradus%20Administration%20-%20v2.4.1.35.html" />
+    <Document title="Setting Doradus Logging Options" href="Doradus%20Administration%20-%20v2.4.1.36.html" />
+    <Document title="Securing the Doradus REST API" href="Doradus%20Administration%20-%20v2.4.1.37.html" />
+    <Document title="Securing the Doradus JMX API" href="Doradus%20Administration%20-%20v2.4.1.38.html" />
+    <Document title="Configuring Doradus for Clusters" href="Doradus%20Administration%20-%20v2.4.1.39.html" />
+    <Document title="Thrift API" href="Doradus%20Administration%20-%20v2.4.1.40.html" />
+    <Document title="CQL API" href="Doradus%20Administration%20-%20v2.4.1.41.html" />
+    <Document title="doradus.yaml Configuration Parameters" href="Doradus%20Administration%20-%20v2.4.1.42.html" />
+    <Document title="Multi-tenant Mode Parameters" href="Doradus%20Administration%20-%20v2.4.1.43.html" />
+    <Document title="default_services Parameter" href="Doradus%20Administration%20-%20v2.4.1.44.html" />
+    <Document title="storage_services Parameter" href="Doradus%20Administration%20-%20v2.4.1.45.html" />
+    <Document title="cf_defaults Parameters" href="Doradus%20Administration%20-%20v2.4.1.46.html" />
+    <Document title="Cassandra Connection Parameters" href="Doradus%20Administration%20-%20v2.4.1.47.html" />
+    <Document title="Doradus REST API Parameters" href="Doradus%20Administration%20-%20v2.4.1.48.html" />
+    <Document title="Doradus Query Parameters" href="Doradus%20Administration%20-%20v2.4.1.49.html" />
+    <Document title="OLAP Parameters" href="Doradus%20Administration%20-%20v2.4.1.50.html" />
+    <Document title="Spider Parameters" href="Doradus%20Administration%20-%20v2.4.1.51.html" />
+    <Document title="Managing Doradus via JMX" href="Doradus%20Administration%20-%20v2.4.1.52.html" />
+    <Document title="ServerMonitor" href="Doradus%20Administration%20-%20v2.4.1.53.html" />
+    <Document title="StorageManager" href="Doradus%20Administration%20-%20v2.4.1.54.html" />
   </DocumentInfo>
   <TopicMap />
 </WebWorksHelpBook>

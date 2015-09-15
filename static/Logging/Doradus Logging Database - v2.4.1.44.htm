@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Grouped Aggregates</title>
+    <link rel="StyleSheet" href="css/Doradus%20Logging%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Logging%20Database%20-%20v2.4.1.26.htm">REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Logging%20Database%20-%20v2.4.1.42.htm">Aggregate Query Command</a> : Grouped Aggregates</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0SF0HA">Grouped Aggregates</a></div>
+      <div class="Normal"><a name="pID0E0RF0HA">When a grouping parameter is provided, objects are divided into sets based on the distinct values created by the grouping expression. A separate metric value is computed for each group. Example:</a></div>
+      <div class="Code"><a name="pID0E0QF0HA">GET /LogDepot/AppLogs/_aggregate?m=COUNT(*)&amp;q=UserSID='S-1-5-18'&amp;f=EventID</a></div>
+      <div class="Normal"><a name="pID0E0PF0HA">This query searches for </a><span class="Code_Char">AppLogs</span> objects whose <span class="Code_Char">UserSID</span> field equals the value <span class="Code_Char">S-1-5-18</span>. Results are divided intro groups based on the <span class="Code_Char">EventID</span> field. A typical JSON result shown below:</div>
+      <div class="Code"><a name="pID0E0OF0HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0NF0HA">"aggregate": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0MF0HA">"metric": "COUNT(*)",</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0LF0HA">"query": "UserSID='S-1-5-18'",</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KF0HA">"group": "EventID"</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0JF0HA">},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0IF0HA">"totalobjects": "172274",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0HF0HA">"summary": "172274",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0GF0HA">"totalgroups": "19",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0FF0HA">"groups": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0EF0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0DF0HA">"metric": "1",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0CF0HA">"field": {"EventID": "512"}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0BF0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0AF0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E06E0HA">"metric": "7",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E05E0HA">"field": {"EventID": "514"}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E04E0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03E0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E02E0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E01E0HA">"metric": "1",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ZE0HA">"field": {"EventID": "806"}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0YE0HA">}}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0XE0HA">]</a></div>
+      <div class="Code"><a name="pID0E0WE0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0VE0HA">For grouped aggregate queries, the </a><span class="Code_Char">results</span> element contains a <span class="Code_Char">groups</span> element, which contains one <span class="Code_Char">group</span> element for each group value. Each <span class="Code_Char">group</span> contains the <span class="Code_Char">field</span> name and value for that group and the corresponding <span class="Code_Char">metric</span> value. The <span class="Code_Char">totalobjects</span> value computes the number of objects selected in the computation. The <span class="Code_Char">summary</span> value computes the metric value across all selected objects independent of groups, which, for <span class="Code_Char">COUNT(*)</span>, is the same as the <span class="Code_Char">totalobjects</span> value.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Applications</title>
+    <link rel="StyleSheet" href="css/Doradus%20Logging%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Logging%20Database%20-%20v2.4.1.05.htm">Logging Data Model</a> : Applications</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0PU0HA">Applications</a></div>
+      <div class="Normal"><a name="pID0E0OU0HA">An application is a named schema hosted in a Doradus cluster. An application’s name is a unique identifier, which must begin with a letter and contain only letters, digits, or underscores. An application’s data is stored in </a><span style="font-style: italic">tables</span>, which are isolated from other applications. Example application names are <span class="Code_Char">MyLogs </span>and <span class="Code_Char">Magellan_1</span>.</div>
+      <div class="Normal"><a name="pID0E0NU0HA">Each application is defined in a </a><span style="font-style: italic">schema</span>. An example schema for declaring a Logging application called <span class="Code_Char">LogDepot</span> is shown below in XML:</div>
+      <div class="Code"><a name="pID0E0MU0HA">&lt;application name="LogDepot"&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0LU0HA">&lt;options&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KU0HA">&lt;option name="StorageService"&gt;LoggingService&lt;/option&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0JU0HA">&lt;/options&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0IU0HA">&lt;tables&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0HU0HA">&lt;table name="AppLogs"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0GU0HA">/tables&gt;</a></div>
+      <div class="Code"><a name="pID0E0FU0HA">&lt;/application&gt;</a></div>
+      <div class="Normal"><a name="pID0E0EU0HA">The same schema is shown below in JSON:</a></div>
+      <div class="Code"><a name="pID0E0DU0HA">{"LogDepot": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0CU0HA">"options": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0BU0HA">"StorageService": "LoggingService"</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0AU0HA">},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E06T0HA">"tables": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E05T0HA">"AppLogs": {}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E04T0HA">}</a></div>
+      <div class="Code"><a name="pID0E03T0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E02T0HA">The application is created with the REST command </a><span class="Code_Char">POST /_applications</span> using the appropriate <span class="Code_Char">Content-Type</span>. (See the <span style="font-weight: bold">REST Commands</span> section for more details.) This schema creates the <span class="Code_Char">LogDepot</span> application and assigns storage management to the Logging service. It also declares a single table, called <span class="Code_Char">AppLogs</span>. Additional tables can be defined if we want separate collections. More tables can be added later by modifying the schema and sending it with the REST command <span class="Code_Char">PUT /_applications/LogDepot</span>.</div>
+      <div class="Normal"><a name="pID0E01T0HA">Applications can be assigned an optional </a><span style="font-style: italic">key</span>, which is declared as follows:</div>
+      <div class="Code"><a name="pID0E0ZT0HA">{"LogDepot": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0YT0HA">"key": "Sassafras",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0XT0HA">...</a></div>
+      <div class="Code"><a name="pID0E0WT0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0VT0HA">When a </a><span class="Code_Char">key</span> is defined, it must be provided when modifying the application’s schema or deleting it. This provides an extra safety check to prevent accidental application changes.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

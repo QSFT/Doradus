@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Securing the Doradus JMX API</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.34.html">Doradus Configuration and Operation</a> : Securing the Doradus JMX API</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0YF0HA">Securing the Doradus JMX API</a></div>
+      <div class="Normal"><a name="pID0E0XF0HA">Doradus supports the Java Management Extensions (JMX) protocol for monitoring Doradus and performing certain administrative commands. JMX can be secured with authorization and/or encryption, however, security JMX security is disabled in the </a><span class="Code_char">{doradus_home}/bin/doradus-server.bat</span> file included with Doradus. The common JMX options are defined in variables at the top of the file as shown below:</div>
+      <div class="Code"><a name="pID0E0WF0HA">set JMX_PORT=9999</a></div>
+      <div class="Code"><a name="pID0E0VF0HA">set JMX_SSL=false</a></div>
+      <div class="Code"><a name="pID0E0UF0HA">set JMX_AUTHENTICATE=false</a></div>
+      <div class="Normal"><a name="pID0E0TF0HA">These options are summarized below:</a></div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char" style="font-weight: bold"><a name="pID0E0SF0HA">JMX_PORT</a></span>: This variable sets the <span class="Code_char">com.sun.management.jmxremote.port</span> define in the JVM, which is the port number that the remote JMX clients must use. As shown, port 9999 is the default used for Doradus.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char" style="font-weight: bold"><a name="pID0E0RF0HA">JMX_SSL</a></span>: This variable sets the <span class="Code_char">com.sun.management.jmxremote.ssl</span> define in the JVM. When set to <span class="Code_char">true</span>, it requires remote clients to use SSL (TLS) to connect to the JMX port. When SSL is enabled, additional options are available to require remote clients to have a client-side certificate.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char" style="font-weight: bold"><a name="pID0E0QF0HA">JMX_AUTHENTICATE</a></span>: This variable sets the <span class="Code_char">com.sun.management.jmxremote.authenticate</span> define in the JVM. When set to true, it requires remote clients to provide a user ID and password in order to connect. Additional parameters are required to define allowed user IDs and passwords and the locations of the corresponding files.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0PF0HA">Because JMX is a standard and external documentation is available for securing JMX, details for using SSL and/or authentication are not covered here. See for example the following:</a></div>
+      <div class="Normal" style="text-indent: 18pt"><span class="Hyperlink"><a href="http://docs.oracle.com/javase/6/docs/technotes/guides/management/agent.html" target="external_window" name="pID0E0OF0HA">http://docs.oracle.com/javase/6/docs/technotes/guides/management/agent.html</a></span></div>
+      <div class="Normal"><a name="pID0E0NF0HA">Though not shown above, here is another useful option: On multi-homed systems, </a><span class="Code_char">java.rmi.server.hostname</span> can be set to a specific IP address, causing JMX to bind to that address instead of the default one. For example:</div>
+      <div class="Code"><a name="pID0E0MF0HA">set JAVA_OPTS=</a></div>
+      <div class="Code"><a name="pID0E0LF0HA">...</a></div>
+      <div class="Code"><a name="pID0E0KF0HA"> -D</a><span class="Code_char">java.rmi.server.hostname</span>=10.1.82.121^</div>
+      <div class="Code"><a name="pID0E0JF0HA">...</a></div>
+      <div class="Normal"><a name="pID0E0IF0HA">This causes the JMX port to bind to address 10.1.82.121.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

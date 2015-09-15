@@ -1,0 +1,23 @@
+function FileData_Pairs(x)
+{
+x.t("simplified","version");
+x.t("version","core");
+x.t("describes","requirements");
+x.t("nature","objects");
+x.t("uses","simplified");
+x.t("doradus","logging");
+x.t("doradus","data");
+x.t("requirements","options");
+x.t("creating","logging");
+x.t("logging","uses");
+x.t("logging","data");
+x.t("logging","application");
+x.t("options","creating");
+x.t("section","describes");
+x.t("core","doradus");
+x.t("data","model");
+x.t("application","nature");
+x.t("model","doradus");
+x.t("model","logging");
+x.t("model","section");
+}

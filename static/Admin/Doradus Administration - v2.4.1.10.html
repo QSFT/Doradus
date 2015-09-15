@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Running Doradus Standalone</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.04.html">Installing and Running Doradus</a> : Running Doradus Standalone</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0XS0HA">Running Doradus Standalone</a></div>
+      <div class="Normal"><a name="pID0E0WS0HA">Java 1.8 is required to run Doradus. The easiest way to run Doradus is as a stand-alone application using its embedded Jetty server. If you build Doradus using Maven, from the directory </a><span class="Code_char">{doradus_home}/doradus-jetty</span> use a command such as the following </div>
+      <div class="Code"><a name="pID0E0VS0HA">java -cp ./target/classes:./target/dependency/* com.dell.doradus.core.DoradusServer</a></div>
+      <div class="Normal"><a name="pID0E0US0HA">If you compiled Doradus with Ant, use a command such as the following:</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0TS0HA">java -cp ./lib/*:../doradus-server/config:../doradus-server/lib/* com.dell.doradus.core.DoradusServer</a></div>
+      <div class="Normal"><a name="pID0E0SS0HA">Parameters are passed to Doradus as follows:</a></div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0RS0HA">Configurable parameters are defined in the file </a><span class="Code_char">doradus.yaml</span>. In Github, it resides in the folder <span class="Code_char">doradus-server/src/main/resources</span>. During builds, this file is copied to the folder <span class="Code_char">doradus-server/target/classes</span> (Maven) or <span class="Code_char">doradus-server/config</span> (Ant). This appropriate folder should be in your <span class="Code_char">classpath</span>. You can specify an alternate location with the following Java parameter:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QS0HA">-Ddoradus.config=file:/Doradus/my-doradus.yaml</a></div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0PS0HA">Logging options are defined in the file </a><span class="Code_char">log4j.properties</span>, which resides in the same folder as <span class="Code_char">doradus.yaml</span>. Specify an alternate location with the parameter:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OS0HA">-Dlog4j.configuration=file:/Doradus/mylog4j.properties</a></div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0NS0HA">Most </a><span class="Code_char">doradus.yaml</span> parameters can be overridden in command line arguments by prepending a "-" to the parameter name. For example, to override <span class="Code_char">restport</span>, add the command line argument:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0MS0HA">-restport 5711</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0LS0HA">List-valued parameter values should be separated with commas and no spaces.  Example:</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KS0HA">-tls_cipher_suites TLS_ECDH_RSA_WITH_AES_128_CBC_SHA,TLS_ECDH_RSA_WITH_AES_256_CBC_SHA</a></div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0JS0HA">Instead of modifying doradus.yaml or passing command line arguments, you can place all your non-default configuration parameters in their own file and specify the file’s location with a single command-line argument </a><span class="Code_char">-param_override_filename</span>. Example:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><span class="Code_char"><a name="pID0E0IS0HA">-param_override_filename /Users/Me/myoverrides.yaml</a></span></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

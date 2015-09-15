@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Logging Service Features</title>
+    <link rel="StyleSheet" href="css/Doradus%20Logging%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Logging%20Database%20-%20v2.4.1.02.htm">Logging Database Overview</a> : Logging Service Features</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0WV0HA">Logging Service Features</a></div>
+      <div class="Normal"><a name="pID0E0VV0HA">Doradus uses a NoSQL database such as Cassandra for persistence. Each </a><span style="font-style: italic">storage service</span> organizes data into rows and columns using techniques beneficial to specific application types. The unique features of the Logging service are summarized below:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0UV0HA">Designed for immutable time-series data</a></span>: The Logging service is designed for time-stamped objects that are not modified once added. Special storage techniques are used that leverage each object’s timestamp and immutability, yielding fast loading, fast time-based queries, and dense storage.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0TV0HA">Irregular data</a></span>: Logging application objects can be highly irregular, using different fields for each object. This is useful, for example, when log records have a variable format or when logs from multiple user applications are stored in the same table.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0SV0HA">Space usage</a></span>: The Logging service “hyper compresses” data using special storage and compression techniques. For example, a batch of 64,000 objects that requires 10MB uncompressed and 1MB using GZIP compression requires only 250KB when stored in the Logging service.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0RV0HA">Fast loading</a></span>: The Logging service can load data up to 500K objects per second on a single node.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0QV0HA">Queries</a></span>: Object and aggregate queries can scan millions of objects per second without indexes. Query processing is designed to make time-constrained queries especially efficient. Even with irregular objects, all fields are queryable.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0PV0HA">Live data</a></span>: All data can be queried as soon as it is stored. Multiple applications can store objects with overlapping and out-of-sequence timestamps simultaneously.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0OV0HA">Data aging</a></span>: A Logging application schema can define automatic data aging, causing expired objects to be deleted automatically.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0NV0HA">Because of its focus, the Logging service imposes restrictions compared to other Doradus storage services. In addition to requiring immutable, time-stamped objects, the Logging service has these restrictions:</a></div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><span style="font-weight: bold"><a name="pID0E0MV0HA">No object IDs</a></span>: Logging service objects do not require nor use object IDs.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><span style="font-weight: bold"><a name="pID0E0LV0HA">SV scalar fields only</a></span>: Link fields are not supported; each consists of single-valued (SV) scalar fields only.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><span style="font-weight: bold"><a name="pID0E0KV0HA">Text field semantics</a></span>: Except for the required <span class="Code_Char">Timestamp</span> field, which is a timestamp value, queries treat all fields like text fields even if they contain data that is numeric, Boolean, etc. Queries that use numeric literals will work in some cases such as the clause <span class="Code_Char">EventID IN [500 TO 600]</span>. However, the clause <span class="Code_Char">EventID IN [500 TO 1000]</span> will not work as expected since <span class="Code_Char">EventID</span> and the values <span class="Code_Char">500</span> and <span class="Code_Char">1000</span> are treated as text strings.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><span style="font-weight: bold"><a name="pID0E0JV0HA">Metric functions</a></span>: In aggregate queries, the Logging service currently only supports the metric function <span class="Code_Char">COUNT(*)</span>. Similarly, metric <span style="font-style: italic">expressions</span> (e.g., <span class="Code_Char">COUNT(*)+10</span>) are not supported.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><span style="font-weight: bold"><a name="pID0E0IV0HA">Single-level grouping</a></span>: In aggregate queries, only a single grouping expression can be provided. Also, some grouping functions such as <span class="Code_Char">BATCH</span> and <span class="Code_Char">SETS</span> are not yet supported.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0HV0HA">Most of these restrictions will be lifted as the Logging service evolves.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

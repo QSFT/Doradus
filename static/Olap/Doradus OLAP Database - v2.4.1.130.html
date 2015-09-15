@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Verify Shard</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.4.1.108.html">OLAP REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.4.1.125.html">Shard Management Commands</a> : Verify Shard</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E03J0HA">Verify Shard</a></div>
+      <div class="Normal"><a name="pID0E02J0HA">A shard can be verified for integrity issues by using the following command:</a></div>
+      <div class="Code"><a name="pID0E01J0HA">GET /{application}/_verify/{shard}</a></div>
+      <div class="Normal"><a name="pID0E0ZJ0HA">The command returns an error only if the application name is unknown. Otherwise, it returns a 200 OK is returned regardless of whether the given shard exists or not. If the shard does exist, a background task is launched to check the integrity of the shard’s data segments. Depending on the size of the shard, this may take a while. The results of the verification can be found by examining the Doradus server’s log file. A typical result is shown below:</a></div>
+      <div class="Code"><a name="pID0E0YJ0HA">16:53:12,887 INFO CheckDatabase:   Checking shard S1</a></div>
+      <div class="Code"><a name="pID0E0XJ0HA">16:53:12,901 INFO CheckDatabase:   Successfully checked 0 segments</a></div>
+      <div class="Normal"><a name="pID0E0WJ0HA">If errors are detected, the results should be interpreted by someone familiar with Doradus OLAP internals.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

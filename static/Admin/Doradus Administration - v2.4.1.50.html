@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>OLAP Parameters</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.34.html">Doradus Configuration and Operation</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.42.html">doradus.yaml Configuration Parameters</a> : OLAP Parameters</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0NB0HA">OLAP Parameters</a></div>
+      <div class="Normal"><a name="pID0E0MB0HA">These parameters control the operation of the OLAP service:</a></div>
+      <div class="Code"><a name="pID0E0LB0HA">olap_cache_size_mb: 100</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0KB0HA">This parameter controls the memory size of the most-recently-used field cache. If this value is exceeded, older fields will be un-loaded from memory.</a></div>
+      <div class="Code"><a name="pID0E0JB0HA">olap_file_cache_size_mb: 100</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0IB0HA">When this value is non-zero, it enables OLAP “file” caching and sets the total size, in megabytes, of the cached data. OLAP uses virtual files to hold raw scalar values such as text values. Caching this data prevents round-trips to the database for certain types of queries. This value does not affect shard caching defined by other parameters.</a></div>
+      <div class="Code"><a name="pID0E0HB0HA">olap_query_cache_size_mb: 100</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0GB0HA">When this value is non-zero, it enables recent query result caching and sets the total size, in megabytes, of the cached search results. Each cached result takes 1 bit per each object in the table.</a></div>
+      <div class="Code"><a name="pID0E0FB0HA">olap_cf_defaults:</a></div>
+      <div class="Code"><a name="pID0E0EB0HA">    - compression_options:</a></div>
+      <div class="Code"><a name="pID0E0DB0HA">        - sstable_compression:  "" # use empty string for "none"</a></div>
+      <div class="Code"><a name="pID0E0CB0HA">    - gc_grace_seconds: 3600</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0BB0HA">This parameter is used to create the OLAP ColumnFamily. All parameters recognized by Cassandra are accepted and passed “as is”. Parameters must be indented and begin with a “-“; sub-parameters must be further indented. The OLAP ColumnFamily is created when the server is first started for a new database. If the OLAP ColumnFamily already exists, it is not modified to match these parameters. See Cassandra documentation for details about these values. Note that Doradus automatically compresses data before storing in Cassanda, hence compression should be disabled for the OLAP ColumnFamily.</a></div>
+      <div class="Code"><a name="pID0E0AB0HA">olap_merge_threads: 0</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E6HA">This parameter controls the number of threads used to merge data within a shard. The default value of 0 means that a single thread is used to merge all data. When this value is &gt; 0, multiple threads are used to merge shard data in parallel. Increasing this value can significantly decrease the time needed to merge shards. However, it must be balanced with the number of processors available on the machine.</a></div>
+      <div class="Code"><a name="pID0E5HA">olap_compression_threads: 0</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E4HA">This parameter controls the number of threads used to compress data before storing in Cassandra. This parameter interacts with </a><span class="Code_char">olap_merge_threads</span> as follows:</div>
+      <div class="Bullet_outer" style="margin-left: 36pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E3HA">If both </a><span class="Code_char">olap_merge_threads</span> and <span class="Code_char">olap_compression_threads</span> = 0, then a single thread is used to merge and store all data for each thread.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 36pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E2HA">If </a><span class="Code_char">olap_merge_threads</span> &gt; 0 and <span class="Code_char">olap_compression_threads</span> = 0, then each merge thread both merges data and compresses all segments before writing to Cassandra.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 36pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E1HA">If </a><span class="Code_char">olap_compression_threads</span> &gt; 0, then the merge thread(s) create data segments that are then queued for compression in the specified number of asynchronous compression threads.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0EZHA">Setting </a><span class="Code_char">olap_compression_threads</span> &gt; 0 can significantly decrease the time needed to merge large OLAP shards. However, the value used must be balanced with <span class="Code_char">olap_merge_threads</span> and the number of cores available on the system.</div>
+      <div class="Code"><a name="pID0EYHA">olap_compression_level: -1</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0EXHA">This parameter controls the GZIP compression level used to compress data in OLAP before storage. The default value, -1, is the same as value 6, which is a good balance between speed and space usage. Value 0 means “no compression”, which speeds shard merge time but requires the most amount of disk space. Value 9 means “best compression”, which requires the most CPU but uses the least amount of disk space. Tests suggest that levels 2, 4, and 6 are good choices.</a></div>
+      <div class="Code"><a name="pID0EWHA">olap_search_threads: 0</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0EVHA">This parameter controls the number of threads used to perform multi-shard queries. When this value is &gt; 0, up to the configured number of threads can be used by a single query to search different shards in parallel. Increasing this value can significantly improve performance for certain threads. However, it must be balanced with the number of processors available on the machine.</a></div>
+      <div class="Normal"><a name="pID0EUHA">One parameter worth highlighting is the OLAP ColumnFamily’s </a><span class="Code_char">gc_grace_seconds</span>. This value controls how long deleted rows called “tombstones” are retained with data tables (called <span style="font-style: italic">sstables</span>) before they are truly deleted during a compaction cycle. The default is 864,000 seconds or 10 days, which provides lots of time for a failed node to recover and learn about deletions it may have missed. However, the OLAP service deletes many rows when it merges a shard, and these rows consume disk space. Moreover, they consume memory because active sstables are memory-mapped (mmap-ed) by Cassandra. This can cause excessive memory usage.</div>
+      <div class="Normal"><a name="pID0ETHA">A much smaller </a><span class="Code_char">gc_grace_seconds</span> value is recommended for the OLAP CF, somewhere between 3600 (a hour) and 86400 (1 day). This causes tombstones to be deleted more quickly, freeing-up disk space and reducing memory usage.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Multi-shard and Uncommitted Data Queries</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.4.1.063.html">OLAP Object Queries</a> : Multi-shard and Uncommitted Data Queries</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0CRB0HA">Multi-shard and Uncommitted Data Queries</a></div>
+      <div class="Normal"><a name="pID0E0BRB0HA">An object query whose </a><span class="Code_Char">range</span> or <span class="Code_Char">shards</span> parameter selects more than one shard is called a <span style="font-style: italic">multi-shard</span> query. Because each shard is analogous to a self-contained database, an object with a given ID may be inserted into the same table in multiple shards. A single multi-shard query could therefore select objects with the same ID in multiple shards. However, since a given object ID is returned only once, only object amount the duplicate IDs is returned from one of the shards.</div>
+      <div class="Normal"><a name="pID0E0ARB0HA">In the query result, the </a><span class="Code_Char">totalobjects</span> field indicates how many objects were selected across all shards, including those with duplicate IDs. For each object returned, the <span class="Code_Char">_shard</span> field indicates the shard from which the corresponding object was selected. Example (in JSON):</div>
+      <div class="Code"><a name="pID0E06QB0HA">GET Email/Message/_query?q=Size&gt;10000&amp;range=&amp;uncommitted=true</a></div>
+      <div class="Code"><a name="pID0E05QB0HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E04QB0HA">"totalobjects": "11",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E03QB0HA">"docs": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E02QB0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E01QB0HA">"_ID":" +/pz/q4Jf8Rc2HK9Cg08TA==",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ZQB0HA">"_shard": "2015-01-01",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YQB0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XQB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0WQB0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0VQB0HA">"_ID": "+/wqUBY1WsGtb7zjpKYf7w==",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0UQB0HA">"_shard": "2015-01-02",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0TQB0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SQB0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0RQB0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0QQB0HA">]</a></div>
+      <div class="Code"><a name="pID0E0PQB0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0OQB0HA">A similar process occurs when a query includes unmerged batches by adding the option </a><span class="Code_Char">&amp;uncommitted=true</span>. An unmerged batch acts like a “mini shard”: if it includes object IDs that already exist in the merged (“live”) shard, only one of the objects is returned by the query. Furthermore, the update batches will not be applied to the “live” object, hence multi-value scalar updates and link updates will not be reflected. If an update batch deletes an object, the delete will not yet be applied.</div>
+      <div class="Normal"><a name="pID0E0NQB0HA">However, when update batches only add new objects, it can be beneficial to include uncommitted data. Essentially, the query includes the latest, live data without having to wait for the underlying shard to be merged.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Updates</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.4.1.003.html">OLAP Database Overview</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.4.1.008.html">Optimizing OLAP Applications</a> : Updates</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0JQC0HA">Updates</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0IQC0HA">Embed Doradus</a></span>: The REST API cuts load time roughly in half (possibly more) due to marshaling, network transfer, parsing, etc. For bulk loading data, you can treat the Doradus server as a “driver” and embed it in the same JVM as your application. (Obviously, this only works with JVM-based applications.) More information about embedding Doradus is provided in the <span style="font-weight: bold">Doradus Administration</span> documentation, but here are the highlights:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 54pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-family: &quot;Courier New&quot;">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0HQC0HA">Call </a><span class="Code_Char">DoradusServer.startEmbedded(String[] args, String[] services)</span> or <span class="Code_Char">DoradusServer. startServerUnblocked(String[] args)</span> to start the server.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 54pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-family: &quot;Courier New&quot;">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0GQC0HA">Load only the services you need for your embedded application, possibly only the OLAP service. For example, if you use </a><span class="Code_Char">startEmbedded()</span>, pass <span class="Code_Char">com.dell.doradus.service.olap.OLAPService</span> in the second parameter.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 54pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-family: &quot;Courier New&quot;">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0FQC0HA">Find your application’s </a><span class="Code_Char">ApplicationDefinition</span> by calling <span class="Code_Char">SchemaService.instance().getApplication(String appName)</span>, then add a batch of data by creating an <span class="Code_Char">OlapBatch</span> object and pass it to one of the <span class="Code_Char">OlapService.instance().addBatch()</span> methods.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0EQC0HA">Use HTTP compression</a></span>: If you use the REST API, compress input batches using GZIP and add the HTTP header <span class="Code_Char">Content-Encoding: gzip</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0DQC0HA">Optimize batch size</a></span>: OLAP works best with update batches containing 100’s to 1000’s of objects depending on your schema and data size. Shards containing lots of small batches take longer to merge, so experiment with batch size and merge frequency to determine the optimal batch size for your application.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0CQC0HA">Use multiple threads</a></span>: Whether you use the REST API or embed Doradus in your application, OLAP benefits from loading data in concurrent threads. More load threads requires more memory and CPU, so balance the number of load threads with available resources.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0BQC0HA">Enable </a></span><span class="Code_Char" style="font-weight: bold">olap_merge_threads</span>: This doradus.yaml file parameter can be used to merge data segments in parallel even for a single load thread. It defaults to 0 (single-threaded merging). You can set this value up to the number of CPUs to decrease merge time.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0AQC0HA">Enable </a></span><span class="Code_Char" style="font-weight: bold">olap_compression_threads</span>: This doradus.yaml file parameter can be used to compress data segments in parallel even for a single load thread. It defaults to 0 (single-threaded compression). You can set this value up to the number of CPUs to decrease merge time.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E06PC0HA">Adjust </a></span><span class="Code_Char" style="font-weight: bold">olap_compression_level</span>: This doradus.yaml file parameter controls the GZIP compression level used when data segments are compressed. The default value (-1, which is the same as 6) selects a good balance between CPU time and compression ratio. If you select a smaller value such as 2 or 4, compression speed will improve, which reduces merge time, at a cost of using more disk space. The highest value (9) employs maximum compression, using more CPU and therefore lengthening merge time.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E05PC0HA">Use background merging</a></span>: Instead of explicitly requesting merges via REST commands, you can schedule automatic background merges by setting the application option <span class="Code_Char">auto-merge</span> to a value such as <span class="Code_Char">1 HOUR</span>. This simplifies application logic, and on clusters it distributes load tasks among Doradus instances. Background merging can also reduce the need to increase <span class="Code_Char">olap_merge_threads</span> or <span class="Code_Char">olap_compression_threads</span>, freeing-up CPU and memory resources.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

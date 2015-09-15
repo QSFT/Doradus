@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Thrift API</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.34.html">Doradus Configuration and Operation</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.39.html">Configuring Doradus for Clusters</a> : Thrift API</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0CF0HA">Thrift API</a></div>
+      <div class="Normal"><a name="pID0E0BF0HA">When Thrift is used (</a><span class="Code_char">use_cql</span> is <span class="Code_char">false</span>), all hosts specified in dbhost are used in a round-robin manner. If a host fails, it is skipped and periodically retried. This achieves load balancing across a set of servers.</div>
+      <div class="Normal"><a name="pID0E0AF0HA">Alternatively, you can set dbhost to a primary Cassandra node or set of nodes and failover to a secondary list of nodes only the primary node(s) are all unavailable. To do this, specify one or more Cassandra nodes using the </a><span class="Code_char">secondary_dbhost</span> parameter. Example:</div>
+      <div class="Code"><a name="pID0E06E0HA">dbhost: 10.1.82.146</a></div>
+      <div class="Code"><span class="Code_char"><a name="pID0E05E0HA">secondary_dbhost</a></span>: 10.1.82.147, 10.1.82.148</div>
+      <div class="Normal"><a name="pID0E04E0HA">This example tells Doradus to use 10.1.82.146 exclusively (perhaps because network-near) and failover to 10.1.82.147 and 10.1.82.148 only if the primary node becomes available.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

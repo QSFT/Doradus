@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Compiling with Maven</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.04.html">Installing and Running Doradus</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.07.html">Compiling Doradus</a> : Compiling with Maven</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E06T0HA">Compiling with Maven</a></div>
+      <div class="Normal"><a name="pID0E05T0HA">From the parent folder, enter the following Maven command:</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E04T0HA">mvn clean install dependency:copy-dependencies -DskipTests=true -Dgpg.skip=true<br />-Dmaven.javadoc.skip=true</a></div>
+      <div class="Normal"><a name="pID0E03T0HA">This command compiles all Doradus components: </a><span class="Code_char">doradus-client</span>, <span class="Code_char">doradus-common</span>, <span class="Code_char">doradus-server, doradus-jetty</span>, etc. Class and jar files are created under <span class="Code_char">target</span> subdirectories of each component, and dependent jar files are copied to <span class="Code_char">target/dependency</span> folders under each component. Therefore, you should see a directory structure similar to this:</div>
+      <div class="Code"><a name="pID0E02T0HA">./Doradus (or whatever your root directory is)</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E01T0HA">/doradus-client</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZT0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0YT0HA">/doradus-common</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XT0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0WT0HA">/doradus-server</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VT0HA">/config</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0UT0HA">/script</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TT0HA">/src</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ST0HA">/target</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0RT0HA">/classes</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0QT0HA">/com</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0PT0HA">doradus.yaml</a></div>
+      <div class="Code" style="margin-left: 90pt"><a name="pID0E0OT0HA">log4j.properties</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0NT0HA">/dependency</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0MT0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0LT0HA">/doradus-jetty</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KT0HA">...</a></div>
+      <div class="Normal"><a name="pID0E0JT0HA">In general, resource files are copied to </a><span class="Code_char">target/classes</span> folder. Jar files needed for runtime reside in the <span class="Code_char">target</span> and <span class="Code_char">target/dependency</span> folders.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

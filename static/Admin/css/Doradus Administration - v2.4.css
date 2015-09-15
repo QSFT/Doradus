@@ -1,0 +1,330 @@
+div.Normal
+{
+  font-family: Arial;
+  font-size: 10pt;
+  margin-bottom: 12pt;
+  margin-top: 12pt;
+  text-align: left;
+}
+
+.Normal_outer
+{
+  margin-bottom: 12pt;
+  margin-top: 12pt;
+}
+
+.Normal_inner
+{
+  font-family: Arial;
+  font-size: 10pt;
+  text-align: left;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.Heading_1
+{
+  color: #345A8A;
+  font-family: Arial;
+  font-size: 14pt;
+  font-weight: bold;
+  margin-bottom: 12pt;
+  margin-left: 18pt;
+  margin-top: 12pt;
+  text-indent: -18pt;
+}
+
+.Heading_1_outer
+{
+  margin-bottom: 12pt;
+  margin-top: 12pt;
+}
+
+.Heading_1_inner
+{
+  color: #345A8A;
+  font-family: Arial;
+  font-size: 14pt;
+  font-weight: bold;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.Heading_2
+{
+  color: #345A8A;
+  font-family: Arial;
+  font-size: 13pt;
+  font-weight: bold;
+  margin-bottom: 12pt;
+  margin-left: 39.6pt;
+  margin-top: 12pt;
+  text-indent: -39.6pt;
+}
+
+.Heading_2_outer
+{
+  margin-bottom: 12pt;
+  margin-top: 12pt;
+}
+
+.Heading_2_inner
+{
+  color: #345A8A;
+  font-family: Arial;
+  font-size: 13pt;
+  font-weight: bold;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.Heading_3
+{
+  color: #4F81BD;
+  font-family: Arial;
+  font-size: 12pt;
+  font-weight: bold;
+  margin-bottom: 0pt;
+  margin-left: 61.2pt;
+  margin-top: 10pt;
+  text-indent: -61.2pt;
+}
+
+.Heading_3_outer
+{
+  margin-bottom: 0pt;
+  margin-top: 10pt;
+}
+
+.Heading_3_inner
+{
+  color: #4F81BD;
+  font-family: Arial;
+  font-size: 12pt;
+  font-weight: bold;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.List_Paragraph
+{
+  font-family: Arial;
+  font-size: 11pt;
+  margin-bottom: 12pt;
+  margin-left: 36pt;
+  margin-top: 12pt;
+}
+
+.List_Paragraph_outer
+{
+  margin-bottom: 12pt;
+  margin-top: 12pt;
+}
+
+.List_Paragraph_inner
+{
+  font-family: Arial;
+  font-size: 11pt;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.List_Bullet
+{
+  font-family: Arial;
+  font-size: 10pt;
+  margin-bottom: 12pt;
+  margin-left: 18pt;
+  margin-top: 12pt;
+  text-align: left;
+  text-indent: -18pt;
+}
+
+.List_Bullet_outer
+{
+  margin-bottom: 12pt;
+  margin-top: 12pt;
+}
+
+.List_Bullet_inner
+{
+  font-family: Arial;
+  font-size: 10pt;
+  text-align: left;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.Bullet
+{
+  font-family: Arial;
+  font-size: 10pt;
+  margin-bottom: 12pt;
+  margin-left: 18pt;
+  margin-top: 12pt;
+  text-align: left;
+  text-indent: -18pt;
+}
+
+.Bullet_outer
+{
+  margin-bottom: 12pt;
+  margin-top: 12pt;
+}
+
+.Bullet_inner
+{
+  font-family: Arial;
+  font-size: 10pt;
+  text-align: left;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.Caption
+{
+  color: #4F81BD;
+  font-family: Arial;
+  font-size: 10pt;
+  font-weight: bold;
+  margin-bottom: 10pt;
+  margin-top: 0pt;
+  text-align: left;
+}
+
+.Caption_outer
+{
+  margin-bottom: 10pt;
+  margin-top: 0pt;
+}
+
+.Caption_inner
+{
+  color: #4F81BD;
+  font-family: Arial;
+  font-size: 10pt;
+  font-weight: bold;
+  text-align: left;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.Code
+{
+  color: #4A442A;
+  font-family: Consolas;
+  font-size: 9.5pt;
+  margin-bottom: auto;
+  margin-left: 18pt;
+  margin-top: auto;
+  white-space: nowrap;
+}
+
+.Code_outer
+{
+  margin-bottom: auto;
+  margin-top: auto;
+}
+
+.Code_inner
+{
+  color: #4A442A;
+  font-family: Consolas;
+  font-size: 9.5pt;
+  white-space: nowrap;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+span.Hyperlink
+{
+  color: #0000FF;
+  text-decoration: underline;
+}
+
+span.Code_char
+{
+  color: #4A442A;
+  font-family: Consolas;
+  font-size: 9.5pt;
+  font-style: normal;
+  font-weight: normal;
+}
+
+table.Table_Normal
+{
+  border-collapse: collapse;
+  margin-left: -5.4pt;
+  padding-bottom: 0pt;
+  padding-left: 5.4pt;
+  padding-right: 5.4pt;
+  padding-top: 0pt;
+}
+
+table.Table_Grid
+{
+  border-collapse: collapse;
+}
+
+img.Default
+{
+  left: 0pt;
+  margin-left: 0pt;
+  padding-left: 0%;
+  position: static;
+}
+

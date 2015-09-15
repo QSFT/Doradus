@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Add Objects Command</title>
+    <link rel="StyleSheet" href="css/Doradus%20Logging%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Logging%20Database%20-%20v2.4.1.26.htm">REST Commands</a> : Add Objects Command</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E06J0HA">Add Objects Command</a></div>
+      <div class="Normal"><a name="pID0E05J0HA">The Logging service supports a single Add Objects command to add new data. Since data is immutable, existing objects cannot be modified. Objects are automatically deleted when table-level data aging is requested. A batch of new objects is added to a specific table using the following REST command:</a></div>
+      <div class="Code"><a name="pID0E04J0HA">POST /{application}/{table}</a></div>
+      <div class="Normal"><a name="pID0E03J0HA">where </a><span class="Code_Char">{application}</span> is the application name and <span class="Code_Char">{table}</span> is the table in which the objects are to be added. The command must include an input entity that contains the objects to be added. An example input message in JSON is shown below:</div>
+      <div class="Code"><a name="pID0E02J0HA">{"batch": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E01J0HA">"docs": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZJ0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YJ0HA">"Timestamp": "2015-03-24 14:05:42.893",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0XJ0HA">"Level": "INFO",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0WJ0HA">"Module": "MBeanProvider",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0VJ0HA">"Message": "Unregistering the ServerManager MXBean”</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0UJ0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TJ0HA">{"doc": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0SJ0HA">"Timestamp": "2015-03-24 14:05:43.403",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0RJ0HA">"Level": "INFO",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0QJ0HA">"Module": "MBeanProvider",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0PJ0HA">"Message": "Unregistering the StorageManager MXBean”</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OJ0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NJ0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0MJ0HA">]</a></div>
+      <div class="Code"><a name="pID0E0LJ0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0KJ0HA">Notes  about adding batches are described below:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0JJ0HA">Only the </a><span class="Code_Char">Timestamp</span> field is required, which contains the object’s timestamp. This value determines how the object is stored and accessed during queries.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0IJ0HA">Objects do not need to be added in time order, and multiple objects can have the same </a><span class="Code_Char">Timestamp</span> value.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0HJ0HA">Logging service objects do not use object IDs, so the </a><span class="Code_Char">_ID</span> field should not be set.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0GJ0HA">Each field name must start with a letter and contain only letters, digits, or underscores.</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0FJ0HA">Field values should be simple scalar values: text, numbers, timestamps, etc.</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0EJ0HA">Updates are more efficient when objects are loaded in batches. However, small batches can be added and are merged into larger batches by a background task.</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0DJ0HA">If the update request is successful, a </a><span class="Code_Char">201 Created</span> response is returned with a simple status result message. Example:</div>
+      <div class="Code"><a name="pID0E0CJ0HA">{"batch-result": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0BJ0HA">"status": "OK"</a></div>
+      <div class="Code"><a name="pID0E0AJ0HA">}}</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

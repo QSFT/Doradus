@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Administrative REST Commands</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">Administrative REST Commands</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_1"><a name="pID0E0KQ0HA">Administrative REST Commands</a></div>
+      <div class="Normal"><a name="pID0E0JQ0HA">Several REST commands are available for monitoring and managing Doradus instances. Below is a summary of general purpose REST commands:</a></div>
+      <table class="Table_Grid" style="margin-left: 14.4pt; width: 531pt" cellspacing="0" summary="">
+        <tr>
+          <td style="background-color: #B6DDE8; border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; width: 91.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span style="font-weight: bold"><a name="pID0EACN0IQ0HA">Command</a></span></div>
+          </td>
+          <td style="background-color: #B6DDE8; border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; width: 156.65pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span style="font-weight: bold"><a name="pID0EABN0IQ0HA">REST URI</a></span></div>
+          </td>
+          <td style="background-color: #B6DDE8; border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; width: 282.85pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span style="font-weight: bold"><a name="pID0EAAN0IQ0HA">Comments</a></span></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="background-color: #DAEEF3; border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt" colspan="3">
+            <div class="Bullet" style="margin-bottom: 0pt; margin-top: 0pt"><span style="font-weight: bold"><a name="pID0EAAM0IQ0HA">System Commands</a></span></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EACL0IQ0HA">List configuration</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABL0IQ0HA">GET /_config</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EBAL0IQ0HA">Lists Doradus version and all configuration parameters.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EAAL0IQ0HA">Privileged command in multi-tenant mode.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EACK0IQ0HA">Thread dump</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABK0IQ0HA">GET /_dump</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EBAK0IQ0HA">Takes a snapshot stack trace of all threads.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EAAK0IQ0HA">Privileged command in multi-tenant mode.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EACJ0IQ0HA">Memory log</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABJ0IQ0HA">GET /_logs</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EBAJ0IQ0HA">Returns latest logs in memory appender; DEBUG log entries by default.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EAAJ0IQ0HA">Privileged command in multi-tenant mode.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EACI0IQ0HA">List Commands</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABI0IQ0HA">GET /_commands</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EAAI0IQ0HA">Lists all REST commands based on currently-loaded services.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="background-color: #DAEEF3; border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt" colspan="3">
+            <div class="Bullet" style="margin-bottom: 0pt; margin-top: 0pt"><span style="font-weight: bold"><a name="pID0EAAH0IQ0HA">Tenant Commands</a></span></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EACG0IQ0HA">Create new tenant</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABG0IQ0HA">POST /_tenants</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EBAG0IQ0HA">Create a new tenant in multi-tenant mode.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EAAG0IQ0HA">Privileged command.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EACF0IQ0HA">Modify tenant</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABF0IQ0HA">PUT /_tenants/{tenant}</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EBAF0IQ0HA">Modify an existing tenant in multi-tenant mode.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EAAF0IQ0HA">Privileged command.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EACE0IQ0HA">Delete tenant</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABE0IQ0HA">DELETE /_tenants/{tenant}</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EBAE0IQ0HA">Delete a tenant and all applications in multi-tenant mode.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EAAE0IQ0HA">Privileged command.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EACD0IQ0HA">List all tenants</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABD0IQ0HA">GET /_tenants</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EBAD0IQ0HA">List all tenants in multi-tenant mode.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EAAD0IQ0HA">Privileged command.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EACC0IQ0HA">List tenant</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABC0IQ0HA">GET /_tenants/{tenant}</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EBAC0IQ0HA">Lists tenant details in multi-tenant mode.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EAAC0IQ0HA">Privileged command.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="background-color: #DAEEF3; border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt" colspan="3">
+            <div class="Bullet" style="margin-bottom: 0pt; margin-top: 0pt"><span style="font-weight: bold"><a name="pID0EAAB0IQ0HA">Task Commands</a></span></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EACA0IQ0HA">List tasks</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABA0IQ0HA">GET /_tasks</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EAAA0IQ0HA">List all tasks for the default or a specific tenant.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div class="Normal"><a name="pID0E0HQ0HA">Tenant commands are described in more detail under </a><span style="font-weight: bold">Multi-Tenant Configuration</span>. In addition to these system commands, each Doradus storage service supports application-specific REST commands.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

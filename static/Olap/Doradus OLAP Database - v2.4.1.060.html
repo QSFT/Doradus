@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Link Path Comparison Functions</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.4.1.027.html">Doradus Query Language (DQL)</a> : Link Path Comparison Functions</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0X4B0HA">Link Path Comparison Functions</a></div>
+      <div class="Normal"><a name="pID0E0W4B0HA">DQL can compare the values defined by two distinct link paths. For example, suppose we want to see if a message sender’s department is the same as, overlaps with, is a superset of, or is completely different than the department of the message’s recipients. To compare two link paths, DQL provides link path comparison functions, which take two link paths as parameters. The following functions are available:</a></div>
+      <table class="Table_Grid" style="margin-left: 36pt; width: 509.4pt" cellspacing="0" summary="">
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; width: 99.9pt">
+            <div class="Normal" style="margin-bottom: 0pt"><span style="font-weight: bold"><a name="pID0EABE0V4B0HA">Function</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; width: 409.5pt">
+            <div class="Normal" style="margin-bottom: 0pt"><span style="font-weight: bold"><a name="pID0EAAE0V4B0HA">Meaning</a></span></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code_table"><a name="pID0EABD0V4B0HA">EQUALS(X,Y)</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAD0V4B0HA">The sets X and Y are either both empty or contain exactly the same values.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code_table"><a name="pID0EABC0V4B0HA">INTERSECTS(X,Y)</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAC0V4B0HA">The sets X and Y are either both empty or contain at least one value in common.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code_table"><a name="pID0EABB0V4B0HA">CONTAINS(X,Y)</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAB0V4B0HA">The set X contains all of the members of set Y. Either both sets must be empty or both most be non-empty.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Code_table"><a name="pID0EABA0V4B0HA">DISJOINT(X,Y)</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt"><a name="pID0EAAA0V4B0HA">Neither set X nor Y are empty and they contain no common member. Same as NOT INTERSECTS.</a></div>
+          </td>
+        </tr>
+      </table>
+      <div class="Normal" style="margin-bottom: 0pt"><a name="pID0E0U4B0HA">&nbsp;</a></div>
+      <div class="Normal"><a name="pID0E0T4B0HA">In the summary above, X and Y are link paths that resolve to the same scalar or link field. For example:</a></div>
+      <div class="Code"><a name="pID0E0S4B0HA">EQUALS(Sender.Person.Department,InternalRecipients.Person.Department)</a></div>
+      <div class="Normal"><a name="pID0E0R4B0HA">This clause returns true if all of a message’s internal recipients are in the same </a><span class="Code_Char">Department</span> as the message’s sender. Since empty sets are considered equal, this clause selects messages for which both <span class="Code_Char">Sender.Person.Department</span> and <span class="Code_Char">InternalRecipients.Person.Department</span> are null. Since a link path is null when any field in the path is null, <span class="Code_Char">Sender.Person.Department</span> is null if any of <span class="Code_Char">Sender</span>, <span class="Code_Char">Sender.Person</span>, or <span class="Code_Char">Sender.Person.Department</span> is null. To return true only for non-null sets, add a second clause that selects non-null values for one of the link paths. Example:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0Q4B0HA">EQUALS(Sender.Person.Department,InternalRecipients.Person.Department) AND<br />Sender.Person.Deparment=*</a></div>
+      <div class="Normal"><a name="pID0E0P4B0HA">Note that </a><span class="Code_Char">X=*</span> is shorthand for <span class="Code_Char">NOT X IS NULL</span>.</div>
+      <div class="Normal"><a name="pID0E0O4B0HA">The links paths passed to a comparison function can include </a><span class="Code_Char">WHERE</span> filters to reduce the set of values used for comparison. For example:</div>
+      <div class="Code"><a name="pID0E0N4B0HA">CONTAINS(Sender.Person.Department,InternalRecipients.Person.WHERE(Office:aliso).Department)</a></div>
+      <div class="Normal"><span class="Code_Char"><a name="pID0E0M4B0HA">CONTAINS</a></span> performs an overlap comparison, testing whether the first parameter produces a value set that <span style="font-style: italic">contains</span> the values produced by the second parameter. This clause above selects a message if at least one internal recipient whose <span class="Code_Char">Office</span> contains the term <span class="Code_Char">aliso</span> is in the same department as the message’s sender. As in the previous example, another clause can be added to skip messages where both link paths are null.</div>
+      <div class="Normal"><span class="Code_Char"><a name="pID0E0L4B0HA">INTERSECT</a></span> is a more general case of <span class="Code_Char">CONTAINS</span> that returns true when <span style="font-style: italic">any</span> value is shared between the sets produced by the link paths.</div>
+      <div class="Normal"><a name="pID0E0K4B0HA">The </a><span class="Code_Char">DISJOINT</span> function does not select objects in which both link paths are null. Both link paths must produce a non-empty set and both must have no values in common for the function to return true.</div>
+      <div class="Normal"><a name="pID0E0J4B0HA">With all of the link path comparison functions, the terminal field in each link path can be a link field, though it must be the same link field. For example:</a></div>
+      <div class="Code"><a name="pID0E0I4B0HA">EQUALS(Sender.Person,InternalRecipients.Person) AND NOT Sender.Person IS NULL</a></div>
+      <div class="Normal"><a name="pID0E0H4B0HA">This query returns true if </a><span class="Code_Char">Sender.Person</span> is not null and is exactly the same person(s) as <span class="Code_Char">InternalRecipients.Person</span>. In other words, someone sent a message to himself only.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

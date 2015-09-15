@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Starting an OLAP Database</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.4.1.003.html">OLAP Database Overview</a> : Starting an OLAP Database</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0CRC0HA">Starting an OLAP Database</a></div>
+      <div class="Normal"><a name="pID0E0BRC0HA">The Doradus server is configured as an OLAP database when the following option is used in the doradus.yaml file:</a></div>
+      <div class="Code"><a name="pID0E0ARC0HA">storage_services:</a></div>
+      <div class="Code"><a name="pID0E06QC0HA">    - com.dell.doradus.service.olap.OLAPService</a></div>
+      <div class="Normal"><a name="pID0E05QC0HA">When the Doradus server starts, this option initializes the </a><span class="Code_Char">OLAPService</span> and places new applications under the control of OLAP storage by default. Details of installing and configuring the Doradus server are covered in the <span style="font-weight: bold">Doradus Administration</span> document, but here’s a review of three ways to start Doradus:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E04QC0HA">Standalone</a></span>: The Doradus server can be started as a standalone application using the provided Jetty web server to serve the REST API. When Doradus is built using Maven, an example command line from the directory <span class="Code_Char">{doradus_home}/doradus-jetty</span> is:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03QC0HA">java -cp ./target/classes:./target/dependency/* com.dell.doradus.core.DoradusServer</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E02QC0HA">Command line arguments can be added to such as “</a><span class="Code_Char">-restport 5711</span>” to change the REST API port to 5711.</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E01QC0HA">Tomcat</a></span>: Doradus can use Apache Tomcat to host its REST API. The doradus-tomcat folder provides a README file with instructions.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-weight: bold">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0ZQC0HA">Windows service</a></span>: Doradus can be started as a Windows service by using the procrun package from Apache Commons. See the Doradus Administration document for details.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0YQC0HA">Embedded app</a></span>: Doradus can be embedded in another JVM process. It is started by calling the following method:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XQC0HA">com.dell.doradus.core.DoradusServer.startEmbedded(String[] args, String[] services)</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0WQC0HA">where:</a></div>
+      <div class="Bullet_outer" style="margin-left: 54pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-family: &quot;Courier New&quot;">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0VQC0HA">args</a></span> is the same arguments parameter passed to <span class="Code_Char">main()</span> when started as a console application. For example <span class="Code_Char">{"-restport", "5711"}</span> sets the REST port to 5711.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 54pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-family: &quot;Courier New&quot;">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0UQC0HA">services</a></span> is the list of Doradus services to initialize. Each string must be the full package name of a service. Required services are automatically included. An embedded application must include at least one storage service. Other services should be included when the corresponding functionality is needed. See the comments in doradus.yaml for a list of the current services.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0TQC0HA">If the Doradus server is configured to use multiple storage services, or if OLAP is not the default storage service (the first one listed in doradus.yaml), an application can explicitly choose OLAP in its schema by setting the application-level </a><span class="Code_Char">StorageService</span> option to<span class="Code_Char"> OLAPService</span>. For example, in JSON:</div>
+      <div class="Code"><a name="pID0E0SQC0HA">{"Email": {</a></div>
+      <div class="Code"><span style="color: #3366FF"><a name="pID0E0RQC0HA">   "options": {"StorageService": "OLAPService"},</a></span></div>
+      <div class="Code"><a name="pID0E0QQC0HA">   ...</a></div>
+      <div class="Code"><a name="pID0E0PQC0HA">}</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+function FileData_Pairs(x)
+{
+x.t("field","null");
+x.t("field","tested");
+x.t("(dql)","null");
+x.t("doradus","query");
+x.t("link","field");
+x.t("prefix","level");
+x.t("nullity","using");
+x.t("scalar","link");
+x.t("language","(dql)");
+x.t("level","null");
+x.t("null","null");
+x.t("null","examples");
+x.t("null","clause");
+x.t("negated","clause");
+x.t("tested","nullity");
+x.t("query","language");
+x.t("examples","level");
+x.t("clause","field");
+x.t("clause","doradus");
+x.t("clause","prefix");
+x.t("clause","scalar");
+x.t("clause","null");
+x.t("clause","negated");
+x.t("using","clause");
+}

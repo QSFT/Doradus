@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Get Shard Statistics</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.4.1.108.html">OLAP REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.4.1.125.html">Shard Management Commands</a> : Get Shard Statistics</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0BM0HA">Get Shard Statistics</a></div>
+      <div class="Normal"><a name="pID0E0AM0HA">Statistics for a specific shard can be retrieved with any of the following REST commands:</a></div>
+      <div class="Code"><a name="pID0E06L0HA">GET /{application}/_shards/{shard}<br />GET /{application}/_statistics/{shard}<br />GET /{application}/_statistics/{shard}?{params}</a></div>
+      <div class="Normal"><a name="pID0E05L0HA">Statistics will be available for the given </a><span class="Code_Char">{shard}</span> only if at least one batch has been loaded for it and the shard has been merged. The first command shown returns general information for each table and field. A typical response in XML is shown:</div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E04L0HA">&lt;stats memory="0.984 MB" storage="1.654 MB" documents="28455"&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E03L0HA">&lt;tables&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E02L0HA">&lt;table documents="370" memory="0.010 MB" name="Domain"&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E01L0HA">&lt;numFields&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0ZL0HA">&lt;field type="BOOLEAN" min="0" max="1" min_pos="1" bits="1" memory="0.000 MB" name="IsInternal"/&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0YL0HA">&lt;/numFields&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0XL0HA">&lt;textFields&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0WL0HA">&lt;field valuesCount="370" doclistSize="370" isSingleValued="true" memory="0.001 MB" name="Name"/&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0VL0HA">&lt;/textFields&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0UL0HA">&lt;linkFields&gt;</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0TL0HA">&lt;field linkedTableName="Address" inverseLink="Domain" doclistSize="1884" isSingleValued="false" memory="0.009 MB" name="Addresses"/&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0SL0HA">&lt;/linkFields&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0RL0HA">&lt;/table&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0QL0HA">&lt;table documents="6030" memory="0.272 MB" name="Message"&gt;</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0PL0HA">...</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0OL0HA">&lt;/table&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0NL0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0ML0HA">&lt;/tables&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0LL0HA">&lt;/stats&gt;</a></div>
+      <div class="Normal"><a name="pID0E0KL0HA">In JSON:</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0JL0HA">{"stats": {</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0IL0HA">"memory": "0.984 MB",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0HL0HA">"storage": "1.654 MB",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0GL0HA">"documents": "28455",</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0FL0HA">"tables": {</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0EL0HA">"Domain": {</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0DL0HA">"documents": "370",</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0CL0HA">"memory": "0.010 MB",</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0BL0HA">"numFields": {</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E0AL0HA">"IsInternal": {"type": "BOOLEAN", "min": "0", "max": "1", "min_pos": "1", "bits": "1", "memory": "0.000 MB"}</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E06K0HA">},</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E05K0HA">"textFields": {</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E04K0HA">"Name": {"valuesCount": "370", "doclistSize": "370", "isSingleValued": "true", "memory": "0.001 MB"}</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E03K0HA">},</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E02K0HA">"linkFields": {</a></div>
+      <div class="Code" style="margin-left: 108pt; text-indent: -18pt"><a name="pID0E01K0HA">"Addresses": {"linkedTableName": "Address", "inverseLink": "Domain", "doclistSize": "1884", "isSingleValued": "false", "memory":"0.009 MB"}</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0ZK0HA">}</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0YK0HA">},</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0XK0HA">"Message": {</a></div>
+      <div class="Code" style="margin-left: 90pt; text-indent: -18pt"><a name="pID0E0WK0HA">...</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0VK0HA">},</a></div>
+      <div class="Code" style="margin-left: 72pt; text-indent: -18pt"><a name="pID0E0UK0HA">...</a></div>
+      <div class="Code" style="margin-left: 54pt; text-indent: -18pt"><a name="pID0E0TK0HA">}</a></div>
+      <div class="Code" style="margin-left: 36pt; text-indent: -18pt"><a name="pID0E0SK0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0RK0HA">The command response provides statistics about data contained in the given shard such as the total number of objects, the number of objects per table, the name value range of scalar fields, and so forth.</a></div>
+      <div class="Normal"><a name="pID0E0QK0HA">The second shard statistics command returns more similar information as the first command plus additional details about the virtual files (segments) stored within the shard. The third statistics command dumps the contents of a specific virtual file. These commands are intended for debugging purposes.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

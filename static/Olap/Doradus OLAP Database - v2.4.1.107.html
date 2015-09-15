@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Multi-shard and Uncommitted Data Queries</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.4.1.078.html">OLAP Aggregate Queries</a> : Multi-shard and Uncommitted Data Queries</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0TT0HA">Multi-shard and Uncommitted Data Queries</a></div>
+      <div class="Normal"><a name="pID0E0ST0HA">Just like object queries, an aggregate query whose </a><span class="Code_Char">range</span> or <span class="Code_Char">shards</span> parameter selects more than one shard is called a <span style="font-style: italic">multi-shard</span> query. Because each shard is analogous to a self-contained database, an object with a given ID may be inserted into the same table in multiple shards. Even though objects with the same ID could be considered duplicates, they are considered separate objects for aggregate queries. A COUNT(*) query, for example, will count all selected objects in all shards, ignoring duplicate object IDs.</div>
+      <div class="Normal"><a name="pID0E0RT0HA">Similarly, when an aggregate query includes unmerged batches by adding the option </a><span class="Code_Char">&amp;uncommitted=true</span>, objects in the batch “mini shards” are treated as separate objects. Since the updates in unmerged batches have not been applied, duplicate object IDs in the update batches and the “live” shard are also considered separate objects. If an update batch deletes an object, the object in the “live” shard will still be present.</div>
+      <div class="Normal"><a name="pID0E0QT0HA">However, when update batches only add new objects, it can be beneficial to include uncommitted data in aggregate queries. Essentially, the query includes the latest, live data without having to wait for the underlying shard to be merged.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>What is OLAP?</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.4.1.003.html">OLAP Database Overview</a> : What is OLAP?</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0LXC0HA">What is OLAP?</a></div>
+      <div class="Normal"><a name="pID0E0KXC0HA">Online Analytical Processing is a decision support technology that allows large amounts of data to be analyzed. In traditional OLAP, data from OLTP databases and other sources typically undergoes an </a><span style="font-style: italic">extract/transform/load</span> (ETL) process, placing it in a <span style="font-style: italic">data warehouse</span> or <span style="font-style: italic">data mart</span> database. This process organizes data into time-oriented <span style="font-style: italic">dimension tables</span> that facilitate subject-based analytical queries. This structure allows a wide range of statistical queries that can compute aggregate results, detect trends, find data anomalies, and perform other analyses.</div>
+      <div class="Normal"><a name="pID0E0JXC0HA">However, traditional OLAP has numerous drawbacks, including long ETL times, large disk space consumption, and complex, specialized schemas.</a></div>
+      <div class="Normal"><a name="pID0E0IXC0HA">Doradus OLAP supports complex analytical queries but employs unique storage and access techniques that overcome drawbacks of traditional OLAP. Some advantages of Doradus OLAP are:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0HXC0HA">Load time</a></span>: Instead of long ETL processes, data can be loaded very quickly. When an application embeds Doradus in the same process, it can load data up to 1 million objects/second.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0GXC0HA">Merge time</a></span>: When updates are applied to a <span style="font-style: italic">shard</span>, they are visible to queries when the shard is <span style="font-style: italic">merged</span>. OLAP has been optimized so that shard merging is typically seconds to a few minutes.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0FXC0HA">Live data queries</a></span>: New data added to a shard can be included in queries <span style="font-style: italic">before</span> it is merged into the corresponding shard. This allows queries to include live data feeds.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0EXC0HA">Data model</a></span>: Applications can use the full Doradus data model, including bi-directional relationships via <span style="font-style: italic">link </span>fields. Doradus provides full referential integrity and bi-directional navigation of link fields.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0DXC0HA">Doradus Query Language</a></span>: DQL is used for <span style="font-style: italic">object queries</span>, which retrieve specific objects and their values, and for <span style="font-style: italic">aggregate queries</span>, which perform statistical computations across large object sets. DQL features include <span style="font-style: italic">full text</span> <span style="font-style: italic">searching</span>, <span style="font-style: italic">path expressions</span>, <span style="font-style: italic">quantifiers</span>, <span style="font-style: italic">transitive </span>relationship searches, <span style="font-style: italic">multi-level grouping</span>, and other advanced search features.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0CXC0HA">Query speed</a></span>: Object and aggregate queries process millions of objects per second without indexes. Multi-shard queries can be searched in parallel.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0BXC0HA">Space usage</a></span>: Doradus stores data in a columnar format that compress very well. An example OLAP <span style="font-style: italic">event</span> application stores 1 billion objects in less than 2GB of disk space.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0AXC0HA">Schema evolution</a></span>: An application’s schema can be changed at any time, allowing new tables and fields to be added. Automatic data aging is available to expire old data.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

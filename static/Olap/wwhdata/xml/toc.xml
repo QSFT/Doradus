@@ -1,158 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
 <WebWorksHelpTOC version="5.0" xmlns="urn:WebWorks-Help-TOC-Schema">
-  <i t="Introduction" l="1">
-    <i t="Recent Changes" l="2" />
+  <i t="Introduction" l="0">
+    <i t="Recent Changes" l="1" />
   </i>
-  <i t="Architecture" l="3" />
-  <i t="OLAP Database Overview" l="4">
-    <i t="Starting an OLAP Database" l="5" />
-    <i t="OLAP Overview" l="6" />
-    <i t="When OLAP Works Best" l="7" />
-    <i t="The Email Sample Application" l="8" />
-  </i>
-  <i t="OLAP Data Model" l="9">
-    <i t="Motivation" l="10" />
-    <i t="Identifiers" l="11" />
-    <i t="Application" l="12" />
-    <i t="Table" l="13" />
-    <i t="Objects" l="14" />
-    <i t="Object IDs" l="15" />
-    <i t="Fields" l="16">
-      <i t="Scalar Fields" l="17" />
-      <i t="Link Fields" l="18" />
-      <i t="Group Fields" l="19" />
-    </i>
-    <i t="Aliases" l="20" />
-    <i t="OLAP Sharding Model" l="21" />
-    <i t="Cross-shard Relationships: Xlinks" l="22" />
-    <i t="Shard Aging" l="23" />
-  </i>
-  <i t="Doradus Query Language (DQL)" l="24">
-    <i t="Query Perspective" l="25" />
-    <i t="Clauses" l="26" />
-    <i t="Clause Negation: NOT" l="27" />
-    <i t="Clause Connectors: AND, OR, and Parentheses" l="28" />
-    <i t="Literals" l="29">
-      <i t="Booleans" l="30" />
-      <i t="Numbers" l="31" />
-      <i t="Timestamps" l="32" />
-      <i t="Terms" l="33" />
-      <i t="Strings" l="34" />
-    </i>
-    <i t="Null Values" l="35" />
-    <i t="IS NULL Clause" l="36" />
-    <i t="Text Contains Clauses" l="37">
-      <i t="Term Clauses" l="38" />
-      <i t="Phrase Clauses" l="39" />
-    </i>
-    <i t="Range Clauses" l="40" />
-    <i t="Equality Clauses" l="41" />
-    <i t="IN Clause" l="42" />
-    <i t="Timestamp Clauses" l="43">
-      <i t="Subfield Clauses" l="44" />
-      <i t="NOW Function" l="45" />
-      <i t="PERIOD Function" l="46" />
-    </i>
-    <i t="Link Clauses" l="47">
-      <i t="Link Path Clauses" l="48" />
-      <i t="WHERE Filter" l="49" />
-      <i t="Outer WHERE Filter" l="50" />
-    </i>
-    <i t="Quantifier Functions" l="51">
-      <i t="Overview: ANY, ALL, and NONE" l="52" />
-      <i t="Quantifiers on MV Scalar Fields" l="53" />
-      <i t="Quantifiers on SV Scalar Fields" l="54" />
-      <i t="Quantifiers on Link Fields" l="55" />
-      <i t="Quantifiers with IS NULL" l="56" />
-    </i>
-    <i t="Transitive Function" l="57" />
-    <i t="COUNT(&lt;link path&gt;)" l="58" />
-  </i>
-  <i t="OLAP Object Queries" l="59">
-    <i t="Query Parameters Overview" l="60" />
-    <i t="Fields Parameter" l="61">
-      <i t="Basic Formats" l="62" />
-      <i t="WHERE Filters" l="63" />
-      <i t="Link Field Size Limits" l="64" />
-      <i t="Link Field AS Aliases" l="65" />
-    </i>
-    <i t="Metric Parameter" l="66" />
-    <i t="Order Parameter" l="67" />
-    <i t="Query Results" l="68">
-      <i t="Empty Results" l="69" />
-      <i t="SV Scalar Fields" l="70" />
-      <i t="MV Scalar Fields" l="71" />
-      <i t="Link Fields" l="72" />
+  <i t="OLAP Database Overview" l="2">
+    <i t="What is OLAP?" l="3" />
+    <i t="When OLAP Works Best" l="4" />
+    <i t="The Email Sample Application" l="5" />
+    <i t="Starting an OLAP Database" l="6" />
+    <i t="Optimizing OLAP Applications" l="7">
+      <i t="Schema Design" l="8" />
+      <i t="Updates" l="9" />
+      <i t="Queries" l="10" />
     </i>
   </i>
-  <i t="OLAP Aggregate Queries" l="73">
-    <i t="Aggregate Parameters Overview" l="74" />
-    <i t="Metric Parameter" l="75">
-      <i t="Metric Functions" l="76" />
-      <i t="Multiple Metric Functions" l="77" />
-      <i t="Metric Expressions" l="78" />
-      <i t="DATEDIFF Function" l="79" />
-      <i t="WHERE Filter" l="80" />
+  <i t="OLAP Data Model" l="11">
+    <i t="Motivation" l="12" />
+    <i t="Identifiers" l="13" />
+    <i t="Application" l="14" />
+    <i t="Table" l="15" />
+    <i t="Objects" l="16" />
+    <i t="Object IDs" l="17" />
+    <i t="Fields" l="18">
+      <i t="Scalar Fields" l="19" />
+      <i t="Link Fields" l="20" />
+      <i t="Group Fields" l="21" />
     </i>
-    <i t="Grouping Parameter" l="81">
-      <i t="Global Aggregates: No Grouping Parameter" l="82" />
-      <i t="Single-level Grouping" l="83" />
-      <i t="Grouping Field Aliases" l="84" />
-      <i t="Multi-level Grouping" l="85" />
-      <i t="Group by Timestamp Subfield" l="86" />
-      <i t="Special Grouping Functions" l="87">
-        <i t="BATCH Function" l="88" />
-        <i t="INCLUDE and EXCLUDE Functions" l="89" />
-        <i t="TERMS Function" l="90" />
-        <i t="TOP and BOTTOM Functions" l="91" />
-        <i t="TRUNCATE Function" l="92" />
-        <i t="UPPER and LOWER Functions" l="93" />
-        <i t="WHERE Function" l="94" />
-        <i t="Outer WHERE Function" l="95" />
-        <i t="FIRST and LAST Functions" l="96" />
-        <i t="Flattened Multi-level Grouping" l="97" />
-        <i t="SETS Function" l="98" />
+    <i t="Aliases" l="22" />
+    <i t="OLAP Sharding Model" l="23" />
+    <i t="Cross-shard Relationships: Xlinks" l="24" />
+    <i t="Shard Aging" l="25" />
+  </i>
+  <i t="Doradus Query Language (DQL)" l="26">
+    <i t="Query Perspective" l="27" />
+    <i t="Clauses" l="28" />
+    <i t="Clause Negation: NOT" l="29" />
+    <i t="Clause Connectors: AND, OR, and Parentheses" l="30" />
+    <i t="Literals" l="31">
+      <i t="Booleans" l="32" />
+      <i t="Numbers" l="33" />
+      <i t="Timestamps" l="34" />
+      <i t="Terms" l="35" />
+      <i t="Strings" l="36" />
+    </i>
+    <i t="Null Values" l="37" />
+    <i t="IS NULL Clause" l="38" />
+    <i t="Text Contains Clauses" l="39">
+      <i t="Term Clauses" l="40" />
+      <i t="Phrase Clauses" l="41" />
+    </i>
+    <i t="Range Clauses" l="42" />
+    <i t="Equality Clauses" l="43" />
+    <i t="IN Clause" l="44" />
+    <i t="Timestamp Clauses" l="45">
+      <i t="Subfield Clauses" l="46" />
+      <i t="NOW Function" l="47" />
+      <i t="PERIOD Function" l="48" />
+    </i>
+    <i t="Link Clauses" l="49">
+      <i t="Link Path Clauses" l="50" />
+      <i t="WHERE Filter" l="51" />
+      <i t="Outer WHERE Filter" l="52" />
+    </i>
+    <i t="Quantifier Functions" l="53">
+      <i t="Overview: ANY, ALL, and NONE" l="54" />
+      <i t="Quantifiers on MV Scalar Fields" l="55" />
+      <i t="Quantifiers on SV Scalar Fields" l="56" />
+      <i t="Quantifiers on Link Fields" l="57" />
+      <i t="Quantifiers with IS NULL" l="58" />
+    </i>
+    <i t="Link Path Comparison Functions" l="59" />
+    <i t="Transitive Function" l="60" />
+    <i t="COUNT(&lt;link path&gt;)" l="61" />
+  </i>
+  <i t="OLAP Object Queries" l="62">
+    <i t="Query Parameters Overview" l="63" />
+    <i t="Fields Parameter" l="64">
+      <i t="Basic Formats" l="65" />
+      <i t="WHERE Filters" l="66" />
+      <i t="Link Field Size Limits" l="67" />
+      <i t="Link Field AS Aliases" l="68" />
+    </i>
+    <i t="Metric Parameter" l="69" />
+    <i t="Order Parameter" l="70" />
+    <i t="Query Results" l="71">
+      <i t="Empty Results" l="72" />
+      <i t="SV Scalar Fields" l="73" />
+      <i t="MV Scalar Fields" l="74" />
+      <i t="Link Fields" l="75" />
+    </i>
+    <i t="Multi-shard and Uncommitted Data Queries" l="76" />
+  </i>
+  <i t="OLAP Aggregate Queries" l="77">
+    <i t="Aggregate Parameters Overview" l="78" />
+    <i t="Metric Parameter" l="79">
+      <i t="Metric Functions" l="80" />
+      <i t="Multiple Metric Functions" l="81" />
+      <i t="Metric Expressions" l="82" />
+      <i t="DATEDIFF Function" l="83" />
+      <i t="WHERE Filter" l="84" />
+      <i t="ROUNDUP Function" l="85" />
+    </i>
+    <i t="Grouping Parameter" l="86">
+      <i t="Global Aggregates: No Grouping Parameter" l="87" />
+      <i t="Single-level Grouping" l="88" />
+      <i t="Grouping Field Aliases" l="89" />
+      <i t="Multi-level Grouping" l="90" />
+      <i t="Group by Timestamp Subfield" l="91" />
+      <i t="Special Grouping Functions" l="92">
+        <i t="BATCH Function" l="93" />
+        <i t="INCLUDE and EXCLUDE Functions" l="94" />
+        <i t="TERMS Function" l="95" />
+        <i t="TOP and BOTTOM Functions" l="96" />
+        <i t="TRUNCATE Function" l="97" />
+        <i t="UPPER and LOWER Functions" l="98" />
+        <i t="WHERE Function" l="99" />
+        <i t="Outer WHERE Function" l="100" />
+        <i t="FIRST and LAST Functions" l="101" />
+        <i t="Flattened Multi-level Grouping" l="102" />
+        <i t="SETS Function" l="103" />
       </i>
     </i>
-    <i t="Multi-metric Aggregate Queries" l="99" />
-    <i t="Pair Parameter" l="100" />
+    <i t="Multi-metric Aggregate Queries" l="104" />
+    <i t="Pair Parameter" l="105" />
+    <i t="Multi-shard and Uncommitted Data Queries" l="106" />
   </i>
-  <i t="OLAP REST Commands" l="101">
-    <i t="REST API Overview" l="102">
-      <i t="Common REST Headers" l="103" />
-      <i t="Common REST URI Parameters" l="104" />
-      <i t="REST Commands in Multi-Tenant Mode" l="105" />
-      <i t="Common JSON Rules" l="106" />
-      <i t="Illegal Characters in XML Content" l="107" />
-      <i t="Common REST Responses" l="108" />
+  <i t="OLAP REST Commands" l="107">
+    <i t="REST API Overview" l="108">
+      <i t="Common REST Headers" l="109" />
+      <i t="Common REST URI Parameters" l="110" />
+      <i t="REST Commands in Multi-Tenant Mode" l="111" />
+      <i t="Common JSON Rules" l="112" />
+      <i t="Illegal Characters in XML Content" l="113" />
+      <i t="Common REST Responses" l="114" />
     </i>
-    <i t="OLAP REST Command Summary" l="109" />
-    <i t="Application Management Commands" l="110">
-      <i t="Create Application" l="111" />
-      <i t="Modify Application" l="112" />
-      <i t="List Application" l="113" />
-      <i t="Delete Application" l="114" />
+    <i t="OLAP REST Command Summary" l="115" />
+    <i t="Application Management Commands" l="116">
+      <i t="Create Application" l="117" />
+      <i t="Modify Application" l="118" />
+      <i t="List Application" l="119" />
+      <i t="Delete Application" l="120" />
     </i>
-    <i t="Object Update Commands" l="115">
-      <i t="Add Batch" l="116" />
-      <i t="Delete Batch" l="117" />
+    <i t="Object Update Commands" l="121">
+      <i t="Add Batch" l="122" />
+      <i t="Delete Batch" l="123" />
     </i>
-    <i t="Shard Management Commands" l="118">
-      <i t="List Shards" l="119" />
-      <i t="Get Shard Statistics" l="120" />
-      <i t="Merge Shard" l="121" />
-      <i t="Delete Shard" l="122" />
+    <i t="Shard Management Commands" l="124">
+      <i t="List Shards" l="125" />
+      <i t="Get Shard Statistics" l="126" />
+      <i t="Merge Shard" l="127" />
+      <i t="Delete Shard" l="128" />
+      <i t="Verify Shard" l="129" />
+      <i t="Set Shard Properties" l="130" />
     </i>
-    <i t="Object Query Commands" l="123">
-      <i t="Object Query via URI" l="124" />
-      <i t="Object Query via Entity" l="125" />
+    <i t="Object Query Commands" l="131">
+      <i t="Object Query via URI" l="132" />
+      <i t="Object Query via Entity" l="133" />
     </i>
-    <i t="Aggregate Query Commands" l="126">
-      <i t="Aggregate Query via URI" l="127" />
-      <i t="Aggregate Query via Entity" l="128" />
+    <i t="Aggregate Query Commands" l="134">
+      <i t="Aggregate Query via URI" l="135" />
+      <i t="Aggregate Query via Entity" l="136" />
     </i>
-    <i t="Find Duplicates Command" l="129" />
-    <i t="Task Status Command" l="130" />
-    <i t="OLAP Browser Interface" l="131" />
+    <i t="Find Duplicates Command" l="137" />
+    <i t="Task Status Command" l="138" />
+    <i t="OLAP Browser Interface" l="139" />
   </i>
 </WebWorksHelpTOC>

@@ -1,0 +1,21 @@
+function FileData_Pairs(x)
+{
+x.t("provide","enhanced");
+x.t("describes","special");
+x.t("command","special");
+x.t("aggregate","query");
+x.t("rest","commands");
+x.t("functions","provide");
+x.t("functions","rest");
+x.t("functions","section");
+x.t("functions","special");
+x.t("commands","aggregate");
+x.t("section","describes");
+x.t("query","command");
+x.t("enhanced","behavior");
+x.t("special","functions");
+x.t("special","grouping");
+x.t("grouping","parameter");
+x.t("grouping","functions");
+x.t("behavior","grouping");
+}

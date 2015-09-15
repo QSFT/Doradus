@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Tables</title>
+    <link rel="StyleSheet" href="css/Doradus%20Logging%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Logging%20Database%20-%20v2.4.1.05.htm">Logging Data Model</a> : Tables</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0UT0HA">Tables</a></div>
+      <div class="Normal"><a name="pID0E0TT0HA">A table is a named set of objects. Table names are identifiers that must be unique within the same application. Compared to other services, the Logging service does not require nor allow fields to be explicitly defined: they are dynamically discovered as data is added. Consequently, a table definition consists only of its name and table-level options. The only option available for Logging tables is automatic data aging, which is defined via the </a><span class="Code_Char">retention-age</span> option as shown below:</div>
+      <div class="Code"><a name="pID0E0ST0HA">{"LogDepot": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0RT0HA">"options": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QT0HA">"StorageService": "LoggingService"</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0PT0HA">},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0OT0HA">"tables": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NT0HA">"AppLogs": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0MT0HA">"options": {"retention-age": "3 MONTHS"}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0LT0HA">}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0KT0HA">}</a></div>
+      <div class="Code"><a name="pID0E0JT0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0IT0HA">In this example, the </a><span class="Code_Char">AppLogs</span> table sets its <span class="Code_Char">retention-age</span> option to 3 months. Objects are automatically deleted when their <span class="Code_Char">Timestamp</span> field value is older than the given age. The <span class="Code_Char">retention-age</span> option must be in the form of “N &lt;units&gt;” where N is a positive integer and &lt;units&gt; is any of <span class="Code_Char">DAYS</span>, <span class="Code_Char">MONTHS</span>, or <span class="Code_Char">YEARS</span> or the singular spelling of these mnemonics. When a table enables data aging, a background tasks periodically checks for and deletes expires objects.</div>
+      <div class="Normal"><a name="pID0E0HT0HA">When a Logging application defines multiple tables, each table can select data aging independently.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

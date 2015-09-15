@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>List Shards</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.4.1.108.html">OLAP REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.4.1.125.html">Shard Management Commands</a> : List Shards</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0AN0HA">List Shards</a></div>
+      <div class="Normal"><a name="pID0E06M0HA">The list of all known shards of a given application can be obtained with the following REST command:</a></div>
+      <div class="Code"><a name="pID0E05M0HA">GET /{application}/_shards</a></div>
+      <div class="Normal"><a name="pID0E04M0HA">Each shard that has at least one batch posted are listed, even if the shard has not yet been merged. A typical response in XML:</a></div>
+      <div class="Code"><a name="pID0E03M0HA">&lt;result&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E02M0HA">&lt;application name="Email"&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01M0HA">&lt;shards&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0ZM0HA">&lt;value&gt;2004-11-16&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0YM0HA">&lt;value&gt;2005-08-03&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0XM0HA">&lt;value&gt;2005-10-10&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0WM0HA">&lt;value&gt;2005-11-01&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0VM0HA">&lt;value&gt;2005-12-20&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0UM0HA">&lt;value&gt;2006-01-17&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0TM0HA">&lt;value&gt;2006-02-01&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SM0HA">&lt;/shards&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0RM0HA">&lt;/application&gt;</a></div>
+      <div class="Code"><a name="pID0E0QM0HA">&lt;/result&gt; </a></div>
+      <div class="Normal"><a name="pID0E0PM0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E0OM0HA">{"result": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0NM0HA">"Email": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0MM0HA">"shards": [</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0LM0HA">"2004-11-16",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0KM0HA">"2005-08-03",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0JM0HA">"2005-10-10",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0IM0HA">"2005-11-01",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0HM0HA">"2005-12-20",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0GM0HA">"2006-01-17",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0FM0HA">"2006-02-01"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0EM0HA">]</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0DM0HA">}</a></div>
+      <div class="Code"><a name="pID0E0CM0HA">}}</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Aggregate Query Command</title>
+    <link rel="StyleSheet" href="css/Doradus%20Logging%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Logging%20Database%20-%20v2.4.1.26.htm">REST Commands</a> : Aggregate Query Command</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0UG0HA">Aggregate Query Command</a></div>
+      <div class="Normal"><a name="pID0E0TG0HA">Aggregate queries perform metric calculations across objects selected from the perspective table. Compared to an object query, which returns fields for selected objects, an aggregate query only returns the metric calculations. An aggregate query provides all parameters in the URI of a GET request. The REST command is:</a></div>
+      <div class="Code"><a name="pID0E0SG0HA">GET /{application}/{table}/_aggregate?{params}</a></div>
+      <div class="Normal"><a name="pID0E0RG0HA">where </a><span class="Code_Char">{application}</span> is the application name, <span class="Code_Char">{table}</span> is the perspective table, and <span class="Code_Char">{params}</span> are URI parameters separated by ampersands (&amp;). The following parameters are supported:</div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0QG0HA">m=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">metric function</span> (optional): The metric function to calculate for selected objects. Currently, the only metric function supported by Doradus Logging is COUNT(*), so this parameter can be omitted. Example:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0PG0HA">m=COUNT(*)</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0OG0HA">q=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">text</span> (optional): A DQL query expression that defines which objects to include in metric computations. If omitted, all objects are selected (same as <span class="Code_Char">q=*</span>). Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0NG0HA">q=*</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0MG0HA">q=Level IN (warning, error)</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0LG0HA">f=</a></span><span class="Code_Char" style="font-style: italic; font-weight: bold">grouping expression </span>(optional): A grouping field expression, which divide computations into groups. When this parameter is omitted, the corresponding <span style="font-style: italic">global query</span> computes a single value for each metric function. When provided, the corresponding <span style="font-style: italic">grouped query</span> computes a value for each group value. Examples:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KG0HA">f=Tags</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0JG0HA">f=TOP(3,EventID)</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0IG0HA">f=TRUNCATE(Timestamp,HOUR)</a></div>
+      <div class="Normal"><a name="pID0E0HG0HA">Below is an example aggregate query using URI parameters:</a></div>
+      <div class="Code"><a name="pID0E0GG0HA">GET /LogDepot/AppLogs/_aggregate?q=Level=error&amp;m=COUNT(*)&amp;f=TOP(3,MessageType)</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

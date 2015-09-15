@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Range Clauses</title>
+    <link rel="StyleSheet" href="css/Doradus%20Logging%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Logging%20Database%20-%20v2.4.1.10.htm">Doradus Query Language (DQL)</a> : Range Clauses</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E01O0HA">Range Clauses</a></div>
+      <div class="Normal"><a name="pID0E0ZO0HA">Range clauses can be used to select a scalar field whose value falls within a specific range. The math operators </a><span class="Code_Char">=</span>, <span class="Code_Char">&lt;</span>, <span class="Code_Char">&lt;=</span>, and <span class="Code_Char">&gt;=</span> are allowed:</div>
+      <div class="Code"><a name="pID0E0YO0HA">Level &gt; error</a></div>
+      <div class="Code"><a name="pID0E0XO0HA">LastName &lt;= Q</a></div>
+      <div class="Normal"><a name="pID0E0WO0HA">Doradus also allows </a><span style="font-style: italic">bracketed</span> ranges with both <span style="font-style: italic">inclusive</span> ([ ]) and <span style="font-style: italic">exclusive</span> ({ }) bounds. For example:</div>
+      <div class="Code"><a name="pID0E0VO0HA">User = [Jane TO Joe}</a></div>
+      <div class="Normal"><a name="pID0E0UO0HA">This is shorthand for:</a></div>
+      <div class="Code"><a name="pID0E0TO0HA">User &gt;= Jane AND User &lt; Joe</a></div>
+      <div class="Normal"><a name="pID0E0SO0HA">For range clauses, “:” and “=” are identical – both perform an </a><span style="font-style: italic">equals</span> search. Hence, the previous example is the same as:</div>
+      <div class="Code"><a name="pID0E0RO0HA">User:[Jane TO Joe}</a></div>
+      <div class="Normal"><a name="pID0E0QO0HA">With the Logging service, the Timestamp field can only be queried using a range clause. Example:</a></div>
+      <div class="Code"><a name="pID0E0PO0HA">Timestamp=['2014-01-01' TO '2014-06-13 12:00']</a></div>
+      <div class="Normal"><a name="pID0E0OO0HA">Note that timestamp literals must be quoted, and time elements can be omitted from right-to-left; omitted elements are considered zero.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

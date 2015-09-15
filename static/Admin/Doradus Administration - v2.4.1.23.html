@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Tenant Mapping to Cassandra</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.22.html">Multi-Tenant Configuration</a> : Tenant Mapping to Cassandra</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0SO0HA">Tenant Mapping to Cassandra</a></div>
+      <div class="Normal"><a name="pID0E0RO0HA">Each tenant is mapped to a Cassandra keyspace, meaning a keyspace is created using the tenant name. All data and metadata are stored in ColumnFamilies within the keyspace. Three ColumnFamilies are shared by all applications owned by the tenant:</a></div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0QO0HA">Applications</a></span>: This ColumnFamily holds metadata for all applications owned by the tenant including schemas and, for non-default tenants, tenant options.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0PO0HA">Tasks</a></span>: This ColumnFamily holds status and synchronization records used by the Doradus Task Manager service to perform background tasks such as data aging.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0OO0HA">OLAP</a></span>: This ColumnFamily holds data for all Doradus OLAP applications, if any, owned by the tenant.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0NO0HA">If the tenant owns any Doradus Spider applications, data is stored in application-specific ColumnFamilies. Two kinds of ColumnFamilies are currently used for Spider applications:</a></div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char" style="font-style: italic"><a name="pID0E0MO0HA">application</a></span><span class="Code_char">_</span><span class="Code_char" style="font-style: italic">table</span>: This ColumnFamily holds object data for a specific Spider application and table.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char" style="font-style: italic"><a name="pID0E0LO0HA">application</a></span><span class="Code_char">_</span><span class="Code_char" style="font-style: italic">table</span><span class="Code_char">_terms</span>: This ColumnFamily holds indexing data for a specific Spider application and table.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0KO0HA">Each tenant possesses one or more user IDs that can be used to access applications. Each user ID is mapped to a Cassandra user, prefixed with the tenant name. For example, if the tenant named </a><span class="Code_char">HelloKitty</span> owns a user called <span class="Code_char">Katniss</span>, the corresponding Cassandra user ID is <span class="Code_char">HelloKitty_Katniss</span>. This allows different tenants to independently define the same user ID. In Doradus REST commands, the tenant user ID (not the Cassandra user ID) and password are provided using basic auth.</div>
+      <div class="Normal"><a name="pID0E0JO0HA">Each tenant can also define the replication factor (RF) to use for its applications. This value cannot exceed the number of underlying Cassandra nodes. RF values greater than 1 ensure that data is replicated to 2 or more nodes, thus providing high availability in case of node failure.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

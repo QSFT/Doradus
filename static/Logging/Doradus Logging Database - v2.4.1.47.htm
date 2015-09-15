@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>TOP and BOTTOM Functions</title>
+    <link rel="StyleSheet" href="css/Doradus%20Logging%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Logging%20Database%20-%20v2.4.1.26.htm">REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Logging%20Database%20-%20v2.4.1.42.htm">Aggregate Query Command</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Logging%20Database%20-%20v2.4.1.46.htm">Special Grouping Functions</a> : TOP and BOTTOM Functions</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_4"><a name="pID0E0VD0HA">TOP and BOTTOM Functions</a></div>
+      <div class="Normal"><a name="pID0E0UD0HA">By default, all group values are returned, and the groups are returned in ascending order of the </a><span style="text-decoration: underline">grouping field</span> value. The <span class="Code_Char">TOP</span> and <span class="Code_Char">BOTTOM</span> functions can be used to return groups in the order of the <span style="text-decoration: underline">metric</span> value. Optionally, they can also be used to limit the number of groups returned to the <span style="font-style: italic">highest</span> or <span style="font-style: italic">lowest</span> metric values. The <span class="Code_Char">TOP</span> and <span class="Code_Char">BOTTOM</span> functions <span style="font-style: italic">wrap</span> a grouping field expression and specify a <span style="font-style: italic">limit</span> parameter. For example:</div>
+      <div class="Code"><a name="pID0E0TD0HA">GET /LogDepot/AppLogs/_aggregate?m=COUNT(*)&amp;q=UserSID='S-1-5-18'&amp;f=TOP(3,EventID)</a></div>
+      <div class="Normal"><a name="pID0E0SD0HA">The first parameter to TOP/BOTTOM is the limit value; the second parameter is the grouping field. This aggregate query counts objects, grouped by </a><span class="Code_Char">EventID</span>, but it only returns the groups with the three highest values. Typical results for the example above in JSON:</div>
+      <div class="Code"><a name="pID0E0RD0HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0QD0HA">"aggregate": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0PD0HA">"metric": "COUNT(*)",</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0OD0HA">"query": "UserSID='S-1-5-18'",</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ND0HA">"group": "TOP(3,EventID)"</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0MD0HA">},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0LD0HA">"totalobjects": "172274",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0KD0HA">"summary": "172274",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0JD0HA">"totalgroups": "19",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0ID0HA">"groups": [</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0HD0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0GD0HA">"metric": "119161",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0FD0HA">"field": {"EventID": "673"}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ED0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0DD0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0CD0HA">"metric": "30815",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0BD0HA">"field": {"EventID":"672"}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0AD0HA">}},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E06C0HA">{"group": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E05C0HA">"metric": "4353",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E04C0HA">"field": {"EventID":"675"}</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03C0HA">}}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E02C0HA">]</a></div>
+      <div class="Code"><a name="pID0E01C0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0ZC0HA">The </a><span class="Code_Char">BOTTOM</span> parameter works the same way but returns the groups with the lowest metric values. When either the <span class="Code_Char">TOP</span> or <span class="Code_Char">BOTTOM</span> function is used, the total number of groups that were actually computed is returned in the element <span class="Code_Char">totalgroups</span>, as shown above.</div>
+      <div class="Normal"><a name="pID0E0YC0HA">When the limit parameter is 0, </a><span style="text-decoration: underline">all</span> groups are returned, but they are returned in metric-computation order. Using 0 for the limit parameter essentially means <span style="font-style: italic">unlimited</span>.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Merge Shard</title>
+    <link rel="StyleSheet" href="css/Doradus%20OLAP%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.4.1.108.html">OLAP REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20OLAP%20Database%20-%20v2.4.1.125.html">Shard Management Commands</a> : Merge Shard</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0PK0HA">Merge Shard</a></div>
+      <div class="Normal"><a name="pID0E0OK0HA">All batches that have been loaded for a given shard are merged with the following REST command:</a></div>
+      <div class="Code"><a name="pID0E0NK0HA">POST /{application}/_shards/{shard}[?{params}]</a></div>
+      <div class="Normal"><a name="pID0E0MK0HA">where:</a></div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0LK0HA">{application}</a></span> is the owning application's name.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0KK0HA">{shard}</a></span> is the name of the shard to be merged.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0JK0HA">{params}</a></span> are optional, comma-separated parameters that set properties on or control the merging of the shard. The available options are:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 54pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-family: &quot;Courier New&quot;">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0IK0HA">expire-date=&lt;timestamp&gt;</a></span>: When specified, assigns an expiration date to the shard. The specified timestamp value must be in the format <span class="Code_Char">YYYY-MM-DD</span>. A background merge task periodically checks for and deletes expired shards. If this option is <span style="text-decoration: underline">not</span> set, the shard is set to not expire even if it previously was assigned an <span class="Code_Char">expire-date</span>. Also, see the <span style="font-weight: bold">Set Shard Properties</span> REST command.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 54pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-family: &quot;Courier New&quot;">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0HK0HA">timeout=&lt;seconds&gt;</a></span>: When specified, this value indicates the time in seconds to wait after the shard is merged before deleting the obsolete segment data. This can be used to allow executing queries to finish in case they are using the pre-merged segments. Normally, if a shard is merged while a query is executing, the query will abort and restart using the new segment data. Setting a <span class="Code_Char">timeout</span> helps prevent ongoing queries from being restarted.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 54pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">
+                <span style="font-family: &quot;Courier New&quot;">•	</span>
+              </div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char"><a name="pID0E0GK0HA">force-merge=&lt;true|false&gt;</a></span>: This option forces the shard to be merged even if there are no new update batches for it. One reason for re-merging a shard is to store the shard’s data with a new compression ratio, defined by the <span class="Code_Char">doradus.yaml</span> file’s <span class="Code_Char">olap_compression_level</span> option.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0FK0HA">The command requires no input entity. It merges the shard’s data synchronously, returning when the merge is complete. If the command is successful, a </a><span class="Code_Char">200 OK</span> response is returned, and all updates will be visible to queries.</div>
+      <div class="Normal"><a name="pID0E0EK0HA">The Merge Shard REST command is compatible with the </a><span class="Code_Char">auto-merge</span> application option. The Merge Shard command is affected by the presence of the <span class="Code_Char">auto-merge</span> option as summarized below:</div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span style="font-weight: bold"><a name="pID0E0DK0HA">Not set</a></span>: If <span class="Code_Char">auto-merge</span> is not defined, the Merge Shard command executes immediately. If another request is already performing a merge for the same shard via the same Doradus process, the command will immediately abort with a 404 error, indicating that the shard is already being merged. However, Doradus cannot detect if another merge is being performed via another server instance. <span style="text-decoration: underline">Merging the same shard via multiple instances can result in corruption of the shard.</span> Hence, is <span class="Code_Char">auto-merge</span> is not set, all merge requests should be send to the same Doradus instance.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_Char" style="font-weight: bold"><a name="pID0E0CK0HA">auto-merge</a></span><span style="font-weight: bold"> set</span>: If auto-merge is defined, the Merge Shard command uses the Task Manager service to perform an immediate “merge shard” task. This mechanism ensures that only one instance of the task is executing among all Doradus instances. If the shard is already being merged, the Merge Shard will (1) wait until the existing task finishes, then (2) perform an additional check to see if the shard has new, unmerged data, and if it does, (3) perform an additional merge operation for the shard. The Merge Shard command returns when the merge is complete.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0BK0HA">Setting the </a><span class="Code_Char">auto-merge</span> option adds an extra second or two to the Merge Shard command due to the interaction with the Task Manager service. However, this option ensures that a shard is not merged simultaneously by multiple tasks even in a multi-node environment.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

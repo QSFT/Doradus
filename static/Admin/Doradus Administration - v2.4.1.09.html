@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Compiling with Ant</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.04.html">Installing and Running Doradus</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.07.html">Compiling Doradus</a> : Compiling with Ant</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0IT0HA">Compiling with Ant</a></div>
+      <div class="Normal"><a name="pID0E0HT0HA">To compile Doradus using Ant, just enter </a><span class="Code_char">ant</span> from the home directory. All components (doradus-common, doradus-server, etc.) are built. The Ant build places binaries in different locations than Maven. You should see a folder structure such as this:</div>
+      <div class="Code"><a name="pID0E0GT0HA">./Doradus (or whatever your root directory is)</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0FT0HA">/doradus-client</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ET0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0DT0HA">/doradus-common</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0CT0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0BT0HA">/doradus-server</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0AT0HA">/bin</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E06S0HA">/config</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E05S0HA">doradus.yaml</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E04S0HA">log4j.properties</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03S0HA">/lib</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E02S0HA">...</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E01S0HA">/doradus-jetty</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZS0HA">...</a></div>
+      <div class="Normal"><a name="pID0E0YS0HA">Resource files are copied to the </a><span class="Code_char">config</span> folder. Generated and dependent jar files are placed in the <span class="Code_char">lib</span> folder.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

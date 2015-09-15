@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Any-field Clauses</title>
+    <link rel="StyleSheet" href="css/Doradus%20Logging%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Logging%20Database%20-%20v2.4.1.10.htm">Doradus Query Language (DQL)</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Logging%20Database%20-%20v2.4.1.18.htm">Contains Clauses</a> : Any-field Clauses</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0IP0HA">Any-field Clauses</a></div>
+      <div class="Normal"><a name="pID0E0HP0HA">Term and phrase clauses can search all fields of the perspective table by eliminating the field name qualifier. The simplest form of an any-field clause is a term clause:</a></div>
+      <div class="Code"><a name="pID0E0GP0HA">John</a></div>
+      <div class="Normal"><a name="pID0E0FP0HA">This clause searches all fields of the perspective table for a value contains the term </a><span class="Code_Char">John</span> (case-insensitive). </div>
+      <div class="Normal"><a name="pID0E0EP0HA">Multiple terms can be provided by separating them by at least one space. For example:</a></div>
+      <div class="Code"><a name="pID0E0DP0HA">John Smith</a></div>
+      <div class="Normal"><a name="pID0E0CP0HA">This multi-term clause searches for the terms </a><span class="Code_Char">John</span> and <span class="Code_Char">Smith</span> in <span style="text-decoration: underline">any order</span> and across <span style="text-decoration: underline">any field</span>. For example, an object will match if it has a <span class="Code_Char">FirstName</span> field that contains <span class="Code_Char">John</span> and a <span class="Code_Char">LastName</span> field that contains <span class="Code_Char">Smith</span>. If all terms are contained in the same field, they can appear in any order and be separated by other terms. For example, an object will match the example above if it has a <span class="Code_Char">Name</span> field whose value is “<span class="Code_Char">John Smith</span>”, “<span class="Code_Char">John Q. Smith</span>”, or “<span class="Code_Char">Smith, John</span>”.</div>
+      <div class="Normal"><a name="pID0E0BP0HA">An any-field clause can be requested using the field qualifier syntax by using the field name “*”. Example:</a></div>
+      <div class="Code"><a name="pID0E0AP0HA">*:(John Smith)</a></div>
+      <div class="Normal"><a name="pID0E06O0HA">This is the same as the unqualified term clause:</a></div>
+      <div class="Code"><a name="pID0E05O0HA">John Smith</a></div>
+      <div class="Normal"><a name="pID0E04O0HA">Phrase clauses can also use the field qualifier syntax and request an any-field search:</a></div>
+      <div class="Code"><a name="pID0E03O0HA">*:"John Smith"</a></div>
+      <div class="Normal"><a name="pID0E02O0HA">This query finds object where the terms </a><span class="Code_Char">John</span> and <span class="Code_Char">Smith</span> appear in succession in any field. The phrase can be preceded or followed by other terms.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>List All Tenants</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.22.html">Multi-Tenant Configuration</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.26.html">Managing Tenants</a> : List All Tenants</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0RK0HA">List All Tenants</a></div>
+      <div class="Normal"><a name="pID0E0QK0HA">This command lists all existing tenants:</a></div>
+      <div class="Code"><a name="pID0E0PK0HA">GET /_tenants</a></div>
+      <div class="Normal"><a name="pID0E0OK0HA">This command returns each tenant’s name and the list of applications owned by each tenant. An example response in XML is shown below:</a></div>
+      <div class="Code"><a name="pID0E0NK0HA">&lt;tenants&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0MK0HA">&lt;tenant&nbsp;name="Doradus"&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0LK0HA">&lt;applications&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0KK0HA">&lt;value&gt;SmokeTest&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0JK0HA">&lt;value&gt;App_Default&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0IK0HA">&lt;/applications&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0HK0HA">&lt;/tenant&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0GK0HA">&lt;tenant&nbsp;name="Bibliotecha"&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0FK0HA">&lt;applications&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0EK0HA">&lt;value&gt;App_Biblio&lt;/value&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0DK0HA">&lt;/applications&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0CK0HA">&lt;/tenant&gt;</a></div>
+      <div class="Code"><a name="pID0E0BK0HA">&lt;/tenants&gt;</a></div>
+      <div class="Normal"><a name="pID0E0AK0HA">As with all REST commands, a JSON response can be requested by adding </a><span class="Code_char">?format=json</span> to the URI. Example:</div>
+      <div class="Code"><a name="pID0E06J0HA">GET /_tenants?format=json</a></div>
+      <div class="Normal"><a name="pID0E05J0HA">Which returns:</a></div>
+      <div class="Code"><a name="pID0E04J0HA">{"tenants": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E03J0HA">"Doradus": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E02J0HA">"applications": [</a></div>
+      <div class="Code" style="margin-left: 61.2pt"><a name="pID0E01J0HA">"SmokeTest",</a></div>
+      <div class="Code" style="margin-left: 61.2pt"><a name="pID0E0ZJ0HA">"App_Default"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0YJ0HA">]</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0XJ0HA">},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0WJ0HA">"Bibliotecha": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VJ0HA">"applications": [</a></div>
+      <div class="Code" style="margin-left: 61.2pt"><a name="pID0E0UJ0HA">"App_Biblio"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TJ0HA">]</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0SJ0HA">}</a></div>
+      <div class="Code"><a name="pID0E0RJ0HA">}}</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

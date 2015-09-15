@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Global Aggregates</title>
+    <link rel="StyleSheet" href="css/Doradus%20Logging%20Database%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Logging%20Database%20-%20v2.4.1.26.htm">REST Commands</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Logging%20Database%20-%20v2.4.1.42.htm">Aggregate Query Command</a> : Global Aggregates</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0FG0HA">Global Aggregates</a></div>
+      <div class="Normal"><a name="pID0E0EG0HA">Without a grouping parameter, an aggregate query returns a single value: the metric function computed across all selected objects. Consider the following aggregate query URI REST command:</a></div>
+      <div class="Code"><a name="pID0E0DG0HA">GET /LogDepot/AppLogs/_aggregate?m=COUNT(*)&amp;q=EventID=540</a></div>
+      <div class="Normal"><a name="pID0E0CG0HA">This aggregate query returns counts all objects in the </a><span class="Code_Char">AppLogs</span> table whose <span class="Code_Char">EventID</span> is 540. A typical response in XML is:</div>
+      <div class="Code"><a name="pID0E0BG0HA">&lt;results&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0AG0HA">&lt;aggregate metric="COUNT(*)" query="EventID=540"/&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E06F0HA">&lt;totalobjects&gt;309142&lt;/totalobjects&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E05F0HA">&lt;value&gt;309142&lt;/value&gt;</a></div>
+      <div class="Code"><a name="pID0E04F0HA">&lt;/results&gt;</a></div>
+      <div class="Normal"><a name="pID0E03F0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E02F0HA">{"results": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E01F0HA">"aggregate": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZF0HA">"metric": "COUNT(*)",</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0YF0HA">"query": "EventID=540"</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0XF0HA">},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0WF0HA">"totalobjects": "309142",</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0VF0HA">"value": "309142"</a></div>
+      <div class="Code"><a name="pID0E0UF0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0TF0HA">As shown, the </a><span class="Code_Char">aggregate</span> element lists the parameters used for the aggregate query, in this case the metric (<span class="Code_Char">?m</span>) and query (<span class="Code_Char">&amp;q</span>) parameters. For a global aggregate, the metric value is provided in the <span class="Code_Char">value</span> element. The number of objects scanned to compute the metric value is also returned in the <span class="Code_Char">totalobjects</span> element.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

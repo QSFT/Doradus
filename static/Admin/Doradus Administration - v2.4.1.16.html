@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>DoradusServer.startEmbedded()</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.04.html">Installing and Running Doradus</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.14.html">Embedding Doradus In Another Application</a> : DoradusServer.startEmbedded()</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0ZQ0HA">DoradusServer.startEmbedded()</a></div>
+      <div class="Normal"><a name="pID0E0YQ0HA">This method returns as soon as all internal services are initialized and started. In addition to runtime arguments (like </a><span class="Code_char">main()</span>), this method accepts a second <span class="Code_char">String[]</span> that specifies optional services. Example:</div>
+      <div class="Code"><a name="pID0E0XQ0HA">String[] args = new String[] {"-restport", "5711"};</a></div>
+      <div class="Code"><a name="pID0E0WQ0HA">String[] services = new String[] {OLAPService.class.getName()};</a></div>
+      <div class="Code"><a name="pID0E0VQ0HA">DoradusServer.startEmbedded(args, services);	// returns when services are started</a></div>
+      <div class="Normal"><a name="pID0E0UQ0HA">The </a><span class="Code_char">services</span> parameter overrides the doradus.yaml file parameter <span class="Code_char">default_services</span>, starting only the given optional services. The example above starts Doradus with the OLAP storage service. But the REST, Task Manager, and other optional services are not initialized. Note that Doradus always initializes the DB and Schema services, which are required. See the <span class="Code_char">doradus.yaml</span> file <span class="Code_char">default_services</span> option for a description of optional services that may be requested.</div>
+      <div class="Normal"><a name="pID0E0TQ0HA">The </a><span class="Code_char">services</span> parameter must include full package name of each service. At least one storage service must be initialized otherwise <span class="Code_char">startEmbedded()</span> will throw a <span class="Code_char">RuntimeException</span>. If multiple storage services are provided, the first one becomes the default for new applications created via the embedded Doradus instance that do not explicitly declare a storage service.</div>
+      <div class="Normal"><a name="pID0E0SQ0HA">Although </a><span class="Code_char">startEmbedded()</span> returns when all requested and requires services have started, a service may not be immediately ready to use. For example, the internal database service is not ready until a connection to Cassandra is established. Until it does, the schema service and all storage services also will not be ready. To ensure that a needed service is ready to use, the application can call the <span class="Code_char">waitForFullService()</span> method. For example, to wait for the <span class="Code_char">OLAPService</span> to be ready:</div>
+      <div class="Code"><a name="pID0E0RQ0HA">OLAPService.instance().waitForFullSerice();	// wait until OLAP is ready.</a></div>
+      <div class="Normal"><a name="pID0E0QQ0HA">Note that multiple Doradus instances can be launched for the same Cassandra cluster with different service sets. For example, a bulk load application could embed Doradus, initializing only the storage service that it requires, while another standalone instance of Doradus can be executed with full services.</a></div>
+      <div class="Normal"><a name="pID0E0PQ0HA">When Doradus is started with the </a><span class="Code_char">startEmbedded()</span> method, it returns as soon as all requested services are initialized and running. Doradus can be gracefully shutdown by calling the <span class="Code_char">shutDown</span> method. Example:</div>
+      <div class="Code"><a name="pID0E0OQ0HA">DoradusServer.shutDown();		// gracefully shutdown and return</a></div>
+      <div class="Normal"><a name="pID0E0NQ0HA">Alternatively, Doradus can be gracefully shutdown and terminate the JVM process by calling </a><span class="Code_char">stopServer</span>. Example:</div>
+      <div class="Code"><a name="pID0E0MQ0HA">DordusServer.stopServer(null);	// gracefully shutdown and call System.exit()</a></div>
+      <div class="Normal"><a name="pID0E0LQ0HA">The parameter passed to </a><span class="Code_char">stopServer()</span> is a <span class="Code_char">String[]</span>, but it is ignored.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

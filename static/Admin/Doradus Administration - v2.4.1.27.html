@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Creating a New Tenant</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.22.html">Multi-Tenant Configuration</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.26.html">Managing Tenants</a> : Creating a New Tenant</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0E0CN0HA">Creating a New Tenant</a></div>
+      <div class="Normal"><a name="pID0E0BN0HA">A new tenant is created with the REST command:</a></div>
+      <div class="Code"><a name="pID0E0AN0HA">POST /_tenants</a></div>
+      <div class="Normal"><a name="pID0E06M0HA">This command must include a message body that minimally identifiers the new tenant’s name. Optionally, the command can define one or more tenant users and/or tenant options. An example in XML is shown below:</a></div>
+      <div class="Code"><a name="pID0E05M0HA">&lt;tenant name="HelloKitty"&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E04M0HA">&lt;options&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03M0HA">&lt;option name="ReplicationFactor"&gt;3&lt;/option&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E02M0HA">&lt;/options&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E01M0HA">&lt;properties&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZM0HA">&lt;property name="Owner_Organization"&gt;Cats, Inc.&lt;/property&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0YM0HA">&lt;/properties&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0XM0HA">&lt;users&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0WM0HA">&lt;user name="Katniss" password="Everdeen"/&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VM0HA">&lt;user name="Asparagus" password="Gus"&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0UM0HA">&lt;permissions&gt;APPEND&lt;/permissions&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0TM0HA">&lt;/user&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0SM0HA">&lt;user name="Skimbleshanks" password="Skanks"&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0RM0HA">&lt;permissions&gt;READ&lt;/permissions&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0QM0HA">&lt;/user&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0PM0HA">&lt;/users&gt;</a></div>
+      <div class="Code"><a name="pID0E0OM0HA">&lt;/tenant&gt;</a></div>
+      <div class="Normal"><a name="pID0E0NM0HA">In JSON:</a></div>
+      <div class="Code"><a name="pID0E0MM0HA">{"HelloKitty": {</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0LM0HA">"options": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0KM0HA">"ReplicationFactor": "3"</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0JM0HA">},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0IM0HA">"properties": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0HM0HA">"Owner_Organization": "Cats, Inc."</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0GM0HA">},</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0FM0HA">"users": {</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0EM0HA">"Katniss": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0DM0HA">"password": "Everdeen"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0CM0HA">},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0BM0HA">"Asparagus": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0AM0HA">"password": "Gus",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E06L0HA">"permissions": "APPEND"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E05L0HA">},</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E04L0HA">"Skimbleshanks": {</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E03L0HA">"password": "Skanks",</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E02L0HA">"permissions": "READ"</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01L0HA">}</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0ZL0HA">}</a></div>
+      <div class="Code"><a name="pID0E0YL0HA">}}</a></div>
+      <div class="Normal"><a name="pID0E0XL0HA">Only the new tenant name (</a><span class="Code_char">HelloKitty</span>) is required. Options, properties, and/or users can also be defined with the following semantics:</div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0WL0HA">options</a></span>: This group sets system-defined tenant options. Currently, the only option supported is <span class="Code_char">ReplicationFactor</span>, which overrides the <span class="Code_char">replication_factor</span> defined within the <span class="Code_char">ks_defaults</span> parameter in <span class="Code_char">doradus.yaml</span>. This option sets the replication factor for data stored within the tenant. It should not be larger than the number of nodes in the underlying Cassandra cluster.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0VL0HA">properties</a></span>: This group is for storing information about the tenant such as company, organization, or license keys. Any property name and value can be used, however, property names cannot begin with an underscore (_).</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0UL0HA">users</a></span>: This group is used to define an initial set of users. If this group is not present, an initial user is created with a random user ID and password and <span class="Code_char">ALL</span> permissions. When users are defined, a password must be provided. Optionally, a permissions can be specified, which is a comma-separated list of permission mnemonics. If no permissions are defined, <span class="Code_char">ALL</span> is assigned by default. Currently, the following permissions are supported:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 36pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0TL0HA">ALL</a></span>: This permission allows the user to perform all commands on all applications within the tenant.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 36pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0SL0HA">APPEND</a></span>: This permission restricts the user to POST commands.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 36pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0RL0HA">UPDATE</a></span>: This permission allows the user to perform PUT and POST commands.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 36pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><span class="Code_char"><a name="pID0E0QL0HA">READ</a></span>: This permission allows the user to perform GET commands.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0PL0HA">When a </a><span class="Code_char">POST /_tenants</span> command is received, the following occurs:</div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0OL0HA">A new tenant is created with the given name.</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0NL0HA">If no tenant users are specified, a new user is created for the tenant with a random user ID, random password, and </a><span class="Code_char">ALL</span> permissions.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0ML0HA">A new Cassandra keyspace is created using the tenant name. If the option </a><span class="Code_char">ReplicationFactor</span> is specified, it is used for the new keyspace. All other defaults come from the <span class="Code_char">doradus.yaml</span> parameter <span class="Code_char">ks_defaults</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0LL0HA">CQL commands are issued to create all new tenant user IDs/passwords. Each Cassandra user is named </a><span class="Code_char">{tenant}_{user}</span> so that user names are unique across tenants. The Cassandra user can be used for direct access to Cassandra.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0KL0HA">The keyspace is initialized with Doradus metadata ColumnFamilies (</a><span class="Code_char">Applications</span> and <span class="Code_char">Tasks</span>).</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Bullet_outer" style="margin-left: 0pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+            </td>
+            <td width="100%">
+              <div class="Bullet_inner"><a name="pID0E0JL0HA">The tenant’s definition is written to the </a><span class="Code_char">Applications</span> CF so it can be recovered if needed.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0IL0HA">The POST command returns the new tenant’s full definition, including name; user IDs, passwords, and permissions; properties; and options, using the same document format shown above. The response also includes the system-assigned </a><span class="Code_char">_CreatedOn</span> property, which is a timestamp documenting when the tenant was created. Example:</div>
+      <div class="Code"><a name="pID0E0HL0HA">&lt;tenant name="HelloKitty"&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0GL0HA">&lt;options&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0FL0HA">&lt;option name="ReplicationFactor"&gt;3&lt;/option&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0EL0HA">&lt;/options&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0DL0HA">&lt;properties&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0CL0HA">&lt;property name="Owner_Organization"&gt;Cats, LLC&lt;/property&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0BL0HA">&lt;property name="_CreatedOn"&gt;2015-06-17 15:41:40&lt;/property&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0AL0HA">&lt;/properties&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E06K0HA">&lt;users&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E05K0HA">&lt;user name="Katniss" password="Everdeen"&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E04K0HA">&lt;permissions&gt;APPEND&lt;/permissions&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E03K0HA">&lt;/user&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E02K0HA">&lt;user name="Asparagus" password="Gus"&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E01K0HA">&lt;permissions&gt;APPEND&lt;/permissions&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZK0HA">&lt;/user&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0YK0HA">&lt;user name="Skimbleshanks" password="Skanks"&gt;</a></div>
+      <div class="Code" style="margin-left: 72pt"><a name="pID0E0XK0HA">&lt;permissions&gt;READ&lt;/permissions&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0WK0HA">&lt;/user&gt;</a></div>
+      <div class="Code" style="margin-left: 36pt"><a name="pID0E0VK0HA">&lt;/users&gt;</a></div>
+      <div class="Code"><a name="pID0E0UK0HA">&lt;/tenant&gt;</a></div>
+      <div class="Normal"><a name="pID0E0TK0HA">If the tenant is modified, the </a><span class="Code_char">_CreatedOn</span> property can be specified but must match the existing value.</div>
+      <div class="Normal"><a name="pID0E0SK0HA">If a create tenant command is received but the given tenant name already exists, a </a><span class="Code_char">409 Conflict</span> response is returned. This prevents the accidental creation of a new tenant using a name already used.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

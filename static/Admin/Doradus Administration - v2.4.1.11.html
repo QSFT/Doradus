@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Running Doradus using Tomcat</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.04.html">Installing and Running Doradus</a> : Running Doradus using Tomcat</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0HS0HA">Running Doradus using Tomcat</a></div>
+      <div class="Normal"><a name="pID0E0GS0HA">Instead of using the embedded Jetty server to serve its REST API, you can host Doradus in the Apache Tomcat server. The folder </a><span class="Code_char">doradus-tomcat</span> contains interface source files, a <span class="Code_char">web.xml</span> file, and a <span class="Code_char">pom.xml</span> build file. (Currently, this project only supports Maven builds.) To use the Tomcat interface, use the following steps:</div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">1)	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><a name="pID0E0FS0HA">Download and install Tomcat. Instructions for Tomcat 7 can be found here: </a><span class="Hyperlink"><a href="https://tomcat.apache.org/tomcat-7.0-doc/appdev/installation.html" target="external_window">https://tomcat.apache.org/tomcat-7.0-doc/appdev/installation.html</a></span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">2)	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><a name="pID0E0ES0HA">Copy the latest </a><span class="Code_char">doradus.yaml</span> file from <span class="Code_char">./doradus-server/src/main/resources</span> to <span class="Code_char">./doradus-tomcat/src/main/resources</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">3)	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><a name="pID0E0DS0HA">Modify the </a><span class="Code_char">doradus.yaml</span> and comment-out the <span class="Code_char">webserver_class</span> parameter. Example:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0CS0HA">#webserver_class: com.dell.doradus.server.JettyWebServer</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0BS0HA">Commenting-out this line prevents Doradus from trying to initialize an embedded web server. Make any additional changes you need to this file at the same time.</a></div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">4)	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><a name="pID0E0AS0HA">The provided </a><span class="Code_char">web.xml</span> file allows Doradus REST commands to respond to ROOT URIs (no prefix) or the special prefix <span class="Code_char">_api</span>. For example, if Doradus runs as ROOT, the “list applications” command will be:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E06R0HA">GET /_applications</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E05R0HA">If Doradus is assigned the URI prefix </a><span class="Code_char">_api</span>, the “list applications” command will be:</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E04R0HA">GET /_api/_applications</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E03R0HA">If you’d like to use a different API prefix, modify </a><span class="Code_char">web.xml</span> and add a section such as the following:</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E02R0HA">&lt;!--Doradus running with URI prefix "Fuzzy" --&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E01R0HA">&lt;servlet-mapping&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0ZR0HA">    &lt;servlet-name&gt;DoradusRestServlet&lt;/servlet-name&gt;</a></div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0YR0HA">    &lt;url-pattern&gt;/</a><span style="font-weight: bold">Fuzzy</span>/*&lt;/url-pattern&gt;</div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0XR0HA">&lt;/servlet-mapping&gt;</a></div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">5)	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><a name="pID0E0WR0HA">Generate the </a><span class="Code_char">war</span> file by compiling <span class="Code_char">doradus-tomcat</span> using <span class="Code_char">pom.xml</span> in the root folder. If Doradus will use no URI prefix, use the following command:</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Code" style="margin-left: 54pt"><a name="pID0E0VR0HA">$ mvn compile war:war -Dwar.warName=ROOT</a></div>
+      <div class="Normal" style="margin-left: 36pt"><a name="pID0E0UR0HA">If Doradus will use a URI prefix, change </a><span class="Code_char">ROOT</span> to the appropriate prefix name.</div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">6)	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><a name="pID0E0TR0HA">Copy the war file (e.g., </a><span class="Code_char">ROOT.war</span> or <span class="Code_char">_api.war</span>) from the <span class="Code_char">target</span> folder to <span class="Code_char">&lt;TOMCAT_HOME&gt;/webapps</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">7)	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><a name="pID0E0SR0HA">Make any other Tomcat changes you need by adjusting the corresponding configuration files. For example, the default port number (8080) is defined in the file </a><span class="Code_char">&lt;TOMCAT_HOME&gt;config/server.xml</span>.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="List_Paragraph_outer" style="margin-left: 18pt">
+        <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+          <tr style="vertical-align: baseline">
+            <td>
+              <div class="List_Paragraph_inner" style="width: 18pt; white-space: nowrap">8)	</div>
+            </td>
+            <td width="100%">
+              <div class="List_Paragraph_inner"><a name="pID0E0RR0HA">Start Tomcat from the </a><span class="Code_char">&lt;TOMCAT_HOME&gt;/bin</span> folder, e.g., with <span class="Code_char">./catalina.sh run</span> on Mac or Linux or just <span class="Code_char">catalina</span> for Windows. The doradus-tomcat war file will be expanded automatically when Tomcat starts.</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="Normal"><a name="pID0E0QR0HA">Note that the doradus.log file should appear in the </a><span class="Code_char">&lt;TOMCAT_HOME&gt;/bin</span> folder.</div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

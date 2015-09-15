@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Managing Tenants</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.22.html">Multi-Tenant Configuration</a> : Managing Tenants</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_2"><a name="pID0E0KN0HA">Managing Tenants</a></div>
+      <div class="Normal"><a name="pID0E0JN0HA">The REST commands to create, modify, and delete tenants are considered privileged operations, hence they must be accompanied with valid super user credentials. REST commands use </a><span style="font-style: italic">basic authorization</span> (basic auth), which means credentials are passed using the <span class="Code_char">Authorization</span> header:</div>
+      <div class="Code"><a name="pID0E0IN0HA">Authorization: Basic xxx</a></div>
+      <div class="Normal"><a name="pID0E0HN0HA">Where xxx is the user ID and password, separated by a colon, and then base64 encoded. For example, if the super user and password are </a><span class="Code_char">cassandra:cassandra</span>, the header would look like this:</div>
+      <div class="Code"><a name="pID0E0GN0HA">Authorization: Basic Y2Fzc2FuZHJhOmNhc3NhbmRyYQo=</a></div>
+      <div class="Normal"><a name="pID0E0FN0HA">A summary of tenant-management commands is given below:</a></div>
+      <table class="Table_Grid" style="margin-left: 14.4pt; width: 463.35pt" cellspacing="0" summary="">
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; width: 90.25pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span style="font-weight: bold"><a name="pID0EACF0EN0HA">Command</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; width: 135.3pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span style="font-weight: bold"><a name="pID0EABF0EN0HA">REST URI</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; width: 237.8pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span style="font-weight: bold"><a name="pID0EAAF0EN0HA">Comments</a></span></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EACE0EN0HA">Create new tenant</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EABE0EN0HA">POST /_tenants</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EBAE0EN0HA">Requires &lt;tenant&gt; document.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EAAE0EN0HA">Fails if tenant already exists.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EACD0EN0HA">Modify tenant</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EABD0EN0HA">PUT /_tenants/{tenant}</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EAAD0EN0HA">Requires &lt;tenant&gt; document.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EACC0EN0HA">Delete tenant</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EABC0EN0HA">DELETE /_tenants/{tenant}</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EBAC0EN0HA">All applications and data are deleted.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EAAC0EN0HA">ColumnFamilies are moved to “snapshot” files.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EACB0EN0HA">List all tenants</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EABB0EN0HA">GET /_tenants</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EAAB0EN0HA">Lists tenant and application names only.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EACA0EN0HA">List tenant</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EABA0EN0HA">GET /_tenants/{tenant}</a></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Bullet_outer" style="margin-left: 0pt; margin-bottom: 0pt; margin-top: 0pt">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" role="presentation">
+                <tr style="vertical-align: baseline">
+                  <td>
+                    <div class="Bullet_inner" style="width: 18pt; white-space: nowrap">•	</div>
+                  </td>
+                  <td width="100%">
+                    <div class="Bullet_inner"><a name="pID0EAAA0EN0HA">Lists tenant details.</a></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div class="Normal"><a name="pID0E0DN0HA">The following sections describe each command in detail.</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>

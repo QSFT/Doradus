@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>StorageManager</title>
+    <link rel="StyleSheet" href="css/Doradus%20Administration%20-%20v2.4.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body onload="WWHUpdate();" onunload="WWHUnload();" onkeydown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onkeypress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onkeyup="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.34.html">Doradus Configuration and Operation</a> : <a class="WebWorks_Breadcrumb_Link" href="Doradus%20Administration%20-%20v2.4.1.52.html">Managing Doradus via JMX</a> : StorageManager</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading_3"><a name="pID0EGHA">StorageManager</a></div>
+      <div class="Normal"><span class="Code_char"><a name="pID0EFHA">StorageManager</a></span> is operative only when the Task Manager service has been initialized (<span class="Code_char">com.dell.doradus.service.taskmanager.TaskManagerService</span>). This is always the case when the server is started as a standalone process but optional when Doradus is embedded within another application. <span class="Code_char">StorageManager</span> provides the following attributes:</div>
+      <table class="Table_Grid" style="margin-left: 36pt; width: 503.5pt" cellspacing="0" summary="">
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; width: 120.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span style="font-weight: bold"><a name="pID0EABJEHA">Attribute Name</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; width: 383pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span style="font-weight: bold"><a name="pID0EAAJEHA">Description</a></span></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABIEHA">AppNames</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EAAIEHA">The Doradus application names known to the Task Manager.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABHEHA">GlobalDefaultSettings</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EAAHEHA">The global task schedule settings, which are used for tasks that do not have a more specific (e.g., application- or table-specific) schedule default. The global schedule is usually "never", meaning no default schedule is applied to tasks.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABGEHA">JobList</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EAAGEHA">The list of tasks currently executing.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABFEHA">NodesCount</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EAAFEHA">The number of Cassandra nodes in the cluster.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABEEHA">OS</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EAAEEHA">The operating system of the Doradus server.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABDEHA">OperationMode</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EAADEHA">The operation mode of the first connected Cassandra mode (NORMAL, LEAVING, JOINING, etc.)</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABCEHA">RecentJob</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EAACEHA">Attributes about the most recent job executed through the </a><span class="Code_char">StorageManager</span> interface.</div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABBEHA">ReleaseVersion</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EAABEHA">The Doradus server release version.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABAEHA">StartMode</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EAAAEHA">The execution mode of the first connected Cassandra node: 1 (FOREGROUND), 2 (BACKGROUND), or 0 (UNKNOWN).</a></div>
+          </td>
+        </tr>
+      </table>
+      <div class="Normal"><a name="pID0EDHA">The </a><span class="Code_char">StorageManager</span> <span class="Code_char">MXBean</span> also provides operations that perform basic administrative functions, summarized below:</div>
+      <table class="Table_Grid" style="margin-left: 36pt; width: 503.5pt" cellspacing="0" summary="">
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; width: 157.05pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span style="font-weight: bold"><a name="pID0EABKCHA">Operation Name</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt; width: 346.45pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span style="font-weight: bold"><a name="pID0EAAKCHA">Description</a></span></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABJCHA">getJobByID</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EAAJCHA">Get the status of a job with a specific ID.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABICHA">startCreateSnapshot</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EAAICHA">Start a task to create a backup snapshot of the first Cassandra node connected to the Doradus server, assigning the snapshot a name.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABHCHA">startDeleteSnapshot</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EAAHCHA">Delete a backup snapshot with a given name.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABGCHA">startRestoreFromSnapshot</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EAAGCHA">Restore the Cassandra node connected to the Doradus server from a given snapshot game.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABFCHA">sendInterruptTaskCommand</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EAAFCHA">Interrupt an executing task with a given name, belonging to a given application.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABECHA">sendSuspectSchedulingCommand</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EAAECHA">Suspend the scheduling of a task with a given name, belonging to a given application.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABDCHA">sendResumeSchedulingCommand</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EAADCHA">Resume the scheduling of a task with a given name, belonging to a given application.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABCCHA">getAppSettings</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EAACCHA">Get the default task schedule settings for a given application name.</a></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><span class="Code_char"><a name="pID0EABBCHA">getTaskStatus</a></span></div>
+          </td>
+          <td style="border-bottom-color: #000000; border-bottom-style: solid; border-bottom-width: 0.5pt; border-left-color: #000000; border-left-style: solid; border-left-width: 0.5pt; border-right-color: #000000; border-right-style: solid; border-right-width: 0.5pt; border-top-color: #000000; border-top-style: solid; border-top-width: 0.5pt">
+            <div class="Normal" style="margin-bottom: 0pt; margin-top: 0pt"><a name="pID0EAABCHA">Get the status of a task with a given name, belonging to a given application.</a></div>
+          </td>
+        </tr>
+      </table>
+      <div class="Normal"><a name="pID0EBHA">&nbsp;</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>
