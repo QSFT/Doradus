@@ -135,9 +135,14 @@ public class Command {
         //validate command name 
         this.metadataJson = matchCommand(restMetadataJson, this.commandName, commandParams.containsKey(STORAGE_SERVICE) ? (String)commandParams.get(STORAGE_SERVICE): _SYSTEM);
         if (this.metadataJson == null) {
-            throw new RuntimeException("unsupported command name: " + this.commandName);
+        	//application command not found, look for system command
+        	if (commandParams.containsKey(STORAGE_SERVICE)) {
+        		this.metadataJson = matchCommand(restMetadataJson, this.commandName, _SYSTEM);
+        	}
         }
-        
+      	if  (this.metadataJson == null) {      	
+    		throw new RuntimeException("unsupported command name: " + this.commandName);
+    	}        
         //validate required params
         validateRequiredParams();
     }

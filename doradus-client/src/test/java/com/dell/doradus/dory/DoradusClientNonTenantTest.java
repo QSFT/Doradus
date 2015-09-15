@@ -159,7 +159,7 @@ public class DoradusClientNonTenantTest {
         
         //test retrieve Logs
         RESTResponse response = client.runCommand(Command.builder().withName("Logs").withParam("level", "INFO").build());
-        assertTrue(response.getCode().getCode() == 200);
+        assertFalse(response.isFailed());
         client.close();     
         
     }
@@ -179,13 +179,14 @@ public class DoradusClientNonTenantTest {
         
         //test ListApps and DeleteApp
         RESTResponse response = client.runCommand(Command.builder().withName("ListApps").build());
-        if (response.getBody().contains("Stuff1")) {        
+        if (response.getBody().contains("Stuff1")) {    
             RESTResponse response1 = client.runCommand(Command.builder().withName("DeleteApp").withParam("application", "Stuff1").build());
-            assertTrue(response1.getCode().getCode() == 200);    
+            assertFalse(response1.isFailed());
+            client.close();
         }
         if (response.getBody().contains("Stuff2")) {        
             RESTResponse response2 = client.runCommand(Command.builder().withName("DeleteApp").withParam("application", "Stuff2").build());
-            assertTrue(response2.getCode().getCode() == 200);    
+            assertFalse(response2.isFailed());     
         }  
         response = client.runCommand(Command.builder().withName("ListApps").build());
         assertFalse(response.getBody().contains("Stuff1")); 
@@ -195,18 +196,18 @@ public class DoradusClientNonTenantTest {
         ApplicationDefinition appDef1 = new ApplicationDefinition();
         appDef1.setAppName("Stuff1");
         response = client.runCommand(Command.builder().withName("DefineApp").withParam("ApplicationDefinition", appDef1).build());
-        assertTrue(response.getCode().getCode() == 200);
+        assertFalse(response.isFailed());  
         
         //test create another OPLAP application
         ApplicationDefinition appDef2 = new ApplicationDefinition();
         appDef2.setAppName("Stuff2");
         appDef2.setOption("StorageService", "OLAPService");
         response = client.runCommand(Command.builder().withName("DefineApp").withParam("ApplicationDefinition", appDef2).build());  
-        assertTrue(response.getCode().getCode() == 200);
+        assertFalse(response.isFailed());
         
         //verify 2 apps created
         response = client.runCommand(Command.builder().withName("ListApps").build());
-        assertTrue(response.getCode().getCode() == 200);
+        assertFalse(response.isFailed());
         assertTrue(response.getBody().contains("Stuff1")); 
         assertTrue(response.getBody().contains("Stuff2"));      
         client.close();
@@ -261,9 +262,11 @@ public class DoradusClientNonTenantTest {
         
         //test find and DeleteApp
         RESTResponse response = client.runCommand(Command.builder().withName("ListApps").build());
-        if (response.getBody().contains("EmailApp")) {         
+        if (response.getBody().contains("EmailApp")) { 
+        	//testing setApplication but still look for _system command
+        	client.setApplication("EmailApp");
             RESTResponse response1 = client.runCommand(Command.builder().withName("DeleteApp").withParam("application", "EmailApp").build());
-            assertTrue(response1.getCode().getCode() == 200);    
+            assertFalse(response1.isFailed());   
         }   
         //test create OLAP app 
         ApplicationDefinition appDef = new ApplicationDefinition();
@@ -272,7 +275,7 @@ public class DoradusClientNonTenantTest {
         
         //test list app
         response = client.runCommand(Command.builder().withName("ListApp").withParam("application", "EmailApp").build());
-        assertTrue(response.getCode().getCode() == 200);
+        assertFalse(response.isFailed());
         client.close();   
     }   
  
@@ -300,7 +303,7 @@ public class DoradusClientNonTenantTest {
         
         //test merge shard
         response = client.runCommand(Command.builder().withName("Merge").withParam("shard","s1").withParam("force-merge", "true").build());     
-        assertTrue(response.getCode().getCode() == 200);  
+        assertFalse(response.isFailed());  
         
         //test query
         Command command2 = Command.builder().withName("Query")
