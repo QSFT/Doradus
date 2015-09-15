@@ -36,5 +36,5 @@ tar -cvf $DIST_FILE_NAME --exclude="*._*" --exclude="*build.sh" --exclude="*.bat
 #remove the build directories
 rm -rf doradus
 
-echo "Doradus Distribution created"
+echo "Doradus Distribution file created"
 ls -la Doradus-distribution-*.tar
