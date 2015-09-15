@@ -237,7 +237,7 @@ public class DoradusClientNonTenantTest {
         DBObjectBatch dbObjectBatch =  DBObjectBatch.builder().withObject(dbObject1).withObject(dbObject2).build();
         RESTResponse response = client.runCommand(Command.builder().withName("Add").withParam("table","Messages").withParam("batch", dbObjectBatch).build());
         
-        assertTrue(response.getCode().getCode() == 201);
+        assertFalse(response.isFailed());
         
         //to query data on the same application: 
         Command command2 = Command.builder().withName("Query")
@@ -247,7 +247,7 @@ public class DoradusClientNonTenantTest {
                                 .withParam("size", "10")
                                 .build();
         RESTResponse response2 = client.runCommand(command2);
-        assertTrue(response2.getCode().getCode() == 200);
+        assertFalse(response.isFailed());
         assertTrue(response2.getBody().contains("{\"results\":{\"docs\":[{\"doc\":{\"Body\":\"Hello there!"));
         
         client.close();
@@ -314,7 +314,7 @@ public class DoradusClientNonTenantTest {
                 .withParam("size", "10")
                 .build();
         RESTResponse response2 = client.runCommand(command2);
-        assertTrue(response2.getCode().getCode() == 200);
+        assertFalse(response.isFailed());
         assertTrue(response2.getBody().contains("Today message"));
     }
 
@@ -326,7 +326,7 @@ public class DoradusClientNonTenantTest {
         RESTResponse response = client.runCommand(Command.builder().withName("ListApps").build());
         if (response.getBody().contains("EmailApp")) {         
             RESTResponse response1 = client.runCommand(Command.builder().withName("DeleteApp").withParam("application", "EmailApp").build());
-            assertTrue(response1.getCode().getCode() == 200);    
+            assertFalse(response1.isFailed());
         }       
         //create OLAP app 
         ApplicationDefinition appDef = new ApplicationDefinition();
