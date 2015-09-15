@@ -1,7 +1,7 @@
 #!/bin/bash
 # Linux Script to build Doradus distribution
 
-DIST_VERSION=2.4
+DIST_VERSION=2.4.0
 DIST_FILE_NAME=Doradus-distribution-$DIST_VERSION.tar
 
 #Build Doradus
