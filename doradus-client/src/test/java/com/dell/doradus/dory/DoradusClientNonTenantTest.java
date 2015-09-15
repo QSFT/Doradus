@@ -34,6 +34,7 @@ import java.util.Map;
 
 import javax.json.JsonObject;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.dell.doradus.client.Credentials;
@@ -52,11 +53,11 @@ import com.dell.doradus.dory.command.Command;
  *
  */
 
-
+@Ignore
 public class DoradusClientNonTenantTest {
     
-    private static final String HOST = "doradus.prep.us.platform.dell.com";
-    private static final int PORT = 80;
+    private static final String HOST = "localhost";
+    private static final int PORT = 1111;
     private static final String OLAP_SCHEMA_FILE = "OLAPSchema.json";
 
     @Test
