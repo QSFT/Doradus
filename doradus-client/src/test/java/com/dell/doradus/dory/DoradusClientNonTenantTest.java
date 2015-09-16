@@ -57,7 +57,7 @@ import com.dell.doradus.dory.command.Command;
 public class DoradusClientNonTenantTest {
     
     private static final String HOST = "localhost";
-    private static final int PORT = 1111;
+    private static final int PORT = 1123;
     private static final String OLAP_SCHEMA_FILE = "OLAPSchema.json";
 
     @Test
@@ -183,7 +183,6 @@ public class DoradusClientNonTenantTest {
         if (response.getBody().contains("Stuff1")) {    
             RESTResponse response1 = client.runCommand(Command.builder().withName("DeleteApp").withParam("application", "Stuff1").build());
             assertFalse(response1.isFailed());
-            client.close();
         }
         if (response.getBody().contains("Stuff2")) {        
             RESTResponse response2 = client.runCommand(Command.builder().withName("DeleteApp").withParam("application", "Stuff2").build());
@@ -232,8 +231,8 @@ public class DoradusClientNonTenantTest {
         assertTrue(jsonResult.getString("input-entity").equals("batch"));
 
         //test add data 
-        DBObject dbObject1 = DBObject.builder().withValue("Subject", "Hello").withValue("Body", "Hello there!").build();        
-        DBObject dbObject2 = DBObject.builder().withValue("Subject", "Bye").withValue("Body", "Good bye!").build();
+        DBObject dbObject1 = DBObject.builder().withValue("Subject", "Hello").withValue("Body", "Hello there!").withValue("password", "password1".getBytes()).build();        
+        DBObject dbObject2 = DBObject.builder().withValue("Subject", "Bye").withValue("Body", "Good bye!").withValue("password", "password2".getBytes()).build();
             
         DBObjectBatch dbObjectBatch =  DBObjectBatch.builder().withObject(dbObject1).withObject(dbObject2).build();
         RESTResponse response = client.runCommand(Command.builder().withName("Add").withParam("table","Messages").withParam("batch", dbObjectBatch).build());
