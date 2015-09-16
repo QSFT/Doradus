@@ -197,7 +197,7 @@ public class ThriftService extends DBService {
     public void commit(DBTransaction dbTran) {
         checkState();
         CassandraTransaction cassDBTran = (CassandraTransaction)dbTran;
-        DBConn dbConn = getDBConnection(cassDBTran.getKeyspace());
+        DBConn dbConn = getDBConnection(cassDBTran.getNamespace());
         try {
             dbConn.commit(dbTran);
         } finally {

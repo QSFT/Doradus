@@ -16,28 +16,13 @@
 
 package com.dell.doradus.service.db;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.apache.cassandra.thrift.Column;
-import org.apache.cassandra.thrift.ColumnOrSuperColumn;
-import org.apache.cassandra.thrift.CounterColumn;
-import org.apache.cassandra.thrift.Deletion;
-import org.apache.cassandra.thrift.Mutation;
-import org.apache.cassandra.thrift.SlicePredicate;
-import org.apache.cassandra.thrift.SliceRange;
-import org.apache.cassandra.thrift.SuperColumn;
 import org.slf4j.Logger;
 
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.service.db.memory.MemoryService.Keyspace;
-import com.dell.doradus.service.db.memory.MemoryService.Row;
-import com.dell.doradus.service.db.memory.MemoryService.Store;
 
 /**
  * Class that encapsulates a set of updates that will be committed together.
@@ -113,102 +98,6 @@ public class DBTransaction {
         return m_rowDeletes;
     }
 
-    /**
-     * Get the collection of the store names affected by the column updates of this transaction
-     */
-    public Collection<String> getColumnUpdatesStoreNames() {
-        Set<String> storeNames = new HashSet<>();
-        for(ColumnUpdate mutation: getColumnUpdates()) {
-            storeNames.add(mutation.getStoreName());
-        }
-        return storeNames;
-    }
-
-    /**
-     * Get the collection of the row keys in the specified store, affected by the column updates of this transaction
-     */
-    public Collection<String> getColumnUpdatesRowKeys(String storeName) {
-        Set<String> rowKeys = new HashSet<>();
-        for(ColumnUpdate mutation: getColumnUpdates()) {
-            if(!storeName.equals(mutation.getStoreName())) continue;
-            rowKeys.add(mutation.getRowKey());
-        }
-        return rowKeys;
-    }
-    
-    /**
-     * Get the collection of the columns to be updated in the specified row of the specified store
-     */
-    public Collection<DColumn> getColumnUpdates(String storeName, String rowKey) {
-        List<DColumn> columnUpdates = new ArrayList<>();
-        for(ColumnUpdate mutation: getColumnUpdates()) {
-            if(!storeName.equals(mutation.getStoreName())) continue;
-            if(!rowKey.equals(mutation.getRowKey())) continue;
-            columnUpdates.add(mutation.getColumn());
-        }
-        return columnUpdates;
-    }
-    
-    /**
-     * Get the collection of the store names affected by the column deletes of this transaction
-     */
-    public Collection<String> getColumnDeletesStoreNames() {
-        Set<String> storeNames = new HashSet<>();
-        for(ColumnDelete mutation: getColumnDeletes()) {
-            storeNames.add(mutation.getStoreName());
-        }
-        return storeNames;
-    }
-
-    /**
-     * Get the collection of the row keys in the specified store, affected by the column deletes of this transaction
-     */
-    public Collection<String> getColumnDeletesRowKeys(String storeName) {
-        Set<String> rowKeys = new HashSet<>();
-        for(ColumnDelete mutation: getColumnDeletes()) {
-            if(!storeName.equals(mutation.getStoreName())) continue;
-            rowKeys.add(mutation.getRowKey());
-        }
-        return rowKeys;
-    }
-    
-    /**
-     * Get the collection of the column names to be deleted in the specified row in the specified store
-     */
-    public Collection<String> getColumnDeletes(String storeName, String rowKey) {
-        List<String> columnDeletes = new ArrayList<>();
-        for(ColumnDelete mutation: getColumnDeletes()) {
-            if(!storeName.equals(mutation.getStoreName())) continue;
-            if(!rowKey.equals(mutation.getRowKey())) continue;
-            columnDeletes.add(mutation.getColumnName());
-        }
-        return columnDeletes;
-    }
-
-    /**
-     * Get the collection of the store names affected by the row deletes of this transaction
-     */
-    public Collection<String> getRowDeletesStoreNames() {
-        Set<String> storeNames = new HashSet<>();
-        for(RowDelete mutation: getRowDeletes()) {
-            storeNames.add(mutation.getStoreName());
-        }
-        return storeNames;
-    }
-
-    /**
-     * Get the collection of row keys to be deleted in the specified store
-     */
-    public Collection<String> getRowDeletes(String storeName) {
-        List<String> rowDeletes = new ArrayList<>();
-        for(ColumnDelete mutation: getColumnDeletes()) {
-            if(!storeName.equals(mutation.getStoreName())) continue;
-            rowDeletes.add(mutation.getRowKey());
-        }
-        return rowDeletes;
-    }
-    
-    
     //----- Column/row update methods
     
     /**

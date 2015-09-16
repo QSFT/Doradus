@@ -189,9 +189,9 @@ public class TaskManagerService extends Service {
                 dbTran.deleteRow(TASKS_STORE_NAME, row.getKey());
             }
         }
-        if (dbTran.getUpdateCount() > 0) {
+        if (dbTran.getMutationsCount() > 0) {
             m_logger.info("Deleting {} task status rows for application {}",
-                          dbTran.getUpdateCount(), appDef.getPath());
+                          dbTran.getMutationsCount(), appDef.getPath());
             DBService.instance().commit(dbTran);
         }
     }

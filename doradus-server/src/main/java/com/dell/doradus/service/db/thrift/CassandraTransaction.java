@@ -18,7 +18,6 @@ package com.dell.doradus.service.db.thrift;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,16 +26,16 @@ import java.util.Set;
 
 import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.thrift.ColumnOrSuperColumn;
-import org.apache.cassandra.thrift.CounterColumn;
 import org.apache.cassandra.thrift.Deletion;
 import org.apache.cassandra.thrift.Mutation;
 import org.apache.cassandra.thrift.SlicePredicate;
-import org.apache.cassandra.thrift.SliceRange;
-import org.apache.cassandra.thrift.SuperColumn;
-import org.slf4j.Logger;
 
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.service.db.ColumnDelete;
+import com.dell.doradus.service.db.ColumnUpdate;
 import com.dell.doradus.service.db.DBTransaction;
+import com.dell.doradus.service.db.DColumn;
+import com.dell.doradus.service.db.RowDelete;
 import com.dell.doradus.service.db.Tenant;
 
 /**
@@ -68,48 +67,76 @@ public class CassandraTransaction extends DBTransaction {
      */
     public long getTimestamp() {
         return m_timestamp;
-    }   // getTimestamp
-    
-    
-    public void addMutationList(String cfName, String rowKey, List<Mutation> mutations) {
-        ByteBuffer rowKeyBB = ByteBuffer.wrap(Utils.toBytes(rowKey));
-        Map<String, List<Mutation>> colFamMap = m_mutationMap.get(rowKeyBB);
-        if (colFamMap == null) {
-            colFamMap = new HashMap<String, List<Mutation>>();
-            m_mutationMap.put(rowKeyBB, colFamMap);
-        }
-        
-        List<Mutation> mutationList = colFamMap.get(cfName);
-        if (mutationList == null) {
-            mutationList = new ArrayList<>();
-            colFamMap.put(cfName, mutationList);
-        }
-        
-        mutationList.addAll(mutations);
-        m_colUpdates += mutations.size();
     }
     
-    //----- Private methods
-
-    // Add the given mutation to the column mutation map.
-    private void addMutation(String cfName, String rowKey, Mutation mutation) {
-        ByteBuffer rowKeyBB = ByteBuffer.wrap(Utils.toBytes(rowKey));
-        Map<String, List<Mutation>> colFamMap = m_mutationMap.get(rowKeyBB);
-        if (colFamMap == null) {
-            colFamMap = new HashMap<String, List<Mutation>>();
-            m_mutationMap.put(rowKeyBB, colFamMap);
+    public Map<String, Set<ByteBuffer>> getRowDeletionMap() {
+        Map<String, Set<ByteBuffer>> rowDeletionMap = new HashMap<>();
+        for(RowDelete mutation: getRowDeletes()) {
+            String storeName = mutation.getStoreName();
+            String rowKey = mutation.getRowKey();
+            Set<ByteBuffer> rows = rowDeletionMap.get(storeName);
+            if(rows == null) {
+                rows = new HashSet<ByteBuffer>();
+                rowDeletionMap.put(storeName, rows);
+            }
+            rows.add(Utils.toByteBuffer(rowKey));
+        }
+        return rowDeletionMap;
+    }
+    
+    public int totalColumnMutations() {
+        return getColumnUpdates().size() + getColumnDeletes().size();
+    }
+    
+    public Map<ByteBuffer, Map<String, List<Mutation>>> getUpdateMap() {
+        Map<ByteBuffer, Map<String, List<Mutation>>> updateMap = new HashMap<>();
+        for(ColumnUpdate mutation: getColumnUpdates()) {
+            String storeName = mutation.getStoreName();
+            String rowKey = mutation.getRowKey();
+            DColumn column = mutation.getColumn();
+            
+            ByteBuffer rowKeyBB = Utils.toByteBuffer(rowKey);
+            Map<String, List<Mutation>> colFamMap = updateMap.get(rowKeyBB);
+            if (colFamMap == null) {
+                colFamMap = new HashMap<String, List<Mutation>>();
+                updateMap.put(rowKeyBB, colFamMap);
+            }
+            
+            List<Mutation> mutationList = colFamMap.get(storeName);
+            if (mutationList == null) {
+                mutationList = new ArrayList<>();
+                colFamMap.put(storeName, mutationList);
+            }
+            
+            Mutation m = createMutation(Utils.toBytes(column.getName()), column.getRawValue());
+            mutationList.add(m);
         }
         
-        List<Mutation> mutationList = colFamMap.get(cfName);
-        if (mutationList == null) {
-            mutationList = new ArrayList<>();
-            colFamMap.put(cfName, mutationList);
+        for(ColumnDelete mutation: getColumnDeletes()) {
+            String storeName = mutation.getStoreName();
+            String rowKey = mutation.getRowKey();
+            String column = mutation.getColumnName();
+            
+            ByteBuffer rowKeyBB = Utils.toByteBuffer(rowKey);
+            Map<String, List<Mutation>> colFamMap = updateMap.get(rowKeyBB);
+            if (colFamMap == null) {
+                colFamMap = new HashMap<String, List<Mutation>>();
+                updateMap.put(rowKeyBB, colFamMap);
+            }
+            
+            List<Mutation> mutationList = colFamMap.get(storeName);
+            if (mutationList == null) {
+                mutationList = new ArrayList<>();
+                colFamMap.put(storeName, mutationList);
+            }
+            
+            Mutation m = createDeleteColumnMutation(Utils.toBytes(column));
+            mutationList.add(m);
         }
         
-        mutationList.add(mutation);
-        m_colUpdates++;
-    }   // addMutation
-
+        return updateMap;
+    }
+    
     // Create a Mutation with the given column name and column value
     private Mutation createMutation(byte[] colName, byte[] colValue) {
         if (colValue == null) {
