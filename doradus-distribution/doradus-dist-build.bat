@@ -1,6 +1,6 @@
 rem Windows Script to build Doradus distribution
  
-set DIST_VERSION=2.4
+set DIST_VERSION=2.4.0
 set DIST_FILE_NAME=Doradus-distribution-%DIST_VERSION%.zip
  
 rem Build Doradus
@@ -32,5 +32,5 @@ cd ..
 rem Create the final distribution file
 .\tools\7za a %DIST_FILE_NAME% -r . -x!*.sh -x!*build.*
  
-echo "Doradus Distribution created"
+echo "Doradus Distribution file created"
 dir Doradus-distribution-*.zip

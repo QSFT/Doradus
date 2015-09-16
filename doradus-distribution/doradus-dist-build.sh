@@ -1,7 +1,7 @@
 #!/bin/bash
 # Linux Script to build Doradus distribution
 
-DIST_VERSION=2.4
+DIST_VERSION=2.4.0
 DIST_FILE_NAME=Doradus-distribution-$DIST_VERSION.tar
 
 #Build Doradus
@@ -36,5 +36,5 @@ tar -cvf $DIST_FILE_NAME --exclude="*._*" --exclude="*build.sh" --exclude="*.bat
 #remove the build directories
 rm -rf doradus
 
-echo "Doradus Distribution created"
+echo "Doradus Distribution file created"
 ls -la Doradus-distribution-*.tar
