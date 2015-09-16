@@ -32,10 +32,13 @@ import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.service.db.ColumnDelete;
+import com.dell.doradus.service.db.ColumnUpdate;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
+import com.dell.doradus.service.db.RowDelete;
 import com.dell.doradus.service.db.Tenant;
 
 public class FsService extends DBService {
@@ -127,7 +130,7 @@ public class FsService extends DBService {
     }
     
     @Override public DBTransaction startTransaction(Tenant tenant) {
-   		return new FsTransaction(tenant.getKeyspace());
+   		return new DBTransaction(tenant.getKeyspace());
     }
     
     public String encode(String name) {
@@ -159,54 +162,42 @@ public class FsService extends DBService {
     
     @Override public void commit(DBTransaction dbTran) {
         synchronized(m_sync) {
-        	FsTransaction t = (FsTransaction)dbTran;
-        	String keyspace = t.getKeyspace();
+        	String keyspace = dbTran.getNamespace();
         	//1. update
-    		for(Map.Entry<String, Map<String, List<DColumn>>> e: t.getUpdateMap().entrySet()) {
-    		    String store = e.getKey();
-    			Map<String, List<DColumn>> rows = e.getValue();
-    			for(Map.Entry<String, List<DColumn>> r: rows.entrySet()) {
-    				String row = r.getKey();
-    	            row = encode(row);
-    				String rowPath = ROOT + "/" + keyspace + "/" + store + "/" + row;
-    				File rowFile = new File(rowPath);
-    				if(!rowFile.exists()) rowFile.mkdir();
-    				List<DColumn> columns = r.getValue();
-    				for(DColumn c: columns) {
-    				    String column = c.getName();
-    				    column = encode(column);
-    				    byte[] value = c.getRawValue();
-                        try {
-                            FileOutputStream stream = new FileOutputStream(rowPath + "/" + column);
-                            stream.write(value);
-                            stream.close();
-                        } catch (IOException ex) {
-                            m_logger.warn("Error", ex);
-                        }
-    				}
-    			}
+        	for(ColumnUpdate mutation: dbTran.getColumnUpdates()) {
+        	    String store = mutation.getStoreName();
+        	    String row = encode(mutation.getRowKey());
+                String rowPath = ROOT + "/" + keyspace + "/" + store + "/" + row;
+                File rowFile = new File(rowPath);
+                if(!rowFile.exists()) rowFile.mkdir();
+                DColumn c = mutation.getColumn();
+                String column = encode(c.getName());
+                byte[] value = c.getRawValue();
+                try {
+                    FileOutputStream stream = new FileOutputStream(rowPath + "/" + column);
+                    stream.write(value);
+                    stream.close();
+                } catch (IOException ex) {
+                    m_logger.warn("Error", ex);
+                }
+        	}
+    		//2. delete columns
+            for(ColumnDelete mutation: dbTran.getColumnDeletes()) {
+    			String store = mutation.getStoreName();
+                String row = encode(mutation.getRowKey());
+                String column = encode(mutation.getColumnName());
+                String path = ROOT + "/" + keyspace + "/" + store + "/" + row + "/" + column;
+                File columnFile = new File(path);
+                if(columnFile.exists()) columnFile.delete();
     		}
-    		//2. delete
-    		for(Map.Entry<String, Map<String, List<String>>> e: t.getDeleteMap().entrySet()) {
-    			String store = e.getKey();
-    			Map<String, List<String>> rows = e.getValue();
-    			for(Map.Entry<String, List<String>> r: rows.entrySet()) {
-                    String row = r.getKey();
-                    row = encode(row);
-                    String rowPath = ROOT + "/" + keyspace + "/" + store + "/" + row;
-    				List<String> columns = r.getValue();
-                    File rowFile = new File(rowPath);
-                    if(!rowFile.exists()) continue;
-    				if(columns == null) {
-    				    deleteDirectory(rowFile);
-    				} else {
-        				for(String c: columns) {
-        				    File columnFile = new File(rowPath + "/" + encode(c));
-        				    if(columnFile.exists()) columnFile.delete();
-        				}
-    				}
-    			}
-    		}
+            //3. delete rows
+            for(RowDelete mutation: dbTran.getRowDeletes()) {
+                String store = mutation.getStoreName();
+                String row = encode(mutation.getRowKey());
+                String path = ROOT + "/" + keyspace + "/" + store + "/" + row;
+                File rowFile = new File(path);
+                if(rowFile.exists()) deleteDirectory(rowFile);
+            }
         }
     }
     

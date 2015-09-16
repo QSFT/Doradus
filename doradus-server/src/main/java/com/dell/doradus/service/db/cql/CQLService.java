@@ -32,8 +32,6 @@ import javax.net.ssl.TrustManagerFactory;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.ColumnMetadata;
-import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.Metadata;
@@ -43,7 +41,6 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.SSLOptions;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SocketOptions;
-import com.datastax.driver.core.TableMetadata;
 import com.datastax.driver.core.exceptions.InvalidQueryException;
 import com.datastax.driver.core.policies.RoundRobinPolicy;
 import com.dell.doradus.common.UserDefinition;
@@ -78,6 +75,7 @@ public class CQLService extends DBService {
     // Members:
     private Cluster m_cluster;
     private Session m_session;
+    private CQLMetadataCache m_metadataCache;
     private final CQLStatementCache m_statementCache = new CQLStatementCache();
     
     //----- Public Service methods
@@ -259,20 +257,15 @@ public class CQLService extends DBService {
     }   // deleteStoreIfPresent
 
     /**
-     * Return true if column values for the given keyspace/table name are binary.
+     * Return true if column values for the given namespace/store name are binary.
      * 
-     * @param keyspace  Keyspace name.
+     * @param namespace Namespace (Keyspace) name.
      * @param storeName Store (ColumnFamily) name.
      * @return          True if the given table's column values are binary.
      */
-    public boolean columnValueIsBinary(String keyspace, String storeName) {
-        String cqlKeyspace = storeToCQLName(keyspace);
-        String tableName = storeToCQLName(storeName);
-        KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(cqlKeyspace);
-        TableMetadata tableMetadata = ksMetadata.getTable(tableName);
-        ColumnMetadata colMetadata = tableMetadata.getColumn("value");
-        return colMetadata.getType().equals(DataType.blob());
-    }   // columnValueIsBinary
+    public boolean columnValueIsBinary(String namespace, String storeName) {
+        return m_metadataCache.columnValueIsBinary(namespace, storeName);
+    }
 
     //----- Public DBService methods: Updates
 
@@ -474,6 +467,7 @@ public class CQLService extends DBService {
             try {
                 m_cluster = buildClusterSpecs();
                 connectToCluster();
+                m_metadataCache = new CQLMetadataCache(m_cluster);
                 break;
             } catch (Exception e) {
                 m_cluster = null;

@@ -27,10 +27,13 @@ import java.util.TreeMap;
 
 import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.service.db.ColumnDelete;
+import com.dell.doradus.service.db.ColumnUpdate;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
+import com.dell.doradus.service.db.RowDelete;
 import com.dell.doradus.service.db.Tenant;
 
 public class MemoryService extends DBService {
@@ -151,58 +154,61 @@ public class MemoryService extends DBService {
     @Override public DBTransaction startTransaction(Tenant tenant) {
     	synchronized (m_sync) {
     		Keyspace ks = getKeyspace(tenant);
-    		return new MemoryTransaction(ks.name);
+    		return new DBTransaction(ks.name);
 		}
     }
     
     @Override public void commit(DBTransaction dbTran) {
-    	MemoryTransaction t = (MemoryTransaction)dbTran;
-    	synchronized (m_sync) {
-        	Keyspace ks = m_Keyspaces.get(t.getKeyspace());
-    		if(ks == null) throw new RuntimeException("Keyspace does not exist");
-    		for(Map.Entry<String, Map<String, List<DColumn>>> e: t.getUpdateMap().entrySet()) {
-    			String table = e.getKey();
-    			Map<String, List<DColumn>> rows = e.getValue();
-    			Store store = ks.stores.get(table);
-    			if(store == null) {
-    				store = new Store(table);
-    				ks.stores.put(table, store);
-    			}
-    			for(Map.Entry<String, List<DColumn>> r: rows.entrySet()) {
-    				String row = r.getKey();
-    				List<DColumn> columns = r.getValue();
-    				Row mrow = store.rows.get(row);
-    				if(mrow == null) {
-    					mrow = new Row(row);
-    					store.rows.put(row, mrow);
-    				}
-    				for(DColumn c: columns) {
-    					String col = c.getName();
-    					byte[] val = c.getRawValue();
-    					mrow.columns.put(col, val);
-    				}
-    			}
-    		}
-    		for(Map.Entry<String, Map<String, List<String>>> e: t.getDeleteMap().entrySet()) {
-    			String table = e.getKey();
-    			Map<String, List<String>> rows = e.getValue();
-    			Store store = ks.stores.get(table);
-    			if(store == null) continue;
-    			for(Map.Entry<String, List<String>> r: rows.entrySet()) {
-    				String row = r.getKey();
-    				List<String> columns = r.getValue();
-    				Row mrow = store.rows.get(row);
-    				if(mrow == null) continue;
-    				if(columns == null) {
-    					store.rows.remove(row);
-    				} else {
-	    				for(String c: columns) {
-	    					mrow.columns.remove(c);
-	    				}
-    				}
-    			}
-    		}
-		}
+        synchronized(m_sync) {
+            String keyspace = dbTran.getNamespace();
+            Keyspace ks = m_Keyspaces.get(keyspace);
+            if(ks == null) throw new RuntimeException("Keyspace " + dbTran.getNamespace() + " does not exist");
+            //1. update
+            for(ColumnUpdate mutation: dbTran.getColumnUpdates()) {
+                String table = mutation.getStoreName();
+                Store store = ks.stores.get(table);
+                if(store == null) {
+                    store = new Store(table);
+                    ks.stores.put(table, store);
+                }
+                String row = mutation.getRowKey();
+                Row mrow = store.rows.get(row);
+                if(mrow == null) {
+                    mrow = new Row(row);
+                    store.rows.put(row, mrow);
+                }
+                DColumn c = mutation.getColumn();
+                mrow.columns.put(c.getName(), c.getRawValue());
+            }
+            //2. delete columns
+            for(ColumnDelete mutation: dbTran.getColumnDeletes()) {
+                String table = mutation.getStoreName();
+                Store store = ks.stores.get(table);
+                if(store == null) {
+                    store = new Store(table);
+                    ks.stores.put(table, store);
+                }
+                String row = mutation.getRowKey();
+                Row mrow = store.rows.get(row);
+                if(mrow == null) {
+                    mrow = new Row(row);
+                    store.rows.put(row, mrow);
+                }
+                String column = mutation.getColumnName();
+                mrow.columns.remove(column);
+            }
+            //3. delete rows
+            for(RowDelete mutation: dbTran.getRowDeletes()) {
+                String table = mutation.getStoreName();
+                Store store = ks.stores.get(table);
+                if(store == null) {
+                    store = new Store(table);
+                    ks.stores.put(table, store);
+                }
+                String row = mutation.getRowKey();
+                store.rows.remove(row);
+            }
+        }
     }
     
     private Keyspace getKeyspace(Tenant tenant) {

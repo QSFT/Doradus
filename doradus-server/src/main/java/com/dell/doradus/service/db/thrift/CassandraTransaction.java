@@ -50,111 +50,13 @@ public class CassandraTransaction extends DBTransaction {
     // Timestamp used for all updates: 
     private final long m_timestamp;
 
-    // Row key -> ColumnFamily -> Mutation list
-    private final Map<ByteBuffer, Map<String, List<Mutation>>> m_mutationMap = new HashMap<>();
-    
-    // ColumnFamily -> key row deletion map.
-    private final Map<String, Set<ByteBuffer>> m_deletionMap = new HashMap<>();
-
-    // Total column updates and row deletes so far.
-    private int m_colUpdates;
-    private int m_rowDeletes;
-
-    // Keyspace in which all mutations are applied.
-    private final String m_keyspace;
-    
     /**
      * Create a new transaction with a timestamp of "now".
      */
     public CassandraTransaction(Tenant tenant) {
-        m_keyspace = tenant.getKeyspace();
+        super(tenant.getKeyspace());
         m_timestamp = Utils.getTimeMicros();
-    }   // constructor
-
-    //----- General methods
-    
-    /**
-     * Clear all mutations from this map.
-     */
-    @Override
-    public void clear() {
-        m_mutationMap.clear();
-        m_deletionMap.clear();
-        m_colUpdates = 0;
-        m_rowDeletes = 0;
-    }   // clear
-    
-    /**
-     * The number of updates stores so far. This includes column mutations and row deletes.
-     * 
-     * @return  The total number of updates stored so far.
-     */
-    @Override
-    public int getUpdateCount() {
-        return m_colUpdates + m_rowDeletes;
-    }   // getUpdateCount
-    
-    /**
-     * Get the keyspace in which this transaction holds mutations.
-     * 
-     * @return  Keyspace name.
-     */
-    public String getKeyspace() {
-        return m_keyspace;
-    }   // getKeyspace
-    
-    //----- DBTransaction: Column/row update methods
-
-    @Override
-    public void addColumn(String storeName, String rowKey, String colName) {
-        Mutation mutation = createMutation(Utils.toBytes(colName), EMPTY_BYTES, m_timestamp);
-        addMutation(storeName, rowKey, mutation);
-    }   // addColumn
-    
-    @Override
-    public void addColumn(String storeName, String rowKey, String colName, String colValue) {
-        Mutation mutation = createMutation(Utils.toBytes(colName), Utils.toBytes(colValue), m_timestamp);
-        addMutation(storeName, rowKey, mutation);
-    }   // addColumn
-    
-    @Override
-    public void addColumn(String storeName, String rowKey, String colName, byte[] colValue) {
-        Mutation mutation = createMutation(Utils.toBytes(colName), colValue, m_timestamp);
-        addMutation(storeName, rowKey, mutation);
-    }   // addColumn
-    
-    @Override
-    public void addColumn(String storeName, String rowKey, String colName, long colValue) {
-        Mutation mutation = createMutation(Utils.toBytes(colName), Utils.toBytes(Long.toString(colValue)), m_timestamp);
-        addMutation(storeName, rowKey, mutation);
-    }   // addColumn
-    
-    @Override
-    public void deleteColumn(String storeName, String rowKey, String colName) {
-        Mutation mutation = createDeleteColumnMutation(Utils.toBytes(colName));
-        addMutation(storeName, rowKey, mutation);
-    }   // deleteColumn
-
-    @Override
-    public void deleteColumns(String storeName, String rowKey, Collection<String> colNames) {
-    	List<ByteBuffer> colNamesList = new ArrayList<>();
-    	for (String colName : colNames) {
-    		colNamesList.add(ByteBuffer.wrap(Utils.toBytes(colName)));
-    	}
-        Mutation mutation = createDeleteColumnMutation(colNamesList);
-        addMutation(storeName, rowKey, mutation);
-    }   // deleteColumn
-
-    @Override
-    public void deleteRow(String storeName, String objectID) {
-        Set<ByteBuffer> keySet = m_deletionMap.get(storeName);
-        if (keySet == null) {
-            keySet = new HashSet<>();
-            m_deletionMap.put(storeName, keySet);
-        }
-        keySet.add(ByteBuffer.wrap(Utils.toBytes(objectID)));
-        m_rowDeletes++;
-    }   // deleteObjectRow
+    }
 
     //----- Cassandra-specific public methods
     
@@ -168,109 +70,6 @@ public class CassandraTransaction extends DBTransaction {
         return m_timestamp;
     }   // getTimestamp
     
-    /**
-     * Get the row deletion map, which contains ColumnFamily to row keys to be deleted.
-     * The map will be empty if {@link #deleteRow(String, String)} was not called since
-     * this transaction was created or cleared.
-     * 
-     * @return  The row deletion map.
-     */
-    public Map<String, Set<ByteBuffer>> getRowDeletionMap() {
-        return m_deletionMap;
-    }   // getRowDeletionMap
-    
-    /**
-     * Get the internal column mutation map. The map uses the Cassandra/Thrift format:
-     * <pre>
-     *      {row key} -> {ColumnFamily name} -> {Mutation list}
-     * </pre>
-     * The map is not copied, so the caller must not modify!
-     * 
-     * @return  The internal mutation map.
-     */
-    public Map<ByteBuffer, Map<String, List<Mutation>>> getUpdateMap() {
-        return m_mutationMap;
-    }   // getUpdateMap
-    
-    /**
-     * Return the total number of column mutations pending for this transaction.
-     * 
-     * @return  The total number of column mutations pending for this transaction.
-     */
-    public int totalColumnMutations() {
-        return m_colUpdates;
-    }   // totalColumnMutations
-    
-    /**
-     * Return the total number of row deletes pending for this transaction.
-     * 
-     * @return  The total number of row deletes pending for this transaction.
-     */
-    public int totalRowDeletes() {
-        return m_rowDeletes;
-    }   // totalRowDeletes
-    
-    /**
-     * For extreme logging.
-     * 
-     * @param logger  Logger to trace mutations to.
-     */
-    public void traceMutations(Logger logger) {
-        for (Map.Entry<ByteBuffer, Map<String, List<Mutation>>> mapEntry : m_mutationMap.entrySet()) {
-            ByteBuffer rowKey = mapEntry.getKey();
-            Map<String, List<Mutation>> colFamMap = mapEntry.getValue(); 
-            for (String colFam : colFamMap.keySet()) {
-                List<Mutation> mutationList = colFamMap.get(colFam);
-                logger.trace("{}['{}'] has {} column mutations:",
-                               new Object[]{colFam, Utils.deWhite(rowKey), mutationList.size()});
-                for (Mutation mutation : mutationList) {
-                    // What kind of mutation is it?
-                    if (mutation.isSetDeletion()) {
-                        // Deletion
-                        Deletion deletion = mutation.getDeletion();
-                        SlicePredicate predicate = deletion.getPredicate();
-                        if (predicate.isSetColumn_names()) {
-                            List<ByteBuffer> colNames = predicate.getColumn_names();
-                            StringBuilder buffer = new StringBuilder();
-                            for (ByteBuffer colName : colNames) {
-                                if (buffer.length() > 0) {
-                                    buffer.append(", ");
-                                }
-                                buffer.append(Utils.deWhite(colName));
-                            }
-                            logger.trace("   Deleted: {}", buffer.toString());
-                        } else {
-                            SliceRange sliceRange = predicate.getSlice_range();
-                            logger.trace("   Deleted: {} to {}",
-                                           Utils.deWhite(sliceRange.getStart()),
-                                           Utils.deWhite(sliceRange.getFinish()));
-                        }
-                    } else {
-                        ColumnOrSuperColumn cosc = mutation.getColumn_or_supercolumn();
-                        if (cosc.isSetCounter_column()) {
-                            // Counter column
-                            CounterColumn counterCol = cosc.getCounter_column();
-                            logger.trace("   {} += ({})",
-                                           Utils.deWhite(counterCol.getName()),
-                                           counterCol.getValue());
-                        } else if (cosc.isSetColumn()) {
-                            // Regular column
-                            Column col = cosc.getColumn();
-                            String colValue = Utils.deWhite(col.getValue());
-                            if (colValue == null || colValue.length() == 0) 
-                                colValue = "[null]";
-                            logger.trace("   {} : {}", Utils.deWhite(col.getName()), colValue);
-                        } else if (cosc.isSetSuper_column()) {
-                            // Supercolumn: since we don't expect these, just print the name.
-                            SuperColumn superCol = cosc.getSuper_column();
-                            logger.trace("   Supercolumn '{}' set", Utils.deWhite(superCol.getName()));
-                            
-                        }
-                    }
-                }   // for mutation list
-            }   // for column family map
-        }   // for row key
-    }   // traceMutations
     
     public void addMutationList(String cfName, String rowKey, List<Mutation> mutations) {
         ByteBuffer rowKeyBB = ByteBuffer.wrap(Utils.toBytes(rowKey));
@@ -311,15 +110,15 @@ public class CassandraTransaction extends DBTransaction {
         m_colUpdates++;
     }   // addMutation
 
-    // Create a Mutation with the given column name, value, and timestamp
-    private Mutation createMutation(byte[] colName, byte[] colValue, long timestamp) {
+    // Create a Mutation with the given column name and column value
+    private Mutation createMutation(byte[] colName, byte[] colValue) {
         if (colValue == null) {
             colValue = EMPTY_BYTES;
         }
         Column col = new Column();
         col.setName(colName);
         col.setValue(colValue);
-        col.setTimestamp(timestamp);
+        col.setTimestamp(m_timestamp);
         
         ColumnOrSuperColumn cosc = new ColumnOrSuperColumn();
         cosc.setColumn(col);
@@ -327,7 +126,7 @@ public class CassandraTransaction extends DBTransaction {
         Mutation mutation = new Mutation();
         mutation.setColumn_or_supercolumn(cosc);
         return mutation;
-    }   // createMutation
+    }
 
     // Create a column mutation that deletes the given column name.
     private Mutation createDeleteColumnMutation(byte[] colName) {
@@ -341,20 +140,6 @@ public class CassandraTransaction extends DBTransaction {
         Mutation mutation = new Mutation();
         mutation.setDeletion(deletion);
         return mutation;
-    }   // createDeleteColumnMutation
+    }
 
-    // Create a column mutation that deletes all of the given column names.
-    private Mutation createDeleteColumnMutation(List<ByteBuffer> colNames) {
-        SlicePredicate slicePred = new SlicePredicate();
-        slicePred.setColumn_names(colNames);
-        
-        Deletion deletion = new Deletion();
-        deletion.setPredicate(slicePred);
-        deletion.setTimestamp(m_timestamp);
-        
-        Mutation mutation = new Mutation();
-        mutation.setDeletion(deletion);
-        return mutation;
-    }   // createDeleteColumnMutation
-    
-}   // MutationMap
+}
