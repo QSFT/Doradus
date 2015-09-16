@@ -7,7 +7,7 @@ rem Build Doradus
 cd ..
 start "" mvn clean install dependency:copy-dependencies -Dgpg.skip=true -Dmaven.javadoc.skip=true
  
-timeout 30
+timeout 90
  
 cd doradus-distribution
  

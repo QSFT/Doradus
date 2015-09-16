@@ -11,7 +11,7 @@ if not exist cassandra (
     timeout 5
     echo "Decompressing Cassandra 2.0.7 for Doradus"
     start .\tools\7za.exe  x dsc-cassandra-2.0.7-bin.tar
-    timeout 30
+    timeout 60
  
     ren dsc-cassandra-2.0.7 cassandra
     mkdir cassandra-data
