@@ -16,8 +16,12 @@
 
 package com.dell.doradus.service.db;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -34,6 +38,7 @@ import com.dell.doradus.common.Utils;
  * The transaction object subsequently can be reused.
  */
 public class DBTransaction {
+    private static final byte[] EMPTY = new byte[0];
     // The namespace of the transaction
     private String  m_namespace;
     //Column updates
@@ -98,6 +103,72 @@ public class DBTransaction {
         return m_rowDeletes;
     }
 
+    /**
+     * Get the map of the column updates as storeName -> rowKey -> list of DColumns
+     */
+    public Map<String, Map<String, List<DColumn>>> getColumnUpdatesMap() {
+        Map<String, Map<String, List<DColumn>>> storeMap = new HashMap<>();
+        for(ColumnUpdate mutation: getColumnUpdates()) {
+            String storeName = mutation.getStoreName();
+            String rowKey = mutation.getRowKey();
+            DColumn column = mutation.getColumn();
+            Map<String, List<DColumn>> rowMap = storeMap.get(storeName);
+            if(rowMap == null) {
+                rowMap = new HashMap<>();
+                storeMap.put(storeName, rowMap);
+            }
+            List<DColumn> columnsList = rowMap.get(rowKey);
+            if(columnsList == null) {
+                columnsList = new ArrayList<>();
+                rowMap.put(rowKey, columnsList);
+            }
+            columnsList.add(column);
+        }
+        return storeMap;
+    }
+
+    /**
+     * Get the map of the column deletes as storeName -> rowKey -> list of column names
+     */
+    public Map<String, Map<String, List<String>>> getColumnDeletesMap() {
+        Map<String, Map<String, List<String>>> storeMap = new HashMap<>();
+        for(ColumnDelete mutation: getColumnDeletes()) {
+            String storeName = mutation.getStoreName();
+            String rowKey = mutation.getRowKey();
+            String column = mutation.getColumnName();
+            Map<String, List<String>> rowMap = storeMap.get(storeName);
+            if(rowMap == null) {
+                rowMap = new HashMap<>();
+                storeMap.put(storeName, rowMap);
+            }
+            List<String> columnsList = rowMap.get(rowKey);
+            if(columnsList == null) {
+                columnsList = new ArrayList<>();
+                rowMap.put(rowKey, columnsList);
+            }
+            columnsList.add(column);
+        }
+        return storeMap;
+    }
+
+    /**
+     * Get the map of the row deletes as storeName -> list of row keys
+     */
+    public Map<String, List<String>> getRowDeletesMap() {
+        Map<String, List<String>> storeMap = new HashMap<>();
+        for(RowDelete mutation: getRowDeletes()) {
+            String storeName = mutation.getStoreName();
+            String rowKey = mutation.getRowKey();
+            List<String> rowList = storeMap.get(storeName);
+            if(rowList == null) {
+                rowList = new ArrayList<>();
+                storeMap.put(storeName, rowList);
+            }
+            rowList.add(rowKey);
+        }
+        return storeMap;
+    }
+    
     //----- Column/row update methods
     
     /**
@@ -120,7 +191,7 @@ public class DBTransaction {
      * @param columnName   Name of column.
      */
     public void addColumn(String storeName, String rowKey, String columnName) {
-        addColumn(storeName, rowKey, columnName, new byte[0]);
+        addColumn(storeName, rowKey, columnName, EMPTY);
     }
     
     /**
