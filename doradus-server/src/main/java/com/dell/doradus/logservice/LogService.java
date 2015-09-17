@@ -1,7 +1,6 @@
 package com.dell.doradus.logservice;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.dell.doradus.common.Utils;
@@ -100,14 +99,11 @@ public class LogService {
         final int MAX_MERGE_DOCS = 65536;
         
         String store = application + "_" + table;
-        Iterator<DColumn> it = DBService.instance().getAllColumns(tenant, store, "partitions_" + partition);
-        if(it == null) return;
         List<ChunkInfo> infos = new ArrayList<ChunkInfo>(MERGE_SEGMENTS);
         int totalSize = 0;
         ChunkInfo info = new ChunkInfo();
         ChunkMerger merger = null;
-        while(it.hasNext()) {
-            DColumn c = it.next();
+        for(DColumn c: DBService.instance().getAllColumns(tenant, store, "partitions_" + partition)) {
             info.set(partition, c.getName(), c.getRawValue());
             int eventsCount = info.getEventsCount();
             if(eventsCount > MIN_MERGE_DOCS) continue;
@@ -148,10 +144,7 @@ public class LogService {
     public List<String> getPartitions(Tenant tenant, String application, String table) {
         String store = application + "_" + table;
         List<String> partitions = new ArrayList<>();
-        Iterator<DColumn> it = DBService.instance().getAllColumns(tenant, store, "partitions");
-        if(it == null) return partitions;
-        while(it.hasNext()) {
-            DColumn c = it.next();
+        for(DColumn c: DBService.instance().getAllColumns(tenant, store, "partitions")) {
             partitions.add(c.getName());
         }
         return partitions;
@@ -167,10 +160,7 @@ public class LogService {
     public List<String> getPartitions(Tenant tenant, String application, String table, String fromPartition, String toPartition) {
         String store = application + "_" + table;
         List<String> partitions = new ArrayList<>();
-        Iterator<DColumn> it = DBService.instance().getColumnSlice(tenant, store, "partitions", fromPartition, toPartition);
-        if(it == null) return partitions;
-        while(it.hasNext()) {
-            DColumn c = it.next();
+        for(DColumn c: DBService.instance().getColumnSlice(tenant, store, "partitions", fromPartition, toPartition + '\0')) {
             partitions.add(c.getName());
         }
         return partitions;
@@ -193,21 +183,10 @@ public class LogService {
         String store = application + "_" + table;
         List<String> chunkIds = new ArrayList<>(infos.size());
         for(ChunkInfo info: infos) chunkIds.add(info.getChunkId());
-        List<String> rows = new ArrayList<>(1);
-        rows.add(infos.get(0).getPartition());
         List<byte[]> data = new ArrayList<>(infos.size());
-        int SIZE = 100;
-        for(int start = 0; start < infos.size(); start += SIZE) {
-            int end = Math.min(start + SIZE, infos.size());
-            Iterator<DRow> rowIt = DBService.instance().getRowsColumns(tenant, store, rows, chunkIds.subList(start, end));
-            if(rowIt == null || !rowIt.hasNext()) throw new RuntimeException("Error reading data");
-            DRow drow = rowIt.next();
-            Iterator<DColumn> colIt = drow.getColumns();
-            if(colIt == null) throw new RuntimeException("Error reading data");
-            while(colIt.hasNext()) {
-                DColumn c = colIt.next();
-                data.add(c.getRawValue());
-            }
+        DRow row = DBService.instance().getRow(tenant, store, infos.get(0).getPartition());
+        for(DColumn c: row.getColumns(chunkIds, 100)) {
+            data.add(c.getRawValue());
         }
         if(data.size() != infos.size()) throw new RuntimeException("Error reading data");
         return data;

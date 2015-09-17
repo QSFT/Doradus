@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +36,6 @@ import com.dell.doradus.service.db.ColumnUpdate;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
-import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.RowDelete;
 import com.dell.doradus.service.db.Tenant;
 
@@ -201,122 +199,74 @@ public class FsService extends DBService {
         }
     }
     
-    @Override public Iterator<DColumn> getAllColumns(Tenant tenant, String storeName, String rowKey) {
+    @Override public List<DColumn> getColumns(String namespace, String storeName,
+            String rowKey, String startColumn, String endColumn, int count) {
         synchronized(m_sync) {
             rowKey = encode(rowKey);
             try {
                 ArrayList<DColumn> list = new ArrayList<>();
-                File rowFile = new File(ROOT + "/" + tenant.getKeyspace() + "/" + storeName + "/" + rowKey);
-                if(!rowFile.exists()) return list.iterator();
-                for(File columnFile: rowFile.listFiles()) {
-                    FileInputStream fis = new FileInputStream(columnFile);
-                    byte[] data = new byte[(int)columnFile.length()];
-                    fis.read(data);
-                    fis.close();
-                    list.add(new DColumn(decode(columnFile.getName()), data));
-                }
-                Collections.sort(list);
-                return list.iterator();
-            }catch(IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-    }
-
-    
-    
-    @Override public Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName, String rowKey,
-                                            String startCol, String endCol, boolean reversed) {
-        synchronized(m_sync) {
-            rowKey = encode(rowKey);
-            try {
-                ArrayList<DColumn> list = new ArrayList<>();
-                File rowFile = new File(ROOT + "/" + tenant.getKeyspace() + "/" + storeName + "/" + rowKey);
-                if(!rowFile.exists()) return list.iterator();
+                File rowFile = new File(ROOT + "/" + namespace + "/" + storeName + "/" + rowKey);
+                if(!rowFile.exists()) return list;
                 for(File columnFile: rowFile.listFiles()) {
                     String fileName = columnFile.getName();
                     String colName = decode(fileName);
-                    if(colName.compareTo(startCol) < 0) continue;
-                    if(colName.compareTo(endCol) >= 0) continue;
+                    if(startColumn != null && colName.compareTo(startColumn) < 0) continue;
+                    if(endColumn != null && colName.compareTo(endColumn) >= 0) continue;
                     FileInputStream fis = new FileInputStream(columnFile);
                     byte[] data = new byte[(int)columnFile.length()];
                     fis.read(data);
                     fis.close();
                     list.add(new DColumn(colName, data));
+                    if(list.size() >= count) break;
                 }
                 Collections.sort(list);
-                if(reversed)Collections.reverse(list);
-                return list.iterator();
+                return list;
             }catch(IOException ex) {
                 throw new RuntimeException(ex);
             }
         }
     }
 
-    @Override public Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName, String rowKey,
-                                            String startCol, String endCol) {
-        return getColumnSlice(tenant, storeName, rowKey, startCol, endCol, false);
-    }
-
-    @Override public DColumn getColumn(Tenant tenant, String storeName, String rowKey, String colName) {
+    @Override
+    public List<DColumn> getColumns(String namespace, String storeName,
+            String rowKey, Collection<String> columnNames) {
         synchronized(m_sync) {
             rowKey = encode(rowKey);
             try {
-                File colFile = new File(ROOT + "/" + tenant.getKeyspace() + "/" + storeName + "/" + rowKey + "/" + encode(colName));
-                if(!colFile.exists()) return null;
-                FileInputStream fis = new FileInputStream(colFile);
-                byte[] data = new byte[(int)colFile.length()];
-                fis.read(data);
-                fis.close();
-                return new DColumn(colName, data);
+                ArrayList<DColumn> list = new ArrayList<>();
+                File rowFile = new File(ROOT + "/" + namespace + "/" + storeName + "/" + rowKey);
+                if(!rowFile.exists()) return list;
+                for(String columnName: columnNames) {
+                    File columnFile = new File(rowFile.getPath() + "/" + columnName);
+                    if(!columnFile.exists()) continue;
+                    FileInputStream fis = new FileInputStream(columnFile);
+                    byte[] data = new byte[(int)columnFile.length()];
+                    fis.read(data);
+                    fis.close();
+                    list.add(new DColumn(columnName, data));
+                }
+                Collections.sort(list);
+                return list;
             }catch(IOException ex) {
                 throw new RuntimeException(ex);
             }
         }
     }
 
-    @Override public Iterator<DRow> getAllRowsAllColumns(Tenant tenant, String storeName) {
+    @Override public List<String> getRows(String namespace, String storeName, String continuationToken, int count) {
         synchronized (m_sync) {
-            List<DRow> rows = new ArrayList<>();
-            File storeDir = new File(ROOT + "/" + tenant.getKeyspace() + "/" + storeName);
-            if(!storeDir.exists()) return rows.iterator();
+            List<String> list = new ArrayList<>();
+            File storeDir = new File(ROOT + "/" + namespace + "/" + storeName);
+            if(!storeDir.exists()) return list;
             for(File rowFile: storeDir.listFiles()) {
-                String row = rowFile.getName();
-                RowIter rowIter = new RowIter(decode(row), getAllColumns(tenant, storeName, row));
-                rows.add(rowIter);
+                String row = decode(rowFile.getName());
+                if(continuationToken != null && continuationToken.compareTo(row) >= 0) continue;
+                list.add(row);
+                if(list.size() >= count) break;
             }
-            return rows.iterator();
+            Collections.sort(list);
+            return list;
         }
-    }
-    
-    @Override public Iterator<DRow> getRowsAllColumns(Tenant tenant, String storeName, Collection<String> rowKeys) {
-    	throw new RuntimeException("Not supported");
-    }
-
-    @Override public Iterator<DRow> getRowsColumns(Tenant   tenant,
-                                         String             storeName,
-                                         Collection<String> rowKeys,
-                                         Collection<String> colNames) {
-        synchronized (m_sync) {
-            List<DRow> rows = new ArrayList<>();
-            for(String rowKey: rowKeys) {
-                List<DColumn> cols = new ArrayList<>();
-                for(String col: colNames) {
-                    DColumn c = getColumn(tenant, storeName, rowKey, col); 
-                    if(c != null) cols.add(c);
-                }
-                rows.add(new RowIter(rowKey, cols.iterator()));
-            }
-            return rows.iterator();
-        }
-    }
-    
-    @Override public Iterator<DRow> getRowsColumnSlice(Tenant   tenant,
-                                             String             storeName,
-                                             Collection<String> rowKeys,
-                                             String             startCol,
-                                             String             endCol) {
-    	throw new RuntimeException("Not supported");
     }
 
 
