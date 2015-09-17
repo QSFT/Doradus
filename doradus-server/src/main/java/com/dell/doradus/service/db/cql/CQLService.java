@@ -270,15 +270,9 @@ public class CQLService extends DBService {
     //----- Public DBService methods: Updates
 
     @Override
-    public DBTransaction startTransaction(Tenant tenant) {
-        checkState();
-        return new CQLTransaction(tenant);
-    }
-
-    @Override
     public void commit(DBTransaction dbTran) {
         checkState();
-        ((CQLTransaction)dbTran).commit();
+        CQLTransaction.commit(dbTran);
     }   // commit
 
     //----- Public DBService methods: Queries

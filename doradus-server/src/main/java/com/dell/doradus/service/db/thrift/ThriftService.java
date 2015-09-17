@@ -188,16 +188,9 @@ public class ThriftService extends DBService {
     //----- Public DBService methods: Updates
     
     @Override
-    public DBTransaction startTransaction(Tenant tenant) {
-        checkState();
-        return new CassandraTransaction(tenant);
-    }   // startTransaction
-    
-    @Override
     public void commit(DBTransaction dbTran) {
         checkState();
-        CassandraTransaction cassDBTran = (CassandraTransaction)dbTran;
-        DBConn dbConn = getDBConnection(cassDBTran.getNamespace());
+        DBConn dbConn = getDBConnection(dbTran.getNamespace());
         try {
             dbConn.commit(dbTran);
         } finally {

@@ -166,7 +166,21 @@ public abstract class DBService extends Service {
      * @param tenant    {@link Tenant} in which updates will be made.
      * @return          New {@link DBTransaction}.
      */
-    public abstract DBTransaction startTransaction(Tenant tenant);
+    public DBTransaction startTransaction(Tenant tenant) {
+        return startTransaction(tenant.getKeyspace());
+    }
+    
+    /**
+     * Create a new {@link DBTransaction} object that holds updates for stores in the
+     * given namespace that will be committed together. The transactions can be committed by
+     * calling {@link #commit(DBTransaction)}.
+     * 
+     * @param namespace    namespace in which updates will be made.
+     * @return          New {@link DBTransaction}.
+     */
+    public DBTransaction startTransaction(String namespace) {
+        return new DBTransaction(namespace);
+    }
     
     /**
      * Commit the updates in the given {@link DBTransaction}. An exception is thrown if

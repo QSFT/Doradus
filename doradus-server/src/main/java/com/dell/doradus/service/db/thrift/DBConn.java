@@ -285,13 +285,13 @@ public class DBConn implements AutoCloseable {
      */
     public void commit(DBTransaction dbTran) {
         // For extreme logging
-        CassandraTransaction cassDBTran = (CassandraTransaction)dbTran;
         if (m_logger.isTraceEnabled()) {
-            cassDBTran.traceMutations(m_logger);
+            dbTran.traceMutations(m_logger);
         }
         try {
-            commitMutations(cassDBTran);
-            commitDeletes(cassDBTran);
+            long timestamp = Utils.getTimeMicros();
+            commitMutations(dbTran, timestamp);
+            commitDeletes(dbTran, timestamp);
         } finally {
             dbTran.clear();
         }
@@ -693,8 +693,8 @@ public class DBConn implements AutoCloseable {
     }   // multigetSlice
 
     // Commit all row-deletions in the given MutationMap, if any, using the given timestamp.
-    private void commitDeletes(CassandraTransaction cassDBTran) {
-        Map<String, Set<ByteBuffer>> rowDeleteMap = cassDBTran.getRowDeletionMap();
+    private void commitDeletes(DBTransaction dbTran, long timestamp) {
+        Map<String, Set<ByteBuffer>> rowDeleteMap = CassandraTransaction.getRowDeletionMap(dbTran);
         if (rowDeleteMap.size() == 0) {
             return;
         }
@@ -704,19 +704,19 @@ public class DBConn implements AutoCloseable {
             // Delete each row in this key set.
             Set<ByteBuffer> rowKeySet = rowDeleteMap.get(colFamName);
             for (ByteBuffer rowKey : rowKeySet) {
-                removeRow(cassDBTran.getTimestamp(), rowKey, new ColumnPath(colFamName));
+                removeRow(timestamp, rowKey, new ColumnPath(colFamName));
             }
         }
     }   // commitDeletes
 
     // Commit the update mutations in the given MutationMap. Retry if needed up to the
     // configured maximum number of retries.
-    private void commitMutations(CassandraTransaction cassDBTran) {
-        Map<ByteBuffer, Map<String, List<Mutation>>> colMutMap = cassDBTran.getUpdateMap();
+    private void commitMutations(DBTransaction dbTran, long timestamp) {
+        Map<ByteBuffer, Map<String, List<Mutation>>> colMutMap = CassandraTransaction.getUpdateMap(dbTran, timestamp);
         if (colMutMap.size() == 0) {
             return;
         }
-        m_logger.debug("Committing {} mutations", cassDBTran.totalColumnMutations());
+        m_logger.debug("Committing {} mutations", CassandraTransaction.totalColumnMutations(dbTran));
         
         // The batch_mutate will be retried up to MAX_COMMIT_RETRIES times.
         boolean bSuccess = false;
