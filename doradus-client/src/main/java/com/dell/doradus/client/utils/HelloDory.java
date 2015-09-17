@@ -92,10 +92,13 @@ public class HelloDory {
             createApplication(client);
             addData(client);
             queryData(client);
+            deleteData(client);
         }
     }
 
-    // Delete the existing HelloSpider application if present.
+
+
+	// Delete the existing HelloSpider application if present.
     private void deleteApplication(DoradusClient client) {
         Command command = Command.builder()
             .withName("DeleteAppWithKey")
@@ -259,7 +262,24 @@ public class HelloDory {
         System.out.println(String.format("Average budget of movies with Kirsten Dunst: $%,.2f",
                                          Double.parseDouble(aggResult.getGlobalValue())));
     }
-
+    
+    //Delete data by ID
+    private void deleteData(DoradusClient client) {      
+    	DBObject dbObject = DBObject.builder()
+                .withValue("_ID", "TMaguire")
+                .build();
+    	DBObjectBatch dbObjectBatch = DBObjectBatch.builder().withObject(dbObject).build();
+    	Command command = Command.builder().withName("Delete")
+    			 .withParam("application", "HelloSpider")
+    			 .withParam("table", "Actors")
+                 .withParam("batch", dbObjectBatch)
+                .build();
+    	RESTResponse response = client.runCommand(command);
+        if (response.isFailed()) {
+            throw new RuntimeException("Delete batch failed: " + response.getBody());
+        }		
+	}
+    
     // Display usage information and exit.
     private void usage() {
         System.out.println("Usage: HelloDory host port");

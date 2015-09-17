@@ -225,7 +225,8 @@ public class Command {
      */
     private byte[] getBody(String method) {
         byte[] body = null;
-        if (method.contains(HttpMethod.POST.name()) || method.contains(HttpMethod.PUT.name())) {
+    	String methodsWithInputEntity = HttpMethod.POST.name() + "|" + HttpMethod.PUT.name() + "|" + HttpMethod.DELETE.name();
+    	if (method.matches(methodsWithInputEntity)) {
             if (isCompound()) {
                 body = Utils.toBytes(getQueryInputEntity());
             }
