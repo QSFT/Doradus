@@ -142,7 +142,7 @@ abstract public class ApplicationSession implements AutoCloseable {
             StringBuilder uri = new StringBuilder("/_applications/");
             uri.append(Utils.urlEncode(m_appDef.getAppName()));
             RESTResponse response =
-                m_restClient.sendRequest(HttpMethod.PUT, uri.toString(), ContentType.APPLICATION_JSON, body);
+                m_restClient.sendRequest(HttpMethod.PUT, uri.toString(), contentType, body);
             m_logger.debug("updateSchema() response: {}", response.toString());
             throwIfErrorResponse(response);
             return true;
