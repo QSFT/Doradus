@@ -17,18 +17,14 @@
 package com.dell.doradus.service.db.thrift;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.cassandra.thrift.AuthenticationRequest;
 import org.apache.cassandra.thrift.Cassandra;
-import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.thrift.ColumnOrSuperColumn;
 import org.apache.cassandra.thrift.ColumnParent;
 import org.apache.cassandra.thrift.ColumnPath;
@@ -56,8 +52,6 @@ import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBNotAvailableException;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
-import com.dell.doradus.service.db.DColumn;
-import com.dell.doradus.service.db.DRow;
 
 /**
  * Represents a Thrift connection to a Cassandra database and provides methods for
@@ -222,59 +216,6 @@ public class DBConn implements AutoCloseable {
     public boolean isOpen() {
         return m_bDBOpen;
     }
-    //----- DBConn: Schema requests
-    
-    /**
-     * Get all properties of all registered applications. The result is a map of
-     * application names to a map of application properties. An application's properties
-     * are typically _application, _version, and _format, which define the application's
-     * schema and the way it is stored in the database.
-     * 
-     * @return  Map of application name -> property name -> property value for all
-     *          known applications. Empty if there are no applications defined.
-     */
-    public Map<String, Map<String, String>> getAllAppProperties() {
-        Iterator<DRow> rowIter = fetchAllRows(COLUMN_PARENT_APPS);
-        Map<String, Map<String, String>> appPropMap = new HashMap<>();
-        while (rowIter.hasNext()) {
-            // Skip system rows, whose row keys begin with "_".
-            DRow row = rowIter.next();
-            if (row.getKey().charAt(0) != '_') {
-                Map<String, String> propMap = new HashMap<>();
-                appPropMap.put(row.getKey(), propMap);
-                Iterator<DColumn> colIter = row.getColumns();
-                while (colIter.hasNext()) {
-                    DColumn col = colIter.next();
-                    propMap.put(col.getName(), col.getValue());
-                }
-            }
-        }
-        return appPropMap;
-    }   // getAllAppProperties
-
-    /**
-     * Get all properties of the application with the given name. The property names are
-     * typically _application, _version, and _format, which define the application's
-     * schema and the way it is stored in the database. Null is returned if there is no
-     * such application defined.
-     * 
-     * @param appName   Name of application whose properties to get.
-     * @return          Map of application properties as key/value pairs or null if there
-     *                  is no such application defined.
-     */
-    public Map<String, String> getAppProperties(String appName) {
-        Iterator<DColumn> colIter = fetchAllColumns(COLUMN_PARENT_APPS, Utils.toBytes(appName));
-        if (colIter == null || !colIter.hasNext()) {
-            return null;
-        }
-        Map<String, String> propMap = new HashMap<>();
-        while (colIter.hasNext()) {
-            DColumn col = colIter.next();
-            propMap.put(col.getName(), col.getValue());
-        }
-        return propMap;
-    }   // getAppProperties
-    
     //----- DBConn: Updates 
     
     /**
@@ -299,165 +240,6 @@ public class DBConn implements AutoCloseable {
 
     //----- DBConn: Queries
 
-    /**
-     * Get all columns for the row with the given key in the given store. Columns are
-     * returned as string/byte[] key/value pairs.
-     * 
-     * @param storeName Name of store to query.
-     * @param rowKey    Key of row to fetch.
-     * @return          All columns for corresponding row. If there is no such row,
-     *                  the iterator's hasNext() will be false.
-     */
-    public Iterator<DColumn> getAllColumns(String storeName, String rowKey) {
-        return fetchAllColumns(CassandraDefs.columnParent(storeName), Utils.toBytes(rowKey));
-    }   // getAllColumns
-    
-    /**
-     * Get a slice of columns for the row with the given key in the given store.
-     * Columns are defined with a range of [startCol, endCol], and returned as
-     * string/byte[] key/value pairs.
-     * 
-     * @param storeName Name of store to query.
-     * @param rowKey    Key of row to fetch.
-     * @param startCol  First column name of the interval
-     * @param endCol    Last column name of the interval
-     * @param reversed  Flag: reversed iteration?
-     * @return
-     */
-    public Iterator<DColumn> getColumnSlice(String storeName, String rowKey, String startCol, String endCol, boolean reversed) {
-    	return getColumnSlice(CassandraDefs.columnParent(storeName), Utils.toBytes(rowKey), Utils.toBytes(startCol), Utils.toBytes(endCol), reversed);
-    }	// getColumnSlice
-
-    /**
-     * Get a slice of columns for the row with the given key in the given store.
-     * Columns are defined with a range of [startCol, endCol], and returned as
-     * string/byte[] key/value pairs.
-     * 
-     * @param storeName Name of store to query.
-     * @param rowKey    Key of row to fetch.
-     * @param startCol  First column name of the interval
-     * @param endCol    Last column name of the interval
-     * @return
-     */
-    public Iterator<DColumn> getColumnSlice(String storeName, String rowKey, String startCol, String endCol) {
-    	return getColumnSlice(CassandraDefs.columnParent(storeName), Utils.toBytes(rowKey), Utils.toBytes(startCol), Utils.toBytes(endCol));
-    }	// getColumnSlice
-
-    /**
-     * Get a single column for a single row in the given store. If the given row or column
-     * is not found, null is returned. Otherwise, a {@link DColumn} is returned with the
-     * column's name and value.
-     * 
-     * @param store     Name of store to query.
-     * @param rowKey    Key of row to read.
-     * @param colName   Name of column to fetch.
-     * @return          {@link DColumn} containing the column name and value or null if
-     *                  column does not exist.
-     */
-    public DColumn getColumn(String storeName, String rowKey, String colName) {
-        return fetchColumn(CassandraDefs.columnParent(storeName), Utils.toBytes(rowKey), Utils.toBytes(colName));
-    }   // getColumn
-
-    /**
-     * Get all rows of all columns in the given store. The results are returned as an
-     * Iterator for {@link DRow} objects. If no rows are found, the iterator's hasNext()
-     * method will immediately return false. If more rows are fetched than an internal
-     * limit allows, an exception is thrown.
-     * 
-     * @param storeName Name of physical store to query. 
-     * @return          Iterator of {@link DRow} objects. May be empty but not null.
-     */
-    public Iterator<DRow> getAllRowsAllColumns(String storeName) {
-        return fetchAllRows(CassandraDefs.columnParent(storeName));
-    }   // getAllRowsAllColumns
-    
-    /**
-     * Get all columns for rows with a specific set of keys. Results are returned as an
-     * Iterator of {@link DRow} objects. If any given row is not found, no entry will
-     * with its key will be returned.
-     * 
-     * @param storeName Name of store to query.
-     * @param rowKeys   Collection of row keys to read.
-     * @return          Iterator of {@link DRow} objects. May be empty but not null.
-     */
-    public Iterator<DRow> getRowsAllColumns(String storeName, Collection<String> rowKeys) {
-        List<byte[]> rowKeyList = new ArrayList<>();
-        for (String rowKey : rowKeys) {
-            rowKeyList.add(Utils.toBytes(rowKey));
-        }
-        return fetchRowsAllColumns(CassandraDefs.columnParent(storeName), rowKeyList);
-    }   // getRowsAllColumns
-
-    /**
-     * Get a specific set of columns for a specific set of rows. Results are returned as an
-     * Iterator of {@link DRow} objects. If any given row is not found, no entry will exist
-     * for it in iterator. If a row is found but none of the requested columns were found,
-     * DRow object's column iterator will be empty.
-     * 
-     * @param storeName Name of store to query.
-     * @param rowKeys   Collection of row keys to read.
-     * @param colNames  Collection of column names to read.
-     * @return          Iterator for {@link DRow} objects. May be empty but not null.
-     */
-    public Iterator<DRow> getRowsColumns(String             storeName,
-                                         Collection<String> rowKeys,
-                                         Collection<String> colNames) {
-        List<byte[]> rowKeyList = new ArrayList<>();
-        for (String rowKey : rowKeys) {
-            rowKeyList.add(Utils.toBytes(rowKey));
-        }
-        List<byte[]> colNameList = new ArrayList<>();
-        for (String colName : colNames) {
-            colNameList.add(Utils.toBytes(colName));
-        }
-        return fetchRowsColumns(CassandraDefs.columnParent(storeName), rowKeyList, colNameList);
-    }   // getRowsColumns
-    
-    /**
-     * Get a specific range of columns for a specific set of rows. Results are returned as an
-     * Iterator of {@link DRow} objects. If any given row is not found, no entry will exist
-     * for it in iterator. If a row is found but none of the requested columns were found,
-     * DRow object's column iterator will be empty.
-     * 
-     * @param storeName Name of store to query.
-     * @param rowKeys   Collection of row keys to read.
-     * @param startCol  First column in a range.
-     * @param endCol    Last column in a range
-     * @return          Iterator for {@link DRow} objects. May be empty but not null.
-     */
-    public Iterator<DRow> getRowsColumns(String             storeName,
-                                         Collection<String> rowKeys,
-                                         String             startCol,
-                                         String             endCol) {
-        return getRowsColumns(storeName, rowKeys, startCol, endCol, false);
-    }   // getRowsColumns
-    
-    /**
-     * Get a specific range of columns for a specific set of rows. Results are returned as an
-     * Iterator of {@link DRow} objects. If any given row is not found, no entry will exist
-     * for it in iterator. If a row is found but none of the requested columns were found,
-     * DRow object's column iterator will be empty.
-     * 
-     * @param storeName Name of store to query.
-     * @param rowKeys   Collection of row keys to read.
-     * @param startCol  First column in a range.
-     * @param endCol    Last column in a range.
-     * @param reversed  Flag: range in reversed order?
-     * @return          Iterator for {@link DRow} objects. May be empty but not null.
-     */
-    public Iterator<DRow> getRowsColumns(String             storeName,
-                                         Collection<String> rowKeys,
-                                         String             startCol,
-                                         String             endCol,
-                                         boolean            reversed) {
-        List<byte[]> rowKeyList = new ArrayList<>();
-        for (String rowKey : rowKeys) {
-            rowKeyList.add(Utils.toBytes(rowKey));
-        }
-        return fetchColumnSlice(CassandraDefs.columnParent(storeName), 
-                                rowKeyList, Utils.toBytes(startCol), Utils.toBytes(endCol), reversed);
-    }	// getRowsColumns
-    
     //----- Package-private methods
     
     /**
@@ -574,31 +356,8 @@ public class DBConn implements AutoCloseable {
 
     //----- Private methods
 
-    // Fetch a slice of columns between the given names for the given set of rows, possibly
-    // reversed. If none of the rows are found, the iterator will return nothing.
-    private Iterator<DRow> fetchColumnSlice(ColumnParent colPar,
-                                            List<byte[]> rowKeys,
-                                            byte[]       startColName,
-                                            byte[]       endColName,
-                                            boolean      reversed) {
-        List<DRow> rowList = new ArrayList<>();
-        Map<ByteBuffer, List<ColumnOrSuperColumn>> keyMap = multigetSlice(
-            CassandraDefs.convertByteKeys(rowKeys), colPar,
-            CassandraDefs.slicePredicateStartEndCol(startColName, endColName, reversed));
-        for (ByteBuffer rowKeyBB : keyMap.keySet()) {
-            List<ColumnOrSuperColumn> coscList = keyMap.get(rowKeyBB);
-            if (coscList.size() == 0) {
-                continue;   // probably a tombstone.
-            }
-            
-            byte[] rowKey = Utils.getBytes(rowKeyBB);   // destructive to ByteBuffer
-            rowList.add(new CassandraRow(rowKey, new CassandraColumnBatch(m_keyspace, colPar, rowKey, coscList)));
-        }
-        return rowList.iterator();
-    }   // fetchColumnSlice
-
     // Fetch a single column.
-    private ColumnOrSuperColumn getColumn(ByteBuffer key, ColumnPath colPath) {
+    ColumnOrSuperColumn getColumn(ByteBuffer key, ColumnPath colPath) {
         m_logger.debug("Fetching {}.{}", new Object[]{Utils.toString(key), toString(colPath)});
         ColumnOrSuperColumn column = null;
         boolean bSuccess = false;
@@ -643,54 +402,6 @@ public class DBConn implements AutoCloseable {
         return column;
     }   // getColumn
 
-    // Perform a multiget_slice() request with the given parameters and retry the
-    // operation if a database error occurs. Retries will attempt to get a new connection
-    // if an error suggests that the current DB node or the Thrift connection has failed.
-    // If no rows are found, an empty map is returned.
-    private Map<ByteBuffer, List<ColumnOrSuperColumn>> multigetSlice(List<ByteBuffer>  rowKeyList,
-                                                             ColumnParent      colParent,
-                                                             SlicePredicate    slicePred) {
-        m_logger.debug("Fetching {} keys {} from {}",
-                       new Object[]{rowKeyList.size(), toString(slicePred), toString(colParent)});
-        Map<ByteBuffer, List<ColumnOrSuperColumn>> keyMap = null;
-        boolean bSuccess = false;
-        for (int attempts = 1; !bSuccess; attempts++) {
-            try {
-                Date startDate = new Date();
-                keyMap = m_client.multiget_slice(rowKeyList, colParent, slicePred, ConsistencyLevel.ONE);
-                timing("multiget_slice", startDate);
-                if (attempts > 1) {
-                    m_logger.info("multiget_slice() succeeded on attempt #{}", attempts);
-                }
-                bSuccess = true;
-            } catch (InvalidRequestException ex) {
-                // No point in retrying this one.
-                String errMsg = "multiget_slice() failed for table: " + colParent.getColumn_family();
-                m_bFailed = true;
-                m_logger.error(errMsg, ex);
-                throw new RuntimeException(errMsg, ex);
-            } catch (Exception ex) {
-                if (attempts >= ServerConfig.getInstance().max_read_attempts) {
-                    String errMsg = "All retries exceeded; abandoning multiget_slice() for table: " +
-                                    colParent.getColumn_family();
-                    m_bFailed = true;
-                    m_logger.error(errMsg, ex);
-                    throw new RuntimeException(errMsg, ex);
-                }
-                
-                m_logger.warn("multiget_slice() attempt #{} failed: {}", attempts, ex);
-                try {
-                    Thread.sleep(attempts * ServerConfig.getInstance().retry_wait_millis);
-                } catch (InterruptedException ex2) {
-                    // ignore
-                }
-                
-                // Reconnect since the connection may be bad.
-                reconnect(ex);
-            }
-        }
-        return keyMap;
-    }   // multigetSlice
 
     // Commit all row-deletions in the given MutationMap, if any, using the given timestamp.
     private void commitDeletes(DBTransaction dbTran, long timestamp) {
@@ -774,82 +485,6 @@ public class DBConn implements AutoCloseable {
         }
         return TSSLTransportFactory.getClientSocket(host, config.dbport, config.db_timeout_millis, sslParams);
     }   // createTLSSocket
-
-    // Get a single column from the given row and CF.
-    private DColumn fetchColumn(ColumnParent colPar, byte[] rowKey, byte[] colName) {
-    	ColumnPath colPath = new ColumnPath();
-    	colPath.setColumn_family(colPar.getColumn_family());
-    	colPath.setColumn(colName);
-    	ColumnOrSuperColumn cosc = getColumn(ByteBuffer.wrap(rowKey), colPath);
-    	if (cosc == null) {
-    	    return null;
-    	}
-    	Column col = cosc.getColumn();
-        return new DColumn(col.getName(), col.getValue());
-    }   // fetchColumn
-
-    // Fetch all columns of the rows with the given keys from the given ColumnFamily.
-    private Iterator<DRow> fetchRowsAllColumns(ColumnParent colPar, Collection<byte[]> rowKeys) {
-        List<DRow> rowList = new ArrayList<>();
-        Map<ByteBuffer, List<ColumnOrSuperColumn>> keyMap =
-            multigetSlice(CassandraDefs.convertByteKeys(rowKeys), colPar, CassandraDefs.SLICE_PRED_ALL_COLS);
-        for (ByteBuffer rowKeyBB : keyMap.keySet()) {
-            List<ColumnOrSuperColumn> coscList = keyMap.get(rowKeyBB);
-            if (coscList.size() == 0) {
-                continue;   // probably a tombstone.
-            }
-            
-            byte[] rowKey = Utils.getBytes(rowKeyBB);   // destructive to ByteBuffer
-            rowList.add(new CassandraRow(rowKey, new CassandraColumnBatch(m_keyspace, colPar, rowKey, coscList)));
-        }
-        return rowList.iterator();
-    }   // fetchRowsAllColumns
-    
-    // Return all columns of the row with the given key in the given ColumnFamily. If no
-    // such row is found, hasNext() will be null.
-    private Iterator<DColumn> fetchAllColumns(ColumnParent colPar, byte[] rowKey) {
-        return new CassandraColumnBatch(this, colPar, rowKey, CassandraDefs.SLICE_PRED_ALL_COLS);
-    }   // fetchAllColumns
-    
-    // Return columns of the given column range in a row. If no columns found or
-    // the row is empty an empty iterator is returned.
-    private Iterator<DColumn> getColumnSlice(ColumnParent colPar, byte[] rowKey,
-                                             byte[] startColName, byte[] endColName, boolean reversed) {
-    	return new CassandraColumnBatch(this, colPar, rowKey,
-    	                                CassandraDefs.slicePredicateStartEndCol(startColName, endColName, reversed));
-    }	// getColumnSlice
-    
-    // Return columns of the given column range in a row. If no columns found or
-    // the row is empty an empty iterator is returned.
-    private Iterator<DColumn> getColumnSlice(ColumnParent colPar, byte[] rowKey,
-                                             byte[] startColName, byte[] endColName) {
-    	return new CassandraColumnBatch(this, colPar, rowKey, 
-    	                                CassandraDefs.slicePredicateStartEndCol(startColName, endColName));
-    }	// getColumnSlice
-    
-    // Return all columns of all rows of the given ColumnFamily. Careful!
-    private Iterator<DRow> fetchAllRows(ColumnParent colPar) {
-        return new CassandraRowBatch(this, colPar);
-    }   // fetchAllRows
-
-    // Fetch the requested columns for the request rows from the requested ColumnFamily.
-    private Iterator<DRow> fetchRowsColumns(ColumnParent       colPar,
-                                            Collection<byte[]> rowKeys,
-                                            Collection<byte[]> colNames) {
-        List<DRow> rowList = new ArrayList<>();
-        Map<ByteBuffer, List<ColumnOrSuperColumn>> keyMap =
-            multigetSlice(CassandraDefs.convertByteKeys(rowKeys), colPar, CassandraDefs.slicePredicateColNames(colNames));
-        for (ByteBuffer rowKeyBB : keyMap.keySet()) {
-            List<ColumnOrSuperColumn> coscList = keyMap.get(rowKeyBB);
-            if (coscList.size() == 0) {
-                continue;   // probably a tombstone.
-            }
-            
-            byte[] rowKey = Utils.getBytes(rowKeyBB);   // destructive to ByteBuffer
-            rowList.add(new CassandraRow(rowKey, new CassandraColumnBatch(m_keyspace, colPar, rowKey, coscList)));
-        }
-        return rowList.iterator();
-    }   // fetchRowsColumns
 
     // Attempt to reconnect this connection to Cassandra due to the given exception.
     // Because Cassandra could be very busy, if the reconnect fails, we will retry multiple

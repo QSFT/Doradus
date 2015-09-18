@@ -27,6 +27,9 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 
+import org.apache.cassandra.thrift.ColumnOrSuperColumn;
+import org.apache.cassandra.thrift.KeySlice;
+
 import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
@@ -34,7 +37,6 @@ import com.dell.doradus.service.db.DBNotAvailableException;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
-import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.schema.SchemaService;
 
@@ -201,104 +203,71 @@ public class ThriftService extends DBService {
     //----- Public DBService methods: Queries
 
     @Override
-    public Iterator<DColumn> getAllColumns(Tenant tenant, String storeName, String rowKey) {
+    public List<DColumn> getColumns(String namespace, String storeName,
+            String rowKey, String startColumn, String endColumn, int count) {
         checkState();
-        String keyspace = tenant.getKeyspace();
-        DBConn dbConn = getDBConnection(keyspace);
+        DBConn dbConn = getDBConnection(namespace);
         try {
-            return dbConn.getAllColumns(storeName, rowKey);
+            List<ColumnOrSuperColumn> columns = dbConn.getSlice(
+                    CassandraDefs.columnParent(storeName),
+                    CassandraDefs.slicePredicateStartEndCol(Utils.toBytes(startColumn), Utils.toBytes(endColumn), count),
+                    Utils.toByteBuffer(rowKey));
+            List<DColumn> result = new ArrayList<>(columns.size());
+            for(ColumnOrSuperColumn column: columns) {
+                result.add(new DColumn(column.getColumn().getName(), column.getColumn().getValue()));
+            }
+            return result;
         } finally {
             returnDBConnection(dbConn);
         }
-    }   // getAllColumns
+    }
 
     @Override
-    public Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName, String rowKey,
-                                            String startCol, String endCol, boolean reversed) {
+    public List<DColumn> getColumns(String namespace, String storeName,
+            String rowKey, Collection<String> columnNames) {
         checkState();
-        String keyspace = tenant.getKeyspace();
-        DBConn dbConn = getDBConnection(keyspace);
+        DBConn dbConn = getDBConnection(namespace);
         try {
-            return dbConn.getColumnSlice(storeName, rowKey, startCol, endCol, reversed);
+            List<byte[]> colNameList = new ArrayList<>(columnNames.size());
+            for (String colName : columnNames) {
+                colNameList.add(Utils.toBytes(colName));
+            }
+
+            List<ColumnOrSuperColumn> columns = dbConn.getSlice(
+                    CassandraDefs.columnParent(storeName),
+                    CassandraDefs.slicePredicateColNames(colNameList),
+                    Utils.toByteBuffer(rowKey));
+            List<DColumn> result = new ArrayList<>(columns.size());
+            for(ColumnOrSuperColumn column: columns) {
+                result.add(new DColumn(column.getColumn().getName(), column.getColumn().getValue()));
+            }
+            return result;
         } finally {
             returnDBConnection(dbConn);
         }
-    }   // getColumnSlice
+    }
 
     @Override
-    public Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName, String rowKey,
-                                            String startCol, String endCol) {
+    public List<String> getRows(String namespace, String storeName, String continuationToken, int count) {
         checkState();
-        return getColumnSlice(tenant, storeName, rowKey, startCol, endCol, false);
-    }   // getColumnSlice
-
-    @Override
-    public Iterator<DRow> getAllRowsAllColumns(Tenant tenant, String storeName) {
-        checkState();
-        String keyspace = tenant.getKeyspace();
-        DBConn dbConn = getDBConnection(keyspace);
+        DBConn dbConn = getDBConnection(namespace);
         try {
-            return dbConn.getAllRowsAllColumns(storeName);
+            List<KeySlice> keys = dbConn.getRangeSlices(
+                    CassandraDefs.columnParent(storeName), 
+                    CassandraDefs.slicePredicateStartEndCol(null, null, 1),
+                    CassandraDefs.keyRangeStartRow(Utils.toBytes(continuationToken), count));
+            List<String> result = new ArrayList<>(keys.size());
+            for(KeySlice key: keys) {
+                result.add(Utils.toString(key.getKey()));
+            }
+            return result;
         } finally {
             returnDBConnection(dbConn);
         }
-    }   // getAllRowsAllColumns
+    }
 
-    @Override
-    public DColumn getColumn(Tenant tenant, String storeName, String rowKey, String colName) {
-        checkState();
-        String keyspace = tenant.getKeyspace();
-        DBConn dbConn = getDBConnection(keyspace);
-        try {
-            return dbConn.getColumn(storeName, rowKey, colName);
-        } finally {
-            returnDBConnection(dbConn);
-        }
-    }   // getColumn
-
-    @Override
-    public Iterator<DRow> getRowsAllColumns(Tenant tenant, String storeName, Collection<String> rowKeys) {
-        checkState();
-        String keyspace = tenant.getKeyspace();
-        DBConn dbConn = getDBConnection(keyspace);
-        try {
-            return dbConn.getRowsAllColumns(storeName, rowKeys);
-        } finally {
-            returnDBConnection(dbConn);
-        }
-    }   // getRowsAllColumns
-
-    @Override
-    public Iterator<DRow> getRowsColumns(Tenant             tenant,
-                                         String             storeName,
-                                         Collection<String> rowKeys,
-                                         Collection<String> colNames) {
-        checkState();
-        String keyspace = tenant.getKeyspace();
-        DBConn dbConn = getDBConnection(keyspace);
-        try {
-            return dbConn.getRowsColumns(storeName, rowKeys, colNames);
-        } finally {
-            returnDBConnection(dbConn);
-        }
-    }   // getRowsColumnSet
     
-    @Override
-    public Iterator<DRow> getRowsColumnSlice(Tenant             tenant,
-                                             String             storeName,
-                                             Collection<String> rowKeys,
-                                             String             startCol,
-                                             String             endCol) {
-        checkState();
-        String keyspace = tenant.getKeyspace();
-        DBConn dbConn = getDBConnection(keyspace);
-        try {
-            return dbConn.getRowsColumns(storeName, rowKeys, startCol, endCol);
-        } finally {
-            returnDBConnection(dbConn);
-        }
-    }   // getRowsColumnSlice
-
+    
     //----- Package-private methods
     
     // Get an available database connection from the pool for the given keyspace, creating

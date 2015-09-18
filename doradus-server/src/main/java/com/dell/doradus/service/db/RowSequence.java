@@ -26,6 +26,13 @@ public class RowSequence implements Sequence<DRow> {
             String continuationToken = m_currentList.get(m_pointer - 1);
             m_currentList = DBService.instance().getRows(m_namespace, m_storeName, continuationToken, m_chunkSize);
             m_pointer = 0;
+            // if the first row in the next chunk equals to the next row
+            if(m_currentList.size() > 0 && continuationToken.equals(m_currentList.get(0))) {
+                m_pointer = 1;
+            }
+        }
+        if(m_pointer >= m_currentList.size()) {
+            return null;
         }
         return new DRow(m_namespace, m_storeName, m_currentList.get(m_pointer++));
     }

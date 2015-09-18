@@ -120,6 +120,14 @@ public final class CassandraDefs {
         return keyRange;
     }   // keyRangeStartRow
 
+    static KeyRange keyRangeStartRow(byte[] startRowKey, int count) {
+        KeyRange keyRange = new KeyRange();
+        keyRange.setStart_key(startRowKey == null ? EMPTY_BYTES : startRowKey);
+        keyRange.setEnd_key(EMPTY_BYTES);
+        keyRange.setCount(count);
+        return keyRange;
+    }
+    
     /**
      * Create a KeyRange that selects a single row with the given key.
      * 
@@ -144,8 +152,29 @@ public final class CassandraDefs {
      *                      columns.
      */
     static SlicePredicate slicePredicateStartCol(byte[] startColName) {
+        if(startColName == null) startColName = EMPTY_BYTES;
         SliceRange sliceRange =
             new SliceRange(ByteBuffer.wrap(startColName), EMPTY_BYTE_BUFFER, false, CassandraDefs.MAX_COLS_BATCH_SIZE);
+        SlicePredicate slicePred = new SlicePredicate();
+        slicePred.setSlice_range(sliceRange);
+        return slicePred;
+    }   // slicePredicateStartCol
+
+    /**
+     * Create a SlicePredicate that starts at the given column name, selecting up to
+     * {@link #MAX_COLS_BATCH_SIZE} columns.
+     * 
+     * @param startColName  Starting column name as a byte[].
+     * @param endColName    Ending column name as a byte[]
+     * @return              SlicePredicate that starts at the given starting column name,
+     *                      ends at the given ending column name, selecting up to
+     *                      {@link #MAX_COLS_BATCH_SIZE} columns.
+     */
+    static SlicePredicate slicePredicateStartEndCol(byte[] startColName, byte[] endColName, int count) {
+        if(startColName == null) startColName = EMPTY_BYTES;
+        if(endColName == null) endColName = EMPTY_BYTES;
+        SliceRange sliceRange =
+            new SliceRange(ByteBuffer.wrap(startColName), ByteBuffer.wrap(endColName), false, count);
         SlicePredicate slicePred = new SlicePredicate();
         slicePred.setSlice_range(sliceRange);
         return slicePred;
@@ -162,6 +191,8 @@ public final class CassandraDefs {
      *                      {@link #MAX_COLS_BATCH_SIZE} columns.
      */
     static SlicePredicate slicePredicateStartEndCol(byte[] startColName, byte[] endColName, boolean reversed) {
+        if(startColName == null) startColName = EMPTY_BYTES;
+        if(endColName == null) endColName = EMPTY_BYTES;
         SliceRange sliceRange =
             new SliceRange(
             		ByteBuffer.wrap(startColName), ByteBuffer.wrap(endColName), 

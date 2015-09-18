@@ -22,9 +22,11 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -38,6 +40,7 @@ import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ProtocolOptions.Compression;
 import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
 import com.datastax.driver.core.SSLOptions;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SocketOptions;
@@ -49,7 +52,6 @@ import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
-import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.db.cql.CQLStatementCache.Query;
 import com.dell.doradus.service.db.cql.CQLStatementCache.Update;
@@ -278,107 +280,91 @@ public class CQLService extends DBService {
     //----- Public DBService methods: Queries
 
     @Override
-    public Iterator<DColumn> getAllColumns(Tenant tenant, String storeName, String rowKey) {
+    public List<DColumn> getColumns(String namespace, String storeName,
+            String rowKey, String startColumn, String endColumn, int count) {
         checkState();
-        String keyspace = storeToCQLName(tenant.getKeyspace());
+        String keyspace = storeToCQLName(namespace);
         String tableName = storeToCQLName(storeName);
-        return new CQLColumnIterator(executeQuery(Query.SELECT_1_ROW_ALL_COLUMNS, keyspace, tableName, rowKey));
-    }
-
-    @Override
-    public Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName, String rowKey,
-                                            String startCol, String  endCol, boolean reversed) {
-        checkState();
-        String keyspace = storeToCQLName(tenant.getKeyspace());
-        String tableName = storeToCQLName(storeName);
-        ResultSet rs = null;
-        if (reversed) {
-            // Swap start/end columns for CQL reversed queries
-            rs = executeQuery(Query.SELECT_1_ROW_COLUMN_RANGE_DESC, keyspace, tableName, rowKey, endCol, startCol);
-        } else {
-            rs = executeQuery(Query.SELECT_1_ROW_COLUMN_RANGE, keyspace, tableName, rowKey, startCol, endCol);
+        boolean isValueBinary = columnValueIsBinary(namespace, storeName);
+        ResultSet rs = executeQuery(Query.SELECT_1_ROW_COLUMN_RANGE,
+                                    keyspace,
+                                    tableName,
+                                    rowKey,
+                                    startColumn == null ? "" : startColumn,
+                                    endColumn == null ? "" : endColumn,
+                                    new Integer(count));
+        List<Row> list = rs.all();
+        List<DColumn> result = new ArrayList<>(list.size());
+        for(Row r: list) {
+            DColumn cqlCol = null;
+            if (isValueBinary) {
+                cqlCol = new DColumn(r.getString("column1"), r.getBytes("value"));
+            } else {
+                cqlCol = new DColumn(r.getString("column1"), r.getString("value"));
+            }
+            
+            result.add(cqlCol);
         }
-        return new CQLColumnIterator(rs);
+        return result;
     }
 
     @Override
-    public Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName, String rowKey,
-                                            String startCol, String endCol) {
+    public List<DColumn> getColumns(String namespace, String storeName,
+            String rowKey, Collection<String> columnNames) {
         checkState();
-        String keyspace = storeToCQLName(tenant.getKeyspace());
+        String keyspace = storeToCQLName(namespace);
         String tableName = storeToCQLName(storeName);
-        return new CQLColumnIterator(executeQuery(Query.SELECT_1_ROW_COLUMN_RANGE,
-                                                  keyspace,
-                                                  tableName,
-                                                  rowKey,
-                                                  startCol,
-                                                  endCol));
-    }
-
-    @Override
-    public Iterator<DRow> getAllRowsAllColumns(Tenant tenant, String storeName) {
-        checkState();
-        String keyspace = storeToCQLName(tenant.getKeyspace());
-        String tableName = storeToCQLName(storeName);
-        return new CQLRowIterator(executeQuery(Query.SELECT_ALL_ROWS_ALL_COLUMNS, keyspace, tableName));
-    }
-
-    @Override
-    public DColumn getColumn(Tenant tenant, String storeName, String rowKey, String colName) {
-        checkState();
-        String keyspace = storeToCQLName(tenant.getKeyspace());
-        String tableName = storeToCQLName(storeName);
-        CQLColumnIterator colIter =
-            new CQLColumnIterator(executeQuery(Query.SELECT_1_ROW_1_COLUMN, keyspace, tableName, rowKey, colName));
-        if (!colIter.hasNext()) {
-            return null;
+        boolean isValueBinary = columnValueIsBinary(namespace, storeName);
+        ResultSet rs = executeQuery(Query.SELECT_1_ROW_COLUMN_SET,
+                                    keyspace,
+                                    tableName,
+                                    rowKey,
+                                    columnNames);
+        List<Row> list = rs.all();
+        List<DColumn> result = new ArrayList<>(list.size());
+        for(Row r: list) {
+            DColumn cqlCol = null;
+            if (isValueBinary) {
+                cqlCol = new DColumn(r.getString("column1"), r.getBytes("value"));
+            } else {
+                cqlCol = new DColumn(r.getString("column1"), r.getString("value"));
+            }
+            
+            result.add(cqlCol);
         }
-        return colIter.next();
-    }   // getColumn
+        return result;
+    }
 
     @Override
-    public Iterator<DRow> getRowsAllColumns(Tenant tenant, String storeName, Collection<String> rowKeys) {
+    public List<String> getRows(String namespace, String storeName,
+            String continuationToken, int count) {
         checkState();
-        String keyspace = storeToCQLName(tenant.getKeyspace());
+        String keyspace = storeToCQLName(namespace);
         String tableName = storeToCQLName(storeName);
-        return new CQLRowIterator(executeQuery(Query.SELECT_ROW_SET_ALL_COLUMNS,
-                                               keyspace,
-                                               tableName,
-                                               new ArrayList<String>(rowKeys)));
-    }   // getRowsAllColumns
-
-    @Override
-    public Iterator<DRow> getRowsColumns(Tenant             tenant,
-                                         String             storeName,
-                                         Collection<String> rowKeys,
-                                         Collection<String> colNames) {
-        checkState();
-        String keyspace = storeToCQLName(tenant.getKeyspace());
-        String tableName = storeToCQLName(storeName);
-        return new CQLRowIterator(executeQuery(Query.SELECT_ROW_SET_COLUMN_SET,
-                                               keyspace,
-                                               tableName,
-                                               new ArrayList<String>(rowKeys),
-                                               new ArrayList<String>(colNames)));
-    }   // getRowsColumns
-
-    @Override
-    public Iterator<DRow> getRowsColumnSlice(Tenant             tenant,
-                                             String             storeName,
-                                             Collection<String> rowKeys,
-                                             String             startCol,
-                                             String             endCol) {
-        checkState();
-        String keyspace = storeToCQLName(tenant.getKeyspace());
-        String tableName = storeToCQLName(storeName);
-        return new CQLRowIterator(executeQuery(Query.SELECT_ROW_SET_COLUMN_RANGE,
-                                               keyspace,
-                                               tableName,
-                                               new ArrayList<String>(rowKeys),
-                                               startCol,
-                                               endCol));
-    }   // getRowsColumnSlice
-
+        Set<String> rows = new HashSet<String>();
+        //unfortunately I don't know how to get one record per row in CQL so we'll read everything
+        //and find out the rows
+        ResultSet rs = executeQuery(Query.SELECT_ROWS_RANGE,
+                                    keyspace,
+                                    tableName);
+        while(true) {
+            Row r = rs.one();
+            if(r == null) break;
+            String key = r.getString("key");
+            if(continuationToken != null && continuationToken.compareTo(key) >= 0) {
+                continue;
+            }
+            rows.add(key);
+        }
+        List<String> result = new ArrayList<>(rows);
+        Collections.sort(result);
+        if(result.size() > count) {
+            result = new ArrayList<>(result.subList(0,  count));
+        }
+        return result;
+    }
+    
+    
     //----- CQLService-specific public methods
 
     /**

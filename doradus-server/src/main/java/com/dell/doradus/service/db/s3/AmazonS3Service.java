@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +41,6 @@ import com.dell.doradus.service.db.ColumnUpdate;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
-import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.RowDelete;
 import com.dell.doradus.service.db.Tenant;
 
@@ -214,10 +212,6 @@ public class AmazonS3Service extends DBService {
         deleteAll(tenant.getKeyspace() + "/" + storeName);
     }
     
-    @Override public DBTransaction startTransaction(Tenant tenant) {
-   		return new DBTransaction(tenant.getKeyspace());
-    }
-    
     public String encode(String name) {
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < name.length(); i++) {
@@ -278,94 +272,52 @@ public class AmazonS3Service extends DBService {
         }
     }
     
-    @Override public Iterator<DColumn> getAllColumns(Tenant tenant, String storeName, String rowKey) {
-        try {
-            ArrayList<DColumn> list = new ArrayList<>();
-            String path = tenant.getKeyspace() + "/" + storeName + "/" + encode(rowKey) + "/";
-            List<String> keys = listAll(path);
-            for(String key: keys) {
-                byte[] value = get(path + key);
-                if(value == null) continue;
-                list.add(new DColumn(decode(key), value));
-            }
-            Collections.sort(list);
-            return list.iterator();
-        } catch(Exception e) {
-            throw new RuntimeException(e); 
-        }
-    }
-
-    
-    
-    @Override public Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName, String rowKey,
-                                            String startCol, String endCol, boolean reversed) {
+    @Override
+    public List<DColumn> getColumns(String namespace, String storeName,
+            String rowKey, String startColumn, String endColumn, int count) {
         ArrayList<DColumn> list = new ArrayList<>();
-        String path = tenant.getKeyspace() + "/" + storeName + "/" + encode(rowKey) + "/";
+        String path = namespace + "/" + storeName + "/" + encode(rowKey) + "/";
         List<String> keys = listAll(path);
         for(String key: keys) {
             String name = decode(key);
-            if(name.compareTo(startCol) < 0) continue;
-            if(name.compareTo(endCol) >= 0) continue;
+            if(startColumn != null && startColumn.compareTo(name) > 0) continue;
+            if(endColumn != null && endColumn.compareTo(name) <= 0) continue;
             byte[] value = get(path + key);
             if(value == null) continue;
-            list.add(new DColumn(decode(key), value));
+            list.add(new DColumn(name, value));
         }
         Collections.sort(list);
-        if(reversed)Collections.reverse(list);
-        return list.iterator();
+        return list;
     }
 
-    @Override public Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName, String rowKey,
-                                            String startCol, String endCol) {
-        return getColumnSlice(tenant, storeName, rowKey, startCol, endCol, false);
+    @Override
+    public List<DColumn> getColumns(String namespace, String storeName,
+            String rowKey, Collection<String> columnNames) {
+        ArrayList<DColumn> list = new ArrayList<>();
+        String path = namespace + "/" + storeName + "/" + encode(rowKey) + "/";
+        //List<String> keys = listAll(path);
+        for(String columnName: columnNames) {
+            byte[] value = get(path + encode(columnName));
+            if(value == null) continue;
+            list.add(new DColumn(columnName, value));
+        }
+        Collections.sort(list);
+        return list;
     }
 
-    @Override public DColumn getColumn(Tenant tenant, String storeName, String rowKey, String colName) {
-        String path = tenant.getKeyspace() + "/" + storeName + "/" + encode(rowKey) + "/" + encode(colName);
-        byte[] value = get(path);
-        if(value == null) return null;
-        DColumn col = new DColumn(colName, value);
-        return col;
-    }
-
-    @Override public Iterator<DRow> getAllRowsAllColumns(Tenant tenant, String storeName) {
-        List<DRow> rows = new ArrayList<>();
-        String path = tenant.getKeyspace() + "/" + storeName + "/";
+    @Override
+    public List<String> getRows(String namespace, String storeName,
+            String continuationToken, int count) {
+        List<String> rows = new ArrayList<>();
+        String path = namespace + "/" + storeName + "/";
         List<String> rowKeys = listAll(path);
         for(String row: rowKeys) {
             String rowName = decode(row);
-            RowIter rowIter = new RowIter(rowName, getAllColumns(tenant, storeName, rowName));
-            rows.add(rowIter);
+            if(continuationToken != null && continuationToken.compareTo(rowName) >= 0) continue;
+            rows.add(rowName);
+            if(rows.size() >= count) break;
         }
-        return rows.iterator();
-    }
-    
-    @Override public Iterator<DRow> getRowsAllColumns(Tenant tenant, String storeName, Collection<String> rowKeys) {
-    	throw new RuntimeException("Not supported");
-    }
-
-    @Override public Iterator<DRow> getRowsColumns(Tenant   tenant,
-                                         String             storeName,
-                                         Collection<String> rowKeys,
-                                         Collection<String> colNames) {
-        List<DRow> rows = new ArrayList<>();
-        for(String rowKey: rowKeys) {
-            List<DColumn> cols = new ArrayList<>();
-            for(String col: colNames) {
-                DColumn c = getColumn(tenant, storeName, rowKey, col); 
-                if(c != null) cols.add(c);
-            }
-            rows.add(new RowIter(rowKey, cols.iterator()));
-        }
-        return rows.iterator();
-    }
-    
-    @Override public Iterator<DRow> getRowsColumnSlice(Tenant   tenant,
-                                             String             storeName,
-                                             Collection<String> rowKeys,
-                                             String             startCol,
-                                             String             endCol) {
-    	throw new RuntimeException("Not supported");
+        return rows;
     }
 
 

@@ -31,6 +31,9 @@ public class ColumnSequence implements Sequence<DColumn> {
                     newStartKey, m_endColumn, m_chunkSize);
             m_pointer = 0;
         }
+        if(m_currentList.size() == 0) {
+            return null;
+        }
         return m_currentList.get(m_pointer++);
     }
 }
