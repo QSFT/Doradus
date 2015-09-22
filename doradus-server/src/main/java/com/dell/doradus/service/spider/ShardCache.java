@@ -18,7 +18,6 @@ package com.dell.doradus.service.spider;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -200,20 +199,19 @@ public class ShardCache {
             tableMap.put(tableName, shardMap);
         }
         
-        Iterator<DColumn> colIter =
-            DBService.instance().getAllColumns(Tenant.getTenant(tableDef), SpiderService.termsStoreName(tableDef), SpiderTransaction.SHARDS_ROW_KEY);
-        while (colIter.hasNext()) {
-            DColumn col = colIter.next();
+        Tenant tenant = Tenant.getTenant(tableDef);
+        String storeName = SpiderService.termsStoreName(tableDef);
+        for(DColumn col: DBService.instance().getAllColumns(tenant, storeName, SpiderTransaction.SHARDS_ROW_KEY)) {
             Integer shardNum = Integer.parseInt(col.getName());
             Date shardDate = new Date(Long.parseLong(col.getValue()));
             shardMap.put(shardNum, shardDate);
         }
-    }   // loadShardCache
+    }
     
     // Return true if given date has exceeded MAX_CACHE_TIME_MILLIS time.
     private boolean isTooOld(Date cacheDate) {
         Date now = new Date();
         return now.getTime() - cacheDate.getTime() > MAX_CACHE_TIME_MILLIS;
-    }   // isTooOld
+    }
 
-}   // class ShardCache
+}

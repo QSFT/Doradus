@@ -1,7 +1,6 @@
 package com.dell.doradus.logmanagement;
 
 import com.dell.doradus.service.Service;
-import com.dell.doradus.service.schema.SchemaService;
 
 public class LogManagementService extends Service {
 	

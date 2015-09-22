@@ -17,7 +17,6 @@
 package com.dell.doradus.olap.io;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.dell.doradus.service.db.DBService;
@@ -42,9 +41,7 @@ public class CassandraIO implements IO {
 	@Override
 	public List<ColumnValue> get(String app, String key, String prefix) {
 		List<ColumnValue> result = new ArrayList<ColumnValue>();
-		Iterator<DColumn> iColumns = DBService.instance().getColumnSlice(m_tenant, app, key, prefix, prefix + "\uFFFF");
-		while (iColumns.hasNext()) {
-			DColumn column = iColumns.next();
+		for(DColumn column: DBService.instance().getColumnSlice(m_tenant, app, key, prefix, prefix + "\uFFFF")) {
 			result.add(new ColumnValue(column.getName().substring(prefix.length()), column.getRawValue()));
 		}
 		return result;

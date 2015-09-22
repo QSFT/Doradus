@@ -17,7 +17,7 @@ public class ChunkIterator implements Iterator<ChunkInfo> {
         m_tenant = tenant;
         m_store = store;
         m_partition = partition;
-        m_iterator = DBService.instance().getAllColumns(m_tenant, m_store, "partitions_" + m_partition);
+        m_iterator = DBService.instance().getAllColumns(m_tenant, m_store, "partitions_" + m_partition).iterator();
         m_chunkInfo = new ChunkInfo();
     }
     

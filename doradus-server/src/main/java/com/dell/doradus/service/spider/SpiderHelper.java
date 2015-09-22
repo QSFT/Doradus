@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -224,15 +223,10 @@ public class SpiderHelper {
 		}
 		String tableName = SpiderService.objectsStoreName(tableDef);
 		Collection<String> rowKeys = objectsToStrings(ids);
-        Iterator<DRow> iRows =
-            dbService.getRowsColumnSlice(Tenant.getTenant(tableDef), tableName, rowKeys, continuationField, "~");
-        while (iRows.hasNext()) {
-        	DRow row = iRows.next();
+        for(DRow row: dbService.getRows(Tenant.getTenant(tableDef), tableName, rowKeys)) {    
         	Map<String, String> scalarValues = new HashMap<>();
         	result.put(IDHelper.createID(row.getKey()), scalarValues);
-        	Iterator<DColumn> iColumns = row.getColumns();
-        	for (int i = 0; i < count && iColumns.hasNext(); ++i) {
-        		DColumn column = iColumns.next();
+        	for(DColumn column: row.getColumns(continuationField, "~", 1024)) {
         		addScalarToMap(tableDef, scalarValues, column);
         	}
         }
@@ -249,11 +243,9 @@ public class SpiderHelper {
 			continuationField = "";
 		}
 		String tableName = SpiderService.objectsStoreName(tableDef);
-		Iterator<DColumn> iColumns =
-		    dbService.getColumnSlice(Tenant.getTenant(tableDef), tableName, IDHelper.IDToString(id), continuationField, "~");
-    	Map<String, String> result = new HashMap<>();
-    	for (int i = 0; i < count && iColumns.hasNext(); ++i) {
-    		DColumn column = iColumns.next();
+        Map<String, String> result = new HashMap<>();
+		for(DColumn column: dbService.getColumns(Tenant.getTenant(tableDef).getKeyspace(), tableName,
+		        IDHelper.IDToString(id), continuationField, "~", 1024)) {
     		result.put(column.getName(), column.getValue());
     	}
         return result;
@@ -266,14 +258,10 @@ public class SpiderHelper {
         
 		String tableName = SpiderService.objectsStoreName(tableDef);
 		Collection<String> rowKeys = objectsToStrings(ids);
-        Iterator<DRow> iRows = dbService.getRowsColumns(Tenant.getTenant(tableDef), tableName, rowKeys, fields);
-        while (iRows.hasNext()) {
-        	DRow row = iRows.next();
+        for(DRow row: dbService.getRows(Tenant.getTenant(tableDef), tableName, rowKeys)) {
         	Map<String, String> scalarValues = new HashMap<>();
         	result.put(IDHelper.createID(row.getKey()), scalarValues);
-        	Iterator<DColumn> iColumns = row.getColumns();
-        	while (iColumns.hasNext()) {
-        		DColumn column = iColumns.next();
+        	for(DColumn column: row.getColumns(fields)) {
         		addScalarToMap(tableDef, scalarValues, column);
         	}
         }
@@ -286,12 +274,8 @@ public class SpiderHelper {
         Map<String, String> result = new HashMap<>();
         
 		String tableName = SpiderService.objectsStoreName(tableDef);
-        Iterator<DRow> iRows =
-            dbService.getRowsColumns(Tenant.getTenant(tableDef), tableName, Arrays.asList(IDHelper.IDToString(id)), fields);
-        if (iRows.hasNext()) {
-        	Iterator<DColumn> iColumns = iRows.next().getColumns();
-        	while (iColumns.hasNext()) {
-        		DColumn column = iColumns.next();
+        for(DRow row: dbService.getRows(Tenant.getTenant(tableDef), tableName, Arrays.asList(IDHelper.IDToString(id)))) {
+        	for(DColumn column: row.getColumns(fields)) {
         		result.put(column.getName(), column.getValue());
         	}
         }
@@ -329,15 +313,11 @@ public class SpiderHelper {
 		String start = fromLinksStart(linkDef, continuationLink, inclusive);
 		String finish = fromLinksFinish(linkDef);
         List<String> keys = objectsToStrings(ids);
-        Iterator<DRow> iRows =
-            dbService.getRowsColumnSlice(Tenant.getTenant(tableDef), tableName, keys, start, finish);
-        while (iRows.hasNext()) {
-        	DRow row = iRows.next();
+        for(DRow row: dbService.getRows(Tenant.getTenant(tableDef), tableName, keys)) {
         	List<ObjectID> list = new ArrayList<>();
         	result.put(IDHelper.createID(row.getKey()), list);
-        	Iterator<DColumn> iColumns = row.getColumns();
-        	for (int i = 0; i < count && iColumns.hasNext(); ++i) {
-        		list.add(IDHelper.linkValueToId(Utils.toBytes(iColumns.next().getName())));
+        	for(DColumn column: row.getColumns(start, finish, 1024)) {
+        		list.add(IDHelper.linkValueToId(Utils.toBytes(column.getName())));
         	}
         }
         return result;
@@ -352,10 +332,8 @@ public class SpiderHelper {
 		
 		String start = fromLinksStart(linkDef, continuationLink, inclusive);
 		String finish = fromLinksFinish(linkDef);
-        Iterator<DColumn> iColumns =
-            dbService.getColumnSlice(Tenant.getTenant(tableDef), tableName, IDHelper.IDToString(id), start, finish);
-        for (int i = 0; i < count && iColumns.hasNext(); ++i) {
-        	result.add(IDHelper.linkValueToId(Utils.toBytes(iColumns.next().getName())));
+        for(DColumn column: dbService.getColumnSlice(Tenant.getTenant(tableDef), tableName, IDHelper.IDToString(id), start, finish)) {
+        	result.add(IDHelper.linkValueToId(Utils.toBytes(column.getName())));
         }
         return result;
     }
@@ -372,15 +350,11 @@ public class SpiderHelper {
 		Map<ObjectID, List<ObjectID>> result = new HashMap<>();
 		
 		String startCol = fromTerms(continuationLink, inclusive);
-		Iterator<DRow> iRows =
-		    dbService.getRowsColumnSlice(Tenant.getTenant(tableDef), tableName, linkKeys(shard, linkDef, ids), startCol, "");
-		while (iRows.hasNext()) {
-			DRow row = iRows.next();
+		for(DRow row: dbService.getRows(Tenant.getTenant(tableDef), tableName, linkKeys(shard, linkDef, ids))) {
 			List<ObjectID> list = new ArrayList<>();
 			result.put(unlinkKey(shard, linkDef, row.getKey()), list);
-			Iterator<DColumn> iColumns = row.getColumns();
-			for (int i = 0; i < count && iColumns.hasNext(); ++i) {
-				list.add(IDHelper.createID(iColumns.next().getName()));
+			for(DColumn column: row.getColumns(startCol, null, 1024)) {
+				list.add(IDHelper.createID(column.getName()));
 			}
 		}
         return result;
@@ -399,10 +373,8 @@ public class SpiderHelper {
 
 		String startCol = fromTerms(continuationLink, inclusive);
         String key = linkKey(shard, linkDef, id);
-		Iterator<DColumn> iColumns =
-	        dbService.getColumnSlice(Tenant.getTenant(tableDef), tableName, key, startCol, "");
-		for (int i = 0; i < count && iColumns.hasNext(); ++i) {
-			result.add(IDHelper.createID(iColumns.next().getName()));
+		for(DColumn column: dbService.getColumnSlice(Tenant.getTenant(tableDef), tableName, key, startCol, null)) {
+			result.add(IDHelper.createID(column.getName()));
 		}
         return result;
     }
@@ -483,27 +455,30 @@ public class SpiderHelper {
     	if (prefix == null) prefix = "";
     	
 		List<String> result = new ArrayList<String>();
-		Iterator<DColumn> iColumns =
-		    dbService.getColumnSlice(Tenant.getTenant(tableDef), termsStore, "_terms/" + field, prefix, prefix + Character.MAX_VALUE);
-		for (int i = 0; i < count && iColumns.hasNext(); ++i) {
-			result.add(iColumns.next().getName());
+		for(DColumn column: dbService.getColumnSlice(Tenant.getTenant(tableDef), termsStore, "_terms/" + field, prefix, prefix + Character.MAX_VALUE)) {
+			result.add(column.getName());
 		}
     	return result;
     }
 
-    public static List<String> getTermsUnsharded(TableDefinition tableDef, String field, String from, String to, int count, boolean reversed) {
+    public static List<String> getTermsUnsharded(TableDefinition tableDef, String field, String from, String to, int count) {
     	DBService dbService = DBService.instance();
     	String termsStore = SpiderService.termsStoreName(tableDef);
-    	if (from == null) from = "";
-    	if (to == null) to = "";
+    	if (to != null) to += "\0";
     	
 		List<String> result = new ArrayList<String>();
-		Iterator<DColumn> iColumns =
-		    dbService.getColumnSlice(Tenant.getTenant(tableDef), termsStore, "_terms/" + field, from, to, reversed);
-    	for (int i = 0; i < count && iColumns.hasNext(); ++i) {
-    		result.add(iColumns.next().getName());
+		for(DColumn column: dbService.getColumnSlice(Tenant.getTenant(tableDef), termsStore, "_terms/" + field, from, to)) {
+    		result.add(column.getName());
     	}
     	return result;
+    }
+
+    public static String getLastTermUnsharded(TableDefinition tableDef, String field, String from, String to) {
+        DBService dbService = DBService.instance();
+        String termsStore = SpiderService.termsStoreName(tableDef);
+        if (to != null) to += "\0";
+        DColumn column = dbService.getLastColumn(Tenant.getTenant(tableDef), termsStore, "_terms/" + field, from, to);
+        return column == null ? null : column.getName();
     }
     
     public static List<String> getTerms(TableDefinition tableDef, Integer shard, String field, String prefix, int count) {
@@ -516,31 +491,38 @@ public class SpiderHelper {
     	if (prefix == null) prefix = "";
     	
 		List<String> result = new ArrayList<String>();
-		Iterator<DColumn> iColumns =
-		    dbService.getColumnSlice(Tenant.getTenant(tableDef), termsStore, termKey(shard, field), prefix, prefix + Character.MAX_VALUE);
-    	for (int i = 0; i < count && iColumns.hasNext(); ++i) {
-    		result.add(iColumns.next().getName());
+		for(DColumn column: dbService.getColumnSlice(Tenant.getTenant(tableDef), termsStore, termKey(shard, field), prefix, prefix + Character.MAX_VALUE)) {
+    		result.add(column.getName());
     	}
     	return result;
     }
 
-    public static List<String> getTerms(TableDefinition tableDef, Integer shard, String field, String from, String to, int count, boolean reversed) {
+    public static List<String> getTerms(TableDefinition tableDef, Integer shard, String field, String from, String to, int count) {
     	if (shard.intValue() == 0) {
-    		return getTermsUnsharded(tableDef, field, from, to, count, reversed);
+    		return getTermsUnsharded(tableDef, field, from, to, count);
     	}
     	
     	DBService dbService = DBService.instance();
     	String termsStore = SpiderService.termsStoreName(tableDef);
-    	if (from == null) from = "";
-    	if (to == null) to = "";
+        if (to != null) to += "\0";
     	
 		List<String> result = new ArrayList<String>();
-		Iterator<DColumn> iColumns =
-		    dbService.getColumnSlice(Tenant.getTenant(tableDef), termsStore, termKey(shard, field), from, to, reversed);
-    	for (int i = 0; i < count && iColumns.hasNext(); ++i) {
-    		result.add(iColumns.next().getName());
+		for(DColumn column: dbService.getColumnSlice(Tenant.getTenant(tableDef), termsStore, termKey(shard, field), from, to)) {
+    		result.add(column.getName());
     	}
     	return result;
+    }
+
+    public static String getLastTerm(TableDefinition tableDef, Integer shard, String field, String from, String to) {
+        if (shard.intValue() == 0) {
+            return getLastTermUnsharded(tableDef, field, from, to);
+        }
+        
+        DBService dbService = DBService.instance();
+        String termsStore = SpiderService.termsStoreName(tableDef);
+        if (to != null) to += "\0";
+        DColumn column = dbService.getLastColumn(Tenant.getTenant(tableDef), termsStore, termKey(shard, field), from, to);
+        return column == null ? null : column.getName();
     }
     
     public static List<String> getTerms(TableDefinition tableDef, Collection<Integer> shards, String field, String prefix, int count) {
@@ -565,9 +547,8 @@ public class SpiderHelper {
     public static List<String> getFields(TableDefinition tableDef) {
 		List<String> result = new ArrayList<String>();
 		String tableName = SpiderService.termsStoreName(tableDef);
-		Iterator<DColumn> iColumns = DBService.instance().getAllColumns(Tenant.getTenant(tableDef), tableName, "_fields");
-		while (iColumns.hasNext()) {
-			result.add(iColumns.next().getName());
+		for(DColumn column: DBService.instance().getAllColumns(Tenant.getTenant(tableDef), tableName, "_fields")) {
+			result.add(column.getName());
 		}
     	return result;
     }
@@ -586,9 +567,8 @@ public class SpiderHelper {
     	if (!inclusive) {
     		startCol += (char)0;
     	}
-    	Iterator<DColumn> iColumns = dbService.getColumnSlice(Tenant.getTenant(tableDef), store, term, startCol, "");
-    	for (int i = 0; i < count && iColumns.hasNext(); ++i) {
-    		result.add(IDHelper.createID(iColumns.next().getName()));
+    	for(DColumn column: dbService.getColumnSlice(Tenant.getTenant(tableDef), store, term, startCol, null)) {
+    		result.add(IDHelper.createID(column.getName()));
     	}
 	    return result;
     }
@@ -604,14 +584,11 @@ public class SpiderHelper {
     		startCol += (char)0;
     	}
 
-    	Iterator<DRow> iRows = dbService.getRowsColumnSlice(Tenant.getTenant(tableDef), store, terms, startCol, "");
-    	while (iRows.hasNext()) {
-    		DRow row = iRows.next();
+    	for(DRow row: dbService.getRows(Tenant.getTenant(tableDef), store, terms)) {
     		List<ObjectID> list = new ArrayList<>();
     		result.put(row.getKey(), list);
-    		Iterator<DColumn> iColumns = row.getColumns();
-    		for (int i = 0; i < count && iColumns.hasNext(); ++i) {
-    			list.add(IDHelper.createID(iColumns.next().getName()));
+    		for(DColumn column: row.getColumns(startCol, null, 1024)) {
+    			list.add(IDHelper.createID(column.getName()));
     		}
     	}
         return result;

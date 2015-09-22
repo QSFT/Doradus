@@ -6,6 +6,7 @@ import com.dell.doradus.common.Utils;
 
 
 public class Substr {
+    private static final byte QUESTIONMARK = (byte)'?';
     public byte[] upper;
     public byte[] lower;
     public int length;
@@ -60,6 +61,7 @@ public class Substr {
     
     private boolean match(byte[] data, int beginIndex) {
         for(int i = 0; i < length; i++) {
+            if(upper[i] == QUESTIONMARK) continue;
             byte b = data[beginIndex + i];
             if(b != upper[i] && b != lower[i]) return false;
         }

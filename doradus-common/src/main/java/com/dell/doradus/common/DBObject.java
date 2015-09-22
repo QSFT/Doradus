@@ -768,7 +768,19 @@ final public class DBObject implements JSONable{
             dbObject.addFieldValue(fieldName, Utils.formatDateUTC(fieldValue, Calendar.MILLISECOND));
             return this;
         }
-        
+
+        /**
+         * Add the given byte[] value field with the given name.
+         * 
+         * @param fieldName     Name of byte[] field.
+         * @param fieldValue    byte[] value to add to the field.
+         * @return              This {@link Builder}.
+         */
+        public Builder withValue(String fieldName, byte[] fieldValue) {
+            dbObject.addFieldValue(fieldName, Utils.base64FromBinary(fieldValue));
+            return this;
+        }
+                
         /**
          * Add an array of values to the MV scalar or link field with the given name. This
          * method works for any scalar field type, though values must be converted to

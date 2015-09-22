@@ -291,13 +291,13 @@ public class SchemaService extends Service {
         for (Tenant tenant : tenantList) {
             m_logger.info("   Tenant: {}", tenant.getKeyspace());
             Iterator<DRow> rowIter =
-                DBService.instance().getAllRowsAllColumns(tenant, SchemaService.APPS_STORE_NAME);
+                DBService.instance().getAllRows(tenant, SchemaService.APPS_STORE_NAME).iterator();
             if (!rowIter.hasNext()) {
                 m_logger.info("      <no applications>");
             }
             while (rowIter.hasNext()) {
                 DRow row = rowIter.next();
-                ApplicationDefinition appDef = loadAppRow(tenant, getColumnMap(row.getColumns()));
+                ApplicationDefinition appDef = loadAppRow(tenant, getColumnMap(row.getAllColumns(1024).iterator()));
                 if (appDef != null) {
                     String appName = appDef.getAppName();
                     String ssName = getStorageServiceOption(appDef);
@@ -419,7 +419,7 @@ public class SchemaService extends Service {
     // refresh the map in case the application was just created.
     private ApplicationDefinition getApplicationDefinition(Tenant tenant, String appName) {
         Iterator<DColumn> colIter =
-            DBService.instance().getAllColumns(tenant, SchemaService.APPS_STORE_NAME, appName);
+            DBService.instance().getAllColumns(tenant, SchemaService.APPS_STORE_NAME, appName).iterator();
         if (!colIter.hasNext()) {
             return null;
         }
@@ -430,10 +430,10 @@ public class SchemaService extends Service {
     private Collection<ApplicationDefinition> findAllApplications(Tenant tenant) {
         List<ApplicationDefinition> result = new ArrayList<>();
         Iterator<DRow> rowIter =
-            DBService.instance().getAllRowsAllColumns(tenant, SchemaService.APPS_STORE_NAME);
+            DBService.instance().getAllRows(tenant, SchemaService.APPS_STORE_NAME).iterator();
         while (rowIter.hasNext()) {
             DRow row = rowIter.next();
-            ApplicationDefinition appDef = loadAppRow(tenant, getColumnMap(row.getColumns()));
+            ApplicationDefinition appDef = loadAppRow(tenant, getColumnMap(row.getAllColumns(1024).iterator()));
             if (appDef != null) {
                 result.add(appDef);
             }

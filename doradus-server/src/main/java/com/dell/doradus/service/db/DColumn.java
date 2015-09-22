@@ -104,6 +104,8 @@ public class DColumn implements Comparable<DColumn> {
     
     @Override
     public String toString() {
+        String value = getValue();
+        if(value.length() > 50) value = value.substring(0, 50) + "...";
         return getName() + "=" + getValue();
     }
 
@@ -112,4 +114,15 @@ public class DColumn implements Comparable<DColumn> {
         return m_name.compareTo(o.m_name);
     }
     
-}   // interface DColumn
+    @Override
+    public boolean equals(Object obj) {
+        DColumn c = (DColumn)obj;
+        return getName().equals(c.getName());
+    }
+    
+    @Override
+    public int hashCode() {
+        return getName().hashCode();
+    }
+    
+}

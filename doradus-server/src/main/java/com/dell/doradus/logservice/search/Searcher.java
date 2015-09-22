@@ -3,7 +3,6 @@ package com.dell.doradus.logservice.search;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import com.dell.doradus.common.ApplicationDefinition;
@@ -168,12 +167,8 @@ public class Searcher {
         TableDefinition tableDef = new TableDefinition(appDef, table);
         appDef.addTable(tableDef);
         addField(tableDef, "Timestamp", FieldType.TIMESTAMP);
-        Iterator<DColumn> it = DBService.instance().getAllColumns(tenant, store, "fields");
-        if(it != null) {
-            while(it.hasNext()) {
-                String field = it.next().getName();
-                addField(tableDef, field);
-            }
+        for(DColumn c: DBService.instance().getAllColumns(tenant, store, "fields")) {
+            addField(tableDef, c.getName());
         }
         
         if(pattern != null) {

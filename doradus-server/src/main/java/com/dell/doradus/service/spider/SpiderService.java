@@ -177,7 +177,7 @@ public class SpiderService extends StorageService {
     public DBObject getObject(TableDefinition tableDef, String objID) {
         checkServiceState();
         String storeName = objectsStoreName(tableDef);
-        Iterator<DColumn> colIter = DBService.instance().getAllColumns(Tenant.getTenant(tableDef), storeName, objID);
+        Iterator<DColumn> colIter = DBService.instance().getAllColumns(Tenant.getTenant(tableDef), storeName, objID).iterator();
         if (!colIter.hasNext()) {
             return null;
         }
@@ -427,13 +427,10 @@ public class SpiderService extends StorageService {
         Map<String, Map<String, String>> objScalarMap = new HashMap<>();
         if (objIDs.size() > 0 && fieldNames.size() > 0) {
             String storeName = objectsStoreName(tableDef);
-            Iterator<DRow> rowIter =
-                DBService.instance().getRowsColumns(Tenant.getTenant(tableDef), storeName, objIDs, fieldNames);
-            while (rowIter.hasNext()) {
-                DRow row = rowIter.next();
+            for(DRow row: DBService.instance().getRows(Tenant.getTenant(tableDef), storeName, objIDs)) {
                 Map<String, String> scalarMap = new HashMap<>();
                 objScalarMap.put(row.getKey(), scalarMap);
-                Iterator<DColumn> colIter = row.getColumns();
+                Iterator<DColumn> colIter = row.getColumns(fieldNames).iterator();
                 while (colIter.hasNext()) {
                     DColumn col = colIter.next();
                     String fieldValue = scalarValueToString(tableDef, col.getName(), col.getRawValue());
@@ -462,17 +459,11 @@ public class SpiderService extends StorageService {
         Map<String, String> objScalarMap = new HashMap<>();
         if (objIDs.size() > 0) {
             String storeName = objectsStoreName(tableDef);
-            Iterator<DRow> rowIter =
-                DBService.instance().getRowsColumns(Tenant.getTenant(tableDef), storeName, objIDs, Arrays.asList(fieldName));
-            while (rowIter.hasNext()) {
-                DRow row = rowIter.next();
-                Iterator<DColumn> colIter = row.getColumns();
-                while (colIter.hasNext()) {
-                    DColumn col = colIter.next();
-                    if (col.getName().equals(fieldName)) {
-                        String fieldValue = scalarValueToString(tableDef, col.getName(), col.getRawValue());
-                        objScalarMap.put(row.getKey(), fieldValue);
-                    }
+            for(DRow row: DBService.instance().getRows(Tenant.getTenant(tableDef), storeName, objIDs)) {
+                DColumn col = row.getColumn(fieldName);
+                if (col != null) {
+                    String fieldValue = scalarValueToString(tableDef, col.getName(), col.getRawValue());
+                    objScalarMap.put(row.getKey(), fieldValue);
                 }
             }
         }
@@ -594,14 +585,9 @@ public class SpiderService extends StorageService {
         }
         TableDefinition tableDef = linkDef.getTableDef();
         String termStore = termsStoreName(linkDef.getTableDef());
-        Iterator<DRow> rowIter = DBService.instance().getRowsAllColumns(Tenant.getTenant(tableDef), termStore, termRowKeys);
-        
-        // We only need the column names from each row.
-        while (rowIter.hasNext()) {
-            DRow row = rowIter.next();
-            Iterator<DColumn> colIter = row.getColumns();
-            while (colIter.hasNext()) {
-                values.add(colIter.next().getName());
+        for(DRow row: DBService.instance().getRows(Tenant.getTenant(tableDef), termStore, termRowKeys)) {
+            for(DColumn column: row.getAllColumns(1024)) {
+                values.add(column.getName());
             }
         }
         return values;

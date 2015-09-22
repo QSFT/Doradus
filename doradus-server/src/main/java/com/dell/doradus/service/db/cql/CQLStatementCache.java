@@ -50,14 +50,9 @@ public class CQLStatementCache {
     public enum Query {
         SELECT_1_ROW_1_COLUMN,
         SELECT_1_ROW_COLUMN_RANGE,
-        SELECT_1_ROW_COLUMN_RANGE_DESC,
-        SELECT_1_ROW_ALL_COLUMNS,
-        SELECT_ROW_SET_COLUMN_SET,
-        SELECT_ROW_SET_COLUMN_RANGE,
-        SELECT_ROW_SET_COLUMN_RANGE_DESC,
-        SELECT_ROW_SET_ALL_COLUMNS,
-        SELECT_ALL_ROWS_ALL_COLUMNS,
-    }   // enum Query
+        SELECT_1_ROW_COLUMN_SET,
+        SELECT_ROWS_RANGE,
+    }
 
     /**
      * Prepared update statement types.
@@ -69,7 +64,7 @@ public class CQLStatementCache {
         DELETE_COLUMN_TS,
         DELETE_ROW,
         DELETE_ROW_TS,
-    }   // enum Update
+    }
     
     /**
      * Get the given prepared statement for the given keyspace, table, and query. Upon
@@ -161,34 +156,20 @@ public class CQLStatementCache {
         
         switch (query) {
         case SELECT_1_ROW_1_COLUMN:
-            cql.append(" WHERE key= ? AND column1 = ?;");
+            cql.append(" WHERE key = ? AND column1 = ?;");
             break;
         case SELECT_1_ROW_COLUMN_RANGE:
-            cql.append(" WHERE key= ? AND column1 >= ? AND column1 <= ?;");
+            cql.append(" WHERE key = ? AND column1 >= ? AND column1 < ? LIMIT ?;");
             break;
-        case SELECT_1_ROW_COLUMN_RANGE_DESC:
-            cql.append(" WHERE key= ? AND column1 >= ? AND column1 <= ? ORDER BY column1 DESC;");
+        case SELECT_1_ROW_COLUMN_SET:
+            cql.append(" WHERE key = ? AND column1 IN ?;");
             break;
-        case SELECT_1_ROW_ALL_COLUMNS:
-            cql.append(" WHERE key= ?;");
+        case SELECT_ROWS_RANGE:
+            //unfortunately I didn't find how to get first column of each row in CQL.
+            cql.append(" ;");
             break;
-        case SELECT_ROW_SET_COLUMN_SET:
-            cql.append(" WHERE key IN ? AND column1 IN ?;");
-            break;
-        case SELECT_ROW_SET_COLUMN_RANGE:
-            cql.append(" WHERE key IN ? AND column1 >= ? AND column1 <= ?");
-            break;
-        case SELECT_ROW_SET_COLUMN_RANGE_DESC:
-            cql.append(" WHERE key IN ? AND column1 >= ? AND column1 <= ? ORDER BY column1 DESC");
-            break;
-        case SELECT_ROW_SET_ALL_COLUMNS:
-            cql.append(" WHERE key IN ?;");
-            break;
-        case SELECT_ALL_ROWS_ALL_COLUMNS:
-            cql.append(" LIMIT ");
-            cql.append(Integer.MAX_VALUE);
-            cql.append(" ALLOW FILTERING;");
-            break;
+        default: 
+            throw new RuntimeException("Not supported: " + query);
         }
         m_logger.debug("Preparing query statement: {}", cql);
         return CQLService.instance().getSession().prepare(cql.toString());

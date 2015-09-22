@@ -40,10 +40,9 @@ public class MaxMinHelper {
     public static Date getMaxDate(TableDefinition tableDefinition, String dateField) {
     	Collection<Integer> shards = SpiderHelper.getShards(tableDefinition);
     	String max = "";
-    	List<String> res = null;
     	for(Integer shard : shards) {
-   			res = SpiderHelper.getTerms(tableDefinition, shard, dateField, "9999", "0000", 1, true);
-			if(res.size() > 0 && max.compareTo(res.get(0)) < 0) max = res.get(0);
+   			String res = SpiderHelper.getLastTerm(tableDefinition, shard, dateField, "0000", "9999");
+			if(max.compareTo(res) < 0) max = res;
     	}
     	if(max.length() == 0) return null;
     	else return new DateTrie().parse(max);

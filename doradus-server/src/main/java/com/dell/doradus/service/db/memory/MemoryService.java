@@ -19,7 +19,6 @@ package com.dell.doradus.service.db.memory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -27,14 +26,16 @@ import java.util.TreeMap;
 
 import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.service.db.ColumnDelete;
+import com.dell.doradus.service.db.ColumnUpdate;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
-import com.dell.doradus.service.db.DRow;
+import com.dell.doradus.service.db.RowDelete;
 import com.dell.doradus.service.db.Tenant;
 
 public class MemoryService extends DBService {
-	public static class Row implements DRow {
+	public static class Row {
 		public String name;
 		public SortedMap<String, byte[]> columns = new TreeMap<>();
 		
@@ -42,14 +43,14 @@ public class MemoryService extends DBService {
 			this.name = name;
 		}
 
-		@Override public String getKey() { return name; }
+		public String getKey() { return name; }
 
-		@Override public Iterator<DColumn> getColumns() {
+		public List<DColumn> getColumns() {
 			List<DColumn> result = new ArrayList<DColumn>();
 			for(Map.Entry<String, byte[]> e: columns.entrySet()) {
 				result.add(new DColumn(e.getKey(), e.getValue()));
 			}
-			return result.iterator();
+			return result;
 		}
 	}
 	public static class Store {
@@ -148,155 +149,118 @@ public class MemoryService extends DBService {
 		}
     }
     
-    @Override public DBTransaction startTransaction(Tenant tenant) {
-    	synchronized (m_sync) {
-    		Keyspace ks = getKeyspace(tenant);
-    		return new MemoryTransaction(ks.name);
-		}
-    }
-    
     @Override public void commit(DBTransaction dbTran) {
-    	MemoryTransaction t = (MemoryTransaction)dbTran;
-    	synchronized (m_sync) {
-        	Keyspace ks = m_Keyspaces.get(t.getKeyspace());
-    		if(ks == null) throw new RuntimeException("Keyspace does not exist");
-    		for(Map.Entry<String, Map<String, List<DColumn>>> e: t.getUpdateMap().entrySet()) {
-    			String table = e.getKey();
-    			Map<String, List<DColumn>> rows = e.getValue();
-    			Store store = ks.stores.get(table);
-    			if(store == null) {
-    				store = new Store(table);
-    				ks.stores.put(table, store);
-    			}
-    			for(Map.Entry<String, List<DColumn>> r: rows.entrySet()) {
-    				String row = r.getKey();
-    				List<DColumn> columns = r.getValue();
-    				Row mrow = store.rows.get(row);
-    				if(mrow == null) {
-    					mrow = new Row(row);
-    					store.rows.put(row, mrow);
-    				}
-    				for(DColumn c: columns) {
-    					String col = c.getName();
-    					byte[] val = c.getRawValue();
-    					mrow.columns.put(col, val);
-    				}
-    			}
-    		}
-    		for(Map.Entry<String, Map<String, List<String>>> e: t.getDeleteMap().entrySet()) {
-    			String table = e.getKey();
-    			Map<String, List<String>> rows = e.getValue();
-    			Store store = ks.stores.get(table);
-    			if(store == null) continue;
-    			for(Map.Entry<String, List<String>> r: rows.entrySet()) {
-    				String row = r.getKey();
-    				List<String> columns = r.getValue();
-    				Row mrow = store.rows.get(row);
-    				if(mrow == null) continue;
-    				if(columns == null) {
-    					store.rows.remove(row);
-    				} else {
-	    				for(String c: columns) {
-	    					mrow.columns.remove(c);
-	    				}
-    				}
-    			}
-    		}
-		}
+        synchronized(m_sync) {
+            String keyspace = dbTran.getNamespace();
+            Keyspace ks = m_Keyspaces.get(keyspace);
+            if(ks == null) throw new RuntimeException("Keyspace " + dbTran.getNamespace() + " does not exist");
+            //1. update
+            for(ColumnUpdate mutation: dbTran.getColumnUpdates()) {
+                String table = mutation.getStoreName();
+                Store store = ks.stores.get(table);
+                if(store == null) {
+                    store = new Store(table);
+                    ks.stores.put(table, store);
+                }
+                String row = mutation.getRowKey();
+                Row mrow = store.rows.get(row);
+                if(mrow == null) {
+                    mrow = new Row(row);
+                    store.rows.put(row, mrow);
+                }
+                DColumn c = mutation.getColumn();
+                mrow.columns.put(c.getName(), c.getRawValue());
+            }
+            //2. delete columns
+            for(ColumnDelete mutation: dbTran.getColumnDeletes()) {
+                String table = mutation.getStoreName();
+                Store store = ks.stores.get(table);
+                if(store == null) {
+                    store = new Store(table);
+                    ks.stores.put(table, store);
+                }
+                String row = mutation.getRowKey();
+                Row mrow = store.rows.get(row);
+                if(mrow == null) {
+                    mrow = new Row(row);
+                    store.rows.put(row, mrow);
+                }
+                String column = mutation.getColumnName();
+                mrow.columns.remove(column);
+            }
+            //3. delete rows
+            for(RowDelete mutation: dbTran.getRowDeletes()) {
+                String table = mutation.getStoreName();
+                Store store = ks.stores.get(table);
+                if(store == null) {
+                    store = new Store(table);
+                    ks.stores.put(table, store);
+                }
+                String row = mutation.getRowKey();
+                store.rows.remove(row);
+            }
+        }
     }
     
-    private Keyspace getKeyspace(Tenant tenant) {
-		String keyspace = tenant.getKeyspace();
-		Keyspace ks = m_Keyspaces.get(keyspace);
+    private Keyspace getKeyspace(String namespace) {
+		Keyspace ks = m_Keyspaces.get(namespace);
 		if(ks == null) {
-			ks = new Keyspace(keyspace);
-			m_Keyspaces.put(keyspace, ks);
+			ks = new Keyspace(namespace);
+			m_Keyspaces.put(namespace, ks);
 		}
 		return ks;
     }
     
-    @Override public Iterator<DColumn> getAllColumns(Tenant tenant, String storeName, String rowKey) {
-    	synchronized (m_sync) {
-    		Keyspace ks = getKeyspace(tenant);
-    		Store st = ks.stores.get(storeName);
-    		if(st == null) return new ArrayList<DColumn>(0).iterator();
-    		Row r = st.rows.get(rowKey);
-    		if(r == null) return new ArrayList<DColumn>(0).iterator();
-    		List<DColumn> list = new ArrayList<>();
-    		for(Map.Entry<String, byte[]> e: r.columns.entrySet()) {
-    			list.add(new DColumn(e.getKey(), e.getValue()));
-    		}
-    		return list.iterator();
-		}
+    @Override public List<DColumn> getColumns(String namespace, String storeName,
+            String rowKey, String startColumn, String endColumn, int count) {
+        synchronized (m_sync) {
+            Keyspace ks = getKeyspace(namespace);
+            Store st = ks.stores.get(storeName);
+            if(st == null) throw new RuntimeException("Store does not exist");
+            List<DColumn> list = new ArrayList<>();
+            Row r = st.rows.get(rowKey);
+            if(r == null) return list;
+            for(Map.Entry<String, byte[]> e: r.columns.entrySet()) {
+                if(startColumn != null && startColumn.compareTo(e.getKey()) > 0) continue;
+                if(endColumn != null && endColumn.compareTo(e.getKey()) <= 0) continue;
+                list.add(new DColumn(e.getKey(), e.getValue()));
+                if(list.size() >= count) break;
+            }
+            return list;
+        }
     }
 
-    @Override public Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName, String rowKey,
-                                            String startCol, String endCol, boolean reversed) {
-    	if(reversed) throw new RuntimeException("Not supported");
-    	synchronized (m_sync) {
-    		Keyspace ks = getKeyspace(tenant);
-    		Store st = ks.stores.get(storeName);
-    		if(st == null) throw new RuntimeException("Store does not exist");
-    		Row r = st.rows.get(rowKey);
-    		if(r == null) return new ArrayList<DColumn>(0).iterator();
-    		List<DColumn> list = new ArrayList<>();
-    		for(Map.Entry<String, byte[]> e: r.columns.entrySet()) {
-    			if(startCol.compareTo(e.getKey()) > 0) continue;
-    			if(endCol.compareTo(e.getKey()) <= 0) continue;
-    			list.add(new DColumn(e.getKey(), e.getValue()));
-    		}
-    		return list.iterator();
-		}
+    @Override public List<DColumn> getColumns(String namespace, String storeName,
+            String rowKey, Collection<String> columnNames) {
+        synchronized (m_sync) {
+            Keyspace ks = getKeyspace(namespace);
+            Store st = ks.stores.get(storeName);
+            if(st == null) throw new RuntimeException("Store does not exist");
+            List<DColumn> list = new ArrayList<>();
+            Row r = st.rows.get(rowKey);
+            if(r == null) return list;
+            for(String columnName: columnNames) {
+                byte[] data = r.columns.get(columnName);
+                if(data == null) continue;
+                list.add(new DColumn(columnName, data));
+            }
+            return list;
+        }
     }
 
-    @Override public Iterator<DColumn> getColumnSlice(Tenant tenant, String storeName, String rowKey,
-                                            String startCol, String endCol) {
-        return getColumnSlice(tenant, storeName, rowKey, startCol, endCol, false);
-    }
-
-    @Override public DColumn getColumn(Tenant tenant, String storeName, String rowKey, String colName) {
-    	synchronized (m_sync) {
-    		Keyspace ks = getKeyspace(tenant);
-    		Store st = ks.stores.get(storeName);
-    		if(st == null) throw new RuntimeException("Store does not exist");
-    		Row r = st.rows.get(rowKey);
-    		if(r == null) return null;
-    		byte[] val = r.columns.get(colName);
-    		if(val == null) return null;
-    		return new DColumn(colName, val);
-		}
-    }
-
-    @Override public Iterator<DRow> getAllRowsAllColumns(Tenant tenant, String storeName) {
-    	synchronized (m_sync) {
-    		Keyspace ks = getKeyspace(tenant);
-    		Store st = ks.stores.get(storeName);
-    		if(st == null) return new ArrayList<DRow>(0).iterator();
-    		List<DRow> list = new ArrayList<>();
-    		for(Row row: st.rows.values()) {
-    			list.add(row);
-    		}
-    		return list.iterator();
-		}
-    }
-    
-    @Override public Iterator<DRow> getRowsAllColumns(Tenant tenant, String storeName, Collection<String> rowKeys) {
-    	throw new RuntimeException("Not supported");
-    }
-
-    @Override public Iterator<DRow> getRowsColumns(Tenant   tenant,
-                                         String             storeName,
-                                         Collection<String> rowKeys,
-                                         Collection<String> colNames) {
-    	throw new RuntimeException("Not supported");
-    }
-    
-    @Override public Iterator<DRow> getRowsColumnSlice(Tenant   tenant,
-                                             String             storeName,
-                                             Collection<String> rowKeys,
-                                             String             startCol,
-                                             String             endCol) {
-    	throw new RuntimeException("Not supported");
+    @Override public List<String> getRows(String namespace, String storeName, String continuationToken, int count) {
+        synchronized (m_sync) {
+            List<String> list = new ArrayList<>();
+            Keyspace ks = getKeyspace(namespace);
+            Store st = ks.stores.get(storeName);
+            if(st == null) return list;
+            for(Row row: st.rows.values()) {
+                if(continuationToken != null && continuationToken.compareTo(row.getKey()) >= 0) continue;
+                list.add(row.getKey());
+                if(list.size() >= count) break;
+            }
+            return list;
+        }
     }
 
 

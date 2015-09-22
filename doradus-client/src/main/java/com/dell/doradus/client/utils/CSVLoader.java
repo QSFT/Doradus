@@ -49,6 +49,7 @@ import com.dell.doradus.client.OLAPSession;
 import com.dell.doradus.client.SpiderSession;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.BatchResult;
+import com.dell.doradus.common.BatchResult.Status;
 import com.dell.doradus.common.CommonDefs;
 import com.dell.doradus.common.ContentType;
 import com.dell.doradus.common.DBObject;
@@ -768,12 +769,16 @@ public class CSVLoader {
                 } else {
                     result = ((SpiderSession)m_session).addBatch(m_batchTableName, m_batch);
                 }
-                if (result.isFailed()) {
-                    m_logger.error("Worker {}: Batch update failed: {}",
-                                  new Object[]{m_workerNo, result.getErrorMessage()});
+                Status status = result.getStatus();
+                if (status != Status.OK) {
+                    if (status == Status.ERROR) {
+                        m_logger.error("Worker {}: Batch update failed: {}", m_workerNo, result.getErrorMessage());
+                    } else {
+                        m_logger.warn("Worker {}: Batch update had warnings:", m_workerNo);
+                    }
                     for (ObjectResult objResult : result.getFailedObjectResults()) {
                         String objectID = objResult.getObjectID();
-                        m_logger.warn("Worker {}: error for object ID '{}': {}",
+                        m_logger.warn("Worker {}:    Error for object ID '{}': {}",
                                       new Object[]{m_workerNo, objectID, objResult.getErrorMessage()});
                         Map<String, String> errorDetails = objResult.getErrorDetails();
                         for (String fieldName : errorDetails.keySet()) {

@@ -180,18 +180,15 @@ public class TaskManagerService extends Service {
         String claimPrefixName = "_claim/" + prefixName;
         Tenant tenant = Tenant.getTenant(appDef);
         DBTransaction dbTran = DBService.instance().startTransaction(tenant);
-        Iterator<DRow> rowIter =
-            DBService.instance().getAllRowsAllColumns(tenant, TaskManagerService.TASKS_STORE_NAME);
-        while (rowIter.hasNext()) {
-            DRow row = rowIter.next();
+        for(DRow row: DBService.instance().getAllRows(tenant, TaskManagerService.TASKS_STORE_NAME)) {
             if (row.getKey().startsWith(prefixName) ||
                 row.getKey().startsWith(claimPrefixName)) {
                 dbTran.deleteRow(TASKS_STORE_NAME, row.getKey());
             }
         }
-        if (dbTran.getUpdateCount() > 0) {
+        if (dbTran.getMutationsCount() > 0) {
             m_logger.info("Deleting {} task status rows for application {}",
-                          dbTran.getUpdateCount(), appDef.getPath());
+                          dbTran.getMutationsCount(), appDef.getPath());
             DBService.instance().commit(dbTran);
         }
     }
@@ -237,16 +234,13 @@ public class TaskManagerService extends Service {
      */
     Collection<TaskRecord> getTaskRecords(Tenant tenant) {
         checkServiceState();
-        Iterator<DRow> rowIter =
-            DBService.instance().getAllRowsAllColumns(tenant, TaskManagerService.TASKS_STORE_NAME);
         List<TaskRecord> taskRecords = new ArrayList<>();
-        while (rowIter.hasNext()) {
-            DRow row = rowIter.next();
+        for(DRow row: DBService.instance().getAllRows(tenant, TaskManagerService.TASKS_STORE_NAME)) {
             String taskID = row.getKey();
             if (taskID.startsWith("_claim/")) {
                 continue;
             }
-            Iterator<DColumn> colIter = row.getColumns();
+            Iterator<DColumn> colIter = row.getAllColumns(1024).iterator();
             TaskRecord taskRecord = buildTaskRecord(taskID, colIter);
             taskRecords.add(taskRecord);
         }
@@ -290,7 +284,7 @@ public class TaskManagerService extends Service {
         TaskRecord taskRecord = null;
         while (true) {
             Iterator<DColumn> colIter =
-                DBService.instance().getAllColumns(tenant, TaskManagerService.TASKS_STORE_NAME, task.getTaskID());
+                DBService.instance().getAllColumns(tenant, TaskManagerService.TASKS_STORE_NAME, task.getTaskID()).iterator();
             if (!colIter.hasNext()) {
                 taskRecord = storeTaskRecord(tenant, task);
             } else {
@@ -345,7 +339,7 @@ public class TaskManagerService extends Service {
         m_logger.debug("Checking task '{}' in tenant '{}'", task.getTaskID(), tenant);
         synchronized (m_executeLock) {
             Iterator<DColumn> colIter =
-                DBService.instance().getAllColumns(tenant, TaskManagerService.TASKS_STORE_NAME, task.getTaskID());
+                DBService.instance().getAllColumns(tenant, TaskManagerService.TASKS_STORE_NAME, task.getTaskID()).iterator();
             TaskRecord taskRecord = null;
             if (!colIter.hasNext()) {
                 taskRecord = storeTaskRecord(tenant, task);
@@ -420,7 +414,7 @@ public class TaskManagerService extends Service {
     private boolean taskClaimedByUs(Tenant tenant, String claimID) {
         waitForClaim();
         Iterator<DColumn> colIter =
-            DBService.instance().getAllColumns(tenant, TaskManagerService.TASKS_STORE_NAME, claimID);
+            DBService.instance().getAllColumns(tenant, TaskManagerService.TASKS_STORE_NAME, claimID).iterator();
         if (colIter == null) {
             m_logger.warn("Claim record disappeared: {}", claimID);
             return false;
@@ -514,10 +508,8 @@ public class TaskManagerService extends Service {
     // Look for hung/abandoned tasks in the given tenant.
     private void checkForDeadTenantTasks(Tenant tenant) {
         m_logger.debug("Checking tenant {} for abandoned tasks", tenant);
-        Iterator<DRow> taskRows = DBService.instance().getAllRowsAllColumns(tenant, TASKS_STORE_NAME);
-        while (taskRows.hasNext()) {
-            DRow row = taskRows.next();
-            TaskRecord taskRecord = buildTaskRecord(row.getKey(), row.getColumns());
+        for(DRow row: DBService.instance().getAllRows(tenant, TaskManagerService.TASKS_STORE_NAME)) {
+            TaskRecord taskRecord = buildTaskRecord(row.getKey(), row.getAllColumns(1024).iterator());
             if (taskRecord.getStatus() == TaskStatus.IN_PROGRESS) {
                 checkForDeadTask(tenant, taskRecord);
             }
