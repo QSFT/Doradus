@@ -25,7 +25,7 @@ public class BatchWriter {
         m_writer.create(size);
         for(int doc = 0; doc < size; doc++) {
             OlapDocument d = batch.get(start + doc);
-            m_writer.setTimestamp(doc, d.getId());
+            m_writer.setTimestamp(doc, d.getIdBinary());
             
             for(int i = 0; i < d.getFieldsCount(); i++) {
                 FieldBuilder fb = m_writer.getFieldBulider(d.getFieldNameBinary(i));

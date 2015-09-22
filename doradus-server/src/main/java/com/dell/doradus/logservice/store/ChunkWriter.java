@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.logservice.DateParser;
 import com.dell.doradus.olap.collections.MemoryStream;
 import com.dell.doradus.olap.io.BSTR;
 
@@ -14,6 +15,7 @@ public class ChunkWriter {
     private Map<BSTR, FieldBuilder> m_fields;
     private TimestampBuilder m_timestamps;
     private MemoryStream m_output;
+    private DateParser m_dateParser = new DateParser();
     
     public ChunkWriter() {
         m_temp = new Temp();
@@ -32,8 +34,9 @@ public class ChunkWriter {
         m_output.clear();
     }
 
-    public void setTimestamp(int doc, String timestamp) {
-        long ts = Utils.parseDate(timestamp).getTimeInMillis();
+    public void setTimestamp(int doc, BSTR timestamp) {
+        //long ts = Utils.parseDate(timestamp).getTimeInMillis();
+        long ts = m_dateParser.getTimestamp(timestamp);
         m_timestamps.add(doc, ts);
     }
 
