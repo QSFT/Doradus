@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.common.UserDefinition;
+import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.db.ColumnDelete;
 import com.dell.doradus.service.db.ColumnUpdate;
 import com.dell.doradus.service.db.DBService;
@@ -45,13 +46,12 @@ import com.dell.doradus.service.db.RowDelete;
 import com.dell.doradus.service.db.Tenant;
 
 public class AmazonS3Service extends DBService {
-    public static final String BUCKET = "mydata";
     public static final int CHUNK_SIZE = 2048;
-
     protected final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
     private static final AmazonS3Service INSTANCE = new AmazonS3Service();
     private S3Service m_s3service;
     private long m_totalRequests = 0;
+    public String BUCKET;
     
     
     private AmazonS3Service() { }
@@ -59,12 +59,23 @@ public class AmazonS3Service extends DBService {
     public static AmazonS3Service instance() { return INSTANCE; }
     
     @Override public void initService() {
-        AWSCredentials awsCredentials = new AWSCredentials("accessKey", "secretKey"); 
+        String accessKey = ServerParams.instance().getModuleParamString("AmazonS3Service", "s3-access-key");
+        String secretKey = ServerParams.instance().getModuleParamString("AmazonS3Service", "s3-secret-key");
+        BUCKET = ServerParams.instance().getModuleParamString("AmazonS3Service", "s3-bucket");
+
+        AWSCredentials awsCredentials = new AWSCredentials(accessKey, secretKey); 
         S3Service s3service = new RestS3Service(awsCredentials);
         Jets3tProperties props = s3service.getJetS3tProperties();
-        props.setProperty("s3service.s3-endpoint-http-port", "10453");
-        props.setProperty("s3service.https-only", "false");
-        props.setProperty("s3service.s3-endpoint", "localhost");
+        
+        String port = ServerParams.instance().getModuleParamString("AmazonS3Service", "s3-endpoint-http-port");
+        String httpsOnly = ServerParams.instance().getModuleParamString("AmazonS3Service", "s3-https-only");
+        String endpoint = ServerParams.instance().getModuleParamString("AmazonS3Service", "s3-endpoint");
+        if(port != null) props.setProperty("s3service.s3-endpoint-http-port", port);
+        if(httpsOnly != null) props.setProperty("s3service.https-only", httpsOnly);
+        if(endpoint != null) props.setProperty("s3service.s3-endpoint", endpoint);
+        //props.setProperty("s3service.s3-endpoint-http-port", "10453");
+        //props.setProperty("s3service.https-only", "false");
+        //props.setProperty("s3service.s3-endpoint", "localhost");
         props.setProperty("s3service.disable-dns-buckets", "true");
         CredentialsProvider credentials = s3service.getCredentialsProvider();
         m_s3service = new RestS3Service(awsCredentials, "Doradus", credentials, props);
