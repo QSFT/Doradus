@@ -7,22 +7,23 @@ import java.util.List;
 
 public class ASTNode {
     private String m_name;
-    private Token m_value;
+    private String m_value;
+    private int m_position;
     private int m_tokensCount;
     private List<ASTNode> m_subnodes;
     
-    public ASTNode(String name) {
+    public ASTNode(String name, String value, int position, int tokensCount) {
         m_name = name;
+        m_value = value;
+        m_position = position;
+        m_tokensCount = tokensCount;
     }
 
     public String getName() { return m_name; }
-    public List<ASTNode> getNodes() { return m_subnodes; }
-
-    public Token getValue() { return m_value; }
-    public void setValue(Token value) { m_value = value; }
-
+    public String getValue() { return m_value; }
     public int getTokensCount() { return m_tokensCount; }
-    public void setTokensCount(int tokensCount) { m_tokensCount = tokensCount; }
+    public int getPosition() { return m_position; }
+    public List<ASTNode> getNodes() { return m_subnodes; }
     
     public void addNode(ASTNode node) {
         if(m_subnodes == null) m_subnodes = new ArrayList<>();
@@ -36,8 +37,7 @@ public class ASTNode {
 
     @Override
     public String toString() {
-        if(m_value == null) return m_name;
-        else return m_name + ": " + m_value;
+        return m_name + ": " + m_value;
     }
     
 }

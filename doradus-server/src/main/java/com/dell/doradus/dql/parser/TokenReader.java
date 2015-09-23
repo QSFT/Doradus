@@ -27,7 +27,7 @@ public class TokenReader {
     
     public static Token read(String str, int pointer) {
         while(pointer < str.length() && Character.isWhitespace(str.charAt(pointer))) pointer++;
-        if(pointer == str.length()) return new Token(pointer, 0, null, -1);
+        if(pointer == str.length()) return new Token(pointer, 0, null, TokenType.EOF);
         
         char ch = str.charAt(pointer);
         if(Character.isJavaIdentifierStart(ch) || Character.isDigit(ch)) {
@@ -35,11 +35,27 @@ public class TokenReader {
         } else if(ch == '"' || ch == '\'') {
             return readTerm(str, pointer);
         } else if(SYNTAX.contains(new Character(ch))) {
-            return new Token(pointer, 1, str.substring(pointer, pointer + 1), ch);
+            return readSyntax(str, pointer);
         } else {
-            throw new IllegalArgumentException("Unexpected character: " + ch);
+            throw new ParseException(pointer, "Unexpected character: " + ch);
         }
         
+    }
+
+    private static Token readSyntax(String str, int pointer) {
+        int start = pointer;
+        if(pointer == str.length()) throw new ParseException(pointer, "Syntax expected");
+        char ch = str.charAt(pointer++);
+        if(!SYNTAX.contains(ch)) throw new ParseException(pointer, "Syntax expected");
+        if(ch == '>' && pointer < str.length() && str.charAt(pointer + 1) == '=') {
+            return new Token(start, 2, ">=", TokenType.SYNTAX);
+        }
+        else if(ch == '<' && pointer < str.length() && str.charAt(pointer + 1) == '=') {
+            return new Token(start, 2, "<=", TokenType.SYNTAX);
+        }
+        else {
+            return new Token(start, 1, "" + ch, TokenType.SYNTAX);
+        }
     }
 
     private static Token readIdentifier(String str, int pointer) {
@@ -51,23 +67,23 @@ public class TokenReader {
             sb.append(ch);
             pointer++;
         }
-        if(start == pointer) throw new IllegalArgumentException("Identifier expected");
-        return new Token(start, pointer - start, sb.toString(), 0);
+        if(start == pointer) throw new ParseException(pointer, "Identifier expected");
+        return new Token(start, pointer - start, sb.toString(), TokenType.TERM);
     }
 
     private static Token readTerm(String str, int pointer) {
         StringBuilder sb = new StringBuilder();
         int start = pointer;
         char ch = str.charAt(pointer++);
-        if(ch != '\'' && ch != '"') throw new IllegalArgumentException("Quote expected");
+        if(ch != '\'' && ch != '"') throw new ParseException(pointer, "Quote expected");
         boolean isSingleQuote = (ch == '\'');
         while(true) {
-            if(pointer == str.length()) throw new IllegalArgumentException("Missing closing quote");
+            if(pointer == str.length()) throw new ParseException(pointer, "Missing closing quote");
             ch = str.charAt(pointer++);
             if((isSingleQuote && ch == '\'') || (!isSingleQuote && ch == '"')) {
                 break;
             } else if(ch == '\\') {
-                if(pointer == str.length()) throw new IllegalArgumentException("Unexpected end of string");
+                if(pointer == str.length()) throw new ParseException(pointer, "Unexpected end of string");
                 ch = str.charAt(pointer++);
                 if(ch == 'n') sb.append('\n');
                 else if(ch == 't') sb.append('\t');
@@ -85,14 +101,14 @@ public class TokenReader {
             }
         }
 
-        return new Token(start, pointer - start, sb.toString(), 0);
+        return new Token(start, pointer - start, sb.toString(), TokenType.TERM);
     }
     
     
     private static int digit(String str, int pointer) {
-        if(pointer == str.length()) throw new IllegalArgumentException("Unexpected end of string");
+        if(pointer == str.length()) throw new ParseException("Unexpected end of string");
         char ch = str.charAt(pointer);
-        if(ch < '0' || ch > '9') throw new IllegalArgumentException("Digit expected");
+        if(ch < '0' || ch > '9') throw new ParseException("Digit expected");
         return ch - '0';
     }
     
