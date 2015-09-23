@@ -210,7 +210,7 @@ public class BatchObjectUpdater {
         if (targObjShardNos.size() > 0) {
             objUpdater.setTargetObjectShardNumbers(targObjShardNos);
         }
-        if (currScalarMap == null) {
+        if (currScalarMap == null || currScalarMap.size() == 0) {
             return objUpdater.addNewObject(m_parentTran, dbObj);
         } else {
             return objUpdater.updateObject(m_parentTran, dbObj, currScalarMap);
