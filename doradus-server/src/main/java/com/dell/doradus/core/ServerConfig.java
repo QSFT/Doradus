@@ -84,7 +84,6 @@ public class ServerConfig {
     public static final String DEFAULT_DBTOOL_NAME = "doradus-cassandra.bat";
     public static final String DEFAULT_AGING_RECHECK = "4 hours";
     public static final boolean DEFAULT_AGGR_SEPARATE_SEARH = false;
-    public static final int DEFAULT_AGGR_CONCURRENT_THREADS = 8;
     public static final int DEFAULT_MAX_REQUEST_SIZE = 50 * 1024 * 1024;    // 50MB
     // Default DBEntitySequenceOptions values
     public static final int DEFAULT_DBESOPTIONS_ENTITY_BUFFER = 1000;
@@ -112,8 +111,14 @@ public class ServerConfig {
     
     //Doradus WebServer
     public String webserver_class;      
-    public static String[] commandLineArgs;
 
+    // Allow package-level construction without load().
+    static ServerConfig createInstance() {
+        assert config == null;
+        config = new ServerConfig();
+        return config;
+    }
+    
     /**
      * WARN: The configuration singleton must be already initialized before to call this method (see: <code>load()</code>).
      * @return The ServerConfig singleton.
@@ -173,7 +178,6 @@ public class ServerConfig {
                 logger.info("Parsing the command line arguments...");
                 parseCommandLineArgs(args);
                 logger.info("Ok. Arguments parsed.");
-                commandLineArgs = args;
             }
         } catch (ConfigurationException e) {
             logger.error("Fatal configuration error", e);
@@ -183,18 +187,18 @@ public class ServerConfig {
 
         //overrides with params from the file
         if (!Utils.isEmpty(config.param_override_filename)) {
-	        try {
-		        InputStream overrideFile = new FileInputStream(config.param_override_filename);
-		        Yaml yaml = new Yaml();
-		        LinkedHashMap<String, ?> overrideColl = (LinkedHashMap<String, ?>)yaml.load(overrideFile);
-		        setParams(overrideColl);
-	        } catch (Exception e) {
-	        	logger.warn(e.getMessage() + " -- Ignoring.");
-        }       
+            try {
+                InputStream overrideFile = new FileInputStream(config.param_override_filename);
+                Yaml yaml = new Yaml();
+                LinkedHashMap<String, ?> overrideColl = (LinkedHashMap<String, ?>)yaml.load(overrideFile);
+                setParams(overrideColl);
+            } catch (Exception e) {
+                logger.warn(e.getMessage() + " -- Ignoring.");
+            }       
         }
         return config;
     }
-
+    
     /**
      * Deletes the the ServerConfig singleton if it has been created.
      * <p>NOTE: Intended for testing/debugging purposes (CR#104652).
@@ -237,7 +241,6 @@ public class ServerConfig {
     public String dbtool = DEFAULT_DBTOOL_NAME;
     public String aging_recheck_freq = DEFAULT_AGING_RECHECK;
     public boolean aggr_separate_search = DEFAULT_AGGR_SEPARATE_SEARH;
-    public int aggr_concurrent_threads = DEFAULT_AGGR_CONCURRENT_THREADS;
     public int max_request_size = DEFAULT_MAX_REQUEST_SIZE;
     // DBEntitySequenceOptions properties
     public int dbesoptions_entityBuffer = DEFAULT_DBESOPTIONS_ENTITY_BUFFER;
@@ -250,18 +253,6 @@ public class ServerConfig {
     public boolean l2r_enable = true;
     // Default query page size (used when s=... parameter is missing in _query request
     public int search_default_page_size = 100;
-
-    //number of columns to retrieve from a row (default: 1024)
-    public int search_column_count = 1024;
-    //number of columns to retrieve from a indexed link row (default: 16384)
-    public int search_link_column_count = 16384;
-    //number of threads to use for indexed row retrieving for links (default: 0)
-    public int search_link_thread_count = 0;
-    //if count of linked objects (sub-query results) exceeds this limit in Link query creation, scanning is applied
-    public int search_max_linked_objects = 100000;
-    //number of threads that search uses simultaneously to execute OR queries and SearchPlan checks.
-    //0 means no thread pool (default: 32)
-    public int search_worker_pool_size = 32;
 
     // Thrift timeout and retry values (see documentation in YAML file):
     public int db_timeout_millis = DEFAULT_DB_TIMEOUT_MILLIS;
@@ -399,19 +390,23 @@ public class ServerConfig {
     // Set configuration parameters from the given YAML-loaded map.
     private static void setParams(Map<String, ?> map) {
         for (String name : map.keySet()) {
-            try {
-                Object value = map.get(name);
-                if (value instanceof List) {
-                    setCollectionParam(name, (List<?>)value);
-                } else {
-                    setParam(name, value);
-                }
-            } catch (ConfigurationException e) {
-                logger.warn(e.getMessage() + " -- Ignoring.");
-            }
+            setParam(name, map.get(name));
         }
     }   // setParams
     
+    static void setParam(String name, Object value) {
+        try {
+            if (value instanceof List) {
+                setCollectionParam(name, (List<?>)value);
+            } else if (value instanceof String) {
+                setParamFromString(name, (String)value);
+            } else {
+                setScalarParam(name, value);
+            }
+        } catch (ConfigurationException e) {
+            logger.warn(e.getMessage() + " -- Ignoring.");
+        }
+    }
     // Return false if given name is not a known scalar configuration parameter
     private static boolean setParamFromString(String name, String value) throws ConfigurationException {
         try {
@@ -435,7 +430,7 @@ public class ServerConfig {
     }   // setParamFromString
     
     // Return false if given name is not a known scalar configuration parameter
-    private static void setParam(String name, Object value) throws ConfigurationException {
+    private static void setScalarParam(String name, Object value) throws ConfigurationException {
         try {
             Field field = config.getClass().getDeclaredField(name);
             field.set(config, value);
@@ -444,7 +439,7 @@ public class ServerConfig {
         } catch (IllegalArgumentException e) {
             throw new ConfigurationException("Couldn't parse parameter: " + value);
         }
-    }   // setParam
+    }   // setScalarParam
     
     // Set a configuration parameter with a Collection type.
     private static void setCollectionParam(String name, List<?> values) throws ConfigurationException {
@@ -515,6 +510,6 @@ public class ServerConfig {
             throw new RuntimeException("Error setting configuration parameter '" + field.getName() + "'", e);
         }
     }   // setMapParam
-    
+
 }   // class ServerConfig
 

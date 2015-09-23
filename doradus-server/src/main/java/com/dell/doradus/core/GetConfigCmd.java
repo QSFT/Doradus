@@ -35,6 +35,7 @@ import com.dell.doradus.service.rest.annotation.Description;
 )
 public class GetConfigCmd extends UNodeOutCallback {
 
+    @SuppressWarnings("unchecked")
     @Override
     public UNode invokeUNodeOut() {
         UNode rootNode = UNode.createMapNode("configuration");
@@ -42,7 +43,7 @@ public class GetConfigCmd extends UNodeOutCallback {
         if (!Utils.isEmpty(version)) {
         	rootNode.addValueNode("version", version);
         }
-        String[] args = ServerConfig.commandLineArgs;
+        String[] args = ServerParams.instance().getCommandLineArgs();
         if (args != null) { 
 	        UNode cmdlineArgsNode = rootNode.addMapNode("command-line-args");
 	        for (int inx = 0; inx < args.length; inx++) {
@@ -51,14 +52,18 @@ public class GetConfigCmd extends UNodeOutCallback {
 	            cmdlineArgsNode.addValueNode(name, value, "arg");
 	        }
         }
-        Map<String, Object> serverConfigMap = new TreeMap<>(ServerConfig.getInstance().toMap());
+        Map<String, Object> serverConfigMap = new TreeMap<>(ServerParams.instance().toMap());
         if (serverConfigMap != null) { 
 	        UNode propsNode = rootNode.addMapNode("server-params");
-	        for (String key : serverConfigMap.keySet()) {
-	        	String value = key.contains("password") ? "*****": "" + serverConfigMap.get(key);
-	        	if (value != null) {
-	        		propsNode.addValueNode(key, value, "param");
-	        	}
+	        for (String moduleName : serverConfigMap.keySet()) {
+	            UNode moduleNode = propsNode.addMapNode(moduleName);
+	            Map<String, Object> paramMap = (Map<String, Object>) serverConfigMap.get(moduleName);
+	            for (String paramName : paramMap.keySet()) {
+	                Object paramValue = paramName.contains("password") ? "*****" : paramMap.get(paramName);
+	                if (paramValue != null) {
+	                    moduleNode.addValueNode(paramName, paramValue.toString(), "param");
+	                }
+	            }
 			}
         }
        

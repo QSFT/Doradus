@@ -358,7 +358,7 @@ public final class DoradusServer {
     // Initialize the ServerConfig module, which loads the doradus.yaml file.
     private void initConfig(String[] args) {
         try {
-            ServerConfig.load(args);
+            ServerParams.load(args);
         } catch (ConfigurationException e) {
             throw new RuntimeException("Failed to initialize server configuration", e);
         }

@@ -56,7 +56,7 @@ public class Aggregate {
     public final static String GROUPSEPARATOR = "\u0000";
     
     // Aggregate options
-	private boolean separateSearchTiming = ServerConfig.DEFAULT_AGGR_SEPARATE_SEARH;
+	private boolean separateSearchTiming;
 
 	static Logger log = LoggerFactory.getLogger(Aggregate.class.getSimpleName());
 	TimerGroup timers = new TimerGroup(Aggregate.class.getSimpleName() + ".timing");
