@@ -307,6 +307,9 @@
         <get dest="${server.lib.dir}">
             <url url="http://repo1.maven.org/maven2/org/eclipse/jgit/org.eclipse.jgit/4.0.0.201506020755-rc3/org.eclipse.jgit-4.0.0.201506020755-rc3.jar"/>
         </get>
+        <get dest="${server.lib.dir}">
+            <url url="http://repo1.maven.org/maven2/net/java/dev/jets3t/jets3t/0.9.4/jets3t-0.9.4.jar"/>
+        </get>
     </target>
     
     <target name="ServerCompile" depends="CommonJar,ServerLoadLibs">
