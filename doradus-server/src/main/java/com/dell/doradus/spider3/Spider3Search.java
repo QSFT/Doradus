@@ -29,12 +29,16 @@ public class Spider3Search {
             qu = DoradusQueryBuilder.Build(query.getQuery(), tableDef);
         }
         SortOrder[] sortOrders = AggregationQueryBuilder.BuildSortOrders(query.getSortOrder(), tableDef);
+        FieldSet fieldSet = new FieldSet(tableDef, query.getFields());
+        fieldSet.expand();
+        
         DocSet set = Spider3Filter.search(tableDef, qu);
         SearchResultList list = new SearchResultList();
         for(String id: set.getIDs()) {
             SearchResult r = new SearchResult();
             r.scalars.put("_ID", id);
             r.orders = sortOrders;
+            r.fieldSet = fieldSet; 
             list.results.add(r);
         }
 
@@ -57,9 +61,6 @@ public class Spider3Search {
             list.continuation_token = list.results.get(end - 1).id();
         }
         list.results = new ArrayList<>(list.results.subList(start, end));
-        
-        FieldSet fieldSet = new FieldSet(tableDef, query.getFields());
-        fieldSet.expand();
 
         map.clear();
         for(SearchResult sr: list.results) {
