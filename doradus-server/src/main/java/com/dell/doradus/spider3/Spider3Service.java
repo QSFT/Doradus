@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package spider3;
+package com.dell.doradus.spider3;
 
 import java.io.Reader;
 import java.util.ArrayList;

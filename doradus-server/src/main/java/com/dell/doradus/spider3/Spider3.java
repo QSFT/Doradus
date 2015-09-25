@@ -1,4 +1,4 @@
-package spider3;
+package com.dell.doradus.spider3;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

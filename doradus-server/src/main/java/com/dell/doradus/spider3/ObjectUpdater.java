@@ -1,4 +1,4 @@
-package spider3;
+package com.dell.doradus.spider3;
 
 import java.util.Collection;
 import java.util.HashSet;

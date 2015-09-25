@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package spider3;
+package com.dell.doradus.spider3;
 
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
