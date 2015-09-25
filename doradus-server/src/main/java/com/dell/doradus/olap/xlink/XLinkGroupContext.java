@@ -60,6 +60,11 @@ public class XLinkGroupContext {
 	public XGroups setupXLinkGroup(AggregationGroup group) {
 	    XGroups lastGroup = null;
 		if(group.filter != null) context.setupXLinkQuery(group.tableDef, group.filter);
+		if(group.batchexFilters != null) {
+		    for(Query qu: group.batchexFilters) {
+		        context.setupXLinkQuery(group.tableDef, qu);
+		    }
+		}
 		List<AggregationGroupItem> items = group.items;
 		TableDefinition tableDef = group.tableDef;
 		for(int i = items.size() - 1; i >= 0; i--) {
