@@ -16,21 +16,20 @@
 
 package com.dell.doradus.service.db.s3;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.apache.http.client.CredentialsProvider;
 import org.jets3t.service.Jets3tProperties;
 import org.jets3t.service.S3Service;
-import org.jets3t.service.ServiceException;
-import org.jets3t.service.StorageObjectsChunk;
 import org.jets3t.service.impl.rest.httpclient.RestS3Service;
-import org.jets3t.service.model.S3Object;
-import org.jets3t.service.model.StorageObject;
 import org.jets3t.service.security.AWSCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,12 +45,11 @@ import com.dell.doradus.service.db.RowDelete;
 import com.dell.doradus.service.db.Tenant;
 
 public class AmazonS3Service extends DBService {
-    public static final int CHUNK_SIZE = 2048;
+    private static final byte[] EMPTY_BYTES = new byte[0];
     protected final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
     private static final AmazonS3Service INSTANCE = new AmazonS3Service();
-    private S3Service m_s3service;
-    private long m_totalRequests = 0;
-    public String BUCKET;
+    private AmazonConnection m_connection;
+    private static ExecutorService s3_executor;
     
     
     private AmazonS3Service() { }
@@ -61,7 +59,7 @@ public class AmazonS3Service extends DBService {
     @Override public void initService() {
         String accessKey = ServerParams.instance().getModuleParamString("AmazonS3Service", "s3-access-key");
         String secretKey = ServerParams.instance().getModuleParamString("AmazonS3Service", "s3-secret-key");
-        BUCKET = ServerParams.instance().getModuleParamString("AmazonS3Service", "s3-bucket");
+        String bucket = ServerParams.instance().getModuleParamString("AmazonS3Service", "s3-bucket");
 
         AWSCredentials awsCredentials = new AWSCredentials(accessKey, secretKey); 
         S3Service s3service = new RestS3Service(awsCredentials);
@@ -78,12 +76,20 @@ public class AmazonS3Service extends DBService {
         //props.setProperty("s3service.s3-endpoint", "localhost");
         props.setProperty("s3service.disable-dns-buckets", "true");
         CredentialsProvider credentials = s3service.getCredentialsProvider();
-        m_s3service = new RestS3Service(awsCredentials, "Doradus", credentials, props);
+        s3service = new RestS3Service(awsCredentials, "Doradus", credentials, props);
+        
+        Object str_threads = ServerParams.instance().getModuleParam("AmazonS3Service", "s3-threads");
+        int threads = str_threads == null ? 1 : Integer.parseInt(str_threads.toString());
+        s3_executor = Executors.newFixedThreadPool(threads);
+        
+        m_connection = new AmazonConnection(s3service, bucket);
     }
 
     @Override public void startService() { }
     
-    @Override public void stopService() { }
+    @Override public void stopService() {
+        s3_executor.shutdownNow();
+    }
     
     @Override public void createTenant(Tenant tenant, Map<String, String> options) {
         //?? how to create tenant?
@@ -93,104 +99,8 @@ public class AmazonS3Service extends DBService {
         throw new RuntimeException("Not implemented");
     }
 
-    private void inc() {
-        m_totalRequests++;
-        if(m_totalRequests % 10000 == 0) {
-            m_logger.info("Requests: {}", "" + (m_totalRequests / 1000) + "k");
-        }
-    }
-    
-    private void deleteAll(String path) {
-        try {
-            String priorLastKey = null;
-            while(true) {
-                StorageObjectsChunk chunk = m_s3service.listObjectsChunked(BUCKET, path, "?", CHUNK_SIZE, priorLastKey);
-                inc();
-                StorageObject[] objects = chunk.getObjects();
-                if(objects.length == 0) break;
-                //m_logger.info("deleting {} objects from {}", objects.length, path);
-                // does not work!!!
-                //String[] names = new String[objects.length];
-                //for(int i = 0; i < objects.length; i++) {
-                //    names[i] = objects[i].getKey();
-                //}
-                //m_s3service.deleteMultipleObjects(BUCKET, names);
-                
-                for(StorageObject object: objects) {
-                    String key = object.getKey();
-                    m_s3service.deleteObject(BUCKET, key);
-                }
-                
-                if(chunk.isListingComplete()) break;
-                priorLastKey = chunk.getPriorLastKey();
-            }
-        } catch (ServiceException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private List<String> listAll(String path) {
-        try {
-            List<String> result = new ArrayList<>();
-            String priorLastKey = null;
-            while(true) {
-                StorageObjectsChunk chunk = m_s3service.listObjectsChunked(BUCKET, path, "/", CHUNK_SIZE, priorLastKey);
-                inc();
-                StorageObject[] objects = chunk.getObjects();
-                for(int i = 0; i < objects.length; i++) {
-                    String key = objects[i].getKey();
-                    if(key.endsWith("/")) key = key.substring(0, key.length() - 1);
-                    key = key.substring(path.length(), key.length());
-                    result.add(key);
-                }
-                if(chunk.isListingComplete()) break;
-                priorLastKey = chunk.getPriorLastKey();
-            }
-            return result;
-       } catch (ServiceException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
-    private byte[] get(String path) {
-        try {
-            S3Object obj = m_s3service.getObject(BUCKET, path);
-            inc();
-            if(obj == null) return null;
-            int len = (int)obj.getContentLength();
-            byte[] data = new byte[len];
-            int start = 0;
-            InputStream is = obj.getDataInputStream();
-            while(start < len) {
-                start += is.read(data, start, len - start);
-            }
-            is.close();
-            return data;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-    
-    private void put(String path, byte[] value) {
-        try {
-            S3Object obj = new S3Object(path, value);
-            m_s3service.putObject(BUCKET, obj);
-            inc();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
-    private void delete(String path) {
-        try {
-            m_s3service.deleteObject(BUCKET, path);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
     @Override public void dropTenant(Tenant tenant) {
-        deleteAll(tenant.getKeyspace());
+        m_connection.deleteAll(tenant.getKeyspace());
     }
     
     
@@ -208,9 +118,9 @@ public class AmazonS3Service extends DBService {
     
     @Override public Collection<Tenant> getTenants() {
         List<Tenant> tenants = new ArrayList<>();
-        List<String> keyspaces = listAll("/");
-        for(String keyspace: keyspaces) {
-            tenants.add(new Tenant(keyspace));
+        List<ListItem> keyspaces = m_connection.listAll("/");
+        for(ListItem keyspace: keyspaces) {
+            tenants.add(new Tenant(keyspace.name));
         }
         return tenants;
     }
@@ -220,7 +130,7 @@ public class AmazonS3Service extends DBService {
     }
     
     @Override public void deleteStoreIfPresent(Tenant tenant, String storeName) {
-        deleteAll(tenant.getKeyspace() + "/" + storeName);
+        m_connection.deleteAll(tenant.getKeyspace() + "/" + storeName);
     }
     
     public String encode(String name) {
@@ -251,78 +161,108 @@ public class AmazonS3Service extends DBService {
     }
     
     @Override public void commit(DBTransaction dbTran) {
-        try {
-        	String keyspace = dbTran.getNamespace();
-            //1. update
-            for(ColumnUpdate mutation: dbTran.getColumnUpdates()) {
-                String store = mutation.getStoreName();
-                String row = mutation.getRowKey();
-                DColumn c = mutation.getColumn();
-                String column = c.getName();
-                byte[] value = c.getRawValue();
-                String path = keyspace + "/" + store + "/" + encode(row) + "/" + encode(column);
-                put(path, value);
-            }
-            //2. delete columns
-            for(ColumnDelete mutation: dbTran.getColumnDeletes()) {
-                String store = mutation.getStoreName();
-                String row = mutation.getRowKey();
-                String column = mutation.getColumnName();
-                String path = keyspace + "/" + store + "/" + encode(row) + "/" + encode(column);
-                delete(path);
-            }
-            //3. delete rows
-            for(RowDelete mutation: dbTran.getRowDeletes()) {
-                String store = mutation.getStoreName();
-                String row = mutation.getRowKey();
-                String path = keyspace + "/" + store + "/" + encode(row);
-                deleteAll(path);
-            }
-        }catch(Exception e) {
-            throw new RuntimeException(e);
+        List<Future<?>> futures = new ArrayList<>();
+    	String keyspace = dbTran.getNamespace();
+        //1. update
+        for(ColumnUpdate mutation: dbTran.getColumnUpdates()) {
+            String store = mutation.getStoreName();
+            String row = mutation.getRowKey();
+            DColumn c = mutation.getColumn();
+            String column = c.getName();
+            final byte[] value = c.getRawValue();
+            final String path = keyspace + "/" + store + "/" + encode(row) + "/" + encode(column);
+            futures.add(s3_executor.submit(new Runnable(){
+                @Override public void run() {
+                    m_connection.put(path, value);
+                }
+            }));
         }
+        //2. delete columns
+        for(ColumnDelete mutation: dbTran.getColumnDeletes()) {
+            String store = mutation.getStoreName();
+            String row = mutation.getRowKey();
+            String column = mutation.getColumnName();
+            final String path = keyspace + "/" + store + "/" + encode(row) + "/" + encode(column);
+            futures.add(s3_executor.submit(new Runnable(){
+                @Override public void run() {
+                    m_connection.delete(path);
+                }
+            }));
+        }
+        //3. delete rows
+        for(RowDelete mutation: dbTran.getRowDeletes()) {
+            String store = mutation.getStoreName();
+            String row = mutation.getRowKey();
+            String path = keyspace + "/" + store + "/" + encode(row);
+            futures.add(s3_executor.submit(new Runnable(){
+                @Override public void run() {
+                    m_connection.deleteAll(path);
+                }
+            }));
+        }
+        wait(futures);
     }
     
     @Override
     public List<DColumn> getColumns(String namespace, String storeName,
             String rowKey, String startColumn, String endColumn, int count) {
-        ArrayList<DColumn> list = new ArrayList<>();
-        String path = namespace + "/" + storeName + "/" + encode(rowKey) + "/";
-        List<String> keys = listAll(path);
-        for(String key: keys) {
+        List<Future<?>> futures = new ArrayList<>();
+        final ArrayList<DColumn> list = new ArrayList<>();
+        final String path = namespace + "/" + storeName + "/" + encode(rowKey) + "/";
+        List<ListItem> keys = m_connection.listAll(path);
+        for(ListItem item: keys) {
+            final String key = item.name;
             String name = decode(key);
             if(startColumn != null && startColumn.compareTo(name) > 0) continue;
             if(endColumn != null && endColumn.compareTo(name) <= 0) continue;
-            byte[] value = get(path + key);
-            if(value == null) continue;
-            list.add(new DColumn(name, value));
+            futures.add(s3_executor.submit(new Runnable(){
+                @Override public void run() {
+                    byte[] value = EMPTY_BYTES;
+                    if(item.hasContents) {
+                        value = m_connection.get(path + key);
+                    }
+                    if(value != null) {
+                        synchronized (list) {
+                            list.add(new DColumn(name, value));
+                        }
+                    }
+                }
+            }));
         }
+        wait(futures);
         Collections.sort(list);
         return list;
     }
 
     @Override
-    public List<DColumn> getColumns(String namespace, String storeName,
-            String rowKey, Collection<String> columnNames) {
-        ArrayList<DColumn> list = new ArrayList<>();
-        String path = namespace + "/" + storeName + "/" + encode(rowKey) + "/";
-        //List<String> keys = listAll(path);
+    public List<DColumn> getColumns(String namespace, String storeName, String rowKey, Collection<String> columnNames) {
+        List<Future<?>> futures = new ArrayList<>();
+        final ArrayList<DColumn> list = new ArrayList<>();
+        final String path = namespace + "/" + storeName + "/" + encode(rowKey) + "/";
         for(String columnName: columnNames) {
-            byte[] value = get(path + encode(columnName));
-            if(value == null) continue;
-            list.add(new DColumn(columnName, value));
+            futures.add(s3_executor.submit(new Runnable() {
+                @Override public void run() {
+                    byte[] value = m_connection.get(path + encode(columnName));
+                    if(value != null) {
+                        synchronized (list) {
+                            list.add(new DColumn(columnName, value));
+                        }
+                    }
+                }
+            }));
         }
+        wait(futures);
         Collections.sort(list);
         return list;
     }
 
     @Override
-    public List<String> getRows(String namespace, String storeName,
-            String continuationToken, int count) {
+    public List<String> getRows(String namespace, String storeName, String continuationToken, int count) {
         List<String> rows = new ArrayList<>();
         String path = namespace + "/" + storeName + "/";
-        List<String> rowKeys = listAll(path);
-        for(String row: rowKeys) {
+        List<ListItem> rowKeys = m_connection.listAll(path);
+        for(ListItem item: rowKeys) {
+            String row = item.name;
             String rowName = decode(row);
             if(continuationToken != null && continuationToken.compareTo(rowName) >= 0) continue;
             rows.add(rowName);
@@ -331,5 +271,14 @@ public class AmazonS3Service extends DBService {
         return rows;
     }
 
+    private void wait(List<Future<?>> futures) {
+        try {
+            for(Future<?> future: futures) {
+                future.get();
+            }
+        }catch(ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }
