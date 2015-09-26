@@ -44,6 +44,7 @@ import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.taskmanager.TaskRecord.TaskStatus;
+import com.dell.doradus.service.tenant.TenantService;
 
 /**
  * Provides task execution service for Doradus. If this service is enabled, it looks for
@@ -188,7 +189,7 @@ public class TaskManagerService extends Service {
         }
         if (dbTran.getMutationsCount() > 0) {
             m_logger.info("Deleting {} task status rows for application {}",
-                          dbTran.getMutationsCount(), appDef.getPath());
+                          dbTran.getMutationsCount(), appDef.getAppName());
             DBService.instance().commit(dbTran);
         }
     }
@@ -315,7 +316,7 @@ public class TaskManagerService extends Service {
     
     // Check all tenants for tasks that need execution.
     private void checkAllTasks() {
-        for (Tenant tenant: DBService.instance().getTenants()) {
+        for (Tenant tenant: TenantService.instance().getTenants()) {
             checkTenantTasks(tenant);
             if (m_bShutdown) {
                 break;
@@ -497,7 +498,7 @@ public class TaskManagerService extends Service {
 
     // Look for tasks that have not reported or finished for too long.
     private void checkForDeadTasks() {
-        for (Tenant tenant: DBService.instance().getTenants()) {
+        for (Tenant tenant: TenantService.instance().getTenants()) {
             checkForDeadTenantTasks(tenant);
             if (m_bShutdown) {
                 break;
@@ -568,7 +569,7 @@ public class TaskManagerService extends Service {
 
     // Construct the map key used to track task executions we own.
     private static String createMapKey(Tenant tenant, String taskID) {
-        return tenant.getKeyspace() + "/" + taskID;
+        return tenant.getName() + "/" + taskID;
     }
 
     // Return true if we are currently executing the given task.

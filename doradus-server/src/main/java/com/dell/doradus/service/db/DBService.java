@@ -20,26 +20,23 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
-import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.db.cql.CQLService;
 import com.dell.doradus.service.db.thrift.ThriftService;
 
 /**
- * Provides methods that access the physical database. This is currently Cassandra but
- * could be other physical stores. Database configuration options (host, port, keyspace,
- * etc.) are defined in doradus.yaml and loaded via {@link ServerConfig}.
+ * Provides methods that access a persistence instance (i.e., database).
  */
 public abstract class DBService extends Service {
     // Choose service based on doradus.yaml setting
     private static final DBService INSTANCE = selectService();
     
     private static DBService selectService() {
-        String dbServiceName = ServerConfig.getInstance().dbservice;
+        // TODO: throw if dbservice is not defined
+        String dbServiceName = ServerParams.instance().getModuleParamString("DBService", "dbservice");
         if (!Utils.isEmpty(dbServiceName)) {
             try {
                 @SuppressWarnings("unchecked")
@@ -50,7 +47,7 @@ public abstract class DBService extends Service {
             } catch (Exception e) {
                 throw new RuntimeException("Error initializing DBService: " + dbServiceName, e);
             }
-        } else if (ServerConfig.getInstance().use_cql) {
+        } else if (ServerParams.instance().getModuleParamBoolean("DBService", "use_cql")) {
             return CQLService.instance();
         } else {
             return ThriftService.instance();
@@ -61,6 +58,16 @@ public abstract class DBService extends Service {
     protected DBService() {
         // Give up to 1 second after start() to allow startService() to succeed
         m_startDelayMillis = 1000;
+        
+        // TODO: Temporary until dbservice becomes mandatory.
+        String dbservice = getParamString("dbservice");
+        if (Utils.isEmpty(dbservice)) {
+            m_logger.warn("DBService.dbservice parameter will become mandatory.");
+        }
+        Object use_cql = getParam("use_cql");
+        if (use_cql != null) {
+            m_logger.warn("'use_cql' is being deimplemented");
+        }
     }
     
     /**
@@ -77,64 +84,37 @@ public abstract class DBService extends Service {
 
     // Implemented by subclasses
     
-    //----- Public DBService methods: Tenant management
+    //----- Public DBService methods: Namespace management
     
     /**
-     * Create a new tenant with the given options.
+     * Indicates if this DBService object supports namespaces. If this method returns
+     * false, {@link #createNamespace(DBContext, String)} and {@link #dropNamespace(String)}
+     * will probably throw an exception.
      * 
-     * @param tenant    {@link Tenant} that defines new tenant.
-     * @param options   Optional map of options for new tenant.
+     * @return True if the database type represented by this DBService object supports
+     *         namespaces.
      */
-    public abstract void createTenant(Tenant tenant, Map<String, String> options);
+    public abstract boolean supportsNamespaces();
     
     /**
-     * Modify the given tenant with the given options.
-     * 
-     * @param tenant    {@link Tenant} to be modified.
-     * @param options   Map of options to apply to tenant.
+     * Create a new namespace for the given Tenant. It is up to the concrete DBService
+     * class to decide what, if anything, should be done to prepare the new namespace.
+     * This method will throw if {@link #supportsNamespaces()} returns false for this
+     * DBService.
+     *  
+     * @param tenant    {@link Tenant} for which to create a new namespace.
      */
-    public abstract void modifyTenant(Tenant tenant, Map<String, String> options);
-    
-    /**
-     * Drop the given tenant.
-     * 
-     * @param tenant    {@link Tenant} to drop.
-     */
-    public abstract void dropTenant(Tenant tenant);
-    
-    /**
-     * Add the given list of users to the database with the defined permissions for the
-     * given tenant.
-     * 
-     * @param tenant    {@link Tenant} to add users for.
-     * @param users     List of {@link UserDefinition} to add.
-     */
-    public abstract void addUsers(Tenant tenant, Iterable<UserDefinition> users);
-    
-    /**
-     * Modify the given list of users to for the given tenant. Currently, only passwords
-     * can be modified.
-     * 
-     * @param tenant    {@link Tenant} whose users are to be modified.
-     * @param users     List of {@link UserDefinition} to modify.
-     */
-    public abstract void modifyUsers(Tenant tenant, Iterable<UserDefinition> users);
-    
-    /**
-     * Delete the given list of users for the given tenant.
-     * 
-     * @param tenant    {@link Tenant} to delete users for.
-     * @param users     List of {@link UserDefinition} to delete.
-     */
-    public abstract void deleteUsers(Tenant tenant, Iterable<UserDefinition> users);
-    
-    /**
-     * Get a list of all known {@link Tenant}s.
-     * 
-     * @return  Map of tenants to application names.
-     */
-    public abstract Collection<Tenant> getTenants();        
+    public abstract void createNamespace(Tenant tenant);
 
+    /**
+     * Delete the namespace for the given Tenant, including its applications and data. 
+     * This method will throw if {@link #supportsNamespaces()} returns false for this
+     * DBService.
+     * 
+     * @param tenant    {@link Tenant} whose applications and data are to be deleted.
+     */
+    public abstract void dropNamespace(Tenant tenant);
+    
     //----- Public DBService methods: Store management
     
     /**
@@ -168,7 +148,7 @@ public abstract class DBService extends Service {
      * @return          New {@link DBTransaction}.
      */
     public DBTransaction startTransaction(Tenant tenant) {
-        return startTransaction(tenant.getKeyspace());
+        return startTransaction(tenant.getName());
     }
     
     /**
@@ -276,7 +256,7 @@ public abstract class DBService extends Service {
      */
     public Iterable<DColumn> getColumnSlice(Tenant tenant, String storeName,
             String rowKey, String startCol, String endCol) {
-        DRow row = new DRow(tenant.getKeyspace(), storeName, rowKey);
+        DRow row = new DRow(tenant.getName(), storeName, rowKey);
         return row.getColumns(startCol, endCol, 1024);
     }
 
@@ -295,14 +275,14 @@ public abstract class DBService extends Service {
     public DColumn getColumn(Tenant tenant, String storeName, String rowKey, String colName) {
         List<String> colNames = new ArrayList<String>(1);
         colNames.add(colName);
-        List<DColumn> columns = getColumns(tenant.getKeyspace(), storeName, rowKey, colNames);
+        List<DColumn> columns = getColumns(tenant.getName(), storeName, rowKey, colNames);
         if(columns.size() == 0) return null;
         else return columns.get(0);
     }
 
     public DColumn getLastColumn(Tenant tenant, String storeName, String rowKey, String startCol, String endCol) {
         DColumn lastCol = null;
-        DRow row = new DRow(tenant.getKeyspace(), storeName, rowKey);
+        DRow row = new DRow(tenant.getName(), storeName, rowKey);
         for(DColumn c: row.getColumns(startCol, endCol, 1024)) {
             lastCol = c;
         }
@@ -319,7 +299,7 @@ public abstract class DBService extends Service {
      * @return          {@link DRow} object. May be empty but not null.
      */
     public Iterable<DRow> getAllRows(Tenant tenant, String storeName) {
-        return new SequenceIterable<DRow>(new RowSequence(tenant.getKeyspace(), storeName, 65536));
+        return new SequenceIterable<DRow>(new RowSequence(tenant.getName(), storeName, 65536));
     }
 
     /**
@@ -333,7 +313,7 @@ public abstract class DBService extends Service {
      * @return          Iterator of {@link DRow} objects. May be empty but not null.
      */
     public DRow getRow(Tenant tenant, String storeName, String rowKey) {
-        return new DRow(tenant.getKeyspace(), storeName, rowKey);
+        return new DRow(tenant.getName(), storeName, rowKey);
     }
     
     /**
@@ -349,7 +329,7 @@ public abstract class DBService extends Service {
     public Iterable<DRow> getRows(Tenant tenant, String storeName, Collection<String> rowKeys) {
         List<DRow> rows = new ArrayList<>(rowKeys.size());
         for(String rowKey: rowKeys) {
-            rows.add(new DRow(tenant.getKeyspace(), storeName, rowKey));
+            rows.add(new DRow(tenant.getName(), storeName, rowKey));
         }
         return rows;
     }

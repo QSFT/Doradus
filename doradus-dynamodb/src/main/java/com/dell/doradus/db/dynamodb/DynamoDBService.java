@@ -43,7 +43,6 @@ import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.util.Tables;
-import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBService;
@@ -60,9 +59,8 @@ import com.dell.doradus.utilities.Timer;
  *     yet. This means something will probably blow-up when a row gets too large.
  * <li>When running in an EC2 instance, DynamoDB will throttle responses, throwing
  *     exceptions when bandwidth is exceed. The code to handle this is not well tested.
- * <li>This service only supports the default tenant. Commands such as
- *     {@link #createTenant()} (other than for the default tenant) and {@link #addUsers()}
- *     will throw an exception. 
+ * <li>DynamoDB does not support namespaces. Calls to {@link #createNamespace()} or
+ *     {@link #dropNamespace()} will throw an exception.
  * <li>Tables are created with an attribute named "_key" as the row (item) key. Only
  *     hash-only keys are currently used. The _key attribute is removed from query results
  *     since the row key is handled independently.
@@ -145,56 +143,28 @@ public class DynamoDBService extends DBService {
         m_ddbClient.shutdown();
     }
 
-    //----- Public DBService methods: Tenant management
+    //----- Public DBService methods: Namespace management
     
     @Override
-    public void createTenant(Tenant tenant, Map<String, String> options) {
-        checkTenant(tenant.getKeyspace());
+    public boolean supportsNamespaces() {
+        return false;
     }
-
+    
     @Override
-    public void modifyTenant(Tenant tenant, Map<String, String> options) {
-        checkTenant(tenant.getKeyspace());
-        throw new UnsupportedOperationException("modifyTenant");
+    public void createNamespace(Tenant tenant) {
+        throw new RuntimeException("Namespaces are not supported");
     }
-
+    
     @Override
-    public void dropTenant(Tenant tenant) {
-        checkTenant(tenant.getKeyspace());
-        throw new UnsupportedOperationException("dropTenant");
+    public void dropNamespace(Tenant tenant) {
+        throw new RuntimeException("Namespaces are not supported");
     }
-
-    @Override
-    public void addUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        checkTenant(tenant.getKeyspace());
-        throw new UnsupportedOperationException("addUsers");
-    }
-
-    @Override
-    public void modifyUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        checkTenant(tenant.getKeyspace());
-        throw new UnsupportedOperationException("modifyUsers");
-    }
-
-    @Override
-    public void deleteUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        checkTenant(tenant.getKeyspace());
-        throw new UnsupportedOperationException("deleteUsers");
-    }
-
-    @Override
-    public Collection<Tenant> getTenants() {
-        checkState();
-        List<Tenant> tenants = new ArrayList<Tenant>();
-        tenants.add(new Tenant(ServerConfig.getInstance().keyspace));
-        return tenants;
-    }
-
+    
     //----- Public DBService methods: Store management
     
     @Override
     public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
-        checkTenant(tenant.getKeyspace());
+        checkTenant(tenant.getName());
         if (!Tables.doesTableExist(m_ddbClient, storeName)) {
             // Create a table with a primary hash key named '_key', which holds a string
             m_logger.info("Creating table: {}", storeName);
@@ -219,7 +189,7 @@ public class DynamoDBService extends DBService {
 
     @Override
     public void deleteStoreIfPresent(Tenant tenant, String storeName) {
-        checkTenant(tenant.getKeyspace());
+        checkTenant(tenant.getName());
         m_logger.info("Deleting table: {}", storeName);
         try {
             m_ddbClient.deleteTable(new DeleteTableRequest(storeName));

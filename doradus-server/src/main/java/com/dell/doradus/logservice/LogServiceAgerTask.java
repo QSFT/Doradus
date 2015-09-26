@@ -45,7 +45,7 @@ public class LogServiceAgerTask extends Task {
     
     public static void doTask(Tenant tenant, ApplicationDefinition appDef, Logger logger) {
         String application = appDef.getAppName();
-        logger.info("Checking expired logs for {}/{}", tenant.getKeyspace(), application);
+        logger.info("Checking expired logs for {}/{}", tenant.getName(), application);
         LogService logService = LoggingService.instance().getLogService();
         for(TableDefinition tableDef: appDef.getTableDefinitions().values()) {
             String retentionAgeStr = tableDef.getOption(CommonDefs.OPT_RETENTION_AGE);

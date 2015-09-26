@@ -75,11 +75,11 @@ public class SpiderDataAger extends Task {
     private void checkTable() {
         // Documentation says that "0 xxx" means data-aging is disabled.
         if (m_retentionAge.getValue() == 0) {
-            m_logger.info("Data aging disabled for table: {}", m_tableDef.getPath());
+            m_logger.info("Data aging disabled for table: {}", m_tableDef.getTableName());
             return;
         }
         
-        m_logger.info("Checking expired objects for: {}", m_tableDef.getPath());
+        m_logger.info("Checking expired objects for: {}", m_tableDef.getTableName());
         GregorianCalendar checkDate = new GregorianCalendar(Utils.UTC_TIMEZONE);
         GregorianCalendar expireDate = m_retentionAge.getExpiredDate(checkDate);
         int objsExpired = 0;
@@ -110,7 +110,7 @@ public class SpiderDataAger extends Task {
             reportProgress("Expired " + objsExpired + " objects");
         } while (!Utils.isEmpty(contToken));
         
-        m_logger.info("Deleted {} objects for {}", objsExpired, m_tableDef.getPath());
+        m_logger.info("Deleted {} objects for {}", objsExpired, m_tableDef.getTableName());
     }   // checkTable
     
     // Build the fixed part of the query that fetches a batch of object IDs.
@@ -139,7 +139,7 @@ public class SpiderDataAger extends Task {
         if (objIDs.size() == 0) {
             return false;
         }
-        m_logger.debug("Deleting batch of {} objects from {}", objIDs.size(), m_tableDef.getPath());
+        m_logger.debug("Deleting batch of {} objects from {}", objIDs.size(), m_tableDef.getTableName());
         BatchObjectUpdater batchUpdater = new BatchObjectUpdater(m_tableDef);
         BatchResult batchResult = batchUpdater.deleteBatch(objIDs);
         if (batchResult.isFailed()) {

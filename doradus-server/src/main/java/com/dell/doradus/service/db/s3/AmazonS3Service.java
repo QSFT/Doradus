@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,7 +33,6 @@ import org.jets3t.service.security.AWSCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.db.ColumnDelete;
 import com.dell.doradus.service.db.ColumnUpdate;
@@ -91,38 +89,25 @@ public class AmazonS3Service extends DBService {
         s3_executor.shutdownNow();
     }
     
-    @Override public void createTenant(Tenant tenant, Map<String, String> options) {
+    @Override public boolean supportsNamespaces() {
+        return true;
+    }
+    
+    @Override public void createNamespace(Tenant tenant) {
         //?? how to create tenant?
     }
 
-    @Override public void modifyTenant(Tenant tenant, Map<String, String> options) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override public void dropTenant(Tenant tenant) {
-        m_connection.deleteAll(tenant.getKeyspace());
+    @Override public void dropNamespace(Tenant tenant) {
+        m_connection.deleteAll(tenant.getName());
     }
     
-    
-    @Override public void addUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        throw new RuntimeException("This method is not supported");
-    }
-    
-    @Override public void modifyUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        throw new RuntimeException("This method is not supported");
-    }
-    
-    @Override public void deleteUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        throw new RuntimeException("This method is not supported");
-    }
-    
-    @Override public Collection<Tenant> getTenants() {
-        List<Tenant> tenants = new ArrayList<>();
+    public Collection<String> getNamespaces() {
+        List<String> namespaces = new ArrayList<>();
         List<ListItem> keyspaces = m_connection.listAll("/");
         for(ListItem keyspace: keyspaces) {
-            tenants.add(new Tenant(keyspace.name));
+            namespaces.add(keyspace.name);
         }
-        return tenants;
+        return namespaces;
     }
 
     @Override public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
@@ -130,7 +115,7 @@ public class AmazonS3Service extends DBService {
     }
     
     @Override public void deleteStoreIfPresent(Tenant tenant, String storeName) {
-        m_connection.deleteAll(tenant.getKeyspace() + "/" + storeName);
+        m_connection.deleteAll(tenant.getName() + "/" + storeName);
     }
     
     public String encode(String name) {

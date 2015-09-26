@@ -33,7 +33,7 @@ public class OLAPDataAger extends Task {
 
     @Override
     public void execute() {
-        m_logger.info("Checking expired shards for {}", m_appDef.getPath());
+        m_logger.info("Checking expired shards for {}", m_appDef.getAppName());
         Date now = new Date();
         OLAPService olap = OLAPService.instance();
         List<String> shards = olap.listShards(m_appDef);

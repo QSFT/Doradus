@@ -132,7 +132,7 @@ public class OLAPService extends StorageService {
     public void initializeApplication(ApplicationDefinition oldAppDef,
                                       ApplicationDefinition appDef) {
         checkServiceState();
-        m_olap.createApplication(Tenant.getTenant(appDef), appDef.getAppName());
+        m_olap.createApplication(appDef.getAppName());
     }   // initializeApplication
     
     @Override
@@ -242,8 +242,8 @@ public class OLAPService extends StorageService {
      * Delete the shard for the given application, including all of its data. This method
      * is a no-op if the given shard does not exist or has no data.
      * 
-     * @param appDef        {@link ApplicationDefinition} of application.
-     * @param shard         Shard name.
+     * @param appDef    {@link ApplicationDefinition} of application.
+     * @param shard     Shard name.
      */
     public void deleteShard(ApplicationDefinition appDef, String shard) {
         checkServiceState();
@@ -410,10 +410,6 @@ public class OLAPService extends StorageService {
             switch (optName) {
             case CommonDefs.OPT_STORAGE_SERVICE:
                 assert optValue.equals(this.getClass().getSimpleName());
-                break;
-                
-            case CommonDefs.OPT_TENANT:
-                // Ignore
                 break;
                 
             case CommonDefs.OPT_AGING_CHECK_FREQ:

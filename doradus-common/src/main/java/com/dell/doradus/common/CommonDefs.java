@@ -82,12 +82,6 @@ final public class CommonDefs {
     public static final String OPT_STORAGE_SERVICE = "StorageService";
     
     /**
-     * The application-level option that indicates the application's tenant. (See by the
-     * server and should not be explicitly declared in schemas.)
-     */
-    public static final String OPT_TENANT = "Tenant";
-    
-    /**
      * System fields
      */
     public static enum SystemFields {

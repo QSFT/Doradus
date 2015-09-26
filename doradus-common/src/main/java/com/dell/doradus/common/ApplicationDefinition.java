@@ -31,6 +31,9 @@ import java.util.TreeMap;
  * fields.
  */
 final public class ApplicationDefinition implements JSONable{
+    // Tenant name when app def is created/fetched by server:
+    private String m_tenantName;
+    
     // Application name (case-sensitive):
     private String m_appName;
     
@@ -136,6 +139,10 @@ final public class ApplicationDefinition implements JSONable{
 
     ///// Getters
 
+    public String getTenantName() {
+        return m_tenantName;
+    }
+    
     /**
      * Return this application's name.
      * 
@@ -189,19 +196,6 @@ final public class ApplicationDefinition implements JSONable{
     }   // getOptionNames
     
     /**
-     * Get the resource path for this application.
-     * 
-     * @return  String in the form /Tenant:{tenant}/Application:{application}
-     */
-    public String getPath() {
-        if (!m_optionMap.containsKey(CommonDefs.OPT_TENANT)) {
-            return "/Tenant:?/Application:" + m_appName;
-        } else {
-            return "/Tenant:" + m_optionMap.get(CommonDefs.OPT_TENANT) + "/Application:" + m_appName;
-        }
-    }   // getPath
-    
-    /**
      * Get the StorageService option for this application. Null is returned if the option
      * has not been set.
      * 
@@ -253,10 +247,8 @@ final public class ApplicationDefinition implements JSONable{
         if (m_optionMap.size() > 0) {
             UNode optsNode = appNode.addMapNode("options");
             for (String optName : m_optionMap.keySet()) {
-                if (!optName.equals(CommonDefs.OPT_TENANT)) {    // don't include for now
-                    // Set each option's tag name to "option" for XML's sake.
-                    optsNode.addValueNode(optName, m_optionMap.get(optName), "option");
-                }
+                // Set each option's tag name to "option" for XML's sake.
+                optsNode.addValueNode(optName, m_optionMap.get(optName), "option");
             }
         }
         
@@ -278,6 +270,10 @@ final public class ApplicationDefinition implements JSONable{
     }   // toString()
     
     ///// Setters
+    
+    public void setTenantName(String tenantName) {
+        m_tenantName = tenantName;
+    }
     
     /**
      * Set this ApplicationDefinition's application name to the given value. An exception

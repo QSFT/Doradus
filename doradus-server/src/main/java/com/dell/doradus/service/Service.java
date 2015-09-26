@@ -16,10 +16,15 @@
 
 package com.dell.doradus.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.DoradusServer;
+import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.db.DBNotAvailableException;
 import com.dell.doradus.service.db.DBService;
 
@@ -134,11 +139,22 @@ public abstract class Service {
     private State           m_state = State.INACTIVE;
     private final Object    m_stateChangeLock = new Object();
     
+    // Hierarchical list of service names for parameter searching:
+    private final List<String> m_serviceAncestry = new ArrayList<>();
+    
     // Services can set this to wait after serviceStart() is called before start() returns.
     protected int m_startDelayMillis = 0;
     
     // Protected logger available to concrete services:
     protected final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
+    
+    protected Service() {
+        Class<?> clazz = this.getClass();
+        while (clazz.getSimpleName().endsWith("Service")) {
+            m_serviceAncestry.add(clazz.getSimpleName());
+            clazz = clazz.getSuperclass();
+        }
+    }
     
     //----- Public service state methods
     
@@ -225,6 +241,49 @@ public abstract class Service {
             }
         }
     }   // waitForFullService
+    
+    /**
+     * Get the value of the parameter with the given name belonging to this service. The
+     * service's concrete name is used as the module name to call
+     * {@link ServerParams#getModuleParam(String, String)}. If the parameter is not
+     * defined for this service, than the service's superclass is searched. If the
+     * parameter is not found, null is returned.  
+     * 
+     * @param paramName Name of parameter to find.
+     * @return          Parameter found if found for this service or one of its
+     *                  superclasses, otherwise null.
+     */
+    public Object getParam(String paramName) {
+        for (String serviceName : m_serviceAncestry) {
+            Object paramValue = ServerParams.instance().getModuleParam(serviceName, paramName);
+            if (paramValue != null) {
+                return paramValue;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Get the value of the parameter with the given name belonging to this service as a
+     * String. The service's concrete name is used as the module name to call
+     * {@link ServerParams#getModuleParam(String, String)}. If the parameter is not
+     * defined for this service, than the service's superclass is searched. If the
+     * parameter is not found, null is returned. If the parameter is found but is not a
+     * String, an IllegalArgumentException is thrown.  
+     * 
+     * @param paramName Name of parameter to find.
+     * @return          Parameter found as a String if found for this service or one of
+     *                  its superclasses, otherwise null.
+     */
+    public String getParamString(String paramName) {
+        Object paramValue = getParam(paramName);
+        if (paramValue != null) {
+            Utils.require(paramValue instanceof String, "Parameter '%s' must be a String: %s",
+                          paramName, paramValue.toString());
+            return (String)paramValue;
+        }
+        return null;
+    }
     
     //----- Protected methods 
 

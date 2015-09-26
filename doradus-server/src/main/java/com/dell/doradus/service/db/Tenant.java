@@ -17,16 +17,18 @@
 package com.dell.doradus.service.db;
 
 import com.dell.doradus.common.ApplicationDefinition;
-import com.dell.doradus.common.CommonDefs;
 import com.dell.doradus.common.TableDefinition;
+import com.dell.doradus.common.TenantDefinition;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.service.tenant.TenantService;
 
 /**
- * Defines a tenant, which can hold one of more Doradus applications. In Cassandra,
- * each tenant is mapped to a unique keyspace.
+ * Represents a unique tenant. This class holds the tenant's name, it's
+ * TenantDefinition, and any server-side state used for the tenant.
  */
 public class Tenant implements Comparable<Tenant> {
-    private final String m_keyspace;
+    private final String m_name;
+    private final TenantDefinition m_tenantDef;
     
     /**
      * Create a Tenant object from the given application definition, which must have the
@@ -36,9 +38,11 @@ public class Tenant implements Comparable<Tenant> {
      * @return          {@link Tenant} in which application resides.
      */
     public static Tenant getTenant(ApplicationDefinition appDef) {
-        String tenantName = appDef.getOption(CommonDefs.OPT_TENANT);
-        Utils.require(!Utils.isEmpty(tenantName), "Application definition is missing 'Tenant' option: " + appDef);
-        return new Tenant(tenantName);
+        String tenantName = appDef.getTenantName();
+        Utils.require(!Utils.isEmpty(tenantName), "Application definition is missing tenant name: " + appDef);
+        TenantDefinition tenantDef = TenantService.instance().getTenantDefinition(tenantName);
+        Utils.require(tenantDef != null, "Tenant definition does not exist: %s", tenantName);
+        return new Tenant(tenantDef);
     }   // getTenant
 
     /**
@@ -53,38 +57,51 @@ public class Tenant implements Comparable<Tenant> {
     }   // getTenant
 
     /**
-     * Create a Tenant that resides in the given keyspace.
-     *  
-     * @param keyspace  Cassandra keyspace name. Might not exist yet.
+     * 
+     * @param tenantDef
      */
-    public Tenant(String keyspace) {
-        m_keyspace = keyspace;
+    public Tenant(TenantDefinition tenantDef) {
+        m_name = tenantDef.getName();
+        m_tenantDef = tenantDef;
     }
+    
+//    /**
+//     * Create a Tenant that with the given name.
+//     *  
+//     * @param name  Tenant name, which must be unique within the cluster.
+//     */
+//    public Tenant(String name) {
+//        m_name = name;
+//    }
 
     /**
-     * This tenant's keyspace.
+     * Get this tenant's name.
      * 
-     * @param keyspace  Unquoted keyspace name.
+     * @return  This tenant's unique name within the cluster.
      */
-    public String getKeyspace() {
-        return m_keyspace;
+    public String getName() {
+        return m_name;
     }
 
+    public TenantDefinition getDefinition() {
+        return m_tenantDef;
+    }
+    
     // So we can be used as a collection key.
     @Override
     public int compareTo(Tenant o) {
-        return this.m_keyspace.compareTo(o.m_keyspace);
+        return this.m_name.compareTo(o.m_name);
     }
     
     // So we can be used as a collection key.
     @Override
     public int hashCode() {
-        return m_keyspace.hashCode();
+        return m_name.hashCode();
     }
     
     @Override
     public String toString() {
-        return m_keyspace;
+        return m_name;
     }   // toString
     
 }   // class Tenant

@@ -44,9 +44,7 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.SSLOptions;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SocketOptions;
-import com.datastax.driver.core.exceptions.InvalidQueryException;
 import com.datastax.driver.core.policies.RoundRobinPolicy;
-import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBService;
@@ -110,138 +108,55 @@ public class CQLService extends DBService {
         }
     }   // stopService
 
-    //----- Public DBService methods: Tenant management
+    //----- Public DBService methods: Namespace management
+
+    @Override
+    public boolean supportsNamespaces() {
+        return true;
+    }
     
     @Override
-    public void createTenant(Tenant tenant, Map<String, String> options) {
+    public void createNamespace(Tenant tenant) {
         checkState();
-        String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
+        String cqlKeyspace = storeToCQLName(tenant.getName());
         KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(cqlKeyspace);
         if (ksMetadata == null) {
+            Map<String, String> options = getKeyspaceOptions(tenant);
             CQLSchemaManager.createKeyspace(cqlKeyspace, options);
         }
-    }   // createTenant
+    }
+    
+    private Map<String, String> getKeyspaceOptions(Tenant tenant) {
+        // TODO: Get keyspace options from tenant definiton; inherit from default tenant if needed.
+        return null;
+    }
 
     @Override
-    public void modifyTenant(Tenant tenant, Map<String, String> options) {
-        String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
-        KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(cqlKeyspace);
-        Utils.require(ksMetadata != null, "Tenant not found: " + tenant.toString());
-        CQLSchemaManager.modifyKeyspace(cqlKeyspace, options);
-    }   // modifyTenant
-
-    @Override
-    public void dropTenant(Tenant tenant) {
+    public void dropNamespace(Tenant tenant) {
         checkState();
-        String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
+        String cqlKeyspace = storeToCQLName(tenant.getName());
         m_statementCache.purgeKeyspace(cqlKeyspace);
         CQLSchemaManager.dropKeyspace(cqlKeyspace);
-    }   // dropTenant
+    }
     
-    @Override
-    public void addUsers(Tenant tenant, Iterable<UserDefinition> users) {
+    public List<String> getDoradusKeyspaces() {
         checkState();
-        String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
-        StringBuilder cql = new StringBuilder();
-        for (UserDefinition userDef : users) {
-            String userID = userDef.getID();
-            String password = userDef.getPassword();
-            
-            m_logger.debug("Adding new user '{}' for keyspace {}", userID, cqlKeyspace);
-            // CREATE USER Foo WITH PASSWORD 'bar' NOSUPERUSER;
-            cql.setLength(0);
-            cql.append("CREATE USER ");
-            cql.append(userID);
-            cql.append(" WITH PASSWORD '");
-            cql.append(password);   // TODO: escape embedded 's?
-            cql.append("' NOSUPERUSER;");
-            try {
-                m_session.execute(cql.toString());
-            } catch (InvalidQueryException e) {
-                String errMsg = e.getLocalizedMessage();
-                if (errMsg.contains("already exists")) {
-                    m_logger.warn("User {} already exists; skipping permission assignment", userID);
-                    continue;
-                } else {
-                    throw new RuntimeException("Error creating user: " + userID, e);
-                }
-            }
-            
-            // TODO: Map user permissions to Cassandra permissions 
-            // GRANT ALL PERMISSIONS ON KEYSPACE "Casey1" TO Foo;
-            cql.setLength(0);
-            cql.append("GRANT ALL PERMISSIONS ON KEYSPACE ");
-            cql.append(cqlKeyspace);
-            cql.append(" TO ");
-            cql.append(userID);
-            cql.append(";");
-            m_session.execute(cql.toString());
-        }
-    }   // addUsers
-    
-    @Override
-    public void modifyUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        checkState();
-        String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
-        StringBuilder cql = new StringBuilder();
-        for (UserDefinition userDef : users) {
-            String userID = userDef.getID();
-            String password = userDef.getPassword();
-            
-            m_logger.debug("Modifying password for user '{}' for keyspace {}", userID, cqlKeyspace);
-            // ALTER USER Foo WITH PASSWORD 'bar';
-            cql.setLength(0);
-            cql.append("ALTER USER ");
-            cql.append(userID);
-            cql.append(" WITH PASSWORD '");
-            cql.append(password);   // TODO: escape embedded 's?
-            cql.append("';");
-            try {
-                m_session.execute(cql.toString());
-            } catch (InvalidQueryException e) {
-                m_logger.warn("Error modifying user '" + userID + "'; skipping this user", userID);
-            }
-        }
-    }   // addUsers
-    
-    @Override
-    public void deleteUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        checkState();
-        StringBuilder cql = new StringBuilder();
-        for (UserDefinition userDef : users) {
-            String userID = userDef.getID();
-            m_logger.debug("Dropping user '{}'", userID);
-            cql.setLength(0);
-            cql.append("DROP USER ");
-            cql.append(userID);
-            cql.append(";");
-            try {
-                m_session.execute(cql.toString());
-            } catch (InvalidQueryException e) {
-                m_logger.warn("Cannot drop user '" + userID + "'; ignoring", e);
-            }
-        }
-    }   // deleteUsers
-    
-    @Override
-    public Collection<Tenant> getTenants() {
-        checkState();
-        List<Tenant> tenants = new ArrayList<>();
+        List<String> keyspaces = new ArrayList<>();
         List<KeyspaceMetadata> keyspaceList = m_cluster.getMetadata().getKeyspaces();
         for (KeyspaceMetadata ksMetadata : keyspaceList) {
             if (ksMetadata.getTable(APPS_CQL_NAME) != null) {
-                tenants.add(new Tenant(ksMetadata.getName()));
+                keyspaces.add(ksMetadata.getName());
             }
         }
-        return tenants;
-    }   // getTenants
+        return keyspaces;
+    }
 
     //----- Public DBService methods: Store management
 
     @Override
     public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
         checkState();
-        String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
+        String cqlKeyspace = storeToCQLName(tenant.getName());
         String tableName = storeToCQLName(storeName);
         if (!storeExists(cqlKeyspace, tableName)) {
             CQLSchemaManager.createCQLTable(cqlKeyspace, storeName, bBinaryValues);
@@ -251,7 +166,7 @@ public class CQLService extends DBService {
     @Override
     public void deleteStoreIfPresent(Tenant tenant, String storeName) {
         checkState();
-        String cqlKeyspace = storeToCQLName(tenant.getKeyspace());
+        String cqlKeyspace = storeToCQLName(tenant.getName());
         String tableName = storeToCQLName(storeName);
         if (storeExists(cqlKeyspace, tableName)) {
             CQLSchemaManager.dropCQLTable(cqlKeyspace, tableName);

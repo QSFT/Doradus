@@ -47,7 +47,7 @@ public class OLAPMerger extends Task {
     
     @Override
     public void execute() {
-        m_logger.info("Merging shards {}", m_appDef.getPath());
+        m_logger.info("Merging shards {}", m_appDef.getAppName());
         Olap olap = OLAPService.instance().getOlap();
         for (String shard : shards) {
             olap.merge(m_appDef, shard, options);

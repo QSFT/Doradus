@@ -253,10 +253,6 @@ public class LoggingService extends StorageService {
                 assert optValue.equals(this.getClass().getSimpleName());
                 break;
                 
-            case CommonDefs.OPT_TENANT:
-                // Ignore
-                break;
-                
             default:
                 throw new IllegalArgumentException("Unknown option for LoggingService application: " + optName);
             }

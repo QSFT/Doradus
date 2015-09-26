@@ -24,12 +24,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.ColumnDelete;
 import com.dell.doradus.service.db.ColumnUpdate;
@@ -62,23 +60,21 @@ public class FsService extends DBService {
     
     @Override public void stopService() { }
     
-    @Override public void createTenant(Tenant tenant, Map<String, String> options) {
+    @Override public boolean supportsNamespaces() {
+        return true;
+    }
+
+    @Override public void createNamespace(Tenant tenant) {
         synchronized (m_sync) {
-            String keyspace = tenant.getKeyspace();
-            File keyspaceDir = new File(ROOT + "/" + keyspace);
-            if(!keyspaceDir.exists())keyspaceDir.mkdir();
+            File namespaceDir = new File(ROOT + "/" + tenant.getName());
+            if(!namespaceDir.exists())namespaceDir.mkdir();
         }
     }
 
-    @Override public void modifyTenant(Tenant tenant, Map<String, String> options) {
-        throw new RuntimeException("Not implemented");
-    }
-    
-    @Override public void dropTenant(Tenant tenant) {
+    @Override public void dropNamespace(Tenant tenant) {
         synchronized(m_sync) {
-            String keyspace = tenant.getKeyspace();
-            File keyspaceDir = new File(ROOT + "/" + keyspace);
-            deleteDirectory(keyspaceDir);
+            File namespaceDir = new File(ROOT + "/" + tenant.getName());
+            deleteDirectory(namespaceDir);
         }
     }
     
@@ -90,45 +86,33 @@ public class FsService extends DBService {
         dir.delete();
     }
     
-    @Override public void addUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        throw new RuntimeException("This method is not supported");
-    }
-    
-    @Override public void modifyUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        throw new RuntimeException("This method is not supported");
-    }
-    
-    @Override public void deleteUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        throw new RuntimeException("This method is not supported");
-    }
-    
-    @Override public Collection<Tenant> getTenants() {
-        List<Tenant> tenants = new ArrayList<>();
+    public List<String> getNamespaces() {
+        List<String> namespaces = new ArrayList<>();
         synchronized (m_sync) {
             File root = new File(ROOT);
-            for(String keyspace: root.list()) {
-                tenants.add(new Tenant(keyspace));
+            for(String namespace: root.list()) {
+                namespaces.add(namespace);
             }
         }
-        return tenants;
+        return namespaces;
     }
 
     @Override public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
         synchronized(m_sync) {
-            File storeDir = new File(ROOT + "/" + tenant.getKeyspace() + "/" + storeName);
+            File storeDir = new File(ROOT + "/" + tenant.getName() + "/" + storeName);
             if(!storeDir.exists()) storeDir.mkdir();
         }
     }
     
     @Override public void deleteStoreIfPresent(Tenant tenant, String storeName) {
         synchronized(m_sync) {
-            File storeDir = new File(ROOT + "/" + tenant.getKeyspace() + "/" + storeName);
+            File storeDir = new File(ROOT + "/" + tenant.getName() + "/" + storeName);
             if(storeDir.exists()) deleteDirectory(storeDir);
         }
     }
     
     @Override public DBTransaction startTransaction(Tenant tenant) {
-   		return new DBTransaction(tenant.getKeyspace());
+   		return new DBTransaction(tenant.getName());
     }
     
     public String encode(String name) {

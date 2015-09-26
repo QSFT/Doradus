@@ -30,7 +30,6 @@ import java.util.Random;
 import org.apache.cassandra.thrift.ColumnOrSuperColumn;
 import org.apache.cassandra.thrift.KeySlice;
 
-import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBNotAvailableException;
@@ -85,72 +84,62 @@ public class ThriftService extends DBService {
         purgeAllConnections();
     }   // stopService
 
-    //----- Public DBService methods: Tenant management
+    //----- Public DBService methods: Namespace management
     
     @Override
-    public void createTenant(Tenant tenant, Map<String, String> options) {
+    public boolean supportsNamespaces() {
+        return true;
+    }
+    
+    @Override
+    public void createNamespace(Tenant tenant) {
         checkState();
         // Use a temporary, no-keyspace session
-        String keyspace = tenant.getKeyspace();
         try (DBConn dbConn = createAndConnectConn(null)) {
             synchronized (g_schemaLock) {
+                String keyspace = tenant.getName();
                 if (!CassandraSchemaMgr.keyspaceExists(dbConn, keyspace)) {
+                    Map<String, String> options = getKeyspaceOptions(tenant);
                     CassandraSchemaMgr.createKeyspace(dbConn, keyspace, options);
                 }
             }
         }
     }   // createTenant
 
-    @Override
-    public void modifyTenant(Tenant tenant, Map<String, String> options) {
-        throw new RuntimeException("This command is not supported for the Thrift API");
+    private Map<String, String> getKeyspaceOptions(Tenant tenant) {
+        // TODO: Get keyspace options from tenant definiton; inherit from default tenant if needed.
+        return null;
     }
 
     @Override
-    public void dropTenant(Tenant tenant) {
+    public void dropNamespace(Tenant tenant) {
         checkState();
         // Use a temporary, no-keyspace session
-        String keyspace = tenant.getKeyspace();
         try (DBConn dbConn = createAndConnectConn(null)) {
             synchronized (g_schemaLock) {
-                if (!CassandraSchemaMgr.keyspaceExists(dbConn, keyspace)) {
+                String keyspace = tenant.getName();
+                if (CassandraSchemaMgr.keyspaceExists(dbConn, keyspace)) {
                     CassandraSchemaMgr.dropKeyspace(dbConn, keyspace);
                 }
             }
         }
     }   // dropTenant
     
-    @Override
-    public void addUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        throw new RuntimeException("This method is not supported for the Thrift API");
-    }
-    
-    @Override
-    public void modifyUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        throw new RuntimeException("This method is not supported for the Thrift API");
-    }
-    
-    @Override
-    public void deleteUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        throw new RuntimeException("This method is not supported for the Thrift API");
-    }
-    
-    @Override
-    public Collection<Tenant> getTenants() {
+    public List<String> getDoradusKeyspaces() {
         checkState();
-        List<Tenant> tenantList = new ArrayList<>();
+        List<String> keyspaces = new ArrayList<>();
         // Use a temporary, no-keyspace session
         try (DBConn dbConn = createAndConnectConn(null)) {
             synchronized (g_schemaLock) {
                 Collection<String> keyspaceList = CassandraSchemaMgr.getKeyspaces(dbConn);
                 for (String keyspace : keyspaceList) {
                     if (CassandraSchemaMgr.columnFamilyExists(dbConn, keyspace, SchemaService.APPS_STORE_NAME)) {
-                        tenantList.add(new Tenant(keyspace));
+                        keyspaces.add(keyspace);
                     }
                 }
             }
         }
-        return tenantList;
+        return keyspaces;
     }   // getTenantMap
     
     //----- Public DBService methods: Store management
@@ -158,7 +147,7 @@ public class ThriftService extends DBService {
     @Override
     public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
         checkState();
-        String keyspace = tenant.getKeyspace();
+        String keyspace = tenant.getName();
         DBConn dbConn = getDBConnection(keyspace);
         try {
             synchronized (g_schemaLock) {
@@ -174,7 +163,7 @@ public class ThriftService extends DBService {
     @Override
     public void deleteStoreIfPresent(Tenant tenant, String storeName) {
         checkState();
-        String keyspace = tenant.getKeyspace();
+        String keyspace = tenant.getName();
         DBConn dbConn = getDBConnection(keyspace);
         try {
             synchronized (g_schemaLock) {

@@ -253,7 +253,7 @@ public class ServerParams {
         }
         Object value = ((Map<String, ?>)moduleParams).get(paramName);
         try {
-            return Boolean.parseBoolean((String)value);
+            return Boolean.parseBoolean(value.toString());
         } catch (Exception e) {
             throw new RuntimeException("Configuration parameter '" + moduleName + "." +
                                         paramName + "' must be a Boolean: " + value);
@@ -277,7 +277,7 @@ public class ServerParams {
         }
         Object value = ((Map<String, ?>)moduleParams).get(paramName);
         try {
-            return Long.parseLong((String)value);
+            return Long.parseLong(value.toString());
         } catch (Exception e) {
             throw new RuntimeException("Configuration parameter '" + moduleName + "." +
                                        paramName + "' must be a number: " + value);
@@ -286,8 +286,8 @@ public class ServerParams {
     
     /**
      * Get the String value of the given parameter name belonging to the given module
-     * name. If no such module/parameter name is known, null is returned. If the given
-     * value is not a String, a RuntimeException is thrown.
+     * name. If no such module/parameter name is known, null is returned. If the parameter
+     * exists, a string is created by calling toString().
      * 
      * @param moduleName    Name of module to get parameter for.
      * @param paramName     Name of parameter to get value of.
@@ -303,11 +303,7 @@ public class ServerParams {
         if (value == null) {
             return null;
         }
-        if (!(value instanceof String)) {
-            throw new RuntimeException("Configuration parameter '" + moduleName + "." +
-                                       paramName + "' must be a String: " + value);
-        }
-        return (String)value;
+        return value.toString();
     }
     
     /**

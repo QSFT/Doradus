@@ -19,8 +19,6 @@ package com.dell.doradus.service.tenant;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TenantDefinition;
 import com.dell.doradus.common.UNode;
-import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.rest.UNodeInOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
@@ -37,8 +35,6 @@ public class DefineTenantCmd extends UNodeInOutCallback {
 
     @Override
     public UNode invokeUNodeInOut(UNode inNode) {
-        Utils.require(ServerConfig.getInstance().multitenant_mode,
-                      "This command is only allowed in multi-tenant mode; see 'multitenant_mode' parameter");
         TenantDefinition tenantDef = new TenantDefinition();
         tenantDef.parse(inNode);
         tenantDef = TenantService.instance().defineTenant(tenantDef);

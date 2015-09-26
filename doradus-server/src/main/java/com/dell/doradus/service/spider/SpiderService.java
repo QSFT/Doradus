@@ -126,8 +126,7 @@ public class SpiderService extends StorageService {
     public void initializeApplication(ApplicationDefinition oldAppDef,
                                       ApplicationDefinition appDef) {
         checkServiceState();
-        Tenant tenant = Tenant.getTenant(appDef);
-        verifyApplicationCFs(tenant.getKeyspace(), oldAppDef, appDef);
+        verifyApplicationCFs(oldAppDef, appDef);
     }   // initializeApplication
     
     // Verify that the given application's options are valid for the Spider service.
@@ -177,7 +176,8 @@ public class SpiderService extends StorageService {
     public DBObject getObject(TableDefinition tableDef, String objID) {
         checkServiceState();
         String storeName = objectsStoreName(tableDef);
-        Iterator<DColumn> colIter = DBService.instance().getAllColumns(Tenant.getTenant(tableDef), storeName, objID).iterator();
+        Tenant tenant = Tenant.getTenant(tableDef);
+        Iterator<DColumn> colIter = DBService.instance().getAllColumns(tenant, storeName, objID).iterator();
         if (!colIter.hasNext()) {
             return null;
         }
@@ -563,7 +563,6 @@ public class SpiderService extends StorageService {
     // Delete all ColumnFamilies used by the given application. Only delete the ones that
     // actually exist in case a previous delete-app failed.
     private void deleteApplicationCFs(ApplicationDefinition appDef) {
-        // Table-level CFs:
         Tenant tenant = Tenant.getTenant(appDef);
         for (TableDefinition tableDef : appDef.getTableDefinitions().values()) {
             DBService.instance().deleteStoreIfPresent(tenant, objectsStoreName(tableDef));
@@ -584,7 +583,7 @@ public class SpiderService extends StorageService {
             termRowKeys.add(shardedLinkTermRowKey(linkDef, objID, shardNumber));
         }
         TableDefinition tableDef = linkDef.getTableDef();
-        String termStore = termsStoreName(linkDef.getTableDef());
+        String termStore = termsStoreName(tableDef);
         for(DRow row: DBService.instance().getRows(Tenant.getTenant(tableDef), termStore, termRowKeys)) {
             for(DColumn column: row.getAllColumns(1024)) {
                 values.add(column.getName());
@@ -638,10 +637,6 @@ public class SpiderService extends StorageService {
                 
             case CommonDefs.OPT_STORAGE_SERVICE:
                 assert optValue.equals(this.getClass().getSimpleName());
-                break;
-                
-            case CommonDefs.OPT_TENANT:
-                // Ignore
                 break;
                 
             case CommonDefs.OPT_AGING_CHECK_FREQ:
@@ -809,8 +804,7 @@ public class SpiderService extends StorageService {
     }   // validateTableOptionShardingStart
 
     // Verify that all ColumnFamilies needed for the given application exist.
-    private void verifyApplicationCFs(String keyspace,
-                                      ApplicationDefinition oldAppDef,
+    private void verifyApplicationCFs(ApplicationDefinition oldAppDef,
                                       ApplicationDefinition appDef) {
         // Add new table-level CFs:
         DBService dbService = DBService.instance();

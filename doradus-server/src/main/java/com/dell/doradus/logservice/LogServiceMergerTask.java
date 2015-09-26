@@ -41,7 +41,7 @@ public class LogServiceMergerTask extends Task {
 
     public static void doTask(Tenant tenant, ApplicationDefinition appDef, Logger logger) {
         String application = appDef.getAppName();
-        logger.info("Merging logs for {}/{}", tenant.getKeyspace(), application);
+        logger.info("Merging logs for {}/{}", tenant.getName(), application);
         LogService logService = LoggingService.instance().getLogService();
         for(TableDefinition tableDef: appDef.getTableDefinitions().values()) {
             boolean mergeDisabled = "false".equals(tableDef.getOption("merge"));

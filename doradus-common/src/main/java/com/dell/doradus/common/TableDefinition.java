@@ -329,16 +329,6 @@ final public class TableDefinition {
     }   // getAppDef
 
     /**
-     * Get the resource path for this table.
-     * 
-     * @return  String in the form {application path}/Table:{table}
-     */
-    public String getPath() {
-        Utils.require(m_appDef != null, "Table has not been added to an application");
-        return m_appDef.getPath() + "/Table:" + m_tableName;
-    }   // getPath
-    
-    /**
      * Get the name of the table represented by this table definition. This is the logical
      * or "REST name", which is unique among tables owned by the application but not
      * necessarily between applications. Also, not that the database table name will be

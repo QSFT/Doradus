@@ -24,17 +24,19 @@ DoradusServer:
         - com.dell.doradus.service.db.DBService
         - com.dell.doradus.service.rest.RESTService
         - com.dell.doradus.service.schema.SchemaService
-#        - com.dell.doradus.service.taskmanager.TaskManagerService
+        - com.dell.doradus.service.taskmanager.TaskManagerService
     l2r_enable: true
     search_default_page_size: 100
     storage_services:
         - com.dell.doradus.service.spider.SpiderService
         - com.dell.doradus.service.olap.OLAPService
         - com.dell.doradus.logservice.LoggingService
+#    super_user: cassandra
+#    super_password: cassandra
 
 TenantService:
+    default_tenant_name: Doradus
     disable_default_keyspace: false
-    multitenant_mode: false
 
 RESTService:
     clientauthentication: false
@@ -82,12 +84,11 @@ DBService:
     dbpassword: cassandra
     dbport: 9160
 #   dbport: 9042
-#   dbservice: com.dell.doradus.service.db.thrift.ThriftService
+    dbservice: com.dell.doradus.service.db.thrift.ThriftService
     dbtls: false
     dbtls_cipher_suites: [TLS_RSA_WITH_AES_128_CBC_SHA]
     dbuser: cassandra
     jmxport: 7199
-    keyspace: 'Doradus'
     ks_defaults:
         strategy_class: SimpleStrategy
         strategy_options:

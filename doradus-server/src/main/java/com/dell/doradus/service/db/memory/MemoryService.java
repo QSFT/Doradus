@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.ColumnDelete;
 import com.dell.doradus.service.db.ColumnUpdate;
@@ -90,50 +89,40 @@ public class MemoryService extends DBService {
     @Override public void startService() { }
     @Override public void stopService() { }
 
-    @Override public void createTenant(Tenant tenant, Map<String, String> options) {
+    @Override public boolean supportsNamespaces() {
+        return true;
+    }
+    
+    @Override public void createNamespace(Tenant tenant) {
     	synchronized (m_sync) {
-    	    String keyspace = tenant.getKeyspace();
-    		if(m_Keyspaces.get(keyspace) != null) return;
-    		Keyspace ks = new Keyspace(keyspace);
-    		m_Keyspaces.put(keyspace, ks);
+    	    String namespace = tenant.getName();
+    		if(m_Keyspaces.get(namespace) != null) return;
+    		Keyspace ks = new Keyspace(namespace);
+    		m_Keyspaces.put(namespace, ks);
 		}
     }
 
-    @Override public void modifyTenant(Tenant tenant, Map<String, String> options) {}
-    
-    @Override public void dropTenant(Tenant tenant) {
+    @Override public void dropNamespace(Tenant tenant) {
     	synchronized (m_sync) {
-            String keyspace = tenant.getKeyspace();
-    		if(m_Keyspaces.get(keyspace) == null) return;
-    		m_Keyspaces.remove(keyspace);
+            String namespace = tenant.getName();
+    		if(m_Keyspaces.get(namespace) == null) return;
+    		m_Keyspaces.remove(namespace);
 		}
     }
     
-    @Override public void addUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        throw new RuntimeException("This method is not supported for the Memory API");
-    }
-    
-    @Override public void modifyUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        throw new RuntimeException("This method is not supported for the Memory API");
-    }
-    
-    @Override public void deleteUsers(Tenant tenant, Iterable<UserDefinition> users) {
-        throw new RuntimeException("This method is not supported for the Memory API");
-    }
-    
-    @Override public Collection<Tenant> getTenants() {
-        List<Tenant> tenants = new ArrayList<>();
+    public List<String> getNamespaces() {
+        List<String> namespaces = new ArrayList<>();
         synchronized (m_sync) {
             for (String keyspace : m_Keyspaces.keySet()) {
-                tenants.add(new Tenant(keyspace));
+                namespaces.add(keyspace);
             }
         }
-        return tenants;
+        return namespaces;
     }
 
     @Override public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
     	synchronized (m_sync) {
-    		Keyspace ks = m_Keyspaces.get(tenant.getKeyspace());
+    		Keyspace ks = m_Keyspaces.get(tenant.getName());
     		if(ks == null) throw new RuntimeException("Keyspace does not exist");
     		Store st = ks.stores.get(storeName);
     		if(st == null) ks.stores.put(storeName, new Store(storeName));
@@ -142,7 +131,7 @@ public class MemoryService extends DBService {
     
     @Override public void deleteStoreIfPresent(Tenant tenant, String storeName) {
     	synchronized (m_sync) {
-    		Keyspace ks = m_Keyspaces.get(tenant.getKeyspace());
+    		Keyspace ks = m_Keyspaces.get(tenant.getName());
     		if(ks == null) throw new RuntimeException("Keyspace does not exist");
     		Store st = ks.stores.get(storeName);
     		if(st != null) ks.stores.remove(storeName);

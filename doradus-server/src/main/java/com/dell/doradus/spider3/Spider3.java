@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.BatchResult;
-import com.dell.doradus.common.CommonDefs;
 import com.dell.doradus.common.DBObjectBatch;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.FieldType;
@@ -64,9 +63,9 @@ public class Spider3 {
     }
 
     public Tenant getTenant(ApplicationDefinition appDef) {
-        String tenantName = appDef.getOption(CommonDefs.OPT_TENANT);
+        String tenantName = appDef.getTenantName();
         if(tenantName == null) return TenantService.instance().getDefaultTenant();
-        else return new Tenant(tenantName);
+        else return new Tenant(TenantService.instance().getTenantDefinition(tenantName));
     }
     
     public ApplicationDefinition addDynamicFields(ApplicationDefinition appDef) {

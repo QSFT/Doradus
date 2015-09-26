@@ -39,7 +39,7 @@ public class TenantDefinition implements JSONable{
     // Members:
     private String m_name;
     private final Map<String, UserDefinition> m_users = new HashMap<>();
-    private final Map<String, String> m_options = new HashMap<>();      // system-defined
+    private final Map<String, Object> m_options = new HashMap<>();      // system-defined
     private final Map<String, String> m_properties = new HashMap<>();   // application-defined
 
     /**
@@ -97,7 +97,7 @@ public class TenantDefinition implements JSONable{
      * @return  Tenant definition options as key/value pairs. The map is read-only and
      *          may be empty but will not be null.
      */
-    public Map<String, String> getOptions() {
+    public Map<String, Object> getOptions() {
         return Collections.unmodifiableMap(m_options);
     }
     
@@ -108,8 +108,23 @@ public class TenantDefinition implements JSONable{
      * @param optName   Name of option to fetch.
      * @return          Option value or null if not defined.
      */
-    public String getOption(String optName) {
+    public Object getOption(String optName) {
         return m_options.get(optName);
+    }
+    
+    /**
+     * Get the value of the option with the given name, if defined, as a String. If the
+     * option is defined, toString() is called to create the String.
+     * 
+     * @param optName   Name of option to fetch.
+     * @return          Option value as a String or null if not defined.
+     */
+    public String getOptionString(String optName) {
+        Object optValue = m_options.get(optName);
+        if (optValue == null) {
+            return null;
+        }
+        return optValue.toString();
     }
     
     /**
@@ -144,8 +159,8 @@ public class TenantDefinition implements JSONable{
         UNode tenantNode = UNode.createMapNode(m_name, "tenant");
         if (m_options.size() > 0) {
             UNode optsNode = tenantNode.addMapNode("options");
-            for (Map.Entry<String, String> mapEntry : m_options.entrySet()) {
-                optsNode.addValueNode(mapEntry.getKey(), mapEntry.getValue(), "option");
+            for (Map.Entry<String, Object> mapEntry : m_options.entrySet()) {
+                optsNode.addChildNode(optionValueToUNode(mapEntry.getKey(), mapEntry.getValue()));
             }
         }
         if (m_properties.size() > 0) {
@@ -163,6 +178,23 @@ public class TenantDefinition implements JSONable{
         return tenantNode;
     }   // toDoc
     
+    // Return a UNode that represents the given option's serialized value.
+    @SuppressWarnings("unchecked")
+    private UNode optionValueToUNode(String optName, Object optValue) {
+        if (!(optValue instanceof Map)) {
+            if (optValue == null) {
+                optValue = "";
+            }
+            return UNode.createValueNode(optName, optValue.toString(), "option");
+        }
+        UNode optNode = UNode.createMapNode(optName, "option");
+        Map<String, Object> suboptMap = (Map<String,Object>)optValue;
+        for (String suboptName : suboptMap.keySet()) {
+            optNode.addChildNode(optionValueToUNode(suboptName, suboptMap.get(suboptName)));
+        }
+        return optNode;
+    }
+
     // For debugging
     @Override
     public String toString() {
@@ -200,9 +232,9 @@ public class TenantDefinition implements JSONable{
      * overwritten.
      * 
      * @param optName   Option name.
-     * @param optValue  Option value.
+     * @param optValue  Option value, which may be a String or Map&lt;String,Object&gt;.
      */
-    public void setOption(String optName, String optValue) {
+    public void setOption(String optName, Object optValue) {
         m_options.put(optName, optValue);
     }
     
@@ -234,8 +266,7 @@ public class TenantDefinition implements JSONable{
             switch (childNode.getName()) {
             case "options":
                 for (UNode optNode : childNode.getMemberList()) {
-                    Utils.require(optNode.isValue(), "'option' must be a value: " + optNode);
-                    m_options.put(optNode.getName(), optNode.getValue());
+                    m_options.put(optNode.getName(), parseOption(optNode));
                 }
                 break;
             case "users":
@@ -257,8 +288,21 @@ public class TenantDefinition implements JSONable{
         }            
     }   // parse
 
-	@Override
-	public String toJSON() {
-		return toDoc().toJSON();
-	}    
+    // Parse an option UNode, which may be a value or a map.
+	private Object parseOption(UNode optionNode) {
+        if (optionNode.isValue()) {
+            return optionNode.getValue();
+        }
+        Map<String, Object> optValueMap = new HashMap<>();
+        for (UNode suboptNode : optionNode.getMemberList()) {
+            optValueMap.put(suboptNode.getName(), parseOption(suboptNode));
+        }
+        return optValueMap;
+    }
+
+    @Override
+    public String toJSON() {
+        return toDoc().toJSON();
+    }
+    
 }   // class TenantDefinition

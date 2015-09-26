@@ -88,8 +88,7 @@ public class Olap {
 	
 	// For testing: use default keyspace
 	public VDirectory createApplication(String appName) {
-        String keyspace = ServerConfig.getInstance().keyspace;
-        Tenant tenant = new Tenant(keyspace);
+        Tenant tenant = new Tenant(TenantService.instance().getDefaultTenantDef());
         return createApplication(tenant, appName);
 	}
 	
@@ -97,7 +96,7 @@ public class Olap {
 	    DBService.instance().createStoreIfAbsent(tenant, "OLAP", true);
 	    VDirectory root = new VDirectory(tenant, "OLAP").getDirectoryCreate("applications").getDirectoryCreate(appName);
 	    synchronized (m_tenantAppRoots) {
-	        String tenantName = tenant.getKeyspace();
+	        String tenantName = tenant.getName();
 	        Map<String, VDirectory> appRoots = m_tenantAppRoots.get(tenantName);
 	        if (appRoots == null) {
 	            appRoots = new HashMap<>();
@@ -113,10 +112,10 @@ public class Olap {
 	    VDirectory root = null;
 	    Tenant tenant = Tenant.getTenant(appDef);
 	    synchronized (m_tenantAppRoots) {
-	        Map<String, VDirectory> appRoots = m_tenantAppRoots.get(tenant.getKeyspace());
+	        Map<String, VDirectory> appRoots = m_tenantAppRoots.get(tenant.getName());
 	        if (appRoots == null) {
 	            appRoots = new HashMap<>();
-	            m_tenantAppRoots.put(tenant.getKeyspace(), appRoots);
+	            m_tenantAppRoots.put(tenant.getName(), appRoots);
 	        }
             root = appRoots.get(appDef.getAppName());
 	        if (root == null) {
@@ -149,7 +148,7 @@ public class Olap {
 	    VDirectory root = getRoot(appDef);
 	    synchronized (m_tenantAppRoots) {
 	        root.delete();
-	        String tenantName = Tenant.getTenant(appDef).getKeyspace();
+	        String tenantName = Tenant.getTenant(appDef).getName();
 	        Map<String, VDirectory> appRoots = m_tenantAppRoots.get(tenantName);
 	        if (appRoots != null) {
 	            appRoots.remove(appDef.getAppName());

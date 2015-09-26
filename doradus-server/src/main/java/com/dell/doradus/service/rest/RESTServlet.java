@@ -173,13 +173,13 @@ public class RESTServlet extends HttpServlet {
             throw new NotFoundException("Request does not match a known URI: " + request.getRequestURL());
         }
         
-        RegisteredCommand cmdModel = RESTService.instance().findCommand(appDef, method, uri, query, variableMap);
-        if (cmdModel == null) {
+        RegisteredCommand cmd = RESTService.instance().findCommand(appDef, method, uri, query, variableMap);
+        if (cmd == null) {
             throw new NotFoundException("Request does not match a known URI: " + request.getRequestURL());
         }
-        validateTenantAccess(request, tenant, cmdModel);
+        validateTenantAccess(request, tenant, cmd);
         
-        RESTCallback callback = cmdModel.getNewCallback();
+        RESTCallback callback = cmd.getNewCallback();
         callback.setRequest(new RESTRequest(tenant, appDef, request, variableMap));
         return callback.invoke();
     }
@@ -198,14 +198,17 @@ public class RESTServlet extends HttpServlet {
         return appDef;
     }
     
-    // Decide the Tenant context for this command and multi-tenant configuration options.
+    // Get the Tenant context for this command and multi-tenant configuration options.
     private Tenant getTenant(Map<String, String> variableMap) {
         String tenantName = variableMap.get("tenant");
         if (Utils.isEmpty(tenantName)) {
-            return TenantService.instance().getDefaultTenant();
-        } else {
-            return new Tenant(tenantName);    // might not exist
+            tenantName = TenantService.instance().getDefaultTenantName();
         }
+        Tenant tenant = TenantService.instance().getTenant(tenantName);
+        if (tenant == null) {
+            throw new NotFoundException("Unknown tenant: " + tenantName);
+        }
+        return tenant;
     }
 
     // Extract Authorization header, if any, and validate this command for the given tenant.
@@ -214,8 +217,9 @@ public class RESTServlet extends HttpServlet {
         StringBuilder userID = new StringBuilder();
         StringBuilder password = new StringBuilder();
         decodeAuthorizationHeader(authString, userID, password);
-        TenantService.instance().validateTenantAuthorization(tenant, userID.toString(), password.toString(), 
-                                                            permissionForMethod(request.getMethod()), cmdModel.isPrivileged());
+        Permission perm = permissionForMethod(request.getMethod());
+        TenantService.instance().validateTenantAccess(tenant, userID.toString(), password.toString(), 
+                                                      perm, cmdModel.isPrivileged());
     }
 
     // Map an HTTP method to the permission needed to execute it.

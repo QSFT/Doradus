@@ -244,7 +244,7 @@ public class SpiderHelper {
 		}
 		String tableName = SpiderService.objectsStoreName(tableDef);
         Map<String, String> result = new HashMap<>();
-		for(DColumn column: dbService.getColumns(Tenant.getTenant(tableDef).getKeyspace(), tableName,
+		for(DColumn column: dbService.getColumns(Tenant.getTenant(tableDef).getName(), tableName,
 		        IDHelper.IDToString(id), continuationField, "~", 1024)) {
     		result.put(column.getName(), column.getValue());
     	}

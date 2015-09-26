@@ -38,7 +38,7 @@ public class ListTenantsCmd extends UNodeOutCallback {
     public UNode invokeUNodeOut() {
         UNode rootNode = UNode.createMapNode("tenants");
         for (Tenant tenant : TenantService.instance().getTenants()) {
-            UNode tenantNode = rootNode.addMapNode(stripQuotes(tenant.getKeyspace()), "tenant");
+            UNode tenantNode = rootNode.addMapNode(stripQuotes(tenant.getName()), "tenant");
             UNode appNode = tenantNode.addArrayNode("applications");
             for (ApplicationDefinition appDef : SchemaService.instance().getAllApplications(tenant)) {
                 appNode.addValueNode("value", appDef.getAppName());
