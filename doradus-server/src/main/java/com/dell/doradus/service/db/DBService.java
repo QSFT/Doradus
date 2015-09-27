@@ -239,6 +239,23 @@ public abstract class DBService extends Service {
     public Iterable<DColumn> getAllColumns(Tenant tenant, String storeName, String rowKey) {
         return getColumnSlice(tenant, storeName, rowKey, null, null);
     }
+
+    /**
+     * Get columns by the list of column names. Columns are returned as
+     * a List of {@link DColumn}s. If no row is found with the given key,
+     * the iterator's hasNext() will be false.
+     * 
+     * @param tenant      {@link Tenant} that owns the store. 
+     * @param storeName   Name of store to query.
+     * @param rowKey      Key of row to fetch.
+     * @param columnNames List of column names to fetch.
+     * @return            Iterator of {@link DColumn}s. If there is no such row, hasNext()
+     *                    will be false.
+     */
+    public List<DColumn> getColumns(Tenant tenant, String storeName, String rowKey, Collection<String> columnNames) {
+        DRow row = new DRow(tenant.getName(), storeName, rowKey);
+        return row.getColumns(columnNames, 1024);
+    }
     
     /**
      * Get columns for the row with the given key in the given store. Columns range

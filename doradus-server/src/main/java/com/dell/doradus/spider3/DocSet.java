@@ -7,6 +7,7 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.logservice.pattern.Pattern;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.Tenant;
@@ -57,16 +58,29 @@ public class DocSet {
     }
     
     public void fillLink(FieldDefinition linkDef, DocSet linkedSet) {
+        m_ids.clear();
+        if(linkedSet.m_ids.size() == 0) return;
         TableDefinition tableDef = linkDef.getTableDef();
         ApplicationDefinition appDef = tableDef.getAppDef();
         Tenant tenant = Spider3.instance().getTenant(tableDef.getAppDef());
         String store = appDef.getAppName();
         String table = tableDef.getTableName();
         String row = table + "/" + linkDef.getName();
-        for(DColumn column: DBService.instance().getAllColumns(tenant, store, row)) {
-            String[] nv = Spider3.split(column.getName());
-            if(!linkedSet.contains(nv[1])) continue;
-            m_ids.add(nv[0]);
+        
+        if(linkedSet.m_ids.size() < 10) {
+            String inverseRow = linkDef.getLinkExtent() + "/" + linkDef.getLinkInverse();
+            for(String id: linkedSet.m_ids) {
+                for(DColumn column: DBService.instance().getColumnSlice(tenant, store, inverseRow, id, id + "~")) {
+                    String[] nv = Spider3.split(column.getName());
+                    m_ids.add(nv[1]);
+                }
+            }
+        } else {
+            for(DColumn column: DBService.instance().getAllColumns(tenant, store, row)) {
+                String[] nv = Spider3.split(column.getName());
+                if(!linkedSet.contains(nv[1])) continue;
+                m_ids.add(nv[0]);
+            }
         }
     }
     
@@ -77,13 +91,17 @@ public class DocSet {
         String store = appDef.getAppName();
         String table = tableDef.getTableName();
         String row = table + "/" + fieldDef.getName();
+        Pattern p = new Pattern(pattern);
+        
         for(DColumn column: DBService.instance().getAllColumns(tenant, store, row)) {
             if(fieldDef.isCollection()) {
                 String[] nv = Spider3.split(column.getName());
-                if(!Utils.matchesPattern(nv[1], pattern)) continue;
+                byte[] value = Utils.toBytes(nv[1]);
+                if(!p.match(value, 0, value.length)) continue;
                 m_ids.add(nv[0]);
             } else {
-                if(!Utils.matchesPattern(column.getValue(), pattern)) continue;
+                byte[] value = column.getRawValue();
+                if(!p.match(value, 0, value.length)) continue;
                 m_ids.add(column.getName());
             }
         }

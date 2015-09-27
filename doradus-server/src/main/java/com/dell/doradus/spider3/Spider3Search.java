@@ -75,6 +75,7 @@ public class Spider3Search {
     }
     
     private static void populateField(Map<String, SearchResult> map, FieldDefinition fieldDef) {
+        if(map.size() == 0) return;
         TableDefinition tableDef = fieldDef.getTableDef();
         ApplicationDefinition appDef = tableDef.getAppDef();
         Tenant tenant = Spider3.instance().getTenant(tableDef.getAppDef());
@@ -86,19 +87,34 @@ public class Spider3Search {
             // not supported yet
         }
         else if(fieldDef.isCollection()) {
-            for(DColumn column: DBService.instance().getAllColumns(tenant, store, row)) {
-                String[] nv = Spider3.split(column.getName());
-                String id = nv[0];
-                String value = nv[1];
-                SearchResult r = map.get(id);
-                if(r == null) continue;
-                String v = r.scalars.get(field);
-                if(v == null) r.scalars.put(field, value);
-                else r.scalars.put(field, v + "\uFFFE" + value);
+            if(map.size() < 10) {
+                for(String id: map.keySet()) {
+                    for(DColumn column: DBService.instance().getColumnSlice(tenant, store, row, id, id + "~")) {
+                        String[] nv = Spider3.split(column.getName());
+                        String value = nv[1];
+                        SearchResult r = map.get(id);
+                        if(r == null) continue;
+                        String v = r.scalars.get(field);
+                        if(v == null) r.scalars.put(field, value);
+                        else r.scalars.put(field, v + "\uFFFE" + value);
+                    }
+                }
+            } else {
+                for(DColumn column: DBService.instance().getAllColumns(tenant, store, row)) {
+                    String[] nv = Spider3.split(column.getName());
+                    String id = nv[0];
+                    String value = nv[1];
+                    SearchResult r = map.get(id);
+                    if(r == null) continue;
+                    String v = r.scalars.get(field);
+                    if(v == null) r.scalars.put(field, value);
+                    else r.scalars.put(field, v + "\uFFFE" + value);
+                }
             }
+            
         }
         else {
-            for(DColumn column: DBService.instance().getAllColumns(tenant, store, row)) {
+            for(DColumn column: DBService.instance().getColumns(tenant, store, row, map.keySet())) {
                 SearchResult r = map.get(column.getName());
                 if(r == null) continue;
                 r.scalars.put(field, column.getValue());

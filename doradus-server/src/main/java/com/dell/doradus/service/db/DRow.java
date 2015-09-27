@@ -62,17 +62,24 @@ public class DRow {
         else return columns.get(0);
     }
     
-    public List<DColumn> getColumns(List<String> columnNames, int chunkSize) {
+    public List<DColumn> getColumns(Collection<String> columnNames, int chunkSize) {
         if(chunkSize < columnNames.size()) {
             return getColumns(columnNames);
         }
-        
         List<DColumn> columns = new ArrayList<>(columnNames.size());
-        for(int start = 0; start < columnNames.size(); start += chunkSize) {
-            int end = Math.min(start + chunkSize, columnNames.size());
-            List<String> partialNames = columnNames.subList(start, end);
-            List<DColumn> partialList = DBService.instance().getColumns(m_namespace, m_storeName, m_rowKey, partialNames);
+        List<String> partial = new ArrayList<>(chunkSize);
+        for(String columnName: columnNames) {
+            partial.add(columnName);
+            if(partial.size() >= chunkSize) {
+                List<DColumn> partialList = DBService.instance().getColumns(m_namespace, m_storeName, m_rowKey, partial);
+                columns.addAll(partialList);
+                partial.clear();
+            }
+        }
+        if(partial.size() > 0) {
+            List<DColumn> partialList = DBService.instance().getColumns(m_namespace, m_storeName, m_rowKey, partial);
             columns.addAll(partialList);
+            partial.clear();
         }
         return columns;
     }
