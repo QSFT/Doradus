@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -27,8 +26,13 @@ public class FsTable {
         m_index = FsTableIndex.read(indexFile);
     }
     
+    public IColumnSequence getColumnsSequence(BSTR rowKey, BSTR start, BSTR end) {
+        FsTableIndex.Row row = m_index.getRow(rowKey);
+        if(row == null) return null;
+        else return new ColumnSequence(row, start, end);
+    }
     
-    public void getColumns(BSTR rowKey, FsReadColumns columns, Collection<BSTR> columnNames) {
+    public void getColumns(BSTR rowKey, FsReadColumns columns, Set<BSTR> columnNames) {
         FsTableIndex.Row row = m_index.getRow(rowKey);
         if(row == null) return;
         ArrayList<BSTR> cols = new ArrayList<>(columnNames);
@@ -39,13 +43,15 @@ public class FsTable {
             end = new BSTR(end.toString() + "\0");
             int startPos = Collections.binarySearch(cols, start);
             if(startPos < 0) startPos = -startPos - 1;
-            int endPos = Collections.binarySearch(cols, end);
             if(startPos < 0) startPos = -startPos - 1;
+            int endPos = Collections.binarySearch(cols, end);
+            if(endPos < 0) endPos = -endPos - 1;
             if(startPos == endPos) continue; // if this range does not contain columnNames, we skip it
 
             List<FsColumn> list = read(range);
             for(FsColumn c: list) {
                 if(columns.containsColumn(c)) continue;
+                if(!columnNames.contains(c.getName())) continue;
                 columns.addColumn(c);
             }
         }
@@ -121,6 +127,69 @@ public class FsTable {
     }
     
     public void close() {
+        
+    }
+    
+    public class ColumnSequence implements IColumnSequence {
+        private FsTableIndex.Row m_row;
+        private List<FsColumn> m_currentList;
+        private int m_position;
+        private int m_rangeIndex;
+        private BSTR m_end;
+        
+        public ColumnSequence(FsTableIndex.Row row, BSTR start, BSTR end) {
+            m_end = end;
+            m_row = row;
+            m_rangeIndex = getFirstRangeIndex(start, end);
+            if(m_rangeIndex < 0) return;
+            
+            m_currentList = read(m_row.getRanges().get(m_rangeIndex));
+            m_position = 0;
+            if(start != null) {
+                m_position = Collections.binarySearch(m_currentList, new FsColumn(-1, start, FileUtils.EMPTY_BYTES));
+                if(m_position < 0) m_position = -m_position - 1; // see binarySearch return value
+            }
+        }
+        
+        public boolean isRowDeleted() {
+            return m_row.isDeleted();
+        }
+        
+        private int getFirstRangeIndex(BSTR start, BSTR end) {
+            int index = 0;
+            ArrayList<FsTableIndex.ColumnRange> ranges = m_row.getRanges();
+            while(index < ranges.size()) {
+                FsTableIndex.ColumnRange range = ranges.get(index);
+                if(end != null && end.compareTo(range.getStart()) <= 0) break;
+                if(start != null && start.compareTo(range.getEnd()) > 0) {
+                    index++;
+                    continue;
+                }
+                return index;
+            }
+            return -1;
+        }
+        
+        @Override
+        public FsColumn next() {
+            if(m_currentList == null) return null;
+            if(m_position == m_currentList.size()) {
+                m_rangeIndex++;
+                if(m_rangeIndex >= m_row.getRanges().size()) {
+                    m_currentList = null;
+                    return null;
+                }
+                m_currentList = read(m_row.getRanges().get(m_rangeIndex));
+                m_position = 0;
+            }
+            
+            FsColumn column = m_currentList.get(m_position++);
+            if(m_end != null && m_end.compareTo(column.getName()) <= 0) {
+                m_currentList = null;
+                return null;
+            }
+            return column;
+        }
         
     }
 }

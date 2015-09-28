@@ -7,14 +7,14 @@ public class FsReadColumns {
     private Set<FsColumn> m_columns = new HashSet<>();
     private boolean m_bRowDeleted;
     
-    public FsReadColumns() {
-        
-    }
+    public FsReadColumns() {}
     
     public void setRowDeleted() { m_bRowDeleted = true; }
     public boolean isRowDeleted() { return m_bRowDeleted; }
     
     public Set<FsColumn> getColumns() { return m_columns; }
     public boolean containsColumn(FsColumn c) { return m_columns.contains(c); }
-    public void addColumn(FsColumn c) { m_columns.add(c); }
+    public void addColumn(FsColumn c) {
+        m_columns.add(c);
+    }
 }

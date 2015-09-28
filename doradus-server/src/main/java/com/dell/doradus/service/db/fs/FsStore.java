@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.olap.collections.MemoryStream;
 import com.dell.doradus.olap.io.BSTR;
-import com.dell.doradus.search.util.HeapList;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.utilities.Timer;
 
@@ -161,9 +160,40 @@ public class FsStore {
 
     public List<DColumn> getColumns(String row, String startColumn, String endColumn, int count) {
         Timer t = new Timer();
-        FsReadColumns readColumns = getColumnsSlice(row, startColumn, endColumn, count);
-        List<FsColumn> allList = new ArrayList<>(readColumns.getColumns());
-        List<DColumn> list = getColumnsList(row, allList, count);
+        BSTR rowKey = new BSTR(row);
+        BSTR start = startColumn == null ? null : new BSTR(startColumn);
+        BSTR end = endColumn == null ? null : new BSTR(endColumn);
+        
+        MergedColumnSequence mergedSequence = new MergedColumnSequence();
+        IColumnSequence memSequence = m_memTable.getColumnSequence(rowKey, start, end);
+        if(memSequence != null) {
+            mergedSequence.add(m_tables.size(), memSequence);
+        }
+        if(memSequence == null || !memSequence.isRowDeleted()) {
+            for(int i = m_tables.size() - 1; i >= 0; i--) {
+                IColumnSequence tableSequence = m_tables.get(i).getColumnsSequence(rowKey, start, end);
+                if(tableSequence == null) continue;
+                mergedSequence.add(i, tableSequence);
+                if(tableSequence.isRowDeleted()) break;
+            }
+        }
+        
+        List<DColumn> list = new ArrayList<>();
+        while(true) {
+            FsColumn column = mergedSequence.next();
+            if(column == null) break;
+            if(column.isColumnDelete()) continue;
+            String columnName = column.getName().toString();
+            byte[] value = column.getValue();
+            if(column.isExternalValue()) {
+                synchronized (m_sync) {
+                    value = m_dataStore.load(row, columnName);
+                }
+            }
+            list.add(new DColumn(columnName, value));
+            if(list.size() >= count) break;
+        }
+        
         m_log.debug("Store {} get columns slice for {} in {}", new Object[] {m_name, row, t});
         return list;
     }
@@ -176,8 +206,16 @@ public class FsStore {
         BSTR rowKey = new BSTR(row);
         synchronized (m_sync) {
             m_memTable.getColumns(rowKey, readColumns, colNames);
+            for(FsColumn c: readColumns.getColumns()) {
+                if(c.isColumnDelete()) continue;
+                colNames.remove(c.getName());
+            }
             for(FsTable table: m_tables) {
                 table.getColumns(rowKey, readColumns, colNames);
+                for(FsColumn c: readColumns.getColumns()) {
+                    if(c.isColumnDelete()) continue;
+                    colNames.remove(c.getName());
+                }
             }
             
             List<FsColumn> allList = new ArrayList<>(readColumns.getColumns());
@@ -195,7 +233,9 @@ public class FsStore {
         }
     }
 
+    /*
     private List<DColumn> getColumnsList(String row, List<FsColumn> allList, int count) {
+        //System.out.println("[" + row + "]: " + allList.size());
         HeapList<FsColumn> heap = new HeapList<>(count);
         for(FsColumn c: allList) {
             if(c.isColumnDelete()) continue;
@@ -217,9 +257,11 @@ public class FsStore {
         }
         return list;
     }
+    */
     
-    private FsReadColumns getColumnsSlice(String row, String startColumn, String endColumn, int count) {
-        FsReadColumns readColumns = new FsReadColumns();
+    /*private FsReadColumns getColumnsSlice(String row, String startColumn, String endColumn, int count) {
+        FsReadColumns readColumns = new FsReadColumns(count);
+        
         FsColumn start = startColumn == null ? null : new FsColumn(-1, new BSTR(startColumn), FileUtils.EMPTY_BYTES);
         FsColumn end = endColumn == null ? null : new FsColumn(-1, new BSTR(endColumn), FileUtils.EMPTY_BYTES);
         BSTR rowKey = new BSTR(row);
@@ -230,7 +272,7 @@ public class FsStore {
             }
         }
         return readColumns;
-    }
+    }*/
     
     public void close() {
         for(FsTable table: m_tables) {

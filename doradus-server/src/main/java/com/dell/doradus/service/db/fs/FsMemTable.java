@@ -117,6 +117,9 @@ public class FsMemTable {
         m_memStore.getRows(rows, continuationToken);
     }
     
+    public IColumnSequence getColumnSequence(BSTR rowKey, BSTR start, BSTR end) {
+        return m_memStore.getColumnSequence(rowKey, start, end);
+    }
 }
 
 

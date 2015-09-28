@@ -41,7 +41,7 @@ public class FsColumn implements Comparable<FsColumn> {
     
     @Override
     public boolean equals(Object obj) {
-        return m_name.equals((FsColumn)obj);
+        return m_name.equals(((FsColumn)obj).m_name);
     }
 
     @Override
