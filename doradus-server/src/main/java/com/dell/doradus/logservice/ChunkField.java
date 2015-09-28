@@ -28,7 +28,7 @@ public class ChunkField {
         m_input = input;
         m_data = data;
         
-        m_fieldName = new BSTR(m_input.readString());
+        m_fieldName = m_input.readString();
         m_valuesCount = m_input.readVInt();
         
         m_valuesOffset = m_input.position();

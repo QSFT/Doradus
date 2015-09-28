@@ -7,7 +7,6 @@ public class MemoryStream {
     private byte[] m_buffer;
     private int m_length;
     private int m_position;
-    private BSTR m_bstr = new BSTR();
     
     public MemoryStream() { m_buffer = new byte[1024]; }
 
@@ -63,6 +62,13 @@ public class MemoryStream {
         return m_buffer[m_position++] & 0xFF;
     }
 
+    public boolean readBoolean() {
+        int i = readByte();
+        if(i == 0) return false;
+        else if(i == 1) return true;
+        else throw new RuntimeException("Invalid boolean value");
+    }
+    
     public int readVInt()
     {
         int b = readByte();
@@ -129,12 +135,25 @@ public class MemoryStream {
 
     public BSTR readString() {
         int len = readVInt();
-        m_bstr.assertLength(len);
-        read(m_bstr.buffer, 0, len);
-        m_bstr.length = len;
-        return m_bstr;
+        byte[] buffer = new byte[len];
+        read(buffer, 0, len);
+        return new BSTR(buffer);
+    }
+
+    public void readString(BSTR bstr) {
+        int len = readVInt();
+        bstr.assertLength(len);
+        read(bstr.buffer, 0, len);
+        bstr.length = len;
     }
     
+    public void readVString(BSTR bstr) {
+        int pfx = readVInt();
+        int len = pfx + readVInt();
+        bstr.assertLength(len);
+        read(bstr.buffer, pfx, len - pfx);
+        bstr.length = len;
+    }
     
     public void writeByte(byte value)
     {
@@ -151,6 +170,11 @@ public class MemoryStream {
         if(m_position > m_length) m_length = m_position;
     }
 
+    public void writeBoolean(boolean value)
+    {
+        writeByte((byte)(value? 1 : 0));
+    }
+    
     public void writeVInt(int value)
     {
 
@@ -226,4 +250,13 @@ public class MemoryStream {
         write(bstr.buffer, 0, bstr.length);
     }
 
+    public void writeVString(BSTR bstr, BSTR prev) {
+        int pfx = 0;
+        int len = Math.min(bstr.length, prev.length);
+        while(pfx < len && bstr.buffer[pfx] == prev.buffer[pfx]) pfx++;
+        writeVInt(pfx);
+        writeVInt(bstr.length - pfx);
+        write(bstr.buffer, pfx, bstr.length - pfx);
+    }
+    
 }
