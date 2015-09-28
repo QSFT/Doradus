@@ -94,6 +94,7 @@ public class FsRow implements Comparable<FsRow> {
         m_columnsList.clear();
         m_bSorted = true;
         m_bDeleted = true;
+        m_dataStore.deleteRow(m_name.toString());
     }
     
     public boolean isDeleted() { return m_bDeleted; }
