@@ -17,30 +17,31 @@
 package com.dell.doradus.service.db.fs;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.core.ServerConfig;
-import com.dell.doradus.service.db.ColumnDelete;
-import com.dell.doradus.service.db.ColumnUpdate;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
-import com.dell.doradus.service.db.RowDelete;
 import com.dell.doradus.service.db.Tenant;
 
 public class FsService extends DBService {
     public static final String ROOT = "c:/temp/FS"; 
     protected final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
     private static final FsService INSTANCE = new FsService();
+    
+    private Map<String, FsStore> m_stores = new HashMap<>();
+    
     private final Object m_sync = new Object();
     
     private FsService() { }
@@ -58,7 +59,9 @@ public class FsService extends DBService {
         if(!root.exists()) root.mkdirs();
     }
     
-    @Override public void stopService() { }
+    @Override public void stopService() {
+        for(FsStore store: m_stores.values()) store.close();
+    }
     
     @Override public boolean supportsNamespaces() {
         return true;
@@ -74,17 +77,10 @@ public class FsService extends DBService {
     @Override public void dropNamespace(Tenant tenant) {
         synchronized(m_sync) {
             File namespaceDir = new File(ROOT + "/" + tenant.getName());
-            deleteDirectory(namespaceDir);
+            FileUtils.deleteDirectory(namespaceDir);
         }
     }
     
-    private void deleteDirectory(File dir) {
-        for(File file: dir.listFiles()) {
-            if(file.isDirectory()) deleteDirectory(file);
-            else file.delete();
-        }
-        dir.delete();
-    }
     
     public List<String> getNamespaces() {
         List<String> namespaces = new ArrayList<>();
@@ -107,7 +103,7 @@ public class FsService extends DBService {
     @Override public void deleteStoreIfPresent(Tenant tenant, String storeName) {
         synchronized(m_sync) {
             File storeDir = new File(ROOT + "/" + tenant.getName() + "/" + storeName);
-            if(storeDir.exists()) deleteDirectory(storeDir);
+            if(storeDir.exists()) FileUtils.deleteDirectory(storeDir);
         }
     }
     
@@ -115,70 +111,20 @@ public class FsService extends DBService {
    		return new DBTransaction(tenant.getName());
     }
     
-    public String encode(String name) {
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < name.length(); i++) {
-            char c = name.charAt(i);
-            if(c != '_' && Character.isLetterOrDigit(c)) sb.append(c);
-            else {
-                String esc = String.format("_%02x", (int)c);
-                sb.append(esc);
-            }
-        }
-        return sb.toString();
-    }
-    
-    public String decode(String name) {
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < name.length(); i++) {
-            char c = name.charAt(i);
-            if(c != '_') sb.append(c);
-            else {
-                c = (char)Integer.parseInt(name.substring(i + 1, i + 3), 16);
-                sb.append(c);
-                i += 2;
-            }
-        }
-        return sb.toString();
-    }
-    
     @Override public void commit(DBTransaction dbTran) {
         synchronized(m_sync) {
         	String keyspace = dbTran.getNamespace();
-        	//1. update
-        	for(ColumnUpdate mutation: dbTran.getColumnUpdates()) {
-        	    String store = mutation.getStoreName();
-        	    String row = encode(mutation.getRowKey());
-                String rowPath = ROOT + "/" + keyspace + "/" + store + "/" + row;
-                File rowFile = new File(rowPath);
-                if(!rowFile.exists()) rowFile.mkdir();
-                DColumn c = mutation.getColumn();
-                String column = encode(c.getName());
-                byte[] value = c.getRawValue();
-                try {
-                    FileOutputStream stream = new FileOutputStream(rowPath + "/" + column);
-                    stream.write(value);
-                    stream.close();
-                } catch (IOException ex) {
-                    m_logger.warn("Error", ex);
-                }
-        	}
-    		//2. delete columns
-            for(ColumnDelete mutation: dbTran.getColumnDeletes()) {
-    			String store = mutation.getStoreName();
-                String row = encode(mutation.getRowKey());
-                String column = encode(mutation.getColumnName());
-                String path = ROOT + "/" + keyspace + "/" + store + "/" + row + "/" + column;
-                File columnFile = new File(path);
-                if(columnFile.exists()) columnFile.delete();
-    		}
-            //3. delete rows
-            for(RowDelete mutation: dbTran.getRowDeletes()) {
-                String store = mutation.getStoreName();
-                String row = encode(mutation.getRowKey());
-                String path = ROOT + "/" + keyspace + "/" + store + "/" + row;
-                File rowFile = new File(path);
-                if(rowFile.exists()) deleteDirectory(rowFile);
+        	Set<String> stores = new HashSet<String>();
+            Map<String, Map<String, List<DColumn>>> columnUpdates = dbTran.getColumnUpdatesMap();
+            Map<String, Map<String, List<String>>> columnDeletes = dbTran.getColumnDeletesMap();
+            Map<String, List<String>> rowDeletes = dbTran.getRowDeletesMap();
+            stores.addAll(columnUpdates.keySet());
+            stores.addAll(columnDeletes.keySet());
+            stores.addAll(rowDeletes.keySet());
+            
+            for(String storeName: stores) {
+                FsStore store = getStore(keyspace, storeName);
+                store.addMutations(columnUpdates.get(storeName), columnDeletes.get(storeName), rowDeletes.get(storeName));
             }
         }
     }
@@ -186,28 +132,8 @@ public class FsService extends DBService {
     @Override public List<DColumn> getColumns(String namespace, String storeName,
             String rowKey, String startColumn, String endColumn, int count) {
         synchronized(m_sync) {
-            rowKey = encode(rowKey);
-            try {
-                ArrayList<DColumn> list = new ArrayList<>();
-                File rowFile = new File(ROOT + "/" + namespace + "/" + storeName + "/" + rowKey);
-                if(!rowFile.exists()) return list;
-                for(File columnFile: rowFile.listFiles()) {
-                    String fileName = columnFile.getName();
-                    String colName = decode(fileName);
-                    if(startColumn != null && colName.compareTo(startColumn) < 0) continue;
-                    if(endColumn != null && colName.compareTo(endColumn) >= 0) continue;
-                    FileInputStream fis = new FileInputStream(columnFile);
-                    byte[] data = new byte[(int)columnFile.length()];
-                    fis.read(data);
-                    fis.close();
-                    list.add(new DColumn(colName, data));
-                    if(list.size() >= count) break;
-                }
-                Collections.sort(list);
-                return list;
-            }catch(IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            FsStore store = getStore(namespace, storeName);
+            return store.getColumns(rowKey, startColumn, endColumn, count);
         }
     }
 
@@ -215,25 +141,8 @@ public class FsService extends DBService {
     public List<DColumn> getColumns(String namespace, String storeName,
             String rowKey, Collection<String> columnNames) {
         synchronized(m_sync) {
-            rowKey = encode(rowKey);
-            try {
-                ArrayList<DColumn> list = new ArrayList<>();
-                File rowFile = new File(ROOT + "/" + namespace + "/" + storeName + "/" + rowKey);
-                if(!rowFile.exists()) return list;
-                for(String columnName: columnNames) {
-                    File columnFile = new File(rowFile.getPath() + "/" + columnName);
-                    if(!columnFile.exists()) continue;
-                    FileInputStream fis = new FileInputStream(columnFile);
-                    byte[] data = new byte[(int)columnFile.length()];
-                    fis.read(data);
-                    fis.close();
-                    list.add(new DColumn(columnName, data));
-                }
-                Collections.sort(list);
-                return list;
-            }catch(IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            FsStore store = getStore(namespace, storeName);
+            return store.getColumns(rowKey, columnNames);
         }
     }
 
@@ -243,7 +152,7 @@ public class FsService extends DBService {
             File storeDir = new File(ROOT + "/" + namespace + "/" + storeName);
             if(!storeDir.exists()) return list;
             for(File rowFile: storeDir.listFiles()) {
-                String row = decode(rowFile.getName());
+                String row = FileUtils.decode(rowFile.getName());
                 if(continuationToken != null && continuationToken.compareTo(row) >= 0) continue;
                 list.add(row);
                 if(list.size() >= count) break;
@@ -254,4 +163,15 @@ public class FsService extends DBService {
     }
 
 
+    private FsStore getStore(String namespace, String storeName) {
+        String path = ROOT + "/" + namespace + "/" + storeName;
+        FsStore store = m_stores.get(path);
+        if(store == null) {
+            File tenantDir = new File(ROOT + "/" + namespace);
+            if(!tenantDir.exists()) tenantDir.mkdir();
+            store = new FsStore(tenantDir, storeName);
+            m_stores.put(path, store);
+        }
+        return store;
+    }
 }
