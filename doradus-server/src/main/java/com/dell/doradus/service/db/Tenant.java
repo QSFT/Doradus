@@ -39,6 +39,7 @@ public class Tenant implements Comparable<Tenant> {
      */
     public static Tenant getTenant(ApplicationDefinition appDef) {
         String tenantName = appDef.getTenantName();
+        if(Utils.isEmpty(tenantName)) return TenantService.instance().getDefaultTenant();
         Utils.require(!Utils.isEmpty(tenantName), "Application definition is missing tenant name: " + appDef);
         TenantDefinition tenantDef = TenantService.instance().getTenantDefinition(tenantName);
         Utils.require(tenantDef != null, "Tenant definition does not exist: %s", tenantName);
