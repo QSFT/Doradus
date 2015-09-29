@@ -30,14 +30,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.Tenant;
 
 public class FsService extends DBService {
-    public static final String ROOT = "c:/temp/FS"; 
-    protected final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
+    private String ROOT; 
+    protected final Logger m_logger = LoggerFactory.getLogger(getClass());
     private static final FsService INSTANCE = new FsService();
     
     private Map<String, FsStore> m_stores = new HashMap<>();
@@ -49,6 +50,8 @@ public class FsService extends DBService {
     public static FsService instance() { return INSTANCE; }
     
     @Override public void initService() {
+        ROOT = ServerParams.instance().getModuleParamString("FsService", "db-path");
+        if(ROOT == null) throw new RuntimeException("FsService: db-path not defined");
         ServerConfig config = ServerConfig.getInstance();
         m_logger.info("Using FS API");
         m_logger.debug("Default application keyspace: {}", config.keyspace);
