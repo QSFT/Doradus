@@ -82,17 +82,6 @@ public class FsService extends DBService {
     }
     
     
-    public List<String> getNamespaces() {
-        List<String> namespaces = new ArrayList<>();
-        synchronized (m_sync) {
-            File root = new File(ROOT);
-            for(String namespace: root.list()) {
-                namespaces.add(namespace);
-            }
-        }
-        return namespaces;
-    }
-
     @Override public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
         synchronized(m_sync) {
             File storeDir = new File(ROOT + "/" + tenant.getName() + "/" + storeName);
@@ -105,10 +94,6 @@ public class FsService extends DBService {
             File storeDir = new File(ROOT + "/" + tenant.getName() + "/" + storeName);
             if(storeDir.exists()) FileUtils.deleteDirectory(storeDir);
         }
-    }
-    
-    @Override public DBTransaction startTransaction(Tenant tenant) {
-   		return new DBTransaction(tenant.getName());
     }
     
     @Override public void commit(DBTransaction dbTran) {

@@ -283,6 +283,31 @@ public class ServerParams {
                                        paramName + "' must be a number: " + value);
         }
     }
+
+    /**
+     * Get the value of the given parameter name belonging to the given module as integer.
+     * If no such module/parameter exists, defaultValue is returned.
+     * If the given value is not an integer, a RuntimeException is thrown.
+     * 
+     * @param moduleName    Name of module to get parameter for.
+     * @param paramName     Name of parameter to get value of.
+     * @return              Parameter value as a integer or defaultValue if tha parameter does not exis.
+     */
+    @SuppressWarnings("unchecked")
+    public int getModuleParamInt(String moduleName, String paramName, int defaultValue) {
+        Object moduleParams = getModuleParams(moduleName);
+        if (moduleParams == null || !(moduleParams instanceof Map)) {
+            return defaultValue;
+        }
+        Object value = ((Map<String, ?>)moduleParams).get(paramName);
+        if(value == null) return defaultValue;
+        try {
+            return Integer.parseInt(value.toString());
+        } catch (Exception e) {
+            throw new RuntimeException("Configuration parameter '" + moduleName + "." +
+                                       paramName + "' must be a number: " + value);
+        }
+    }
     
     /**
      * Get the String value of the given parameter name belonging to the given module
