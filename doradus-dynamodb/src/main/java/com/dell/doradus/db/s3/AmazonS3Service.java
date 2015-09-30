@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.dell.doradus.service.db.s3;
+package com.dell.doradus.db.s3;
 
 import java.util.ArrayList;
 import java.util.Collection;

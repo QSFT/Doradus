@@ -97,10 +97,5 @@
 	      <artifactId>org.eclipse.jgit</artifactId>
 	      <version>4.0.0.201506020755-rc3</version>
 	    </dependency>           
-        <dependency>
-            <groupId>net.java.dev.jets3t</groupId>
-            <artifactId>jets3t</artifactId>
-            <version>0.9.3</version>
-        </dependency>
     </dependencies>
 </project>

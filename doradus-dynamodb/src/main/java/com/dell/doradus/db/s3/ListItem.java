@@ -1,4 +1,4 @@
-package com.dell.doradus.service.db.s3;
+package com.dell.doradus.db.s3;
 
 public class ListItem {
     public String name;
