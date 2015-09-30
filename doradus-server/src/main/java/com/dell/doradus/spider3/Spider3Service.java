@@ -22,8 +22,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.BatchResult;
 import com.dell.doradus.common.DBObjectBatch;
@@ -147,7 +145,7 @@ public class Spider3Service extends StorageService {
         }
 
         @Override public UNode invokeUNodeOut() {
-            throw new NotImplementedException();
+            throw new RuntimeException("Not implemented");
             //ApplicationDefinition appDef = m_request.getAppDef();
             //TableDefinition tableDef = m_request.getTableDef(appDef);
             //Tenant tenant = m_request.getTenant();
