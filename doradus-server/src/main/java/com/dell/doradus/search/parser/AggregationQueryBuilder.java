@@ -1480,6 +1480,10 @@ public class AggregationQueryBuilder {
             if (grammarItem.getValue().equals(SemanticNames.WHERE)) {
                 ArrayList<GrammarItem> sublist = new ArrayList<GrammarItem>();
                 Item prev = items.get(items.size() - 1);
+                //fix for ROUNDUP with global WHERE filters
+                if("MetricFunctionBinary".equals(prev.item.getType())) {
+                	prev = items.get(items.size() - 2);
+                }
                 if (prev.queryItems == null) {
                     prev.queryItems = new ArrayList<ArrayList<GrammarItem>>();
                 }
