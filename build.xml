@@ -161,6 +161,9 @@
         <get dest="${dynamodb.lib.dir}">
             <url url="http://repo1.maven.org/maven2/joda-time/joda-time/2.8.1/joda-time-2.8.1.jar"/> 
         </get>
+        <get dest="${server.lib.dir}">
+            <url url="http://repo1.maven.org/maven2/net/java/dev/jets3t/jets3t/0.9.4/jets3t-0.9.4.jar"/>
+        </get>
     </target>
     
     <target name="DynamoDBCompile" depends="ServerJar,DynamoDBLoadLibs">
