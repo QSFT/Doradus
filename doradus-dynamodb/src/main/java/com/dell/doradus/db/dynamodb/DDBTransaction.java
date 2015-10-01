@@ -30,6 +30,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
+import com.dell.doradus.service.db.Tenant;
 
 /**
  * Applies column and row updates held in a {@link DBTransaction} to a DynamoDB instance.
@@ -59,66 +60,69 @@ public class DDBTransaction {
     //----- Private methods
     
     private static void applyUpdates(DBTransaction dbTran) {
+        Tenant tenant = dbTran.getTenant();
         Map<String, Map<String, List<DColumn>>> colUpdatesMap = dbTran.getColumnUpdatesMap();
         for (String tableName : colUpdatesMap.keySet()) {
-            updateTableColumnUpdates(tableName, colUpdatesMap.get(tableName));
+            updateTableColumnUpdates(tenant, tableName, colUpdatesMap.get(tableName));
         }
         
         Map<String, Map<String, List<String>>> colDeletesMap = dbTran.getColumnDeletesMap();
         for (String tableName : colDeletesMap.keySet()) {
-            updateTableColumnDeletes(tableName, colDeletesMap.get(tableName));
+            updateTableColumnDeletes(tenant, tableName, colDeletesMap.get(tableName));
         }
         
         Map<String, List<String>> rowDeletesMap = dbTran.getRowDeletesMap();
         for (String tableName : rowDeletesMap.keySet()) {
             for (String rowKey : rowDeletesMap.get(tableName)) {
                 Map<String, AttributeValue> key = DynamoDBService.makeDDBKey(rowKey);
-                DynamoDBService.instance().deleteRow(tableName, key);
+                DynamoDBService.instance(tenant).deleteRow(tableName, key);
             }
         }
     }
 
-    private static void updateTableColumnUpdates(String tableName, Map<String, List<DColumn>> rowMap) {
+    private static void updateTableColumnUpdates(Tenant tenant, String tableName, Map<String, List<DColumn>> rowMap) {
         for (String rowKey : rowMap.keySet()) {
             Map<String, AttributeValue> key = DynamoDBService.makeDDBKey(rowKey);
             List<DColumn> colList = rowMap.get(rowKey);
-            updateRowColumnUpdates(tableName, key, colList);
+            updateRowColumnUpdates(tenant, tableName, key, colList);
         }
     }
 
-    private static void updateRowColumnUpdates(String tableName,
+    private static void updateRowColumnUpdates(Tenant tenant,
+                                               String tableName,
                                                Map<String, AttributeValue> key,
                                                List<DColumn> colList) {
         Map<String, AttributeValueUpdate> attributeUpdates = new HashMap<>();
         for (DColumn col : colList) {
-            AttributeValue attrValue = mapColumnValue(col);
+            AttributeValue attrValue = mapColumnValue(tenant, col);
             attributeUpdates.put(col.getName(), new AttributeValueUpdate(attrValue, AttributeAction.PUT));
         }
-        DynamoDBService.instance().updateRow(tableName, key, attributeUpdates);
+        DynamoDBService.instance(tenant).updateRow(tableName, key, attributeUpdates);
     }
 
-    private static void updateTableColumnDeletes(String tableName, Map<String, List<String>> rowMap) {
+    private static void updateTableColumnDeletes(Tenant tenant, String tableName, Map<String, List<String>> rowMap) {
         for (String rowKey : rowMap.keySet()) {
             Map<String, AttributeValue> key = DynamoDBService.makeDDBKey(rowKey);
             List<String> colNames = rowMap.get(rowKey);
-            updateRowColumnDeletes(tableName, key, colNames);
+            updateRowColumnDeletes(tenant, tableName, key, colNames);
         }
     }
 
-    private static void updateRowColumnDeletes(String tableName,
+    private static void updateRowColumnDeletes(Tenant tenant,
+                                               String tableName,
                                                Map<String, AttributeValue> key,
                                                List<String> colNames) {
         Map<String, AttributeValueUpdate> attributeUpdates = new HashMap<>();
         for (String colName : colNames) {
             attributeUpdates.put(colName, new AttributeValueUpdate().withAction(AttributeAction.DELETE));
         }
-        DynamoDBService.instance().updateRow(tableName, key, attributeUpdates);
+        DynamoDBService.instance(tenant).updateRow(tableName, key, attributeUpdates);
     }
 
     // Create the appropriate AttributeValue for the given column value type and length.
-    private static AttributeValue mapColumnValue(DColumn col) {
+    private static AttributeValue mapColumnValue(Tenant tenant, DColumn col) {
         AttributeValue attrValue = new AttributeValue();
-        boolean isBinaryValue = DynamoDBService.instance().columnIsBinary(col.getName());
+        boolean isBinaryValue = DynamoDBService.instance(tenant).columnIsBinary(col.getName());
         if (isBinaryValue) {
             if (col.getRawValue().length == 0) {
                 attrValue.setS(DynamoDBService.NULL_COLUMN_MARKER);

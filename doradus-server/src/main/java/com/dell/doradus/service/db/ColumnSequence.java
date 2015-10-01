@@ -35,7 +35,7 @@ public class ColumnSequence implements Sequence<DColumn> {
     
     @Override public DColumn next() {
         if(m_currentList == null) {
-            m_currentList = DBService.instance().getColumns(m_row.getNamespace(), m_row.getStoreName(), m_row.getRowKey(),
+            m_currentList = DBService.instance(m_row.getTenant()).getColumns(m_row.getStoreName(), m_row.getRowKey(),
                     m_startColumn, m_endColumn, m_chunkSize);
         }
         if(m_currentList.size() == 0) {
@@ -43,7 +43,7 @@ public class ColumnSequence implements Sequence<DColumn> {
         }
         if(m_pointer == m_currentList.size()) {
             String newStartKey = m_currentList.get(m_pointer - 1).getName() + '\0';
-            m_currentList = DBService.instance().getColumns(m_row.getNamespace(), m_row.getStoreName(), m_row.getRowKey(),
+            m_currentList = DBService.instance(m_row.getTenant()).getColumns(m_row.getStoreName(), m_row.getRowKey(),
                     newStartKey, m_endColumn, m_chunkSize);
             m_pointer = 0;
         }

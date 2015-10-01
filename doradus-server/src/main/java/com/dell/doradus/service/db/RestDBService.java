@@ -98,9 +98,9 @@ public class RestDBService extends Service {
             Utils.require((start == null && end == null) || (columns == null), "Columns parameter cannot be used together with start/end parameters");
             List<DColumn> result = null;
             if(columns != null) {
-                result = DBService.instance().getColumns(tenant.getName(), store, row, Utils.split(columns, ','));
+                result = DBService.instance(tenant).getColumns(store, row, Utils.split(columns, ','));
             } else {
-                result = DBService.instance().getColumns(tenant.getName(), store, row, start, end, count);
+                result = DBService.instance(tenant).getColumns(store, row, start, end, count);
             }
             UNode node = UNode.createArrayNode("columns");
             for(DColumn c: result) {
@@ -143,7 +143,7 @@ public class RestDBService extends Service {
             String c = parsedQuery.get("c");
             int count = parsedQuery.getInt("count", 1024);
             parsedQuery.checkInvalidParameters();
-            List<String> result = DBService.instance().getRows(tenant.getName(), store, c, count);
+            List<String> result = DBService.instance(tenant).getRows(store, c, count);
             UNode node = UNode.createArrayNode("rows");
             for(String r: result) {
                 node.addValueNode("row", r);            }

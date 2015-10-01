@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import com.datastax.driver.core.ResultSet;
 import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.service.db.DBService;
+import com.dell.doradus.service.db.Tenant;
 
 /**
  * Performs schema management operations using the CQL API. All methods are static and
@@ -45,18 +47,18 @@ public class CQLSchemaManager {
      * </pre>
      * Where the list of <i>prop</i> properties come from {@link ServerConfig#ks_defaults}.
      * 
-     * @param keyspace  Name of keyspace to create.
+     * @param tenant    {@link Tenant} that will use new keyspace.
      * @param options   Options to use for new keyspace.
      */
-    public static void createKeyspace(String keyspace, Map<String, String> options) {
-        String cqlKeyspace = CQLService.storeToCQLName(keyspace);
+    public static void createKeyspace(Tenant tenant, Map<String, String> options) {
+        String cqlKeyspace = CQLService.storeToCQLName(tenant.getName());
         m_logger.info("Creating new keyspace: {}", cqlKeyspace);
         StringBuilder cql = new StringBuilder();
         cql.append("CREATE KEYSPACE ");
         cql.append(cqlKeyspace);
         cql.append(keyspaceDefaultsToCQLString(options));
         cql.append(";");
-        executeCQL(cql.toString());
+        executeCQL(tenant, cql.toString());
     }   // createKeyspace
     
     /**
@@ -68,15 +70,15 @@ public class CQLSchemaManager {
      *        'replication_factor' : <i>replication_factor</i> };
      * </pre>
      * 
-     * @param keyspace  Name of keyspace to modify.
+     * @param tenant    {@link Tenant} that uses keyspace.
      * @param options   Modified options to use for keyspace. Only the option
      *                  "replication_factor" is examined.
      */
-    public static void modifyKeyspace(String keyspace, Map<String, String> options) {
+    public static void modifyKeyspace(Tenant tenant, Map<String, String> options) {
         if (!options.containsKey("ReplicationFactor")) {
             return;
         }
-        String cqlKeyspace = CQLService.storeToCQLName(keyspace);
+        String cqlKeyspace = CQLService.storeToCQLName(tenant.getName());
         m_logger.info("Modifying keyspace: {}", cqlKeyspace);
         StringBuilder cql = new StringBuilder();
         cql.append("ALTER KEYSPACE ");
@@ -91,26 +93,26 @@ public class CQLSchemaManager {
         cql.append("','replication_factor':");
         cql.append(options.get("ReplicationFactor"));
         cql.append("};");
-        executeCQL(cql.toString());
+        executeCQL(tenant, cql.toString());
     }   // createKeyspace
     
     /**
-     * Drop the keyspace with the given name. The keyspace is dropped with the following
+     * Drop the keyspace for the given tenant. The keyspace is dropped with the following
      * CQL command:
      * <pre>
      *      DROP KEYSPACE "<i>keyspace</i>";
      * </pre>
      * 
-     * @param keyspace  Name of keyspace to drop.
+     * @param tenant    {@link Tenant} that owns keyspace to drop.
      */
-    public static void dropKeyspace(String keyspace) {
-        String cqlKeyspace = CQLService.storeToCQLName(keyspace);
+    public static void dropKeyspace(Tenant tenant) {
+        String cqlKeyspace = CQLService.storeToCQLName(tenant.getName());
         m_logger.info("Dropping keyspace: {}", cqlKeyspace);
         StringBuilder cql = new StringBuilder();
         cql.append("DROP KEYSPACE ");
         cql.append(cqlKeyspace);
         cql.append(";");
-        executeCQL(cql.toString());
+        executeCQL(tenant, cql.toString());
     }   // dropKeyspace
     
     /**
@@ -127,12 +129,12 @@ public class CQLSchemaManager {
      * Where the WITH <i>prop</i> clauses come from {@link ServerConfig#olap_cf_defaults}
      * or {@link ServerConfig#cf_defaults}.
      * 
-     * @param keyspace      Name of keyspace in which to create table.
+     * @param tenant        {@link Tenant} that owns keyspace.
      * @param storeName     Name of table (unquoted) to create.
      * @param bBinaryValues True if store's values will be binary.
      */
-    public static void createCQLTable(String keyspace, String storeName, boolean bBinaryValues) {
-        String cqlKeyspace = CQLService.storeToCQLName(keyspace);
+    public static void createCQLTable(Tenant tenant, String storeName, boolean bBinaryValues) {
+        String cqlKeyspace = CQLService.storeToCQLName(tenant.getName());
         String tableName = CQLService.storeToCQLName(storeName);
         m_logger.info("Creating CQL table {}", tableName);
         
@@ -148,24 +150,24 @@ public class CQLSchemaManager {
         cql.append("PRIMARY KEY(key,column1)) WITH COMPACT STORAGE ");
         cql.append(tablePropertiesToCQLString(storeName));
         cql.append(";");
-        executeCQL(cql.toString());
+        executeCQL(tenant, cql.toString());
     }   // createCQLTable
     
     /**
-     * Drop the table identified by the given template. The CQL executed is:
+     * Drop the table with the given name owned by the given tenant. The CQL executed is:
      * <pre>
      *      DROP TABLE "<i>keyspace</i>"."<i>name</i>";
      * </pre>
      * 
-     * @param keyspace  Keyspace that owns table to be dropped.
+     * @param tenant    {@link Tenant} that owns table.
      * @param storeName Name of table to be dropped.
      */
-    public static void dropCQLTable(String keyspace, String storeName) {
-        String cqlKeyspace = CQLService.storeToCQLName(keyspace);
+    public static void dropCQLTable(Tenant tenant, String storeName) {
+        String cqlKeyspace = CQLService.storeToCQLName(tenant.getName());
         String tableName = CQLService.storeToCQLName(storeName);
         m_logger.info("Dropping table: {}", tableName);
         String cql = "DROP TABLE " + qualifiedTableName(cqlKeyspace, tableName) + ";";
-        executeCQL(cql);
+        executeCQL(tenant, cql);
     }   // dropCQLTable
     
     //----- Private methods
@@ -274,10 +276,10 @@ public class CQLSchemaManager {
     }   // mapToCQLString
 
     // Execute and optionally log the given CQL statement.
-    private static ResultSet executeCQL(String cql) {
+    private static ResultSet executeCQL(Tenant tenant, String cql) {
         m_logger.trace("Executing CQL: {}", cql);
         try {
-            return CQLService.instance().getSession().execute(cql);
+            return ((CQLService)DBService.instance(tenant)).getSession().execute(cql);
         } catch (Exception e) {
             m_logger.error("CQL query failed", e);
             m_logger.info("   Query={}", cql);

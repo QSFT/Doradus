@@ -33,7 +33,6 @@ import org.jets3t.service.security.AWSCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.db.ColumnDelete;
 import com.dell.doradus.service.db.ColumnUpdate;
 import com.dell.doradus.service.db.DBService;
@@ -45,27 +44,34 @@ import com.dell.doradus.service.db.Tenant;
 public class AmazonS3Service extends DBService {
     private static final byte[] EMPTY_BYTES = new byte[0];
     protected final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
-    private static final AmazonS3Service INSTANCE = new AmazonS3Service();
     private AmazonConnection m_connection;
     private static ExecutorService s3_executor;
     
     
-    private AmazonS3Service() { }
+    private AmazonS3Service(Tenant tenant) {
+        super(tenant);
+    }
 
-    public static AmazonS3Service instance() { return INSTANCE; }
+    public static AmazonS3Service instance(Tenant tenant) {
+        AmazonS3Service instance = new AmazonS3Service(tenant);
+        instance.connect();
+        return instance;
+    }
     
-    @Override public void initService() {
-        String accessKey = ServerParams.instance().getModuleParamString("AmazonS3Service", "s3-access-key");
-        String secretKey = ServerParams.instance().getModuleParamString("AmazonS3Service", "s3-secret-key");
-        String bucket = ServerParams.instance().getModuleParamString("AmazonS3Service", "s3-bucket");
+    @Override public void initService() { }
+    
+    private void connect() {
+        String accessKey = m_tenant.getDBParamString("s3-access-key");
+        String secretKey = m_tenant.getDBParamString("s3-secret-key");
+        String bucket = m_tenant.getDBParamString("s3-bucket");
 
         AWSCredentials awsCredentials = new AWSCredentials(accessKey, secretKey); 
         S3Service s3service = new RestS3Service(awsCredentials);
         Jets3tProperties props = s3service.getJetS3tProperties();
         
-        String port = ServerParams.instance().getModuleParamString("AmazonS3Service", "s3-endpoint-http-port");
-        String httpsOnly = ServerParams.instance().getModuleParamString("AmazonS3Service", "s3-https-only");
-        String endpoint = ServerParams.instance().getModuleParamString("AmazonS3Service", "s3-endpoint");
+        String port = m_tenant.getDBParamString("s3-endpoint-http-port");
+        String httpsOnly = m_tenant.getDBParamString("s3-https-only");
+        String endpoint = m_tenant.getDBParamString("s3-endpoint");
         if(port != null) props.setProperty("s3service.s3-endpoint-http-port", port);
         if(httpsOnly != null) props.setProperty("s3service.https-only", httpsOnly);
         if(endpoint != null) props.setProperty("s3service.s3-endpoint", endpoint);
@@ -76,7 +82,7 @@ public class AmazonS3Service extends DBService {
         CredentialsProvider credentials = s3service.getCredentialsProvider();
         s3service = new RestS3Service(awsCredentials, "Doradus", credentials, props);
         
-        Object str_threads = ServerParams.instance().getModuleParam("AmazonS3Service", "s3-threads");
+        Object str_threads = m_tenant.getDBParamString("s3-threads");
         int threads = str_threads == null ? 1 : Integer.parseInt(str_threads.toString());
         s3_executor = Executors.newFixedThreadPool(threads);
         
@@ -93,12 +99,12 @@ public class AmazonS3Service extends DBService {
         return true;
     }
     
-    @Override public void createNamespace(Tenant tenant) {
+    @Override public void createNamespace() {
         //?? how to create tenant?
     }
 
-    @Override public void dropNamespace(Tenant tenant) {
-        m_connection.deleteAll(tenant.getName());
+    @Override public void dropNamespace() {
+        m_connection.deleteAll(getTenant().getName());
     }
     
     public Collection<String> getNamespaces() {
@@ -110,12 +116,12 @@ public class AmazonS3Service extends DBService {
         return namespaces;
     }
 
-    @Override public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
+    @Override public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
         //???
     }
     
-    @Override public void deleteStoreIfPresent(Tenant tenant, String storeName) {
-        m_connection.deleteAll(tenant.getName() + "/" + storeName);
+    @Override public void deleteStoreIfPresent(String storeName) {
+        m_connection.deleteAll(getTenant().getName() + "/" + storeName);
     }
     
     public String encode(String name) {
@@ -147,7 +153,7 @@ public class AmazonS3Service extends DBService {
     
     @Override public void commit(DBTransaction dbTran) {
         List<Future<?>> futures = new ArrayList<>();
-    	String keyspace = dbTran.getNamespace();
+    	String keyspace = dbTran.getTenant().getName();
         //1. update
         for(ColumnUpdate mutation: dbTran.getColumnUpdates()) {
             String store = mutation.getStoreName();
@@ -189,8 +195,9 @@ public class AmazonS3Service extends DBService {
     }
     
     @Override
-    public List<DColumn> getColumns(String namespace, String storeName,
+    public List<DColumn> getColumns(String storeName,
             String rowKey, String startColumn, String endColumn, int count) {
+        String namespace = getTenant().getName();
         List<Future<?>> futures = new ArrayList<>();
         final ArrayList<DColumn> list = new ArrayList<>();
         final String path = namespace + "/" + storeName + "/" + encode(rowKey) + "/";
@@ -220,7 +227,8 @@ public class AmazonS3Service extends DBService {
     }
 
     @Override
-    public List<DColumn> getColumns(String namespace, String storeName, String rowKey, Collection<String> columnNames) {
+    public List<DColumn> getColumns(String storeName, String rowKey, Collection<String> columnNames) {
+        String namespace = getTenant().getName();
         List<Future<?>> futures = new ArrayList<>();
         final ArrayList<DColumn> list = new ArrayList<>();
         final String path = namespace + "/" + storeName + "/" + encode(rowKey) + "/";
@@ -242,7 +250,8 @@ public class AmazonS3Service extends DBService {
     }
 
     @Override
-    public List<String> getRows(String namespace, String storeName, String continuationToken, int count) {
+    public List<String> getRows(String storeName, String continuationToken, int count) {
+        String namespace = getTenant().getName();
         List<String> rows = new ArrayList<>();
         String path = namespace + "/" + storeName + "/";
         List<ListItem> rowKeys = m_connection.listAll(path);

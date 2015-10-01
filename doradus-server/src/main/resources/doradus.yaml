@@ -21,9 +21,7 @@ DoradusServer:
     dbesoptions_linkBuffer: 1000
     default_services:
         - com.dell.doradus.mbeans.MBeanService
-        - com.dell.doradus.service.db.DBService
         - com.dell.doradus.service.rest.RESTService
-        - com.dell.doradus.service.schema.SchemaService
         - com.dell.doradus.service.taskmanager.TaskManagerService
     l2r_enable: true
     search_default_page_size: 100
@@ -36,7 +34,45 @@ DoradusServer:
 
 TenantService:
     default_tenant_name: Doradus
-    disable_default_keyspace: false
+
+# Parameters common to the default database.
+DBService:
+    # Defines the concrete DBService that manages the default database.
+    dbservice: com.dell.doradus.service.db.thrift.ThriftService
+#   dbservice: com.dell.doradus.service.db.cql.CQLService
+    max_read_attempts: 7
+    retry_wait_millis: 5000
+
+# Additional DBService parameters used by CQLService and ThriftService
+# if either manages the default database.
+CassandraService:
+    cf_defaults:
+        compression_options:
+           sstable_compression: ""   # use empty string for "none"
+        gc_grace_seconds: 3600
+    db_connect_retry_wait_millis: 5000
+    db_timeout_millis: 10000
+    dbhost: localhost
+    dbpassword: cassandra
+    dbtls: false
+    dbtls_cipher_suites: [TLS_RSA_WITH_AES_128_CBC_SHA]
+    dbuser: cassandra
+    jmxport: 7199
+    ks_defaults:
+        strategy_class: SimpleStrategy
+        strategy_options:
+            replication_factor: "1"   # enclose this value in quotes
+        durable_writes: true
+    max_commit_attempts: 10
+
+CQLService:
+    dbport: 9042
+
+ThriftService:
+    dbport: 9160
+    max_reconnect_attempts: 3
+    secondary_dbhost: 
+    thrift_buffer_size_mb: 16
 
 RESTService:
     clientauthentication: false
@@ -72,35 +108,6 @@ RESTService:
     truststore: config/truststore
     truststorepassword: password
     webserver_class: com.dell.doradus.server.JettyWebServer
-
-DBService:
-    cf_defaults:
-        compression_options:
-           sstable_compression: ""   # use empty string for "none"
-        gc_grace_seconds: 3600
-    db_connect_retry_wait_millis: 5000
-    db_timeout_millis: 10000
-    dbhost: localhost
-    dbpassword: cassandra
-    dbport: 9160
-#   dbport: 9042
-    dbservice: com.dell.doradus.service.db.thrift.ThriftService
-    dbtls: false
-    dbtls_cipher_suites: [TLS_RSA_WITH_AES_128_CBC_SHA]
-    dbuser: cassandra
-    jmxport: 7199
-    ks_defaults:
-        strategy_class: SimpleStrategy
-        strategy_options:
-            replication_factor: "1"   # enclose this value in quotes
-        durable_writes: true
-    max_commit_attempts: 10
-    max_read_attempts: 7
-    max_reconnect_attempts: 3
-    retry_wait_millis: 5000
-    secondary_dbhost: 
-    thrift_buffer_size_mb: 16
-    use_cql: false
 
 OLAPService:
     olap_cache_size_mb: 1000

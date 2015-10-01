@@ -69,17 +69,21 @@ public class MemoryService extends DBService {
 		}
 	}
 	
-    private static final MemoryService INSTANCE = new MemoryService();
     private final Object m_sync = new Object(); 
 
     // holds ALL data
     private final Map<String, Keyspace> m_Keyspaces = new HashMap<>();
     
-    private MemoryService() { }
+    private MemoryService(Tenant tenant) {
+        super(tenant);
+    }
 
-    public static MemoryService instance() {return INSTANCE;}
+    public static MemoryService instance(Tenant tenant) {
+        return new MemoryService(tenant);
+    }
     
     @Override public void initService() {
+        // TODO: Get parameters from Tenant
         ServerConfig config = ServerConfig.getInstance();
         m_logger.info("Using MEMORY API");
         m_logger.warn("Memory API is not persistent and can be used ONLY for testing purposes!");
@@ -93,18 +97,18 @@ public class MemoryService extends DBService {
         return true;
     }
     
-    @Override public void createNamespace(Tenant tenant) {
+    @Override public void createNamespace() {
     	synchronized (m_sync) {
-    	    String namespace = tenant.getName();
+    	    String namespace = getTenant().getName();
     		if(m_Keyspaces.get(namespace) != null) return;
     		Keyspace ks = new Keyspace(namespace);
     		m_Keyspaces.put(namespace, ks);
 		}
     }
 
-    @Override public void dropNamespace(Tenant tenant) {
+    @Override public void dropNamespace() {
     	synchronized (m_sync) {
-            String namespace = tenant.getName();
+            String namespace = getTenant().getName();
     		if(m_Keyspaces.get(namespace) == null) return;
     		m_Keyspaces.remove(namespace);
 		}
@@ -120,18 +124,18 @@ public class MemoryService extends DBService {
         return namespaces;
     }
 
-    @Override public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
+    @Override public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
     	synchronized (m_sync) {
-    		Keyspace ks = m_Keyspaces.get(tenant.getName());
+    		Keyspace ks = m_Keyspaces.get(getTenant().getName());
     		if(ks == null) throw new RuntimeException("Keyspace does not exist");
     		Store st = ks.stores.get(storeName);
     		if(st == null) ks.stores.put(storeName, new Store(storeName));
 		}
     }
     
-    @Override public void deleteStoreIfPresent(Tenant tenant, String storeName) {
+    @Override public void deleteStoreIfPresent(String storeName) {
     	synchronized (m_sync) {
-    		Keyspace ks = m_Keyspaces.get(tenant.getName());
+    		Keyspace ks = m_Keyspaces.get(getTenant().getName());
     		if(ks == null) throw new RuntimeException("Keyspace does not exist");
     		Store st = ks.stores.get(storeName);
     		if(st != null) ks.stores.remove(storeName);
@@ -140,9 +144,9 @@ public class MemoryService extends DBService {
     
     @Override public void commit(DBTransaction dbTran) {
         synchronized(m_sync) {
-            String keyspace = dbTran.getNamespace();
+            String keyspace = dbTran.getTenant().getName();
             Keyspace ks = m_Keyspaces.get(keyspace);
-            if(ks == null) throw new RuntimeException("Keyspace " + dbTran.getNamespace() + " does not exist");
+            if(ks == null) throw new RuntimeException("Keyspace " + keyspace + " does not exist");
             //1. update
             for(ColumnUpdate mutation: dbTran.getColumnUpdates()) {
                 String table = mutation.getStoreName();
@@ -200,10 +204,9 @@ public class MemoryService extends DBService {
 		return ks;
     }
     
-    @Override public List<DColumn> getColumns(String namespace, String storeName,
-            String rowKey, String startColumn, String endColumn, int count) {
+    @Override public List<DColumn> getColumns(String storeName, String rowKey, String startColumn, String endColumn, int count) {
         synchronized (m_sync) {
-            Keyspace ks = getKeyspace(namespace);
+            Keyspace ks = getKeyspace(getTenant().getName());
             Store st = ks.stores.get(storeName);
             if(st == null) throw new RuntimeException("Store does not exist");
             List<DColumn> list = new ArrayList<>();
@@ -219,10 +222,9 @@ public class MemoryService extends DBService {
         }
     }
 
-    @Override public List<DColumn> getColumns(String namespace, String storeName,
-            String rowKey, Collection<String> columnNames) {
+    @Override public List<DColumn> getColumns(String storeName, String rowKey, Collection<String> columnNames) {
         synchronized (m_sync) {
-            Keyspace ks = getKeyspace(namespace);
+            Keyspace ks = getKeyspace(getTenant().getName());
             Store st = ks.stores.get(storeName);
             if(st == null) throw new RuntimeException("Store does not exist");
             List<DColumn> list = new ArrayList<>();
@@ -237,10 +239,10 @@ public class MemoryService extends DBService {
         }
     }
 
-    @Override public List<String> getRows(String namespace, String storeName, String continuationToken, int count) {
+    @Override public List<String> getRows(String storeName, String continuationToken, int count) {
         synchronized (m_sync) {
             List<String> list = new ArrayList<>();
-            Keyspace ks = getKeyspace(namespace);
+            Keyspace ks = getKeyspace(getTenant().getName());
             Store st = ks.stores.get(storeName);
             if(st == null) return list;
             for(Row row: st.rows.values()) {

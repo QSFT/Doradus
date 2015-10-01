@@ -64,7 +64,6 @@ import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.DRow;
 import com.dell.doradus.service.db.RowDelete;
 import com.dell.doradus.service.db.Tenant;
-import com.dell.doradus.service.tenant.TenantService;
 import com.dell.doradus.utilities.Timer;
 
 public class DynamoDBService2 extends DBService {
@@ -74,13 +73,15 @@ public class DynamoDBService2 extends DBService {
 	private long m_writeCapacityUnits;
     private AmazonDynamoDBClient m_client;
     
-    private static DynamoDBService2 INSTANCE = new DynamoDBService2();
-
-    public static DynamoDBService2 instance() {return INSTANCE;}
+    public static DynamoDBService2 instance(Tenant tenant) {
+        return new DynamoDBService2(tenant);
+    }
 
     
     
-    private DynamoDBService2() { }
+    private DynamoDBService2(Tenant tenant) {
+        super(tenant);
+    }
     
     @Override
     protected void initService() {
@@ -117,8 +118,8 @@ public class DynamoDBService2 extends DBService {
     }
     
     @Override
-    public void createNamespace(Tenant tenant) {
-        String table = tenant.getName();
+    public void createNamespace() {
+        String table = getTenant().getName();
         if(Tables.doesTableExist(m_client, table)) return;
         m_logger.info("Creating table: {}", table);
         CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(table)
@@ -148,25 +149,26 @@ public class DynamoDBService2 extends DBService {
     }
     
     @Override
-    public void dropNamespace(Tenant tenant) {
-        m_client.deleteTable(tenant.getName());
+    public void dropNamespace() {
+        m_client.deleteTable(getTenant().getName());
     }
     
     @Override
-    public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
+    public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
     	// nothing to do
     }
 
     @Override
-    public void deleteStoreIfPresent(Tenant tenant, String storeName) {
-    	DBTransaction dbTran = new DBTransaction(tenant.getName());
-    	for(DRow row: getAllRows(tenant, storeName)) {
+    public void deleteStoreIfPresent(String storeName) {
+    	DBTransaction dbTran = new DBTransaction(getTenant());
+    	for(DRow row: getAllRows(storeName)) {
     		dbTran.deleteRow(storeName, row.getKey());
     	}
     	commit(dbTran);
     }
 
     public void commit(DBTransaction dbTran) {
+        String namespace = getTenant().getName();
         List<WriteRequest> list = new ArrayList<>();
         
         for(ColumnUpdate mutation: dbTran.getColumnUpdates()) {
@@ -178,7 +180,7 @@ public class DynamoDBService2 extends DBService {
         	
         	if(list.size() >= 25) {
         		Map<String, List<WriteRequest>> map = new HashMap<>();
-        		map.put(dbTran.getNamespace(), list);
+        		map.put(namespace, list);
         		BatchWriteItemResult result = m_client.batchWriteItem(new BatchWriteItemRequest(map));
         		while(result.getUnprocessedItems().size() > 0) {
             		result = m_client.batchWriteItem(new BatchWriteItemRequest(result.getUnprocessedItems()));
@@ -193,7 +195,7 @@ public class DynamoDBService2 extends DBService {
         	
         	if(list.size() >= 25) {
         		Map<String, List<WriteRequest>> map = new HashMap<>();
-        		map.put(dbTran.getNamespace(), list);
+        		map.put(namespace, list);
         		BatchWriteItemResult result = m_client.batchWriteItem(new BatchWriteItemRequest(map));
         		while(result.getUnprocessedItems().size() > 0) {
             		result = m_client.batchWriteItem(new BatchWriteItemRequest(result.getUnprocessedItems()));
@@ -204,13 +206,13 @@ public class DynamoDBService2 extends DBService {
         }
 
         for(RowDelete mutation: dbTran.getRowDeletes()) {
-        	for(DColumn c: getColumnSlice(TenantService.instance().getTenant(dbTran.getNamespace()), mutation.getStoreName(), mutation.getRowKey(), null, null)) {
+        	for(DColumn c: getColumnSlice(mutation.getStoreName(), mutation.getRowKey(), null, null)) {
             	Map<String, AttributeValue> item = getPrimaryKey(mutation.getStoreName() + "_" + mutation.getRowKey(), c.getName());
             	list.add(new WriteRequest().withDeleteRequest(new DeleteRequest(item)));
 
             	if(list.size() >= 25) {
             		Map<String, List<WriteRequest>> map = new HashMap<>();
-            		map.put(dbTran.getNamespace(), list);
+            		map.put(namespace, list);
             		BatchWriteItemResult result = m_client.batchWriteItem(new BatchWriteItemRequest(map));
             		while(result.getUnprocessedItems().size() > 0) {
                 		result = m_client.batchWriteItem(new BatchWriteItemRequest(result.getUnprocessedItems()));
@@ -223,7 +225,7 @@ public class DynamoDBService2 extends DBService {
 
     	if(list.size() > 0) {
     		Map<String, List<WriteRequest>> map = new HashMap<>();
-    		map.put(dbTran.getNamespace(), list);
+    		map.put(getTenant().getName(), list);
     		BatchWriteItemResult result = m_client.batchWriteItem(new BatchWriteItemRequest(map));
     		if(result.getUnprocessedItems().size() > 0) throw new RuntimeException("Could not write items");
     		list.clear();
@@ -231,7 +233,7 @@ public class DynamoDBService2 extends DBService {
     }
     
     @Override
-    public List<DColumn> getColumns(String namespace, String storeName, String rowKey,
+    public List<DColumn> getColumns(String storeName, String rowKey,
                                     String startColumn, String endColumn, int count) {
     	Timer t = new Timer();
     	String key = storeName + "_" + rowKey;
@@ -254,17 +256,18 @@ public class DynamoDBService2 extends DBService {
     	}
 
 		QueryRequest request = new QueryRequest()
-			.withTableName(namespace)
+			.withTableName(getTenant().getName())
 			.withLimit(Math.min(100,  count))
 			.withKeyConditions(keyConditions);
 		QueryResult result = m_client.query(request);
 		List<DColumn> list = fromItems(result.getItems());
-        m_logger.debug("get columns range for {} in {}", namespace, t);
+        m_logger.debug("get columns range for {} in {}", getTenant().getName(), t);
     	return list;
     }
 
     @Override
-    public List<DColumn> getColumns(String namespace, String storeName, String rowKey, Collection<String> columnNames) {
+    public List<DColumn> getColumns(String storeName, String rowKey, Collection<String> columnNames) {
+        String namespace = getTenant().getName();
     	Timer t = new Timer();
     	String key = storeName + "_" + rowKey;
     	List<DColumn> list = new ArrayList<>();
@@ -296,8 +299,8 @@ public class DynamoDBService2 extends DBService {
     }
 
     @Override
-    public List<String> getRows(String namespace, String storeName, String continuationToken, int count) {
-        ScanRequest scanRequest = new ScanRequest(namespace);
+    public List<String> getRows(String storeName, String continuationToken, int count) {
+        ScanRequest scanRequest = new ScanRequest(getTenant().getName());
         scanRequest.setAttributesToGet(Arrays.asList("key")); // attributes to get
         //if (continuationToken != null) {
         //	scanRequest.setExclusiveStartKey(getPrimaryKey(storeName + "_" + continuationToken, "\u007F"));

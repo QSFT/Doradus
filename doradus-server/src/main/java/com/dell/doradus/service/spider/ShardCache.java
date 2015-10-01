@@ -142,9 +142,10 @@ public class ShardCache {
     private void addShardStart(TableDefinition tableDef, int shardNumber, Date shardDate) {
         SpiderTransaction spiderTran = new SpiderTransaction();
         spiderTran.addShardStart(tableDef, shardNumber, shardDate);
-        DBTransaction dbTran = DBService.instance().startTransaction(Tenant.getTenant(tableDef));
+        Tenant tenant = Tenant.getTenant(tableDef);
+        DBTransaction dbTran = DBService.instance(tenant).startTransaction();
         spiderTran.applyUpdates(dbTran);
-        DBService.instance().commit(dbTran);
+        DBService.instance(tenant).commit(dbTran);
         synchronized (this) {
             cacheShardValue(tableDef, shardNumber, shardDate);
         }
@@ -201,7 +202,7 @@ public class ShardCache {
         
         Tenant tenant = Tenant.getTenant(tableDef);
         String storeName = SpiderService.termsStoreName(tableDef);
-        for(DColumn col: DBService.instance().getAllColumns(tenant, storeName, SpiderTransaction.SHARDS_ROW_KEY)) {
+        for(DColumn col: DBService.instance(tenant).getAllColumns(storeName, SpiderTransaction.SHARDS_ROW_KEY)) {
             Integer shardNum = Integer.parseInt(col.getName());
             Date shardDate = new Date(Long.parseLong(col.getValue()));
             shardMap.put(shardNum, shardDate);

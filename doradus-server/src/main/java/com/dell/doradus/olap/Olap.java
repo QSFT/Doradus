@@ -93,7 +93,7 @@ public class Olap {
 	}
 	
 	public VDirectory createApplication(Tenant tenant, String appName) {
-	    DBService.instance().createStoreIfAbsent(tenant, "OLAP", true);
+	    DBService.instance(tenant).createStoreIfAbsent("OLAP", true);
 	    VDirectory root = new VDirectory(tenant, "OLAP").getDirectoryCreate("applications").getDirectoryCreate(appName);
 	    synchronized (m_tenantAppRoots) {
 	        String tenantName = tenant.getName();

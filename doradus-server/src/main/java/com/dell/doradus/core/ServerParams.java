@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -391,8 +392,8 @@ public class ServerParams {
             logger.info("Loading configuration parameters from: {}", url);
             InputStream input = url.openStream();
             Yaml yaml = new Yaml();
-            LinkedHashMap<String, ?> params = (LinkedHashMap<String, ?>)yaml.load(input);
-            setConfigParams(params);
+            LinkedHashMap<String, Object> params = (LinkedHashMap<String, Object>)yaml.load(input);
+            addConfigParams(params);
         } catch (Exception e) {
             logger.error("Failed to load configuration file", e);
             throw new ConfigurationException("Failed to load configuration file", e);
@@ -400,31 +401,48 @@ public class ServerParams {
     }
     
     // Set configuration parameters from the given YAML-loaded map.
-    private void setConfigParams(Map<String, ?> map) throws ConfigurationException {
+    private void addConfigParams(Map<String, Object> map) throws ConfigurationException {
         for (String name : map.keySet()) {
-            setConfigParam(name, map.get(name));
+            addConfigParam(name, map.get(name));
         }
     }
     
     // Set the given parameter name and value. The parameter name could be a dotted
     // module name (e.g., com.dell.doradus.service.db.DBService) or a legacy YAML file
     // option (e.g., dbhost).
-    private void setConfigParam(String name, Object value) throws ConfigurationException {
+    private void addConfigParam(String name, Object value) throws ConfigurationException {
         if (isModuleName(name)) {
-            setModuleParams(name, value);
+            Utils.require(value instanceof Map,
+                          "Value for module '%s' should be a map: %s", name, value.toString());
+            updateMap(m_params, name, value);
         } else {
             setLegacyParam(name, value);
         }
     }
 
-    // Sets the given module's paramters to the given map. 
-    private void setModuleParams(String moduleName, Object value) throws ConfigurationException {
-        Utils.require(value instanceof Map, "Parameter for module %s should be a map: %s", moduleName, value.toString());
-        m_params.put(moduleName, value);
+    // Replace or add the given parameter name and value to the given map. 
+    @SuppressWarnings("unchecked")
+    private void updateMap(Map<String, Object> parentMap, String paramName, Object paramValue) {
+        Object currentValue = parentMap.get(paramName);
+        if (currentValue == null || !(currentValue instanceof Map)) {
+            if (paramValue instanceof Map) {
+                parentMap.put(paramName, paramValue);
+            } else {
+                parentMap.put(paramName, paramValue.toString());
+            }
+        } else {
+            Utils.require(paramValue instanceof Map,
+                          "Parameter '%s' must be a map: %s", paramName, paramValue.toString());
+            Map<String, Object> currentMap = (Map<String, Object>)currentValue;
+            Map<String, Object> updateMap = (Map<String, Object>)paramValue;
+            for (String subParam : updateMap.keySet()) {
+                updateMap(currentMap, subParam, updateMap.get(subParam));
+            }
+        }
     }
 
     // Sets a parameter using a legacy name.
-    private void setLegacyParam(String legacyParamName, Object value) throws ConfigurationException {
+    private void setLegacyParam(String legacyParamName, Object paramValue) {
         if (!m_bWarnedLegacyParam) {
             logger.warn("Parameter '{}': Legacy parameter format is being phased-out. " +
                         "Please use new module/parameter format.", legacyParamName);
@@ -434,7 +452,7 @@ public class ServerParams {
         if (moduleName == null) {
             logger.warn("Skipping unknown legacy parameter: {}", legacyParamName);
         } else {
-            setModuleParam(moduleName, legacyParamName, value);
+            setModuleParam(moduleName, legacyParamName, paramValue);
         }
     }
     
@@ -445,9 +463,13 @@ public class ServerParams {
             moduleMap = new HashMap<String, Object>();
             m_params.put(moduleName, moduleMap);
         }
-        moduleMap.put(paramName, paramValue);
-        
+        if (paramValue instanceof Collection) {
+            moduleMap.put(paramName, paramValue);
+        } else {
+            moduleMap.put(paramName, paramValue.toString());
+        }
     }
+    
     // Overrides the loaded/default settings by command line arguments.
     private void parseCommandLineArgs(String[] args) throws ConfigurationException {
         if (args == null || args.length == 0) {
@@ -497,8 +519,8 @@ public class ServerParams {
                 logger.info("Parsing parameter override file: {}", overrideFilename);
                 InputStream overrideFile = new FileInputStream(overrideFilename);
                 Yaml yaml = new Yaml();
-                LinkedHashMap<String, ?> overrideColl = (LinkedHashMap<String, ?>)yaml.load(overrideFile);
-                setConfigParams(overrideColl);
+                LinkedHashMap<String, Object> overrideColl = (LinkedHashMap<String, Object>)yaml.load(overrideFile);
+                addConfigParams(overrideColl);
             } catch (Exception e) {
                 logger.error("Failed to parse parameter override file", e);
                 throw new ConfigurationException("Failed to parse command line arguments", e);
@@ -557,7 +579,8 @@ public class ServerParams {
     private static void copyParamsToServerConfig() {
         ServerConfig.createInstance();
         for (String moduleName : INSTANCE.m_params.keySet()) {
-            Map<String, Object> paramMap = (Map<String, Object>)INSTANCE.m_params.get(moduleName);
+            Object moduleParams = INSTANCE.m_params.get(moduleName);
+            Map<String, Object> paramMap = (Map<String, Object>)moduleParams;
             for (String paramName : paramMap.keySet()) {
                 ServerConfig.setParam(paramName, paramMap.get(paramName));
             }

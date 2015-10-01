@@ -177,7 +177,7 @@ public class SpiderService extends StorageService {
         checkServiceState();
         String storeName = objectsStoreName(tableDef);
         Tenant tenant = Tenant.getTenant(tableDef);
-        Iterator<DColumn> colIter = DBService.instance().getAllColumns(tenant, storeName, objID).iterator();
+        Iterator<DColumn> colIter = DBService.instance(tenant).getAllColumns(storeName, objID).iterator();
         if (!colIter.hasNext()) {
             return null;
         }
@@ -425,9 +425,10 @@ public class SpiderService extends StorageService {
                                                              Collection<String> fieldNames) {
         checkServiceState();
         Map<String, Map<String, String>> objScalarMap = new HashMap<>();
+        Tenant tenant = Tenant.getTenant(tableDef);
         if (objIDs.size() > 0 && fieldNames.size() > 0) {
             String storeName = objectsStoreName(tableDef);
-            for(DRow row: DBService.instance().getRows(Tenant.getTenant(tableDef), storeName, objIDs)) {
+            for(DRow row: DBService.instance(tenant).getRows(storeName, objIDs)) {
                 Map<String, String> scalarMap = new HashMap<>();
                 objScalarMap.put(row.getKey(), scalarMap);
                 Iterator<DColumn> colIter = row.getColumns(fieldNames).iterator();
@@ -457,9 +458,10 @@ public class SpiderService extends StorageService {
                                                String             fieldName) {
         checkServiceState();
         Map<String, String> objScalarMap = new HashMap<>();
+        Tenant tenant = Tenant.getTenant(tableDef);
         if (objIDs.size() > 0) {
             String storeName = objectsStoreName(tableDef);
-            for(DRow row: DBService.instance().getRows(Tenant.getTenant(tableDef), storeName, objIDs)) {
+            for(DRow row: DBService.instance(tenant).getRows(storeName, objIDs)) {
                 DColumn col = row.getColumn(fieldName);
                 if (col != null) {
                     String fieldValue = scalarValueToString(tableDef, col.getName(), col.getRawValue());
@@ -565,8 +567,8 @@ public class SpiderService extends StorageService {
     private void deleteApplicationCFs(ApplicationDefinition appDef) {
         Tenant tenant = Tenant.getTenant(appDef);
         for (TableDefinition tableDef : appDef.getTableDefinitions().values()) {
-            DBService.instance().deleteStoreIfPresent(tenant, objectsStoreName(tableDef));
-            DBService.instance().deleteStoreIfPresent(tenant, termsStoreName(tableDef));
+            DBService.instance(tenant).deleteStoreIfPresent(objectsStoreName(tableDef));
+            DBService.instance(tenant).deleteStoreIfPresent(termsStoreName(tableDef));
         }
     }   // deleteApplicationCFs
     
@@ -584,7 +586,8 @@ public class SpiderService extends StorageService {
         }
         TableDefinition tableDef = linkDef.getTableDef();
         String termStore = termsStoreName(tableDef);
-        for(DRow row: DBService.instance().getRows(Tenant.getTenant(tableDef), termStore, termRowKeys)) {
+        Tenant tenant = Tenant.getTenant(tableDef);
+        for(DRow row: DBService.instance(tenant).getRows(termStore, termRowKeys)) {
             for(DColumn column: row.getAllColumns(1024)) {
                 values.add(column.getName());
             }
@@ -807,19 +810,19 @@ public class SpiderService extends StorageService {
     private void verifyApplicationCFs(ApplicationDefinition oldAppDef,
                                       ApplicationDefinition appDef) {
         // Add new table-level CFs:
-        DBService dbService = DBService.instance();
         Tenant tenant = Tenant.getTenant(appDef);
+        DBService dbService = DBService.instance(tenant);
         for (TableDefinition tableDef : appDef.getTableDefinitions().values()) {
-            dbService.createStoreIfAbsent(tenant, objectsStoreName(tableDef), true);
-            dbService.createStoreIfAbsent(tenant, termsStoreName(tableDef), true);
+            dbService.createStoreIfAbsent(objectsStoreName(tableDef), true);
+            dbService.createStoreIfAbsent(termsStoreName(tableDef), true);
         }
         
         // Delete obsolete table-level CFs:
         if (oldAppDef != null) {
             for (TableDefinition oldTableDef : oldAppDef.getTableDefinitions().values()) {
                 if (appDef.getTableDef(oldTableDef.getTableName()) == null) {
-                    dbService.deleteStoreIfPresent(tenant, objectsStoreName(oldTableDef));
-                    dbService.deleteStoreIfPresent(tenant, termsStoreName(oldTableDef));
+                    dbService.deleteStoreIfPresent(objectsStoreName(oldTableDef));
+                    dbService.deleteStoreIfPresent(termsStoreName(oldTableDef));
                 }
             }
         }

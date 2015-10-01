@@ -19,70 +19,88 @@ package com.dell.doradus.service.db;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.Service;
-import com.dell.doradus.service.db.cql.CQLService;
-import com.dell.doradus.service.db.thrift.ThriftService;
+import com.dell.doradus.service.tenant.TenantService;
 
 /**
- * Provides methods that access a persistence instance (i.e., database).
+ * Provides methods that access a persistence instance (i.e., database). Each object
+ * manages data for a specific Tenant. Concrete subclasses must implement the
+ * following method to create instances for a specific tenant.
+ * <pre>
+ *      public static DBService createInstance(Tenant)
+ * </pre>
  */
 public abstract class DBService extends Service {
-    // Choose service based on doradus.yaml setting
-    private static final DBService INSTANCE = selectService();
+    // TODO: Make this an evaporative map in case tenants are deleted by another server.
+    private static final Map<String, DBService> g_tenantServiceMap = new HashMap<>();
     
-    private static DBService selectService() {
-        // TODO: throw if dbservice is not defined
-        String dbServiceName = ServerParams.instance().getModuleParamString("DBService", "dbservice");
-        if (!Utils.isEmpty(dbServiceName)) {
-            try {
-                @SuppressWarnings("unchecked")
-                Class<DBService> serviceClass = (Class<DBService>) Class.forName(dbServiceName);
-                Method instanceMethod = serviceClass.getMethod("instance", (Class<?>[])null);
-                DBService instance = (DBService)instanceMethod.invoke(null, (Object[])null);
-                return instance;
-            } catch (Exception e) {
-                throw new RuntimeException("Error initializing DBService: " + dbServiceName, e);
-            }
-        } else if (ServerParams.instance().getModuleParamBoolean("DBService", "use_cql")) {
-            return CQLService.instance();
-        } else {
-            return ThriftService.instance();
-        }
+    // Choose service based on doradus.yaml setting
+    private static final DBService INSTANCE = createDefaultDBInstance();
+
+    private static DBService createDefaultDBInstance() {
+        Tenant defaultTenant = TenantService.instance().getDefaultTenant();
+        DBService dbservice = createTenantInstance(defaultTenant);
+        g_tenantServiceMap.put(defaultTenant.getName(), dbservice);
+        return dbservice;
     }
     
+    // Tenant served by this DBObject:
+    protected final Tenant m_tenant;
+    
     // Only subclasses can construct an object.
-    protected DBService() {
+    protected DBService(Tenant tenant) {
+        m_tenant = tenant;
+        
         // Give up to 1 second after start() to allow startService() to succeed
         m_startDelayMillis = 1000;
-        
-        // TODO: Temporary until dbservice becomes mandatory.
-        String dbservice = getParamString("dbservice");
-        if (Utils.isEmpty(dbservice)) {
-            m_logger.warn("DBService.dbservice parameter will become mandatory.");
-        }
-        Object use_cql = getParam("use_cql");
-        if (use_cql != null) {
-            m_logger.warn("'use_cql' is being deimplemented");
-        }
     }
     
     /**
-     * Get the singleton instance of this service. The service may or may not have been
-     * initialized yet.
+     * Get the default {@link DBService} instance, which is the object that manages the
+     * default database.
      * 
-     * @return  The singleton instance of this service.
+     * @return  The default DBService object.
      */
     public static DBService instance() {
         return INSTANCE;
     }   // instance
 
+    /**
+     * Get the {@link DBService} instance that manages data for the given tenant.
+     * 
+     * @param tenant    Existing or potentially new tenant.
+     * @return
+     */
+    public static DBService instance(Tenant tenant) {
+        synchronized (g_tenantServiceMap) {
+            DBService dbservice = g_tenantServiceMap.get(tenant.getName());
+            if (dbservice == null) {
+                dbservice = createTenantInstance(tenant);
+                // TODO: another way to do this?
+                dbservice.initialize();
+                dbservice.start();
+                dbservice.waitForFullService();
+                g_tenantServiceMap.put(tenant.getName(), dbservice);
+            }
+            return dbservice;
+        }
+    }
+
     //----- Public Service methods
 
-    // Implemented by subclasses
+    /**
+     * Get the Tenant that this DBService manages data for.
+     * 
+     * @return  This DBService's {@link Tenant}.
+     */
+    public Tenant getTenant() {
+        return m_tenant;
+    }
     
     //----- Public DBService methods: Namespace management
     
@@ -97,70 +115,49 @@ public abstract class DBService extends Service {
     public abstract boolean supportsNamespaces();
     
     /**
-     * Create a new namespace for the given Tenant. It is up to the concrete DBService
-     * class to decide what, if anything, should be done to prepare the new namespace.
-     * This method will throw if {@link #supportsNamespaces()} returns false for this
-     * DBService.
-     *  
-     * @param tenant    {@link Tenant} for which to create a new namespace.
+     * Create a new namespace for this DBService's Tenant. It is up to the concrete
+     * DBService class to decide what, if anything, should be done to prepare the new
+     * namespace. This method will throw if {@link #supportsNamespaces()} returns false
+     * for this DBService.
      */
-    public abstract void createNamespace(Tenant tenant);
-
+    public abstract void createNamespace();
+    
     /**
-     * Delete the namespace for the given Tenant, including its applications and data. 
-     * This method will throw if {@link #supportsNamespaces()} returns false for this
-     * DBService.
-     * 
-     * @param tenant    {@link Tenant} whose applications and data are to be deleted.
+     * Delete the namespace for this DBService's Tenant, including its applications and
+     * data. This method will throw if {@link #supportsNamespaces()} returns false for
+     * this DBService.
      */
-    public abstract void dropNamespace(Tenant tenant);
+    public abstract void dropNamespace();
     
     //----- Public DBService methods: Store management
     
     /**
-     * Create a new store in the given tenant. Columns hold string or binary values as
-     * requested. If the given store already exists, this is a no-op.
+     * Create a new store. Columns hold string or binary values as requested. If the
+     * given store already exists, this is a no-op.
      * 
-     * @param tenant        {@link Tenant} that holds new store.
      * @param storeName     Name of new store to create.
      * @param bBinaryValues True to ensure that new store holds binary values. False means
      *                      columns hold string values.
      */
-    public abstract void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues);
+    public abstract void createStoreIfAbsent(String storeName, boolean bBinaryValues);
     
     /**
-     * Delete the store with the given name belonging to the given tenant. If the store
-     * does not exist, this is a no-op.
+     * Delete the store with the given name. If the store does not exist, this is a no-op.
      * 
-     * @param tenant    Tenant that owns store.
      * @param storeName Name of store to delete.
      */
-    public abstract void deleteStoreIfPresent(Tenant tenant, String storeName);
-
+    public abstract void deleteStoreIfPresent(String storeName);
+    
     //----- Public DBService methods: Updates
     
     /**
-     * Create a new {@link DBTransaction} object that holds updates for stores in the
-     * given tenant that will be committed together. The transactions can be committed by
-     * calling {@link #commit(DBTransaction)}.
+     * Create a new {@link DBTransaction} object that holds updates that will be committed
+     * together. The transactions can be committed by calling {@link #commit(DBTransaction)}.
      * 
-     * @param tenant    {@link Tenant} in which updates will be made.
-     * @return          New {@link DBTransaction}.
+     * @return  New {@link DBTransaction}.
      */
-    public DBTransaction startTransaction(Tenant tenant) {
-        return startTransaction(tenant.getName());
-    }
-    
-    /**
-     * Create a new {@link DBTransaction} object that holds updates for stores in the
-     * given namespace that will be committed together. The transactions can be committed by
-     * calling {@link #commit(DBTransaction)}.
-     * 
-     * @param namespace    namespace in which updates will be made.
-     * @return          New {@link DBTransaction}.
-     */
-    public DBTransaction startTransaction(String namespace) {
-        return new DBTransaction(namespace);
+    public DBTransaction startTransaction() {
+        return new DBTransaction(getTenant());
     }
     
     /**
@@ -186,30 +183,27 @@ public abstract class DBService extends Service {
      * Empty array or null can be returned if no row
      * is found with the given key or no columns in the given interval found.
      * 
-     * @param namespace namespace that owns the store. 
      * @param storeName Name of store to query.
      * @param rowKey    Key of row to fetch.
      * @param startCol  First name in the column names interval, inclusive, or null.
      * @param endCol    Upper bound on the column names interval, exclusive, or null.
      * @return          List of {@link DColumn}s or null. List should be sorted by the column's name
      */
-    public abstract List<DColumn> getColumns(String namespace, String storeName, String rowKey,
-                                         String startColumn, String endColumn, int count);
+    public abstract List<DColumn> getColumns(String storeName, String rowKey,
+                                             String startColumn, String endColumn, int count);
     
-
     /**
      * Get columns by the specified column names.
      * Empty array or null can be returned if no row is found
      * with the given key or no columns with the given column names are found.
      * 
-     * @param namespace   Namespace that owns the store. 
      * @param storeName   Name of store to query.
      * @param rowKey      Key of row to fetch.
      * @param columnNames List of column names to return.
      * @return            List of {@link DColumn}s or null.
      */
-    public abstract List<DColumn> getColumns(String namespace, String storeName, String rowKey, Collection<String> columnNames);
-
+    public abstract List<DColumn> getColumns(String storeName, String rowKey, Collection<String> columnNames);
+    
     /**
      * Use this method to get all the rows in the database.
      * First call should set continuationToken to null,
@@ -217,53 +211,33 @@ public abstract class DBService extends Service {
      * so the chunk should start from the row next after continuationToken
      * Empty array or null can be returned if no rows in the given store are found.
      * 
-     * @param namespace         Namespace that owns the store. 
      * @param storeName         Name of store to query.
      * @param continuationToken Last row of the previous invokation, or null.
      * @param count             Maximum number of rows returned.
      * @return                  List of row names or null.
      */
-    public abstract List<String> getRows(String namespace, String storeName, String continuationToken, int count);
+    public abstract List<String> getRows(String storeName, String continuationToken, int count);
     
     /**
      * Get all columns for the row with the given key in the given store. Columns are
      * returned as an Iterator of {@link DColumn}s. If no row is found with the given key,
      * the iterator's hasNext() will be false.
      * 
-     * @param tenant    {@link Tenant} that owns the store. 
      * @param storeName Name of store to query.
      * @param rowKey    Key of row to fetch.
      * @return          Iterator of {@link DColumn}s. If there is no such row, hasNext()
      *                  will be false.
      */
-    public Iterable<DColumn> getAllColumns(Tenant tenant, String storeName, String rowKey) {
-        return getColumnSlice(tenant, storeName, rowKey, null, null);
+    public Iterable<DColumn> getAllColumns(String storeName, String rowKey) {
+        return getColumnSlice(storeName, rowKey, null, null);
     }
 
-    /**
-     * Get columns by the list of column names. Columns are returned as
-     * a List of {@link DColumn}s. If no row is found with the given key,
-     * the iterator's hasNext() will be false.
-     * 
-     * @param tenant      {@link Tenant} that owns the store. 
-     * @param storeName   Name of store to query.
-     * @param rowKey      Key of row to fetch.
-     * @param columnNames List of column names to fetch.
-     * @return            Iterator of {@link DColumn}s. If there is no such row, hasNext()
-     *                    will be false.
-     */
-    public List<DColumn> getColumns(Tenant tenant, String storeName, String rowKey, Collection<String> columnNames) {
-        DRow row = new DRow(tenant.getName(), storeName, rowKey);
-        return row.getColumns(columnNames, 1024);
-    }
-    
     /**
      * Get columns for the row with the given key in the given store. Columns range
      * is defined by an interval [startCol, endCol]. Columns are returned
      * as an Iterator of {@link DColumn}s. Empty iterator is returned if no row
      * is found with the given key or no columns in the given interval found.
      * 
-     * @param tenant    {@link Tenant} that owns the store. 
      * @param storeName Name of store to query.
      * @param rowKey    Key of row to fetch.
      * @param startCol	First name in the column names interval.
@@ -271,9 +245,8 @@ public abstract class DBService extends Service {
      * @return          Iterator of {@link DColumn}s. If there is no such row, the
      *                  iterator's hasNext() will be false.
      */
-    public Iterable<DColumn> getColumnSlice(Tenant tenant, String storeName,
-            String rowKey, String startCol, String endCol) {
-        DRow row = new DRow(tenant.getName(), storeName, rowKey);
+    public Iterable<DColumn> getColumnSlice(String storeName, String rowKey, String startCol, String endCol) {
+        DRow row = new DRow(m_tenant, storeName, rowKey);
         return row.getColumns(startCol, endCol, 1024);
     }
 
@@ -282,55 +255,38 @@ public abstract class DBService extends Service {
      * is not found, null is returned. Otherwise, a {@link DColumn} containing the column
      * name and value is returned.
      * 
-     * @param tenant    {@link Tenant} that owns the store. 
      * @param storeName Name of store to query.
      * @param rowKey    Key of row to read.
      * @param colName   Name of column to fetch.
      * @return          {@link DColumn} containing the column name and value or null if
      *                  the row or column was not found.
      */
-    public DColumn getColumn(Tenant tenant, String storeName, String rowKey, String colName) {
+    public DColumn getColumn(String storeName, String rowKey, String colName) {
         List<String> colNames = new ArrayList<String>(1);
         colNames.add(colName);
-        List<DColumn> columns = getColumns(tenant.getName(), storeName, rowKey, colNames);
+        List<DColumn> columns = getColumns(storeName, rowKey, colNames);
         if(columns.size() == 0) return null;
         else return columns.get(0);
     }
 
-    public DColumn getLastColumn(Tenant tenant, String storeName, String rowKey, String startCol, String endCol) {
+    public DColumn getLastColumn(String storeName, String rowKey, String startCol, String endCol) {
         DColumn lastCol = null;
-        DRow row = new DRow(tenant.getName(), storeName, rowKey);
+        DRow row = new DRow(m_tenant, storeName, rowKey);
         for(DColumn c: row.getColumns(startCol, endCol, 1024)) {
             lastCol = c;
         }
         return lastCol;
     }
     
-    
     /**
      * Get {@link DRow} object for the given row key.
      * the object will be returned even if the row has no columns or does not exist
      * 
-     * @param tenant    {@link Tenant} that owns the store. 
      * @param storeName Name of physical store to query.
      * @return          {@link DRow} object. May be empty but not null.
      */
-    public Iterable<DRow> getAllRows(Tenant tenant, String storeName) {
-        return new SequenceIterable<DRow>(new RowSequence(tenant.getName(), storeName, 65536));
-    }
-
-    /**
-     * Get iterator for rows with a specific set of keys. Results are returned as an
-     * Iterator of {@link DRow} objects. If any given row is not found, no entry
-     * with its key will be returned.
-     * 
-     * @param tenant    {@link Tenant} that owns the store. 
-     * @param storeName Name of store to query.
-     * @param rowKeys   Collection of row keys to read.
-     * @return          Iterator of {@link DRow} objects. May be empty but not null.
-     */
-    public DRow getRow(Tenant tenant, String storeName, String rowKey) {
-        return new DRow(tenant.getName(), storeName, rowKey);
+    public Iterable<DRow> getAllRows(String storeName) {
+        return new SequenceIterable<DRow>(new RowSequence(m_tenant, storeName, 65536));
     }
     
     /**
@@ -338,15 +294,27 @@ public abstract class DBService extends Service {
      * Iterator of {@link DRow} objects. If any given row is not found, no entry
      * with its key will be returned.
      * 
-     * @param tenant    {@link Tenant} that owns the store. 
      * @param storeName Name of store to query.
      * @param rowKeys   Collection of row keys to read.
      * @return          Iterator of {@link DRow} objects. May be empty but not null.
      */
-    public Iterable<DRow> getRows(Tenant tenant, String storeName, Collection<String> rowKeys) {
+    public DRow getRow(String storeName, String rowKey) {
+        return new DRow(m_tenant, storeName, rowKey);
+    }
+    
+    /**
+     * Get iterator for rows with a specific set of keys. Results are returned as an
+     * Iterator of {@link DRow} objects. If any given row is not found, no entry
+     * with its key will be returned.
+     * 
+     * @param storeName Name of store to query.
+     * @param rowKeys   Collection of row keys to read.
+     * @return          Iterator of {@link DRow} objects. May be empty but not null.
+     */
+    public Iterable<DRow> getRows(String storeName, Collection<String> rowKeys) {
         List<DRow> rows = new ArrayList<>(rowKeys.size());
         for(String rowKey: rowKeys) {
-            rows.add(new DRow(tenant.getName(), storeName, rowKey));
+            rows.add(new DRow(m_tenant, storeName, rowKey));
         }
         return rows;
     }
@@ -362,5 +330,24 @@ public abstract class DBService extends Service {
         }
     }
 
+    //----- Private methods
+    
+    // Create a new DBService for the given tenant. This should only be called when a lock
+    // is held on g_tenantServiceMap
+    private static DBService createTenantInstance(Tenant tenant) {
+        DBService dbservice = null;
+        String dbServiceName = tenant.getDBParamString("dbservice");
+        Utils.require(!Utils.isEmpty(dbServiceName), "'dbservice' parameter is not defined");
+        try {
+            // Find and invoke static method: instance(Tenant)
+            @SuppressWarnings("unchecked")
+            Class<DBService> serviceClass = (Class<DBService>) Class.forName(dbServiceName);
+            Method instanceMethod = serviceClass.getMethod("instance", new Class<?>[]{Tenant.class});
+            dbservice = (DBService)instanceMethod.invoke(null, new Object[]{tenant});
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot load specified 'dbservice': " + dbServiceName, e);
+        }
+        return dbservice;
+    }
+    
 }
-

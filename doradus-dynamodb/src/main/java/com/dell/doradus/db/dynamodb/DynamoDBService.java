@@ -106,13 +106,12 @@ public class DynamoDBService extends DBService {
     private static long READ_CAPACITY_UNITS = 1L;
     private static long WRITE_CAPACITY_UNITS = 1L;
     
-    // Singleton instance:
-    private static DynamoDBService INSTANCE = new DynamoDBService();
-
     // Private members:
     private AmazonDynamoDBClient m_ddbClient;
     
-    private DynamoDBService() { }
+    private DynamoDBService(Tenant tenant) {
+        super(tenant);
+    }
     
     //----- Service methods
 
@@ -121,7 +120,9 @@ public class DynamoDBService extends DBService {
      * 
      * @return  Static DynamoDBService object.
      */
-    public static DynamoDBService instance() {return INSTANCE;}
+    public static DynamoDBService instance(Tenant tenant) {
+        return new DynamoDBService(tenant);
+    }
     
     /**
      * Establish a connection to DynamoDB.
@@ -151,20 +152,20 @@ public class DynamoDBService extends DBService {
     }
     
     @Override
-    public void createNamespace(Tenant tenant) {
+    public void createNamespace() {
         throw new RuntimeException("Namespaces are not supported");
     }
     
     @Override
-    public void dropNamespace(Tenant tenant) {
+    public void dropNamespace() {
         throw new RuntimeException("Namespaces are not supported");
     }
     
     //----- Public DBService methods: Store management
     
     @Override
-    public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
-        checkTenant(tenant.getName());
+    public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
+        checkState();
         if (!Tables.doesTableExist(m_ddbClient, storeName)) {
             // Create a table with a primary hash key named '_key', which holds a string
             m_logger.info("Creating table: {}", storeName);
@@ -188,8 +189,8 @@ public class DynamoDBService extends DBService {
     }
 
     @Override
-    public void deleteStoreIfPresent(Tenant tenant, String storeName) {
-        checkTenant(tenant.getName());
+    public void deleteStoreIfPresent(String storeName) {
+        checkState();
         m_logger.info("Deleting table: {}", storeName);
         try {
             m_ddbClient.deleteTable(new DeleteTableRequest(storeName));
@@ -219,16 +220,16 @@ public class DynamoDBService extends DBService {
      * @param dbTran    {@link DBTransaction} containing updates to commit.
      */
     public void commit(DBTransaction dbTran) {
-        checkTenant(dbTran.getNamespace());
+        checkState();
         DDBTransaction.commit(dbTran);
     }
     
     //----- Public DBService methods: Queries
 
     @Override
-    public List<DColumn> getColumns(String namespace, String storeName, String rowKey,
+    public List<DColumn> getColumns(String storeName, String rowKey,
                                     String startColumn, String endColumn, int count) {
-        checkTenant(namespace);
+        checkState();
         Map<String, AttributeValue> attributeMap = m_ddbClient.getItem(storeName, makeDDBKey(rowKey)).getItem();
         List<DColumn> colList =
             loadAttributes(attributeMap,
@@ -241,8 +242,8 @@ public class DynamoDBService extends DBService {
     }
 
     @Override
-    public List<DColumn> getColumns(String namespace, String storeName, String rowKey, Collection<String> columnNames) {
-        checkTenant(namespace);
+    public List<DColumn> getColumns(String storeName, String rowKey, Collection<String> columnNames) {
+        checkState();
         Map<String, AttributeValue> attributeMap = m_ddbClient.getItem(storeName, makeDDBKey(rowKey)).getItem();
         List<DColumn> colList =
             loadAttributes(attributeMap,
@@ -254,8 +255,8 @@ public class DynamoDBService extends DBService {
     }
 
     @Override
-    public List<String> getRows(String namespace, String storeName, String continuationToken, int count) {
-        checkTenant(namespace);
+    public List<String> getRows(String storeName, String continuationToken, int count) {
+        checkState();
         ScanRequest scanRequest = new ScanRequest(storeName);
         scanRequest.setAttributesToGet(Arrays.asList(ROW_KEY_ATTR_NAME)); // attributes to get
         if (continuationToken != null) {
@@ -366,13 +367,6 @@ public class DynamoDBService extends DBService {
     }
 
     //----- Private methods
-    
-    // Throw if not running or tenant is not default.
-    private void checkTenant(String namespace) {
-        checkState();
-        Utils.require(namespace.equals(ServerConfig.getInstance().keyspace),
-                      "Only the default is currently supported");
-    }
     
     // Set the region or endpoint in m_ddbClient
     private void setRegionOrEndPoint() {

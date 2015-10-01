@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -46,8 +45,7 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SocketOptions;
 import com.datastax.driver.core.policies.RoundRobinPolicy;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerConfig;
-import com.dell.doradus.service.db.DBService;
+import com.dell.doradus.service.db.CassandraService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.Tenant;
@@ -62,38 +60,37 @@ import com.dell.doradus.service.schema.SchemaService;
  * call {@link #storeToCQLName(String)} to add quotes, if needed. Private methods assume
  * this has already been done.
  */
-public class CQLService extends DBService {
+public class CQLService extends CassandraService {
     // Quoted version of Applications CF name:
     private static final String APPS_CQL_NAME = "\"" + SchemaService.APPS_STORE_NAME + "\"";
     
-    // Singleton instance:
-    private static final CQLService INSTANCE = new CQLService();
-
     // Construction via singleton only
-    private CQLService() { }
+    private CQLService(Tenant tenant) {
+        super(tenant);
+        m_statementCache = new CQLStatementCache(tenant);
+    }
 
     // Members:
     private Cluster m_cluster;
     private Session m_session;
     private CQLMetadataCache m_metadataCache;
-    private final CQLStatementCache m_statementCache = new CQLStatementCache();
+    private final CQLStatementCache m_statementCache;
+    private int db_connect_retry_wait_millis;
     
     //----- Public Service methods
 
     /**
-     * Return the singleton CQLService service object.
+     * Return a new CQLService service object that will manage data for the given tenant.
      * 
-     * @return  Static CQLService object.
+     * @return  New CQLService object.
      */
-    public static CQLService instance() {return INSTANCE;}
+    public static CQLService instance(Tenant tenant) {
+        return new CQLService(tenant);
+    }
     
     @Override
     protected void initService() {
-        ServerConfig config = ServerConfig.getInstance();
-        m_logger.info("Using CQL API");
-        m_logger.debug("Cassandra host list: {}", Arrays.toString(config.dbhost.split(",")));
-        m_logger.debug("Cassandra port: {}", config.dbport);
-        m_logger.debug("Default application keyspace: {}", config.keyspace);
+        db_connect_retry_wait_millis = m_tenant.getDBParamInt("db_connect_retry_wait_millis", 1000);
     }
 
     @Override
@@ -116,13 +113,13 @@ public class CQLService extends DBService {
     }
     
     @Override
-    public void createNamespace(Tenant tenant) {
+    public void createNamespace() {
         checkState();
-        String cqlKeyspace = storeToCQLName(tenant.getName());
+        String cqlKeyspace = storeToCQLName(getTenant().getName());
         KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(cqlKeyspace);
         if (ksMetadata == null) {
-            Map<String, String> options = getKeyspaceOptions(tenant);
-            CQLSchemaManager.createKeyspace(cqlKeyspace, options);
+            Map<String, String> options = getKeyspaceOptions(getTenant());
+            CQLSchemaManager.createKeyspace(getTenant(), options);
         }
     }
     
@@ -132,11 +129,10 @@ public class CQLService extends DBService {
     }
 
     @Override
-    public void dropNamespace(Tenant tenant) {
+    public void dropNamespace() {
         checkState();
-        String cqlKeyspace = storeToCQLName(tenant.getName());
-        m_statementCache.purgeKeyspace(cqlKeyspace);
-        CQLSchemaManager.dropKeyspace(cqlKeyspace);
+        m_statementCache.clear();
+        CQLSchemaManager.dropKeyspace(getTenant());
     }
     
     public List<String> getDoradusKeyspaces() {
@@ -154,34 +150,33 @@ public class CQLService extends DBService {
     //----- Public DBService methods: Store management
 
     @Override
-    public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
+    public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
         checkState();
-        String cqlKeyspace = storeToCQLName(tenant.getName());
+        String cqlKeyspace = storeToCQLName(getTenant().getName());
         String tableName = storeToCQLName(storeName);
         if (!storeExists(cqlKeyspace, tableName)) {
-            CQLSchemaManager.createCQLTable(cqlKeyspace, storeName, bBinaryValues);
+            CQLSchemaManager.createCQLTable(getTenant(), storeName, bBinaryValues);
         }
     }   // createStoreIfAbsent
     
     @Override
-    public void deleteStoreIfPresent(Tenant tenant, String storeName) {
+    public void deleteStoreIfPresent(String storeName) {
         checkState();
-        String cqlKeyspace = storeToCQLName(tenant.getName());
+        String cqlKeyspace = storeToCQLName(getTenant().getName());
         String tableName = storeToCQLName(storeName);
         if (storeExists(cqlKeyspace, tableName)) {
-            CQLSchemaManager.dropCQLTable(cqlKeyspace, tableName);
+            CQLSchemaManager.dropCQLTable(getTenant(), tableName);
         }
     }   // deleteStoreIfPresent
 
     /**
-     * Return true if column values for the given namespace/store name are binary.
+     * Return true if column values for the given store name are binary.
      * 
-     * @param namespace Namespace (Keyspace) name.
      * @param storeName Store (ColumnFamily) name.
      * @return          True if the given table's column values are binary.
      */
-    public boolean columnValueIsBinary(String namespace, String storeName) {
-        return m_metadataCache.columnValueIsBinary(namespace, storeName);
+    public boolean columnValueIsBinary(String storeName) {
+        return m_metadataCache.columnValueIsBinary(getTenant().getName(), storeName);
     }
 
     //----- Public DBService methods: Updates
@@ -195,14 +190,11 @@ public class CQLService extends DBService {
     //----- Public DBService methods: Queries
 
     @Override
-    public List<DColumn> getColumns(String namespace, String storeName,
-            String rowKey, String startColumn, String endColumn, int count) {
+    public List<DColumn> getColumns(String storeName, String rowKey, String startColumn, String endColumn, int count) {
         checkState();
-        String keyspace = storeToCQLName(namespace);
         String tableName = storeToCQLName(storeName);
-        boolean isValueBinary = columnValueIsBinary(namespace, storeName);
+        boolean isValueBinary = columnValueIsBinary(storeName);
         ResultSet rs = executeQuery(Query.SELECT_1_ROW_COLUMN_RANGE,
-                                    keyspace,
                                     tableName,
                                     rowKey,
                                     startColumn == null ? "" : startColumn,
@@ -224,14 +216,11 @@ public class CQLService extends DBService {
     }
 
     @Override
-    public List<DColumn> getColumns(String namespace, String storeName,
-            String rowKey, Collection<String> columnNames) {
+    public List<DColumn> getColumns(String storeName, String rowKey, Collection<String> columnNames) {
         checkState();
-        String keyspace = storeToCQLName(namespace);
         String tableName = storeToCQLName(storeName);
-        boolean isValueBinary = columnValueIsBinary(namespace, storeName);
+        boolean isValueBinary = columnValueIsBinary(storeName);
         ResultSet rs = executeQuery(Query.SELECT_1_ROW_COLUMN_SET,
-                                    keyspace,
                                     tableName,
                                     rowKey,
                                     columnNames);
@@ -251,16 +240,13 @@ public class CQLService extends DBService {
     }
 
     @Override
-    public List<String> getRows(String namespace, String storeName,
-            String continuationToken, int count) {
+    public List<String> getRows(String storeName, String continuationToken, int count) {
         checkState();
-        String keyspace = storeToCQLName(namespace);
         String tableName = storeToCQLName(storeName);
         Set<String> rows = new HashSet<String>();
         //unfortunately I don't know how to get one record per row in CQL so we'll read everything
         //and find out the rows
         ResultSet rs = executeQuery(Query.SELECT_ROWS_RANGE,
-                                    keyspace,
                                     tableName);
         while(true) {
             Row r = rs.one();
@@ -284,36 +270,30 @@ public class CQLService extends DBService {
 
     /**
      * Get the {@link PreparedStatement} for the given {@link CQLStatementCache.Query} to
-     * the given table name, residing in the given keyspace. If needed, the query
-     * statement is compiled and cached.
+     * the given table name. If needed, the query statement is compiled and cached.
      * 
-     * @param keyspace      Keyspace name.
      * @param query         Query statement type.
      * @param storeName     Store (ColumnFamily) name.
-     * @return              PreparedStatement for requested keyspace/table/update.
+     * @return              PreparedStatement for requested table/query.
      */
-    public PreparedStatement getPreparedQuery(String keyspace, Query query, String storeName) {
-        String cqlKeyspace = storeToCQLName(keyspace);
+    public PreparedStatement getPreparedQuery(Query query, String storeName) {
         String tableName = storeToCQLName(storeName);
-        return m_statementCache.getPreparedQuery(cqlKeyspace, tableName, query);
+        return m_statementCache.getPreparedQuery(tableName, query);
     }   // getPreparedQuery
     
-    /**
-     * Get the {@link PreparedStatement} for the given {@link CQLStatementCache.Update} to
-     * the given table name, residing in the given keyspace. If needed, the update
-     * statement is compiled and cached.
-     * 
-     * @param keyspace      Keyspace name.
-     * @param update        Update statement type.
-     * @param storeName     Store (ColumnFamily) name.
-     * @return              PreparedStatement for requested keyspace/table/update.
-     */
-	public PreparedStatement getPreparedUpdate(String keyspace, Update update, String storeName) {
-        String cqlKeyspace = storeToCQLName(keyspace);
-        String tableName = storeToCQLName(storeName);
-        return m_statementCache.getPreparedUpdate(cqlKeyspace, tableName, update);
-    }  // getPreparedUpdate
-    
+	/**
+	 * Get the {@link PreparedStatement} for the given {@link CQLStatementCache.Update} to
+	 * the given table name. If needed, the update statement is compiled and cached.
+	 * 
+	 * @param update        Update statement type.
+	 * @param storeName     Store (ColumnFamily) name.
+	 * @return              PreparedStatement for requested table/update.
+	 */
+	public PreparedStatement getPreparedUpdate(Update update, String storeName) {
+	    String tableName = storeToCQLName(storeName);
+	    return m_statementCache.getPreparedUpdate(tableName, update);
+	}  // getPreparedUpdate
+	
     /**
      * Get the CQL session being used by this CQL service.
      * 
@@ -347,11 +327,11 @@ public class CQLService extends DBService {
     }   // storeExists
 
     // Execute the given query for the given table using the given values.
-    private ResultSet executeQuery(Query query, String cqlKeyspace, String tableName, Object... values) {
-        assert cqlKeyspace.charAt(0) == '"';
+    private ResultSet executeQuery(Query query, String tableName, Object... values) {
+        String cqlKeyspace = storeToCQLName(getTenant().getName());
         m_logger.debug("Executing statement {} on table {}.{}; total params={}",
                        new Object[]{query, cqlKeyspace, tableName, values.length});
-        PreparedStatement prepState = getPreparedQuery(cqlKeyspace, query, tableName);
+        PreparedStatement prepState = getPreparedQuery(query, tableName);
         BoundStatement boundState = prepState.bind(values);
         return m_session.execute(boundState);
     }   // executeQuery
@@ -368,7 +348,7 @@ public class CQLService extends DBService {
                 m_cluster = null;
                 m_logger.info("Database is not reachable: {}. Waiting to retry", e);
                 try {
-                    Thread.sleep(ServerConfig.getInstance().db_connect_retry_wait_millis);
+                    Thread.sleep(db_connect_retry_wait_millis);
                 } catch (InterruptedException ex2) {
                     // ignore
                 }
@@ -378,34 +358,35 @@ public class CQLService extends DBService {
 
     // Build Cluster object from ServerConfig settings.
     private Cluster buildClusterSpecs() {
-        ServerConfig config = ServerConfig.getInstance();
         Cluster.Builder builder = Cluster.builder();
         
         // dbhost
-        String[] nodeAddresses = config.dbhost.split(",");
+        String dbhost = m_tenant.getDBParamString("dbhost");
+        String[] nodeAddresses = dbhost.split(",");
         for (String address : nodeAddresses) {
             builder.addContactPoint(address);
         }
         
         // dbport
-        builder.withPort(ServerConfig.getInstance().dbport);
+        builder.withPort(m_tenant.getDBParamInt("dbport", 9042));
         
         // db_timeout_millis and db_connect_retry_wait_millis
         SocketOptions socketOpts = new SocketOptions();
-        socketOpts.setReadTimeoutMillis(config.db_timeout_millis);
-        socketOpts.setConnectTimeoutMillis(config.db_connect_retry_wait_millis);
+        socketOpts.setReadTimeoutMillis(m_tenant.getDBParamInt("db_timeout_millis", 10000));
+        socketOpts.setConnectTimeoutMillis(m_tenant.getDBParamInt("db_connect_retry_wait_millis", 5000));
         builder.withSocketOptions(socketOpts);
         
         // dbuser/dbpassword
-        if (!Utils.isEmpty(config.dbuser)) {
-            builder.withCredentials(config.dbuser, config.dbpassword);
+        String dbuser = m_tenant.getDBParamString("dbuser");
+        if (!Utils.isEmpty(dbuser)) {
+            builder.withCredentials(dbuser, m_tenant.getDBParamString("dbpassword"));
         }
         
         // compression
         builder.withCompression(Compression.SNAPPY);
         
         // TLS/SSL
-        if (config.dbtls) {
+        if (m_tenant.getDBParamBoolean("dbtls")) {
             builder.withSSL(getSSLOptions());
         }
         
@@ -414,17 +395,17 @@ public class CQLService extends DBService {
 
     // Build SSLOptions from SSL/TLS configuration options. 
     private SSLOptions getSSLOptions() {
-        ServerConfig config = ServerConfig.getInstance();
         SSLContext sslContext = null;
         try {
-            sslContext = getSSLContext(config.truststore,
-                                       config.truststorepassword,
-                                       config.keystore,
-                                       config.keystorepassword);
+            sslContext = getSSLContext(m_tenant.getDBParamString("truststore"),
+                                       m_tenant.getDBParamString("truststorepassword"),
+                                       m_tenant.getDBParamString("keystore"),
+                                       m_tenant.getDBParamString("keystorepassword"));
         } catch (Exception e) {
             throw new RuntimeException("Unable to build SSLContext", e);
         }
-        List<String> cipherSuites = config.dbtls_cipher_suites;
+        @SuppressWarnings("unchecked")
+        List<String> cipherSuites = (List<String>)m_tenant.getDBParam("dbtls_cipher_suites");
         if (cipherSuites == null) {
             cipherSuites = new ArrayList<>();
         }

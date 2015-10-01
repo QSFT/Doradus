@@ -17,13 +17,14 @@
 package com.dell.doradus.service.db.cql;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.datastax.driver.core.PreparedStatement;
+import com.dell.doradus.service.db.DBService;
+import com.dell.doradus.service.db.Tenant;
 
 /**
  * Creates and caches prepared query and update statements. The first time a {@link Query}
@@ -34,15 +35,20 @@ import com.datastax.driver.core.PreparedStatement;
 public class CQLStatementCache {
     // Members:
     private final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
+    private final Tenant m_tenant;
+    private final String m_keyspace;
     
-    // Key is "<keyspace>.<table>"
+    // Key is table name.
     private final Map<String, Map<Query, PreparedStatement>> m_prepQueryMap = new HashMap<>();
     private final Map<String, Map<Update, PreparedStatement>> m_prepUpdateMap = new HashMap<>();
     
     /**
      * Create a new empty statement cache.
      */
-    public CQLStatementCache() { }
+    public CQLStatementCache(Tenant tenant) {
+        m_tenant = tenant;
+        m_keyspace = CQLService.storeToCQLName(m_tenant.getName());
+    }
     
     /**
      * Prepared query statement types.
@@ -67,25 +73,23 @@ public class CQLStatementCache {
     }
     
     /**
-     * Get the given prepared statement for the given keyspace, table, and query. Upon
+     * Get the given prepared statement for the given table and query. Upon
      * first invocation for a given combo, the query is parsed and cached.
      *
-     * @param keyspace  Name of keyspace that owns table (should be quoted).
      * @param tableName Name of table to customize query for.
      * @param query     Inquiry {@link Query}.
      * @return          PreparedStatement for given combo.
      */
-    public PreparedStatement getPreparedQuery(String keyspace, String tableName, Query query) {
-        String mapKey = createMapKey(keyspace, tableName);
+    public PreparedStatement getPreparedQuery(String tableName, Query query) {
         synchronized (m_prepQueryMap) {
-            Map<Query, PreparedStatement> statementMap = m_prepQueryMap.get(mapKey);
+            Map<Query, PreparedStatement> statementMap = m_prepQueryMap.get(tableName);
             if (statementMap == null) {
                 statementMap = new HashMap<>();
-                m_prepQueryMap.put(mapKey, statementMap);
+                m_prepQueryMap.put(tableName, statementMap);
             }
             PreparedStatement prepState = statementMap.get(query);
             if (prepState == null) {
-                prepState = prepareQuery(keyspace, tableName, query);
+                prepState = prepareQuery(tableName, query);
                 statementMap.put(query, prepState);
             }
             return prepState;
@@ -93,25 +97,23 @@ public class CQLStatementCache {
     }   // getPreparedQuery
 
     /**
-     * Get the given prepared statement for the given keyspace, table, and update. Upon
+     * Get the given prepared statement for the given table and update. Upon
      * first invocation for a given combo, the query is parsed and cached.
      * 
-     * @param keyspace  Name of keyspace that owns table (should be quoted).
      * @param tableName Name of table to customize update for.
      * @param update    Inquiry {@link Update}.
      * @return          PreparedStatement for given combo.
      */
-    public PreparedStatement getPreparedUpdate(String keyspace, String tableName, Update update) {
-        String mapKey = createMapKey(keyspace, tableName);
+    public PreparedStatement getPreparedUpdate(String tableName, Update update) {
         synchronized (m_prepUpdateMap) {
-            Map<Update, PreparedStatement> statementMap = m_prepUpdateMap.get(mapKey);
+            Map<Update, PreparedStatement> statementMap = m_prepUpdateMap.get(tableName);
             if (statementMap == null) {
                 statementMap = new HashMap<>();
-                m_prepUpdateMap.put(mapKey, statementMap);
+                m_prepUpdateMap.put(tableName, statementMap);
             }
             PreparedStatement prepState = statementMap.get(update);
             if (prepState == null) {
-                prepState = prepareUpdate(keyspace, tableName, update);
+                prepState = prepareUpdate(tableName, update);
                 statementMap.put(update, prepState);
             }
             return prepState;
@@ -119,40 +121,27 @@ public class CQLStatementCache {
     }   // getPreparedUpdate
 
     /**
-     * Purge all cached statements for the given keyspace.
-     * 
-     * @param keyspace  Quoted CQL keyspace name.
+     * Purge all cached statements.
      */
-    public void purgeKeyspace(String keyspace) {
-        assert keyspace.charAt(0) == '"';
-        String prefix = keyspace + ".";
+    public void clear() {
         synchronized (m_prepQueryMap) {
-            Iterator<String> iter = m_prepQueryMap.keySet().iterator();
-            while (iter.hasNext()) {
-                if (iter.next().startsWith(prefix)) {
-                    iter.remove();
-                }
-            }
+            m_prepQueryMap.clear();
         }
         
         synchronized (m_prepUpdateMap) {
-            Iterator<String> iter = m_prepUpdateMap.keySet().iterator();
-            while (iter.hasNext()) {
-                if (iter.next().startsWith(prefix)) {
-                    iter.remove();
-                }
-            }
+            m_prepUpdateMap.clear();
         }
     }
 
     //----- Private methods
     
     // Create a prepared statement for the given query/table combo.
-    private PreparedStatement prepareQuery(String keyspace, String tableName, Query query) {
-        assert keyspace.charAt(0) == '"';
+    private PreparedStatement prepareQuery(String tableName, Query query) {
         // All queries start with SELECT * FROM <keyspace>.<table>
         StringBuilder cql = new StringBuilder("SELECT * FROM ");
-        cql.append(createMapKey(keyspace, tableName));
+        cql.append(m_keyspace);
+        cql.append(".");
+        cql.append(tableName);
         
         switch (query) {
         case SELECT_1_ROW_1_COLUMN:
@@ -172,60 +161,67 @@ public class CQLStatementCache {
             throw new RuntimeException("Not supported: " + query);
         }
         m_logger.debug("Preparing query statement: {}", cql);
-        return CQLService.instance().getSession().prepare(cql.toString());
+        return ((CQLService)DBService.instance(m_tenant)).getSession().prepare(cql.toString());
     }   // prepareQuery
 
     // Create a prepared statement for the given query/table combo.
-    private PreparedStatement prepareUpdate(String keyspace, String tableName, Update update) {
+    private PreparedStatement prepareUpdate(String tableName, Update update) {
         StringBuilder cql = new StringBuilder();
         switch (update) {
         case INSERT_ROW:
             // INSERT INTO <keyspace>.<table> (key,column1,value) VALUES (<key>, <colname>, <colvalue>);
             cql.append("INSERT INTO ");
-            cql.append(createMapKey(keyspace, tableName));
+            cql.append(m_keyspace);
+            cql.append(".");
+            cql.append(tableName);
             cql.append(" (key,column1,value) VALUES (?, ?, ?);");
             break;
         case INSERT_ROW_TS:
             // INSERT INTO <keyspace>.<table> (key,column1,value) VALUES (<key>, <colname>, <colvalue>) USING TIMESTAMP <timestamp>;
             // Note timestamp is the last parameter
             cql.append("INSERT INTO ");
-            cql.append(createMapKey(keyspace, tableName));
+            cql.append(m_keyspace);
+            cql.append(".");
+            cql.append(tableName);
             cql.append(" (key,column1,value) VALUES (?, ?, ?) USING TIMESTAMP ?;");
             break;
         case DELETE_COLUMN:
             // DELETE FROM <keyspace>.<table> WHERE key=<key> AND column1=<column name>;
             cql.append("DELETE FROM ");
-            cql.append(createMapKey(keyspace, tableName));
+            cql.append(m_keyspace);
+            cql.append(".");
+            cql.append(tableName);
             cql.append(" WHERE key=? AND column1=?;");
             break;
         case DELETE_COLUMN_TS:
             // DELETE FROM <keyspace>.<table> USING TIMESTAMP <timestamp> WHERE key=<key> AND column1=<column name>;
             // Note timestamp is the first parameter
             cql.append("DELETE FROM ");
-            cql.append(createMapKey(keyspace, tableName));
+            cql.append(m_keyspace);
+            cql.append(".");
+            cql.append(tableName);
             cql.append(" USING TIMESTAMP ? WHERE key=? AND column1=?;");
             break;
         case DELETE_ROW:
             // DELETE FROM <keyspace>.<table> WHERE key='key';
             cql.append("DELETE FROM ");
-            cql.append(createMapKey(keyspace, tableName));
+            cql.append(m_keyspace);
+            cql.append(".");
+            cql.append(tableName);
             cql.append(" WHERE key=?;");
             break;
         case DELETE_ROW_TS:
             // DELETE FROM <keyspace>.<table> USING TIMESTAMP <timestamp> WHERE key='key';
             // Note timestamp is the first parameter
             cql.append("DELETE FROM ");
-            cql.append(createMapKey(keyspace, tableName));
+            cql.append(m_keyspace);
+            cql.append(".");
+            cql.append(tableName);
             cql.append(" USING TIMESTAMP ? WHERE key=?;");
             break;
         }
         m_logger.debug("Preparing update statement: {}", cql);
-        return CQLService.instance().getSession().prepare(cql.toString());
+        return ((CQLService)DBService.instance(m_tenant)).getSession().prepare(cql.toString());
     }   // prepareUpdate
-
-    private String createMapKey(String keyspace, String tableName) {
-        assert keyspace.charAt(0) == '"';
-        return keyspace + "." + tableName;
-    }
 
 }   // class CQLStatementCache

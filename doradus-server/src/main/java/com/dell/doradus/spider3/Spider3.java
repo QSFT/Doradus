@@ -44,7 +44,6 @@ import com.dell.doradus.utilities.Timer;
 public class Spider3 {
     private static Spider3 m_instance;
     private Logger m_logger = LoggerFactory.getLogger(getClass());
-    private DBService m_service = DBService.instance(); 
     
     Spider3() {}
     
@@ -55,11 +54,11 @@ public class Spider3 {
     
 
     public void createApplication(Tenant tenant, String application) {
-        m_service.createStoreIfAbsent(tenant, application, true);
+        DBService.instance(tenant).createStoreIfAbsent(application, true);
     }
 
     public void deleteApplication(Tenant tenant, String application) {
-        DBService.instance().deleteStoreIfPresent(tenant, application);
+        DBService.instance(tenant).deleteStoreIfPresent(application);
     }
 
     public Tenant getTenant(ApplicationDefinition appDef) {
@@ -71,7 +70,7 @@ public class Spider3 {
     public ApplicationDefinition addDynamicFields(ApplicationDefinition appDef) {
         Tenant tenant = getTenant(appDef);
         String store = appDef.getAppName();
-        for(DColumn column: m_service.getAllColumns(tenant, store, "_fields")) {
+        for(DColumn column: DBService.instance(tenant).getAllColumns(store, "_fields")) {
             String[] nv = column.getName().split("/");
             String tableName = nv[0];
             String fieldName = nv[1];

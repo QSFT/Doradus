@@ -39,8 +39,8 @@ import com.dell.doradus.common.Utils;
  */
 public class DBTransaction {
     private static final byte[] EMPTY = new byte[0];
-    // The namespace of the transaction
-    private String  m_namespace;
+    // The Tenant of the transaction
+    private Tenant m_tenant;
     //Column updates
     private Set<ColumnUpdate> m_columnUpdates = new HashSet<>();
     //Column deletes
@@ -51,8 +51,8 @@ public class DBTransaction {
     /**
      * Create a new DBTransaction.
      */
-    public DBTransaction(String namespace) {
-        m_namespace = namespace;
+    public DBTransaction(Tenant tenant) {
+        m_tenant = tenant;
     }
    
     /**
@@ -65,10 +65,10 @@ public class DBTransaction {
     }
 
     /**
-     * Get the namespace of the transaction.
+     * Get the {@link Tenant} of the transaction.
      */
-    public String getNamespace() {
-        return m_namespace;
+    public Tenant getTenant() {
+        return m_tenant;
     }
     
     //----- Statistics
@@ -266,7 +266,7 @@ public class DBTransaction {
      * @param logger  Logger to trace mutations to.
      */
     public void traceMutations(Logger logger) {
-        logger.debug("Transaction in " + getNamespace() + ": " + getMutationsCount() + " mutations");
+        logger.debug("Transaction in " + getTenant().getName() + ": " + getMutationsCount() + " mutations");
         for(ColumnUpdate mutation: getColumnUpdates()) {
             logger.trace(mutation.toString());
         }

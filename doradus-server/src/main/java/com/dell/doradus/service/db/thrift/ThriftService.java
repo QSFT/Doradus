@@ -20,7 +20,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,29 +31,29 @@ import org.apache.cassandra.thrift.KeySlice;
 
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.service.db.CassandraService;
 import com.dell.doradus.service.db.DBNotAvailableException;
-import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.schema.SchemaService;
 
-public class ThriftService extends DBService {
-    private static final ThriftService INSTANCE = new ThriftService();
-
+public class ThriftService extends CassandraService {
     // Members to handle rotation host selection:
     private final Object m_lastHostLock = new Object();
     private String       m_lastHost;
     private boolean      m_bUseSecondaryHosts;
     private long         m_lastPrimaryHostCheckTimeMillis;
     
-    // Keyspace names to DBConn queue:
-    private final Map<String, Queue<DBConn>> m_dbKeyspaceDBConns = new HashMap<>();
+    // DBConn queue:
+    private final Queue<DBConn> m_dbConns = new ArrayDeque<>();
     
     // Single-thread all schema access:
     private static final Object g_schemaLock = new Object();
 
-    private ThriftService() { }
+    private ThriftService(Tenant tenant) {
+        super(tenant);
+    }
 
     //----- Public Service methods
 
@@ -63,10 +62,13 @@ public class ThriftService extends DBService {
      * 
      * @return  Static ThriftService object.
      */
-    public static ThriftService instance() {return INSTANCE;}
+    public static ThriftService instance(Tenant tenant) {
+        return new ThriftService(tenant);
+    }
     
     @Override
     public void initService() {
+        // TODO: Get parameters from Tenant
         ServerConfig config = ServerConfig.getInstance();
         m_logger.info("Using Thrift API");
         m_logger.info("Cassandra host list: {}", Arrays.toString(config.dbhost.split(",")));
@@ -92,14 +94,14 @@ public class ThriftService extends DBService {
     }
     
     @Override
-    public void createNamespace(Tenant tenant) {
+    public void createNamespace() {
         checkState();
         // Use a temporary, no-keyspace session
         try (DBConn dbConn = createAndConnectConn(null)) {
             synchronized (g_schemaLock) {
-                String keyspace = tenant.getName();
+                String keyspace = getTenant().getName();
                 if (!CassandraSchemaMgr.keyspaceExists(dbConn, keyspace)) {
-                    Map<String, String> options = getKeyspaceOptions(tenant);
+                    Map<String, String> options = getKeyspaceOptions(getTenant());
                     CassandraSchemaMgr.createKeyspace(dbConn, keyspace, options);
                 }
             }
@@ -112,12 +114,12 @@ public class ThriftService extends DBService {
     }
 
     @Override
-    public void dropNamespace(Tenant tenant) {
+    public void dropNamespace() {
         checkState();
         // Use a temporary, no-keyspace session
         try (DBConn dbConn = createAndConnectConn(null)) {
             synchronized (g_schemaLock) {
-                String keyspace = tenant.getName();
+                String keyspace = getTenant().getName();
                 if (CassandraSchemaMgr.keyspaceExists(dbConn, keyspace)) {
                     CassandraSchemaMgr.dropKeyspace(dbConn, keyspace);
                 }
@@ -145,10 +147,10 @@ public class ThriftService extends DBService {
     //----- Public DBService methods: Store management
 
     @Override
-    public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
+    public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
         checkState();
-        String keyspace = tenant.getName();
-        DBConn dbConn = getDBConnection(keyspace);
+        String keyspace = getTenant().getName();
+        DBConn dbConn = getDBConnection();
         try {
             synchronized (g_schemaLock) {
                 if (!CassandraSchemaMgr.columnFamilyExists(dbConn, keyspace, storeName)) {
@@ -161,10 +163,10 @@ public class ThriftService extends DBService {
     }   // createStoreIfAbsent
     
     @Override
-    public void deleteStoreIfPresent(Tenant tenant, String storeName) {
+    public void deleteStoreIfPresent(String storeName) {
         checkState();
-        String keyspace = tenant.getName();
-        DBConn dbConn = getDBConnection(keyspace);
+        String keyspace = getTenant().getName();
+        DBConn dbConn = getDBConnection();
         try {
             synchronized (g_schemaLock) {
                 if (CassandraSchemaMgr.columnFamilyExists(dbConn, keyspace, storeName)) {
@@ -181,7 +183,8 @@ public class ThriftService extends DBService {
     @Override
     public void commit(DBTransaction dbTran) {
         checkState();
-        DBConn dbConn = getDBConnection(dbTran.getNamespace());
+        assert dbTran.getTenant().getName().equals(this.getTenant().getName());
+        DBConn dbConn = getDBConnection();
         try {
             dbConn.commit(dbTran);
         } finally {
@@ -192,10 +195,9 @@ public class ThriftService extends DBService {
     //----- Public DBService methods: Queries
 
     @Override
-    public List<DColumn> getColumns(String namespace, String storeName,
-            String rowKey, String startColumn, String endColumn, int count) {
+    public List<DColumn> getColumns(String storeName, String rowKey, String startColumn, String endColumn, int count) {
         checkState();
-        DBConn dbConn = getDBConnection(namespace);
+        DBConn dbConn = getDBConnection();
         try {
             List<ColumnOrSuperColumn> columns = dbConn.getSlice(
                     CassandraDefs.columnParent(storeName),
@@ -212,10 +214,9 @@ public class ThriftService extends DBService {
     }
 
     @Override
-    public List<DColumn> getColumns(String namespace, String storeName,
-            String rowKey, Collection<String> columnNames) {
+    public List<DColumn> getColumns(String storeName, String rowKey, Collection<String> columnNames) {
         checkState();
-        DBConn dbConn = getDBConnection(namespace);
+        DBConn dbConn = getDBConnection();
         try {
             List<byte[]> colNameList = new ArrayList<>(columnNames.size());
             for (String colName : columnNames) {
@@ -237,9 +238,9 @@ public class ThriftService extends DBService {
     }
 
     @Override
-    public List<String> getRows(String namespace, String storeName, String continuationToken, int count) {
+    public List<String> getRows(String storeName, String continuationToken, int count) {
         checkState();
-        DBConn dbConn = getDBConnection(namespace);
+        DBConn dbConn = getDBConnection();
         try {
             List<KeySlice> keys = dbConn.getRangeSlices(
                     CassandraDefs.columnParent(storeName), 
@@ -255,24 +256,16 @@ public class ThriftService extends DBService {
         }
     }
 
-    
-    
     //----- Package-private methods
-    
-    // Get an available database connection from the pool for the given keyspace, creating
-    // a new one if needed.
-    DBConn getDBConnection(String keyspace) {
+
+    // Get an available database connection from the pool, creating a new one if needed.
+    DBConn getDBConnection() {
         DBConn dbConn = null;
-        synchronized (m_dbKeyspaceDBConns) {
-            Queue<DBConn> dbQueue = m_dbKeyspaceDBConns.get(keyspace);
-            if (dbQueue == null) {
-                dbQueue = new ArrayDeque<>();
-                m_dbKeyspaceDBConns.put(keyspace, dbQueue);
-            }
-            if (dbQueue.size() > 0) {
-                dbConn = dbQueue.poll();
+        synchronized (m_dbConns) {
+            if (m_dbConns.size() > 0) {
+                dbConn = m_dbConns.poll();
             } else {
-                dbConn = createAndConnectConn(keyspace);
+                dbConn = createAndConnectConn(getTenant().getName());
             }
         }
         return dbConn;
@@ -362,7 +355,7 @@ public class ThriftService extends DBService {
     // DBNotAvailableException if no connection is possible. Throw a RuntimeException ifa
     // the given keyspace does not exist.
     private DBConn createAndConnectConn(String keyspace) throws DBNotAvailableException, RuntimeException {
-        DBConn dbConn = new DBConn(keyspace);
+        DBConn dbConn = new DBConn(this, keyspace);
         connectDBConn(dbConn);
         return dbConn;
     }   // createAndConnectConn
@@ -388,17 +381,10 @@ public class ThriftService extends DBService {
         return host;
     }   // chooseHost
     
-    // Add/return the given DBConnection to the keyspace/connection list map.
+    // Add/return the given DBConnection to the connection queue.
     private void returnGoodConnection(DBConn dbConn) {
-        String keyspace = dbConn.getKeyspace();
-        assert !Utils.isEmpty(keyspace);
-        synchronized (m_dbKeyspaceDBConns) {
-            Queue<DBConn> connQueue = m_dbKeyspaceDBConns.get(keyspace);
-            if (connQueue == null) {
-                connQueue = new ArrayDeque<>();
-                m_dbKeyspaceDBConns.put(keyspace, connQueue);
-            }
-            connQueue.add(dbConn);
+        synchronized (m_dbConns) {
+            m_dbConns.add(dbConn);
         }
     }   // returnGoodConnection
 
@@ -424,16 +410,13 @@ public class ThriftService extends DBService {
 
     // Close and delete all db connections, e.g., 'cause we're shutting down.
     private void purgeAllConnections() {
-        synchronized (m_dbKeyspaceDBConns) {
-            for (String keyspace : m_dbKeyspaceDBConns.keySet()) {
-                Iterator<DBConn> iter = m_dbKeyspaceDBConns.get(keyspace).iterator();
-                while (iter.hasNext()) {
-                    DBConn dbConn = iter.next();
-                    dbConn.close();
-                    iter.remove();
-                }
+        synchronized (m_dbConns) {
+            Iterator<DBConn> iter = m_dbConns.iterator();
+            while (iter.hasNext()) {
+                DBConn dbConn = iter.next();
+                dbConn.close();
+                iter.remove();
             }
-            m_dbKeyspaceDBConns.clear();
         }
     }   // purgeAllConnections
 

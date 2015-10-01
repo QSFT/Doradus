@@ -27,17 +27,17 @@ import java.util.List;
  * were retrieved from the database.
  */
 public class DRow {
-    private String m_namespace;
+    private Tenant m_tenant;
     private String m_storeName;
     private String m_rowKey;
     
-    public DRow(String namespace, String storeName, String rowKey) {
-        m_namespace = namespace;
+    public DRow(Tenant tenant, String storeName, String rowKey) {
+        m_tenant = tenant;
         m_storeName = storeName;
         m_rowKey = rowKey;
     }
     
-    public String getNamespace() { return m_namespace; }
+    public Tenant getTenant() { return m_tenant; }
     public String getStoreName() { return m_storeName; }
     public String getRowKey() { return m_rowKey; }
     public String getKey() { return m_rowKey; } // for backward compatibility
@@ -51,7 +51,7 @@ public class DRow {
     }
     
     public List<DColumn> getColumns(Collection<String> columnNames) {
-        return DBService.instance().getColumns(m_namespace, m_storeName, m_rowKey, columnNames);
+        return DBService.instance(m_tenant).getColumns(m_storeName, m_rowKey, columnNames);
     }
 
     public DColumn getColumn(String columnName) {
@@ -71,13 +71,13 @@ public class DRow {
         for(String columnName: columnNames) {
             partial.add(columnName);
             if(partial.size() >= chunkSize) {
-                List<DColumn> partialList = DBService.instance().getColumns(m_namespace, m_storeName, m_rowKey, partial);
+                List<DColumn> partialList = DBService.instance(m_tenant).getColumns(m_storeName, m_rowKey, partial);
                 columns.addAll(partialList);
                 partial.clear();
             }
         }
         if(partial.size() > 0) {
-            List<DColumn> partialList = DBService.instance().getColumns(m_namespace, m_storeName, m_rowKey, partial);
+            List<DColumn> partialList = DBService.instance(m_tenant).getColumns(m_storeName, m_rowKey, partial);
             columns.addAll(partialList);
             partial.clear();
         }

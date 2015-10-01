@@ -65,13 +65,17 @@ public class HybridService extends DBService {
     private DBService m_serviceDatastore;
     private int m_valueThreshold;
     protected final Logger m_logger = LoggerFactory.getLogger(getClass());
-    private static final HybridService INSTANCE = new HybridService();
     
-    private HybridService() { }
+    private HybridService(Tenant tenant) {
+        super(tenant);
+    }
 
-    public static HybridService instance() { return INSTANCE; }
+    public static HybridService instance(Tenant tenant) { 
+        return new HybridService(tenant);
+    }
     
     @Override public void initService() {
+        // TODO: Get parameters from Tenant instead of ServerParams.
         ServerParams params = ServerParams.instance();
         String serviceNosqlName = params.getModuleParamString("HybridService", "service-nosql");
         String serviceDatastoreName = params.getModuleParamString("HybridService", "service-datastore");
@@ -80,11 +84,11 @@ public class HybridService extends DBService {
         try {
             Method instanceMethod;
             Class<? extends DBService> serviceNosqlClass = Class.forName(serviceNosqlName).asSubclass(DBService.class);
-            instanceMethod = serviceNosqlClass.getMethod("instance", (Class<?>[])null);
-            m_serviceNosql = (DBService)instanceMethod.invoke(null, (Object[])null);
+            instanceMethod = serviceNosqlClass.getMethod("instance", new Class<?>[]{Tenant.class});
+            m_serviceNosql = (DBService)instanceMethod.invoke(null, new Object[]{getTenant()});
             Class<? extends DBService> serviceDatastoreClass = Class.forName(serviceDatastoreName).asSubclass(DBService.class);
-            instanceMethod = serviceDatastoreClass.getMethod("instance", (Class<?>[])null);
-            m_serviceDatastore = (DBService)instanceMethod.invoke(null, (Object[])null);
+            instanceMethod = serviceDatastoreClass.getMethod("instance", new Class<?>[]{Tenant.class});
+            m_serviceDatastore = (DBService)instanceMethod.invoke(null, new Object[]{getTenant()});
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
@@ -111,30 +115,30 @@ public class HybridService extends DBService {
         return m_serviceDatastore.supportsNamespaces() && m_serviceNosql.supportsNamespaces();
     }
 
-    @Override public void createNamespace(Tenant tenant) {
-        m_serviceDatastore.createNamespace(tenant);
-        m_serviceNosql.createNamespace(tenant);
+    @Override public void createNamespace() {
+        m_serviceDatastore.createNamespace();
+        m_serviceNosql.createNamespace();
     }
 
-    @Override public void dropNamespace(Tenant tenant) {
-        m_serviceDatastore.dropNamespace(tenant);
-        m_serviceNosql.dropNamespace(tenant);
+    @Override public void dropNamespace() {
+        m_serviceDatastore.dropNamespace();
+        m_serviceNosql.dropNamespace();
     }
     
     
-    @Override public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
-        m_serviceDatastore.createStoreIfAbsent(tenant, storeName, bBinaryValues);
-        m_serviceNosql.createStoreIfAbsent(tenant, storeName, bBinaryValues);
+    @Override public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
+        m_serviceDatastore.createStoreIfAbsent(storeName, bBinaryValues);
+        m_serviceNosql.createStoreIfAbsent(storeName, bBinaryValues);
     }
     
-    @Override public void deleteStoreIfPresent(Tenant tenant, String storeName) {
-        m_serviceDatastore.deleteStoreIfPresent(tenant, storeName);
-        m_serviceNosql.deleteStoreIfPresent(tenant, storeName);
+    @Override public void deleteStoreIfPresent(String storeName) {
+        m_serviceDatastore.deleteStoreIfPresent(storeName);
+        m_serviceNosql.deleteStoreIfPresent(storeName);
     }
     
     @Override public void commit(DBTransaction dbTran) {
-        DBTransaction nosqlTransaction = new DBTransaction(dbTran.getNamespace());
-        DBTransaction datastoreTransaction = new DBTransaction(dbTran.getNamespace());
+        DBTransaction nosqlTransaction = new DBTransaction(dbTran.getTenant());
+        DBTransaction datastoreTransaction = new DBTransaction(dbTran.getTenant());
         
         for(ColumnUpdate mutation: dbTran.getColumnUpdates()) {
             String storeName = mutation.getStoreName();
@@ -171,26 +175,24 @@ public class HybridService extends DBService {
         m_serviceNosql.commit(nosqlTransaction);
     }
     
-    @Override public List<DColumn> getColumns(String namespace, String storeName,
-            String rowKey, String startColumn, String endColumn, int count) {
-        List<DColumn> nosqlColumns = m_serviceNosql.getColumns(namespace, storeName, rowKey, startColumn, endColumn, count);
-        List<DColumn> columns = processColumns(namespace, storeName, rowKey, nosqlColumns);
+    @Override public List<DColumn> getColumns(String storeName, String rowKey, String startColumn, String endColumn, int count) {
+        List<DColumn> nosqlColumns = m_serviceNosql.getColumns(storeName, rowKey, startColumn, endColumn, count);
+        List<DColumn> columns = processColumns(storeName, rowKey, nosqlColumns);
         return columns;
     }
 
     @Override
-    public List<DColumn> getColumns(String namespace, String storeName,
-            String rowKey, Collection<String> columnNames) {
-        List<DColumn> nosqlColumns = m_serviceNosql.getColumns(namespace, storeName, rowKey, columnNames);
-        List<DColumn> columns = processColumns(namespace, storeName, rowKey, nosqlColumns);
+    public List<DColumn> getColumns(String storeName, String rowKey, Collection<String> columnNames) {
+        List<DColumn> nosqlColumns = m_serviceNosql.getColumns(storeName, rowKey, columnNames);
+        List<DColumn> columns = processColumns(storeName, rowKey, nosqlColumns);
         return columns;
     }
 
-    @Override public List<String> getRows(String namespace, String storeName, String continuationToken, int count) {
-        return m_serviceNosql.getRows(namespace, storeName, continuationToken, count);
+    @Override public List<String> getRows(String storeName, String continuationToken, int count) {
+        return m_serviceNosql.getRows(storeName, continuationToken, count);
     }
 
-    private List<DColumn> processColumns(String namespace, String storeName, String rowKey, List<DColumn> nosqlColumns) {
+    private List<DColumn> processColumns(String storeName, String rowKey, List<DColumn> nosqlColumns) {
         List<DColumn> columns = new ArrayList<>();
         List<String> colNames = new ArrayList<>();
         for(DColumn column: nosqlColumns) {
@@ -203,7 +205,7 @@ public class HybridService extends DBService {
             }
         }
         if(colNames.size() > 0) {
-            List<DColumn> datastoreColumns = m_serviceDatastore.getColumns(namespace, storeName, rowKey, colNames);
+            List<DColumn> datastoreColumns = m_serviceDatastore.getColumns(storeName, rowKey, colNames);
             columns.addAll(datastoreColumns);
             Collections.sort(columns);
         }

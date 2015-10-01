@@ -39,17 +39,21 @@ import com.dell.doradus.service.db.Tenant;
 public class FsService extends DBService {
     private String ROOT; 
     protected final Logger m_logger = LoggerFactory.getLogger(getClass());
-    private static final FsService INSTANCE = new FsService();
     
     private Map<String, FsStore> m_stores = new HashMap<>();
     
     private final Object m_sync = new Object();
     
-    private FsService() { }
+    private FsService(Tenant tenant) {
+        super(tenant);
+    }
 
-    public static FsService instance() { return INSTANCE; }
+    public static FsService instance(Tenant tenant) { 
+        return new FsService(tenant);
+    }
     
     @Override public void initService() {
+        // TODO: Get params from Tenant instead of ServerParams
         ROOT = ServerParams.instance().getModuleParamString("FsService", "db-path");
         if(ROOT == null) throw new RuntimeException("FsService: db-path not defined");
         ServerConfig config = ServerConfig.getInstance();
@@ -70,38 +74,38 @@ public class FsService extends DBService {
         return true;
     }
 
-    @Override public void createNamespace(Tenant tenant) {
+    @Override public void createNamespace() {
         synchronized (m_sync) {
-            File namespaceDir = new File(ROOT + "/" + tenant.getName());
+            File namespaceDir = new File(ROOT + "/" + getTenant().getName());
             if(!namespaceDir.exists())namespaceDir.mkdir();
         }
     }
 
-    @Override public void dropNamespace(Tenant tenant) {
+    @Override public void dropNamespace() {
         synchronized(m_sync) {
-            File namespaceDir = new File(ROOT + "/" + tenant.getName());
+            File namespaceDir = new File(ROOT + "/" + getTenant().getName());
             FileUtils.deleteDirectory(namespaceDir);
         }
     }
     
     
-    @Override public void createStoreIfAbsent(Tenant tenant, String storeName, boolean bBinaryValues) {
+    @Override public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
         synchronized(m_sync) {
-            File storeDir = new File(ROOT + "/" + tenant.getName() + "/" + storeName);
+            File storeDir = new File(ROOT + "/" + getTenant().getName() + "/" + storeName);
             if(!storeDir.exists()) storeDir.mkdir();
         }
     }
     
-    @Override public void deleteStoreIfPresent(Tenant tenant, String storeName) {
+    @Override public void deleteStoreIfPresent(String storeName) {
         synchronized(m_sync) {
-            File storeDir = new File(ROOT + "/" + tenant.getName() + "/" + storeName);
+            File storeDir = new File(ROOT + "/" + getTenant().getName() + "/" + storeName);
             if(storeDir.exists()) FileUtils.deleteDirectory(storeDir);
         }
     }
     
     @Override public void commit(DBTransaction dbTran) {
         synchronized(m_sync) {
-        	String keyspace = dbTran.getNamespace();
+        	String keyspace = dbTran.getTenant().getName();
         	Set<String> stores = new HashSet<String>();
             Map<String, Map<String, List<DColumn>>> columnUpdates = dbTran.getColumnUpdatesMap();
             Map<String, Map<String, List<String>>> columnDeletes = dbTran.getColumnDeletesMap();
@@ -117,27 +121,25 @@ public class FsService extends DBService {
         }
     }
     
-    @Override public List<DColumn> getColumns(String namespace, String storeName,
-            String rowKey, String startColumn, String endColumn, int count) {
+    @Override public List<DColumn> getColumns(String storeName, String rowKey, String startColumn, String endColumn, int count) {
         synchronized(m_sync) {
-            FsStore store = getStore(namespace, storeName);
+            FsStore store = getStore(getTenant().getName(), storeName);
             return store.getColumns(rowKey, startColumn, endColumn, count);
         }
     }
 
     @Override
-    public List<DColumn> getColumns(String namespace, String storeName,
-            String rowKey, Collection<String> columnNames) {
+    public List<DColumn> getColumns(String storeName, String rowKey, Collection<String> columnNames) {
         synchronized(m_sync) {
-            FsStore store = getStore(namespace, storeName);
+            FsStore store = getStore(getTenant().getName(), storeName);
             return store.getColumns(rowKey, columnNames);
         }
     }
 
-    @Override public List<String> getRows(String namespace, String storeName, String continuationToken, int count) {
+    @Override public List<String> getRows(String storeName, String continuationToken, int count) {
         synchronized (m_sync) {
             List<String> list = new ArrayList<>();
-            File storeDir = new File(ROOT + "/" + namespace + "/" + storeName);
+            File storeDir = new File(ROOT + "/" + getTenant().getName() + "/" + storeName);
             if(!storeDir.exists()) return list;
             for(File rowFile: storeDir.listFiles()) {
                 String row = FileUtils.decode(rowFile.getName());

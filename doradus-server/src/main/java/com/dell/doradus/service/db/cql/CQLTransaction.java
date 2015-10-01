@@ -32,9 +32,11 @@ import com.datastax.driver.core.ResultSetFuture;
 import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.ColumnDelete;
 import com.dell.doradus.service.db.ColumnUpdate;
+import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.RowDelete;
+import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.service.db.cql.CQLStatementCache.Update;
 
 /**
@@ -79,7 +81,8 @@ public class CQLTransaction {
         Collection<BoundStatement> mutations = getMutations(transaction);
         List<ResultSetFuture> futureList = new ArrayList<>(mutations.size());
         for(BoundStatement mutation: mutations) {
-            ResultSetFuture future = CQLService.instance().getSession().executeAsync(mutation);
+            ResultSetFuture future =
+                ((CQLService)DBService.instance(transaction.getTenant())).getSession().executeAsync(mutation);
             futureList.add(future);
         }
         m_logger.debug("Waiting for {} asynchronous futures", futureList.size());
@@ -92,32 +95,33 @@ public class CQLTransaction {
     private static void executeUpdatesSynchronous(DBTransaction transaction) {
         BatchStatement batchState = new BatchStatement(Type.UNLOGGED);
         batchState.addAll(getMutations(transaction));
-        executeBatch(batchState);
+        executeBatch(transaction.getTenant(), batchState);
     }
 
     private static List<BoundStatement> getMutations(DBTransaction transaction) {
-        String keyspace = CQLService.storeToCQLName(transaction.getNamespace());
+        Tenant tenant = transaction.getTenant();
         List<BoundStatement> mutations = new ArrayList<>();
         for(ColumnUpdate value: transaction.getColumnUpdates()) {
-            boolean isBinaryValue = CQLService.instance().columnValueIsBinary(keyspace, value.getStoreName());
-            BoundStatement bstmt = addColumnUpdate(keyspace, value.getStoreName(), value.getRowKey(), value.getColumn(), isBinaryValue);
+            boolean isBinaryValue =
+                ((CQLService)DBService.instance(tenant)).columnValueIsBinary(value.getStoreName());
+            BoundStatement bstmt = addColumnUpdate(tenant, value.getStoreName(), value.getRowKey(), value.getColumn(), isBinaryValue);
             mutations.add(bstmt);
         }
         for(ColumnDelete value: transaction.getColumnDeletes()) {
-            BoundStatement bstmt = addColumnDelete(keyspace, value.getStoreName(), value.getRowKey(), value.getColumnName());
+            BoundStatement bstmt = addColumnDelete(tenant, value.getStoreName(), value.getRowKey(), value.getColumnName());
             mutations.add(bstmt);
         }
         for(RowDelete value: transaction.getRowDeletes()) {
-            BoundStatement bstmt = addRowDelete(keyspace, value.getStoreName(), value.getRowKey());
+            BoundStatement bstmt = addRowDelete(tenant, value.getStoreName(), value.getRowKey());
             mutations.add(bstmt);
         }
         return mutations;
     }
     
     // Create and return a BoundStatement for the given column update.
-    private static BoundStatement addColumnUpdate(String keyspace, String tableName, String key, DColumn column, boolean isBinaryValue) {
+    private static BoundStatement addColumnUpdate(Tenant tenant, String tableName, String key, DColumn column, boolean isBinaryValue) {
         PreparedStatement prepState =
-                CQLService.instance().getPreparedUpdate(keyspace, Update.INSERT_ROW, tableName);
+            ((CQLService)DBService.instance(tenant)).getPreparedUpdate(Update.INSERT_ROW, tableName);
         BoundStatement boundState = prepState.bind();
         boundState.setString(0, key);
         boundState.setString(1, column.getName());
@@ -131,9 +135,9 @@ public class CQLTransaction {
     
     
     // Create and return a BoundStatement that deletes the given column.
-    private static BoundStatement addColumnDelete(String keyspace, String tableName, String key, String colName) {
+    private static BoundStatement addColumnDelete(Tenant tenant, String tableName, String key, String colName) {
         PreparedStatement prepState =
-                CQLService.instance().getPreparedUpdate(keyspace, Update.DELETE_COLUMN, tableName);
+            ((CQLService)DBService.instance(tenant)).getPreparedUpdate(Update.DELETE_COLUMN, tableName);
         BoundStatement boundState = prepState.bind();
         boundState.setString(0, key);
         boundState.setString(1, colName);
@@ -141,9 +145,9 @@ public class CQLTransaction {
     }
     
     // Create and return a BoundStatement that deletes the given row.
-    private static BoundStatement addRowDelete(String keyspace, String tableName, String key) {
+    private static BoundStatement addRowDelete(Tenant tenant, String tableName, String key) {
         PreparedStatement prepState =
-                CQLService.instance().getPreparedUpdate(keyspace, Update.DELETE_ROW, tableName);
+            ((CQLService)DBService.instance(tenant)).getPreparedUpdate(Update.DELETE_ROW, tableName);
         BoundStatement boundState = prepState.bind();
         boundState.setString(0, key);
         return boundState;
@@ -151,10 +155,10 @@ public class CQLTransaction {
     
     
     // Execute and given update statement.
-    private static void executeBatch(BatchStatement batchState) {
+    private static void executeBatch(Tenant tenant, BatchStatement batchState) {
         if (batchState.size() > 0) {
             m_logger.debug("Executing synchronous batch with {} statements", batchState.size());
-            CQLService.instance().getSession().execute(batchState);
+            ((CQLService)DBService.instance(tenant)).getSession().execute(batchState);
         }
     }
     

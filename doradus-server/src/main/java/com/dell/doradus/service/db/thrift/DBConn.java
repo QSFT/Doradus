@@ -65,7 +65,8 @@ public class DBConn implements AutoCloseable {
     private Cassandra.Client m_client;
     private boolean m_bDBOpen;
     private boolean m_bFailed;
-    private String m_keyspace;
+    private final String  m_keyspace;
+    private final ThriftService m_dbService;
 
     //----- Public static constants and methods
 
@@ -82,14 +83,15 @@ public class DBConn implements AutoCloseable {
     //----- DBConn: Connection management
 
     /**
-     * Create a new DBConn that will connect to the given keyspace. No connection is
-     * attempted until {@link #connect(String)} is called. If the given keyspace is null
-     * or empty, this DBConn will create a no-keyspace session.
+     * Create a new DBConn owned by the given ThriftService instance that will connect to
+     * the given keyspace. No connection is attempted until {@link #connect(String)} is
+     * called. If the given keyspace is null, a no-keyspace session will be created.
      * 
-     * @param keyspace  Name of keyspace to set connection to or null to for a
-     *                  no-keyspace session.
+     * @param dbService {@link ThriftService} instance that owns this DBConn.
+     * @param keyspace  Name of keyspace to use or null for a no-keyspace connection.
      */
-    public DBConn(String keyspace) {
+    public DBConn(ThriftService dbService, String keyspace) {
+        m_dbService = dbService;
         m_keyspace = keyspace;
     }   // constructor
 
@@ -128,7 +130,7 @@ public class DBConn implements AutoCloseable {
         }
         
         // Set keyspace if requested.
-        if (!Utils.isEmpty(m_keyspace)) {
+        if (m_keyspace != null) {
             try {
                 m_client.set_keyspace(m_keyspace);
             } catch (Exception e) {
@@ -157,16 +159,6 @@ public class DBConn implements AutoCloseable {
         m_bFailed = false;
     }   // connect
 
-    /**
-     * Get the keyspace with which this connected was created. This will be null for a
-     * no-keyspace session.
-     * 
-     * @return  Keyspace to which this connection is attached, null if none.
-     */
-    public String getKeyspace() {
-        return m_keyspace;
-    }   // getKeyspace
-    
     /**
      * Get this DBConn's Cassandra.Client session. This should only be used temporarily
      * since it is shared with this DBConn object.
@@ -499,8 +491,8 @@ public class DBConn implements AutoCloseable {
         for (int attempt = 1; !bSuccess; attempt++) {
             try {
                 close();
-                ThriftService.instance().connectDBConn(this);
-                m_logger.debug("Reconnected successful");
+                m_dbService.connectDBConn(this);
+                m_logger.debug("Reconnect successful");
                 bSuccess = true;
             } catch (Exception ex) {
                 // Abort if all retries failed.

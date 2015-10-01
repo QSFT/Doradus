@@ -74,7 +74,12 @@ public class TenantService extends Service {
     );
     
     // Singleton creation only.
-    private TenantService() {};
+    private TenantService() {
+        m_defaultTenantName = getParamString("default_tenant_name");
+        if (Utils.isEmpty(m_defaultTenantName)) {
+            throw new RuntimeException("Configuration parameter 'TenantService.default_tenant_name' must be defined");
+        }
+    };
 
     /**
      * Simple interface used for filtered searching for a {@link TenantDefinition}.
@@ -105,10 +110,6 @@ public class TenantService extends Service {
     
     @Override
     protected void initService() {
-        m_defaultTenantName = getParamString("default_tenant_name");
-        if (Utils.isEmpty(m_defaultTenantName)) {
-            throw new RuntimeException("Configuration parameter 'TenantService.default_tenant_name' must be defined");
-        }
         RESTService.instance().registerCommands(CMD_CLASSES);
     }
 
@@ -117,7 +118,6 @@ public class TenantService extends Service {
         DBService.instance().waitForFullService();
         initializeDefaultTenant();
         migrateTenantDefinitions();
-        checkNamespaces();
     }
 
     @Override
@@ -176,6 +176,9 @@ public class TenantService extends Service {
      *                      tenant's {@link TenantDefinition}.
      */
     public Tenant getTenant(String tenantName) {
+        if (tenantName.equals(m_defaultTenantName)) {
+            return getDefaultTenant();
+        }
         checkServiceState();
         TenantDefinition tenantDef = getTenantDefinition(tenantName);
         if (tenantDef == null) {
@@ -240,12 +243,6 @@ public class TenantService extends Service {
     }   // searchForTenant
     
     /**
-     * @deprecated This method is a no-op and no longer needed.
-     */
-    public void createDefaultTenant() {
-    }   // createDefaultTenant
-
-    /**
      * Create a new tenant with the given definition and return the updated definition.
      * Throw a {@link DuplicateException} if the tenant has already been defined.
      * 
@@ -303,10 +300,13 @@ public class TenantService extends Service {
             return; // allow idempotent deletes
         }
         Tenant tenant = new Tenant(tenantDef);
-        DBService.instance().dropNamespace(tenant);
-        DBTransaction dbTran = new DBTransaction(getDefaultTenantName());
+        DBService.instance(tenant).dropNamespace();
+        
+        // Delete tenant definition in default database.
+        Tenant defaultTenant = getDefaultTenant();
+        DBTransaction dbTran = new DBTransaction(defaultTenant);
         dbTran.deleteRow(TENANTS_STORE_NAME, tenantName);
-        DBService.instance().commit(dbTran);
+        DBService.instance(defaultTenant).commit(dbTran);
     }   // deleteTenant
 
     //----- Tenant authorization
@@ -352,13 +352,12 @@ public class TenantService extends Service {
     // Ensure that the default tenant and its required metadata tables exist.
     private void initializeDefaultTenant() {
         DBService dbService = DBService.instance();
-        Tenant tenant = new Tenant(createDefaultTenantDefinition());
         if (dbService.supportsNamespaces()) {
-            dbService.createNamespace(tenant);
+            dbService.createNamespace();
         }
-        dbService.createStoreIfAbsent(tenant, SchemaService.APPS_STORE_NAME, false);
-        dbService.createStoreIfAbsent(tenant, TaskManagerService.TASKS_STORE_NAME, false);
-        dbService.createStoreIfAbsent(tenant, TENANTS_STORE_NAME, false);
+        dbService.createStoreIfAbsent(SchemaService.APPS_STORE_NAME, false);
+        dbService.createStoreIfAbsent(TaskManagerService.TASKS_STORE_NAME, false);
+        dbService.createStoreIfAbsent(TENANTS_STORE_NAME, false);
         storeInitialDefaultTenantDef();
     }
     
@@ -417,7 +416,7 @@ public class TenantService extends Service {
         TenantDefinition tempTenantDef = new TenantDefinition();
         tempTenantDef.setName(keyspace);
         Tenant migratingTenant = new Tenant(tempTenantDef);
-        DColumn col = DBService.instance().getColumn(migratingTenant, "Applications", "_tenant", "Definition");
+        DColumn col = DBService.instance(migratingTenant).getColumn("Applications", "_tenant", "Definition");
         if (col == null) {
             return;
         }
@@ -430,42 +429,20 @@ public class TenantService extends Service {
             return;
         }
         storeTenantDefinition(migratingTenantDef);
-        DBTransaction dbTran = new DBTransaction(keyspace);
+        DBTransaction dbTran = new DBTransaction(migratingTenant);
         dbTran.deleteRow("Applications", "_tenant");
-        DBService.instance().commit(dbTran);
+        DBService.instance(migratingTenant).commit(dbTran);
     }
 
-    // Check that namespaces and required stores exist for each tenant.
-    private void checkNamespaces() {
-        for (TenantDefinition tenantDef : getAllTenantDefs().values()) {
-            checkNamespace(new Tenant(tenantDef));
-        }
-    }
-    
-    private void checkNamespace(Tenant tenant) {
-        // TODO: Get DBService for namespace
-        m_logger.debug("Checking namespace and stores for tenant '{}'", tenant.getName());
-        DBService dbservice = DBService.instance();
-        try {
-            if (dbservice.supportsNamespaces()) {
-                dbservice.createNamespace(tenant);
-            }
-            initializeTenantStores(tenant);
-        } catch (Exception e) {
-            m_logger.warn("Could not verify namespace and stores for tenant '" +
-                          tenant.getName() + ". Tenant may be inaccessible.", e);
-        }
-    }
-    
     // Define a new tenant
     private void defineNewTenant(TenantDefinition tenantDef) {
-        // TODO: Get DBService for tenant
-        DBService dbService = DBService.instance();
         validateTenantUsers(tenantDef);
         addTenantProperties(tenantDef);
+        
         Tenant tenant = new Tenant(tenantDef);
+        DBService dbService = DBService.instance(tenant);
         if (dbService.supportsNamespaces()) {
-            dbService.createNamespace(tenant);
+            dbService.createNamespace();
         } else {
             // TODO: Ensure this DB does not already have a tenant.
         }
@@ -475,8 +452,8 @@ public class TenantService extends Service {
 
     // Ensure required tenant stores exist.
     private void initializeTenantStores(Tenant tenant) {
-        DBService.instance().createStoreIfAbsent(tenant, SchemaService.APPS_STORE_NAME, false);
-        DBService.instance().createStoreIfAbsent(tenant, TaskManagerService.TASKS_STORE_NAME, false);
+        DBService.instance(tenant).createStoreIfAbsent(SchemaService.APPS_STORE_NAME, false);
+        DBService.instance(tenant).createStoreIfAbsent(TaskManagerService.TASKS_STORE_NAME, false);
     }
     
     private void addTenantProperties(TenantDefinition tenantDef) {
@@ -495,9 +472,8 @@ public class TenantService extends Service {
 
     // Store the given tenant definition the Tenants table in the default database.
     private void storeTenantDefinition(TenantDefinition tenantDef) {
-        Tenant defaultTenant = getDefaultTenant();
         String tenantDefJSON = tenantDef.toDoc().toJSON();
-        DBTransaction dbTran = DBService.instance().startTransaction(defaultTenant);
+        DBTransaction dbTran = DBService.instance().startTransaction();
         dbTran.addColumn(TENANTS_STORE_NAME, tenantDef.getName(), TENANT_DEF_COL_NAME, tenantDefJSON);
         DBService.instance().commit(dbTran);
     }
@@ -548,8 +524,7 @@ public class TenantService extends Service {
 
     // Get the TenantDefinition for the given tenant. Return null if unknown. 
     private TenantDefinition getTenantDef(String tenantName) {
-        Tenant defaultTenant = new Tenant(createDefaultTenantDefinition());
-        DRow tenantDefRow = DBService.instance().getRow(defaultTenant, TENANTS_STORE_NAME, tenantName);
+        DRow tenantDefRow = DBService.instance().getRow(TENANTS_STORE_NAME, tenantName);
         if (tenantDefRow == null) {
             return null;
         }
@@ -558,9 +533,8 @@ public class TenantService extends Service {
 
     // Get all tenants, including the default tenant.
     private Map<String, TenantDefinition> getAllTenantDefs() {
-        Tenant defaultTenant = new Tenant(createDefaultTenantDefinition());
         Map<String, TenantDefinition> tenantMap = new HashMap<>();
-        Iterable<DRow> rowIter = DBService.instance().getAllRows(defaultTenant, TENANTS_STORE_NAME);
+        Iterable<DRow> rowIter = DBService.instance().getAllRows(TENANTS_STORE_NAME);
         for (DRow row : rowIter) {
             TenantDefinition tenantDef = loadTenantDefinition(row);
             if (tenantDef != null) {

@@ -147,9 +147,10 @@ public class BatchObjectUpdater {
 
     // Post all updates in the parent transaction to the database.
     private void commitTransaction() {
-        DBTransaction dbTran = DBService.instance().startTransaction(Tenant.getTenant(m_tableDef));
+        Tenant tenant = Tenant.getTenant(m_tableDef);
+        DBTransaction dbTran = DBService.instance(tenant).startTransaction();
         m_parentTran.applyUpdates(dbTran);
-        DBService.instance().commit(dbTran);
+        DBService.instance(tenant).commit(dbTran);
         m_parentTran.clear();
     }
 

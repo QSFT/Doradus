@@ -34,8 +34,8 @@ public class ObjectUpdater {
         m_tableName = tableName;
         m_batch = batch;
         m_appDef = Spider3.instance().addDynamicFields(m_appDef);
-        m_service = DBService.instance();
-        m_transaction = m_service.startTransaction(tenant);
+        m_service = DBService.instance(m_tenant);
+        m_transaction = m_service.startTransaction();
         m_batchResult = new BatchResult();
     }
     
@@ -50,7 +50,7 @@ public class ObjectUpdater {
                 removeFieldValues(object);
             }
         }
-        DBService.instance().commit(m_transaction);
+        DBService.instance(m_tenant).commit(m_transaction);
         return m_batchResult;
     }
     
@@ -173,13 +173,13 @@ public class ObjectUpdater {
                 m_transaction.deleteColumn(store, row, id);
             } else if(fieldDef.isLinkField()) {
                 String inverseLinkRow = fieldDef.getLinkExtent() + "/" + fieldDef.getLinkInverse();
-                for(DColumn value: m_service.getColumnSlice(m_tenant, store, row, id, id + "~")) {
+                for(DColumn value: m_service.getColumnSlice(store, row, id, id + "~")) {
                     m_transaction.deleteColumn(store, row, value.getName());
                     String[] nv = Spider3.split(value.getName());
                     m_transaction.deleteColumn(store, inverseLinkRow, Spider3.concat(nv[1], nv[0]));
                 }
             } else {
-                for(DColumn value: m_service.getColumnSlice(m_tenant, store, row, id, id + "~")) {
+                for(DColumn value: m_service.getColumnSlice(store, row, id, id + "~")) {
                     m_transaction.deleteColumn(store, row, value.getName());
                 }
             }

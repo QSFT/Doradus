@@ -167,7 +167,7 @@ public class Searcher {
         TableDefinition tableDef = new TableDefinition(appDef, table);
         appDef.addTable(tableDef);
         addField(tableDef, "Timestamp", FieldType.TIMESTAMP);
-        for(DColumn c: DBService.instance().getAllColumns(tenant, store, "fields")) {
+        for(DColumn c: DBService.instance(tenant).getAllColumns(store, "fields")) {
             addField(tableDef, c.getName());
         }
         

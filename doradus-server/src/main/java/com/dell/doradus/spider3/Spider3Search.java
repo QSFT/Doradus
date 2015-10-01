@@ -89,7 +89,7 @@ public class Spider3Search {
         else if(fieldDef.isCollection()) {
             if(map.size() < 10) {
                 for(String id: map.keySet()) {
-                    for(DColumn column: DBService.instance().getColumnSlice(tenant, store, row, id, id + "~")) {
+                    for(DColumn column: DBService.instance(tenant).getColumnSlice(store, row, id, id + "~")) {
                         String[] nv = Spider3.split(column.getName());
                         String value = nv[1];
                         SearchResult r = map.get(id);
@@ -100,7 +100,7 @@ public class Spider3Search {
                     }
                 }
             } else {
-                for(DColumn column: DBService.instance().getAllColumns(tenant, store, row)) {
+                for(DColumn column: DBService.instance(tenant).getAllColumns(store, row)) {
                     String[] nv = Spider3.split(column.getName());
                     String id = nv[0];
                     String value = nv[1];
@@ -114,7 +114,7 @@ public class Spider3Search {
             
         }
         else {
-            for(DColumn column: DBService.instance().getColumns(tenant, store, row, map.keySet())) {
+            for(DColumn column: DBService.instance(tenant).getColumns(store, row, map.keySet())) {
                 SearchResult r = map.get(column.getName());
                 if(r == null) continue;
                 r.scalars.put(field, column.getValue());

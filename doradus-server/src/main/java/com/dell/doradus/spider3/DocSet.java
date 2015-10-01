@@ -52,7 +52,7 @@ public class DocSet {
         String store = appDef.getAppName();
         String table = tableDef.getTableName();
         String row = table + "/_id";
-        for(DColumn column: DBService.instance().getAllColumns(tenant, store, row)) {
+        for(DColumn column: DBService.instance(tenant).getAllColumns(store, row)) {
             m_ids.add(column.getName());
         }
     }
@@ -70,13 +70,13 @@ public class DocSet {
         if(linkedSet.m_ids.size() < 10) {
             String inverseRow = linkDef.getLinkExtent() + "/" + linkDef.getLinkInverse();
             for(String id: linkedSet.m_ids) {
-                for(DColumn column: DBService.instance().getColumnSlice(tenant, store, inverseRow, id, id + "~")) {
+                for(DColumn column: DBService.instance(tenant).getColumnSlice(store, inverseRow, id, id + "~")) {
                     String[] nv = Spider3.split(column.getName());
                     m_ids.add(nv[1]);
                 }
             }
         } else {
-            for(DColumn column: DBService.instance().getAllColumns(tenant, store, row)) {
+            for(DColumn column: DBService.instance(tenant).getAllColumns(store, row)) {
                 String[] nv = Spider3.split(column.getName());
                 if(!linkedSet.contains(nv[1])) continue;
                 m_ids.add(nv[0]);
@@ -93,7 +93,7 @@ public class DocSet {
         String row = table + "/" + fieldDef.getName();
         Pattern p = new Pattern(pattern);
         
-        for(DColumn column: DBService.instance().getAllColumns(tenant, store, row)) {
+        for(DColumn column: DBService.instance(tenant).getAllColumns(store, row)) {
             if(fieldDef.isCollection()) {
                 String[] nv = Spider3.split(column.getName());
                 byte[] value = Utils.toBytes(nv[1]);

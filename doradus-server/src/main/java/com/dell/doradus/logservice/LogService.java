@@ -22,12 +22,12 @@ public class LogService {
 
     public void createTable(Tenant tenant, String application, String table) {
         String store = application + "_" + table;
-        DBService.instance().createStoreIfAbsent(tenant, store, true);
+        DBService.instance(tenant).createStoreIfAbsent(store, true);
     }
 
     public void deleteTable(Tenant tenant, String application, String table) {
         String store = application + "_" + table;
-        DBService.instance().deleteStoreIfPresent(tenant, store);
+        DBService.instance(tenant).deleteStoreIfPresent(store);
     }
     
     public String getPartition(long timestamp) {
@@ -48,7 +48,7 @@ public class LogService {
         if(size == 0) return;
         int start = 0;
         BatchWriter writer = new BatchWriter();
-        DBTransaction transaction = DBService.instance().startTransaction(tenant);
+        DBTransaction transaction = DBService.instance(tenant).startTransaction();
         while(start < size) {
             String dateStr = batch.get(start).getId();
             Utils.parseDate(dateStr);
@@ -74,7 +74,7 @@ public class LogService {
             
             start = end;
         }
-        DBService.instance().commit(transaction);
+        DBService.instance(tenant).commit(transaction);
     }
     
     public void deleteOldSegments(Tenant tenant, String application, String table, long removeBeforeTimestamp) {
@@ -84,12 +84,12 @@ public class LogService {
         DBTransaction transaction = null;
         for(String partition: partitions) {
             if(partition.compareTo(partitionToCompare) >= 0) continue;
-            if(transaction == null) transaction = DBService.instance().startTransaction(tenant);
+            if(transaction == null) transaction = DBService.instance(tenant).startTransaction();
             transaction.deleteColumn(store, "partitions", partition);
             transaction.deleteRow(store, partition);
             transaction.deleteRow(store, "partitions_" + partition);
         }
-        if(transaction != null) DBService.instance().commit(transaction);
+        if(transaction != null) DBService.instance(tenant).commit(transaction);
     }
     
 
@@ -103,7 +103,7 @@ public class LogService {
         int totalSize = 0;
         ChunkInfo info = new ChunkInfo();
         ChunkMerger merger = null;
-        for(DColumn c: DBService.instance().getAllColumns(tenant, store, "partitions_" + partition)) {
+        for(DColumn c: DBService.instance(tenant).getAllColumns(store, "partitions_" + partition)) {
             info.set(partition, c.getName(), c.getRawValue());
             int eventsCount = info.getEventsCount();
             if(eventsCount > MIN_MERGE_DOCS) continue;
@@ -131,20 +131,20 @@ public class LogService {
         String uuid = Utils.getUniqueId();
         ChunkInfo chunkInfo = new ChunkInfo();
         chunkInfo.set(partition, uuid, merger.getWriter());
-        DBTransaction transaction = DBService.instance().startTransaction(merger.getTenant());
+        DBTransaction transaction = DBService.instance(merger.getTenant()).startTransaction();
         transaction.addColumn(store, "partitions_" + partition, uuid, chunkInfo.getByteData());
         transaction.addColumn(store, partition, uuid, data);
         for(ChunkInfo info: infos) {
             transaction.deleteColumn(store, "partitions_" + partition, info.getChunkId());
             transaction.deleteColumn(store, partition, info.getChunkId());
         }
-        DBService.instance().commit(transaction);
+        DBService.instance(merger.getTenant()).commit(transaction);
     }
     
     public List<String> getPartitions(Tenant tenant, String application, String table) {
         String store = application + "_" + table;
         List<String> partitions = new ArrayList<>();
-        for(DColumn c: DBService.instance().getAllColumns(tenant, store, "partitions")) {
+        for(DColumn c: DBService.instance(tenant).getAllColumns(store, "partitions")) {
             partitions.add(c.getName());
         }
         return partitions;
@@ -160,7 +160,7 @@ public class LogService {
     public List<String> getPartitions(Tenant tenant, String application, String table, String fromPartition, String toPartition) {
         String store = application + "_" + table;
         List<String> partitions = new ArrayList<>();
-        for(DColumn c: DBService.instance().getColumnSlice(tenant, store, "partitions", fromPartition, toPartition + '\0')) {
+        for(DColumn c: DBService.instance(tenant).getColumnSlice(store, "partitions", fromPartition, toPartition + '\0')) {
             partitions.add(c.getName());
         }
         return partitions;
@@ -174,7 +174,7 @@ public class LogService {
 
     public byte[] readChunkData(Tenant tenant, String application, String table, ChunkInfo chunkInfo) {
         String store = application + "_" + table;
-        DColumn column = DBService.instance().getColumn(tenant, store, chunkInfo.getPartition(), chunkInfo.getChunkId());
+        DColumn column = DBService.instance(tenant).getColumn(store, chunkInfo.getPartition(), chunkInfo.getChunkId());
         if(column == null) return null;
         return column.getRawValue();
     }
@@ -184,7 +184,7 @@ public class LogService {
         List<String> chunkIds = new ArrayList<>(infos.size());
         for(ChunkInfo info: infos) chunkIds.add(info.getChunkId());
         List<byte[]> data = new ArrayList<>(infos.size());
-        DRow row = DBService.instance().getRow(tenant, store, infos.get(0).getPartition());
+        DRow row = DBService.instance(tenant).getRow(store, infos.get(0).getPartition());
         for(DColumn c: row.getColumns(chunkIds, 100)) {
             data.add(c.getRawValue());
         }
