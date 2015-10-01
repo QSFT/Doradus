@@ -46,9 +46,6 @@ public class VDirectory {
 	public VDirectory(Tenant tenant, String storeName) {
 		m_parent = null;
 		IO io = new CassandraIO(tenant);
-		//IO io = new FileIO();
-		//IO io = new SqlIO();
-		//IO io = new MemIO();
 		m_helper = new StorageHelper(io);
 		m_storeName = storeName;
 		m_name = "$root";
