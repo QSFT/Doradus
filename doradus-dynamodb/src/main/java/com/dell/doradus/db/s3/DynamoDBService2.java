@@ -68,20 +68,13 @@ import com.dell.doradus.utilities.Timer;
 
 public class DynamoDBService2 extends DBService {
 	private static final byte[] EMPTY_VALUE = new byte[] { (byte)0 };
+	private static final int[] RETRY_SLEEPS = new int[] { 100, 500, 1000, 2000, 5000, 10000, 30000 };
     protected final Logger m_logger = LoggerFactory.getLogger(getClass());
 	private long m_readCapacityUnits;
 	private long m_writeCapacityUnits;
     private AmazonDynamoDBClient m_client;
     
-    public static DynamoDBService2 instance(Tenant tenant) {
-        return new DynamoDBService2(tenant);
-    }
-
-    
-    
-    private DynamoDBService2(Tenant tenant) {
-        super(tenant);
-    }
+    private DynamoDBService2(Tenant tenant) { super(tenant); }
     
     @Override
     protected void initService() {
@@ -168,7 +161,7 @@ public class DynamoDBService2 extends DBService {
     }
 
     public void commit(DBTransaction dbTran) {
-        String namespace = getTenant().getName();
+    	Timer t = new Timer();
         List<WriteRequest> list = new ArrayList<>();
         
         for(ColumnUpdate mutation: dbTran.getColumnUpdates()) {
@@ -179,13 +172,7 @@ public class DynamoDBService2 extends DBService {
         	list.add(new WriteRequest().withPutRequest(new PutRequest(item)));
         	
         	if(list.size() >= 25) {
-        		Map<String, List<WriteRequest>> map = new HashMap<>();
-        		map.put(namespace, list);
-        		BatchWriteItemResult result = m_client.batchWriteItem(new BatchWriteItemRequest(map));
-        		while(result.getUnprocessedItems().size() > 0) {
-            		result = m_client.batchWriteItem(new BatchWriteItemRequest(result.getUnprocessedItems()));
-        		}
-        		list.clear();
+        		commitPartial(list);
         	}
         }
 
@@ -194,13 +181,7 @@ public class DynamoDBService2 extends DBService {
         	list.add(new WriteRequest().withDeleteRequest(new DeleteRequest(item)));
         	
         	if(list.size() >= 25) {
-        		Map<String, List<WriteRequest>> map = new HashMap<>();
-        		map.put(namespace, list);
-        		BatchWriteItemResult result = m_client.batchWriteItem(new BatchWriteItemRequest(map));
-        		while(result.getUnprocessedItems().size() > 0) {
-            		result = m_client.batchWriteItem(new BatchWriteItemRequest(result.getUnprocessedItems()));
-        		}
-        		list.clear();
+        		commitPartial(list);
         	}
         	
         }
@@ -211,30 +192,42 @@ public class DynamoDBService2 extends DBService {
             	list.add(new WriteRequest().withDeleteRequest(new DeleteRequest(item)));
 
             	if(list.size() >= 25) {
-            		Map<String, List<WriteRequest>> map = new HashMap<>();
-            		map.put(namespace, list);
-            		BatchWriteItemResult result = m_client.batchWriteItem(new BatchWriteItemRequest(map));
-            		while(result.getUnprocessedItems().size() > 0) {
-                		result = m_client.batchWriteItem(new BatchWriteItemRequest(result.getUnprocessedItems()));
-            		}
-            		list.clear();
+            		commitPartial(list);
             	}
 
         	}
         }
 
     	if(list.size() > 0) {
-    		Map<String, List<WriteRequest>> map = new HashMap<>();
-    		map.put(getTenant().getName(), list);
-    		BatchWriteItemResult result = m_client.batchWriteItem(new BatchWriteItemRequest(map));
-    		if(result.getUnprocessedItems().size() > 0) throw new RuntimeException("Could not write items");
-    		list.clear();
+    		commitPartial(list);
     	}
+    	
+    	m_logger.debug("Committed transaction to {} in {}", getTenant().getName(), t);
+    }
+
+    private void commitPartial(List<WriteRequest> list) {
+    	Timer t = new Timer();
+		Map<String, List<WriteRequest>> map = new HashMap<>();
+		map.put(getTenant().getName(), list);
+		BatchWriteItemResult result = m_client.batchWriteItem(new BatchWriteItemRequest(map));
+		int retry = 0;
+		while(result.getUnprocessedItems().size() > 0) {
+			if(retry == RETRY_SLEEPS.length) throw new RuntimeException("All retries failed");
+			m_logger.debug("Committing {} unprocessed items, retry: {}", result.getUnprocessedItems().size(), retry + 1);
+			try {
+				Thread.sleep(RETRY_SLEEPS[retry++]);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		result = m_client.batchWriteItem(new BatchWriteItemRequest(result.getUnprocessedItems()));
+		}
+		m_logger.debug("Committed {} writes in {}", list.size(), t);
+		list.clear();
     }
     
     @Override
-    public List<DColumn> getColumns(String storeName, String rowKey,
-                                    String startColumn, String endColumn, int count) {
+    public List<DColumn> getColumns(String storeName, String rowKey, String startColumn, String endColumn, int count) {
     	Timer t = new Timer();
     	String key = storeName + "_" + rowKey;
     	HashMap<String,Condition> keyConditions = new HashMap<String,Condition>();
@@ -267,8 +260,8 @@ public class DynamoDBService2 extends DBService {
 
     @Override
     public List<DColumn> getColumns(String storeName, String rowKey, Collection<String> columnNames) {
-        String namespace = getTenant().getName();
     	Timer t = new Timer();
+    	String namespace = getTenant().getName();
     	String key = storeName + "_" + rowKey;
     	List<DColumn> list = new ArrayList<>();
         
@@ -300,7 +293,8 @@ public class DynamoDBService2 extends DBService {
 
     @Override
     public List<String> getRows(String storeName, String continuationToken, int count) {
-        ScanRequest scanRequest = new ScanRequest(getTenant().getName());
+    	Timer t = new Timer();
+    	ScanRequest scanRequest = new ScanRequest(getTenant().getName());
         scanRequest.setAttributesToGet(Arrays.asList("key")); // attributes to get
         //if (continuationToken != null) {
         //	scanRequest.setExclusiveStartKey(getPrimaryKey(storeName + "_" + continuationToken, "\u007F"));
@@ -326,6 +320,7 @@ public class DynamoDBService2 extends DBService {
         }
         List<String> list = new ArrayList<>(rowKeys);
         Collections.sort(list);
+    	m_logger.debug("get rows in {} in {}", storeName, t);
         return list;
     }
 
