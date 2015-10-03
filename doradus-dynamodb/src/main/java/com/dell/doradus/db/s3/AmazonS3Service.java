@@ -61,17 +61,17 @@ public class AmazonS3Service extends DBService {
     @Override public void initService() { }
     
     private void connect() {
-        String accessKey = m_tenant.getDBParamString("s3-access-key");
-        String secretKey = m_tenant.getDBParamString("s3-secret-key");
-        String bucket = m_tenant.getDBParamString("s3-bucket");
+        String accessKey = getParamString("s3-access-key");
+        String secretKey = getParamString("s3-secret-key");
+        String bucket = getParamString("s3-bucket");
 
         AWSCredentials awsCredentials = new AWSCredentials(accessKey, secretKey); 
         S3Service s3service = new RestS3Service(awsCredentials);
         Jets3tProperties props = s3service.getJetS3tProperties();
         
-        String port = m_tenant.getDBParamString("s3-endpoint-http-port");
-        String httpsOnly = m_tenant.getDBParamString("s3-https-only");
-        String endpoint = m_tenant.getDBParamString("s3-endpoint");
+        String port = getParamString("s3-endpoint-http-port");
+        String httpsOnly = getParamString("s3-https-only");
+        String endpoint = getParamString("s3-endpoint");
         if(port != null) props.setProperty("s3service.s3-endpoint-http-port", port);
         if(httpsOnly != null) props.setProperty("s3service.https-only", httpsOnly);
         if(endpoint != null) props.setProperty("s3service.s3-endpoint", endpoint);
@@ -82,7 +82,7 @@ public class AmazonS3Service extends DBService {
         CredentialsProvider credentials = s3service.getCredentialsProvider();
         s3service = new RestS3Service(awsCredentials, "Doradus", credentials, props);
         
-        Object str_threads = m_tenant.getDBParamString("s3-threads");
+        Object str_threads = getParamString("s3-threads");
         int threads = str_threads == null ? 1 : Integer.parseInt(str_threads.toString());
         s3_executor = Executors.newFixedThreadPool(threads);
         

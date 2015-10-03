@@ -16,14 +16,14 @@
 
 package com.dell.doradus.olap.io;
 
-import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.search.util.LRUSizeCache;
+import com.dell.doradus.service.olap.OLAPService;
 
 public class FileCache {
     private LRUSizeCache<String, byte[]> m_chunkCache;
 
     public FileCache() {
-		int cacheSize = ServerConfig.getInstance().olap_file_cache_size_mb;  
+		int cacheSize = OLAPService.instance().getParamInt("olap_file_cache_size_mb", 0);  
 		if(cacheSize > 0) {
 			m_chunkCache = new LRUSizeCache<String, byte[]>(0, cacheSize * 1024L * 1024L);
 		}

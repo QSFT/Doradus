@@ -16,13 +16,13 @@
 
 package com.dell.doradus.service;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.DoradusServer;
 import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.db.DBNotAvailableException;
@@ -139,8 +139,8 @@ public abstract class Service {
     private State           m_state = State.INACTIVE;
     private final Object    m_stateChangeLock = new Object();
     
-    // Hierarchical list of service names for parameter searching:
-    private final List<String> m_serviceAncestry = new ArrayList<>();
+    // Direct and inherited parameters, visible to subclasses:
+    protected final Map<String, Object> m_serviceParamMap = new HashMap<>();
     
     // Services can set this to wait after serviceStart() is called before start() returns.
     protected int m_startDelayMillis = 0;
@@ -149,10 +149,9 @@ public abstract class Service {
     protected final Logger m_logger = LoggerFactory.getLogger(getClass().getSimpleName());
     
     protected Service() {
-        Class<?> clazz = this.getClass();
-        while (clazz.getSimpleName().endsWith("Service")) {
-            m_serviceAncestry.add(clazz.getSimpleName());
-            clazz = clazz.getSuperclass();
+        Map<String, Object> moduleParamMap = ServerParams.instance().getAllModuleParams(this.getClass().getName());
+        if (moduleParamMap != null) {
+            m_serviceParamMap.putAll(moduleParamMap);
         }
     }
     
@@ -243,46 +242,106 @@ public abstract class Service {
     }   // waitForFullService
     
     /**
-     * Get the value of the parameter with the given name belonging to this service. The
-     * service's concrete name is used as the module name to call
-     * {@link ServerParams#getModuleParam(String, String)}. If the parameter is not
-     * defined for this service, than the service's superclass is searched. If the
-     * parameter is not found, null is returned.  
+     * Get the value of the parameter with the given name belonging to this service. If
+     * the parameter is not found, null is returned.  
      * 
      * @param paramName Name of parameter to find.
-     * @return          Parameter found if found for this service or one of its
-     *                  superclasses, otherwise null.
+     * @return          Parameter found if found for this service, otherwise null.
      */
     public Object getParam(String paramName) {
-        for (String serviceName : m_serviceAncestry) {
-            Object paramValue = ServerParams.instance().getModuleParam(serviceName, paramName);
-            if (paramValue != null) {
-                return paramValue;
-            }
-        }
-        return null;
+        return m_serviceParamMap.get(paramName);
     }
     
     /**
      * Get the value of the parameter with the given name belonging to this service as a
-     * String. The service's concrete name is used as the module name to call
-     * {@link ServerParams#getModuleParam(String, String)}. If the parameter is not
-     * defined for this service, than the service's superclass is searched. If the
-     * parameter is not found, null is returned. If the parameter is found but is not a
-     * String, an IllegalArgumentException is thrown.  
+     * String. If the parameter is not found, null is returned.
      * 
      * @param paramName Name of parameter to find.
-     * @return          Parameter found as a String if found for this service or one of
-     *                  its superclasses, otherwise null.
+     * @return          Parameter found as a String if found, otherwise null.
      */
     public String getParamString(String paramName) {
         Object paramValue = getParam(paramName);
-        if (paramValue != null) {
-            Utils.require(paramValue instanceof String, "Parameter '%s' must be a String: %s",
-                          paramName, paramValue.toString());
-            return (String)paramValue;
+        if (paramValue == null) {
+            return null;
         }
-        return null;
+        return paramValue.toString();
+    }
+    
+    /**
+     * Get the value of the parameter with the given name belonging to this service as an
+     * integer. If the parameter is not found, the given default value is returned. If the
+     * parameter is found but cannot be converted to an integer, an
+     * IllegalArgumentException is thrown.
+     * 
+     * @param paramName     Name of parameter to find.
+     * @param defaultValue  Value to return if parameter is not defined.
+     * @return              Defined or default value.
+     */
+    public int getParamInt(String paramName, int defaultValue) {
+        Object paramValue = getParam(paramName);
+        if (paramValue == null) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(paramValue.toString());
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Value for parameter '" + paramName + "' must be an integer: " + paramValue);
+        }
+    }
+    
+    /**
+     * Get the value of the parameter with the given name belonging to this service as a
+     * boolean. If the parameter is not found, false is returned.
+     * 
+     * @param paramName Name of parameter to find.
+     * @return          Parameter value found or false if not found.
+     */
+    public boolean getParamBoolean(String paramName) {
+        Object paramValue = getParam(paramName);
+        if (paramValue == null) {
+            return false;
+        }
+        return Boolean.parseBoolean(paramValue.toString());
+    }
+    
+    /**
+     * Get the value of the given parameter name belonging to this service as a LIst of
+     * Strings. If no such parameter name is known, null is returned. If the parameter is
+     * defined but is not a list, an IllegalArgumentException is thrown. 
+     * 
+     * @param paramName     Name of parameter to get value of.
+     * @return              Parameter value as a List of Strings or null if unknown.
+     */
+    @SuppressWarnings("unchecked")
+    public List<String> getParamList(String paramName) {
+        Object paramValue = getParam(paramName);
+        if (paramValue == null) {
+            return null;
+        }
+        if (!(paramValue instanceof List)) {
+            throw new IllegalArgumentException("Parameter '" + paramName + "' must be a list: " + paramValue);
+        }
+        return (List<String>)paramValue;
+    }
+    
+    /**
+     * Get the value of the given parameter name as a Map. If no such parameter name is
+     * known, null is returned. If the parameter is defined but is not a Map, an
+     * IllegalArgumentException is thrown. 
+     * 
+     * @param paramName     Name of parameter to get value of.
+     * @return              Parameter value as a String/Objec Map or null if unknown.
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getParamMap(String paramName) {
+        Object paramValue = getParam(paramName);
+        if (paramValue == null) {
+            return null;
+        }
+        if (!(paramValue instanceof Map)) {
+            throw new IllegalArgumentException("Parameter '" + paramName + "' must be a map: " + paramValue);
+        }
+        return (Map<String, Object>)paramValue;
     }
     
     //----- Protected methods 

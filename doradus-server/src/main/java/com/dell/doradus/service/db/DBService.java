@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.tenant.TenantService;
 
@@ -44,7 +45,7 @@ public abstract class DBService extends Service {
 
     private static DBService createDefaultDBInstance() {
         Tenant defaultTenant = TenantService.instance().getDefaultTenant();
-        DBService dbservice = createTenantInstance(defaultTenant);
+        DBService dbservice = createTenantDBService(defaultTenant);
         g_tenantServiceMap.put(defaultTenant.getName(), dbservice);
         return dbservice;
     }
@@ -71,16 +72,19 @@ public abstract class DBService extends Service {
     }   // instance
 
     /**
-     * Get the {@link DBService} instance that manages data for the given tenant.
+     * Get the {@link DBService} instance that manages data for the given tenant. If a
+     * DBService instance does not yet exist for this tenant, a new one is created based
+     * on the options defined by the tenant. This causes DB-specific parameters to be
+     * copied to the DBService object.
      * 
      * @param tenant    Existing or potentially new tenant.
-     * @return
+     * @return          {@link DBService} instances that can manage the tenant's data.
      */
     public static DBService instance(Tenant tenant) {
         synchronized (g_tenantServiceMap) {
             DBService dbservice = g_tenantServiceMap.get(tenant.getName());
             if (dbservice == null) {
-                dbservice = createTenantInstance(tenant);
+                dbservice = createTenantDBService(tenant);
                 // TODO: another way to do this?
                 dbservice.initialize();
                 dbservice.start();
@@ -334,20 +338,44 @@ public abstract class DBService extends Service {
     
     // Create a new DBService for the given tenant. This should only be called when a lock
     // is held on g_tenantServiceMap
-    private static DBService createTenantInstance(Tenant tenant) {
+    private static DBService createTenantDBService(Tenant tenant) {
+        Map<String, Object> paramMap = tenant.getDefinition().getOptionMap("DBService");
+        String dbServiceName = null;
+        if (paramMap == null) {
+            dbServiceName = ServerParams.instance().getModuleParamString("DBService", "dbservice");
+            Utils.require(!Utils.isEmpty(dbServiceName), "DBService.dbservice parameter is not defined");
+        } else {
+            dbServiceName = paramMap.get("dbservice").toString();
+            Utils.require(!Utils.isEmpty(dbServiceName),
+                          "Tenant '%s' must define 'dbservice' within 'DBService' option", tenant.getName());
+        }
+
         DBService dbservice = null;
-        String dbServiceName = tenant.getDBParamString("dbservice");
-        Utils.require(!Utils.isEmpty(dbServiceName), "'dbservice' parameter is not defined");
         try {
-            // Find and invoke static method: instance(Tenant)
+            // Find and invoke static method: instance(Tenant). Note that since the DBService is
+            // a Service, all module parameters defined for it are copied from doradus.yaml to the
+            // object in the Service constructor. Hence, it is initialized with all options relevant
+            // to the DBService's type.
             @SuppressWarnings("unchecked")
             Class<DBService> serviceClass = (Class<DBService>) Class.forName(dbServiceName);
             Method instanceMethod = serviceClass.getMethod("instance", new Class<?>[]{Tenant.class});
             dbservice = (DBService)instanceMethod.invoke(null, new Object[]{tenant});
+            
+            // Override the service's params with any defined in the tenant's definition.
+            dbservice.addParams(tenant.getDBServiceParams());
         } catch (Exception e) {
             throw new RuntimeException("Cannot load specified 'dbservice': " + dbServiceName, e);
         }
         return dbservice;
+    }
+
+    // Add/override parameters defined for this DBService with those in the given map.
+    private void addParams(Map<String, Object> dbServiceParams) {
+        if (dbServiceParams != null) {
+            for (String paramName : dbServiceParams.keySet()) {
+                m_serviceParamMap.put(paramName, dbServiceParams.get(paramName));
+            }
+        }
     }
     
 }

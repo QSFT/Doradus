@@ -26,7 +26,7 @@ import java.util.Set;
 
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.core.ObjectID;
-import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.spider.SpiderHelper;
 import com.dell.doradus.service.spider.SpiderService;
 
@@ -54,7 +54,7 @@ public class LinksIterable implements Iterable<ObjectID> {
 		if(m_shards.size() == 0) return NoneIterator.instance;
 		int maxobjects = 64;
 		int maxmaxobjects = 64 * 1024;
-		int count = ServerConfig.getInstance().dbesoptions_linkBuffer; // 1000
+		int count = ServerParams.instance().getModuleParamInt("DoradusServer", "dbesoptions_linkBuffer", 1000);
 		List<ObjectID> keys = new ArrayList<ObjectID>();
 		for(ObjectID key : m_keys) {
 			keys.add(key);

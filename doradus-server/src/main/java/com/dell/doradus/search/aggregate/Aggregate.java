@@ -41,7 +41,7 @@ import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ObjectID;
-import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.search.QueryExecutor;
 import com.dell.doradus.search.aggregate.AggregationGroup.Selection;
 import com.dell.doradus.search.filter.Filter;
@@ -143,9 +143,8 @@ public class Aggregate {
 		assert tableDef != null;
 		m_tableDef = tableDef;
 		m_groupSet = new GroupSetEntry[0];
-	    ServerConfig config = ServerConfig.getInstance();
-	    separateSearchTiming = config.aggr_separate_search;
-	    m_l2rEnable = config.l2r_enable;
+	    separateSearchTiming = ServerParams.instance().getModuleParamBoolean("DoradusServer", "aggr_separate_search");
+	    m_l2rEnable = ServerParams.instance().getModuleParamBoolean("DoradusServer", "l2r_enable");
 	}
 
 	// Executes the request and returns the total group.

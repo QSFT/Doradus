@@ -16,7 +16,6 @@
 
 package com.dell.doradus.service.db;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.dell.doradus.common.ApplicationDefinition;
@@ -33,7 +32,6 @@ import com.dell.doradus.service.tenant.TenantService;
 public class Tenant implements Comparable<Tenant> {
     private final String m_name;
     private final TenantDefinition m_tenantDef;
-    private final Map<String, Object> m_dbParamMap = new HashMap<>();
     
     /**
      * Create a Tenant object from the given application definition. If the application
@@ -44,8 +42,9 @@ public class Tenant implements Comparable<Tenant> {
      */
     public static Tenant getTenant(ApplicationDefinition appDef) {
         String tenantName = appDef.getTenantName();
-        if(Utils.isEmpty(tenantName)) return TenantService.instance().getDefaultTenant();
-        Utils.require(!Utils.isEmpty(tenantName), "Application definition is missing tenant name: " + appDef);
+        if (Utils.isEmpty(tenantName)) {
+            return TenantService.instance().getDefaultTenant();
+        }
         TenantDefinition tenantDef = TenantService.instance().getTenantDefinition(tenantName);
         Utils.require(tenantDef != null, "Tenant definition does not exist: %s", tenantName);
         return new Tenant(tenantDef);
@@ -63,72 +62,48 @@ public class Tenant implements Comparable<Tenant> {
     }   // getTenant
 
     /**
+     * Create a Tenant object from the given TenantDefinition.
      * 
-     * @param tenantDef
+     * @param tenantDef {@link TenantDefinition} that defines a tenant.
      */
     public Tenant(TenantDefinition tenantDef) {
         m_name = tenantDef.getName();
         m_tenantDef = tenantDef;
-        loadDBServiceParams();
     }
 
-    private void loadDBServiceParams() {
-        if (m_tenantDef.getOption("DBService") == null) {
-            copyDefaultDBParams();
-        } else {
-            copyTenantDBParams();
+    /**
+     * Get all DBService parameters defined by this tenant, if any. If the tenant
+     * definition's options do not define "DBService", null is returned. Otherwise, the
+     * DBService.dbservice option is used to find and merge all options defined by the
+     * tenant for the corresponding DBService. For example, suppose the tenant definition
+     * includes these options:
+     * <pre>
+     *      {"options": {
+     *          "DBService": {
+     *              "dbservice": "com.dell.doradus.service.db.thrift.ThriftService"
+     *          },
+     *          "ThriftService": {
+     *              "dbhost": 12.34.56.78,
+     *              "dbport": 7532
+     *          }
+     *      }}
+     * <pre>
+     * This method inspects the class hierarchy of the ThriftService and loads all options
+     * defined for it and its superclasses into a single map. In the example above, this
+     * means options defined for both DBService and ThriftService are merged into the map.
+     * 
+     * @return  String-to-Object map of all DBService parameters defined by this tenant
+     *          definition's options, if any, or null if there are none.
+     */
+    public Map<String, Object> getDBServiceParams() {
+        Map<String, Object> tenantDBParamMap = m_tenantDef.getOptionMap("DBService");
+        if (tenantDBParamMap == null) {
+            return null;
         }
-    }
-    
-    @SuppressWarnings("unchecked")
-    private void copyDefaultDBParams() {
-        Object dbServiceParams = ServerParams.instance().getModuleParams("DBService");
-        Utils.require(dbServiceParams != null, "'DBService' parameter has not been defined");
-        Map<String, Object> defaultDBParamMap = (Map<String, Object>)dbServiceParams;
-        m_dbParamMap.putAll(defaultDBParamMap);
-        
-        String dbservice = (String)m_dbParamMap.get("dbservice");
-        Utils.require(dbservice != null, "'DBService.dbservice' parameter has not been defined");
-        
-        try {
-            Class<?> dbServiceClass = Class.forName(dbservice);
-            String serviceName = dbServiceClass.getSimpleName();
-            while (serviceName.endsWith("Service")) {
-                dbServiceParams = ServerParams.instance().getModuleParams(serviceName);
-                if (dbServiceParams != null && dbServiceParams instanceof Map) {
-                    m_dbParamMap.putAll((Map<String, Object>)dbServiceParams);
-                }
-                dbServiceClass = dbServiceClass.getSuperclass();
-                serviceName = dbServiceClass.getSimpleName();
-            }
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Could not validate dbservice '" + dbservice + "'", e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void copyTenantDBParams() {
-        Object dbServiceParams = m_tenantDef.getOption("DBService");
-        Map<String, Object> defaultDBParamMap = (Map<String, Object>)dbServiceParams;
-        m_dbParamMap.putAll(defaultDBParamMap);
-        
-        String dbservice = (String)m_dbParamMap.get("dbservice");
-        Utils.require(dbservice != null, "'DBService.dbservice' must be defined for Tenant: %s", m_name);
-        
-        try {
-            Class<?> dbServiceClass = Class.forName(dbservice);
-            String serviceName = dbServiceClass.getSimpleName();
-            while (serviceName.endsWith("Service")) {
-                dbServiceParams = m_tenantDef.getOption(serviceName);
-                if (dbServiceParams != null && dbServiceParams instanceof Map) {
-                    m_dbParamMap.putAll((Map<String, Object>)dbServiceParams);
-                }
-                dbServiceClass = dbServiceClass.getSuperclass();
-                serviceName = dbServiceClass.getSimpleName();
-            }
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Could not validate dbservice '" + dbservice + "'", e);
-        }
+        String dbservice = (String)tenantDBParamMap.get("dbservice");
+        Utils.require(!Utils.isEmpty(dbservice), "'DBService.dbservice' option must be defined for tenant: %s", m_name);
+        Map<String, Object> dbParamMap = ServerParams.getAllModuleParams(dbservice, tenantDBParamMap);
+        return dbParamMap;
     }
 
     /**
@@ -147,68 +122,6 @@ public class Tenant implements Comparable<Tenant> {
      */
     public TenantDefinition getDefinition() {
         return m_tenantDef;
-    }
-    
-    /**
-     * Get the database parameter with the given name. For example, if this tenant's
-     * definiton has the option:
-     * <pre>
-     *      DBService:
-     *          dbhost: 12.34.56.78
-     * </pre>
-     * The call <code>getDBParam("dbhost")</code> returns the value "12.34.56.78" as an
-     * Object.
-     *  
-     * @param paramName Name of DBService parameter.
-     * @return          Parameter value or null if not defined.
-     */
-    public Object getDBParam(String paramName) {
-        return m_dbParamMap.get(paramName);
-    }
-
-    /**
-     * Get the given Boolean database parameter, returning false if it is not defined.
-     * 
-     * @param paramName     Database parameter name.
-     * @return              Defined parameter value or false.
-     */
-    public boolean getDBParamBoolean(String paramName) {
-        Object dbParam = m_dbParamMap.get(paramName);
-        if (dbParam == null) {
-            return false;
-        }
-        return Boolean.parseBoolean(dbParam.toString());
-    }
-    
-    /**
-     * Get the given integer database parameter, returning the given default value if it
-     * is not defined.
-     * 
-     * @param paramName     Database parameter name.
-     * @param defaultValue  Default value returned if parameter is not defined.
-     * @return              Defined or default parameter value.
-     */
-    public int getDBParamInt(String paramName, int defaultValue) {
-        Object dbParam = m_dbParamMap.get(paramName);
-        if (dbParam == null) {
-            return defaultValue;
-        }
-        return Integer.parseInt(dbParam.toString());
-    }
-
-    /**
-     * Get the database parameter with the given name. This method calls
-     * {@link #getDBParam(String)} and calls toString() on the result.
-     *  
-     * @param paramName Name of DBService parameter.
-     * @return          Parameter value as a String or null if not defined.
-     */
-    public String getDBParamString(String paramName) {
-        Object dbParam = m_dbParamMap.get(paramName);
-        if (dbParam != null) {
-            return dbParam.toString();
-        }
-        return null;
     }
     
     // So we can be used as a collection key.

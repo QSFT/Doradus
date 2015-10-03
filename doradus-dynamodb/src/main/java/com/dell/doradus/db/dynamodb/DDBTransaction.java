@@ -28,6 +28,7 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.dynamodbv2.model.AttributeAction;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
+import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.Tenant;
@@ -36,11 +37,17 @@ import com.dell.doradus.service.db.Tenant;
  * Applies column and row updates held in a {@link DBTransaction} to a DynamoDB instance.
  */
 public class DDBTransaction {
-    protected final static Logger m_logger = LoggerFactory.getLogger(DDBTransaction.class.getSimpleName());    
-    private DDBTransaction() {}
+    private final static Logger m_logger = LoggerFactory.getLogger(DDBTransaction.class.getSimpleName());
+    private final DynamoDBService m_service;
     
-    // Apply all updates in m_updateMap.
-    public static void commit(DBTransaction dbTran) {
+    DDBTransaction(DynamoDBService service) { m_service = service; }
+    
+    /**
+     * Apply aall updates in the given {@link DBTransaction} to our DynamoDB instance.
+     * 
+     * @param dbTran {@link DBTransaction} with updates.
+     */
+    public void commit(DBTransaction dbTran) {
         try {
             applyUpdates(dbTran);
         } catch (Exception e) {
@@ -59,7 +66,7 @@ public class DDBTransaction {
     
     //----- Private methods
     
-    private static void applyUpdates(DBTransaction dbTran) {
+    private void applyUpdates(DBTransaction dbTran) {
         Tenant tenant = dbTran.getTenant();
         Map<String, Map<String, List<DColumn>>> colUpdatesMap = dbTran.getColumnUpdatesMap();
         for (String tableName : colUpdatesMap.keySet()) {
@@ -75,12 +82,12 @@ public class DDBTransaction {
         for (String tableName : rowDeletesMap.keySet()) {
             for (String rowKey : rowDeletesMap.get(tableName)) {
                 Map<String, AttributeValue> key = DynamoDBService.makeDDBKey(rowKey);
-                DynamoDBService.instance(tenant).deleteRow(tableName, key);
+                m_service.deleteRow(tableName, key);
             }
         }
     }
 
-    private static void updateTableColumnUpdates(Tenant tenant, String tableName, Map<String, List<DColumn>> rowMap) {
+    private void updateTableColumnUpdates(Tenant tenant, String tableName, Map<String, List<DColumn>> rowMap) {
         for (String rowKey : rowMap.keySet()) {
             Map<String, AttributeValue> key = DynamoDBService.makeDDBKey(rowKey);
             List<DColumn> colList = rowMap.get(rowKey);
@@ -88,19 +95,19 @@ public class DDBTransaction {
         }
     }
 
-    private static void updateRowColumnUpdates(Tenant tenant,
-                                               String tableName,
-                                               Map<String, AttributeValue> key,
-                                               List<DColumn> colList) {
+    private void updateRowColumnUpdates(Tenant tenant,
+                                        String tableName,
+                                        Map<String, AttributeValue> key,
+                                        List<DColumn> colList) {
         Map<String, AttributeValueUpdate> attributeUpdates = new HashMap<>();
         for (DColumn col : colList) {
             AttributeValue attrValue = mapColumnValue(tenant, col);
             attributeUpdates.put(col.getName(), new AttributeValueUpdate(attrValue, AttributeAction.PUT));
         }
-        DynamoDBService.instance(tenant).updateRow(tableName, key, attributeUpdates);
+        m_service.updateRow(tableName, key, attributeUpdates);
     }
 
-    private static void updateTableColumnDeletes(Tenant tenant, String tableName, Map<String, List<String>> rowMap) {
+    private void updateTableColumnDeletes(Tenant tenant, String tableName, Map<String, List<String>> rowMap) {
         for (String rowKey : rowMap.keySet()) {
             Map<String, AttributeValue> key = DynamoDBService.makeDDBKey(rowKey);
             List<String> colNames = rowMap.get(rowKey);
@@ -108,21 +115,21 @@ public class DDBTransaction {
         }
     }
 
-    private static void updateRowColumnDeletes(Tenant tenant,
-                                               String tableName,
-                                               Map<String, AttributeValue> key,
-                                               List<String> colNames) {
+    private void updateRowColumnDeletes(Tenant tenant,
+                                        String tableName,
+                                        Map<String, AttributeValue> key,
+                                        List<String> colNames) {
         Map<String, AttributeValueUpdate> attributeUpdates = new HashMap<>();
         for (String colName : colNames) {
             attributeUpdates.put(colName, new AttributeValueUpdate().withAction(AttributeAction.DELETE));
         }
-        DynamoDBService.instance(tenant).updateRow(tableName, key, attributeUpdates);
+        m_service.updateRow(tableName, key, attributeUpdates);
     }
 
     // Create the appropriate AttributeValue for the given column value type and length.
-    private static AttributeValue mapColumnValue(Tenant tenant, DColumn col) {
+    private AttributeValue mapColumnValue(Tenant tenant, DColumn col) {
         AttributeValue attrValue = new AttributeValue();
-        boolean isBinaryValue = DynamoDBService.instance(tenant).columnIsBinary(col.getName());
+        boolean isBinaryValue = ((DynamoDBService)DBService.instance(tenant)).columnIsBinary(col.getName());
         if (isBinaryValue) {
             if (col.getRawValue().length == 0) {
                 attrValue.setS(DynamoDBService.NULL_COLUMN_MARKER);

@@ -18,7 +18,7 @@ package com.dell.doradus.logservice;
 
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.olap.ParsedQuery;
 
 public class LogQuery {
@@ -75,7 +75,7 @@ public class LogQuery {
     public String getPattern() { return m_pattern; }
     
     public int getPageSizeWithSkip() {
-    	if(m_pageSize < 0) return m_skip + ServerConfig.getInstance().search_default_page_size;
+    	if(m_pageSize < 0) return m_skip + ServerParams.instance().getModuleParamInt("DoradusServer", "search_default_page_size", 100);
     	else if(m_pageSize == 0) return Integer.MAX_VALUE;
     	else return m_pageSize + m_skip;
     }
@@ -85,7 +85,7 @@ public class LogQuery {
     private void checkDefaults() {
         Utils.require(m_continueAt == null || m_continueAfter == null, "Both continue-at and continue-after parameters cannot be set");
         //Utils.require((m_continueAt == null && m_continueAfter == null) || m_sortOrder == null, "continuation parameters cannot be set if sort order is set");
-        if (m_pageSize == -1) m_pageSize = ServerConfig.getInstance().search_default_page_size;
+        if (m_pageSize == -1) m_pageSize = ServerParams.instance().getModuleParamInt("DoradusServer", "search_default_page_size", 100);
     }
     
 }

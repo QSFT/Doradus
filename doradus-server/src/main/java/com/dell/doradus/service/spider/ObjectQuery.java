@@ -21,7 +21,7 @@ import java.util.Map;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.search.QueryExecutor;
 import com.dell.doradus.search.SearchResultList;
 
@@ -42,7 +42,7 @@ public class ObjectQuery {
     private String  m_fieldSet;
     private int		m_skip = 0;
     private String  m_sortOrder;
-    private boolean m_l2rEnabled = ServerConfig.getInstance().l2r_enable;
+    private boolean m_l2rEnabled = ServerParams.instance().getModuleParamBoolean("DoradusServer", "l2r_enable");
 
     /**
      * Create an object that uses the given perspective table and extracts query

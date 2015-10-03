@@ -128,6 +128,26 @@ public class TenantDefinition implements JSONable{
     }
     
     /**
+     * Get the value of the option with the given name as a Map. If the option is not
+     * defined, null is returned. If the option value is not a Map, an
+     * IllegalArgumentException is thrown.
+     * 
+     * @param optName   Name of option to fetch.
+     * @return          Option value as a String-to-Object map or null if not defined.
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getOptionMap(String optName) {
+        Object optValue = m_options.get(optName);
+        if (optValue == null) {
+            return null;
+        }
+        if (!(optValue instanceof Map)) {
+            throw new IllegalArgumentException("Tenant option '" + optName + "' should be a map: " + optValue);
+        }
+        return (Map<String, Object>)optValue;
+    }
+    
+    /**
      * Get the properties defined for this tenant definition as a key value map. Compared
      * to options, which are system-defined, options are application-defined.
      *  
@@ -304,5 +324,5 @@ public class TenantDefinition implements JSONable{
     public String toJSON() {
         return toDoc().toJSON();
     }
-    
+
 }   // class TenantDefinition

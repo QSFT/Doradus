@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.datastax.driver.core.ResultSet;
-import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.Tenant;
 
@@ -45,7 +44,7 @@ public class CQLSchemaManager {
      * <pre>
      *      CREATE KEYSPACE "<i>keyspace</i>" WITH <i>prop</i>=<i>value</i> AND ...;
      * </pre>
-     * Where the list of <i>prop</i> properties come from {@link ServerConfig#ks_defaults}.
+     * Where the list of <i>prop</i> properties come from defined parameters.
      * 
      * @param tenant    {@link Tenant} that will use new keyspace.
      * @param options   Options to use for new keyspace.
@@ -85,7 +84,7 @@ public class CQLSchemaManager {
         cql.append(cqlKeyspace);
         cql.append(" WITH REPLICATION = {'class':'");
         String strategyClass = "SimpleStrategy";
-        Map<String, Object> ksDefs = ServerConfig.getInstance().ks_defaults;
+        Map<String, Object> ksDefs = CQLService.instance().getParamMap("ks_defaults");
         if (ksDefs != null && ksDefs.containsKey("strategy_class")) {
             strategyClass = ksDefs.get("strategy_class").toString();
         }
@@ -126,8 +125,7 @@ public class CQLSchemaManager {
      *          PRIMARY KEY(key, column1)
      *      ) WITH COMPACT STORAGE [WITH <i>prop</i> AND <i>prop</i> AND ...]
      * </pre>
-     * Where the WITH <i>prop</i> clauses come from {@link ServerConfig#olap_cf_defaults}
-     * or {@link ServerConfig#cf_defaults}.
+     * Where the WITH <i>prop</i> clauses come from configuration parameters.
      * 
      * @param tenant        {@link Tenant} that owns keyspace.
      * @param storeName     Name of table (unquoted) to create.
@@ -178,10 +176,8 @@ public class CQLSchemaManager {
     private static String tablePropertiesToCQLString(String storeName) {
         StringBuilder buffer = new StringBuilder();
         
-        // A little kludgey for now
-        Map<String, Object> cfOptions = storeName.startsWith("OLAP")
-                                      ? ServerConfig.getInstance().olap_cf_defaults
-                                      : ServerConfig.getInstance().cf_defaults;
+        // TODO: Need to handle per-tenant options.
+        Map<String, Object> cfOptions = CQLService.instance().getParamMap("cf_defaults");
         if (cfOptions != null) {
             for (String optName : cfOptions.keySet()) {
                 buffer.append(" AND ");
@@ -215,7 +211,7 @@ public class CQLSchemaManager {
         replication.put("replication_factor", "1");
 
         // Override defaults if configured
-        Map<String, Object> ksDefs = ServerConfig.getInstance().ks_defaults;
+        Map<String, Object> ksDefs = CQLService.instance().getParamMap("ks_defaults");
         if (ksDefs != null) {
             if (ksDefs.containsKey("durable_writes")) {
                 durable_writes = Boolean.parseBoolean(ksDefs.get("durable_writes").toString());

@@ -22,11 +22,11 @@ import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.service.olap.OLAPService;
 
 public class Compressor {
-    private static boolean m_bCompress = ServerConfig.getInstance().olap_internal_compression;
-    private static int m_compressionLevel = ServerConfig.getInstance().olap_compression_level;
+    private static boolean m_bCompress = OLAPService.instance().getParamBoolean("olap_internal_compression");
+    private static int m_compressionLevel = OLAPService.instance().getParamInt("olap_compression_level", -1);
 	
 	public static byte[] compress(byte[] data) {
 		if(data.length == 0) return data;

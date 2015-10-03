@@ -25,7 +25,6 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.rest.RESTCatalog;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.StorageService;
 import com.dell.doradus.service.rest.annotation.Description;
@@ -242,14 +241,14 @@ public class RESTService extends Service {
     // Attempt to load the WebServer instance defined by webserver_class.
     private WebServer loadWebServer() {
         WebServer webServer = null;
-        if (!Utils.isEmpty(ServerConfig.getInstance().webserver_class)) {
+        if (!Utils.isEmpty(getParamString("webserver_class"))) {
             try {
-                Class<?> serviceClass = Class.forName(ServerConfig.getInstance().webserver_class);
+                Class<?> serviceClass = Class.forName(getParamString("webserver_class"));
                 Method instanceMethod = serviceClass.getMethod("instance", (Class<?>[])null);
                 webServer = (WebServer)instanceMethod.invoke(null, (Object[])null);
                 webServer.init(RESTServlet.class.getName());
             } catch (Exception e) {
-                throw new RuntimeException("Error initializing WebServer: " + ServerConfig.getInstance().webserver_class, e);
+                throw new RuntimeException("Error initializing WebServer: " + getParamString("webserver_class"), e);
             }
         }
         return webServer;

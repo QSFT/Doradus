@@ -443,8 +443,6 @@ public class TenantService extends Service {
         DBService dbService = DBService.instance(tenant);
         if (dbService.supportsNamespaces()) {
             dbService.createNamespace();
-        } else {
-            // TODO: Ensure this DB does not already have a tenant.
         }
         initializeTenantStores(tenant);
         storeTenantDefinition(tenantDef);

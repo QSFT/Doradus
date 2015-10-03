@@ -27,11 +27,10 @@ import org.apache.cassandra.thrift.KsDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dell.doradus.core.ServerConfig;
-
 /**
- * Provides static methods for accessing and managing Cassandra schemas: creating keyspaces,
- * creating and deleting ColumnFamilies, single- and multi-gets, updates, etc.
+ * Provides methods for accessing and managing Cassandra schemas: creating keyspaces,
+ * creating and deleting ColumnFamilies, single- and multi-gets, updates, etc. Each
+ * instance is created for a specific ThriftService instance.
  */
 public class CassandraSchemaMgr {
     private static final String DEFAULT_KS_STRATEGY_CLASS = "SimpleStrategy";
@@ -41,8 +40,12 @@ public class CassandraSchemaMgr {
     
     private static final Logger m_logger = LoggerFactory.getLogger(CassandraSchemaMgr.class.getSimpleName());
 
+    private final ThriftService m_service;
+    
     // Static methods only
-    private CassandraSchemaMgr() { }
+    public CassandraSchemaMgr(ThriftService service) {
+        m_service = service;
+    }
 
     //----- Keyspace methods
 
@@ -52,7 +55,7 @@ public class CassandraSchemaMgr {
      * @param  dbConn   Database connection to use.
      * @return          List of all known keyspaces, empty if none.
      */
-    public static Collection<String> getKeyspaces(DBConn dbConn) {
+    public Collection<String> getKeyspaces(DBConn dbConn) {
         List<String> result = new ArrayList<>();
         try {
             for (KsDef ksDef : dbConn.getClientSession().describe_keyspaces()) {
@@ -75,7 +78,7 @@ public class CassandraSchemaMgr {
      * @param options   Optional map of new keyspace options, which override ks_defaults
      *                  in the configuration file.
      */
-    public static void createKeyspace(DBConn dbConn, String keyspace, Map<String, String> options) {
+    public void createKeyspace(DBConn dbConn, String keyspace, Map<String, String> options) {
         m_logger.info("Creating Keyspace '{}'", keyspace);
         try {
             KsDef ksDef = setKeySpaceOptions(keyspace);
@@ -97,7 +100,7 @@ public class CassandraSchemaMgr {
      * @param keyspace  Keyspace name.
      * @return          True if it exists.
      */
-    public static boolean keyspaceExists(DBConn dbConn, String keyspace) {
+    public boolean keyspaceExists(DBConn dbConn, String keyspace) {
         try {
             dbConn.getClientSession().describe_keyspace(keyspace);
             return true;
@@ -112,7 +115,7 @@ public class CassandraSchemaMgr {
      * @param dbConn    Database connection to use.
      * @param keyspace  Name of keyspace to drop.
      */
-    public static void dropKeyspace(DBConn dbConn, String keyspace) {
+    public void dropKeyspace(DBConn dbConn, String keyspace) {
         m_logger.info("Deleting Keyspace '{}'", keyspace);
         try {
             dbConn.getClientSession().system_drop_keyspace(keyspace);
@@ -136,7 +139,7 @@ public class CassandraSchemaMgr {
      * @param cfName        name of new CF.
      * @param bBinaryValues True if column values shoud be binary.
      */
-    public static void createColumnFamily(DBConn dbConn, String keyspace, String cfName, boolean bBinaryValues) {
+    public void createColumnFamily(DBConn dbConn, String keyspace, String cfName, boolean bBinaryValues) {
         m_logger.info("Creating ColumnFamily: {}:{}", keyspace, cfName);
         
         CfDef cfDef = new CfDef();
@@ -151,10 +154,7 @@ public class CassandraSchemaMgr {
             cfDef.setDefault_validation_class("UTF8Type");
         }
         
-        // A little kludgey for now
-        Map<String, Object> cfOptions = cfName.startsWith("OLAP")
-                                      ? ServerConfig.getInstance().olap_cf_defaults
-                                      : ServerConfig.getInstance().cf_defaults;
+        Map<String, Object> cfOptions = m_service.getParamMap("cf_defaults");
         if (cfOptions != null) {
             for (String optName : cfOptions.keySet()) {
                 Object optValue = cfOptions.get(optName);
@@ -177,7 +177,7 @@ public class CassandraSchemaMgr {
             try {
                 dbConn.getClientSession().system_add_column_family(cfDef);
             } catch (Exception ex) {
-                if (attempt > ServerConfig.getInstance().max_commit_attempts) {
+                if (attempt > m_service.getParamInt("max_commit_attempts", 10)) {
                     String msg = String.format("%d attempts to create ColumnFamily %s:%s failed",
                                                attempt, keyspace, cfName);
                     throw new RuntimeException(msg, ex);
@@ -195,7 +195,7 @@ public class CassandraSchemaMgr {
      * @param cfName    Candidate ColumnFamily name.
      * @return          True if the CF exists in the database.
      */
-    public static boolean columnFamilyExists(DBConn dbConn, String keyspace, String cfName) {
+    public boolean columnFamilyExists(DBConn dbConn, String keyspace, String cfName) {
         KsDef ksDef = null;
         try {
             ksDef = dbConn.getClientSession().describe_keyspace(keyspace);
@@ -219,7 +219,7 @@ public class CassandraSchemaMgr {
      * @param dbConn    Database connection to use.
      * @param cfName    Name of CF to delete.
      */
-    public static void deleteColumnFamily(DBConn dbConn, String cfName) {
+    public void deleteColumnFamily(DBConn dbConn, String cfName) {
         m_logger.info("Deleting ColumnFamily: {}", cfName);
         try {
             dbConn.getClientSession().system_drop_column_family(cfName);
@@ -231,10 +231,10 @@ public class CassandraSchemaMgr {
     //----- Private methods
     
     // Build KsDef from configuration options and defaults.
-    private static KsDef setKeySpaceOptions(String keyspace) {
+    private KsDef setKeySpaceOptions(String keyspace) {
         KsDef ksDef = new KsDef();
         ksDef.setName(keyspace);
-        Map<String, Object> ksOptions = ServerConfig.getInstance().ks_defaults;
+        Map<String, Object> ksOptions = m_service.getParamMap("ks_defaults");
         if (ksOptions != null) {
             for (String name : ksOptions.keySet()) {
                 Object value = ksOptions.get(name);

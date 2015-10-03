@@ -18,7 +18,6 @@ package com.dell.doradus.service.db.thrift;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +29,6 @@ import org.apache.cassandra.thrift.ColumnOrSuperColumn;
 import org.apache.cassandra.thrift.KeySlice;
 
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.CassandraService;
 import com.dell.doradus.service.db.DBNotAvailableException;
 import com.dell.doradus.service.db.DBTransaction;
@@ -48,11 +46,13 @@ public class ThriftService extends CassandraService {
     // DBConn queue:
     private final Queue<DBConn> m_dbConns = new ArrayDeque<>();
     
-    // Single-thread all schema access:
-    private static final Object g_schemaLock = new Object();
+    // Single-thread all schema access for our tenant:
+    private final Object m_schemaLock = new Object();
+    private final CassandraSchemaMgr m_schemaMgr;
 
     private ThriftService(Tenant tenant) {
         super(tenant);
+        m_schemaMgr = new CassandraSchemaMgr(this);
     }
 
     //----- Public Service methods
@@ -67,14 +67,7 @@ public class ThriftService extends CassandraService {
     }
     
     @Override
-    public void initService() {
-        // TODO: Get parameters from Tenant
-        ServerConfig config = ServerConfig.getInstance();
-        m_logger.info("Using Thrift API");
-        m_logger.info("Cassandra host list: {}", Arrays.toString(config.dbhost.split(",")));
-        m_logger.info("Cassandra port: {}", config.dbport);
-        m_logger.info("Default application keyspace: {}", config.keyspace);
-    }   // initService
+    public void initService() { }
 
     @Override
     public void startService() {
@@ -98,11 +91,11 @@ public class ThriftService extends CassandraService {
         checkState();
         // Use a temporary, no-keyspace session
         try (DBConn dbConn = createAndConnectConn(null)) {
-            synchronized (g_schemaLock) {
+            synchronized (m_schemaLock) {
                 String keyspace = getTenant().getName();
-                if (!CassandraSchemaMgr.keyspaceExists(dbConn, keyspace)) {
+                if (!m_schemaMgr.keyspaceExists(dbConn, keyspace)) {
                     Map<String, String> options = getKeyspaceOptions(getTenant());
-                    CassandraSchemaMgr.createKeyspace(dbConn, keyspace, options);
+                    m_schemaMgr.createKeyspace(dbConn, keyspace, options);
                 }
             }
         }
@@ -118,10 +111,10 @@ public class ThriftService extends CassandraService {
         checkState();
         // Use a temporary, no-keyspace session
         try (DBConn dbConn = createAndConnectConn(null)) {
-            synchronized (g_schemaLock) {
+            synchronized (m_schemaLock) {
                 String keyspace = getTenant().getName();
-                if (CassandraSchemaMgr.keyspaceExists(dbConn, keyspace)) {
-                    CassandraSchemaMgr.dropKeyspace(dbConn, keyspace);
+                if (m_schemaMgr.keyspaceExists(dbConn, keyspace)) {
+                    m_schemaMgr.dropKeyspace(dbConn, keyspace);
                 }
             }
         }
@@ -132,10 +125,10 @@ public class ThriftService extends CassandraService {
         List<String> keyspaces = new ArrayList<>();
         // Use a temporary, no-keyspace session
         try (DBConn dbConn = createAndConnectConn(null)) {
-            synchronized (g_schemaLock) {
-                Collection<String> keyspaceList = CassandraSchemaMgr.getKeyspaces(dbConn);
+            synchronized (m_schemaLock) {
+                Collection<String> keyspaceList = m_schemaMgr.getKeyspaces(dbConn);
                 for (String keyspace : keyspaceList) {
-                    if (CassandraSchemaMgr.columnFamilyExists(dbConn, keyspace, SchemaService.APPS_STORE_NAME)) {
+                    if (m_schemaMgr.columnFamilyExists(dbConn, keyspace, SchemaService.APPS_STORE_NAME)) {
                         keyspaces.add(keyspace);
                     }
                 }
@@ -152,9 +145,9 @@ public class ThriftService extends CassandraService {
         String keyspace = getTenant().getName();
         DBConn dbConn = getDBConnection();
         try {
-            synchronized (g_schemaLock) {
-                if (!CassandraSchemaMgr.columnFamilyExists(dbConn, keyspace, storeName)) {
-                    CassandraSchemaMgr.createColumnFamily(dbConn, keyspace, storeName, bBinaryValues);
+            synchronized (m_schemaLock) {
+                if (!m_schemaMgr.columnFamilyExists(dbConn, keyspace, storeName)) {
+                    m_schemaMgr.createColumnFamily(dbConn, keyspace, storeName, bBinaryValues);
                 }
             }
         } finally {
@@ -168,9 +161,9 @@ public class ThriftService extends CassandraService {
         String keyspace = getTenant().getName();
         DBConn dbConn = getDBConnection();
         try {
-            synchronized (g_schemaLock) {
-                if (CassandraSchemaMgr.columnFamilyExists(dbConn, keyspace, storeName)) {
-                    CassandraSchemaMgr.deleteColumnFamily(dbConn, storeName);
+            synchronized (m_schemaLock) {
+                if (m_schemaMgr.columnFamilyExists(dbConn, keyspace, storeName)) {
+                    m_schemaMgr.deleteColumnFamily(dbConn, storeName);
                 }
             }
         } finally {
@@ -302,14 +295,14 @@ public class ThriftService extends CassandraService {
     void connectDBConn(DBConn dbConn) throws DBNotAvailableException, RuntimeException {
         // If we're using failover hosts, see if it's time to try primary hosts again.
         if (m_bUseSecondaryHosts &&
-            (System.currentTimeMillis() - m_lastPrimaryHostCheckTimeMillis) > ServerConfig.getInstance().primary_host_recheck_millis) {
+            (System.currentTimeMillis() - m_lastPrimaryHostCheckTimeMillis) > getParamInt("primary_host_recheck_millis", 60000)) {
             m_bUseSecondaryHosts = false;
         }
         
         // Try all primary hosts first if possible.
         DBNotAvailableException lastException = null;
         if (!m_bUseSecondaryHosts) {
-            String[] dbHosts = ServerConfig.getInstance().dbhost.split(",");
+            String[] dbHosts = getParamString("dbhost").split(",");
             for (int attempt = 1; !dbConn.isOpen() && attempt <= dbHosts.length; attempt++) {
                 try {
                     dbConn.connect(chooseHost(dbHosts));
@@ -323,11 +316,11 @@ public class ThriftService extends CassandraService {
         }
         
         // Try secondary hosts if needed and if configured.
-        if (!dbConn.isOpen() && !Utils.isEmpty(ServerConfig.getInstance().secondary_dbhost)) {
+        if (!dbConn.isOpen() && !Utils.isEmpty(getParamString("secondary_dbhost"))) {
             if (!m_bUseSecondaryHosts) {
                 m_logger.info("All connections to 'dbhost' failed; trying 'secondary_dbhost'");
             }
-            String[] dbHosts = ServerConfig.getInstance().secondary_dbhost.split(",");
+            String[] dbHosts = getParamString("secondary_dbhost").split(",");
             for (int attempt = 1; !dbConn.isOpen() && attempt <= dbHosts.length; attempt++) {
                 try {
                     dbConn.connect(chooseHost(dbHosts));
@@ -395,12 +388,12 @@ public class ThriftService extends CassandraService {
             // Create a no-keyspace connection and fetch all keyspaces to prove that the
             // cluster is really ready.
             try (DBConn dbConn = createAndConnectConn(null)) {
-                CassandraSchemaMgr.getKeyspaces(dbConn);
+                m_schemaMgr.getKeyspaces(dbConn);
                 bSuccess = true;
             } catch (DBNotAvailableException ex) {
                 m_logger.info("Database is not reachable. Waiting to retry");
                 try {
-                    Thread.sleep(ServerConfig.getInstance().db_connect_retry_wait_millis);
+                    Thread.sleep(getParamInt("db_connect_retry_wait_millis", 5000));
                 } catch (InterruptedException ex2) {
                     // ignore
                 }

@@ -55,7 +55,6 @@ import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.model.WriteRequest;
 import com.amazonaws.services.dynamodbv2.util.Tables;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.db.ColumnDelete;
 import com.dell.doradus.service.db.ColumnUpdate;
 import com.dell.doradus.service.db.DBService;
@@ -78,12 +77,11 @@ public class DynamoDBService2 extends DBService {
     
     @Override
     protected void initService() {
-    	ServerParams params = ServerParams.instance();
-        String accessKey = params.getModuleParamString("DynamoDBService", "ddb-access-key");
-        String secretKey = params.getModuleParamString("DynamoDBService", "ddb-secret-key");
-        String endpoint = params.getModuleParamString("DynamoDBService", "ddb-endpoint");
-    	m_readCapacityUnits = params.getModuleParamInt("DynamoDBService", "ddb-read-capacity-units", 1);
-    	m_writeCapacityUnits = params.getModuleParamInt("DynamoDBService", "ddb-write-capacity-units", 1);
+        String accessKey = getParamString("ddb-access-key");
+        String secretKey = getParamString("ddb-secret-key");
+        String endpoint = getParamString("ddb-endpoint");
+    	m_readCapacityUnits = getParamInt("ddb-read-capacity-units", 1);
+    	m_writeCapacityUnits = getParamInt("ddb-write-capacity-units", 1);
     	
         BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey); 
         m_client = new AmazonDynamoDBClient(awsCredentials);

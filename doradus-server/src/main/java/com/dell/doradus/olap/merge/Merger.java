@@ -32,7 +32,6 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.FieldType;
 import com.dell.doradus.common.TableDefinition;
-import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.olap.io.VDirectory;
 import com.dell.doradus.olap.store.FieldSearcher;
 import com.dell.doradus.olap.store.FieldWriter;
@@ -47,12 +46,14 @@ import com.dell.doradus.olap.store.SegmentStats;
 import com.dell.doradus.olap.store.ValueReader;
 import com.dell.doradus.olap.store.ValueWriter;
 import com.dell.doradus.search.util.HeapList;
+import com.dell.doradus.service.olap.OLAPService;
 import com.dell.doradus.utilities.Timer;
 
 public class Merger {
     private static Logger LOG = LoggerFactory.getLogger("Olap.Merger");
-    private static ExecutorService executor = ServerConfig.getInstance().olap_merge_threads == 0 ? null :
-    		Executors.newFixedThreadPool(ServerConfig.getInstance().olap_merge_threads);
+    private static final int olap_merge_threads = OLAPService.instance().getParamInt("olap_merge_threads", 0);
+    private static ExecutorService executor =
+            olap_merge_threads == 0 ? null : Executors.newFixedThreadPool(olap_merge_threads);
     
     private ApplicationDefinition appDef;
     private List<VDirectory> sources;

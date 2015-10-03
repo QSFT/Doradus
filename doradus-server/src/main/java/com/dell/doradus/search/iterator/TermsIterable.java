@@ -25,7 +25,7 @@ import java.util.Set;
 
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.core.ObjectID;
-import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.spider.SpiderHelper;
 import com.dell.doradus.service.spider.SpiderService;
 
@@ -56,7 +56,7 @@ public class TermsIterable implements Iterable<ObjectID> {
     }
 	
 	@Override public Iterator<ObjectID> iterator() {
-		int count = ServerConfig.getInstance().dbesoptions_linkBuffer; // 1000
+		int count = ServerParams.instance().getModuleParamInt("DoradusServer", "dbesoptions_linkBuffer", 1000);
 		if(m_shards.size() == 0) return NoneIterator.instance;
 		if(m_terms.size() == 0) return NoneIterator.instance;
 		

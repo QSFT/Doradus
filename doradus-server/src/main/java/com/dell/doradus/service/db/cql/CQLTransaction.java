@@ -29,7 +29,6 @@ import com.datastax.driver.core.BatchStatement.Type;
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSetFuture;
-import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.ColumnDelete;
 import com.dell.doradus.service.db.ColumnUpdate;
 import com.dell.doradus.service.db.DBService;
@@ -69,7 +68,7 @@ public class CQLTransaction {
     private static void applyUpdates(DBTransaction transaction) {
         if (transaction.getMutationsCount() == 0) {
             m_logger.debug("Skipping commit with no updates");
-        } else if (ServerConfig.getInstance().async_updates) {
+        } else if (CQLService.instance().getParamBoolean("async_updates")) {
             executeUpdatesAsynchronous(transaction);
         } else {
             executeUpdatesSynchronous(transaction);

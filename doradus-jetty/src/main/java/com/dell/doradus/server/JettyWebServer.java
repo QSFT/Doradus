@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package com.dell.doradus.server;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -29,7 +30,7 @@ import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
-import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.rest.RESTService.RequestCallback;
 import com.dell.doradus.service.rest.WebServer;
 
@@ -48,6 +49,43 @@ public class JettyWebServer extends WebServer{
     // Although it is unlike new RequestCallbacks will be added after initialization, we use
     // a ConcurrentLinkedQueue so we don't have to serialize onXxx requests.
     private final Queue<RequestCallback> m_requestCallbacks = new ConcurrentLinkedQueue<>();
+    
+    // Parameters:
+    private final int       m_maxTaskQueue;
+    private final int       m_maxconns;
+    private final int       m_defaultMinThreads;
+    private final int       m_defaultIdleTimeout;
+    private final boolean   m_tls;
+    private final String    m_restaddr;
+    private final int       m_restport;
+    private final String    m_keystore;
+    private final String    m_keystorepassword;
+    private final String    m_truststore;
+    private final String    m_truststorepassword;
+    private final boolean   m_clientauthentication;
+    private final String[]  m_tls_cipher_suites;
+
+    private JettyWebServer() {
+        RESTService restService = RESTService.instance();
+        m_maxTaskQueue = restService.getParamInt("maxTaskQueue", 600);
+        m_maxconns = restService.getParamInt("maxconns", 200);
+        m_defaultMinThreads = restService.getParamInt("defaultMinThreads", 10);
+        m_defaultIdleTimeout = restService.getParamInt("defaultIdleTimeout", 600000);
+        m_tls = restService.getParamBoolean("tls");
+        m_restaddr = restService.getParamString("restaddr");
+        m_restport = restService.getParamInt("restport", 1123);
+        m_keystore = restService.getParamString("keystore");
+        m_keystorepassword = restService.getParamString("keystorepassword");
+        m_truststore = restService.getParamString("truststore");
+        m_truststorepassword = restService.getParamString("truststorepassword");
+        m_clientauthentication = restService.getParamBoolean("clientauthentication");
+        List<String> cipherList = restService.getParamList("tls_cipher_suites");
+        if (cipherList == null) {
+            m_tls_cipher_suites = null;
+        } else {
+            m_tls_cipher_suites = cipherList.toArray(new String[cipherList.size()]);
+        }
+    }
     
     // Private Connection.Listener used to invoke connection opens and closes. Registered
     // as an MBean with Jetty's Connector.
@@ -117,9 +155,8 @@ public class JettyWebServer extends WebServer{
 
     // Create, configure, and return the Jetty Server object.
     private Server configureJettyServer() {
-        ServerConfig config = ServerConfig.getInstance();
-        LinkedBlockingQueue<Runnable> taskQueue = new LinkedBlockingQueue<Runnable>(config.maxTaskQueue); 
-        QueuedThreadPool threadPool = new QueuedThreadPool(config.maxconns, config.defaultMinThreads, config.defaultIdleTimeout, 
+        LinkedBlockingQueue<Runnable> taskQueue = new LinkedBlockingQueue<Runnable>(m_maxTaskQueue); 
+        QueuedThreadPool threadPool = new QueuedThreadPool(m_maxconns, m_defaultMinThreads, m_defaultIdleTimeout, 
         		taskQueue);
         Server server = new Server(threadPool);
         server.setStopAtShutdown(true);
@@ -128,18 +165,17 @@ public class JettyWebServer extends WebServer{
     
     // Create, configure, and return the ServerConnector object.
     private ServerConnector configureConnector() {
-        ServerConfig config = ServerConfig.getInstance();
         ServerConnector connector = null;
-        if (config.tls) {
+        if (m_tls) {
             connector = createSSLConnector();
         } else {
             // Unsecured connector
             connector = new ServerConnector(m_jettyServer);
         }
-        if (config.restaddr != null) {
-            connector.setHost(config.restaddr);
+        if (m_restaddr != null) {
+            connector.setHost(m_restaddr);
         }
-        connector.setPort(config.restport);
+        connector.setPort(m_restport);
         connector.setIdleTimeout(SOCKET_TIMEOUT_MILLIS);
         connector.addBean(new ConnListener());  // invokes registered callbacks, if any
         return connector;
@@ -154,15 +190,13 @@ public class JettyWebServer extends WebServer{
     
     // Create a Jetty ServerConnector configured to use TLS/SSL.
     private ServerConnector createSSLConnector() {
-        ServerConfig config = ServerConfig.getInstance();
-        
         SslContextFactory sslContextFactory = new SslContextFactory();
-        sslContextFactory.setKeyStorePath(config.keystore);
-        sslContextFactory.setKeyStorePassword(config.keystorepassword);
-        sslContextFactory.setTrustStorePath(config.truststore);
-        sslContextFactory.setTrustStorePassword(config.truststorepassword);
-        sslContextFactory.setNeedClientAuth(config.clientauthentication);
-        sslContextFactory.setIncludeCipherSuites(config.tls_cipher_suites.toArray(new String[]{}));
+        sslContextFactory.setKeyStorePath(m_keystore);
+        sslContextFactory.setKeyStorePassword(m_keystorepassword);
+        sslContextFactory.setTrustStorePath(m_truststore);
+        sslContextFactory.setTrustStorePassword(m_truststorepassword);
+        sslContextFactory.setNeedClientAuth(m_clientauthentication);
+        sslContextFactory.setIncludeCipherSuites(m_tls_cipher_suites);
 
         HttpConfiguration http_config = new HttpConfiguration();
         http_config.setSecureScheme("https");

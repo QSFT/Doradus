@@ -26,6 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
@@ -44,7 +47,6 @@ import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.util.Tables;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
@@ -52,53 +54,52 @@ import com.dell.doradus.service.db.Tenant;
 import com.dell.doradus.utilities.Timer;
 
 /**
- * Implements a {@link DBService} for Amazon's DynamoDB. This implementation is currently
- * experimental. Implementation notes and limitations:
+ * Implements a {@link DBService} for Amazon's DynamoDB. Implementation notes and
+ * limitations:
  * <ol>
  * <li>DynamoDB restricts row to 400KB size. Nothing is done to compensate for this limit
  *     yet. This means something will probably blow-up when a row gets too large.
  * <li>When running in an EC2 instance, DynamoDB will throttle responses, throwing
  *     exceptions when bandwidth is exceed. The code to handle this is not well tested.
- * <li>DynamoDB does not support namespaces. Calls to {@link #createNamespace()} or
- *     {@link #dropNamespace()} will throw an exception.
+ * <li>DynamoDB does not support namespaces. Each tenant must be placed in a DynamoDB
+ *     instance with unique credentials and/or a unique region. Calls to
+ *     {@link #createNamespace()} or {@link #dropNamespace()} will throw an exception.
  * <li>Tables are created with an attribute named "_key" as the row (item) key. Only
  *     hash-only keys are currently used. The _key attribute is removed from query results
  *     since the row key is handled independently.
  * <li>DynamoDB doesn't seem to allow null string values, despite its documentation. So,
  *     we store "null" columns by storing the value {@link #NULL_COLUMN_MARKER}.
  * </ol>
- * The connection to a DynamoDB is established on AWS SDK standard Java properties and
- * environment variables where possible. However, we define two additional Java properties
- * to define the database endpoint. Below is a summary of what must be set:
+ * Because of multi-tenancy, AWS SDK standard Java properties and environment variables
+ * are not used to define DynamoDB parameters. Instead, parameters must be defined for
+ * each tenant as follows:<p>
  * <ul>
- * <li>Credentials: There are two ways to define the credentials to use:
+ * <li>Credentials: These are required. There are two ways to define parameters that
+ *     identify the AWS credentials to use:
  *     <ol>
- *     <li>An access key and secret key can be explicitly provided by setting either the
- *         Java properties <code>aws.accessKeyId</code> and <code>aws.secretKey</code> or
- *         the environment variables <code>AWS_ACCESS_KEY_ID</code> and <code>
- *         AWS_SECRET_ACCESS_KEY</code>.
- *     <li>A profile name can be provided by setting the environment variable <code>
- *         AWS_PROFILE</code>. By default, the profile lives in the file ~/.aws/credentials
- *         but this can be overridden by setting the environment variable <code>
- *         AWS_CREDENTIAL_FILE</code>.
+ *     <li><code>aws_profile</code>: This parameter defines a AWS profile name. By default,
+ *         the profile lives in the file ~/.aws/credentials, but this location can be
+ *         overridden by setting the parameter <code>aws_credential_file</code>. Using
+ *         the <code>aws_profile</code> parameter is preferred since it is more secure.
+ *     <li><code>aws_access_key</code> and <code>aws_secret_key</code>: These parameters
+ *         must be defined if <code>aws_profile</code> is not defined.
  *     </ol>
- *     The AWS SDK discoveries the credentials settings automatically.
- * <li>Endpoint: There are two ways to define the database endpoint:
+ * <li>Endpoint: This is required and can be specified by using either of two parameters:
  *     <ol>
- *     <li>Set the Java property <code>ddb.region</code>, which implies the endpoint.
- *     <li>Set the Java property <code>ddb.endpoint</code>. This technique works when
- *         using a local DynamoDB instance for testing.
+ *     <li><code>ddb.region</code>: When this parameter is set, it must define a valid AWS
+ *         region name.
+ *     <li><code>ddb.endpoint</code>: This is a connection string to a DynamoDB instance.
+ *         This technique works when using a local DynamoDB instance for testing.
  *     </ol>
+ * <li>Default capacity: These parameters are optional:
+ *     <ol>
+ *     <li><code>ddb_default_read_capacity</code>: This parameter defines the default
+ *         read units for new tables.
+ *     <li><code>ddb_default_write_capacity</code>: This parameter defines the default
+ *         write units for new tables.
  * </ul>
- *
  */
 public class DynamoDBService extends DBService {
-    // Java properties we define:
-    public static final String DDB_REGION = "ddb.region";
-    public static final String DDB_ENDPOINT = "ddb.endpoint";
-    private static final String DDB_DEFAULT_READ_CAPACITY = "ddb.default.read.capacity";
-    private static final String DDB_DEFAULT_WRITE_CAPACITY = "ddb.default.write.capacity";
-    
     // Special marker values:
     public static final String ROW_KEY_ATTR_NAME = "_key";
     public static final String NULL_COLUMN_MARKER = "\u0000";
@@ -109,8 +110,20 @@ public class DynamoDBService extends DBService {
     // Private members:
     private AmazonDynamoDBClient m_ddbClient;
     
+    // Parameters:
+    private final int m_retry_wait_millis;
+    private final int m_max_commit_attempts;
+    private final int m_max_read_attempts;
+    
     private DynamoDBService(Tenant tenant) {
         super(tenant);
+        m_retry_wait_millis = getParamInt("retry_wait_millis", 5000);
+        m_max_commit_attempts = getParamInt("max_commit_attempts", 10);
+        m_max_read_attempts = getParamInt("max_read_attempts", 3);
+        
+        m_ddbClient = new AmazonDynamoDBClient(getCredentials());
+        setRegionOrEndPoint();
+        setDefaultCapacity();
     }
     
     //----- Service methods
@@ -129,9 +142,6 @@ public class DynamoDBService extends DBService {
      */
     @Override
     protected void initService() {
-        m_ddbClient = new AmazonDynamoDBClient();
-        setRegionOrEndPoint();
-        setDefaultCapacity();
     }
 
     @Override
@@ -221,7 +231,7 @@ public class DynamoDBService extends DBService {
      */
     public void commit(DBTransaction dbTran) {
         checkState();
-        DDBTransaction.commit(dbTran);
+        new DDBTransaction(this).commit(dbTran);
     }
     
     //----- Public DBService methods: Queries
@@ -318,14 +328,14 @@ public class DynamoDBService extends DBService {
                 m_logger.debug("Time to delete table {}, key={}: {}",
                                new Object[]{tableName, DynamoDBService.getDDBKey(key), timer.toString()});
             } catch (ProvisionedThroughputExceededException e) {
-                if (attempts >= ServerConfig.getInstance().max_commit_attempts) {
+                if (attempts >= m_max_commit_attempts) {
                     String errMsg = "All retries exceeded; abandoning deleteRow() for table: " + tableName;
                     m_logger.error(errMsg, e);
                     throw new RuntimeException(errMsg, e);
                 }
                 m_logger.warn("deleteRow() attempt #{} failed: {}", attempts, e);
                 try {
-                    Thread.sleep(attempts * ServerConfig.getInstance().retry_wait_millis);
+                    Thread.sleep(attempts * m_retry_wait_millis);
                 } catch (InterruptedException ex2) {
                     // ignore
                 }
@@ -351,14 +361,14 @@ public class DynamoDBService extends DBService {
                 m_logger.debug("Time to update table {}, key={}: {}",
                                new Object[]{tableName, DynamoDBService.getDDBKey(key), timer.toString()});
             } catch (ProvisionedThroughputExceededException e) {
-                if (attempts >= ServerConfig.getInstance().max_commit_attempts) {
+                if (attempts >= m_max_commit_attempts) {
                     String errMsg = "All retries exceeded; abandoning updateRow() for table: " + tableName;
                     m_logger.error(errMsg, e);
                     throw new RuntimeException(errMsg, e);
                 }
                 m_logger.warn("updateRow() attempt #{} failed: {}", attempts, e);
                 try {
-                    Thread.sleep(attempts * ServerConfig.getInstance().retry_wait_millis);
+                    Thread.sleep(attempts * m_retry_wait_millis);
                 } catch (InterruptedException ex2) {
                     // ignore
                 }
@@ -368,21 +378,43 @@ public class DynamoDBService extends DBService {
 
     //----- Private methods
     
+    // Set the AWS credentials in m_ddbClient
+    private AWSCredentials getCredentials() {
+        String awsProfile = getParamString("aws_profile");
+        if (!Utils.isEmpty(awsProfile)) {
+            m_logger.info("Using AWS profile: {}", awsProfile);
+            ProfileCredentialsProvider credsProvider = null;
+            String awsCredentialsFile = getParamString("aws_credentials_file");
+            if (!Utils.isEmpty(awsCredentialsFile)) {
+                credsProvider = new ProfileCredentialsProvider(awsCredentialsFile, awsProfile);
+            } else {
+                credsProvider = new ProfileCredentialsProvider(awsProfile);
+            }
+            return credsProvider.getCredentials();
+        }
+        
+        String awsAccessKey = getParamString("aws_access_key");
+        Utils.require(!Utils.isEmpty(awsAccessKey),
+                      "Either 'aws_profile' or 'aws_access_key' must be defined for tenant: " + m_tenant.getName());
+        String awsSecretKey = getParamString("aws_secret_key");
+        Utils.require(!Utils.isEmpty(awsSecretKey),
+                      "'aws_secret_key' must be defined when 'aws_access_key' is defined. " +
+                      "'aws_profile' is preferred over aws_access_key/aws_secret_key. Tenant: " + m_tenant.getName());
+        return new BasicAWSCredentials(awsAccessKey, awsSecretKey);
+    }
+    
     // Set the region or endpoint in m_ddbClient
     private void setRegionOrEndPoint() {
-        String regionName = System.getProperty(DDB_REGION);
+        String regionName = getParamString("ddb_region");
         if (regionName != null) {
             Regions regionEnum = Regions.fromName(regionName);
-            if (regionEnum == null) {
-                throw new RuntimeException("Unknown '" + DDB_REGION + "': " + regionName);
-            }
+            Utils.require(regionEnum != null, "Unknown 'ddb_region': " + regionName);
             m_logger.info("Using region: {}", regionName);
             m_ddbClient.setRegion(Region.getRegion(regionEnum));
         } else {
-            String ddbEndpoint = System.getProperty(DDB_ENDPOINT);
-            if (ddbEndpoint == null) {
-                throw new RuntimeException("Either '" + DDB_REGION + "' or '" + DDB_ENDPOINT + "' must be set");
-            }
+            String ddbEndpoint = getParamString("ddb_endpoint");
+            Utils.require(ddbEndpoint != null,
+                          "Either 'ddb_region' or 'ddb_endpoint' must be defined for tenant: " + m_tenant.getName());
             m_logger.info("Using endpoint: {}", ddbEndpoint);
             m_ddbClient.setEndpoint(ddbEndpoint);
         }
@@ -390,13 +422,13 @@ public class DynamoDBService extends DBService {
 
     // Set READ_CAPACITY_UNITS and WRITE_CAPACITY_UNITS if overridden.
     private void setDefaultCapacity() {
-        String capacity = System.getProperty(DDB_DEFAULT_READ_CAPACITY);
+        Object capacity = getParam("ddb_default_read_capacity"); 
         if (capacity != null) {
-            READ_CAPACITY_UNITS = Integer.parseInt(capacity);
+            READ_CAPACITY_UNITS = Integer.parseInt(capacity.toString());
         }
-        capacity = System.getProperty(DDB_DEFAULT_WRITE_CAPACITY);
+        capacity = getParam("ddb_default_write_capacity");
         if (capacity != null) {
-            WRITE_CAPACITY_UNITS = Integer.parseInt(capacity);
+            WRITE_CAPACITY_UNITS = Integer.parseInt(capacity.toString());
         }
         m_logger.info("Default table capacity: read={}, write={}", READ_CAPACITY_UNITS, WRITE_CAPACITY_UNITS);
     }
@@ -417,14 +449,14 @@ public class DynamoDBService extends DBService {
                 bSuccess = true;
                 m_logger.debug("Time to scan table {}: {}", scanRequest.getTableName(), timer.toString());
             } catch (ProvisionedThroughputExceededException e) {
-                if (attempts >= ServerConfig.getInstance().max_read_attempts) {
+                if (attempts >= m_max_read_attempts) {
                     String errMsg = "All retries exceeded; abandoning scan() for table: " + scanRequest.getTableName();
                     m_logger.error(errMsg, e);
                     throw new RuntimeException(errMsg, e);
                 }
                 m_logger.warn("scan() attempt #{} failed: {}", attempts, e);
                 try {
-                    Thread.sleep(attempts * ServerConfig.getInstance().retry_wait_millis);
+                    Thread.sleep(attempts * m_retry_wait_millis);
                 } catch (InterruptedException ex2) {
                     // ignore
                 }

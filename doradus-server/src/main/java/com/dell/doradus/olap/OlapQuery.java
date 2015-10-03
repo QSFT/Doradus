@@ -21,13 +21,15 @@ import java.util.List;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.UNode;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.core.ServerParams;
 
 /**
  * OlapQuery encapsulates the parameters that can be provided for an OLAP search query. It
  * provides methods that allow parameters to be parsed from a query URI or UNode document.
  */
 public class OlapQuery {
+    private static final int search_default_page_size =
+        ServerParams.instance().getModuleParamInt("DoradusServer", "search_default_page_size", 100);
     private String m_query;					// &q parameter
     private int    m_pageSize = -1;			// &s parameter
     private int    m_skip = 0;        		// &k parameter
@@ -151,7 +153,7 @@ public class OlapQuery {
     }
     
     public int getPageSizeWithSkip() {
-    	if(m_pageSize < 0) return m_skip + ServerConfig.getInstance().search_default_page_size;
+    	if(m_pageSize < 0) return m_skip + search_default_page_size;
     	else if(m_pageSize == 0) return Integer.MAX_VALUE;
     	else return m_pageSize + m_skip;
     }
@@ -172,7 +174,7 @@ public class OlapQuery {
         }
         
         if (m_query == null) m_query = "*";
-        if (m_pageSize == -1) m_pageSize = ServerConfig.getInstance().search_default_page_size;
+        if (m_pageSize == -1) m_pageSize = search_default_page_size;
     }
     
 }

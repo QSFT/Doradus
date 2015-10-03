@@ -48,7 +48,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.DBNotAvailableException;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
@@ -67,6 +66,23 @@ public class DBConn implements AutoCloseable {
     private boolean m_bFailed;
     private final String  m_keyspace;
     private final ThriftService m_dbService;
+    
+    // Configuration parameters
+    private final int m_max_commit_attempts;
+    private final int m_thrift_buffer_size_mb;
+    private final boolean m_dbtls;
+    private final String[] m_dbtls_cipher_suites;
+    private final int m_dbport;
+    private final int m_db_timeout_millis;
+    private final String m_dbuser;
+    private final String m_dbpassword;
+    private final int m_max_read_attempts;
+    private final int m_retry_wait_millis;
+    private final String m_keystore;
+    private final String m_keystorepassword;
+    private final String m_truststore;
+    private final String m_truststorepassword;
+    private final int m_max_reconnect_attempts;
 
     //----- Public static constants and methods
 
@@ -93,6 +109,26 @@ public class DBConn implements AutoCloseable {
     public DBConn(ThriftService dbService, String keyspace) {
         m_dbService = dbService;
         m_keyspace = keyspace;
+        m_max_commit_attempts = dbService.getParamInt("max_commit_attempts", 10);
+        m_thrift_buffer_size_mb = dbService.getParamInt("thrift_buffer_size_mb", 16);
+        m_dbtls = dbService.getParamBoolean("dbtls");
+        List<String> cipherList = dbService.getParamList("dbtls_cipher_suites");
+        if (cipherList == null) {
+            m_dbtls_cipher_suites = null;
+        } else {
+            m_dbtls_cipher_suites = cipherList.toArray(new String[cipherList.size()]);
+        }
+        m_dbport = dbService.getParamInt("dbport", 9042);
+        m_db_timeout_millis = dbService.getParamInt("db_timeout_millis", 10000);
+        m_dbuser = dbService.getParamString("dbuser");
+        m_dbpassword = dbService.getParamString("dbpassword");
+        m_max_read_attempts = dbService.getParamInt("max_read_attempts", 3);
+        m_retry_wait_millis = dbService.getParamInt("retry_wait_millis", 5000);
+        m_keystore = dbService.getParamString("keystore");
+        m_keystorepassword = dbService.getParamString("keystorepassword");
+        m_truststore = dbService.getParamString("truststore");
+        m_truststorepassword = dbService.getParamString("truststorepassword");
+        m_max_reconnect_attempts = dbService.getParamInt("max_reconnect_attempts", 3);
     }   // constructor
 
     /**
@@ -108,18 +144,17 @@ public class DBConn implements AutoCloseable {
      */
     public void connect(String dbhost) throws DBNotAvailableException, RuntimeException {
         assert !m_bDBOpen;
-        ServerConfig config = ServerConfig.getInstance();
-        int bufferSize = config.thrift_buffer_size_mb * 1024 * 1024;
+        int bufferSize = m_thrift_buffer_size_mb * 1024 * 1024;
         
         // Attempt to open the requested dbhost.
         try {
             TSocket socket = null;
-            if (config.dbtls) {
-                m_logger.debug("Connecting to Cassandra node {}:{} using TLS", dbhost, config.dbport);
+            if (m_dbtls) {
+                m_logger.debug("Connecting to Cassandra node {}:{} using TLS", dbhost, m_dbport);
                 socket = createTLSSocket(dbhost);
             } else {
-                m_logger.debug("Connecting to Cassandra node {}:{}", dbhost, config.dbport);
-                socket = new TSocket(dbhost, config.dbport, config.db_timeout_millis);
+                m_logger.debug("Connecting to Cassandra node {}:{}", dbhost, m_dbport);
+                socket = new TSocket(dbhost, m_dbport, m_db_timeout_millis);
                 socket.open();
             }
             TTransport transport = new TFramedTransport(socket, bufferSize);
@@ -141,16 +176,16 @@ public class DBConn implements AutoCloseable {
         }
         
         // Set credentials if requested.
-        if (!Utils.isEmpty(config.dbuser)) {
+        if (!Utils.isEmpty(m_dbuser)) {
             try {
                 Map<String, String> credentials = new HashMap<>();
-                credentials.put("username", config.dbuser);
-                credentials.put("password", config.dbpassword);
+                credentials.put("username", m_dbuser);
+                credentials.put("password", m_dbpassword);
                 AuthenticationRequest auth_request = new AuthenticationRequest(credentials);
                 m_client.login(auth_request);
             } catch (Exception e) {
                 // This can't be retried, so we throw a RuntimeException
-                m_logger.error("Could not authenticate with dbuser '" + config.dbuser + "'", e);
+                m_logger.error("Could not authenticate with dbuser '" + m_dbuser + "'", e);
                 throw new RuntimeException(e);
             }
         }
@@ -270,7 +305,7 @@ public class DBConn implements AutoCloseable {
                 throw new RuntimeException(errMsg, ex);
             } catch (Exception ex) {
                 // Abort if all retries exceeded.
-                if (attempts >= ServerConfig.getInstance().max_read_attempts) {
+                if (attempts >= m_max_read_attempts) {
                     String errMsg = "All retries exceeded; abandoning get_range_slices() for table: " +
                                     colParent.getColumn_family();
                     m_bFailed = true;
@@ -281,7 +316,7 @@ public class DBConn implements AutoCloseable {
                 // Report retry as a warning.
                 m_logger.warn("get_range_slices() attempt #{} failed: {}", attempts, ex);
                 try {
-                    Thread.sleep(attempts * ServerConfig.getInstance().retry_wait_millis);
+                    Thread.sleep(attempts * m_retry_wait_millis);
                 } catch (InterruptedException e1) {
                     // ignore
                 }
@@ -325,7 +360,7 @@ public class DBConn implements AutoCloseable {
                 throw new RuntimeException(errMsg, ex);
             } catch (Exception ex) {
                 // Abort if all retries exceeded.
-                if (attempts >= ServerConfig.getInstance().max_read_attempts) {
+                if (attempts >= m_max_read_attempts) {
                     String errMsg = "All retries exceeded; abandoning get_slice() for table: " +
                                     colParent.getColumn_family();
                     m_bFailed = true;
@@ -336,7 +371,7 @@ public class DBConn implements AutoCloseable {
                 // Report retry as a warning.
                 m_logger.warn("get_slice() attempt #{} failed: {}", attempts, ex);
                 try {
-                    Thread.sleep(attempts * ServerConfig.getInstance().retry_wait_millis);
+                    Thread.sleep(attempts * m_retry_wait_millis);
                 } catch (InterruptedException e1) {
                     // ignore
                 }
@@ -373,7 +408,7 @@ public class DBConn implements AutoCloseable {
                 throw new RuntimeException(errMsg, ex);
             } catch (Exception ex) {
                 // Abort if all retries exceeded.
-                if (attempts >= ServerConfig.getInstance().max_read_attempts) {
+                if (attempts >= m_max_read_attempts) {
                     String errMsg = "All retries exceeded; abandoning get() for table: " +
                                     colPath.getColumn_family();
                     m_bFailed = true;
@@ -384,7 +419,7 @@ public class DBConn implements AutoCloseable {
                 // Report retry as a warning.
                 m_logger.warn("get() attempt #{} failed: {}", attempts, ex);
                 try {
-                    Thread.sleep(attempts * ServerConfig.getInstance().retry_wait_millis);
+                    Thread.sleep(attempts * m_retry_wait_millis);
                 } catch (InterruptedException e1) {
                     // ignore
                 }
@@ -441,7 +476,7 @@ public class DBConn implements AutoCloseable {
                 throw new RuntimeException("batch_mutate() failed", ex);
             } catch (Exception ex) {
                 // If we've reached the retry limit, we fail this commit.
-                if (attempts >= ServerConfig.getInstance().max_commit_attempts) {
+                if (attempts >= m_max_commit_attempts) {
                     m_bFailed = true;
                     m_logger.error("All retries exceeded; abandoning batch_mutate()", ex);
                     throw new RuntimeException("All retries exceeded; abandoning batch_mutate()", ex);
@@ -451,7 +486,7 @@ public class DBConn implements AutoCloseable {
                 m_logger.warn("batch_mutate() attempt #{} failed: {}", attempts, ex);
                 try {
                     // We wait more with each failure.
-                    Thread.sleep(attempts * ServerConfig.getInstance().retry_wait_millis);
+                    Thread.sleep(attempts * m_retry_wait_millis);
                 } catch (InterruptedException e1) {
                     // ignore
                 }
@@ -466,16 +501,14 @@ public class DBConn implements AutoCloseable {
 
     // Create a TSocket using configured TLS/SSL options. 
     private TSocket createTLSSocket(String host) throws TTransportException {
-        ServerConfig config = ServerConfig.getInstance();
-        String[] cipherSuites = config.dbtls_cipher_suites.toArray(new String[]{});
-        TSSLTransportParameters sslParams = new TSSLTransportParameters("SSL", cipherSuites);
-        if (!Utils.isEmpty(config.keystore)) {
-            sslParams.setKeyStore(config.keystore, config.keystorepassword);
+        TSSLTransportParameters sslParams = new TSSLTransportParameters("SSL", m_dbtls_cipher_suites);
+        if (!Utils.isEmpty(m_keystore)) {
+            sslParams.setKeyStore(m_keystore, m_keystorepassword);
         }
-        if (!Utils.isEmpty(config.truststore)) {
-            sslParams.setTrustStore(config.truststore, config.truststorepassword);
+        if (!Utils.isEmpty(m_truststore)) {
+            sslParams.setTrustStore(m_truststore, m_truststorepassword);
         }
-        return TSSLTransportFactory.getClientSocket(host, config.dbport, config.db_timeout_millis, sslParams);
+        return TSSLTransportFactory.getClientSocket(host, m_dbport, m_db_timeout_millis, sslParams);
     }   // createTLSSocket
 
     // Attempt to reconnect this connection to Cassandra due to the given exception.
@@ -496,13 +529,13 @@ public class DBConn implements AutoCloseable {
                 bSuccess = true;
             } catch (Exception ex) {
                 // Abort if all retries failed.
-                if (attempt >= ServerConfig.getInstance().max_reconnect_attempts) {
+                if (attempt >= m_max_reconnect_attempts) {
                     m_logger.error("All reconnect attempts failed; abandoning reconnect", ex);
                     throw new DBNotAvailableException("All reconnect attempts failed", ex);
                 }
                 m_logger.warn("Reconnect attempt #" + attempt + " failed", ex);
                 try {
-                    Thread.sleep(ServerConfig.getInstance().retry_wait_millis * attempt);
+                    Thread.sleep(m_retry_wait_millis * attempt);
                 } catch (InterruptedException e) {
                     // Ignore
                 }
@@ -539,7 +572,7 @@ public class DBConn implements AutoCloseable {
             } catch (Exception ex) {
                 // For a timeout exception, Cassandra may be very busy, so we retry up
                 // to the configured limit.
-                if (attempts >= ServerConfig.getInstance().max_commit_attempts) {
+                if (attempts >= m_max_commit_attempts) {
                     m_bFailed = true;
                     String errMsg = "All retries exceeded; abandoning remove() for table: " +
                                     colPath.getColumn_family();
@@ -551,7 +584,7 @@ public class DBConn implements AutoCloseable {
                 m_logger.warn("remove() attempt #{} failed: {}", attempts, ex);
                 try {
                     // We wait more with each failure.
-                    Thread.sleep(attempts * ServerConfig.getInstance().retry_wait_millis);
+                    Thread.sleep(attempts * m_retry_wait_millis);
                 } catch (InterruptedException e1) {
                     // ignore
                 }

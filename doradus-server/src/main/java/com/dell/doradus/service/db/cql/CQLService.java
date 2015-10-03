@@ -90,7 +90,7 @@ public class CQLService extends CassandraService {
     
     @Override
     protected void initService() {
-        db_connect_retry_wait_millis = m_tenant.getDBParamInt("db_connect_retry_wait_millis", 1000);
+        db_connect_retry_wait_millis = getParamInt("db_connect_retry_wait_millis", 1000);
     }
 
     @Override
@@ -361,32 +361,32 @@ public class CQLService extends CassandraService {
         Cluster.Builder builder = Cluster.builder();
         
         // dbhost
-        String dbhost = m_tenant.getDBParamString("dbhost");
+        String dbhost = getParamString("dbhost");
         String[] nodeAddresses = dbhost.split(",");
         for (String address : nodeAddresses) {
             builder.addContactPoint(address);
         }
         
         // dbport
-        builder.withPort(m_tenant.getDBParamInt("dbport", 9042));
+        builder.withPort(getParamInt("dbport", 9042));
         
         // db_timeout_millis and db_connect_retry_wait_millis
         SocketOptions socketOpts = new SocketOptions();
-        socketOpts.setReadTimeoutMillis(m_tenant.getDBParamInt("db_timeout_millis", 10000));
-        socketOpts.setConnectTimeoutMillis(m_tenant.getDBParamInt("db_connect_retry_wait_millis", 5000));
+        socketOpts.setReadTimeoutMillis(getParamInt("db_timeout_millis", 10000));
+        socketOpts.setConnectTimeoutMillis(getParamInt("db_connect_retry_wait_millis", 5000));
         builder.withSocketOptions(socketOpts);
         
         // dbuser/dbpassword
-        String dbuser = m_tenant.getDBParamString("dbuser");
+        String dbuser = getParamString("dbuser");
         if (!Utils.isEmpty(dbuser)) {
-            builder.withCredentials(dbuser, m_tenant.getDBParamString("dbpassword"));
+            builder.withCredentials(dbuser, getParamString("dbpassword"));
         }
         
         // compression
         builder.withCompression(Compression.SNAPPY);
         
         // TLS/SSL
-        if (m_tenant.getDBParamBoolean("dbtls")) {
+        if (getParamBoolean("dbtls")) {
             builder.withSSL(getSSLOptions());
         }
         
@@ -397,15 +397,14 @@ public class CQLService extends CassandraService {
     private SSLOptions getSSLOptions() {
         SSLContext sslContext = null;
         try {
-            sslContext = getSSLContext(m_tenant.getDBParamString("truststore"),
-                                       m_tenant.getDBParamString("truststorepassword"),
-                                       m_tenant.getDBParamString("keystore"),
-                                       m_tenant.getDBParamString("keystorepassword"));
+            sslContext = getSSLContext(getParamString("truststore"),
+                                       getParamString("truststorepassword"),
+                                       getParamString("keystore"),
+                                       getParamString("keystorepassword"));
         } catch (Exception e) {
             throw new RuntimeException("Unable to build SSLContext", e);
         }
-        @SuppressWarnings("unchecked")
-        List<String> cipherSuites = (List<String>)m_tenant.getDBParam("dbtls_cipher_suites");
+        List<String> cipherSuites = getParamList("dbtls_cipher_suites");
         if (cipherSuites == null) {
             cipherSuites = new ArrayList<>();
         }

@@ -26,7 +26,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.service.olap.OLAPService;
 
 public class DataCache {
 	private static int m_maxCachedColumns = 200;
@@ -59,7 +59,7 @@ public class DataCache {
 	private List<Future<?>> m_futures = new ArrayList<>();
 	
 	public DataCache(String storeName, String row, StorageHelper helper) {
-		int threads = ServerConfig.getInstance().olap_compression_threads;
+		int threads = OLAPService.instance().getParamInt("olap_compression_threads", 0);
 		if(threads > 0) {
 	    	synchronized(m_staticSyncRoot) {
 	    		if(m_executor == null) {

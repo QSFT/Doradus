@@ -205,16 +205,81 @@ public class ServerParams {
     /**
      * Get the parameters loaded for the given module name, if any. The result will be
      * null if the module name is unknown or no parameters have been loaded. Otherwise,
-     * the object returned will be parsed configuration parameter(s), which in most cases
-     * can be cast to a Map<String,Object>.
+     * the object returned is a Map<String,Object>.
      * 
      * @param   moduleName  Name of module to get parameters for.
-     * @return              Module's parameter, usually a map, or null if none.
+     * @return              Module's parameter map or null if none.
      */
-    public Object getModuleParams(String moduleName) {
-        return m_params.get(moduleName);
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getModuleParams(String moduleName) {
+        return (Map<String, Object>)m_params.get(moduleName);
     }
 
+    /**
+     * Get the parameters loaded for the given module class. This method is similar to
+     * {@link #getModuleParams(String)} except that it searches for and adds "inherited"
+     * parameters belonging to superclasses. This method calls
+     * {@link #getAllModuleParams(String, Map)} using the parameters stored by this class
+     * from doradus.yaml and command-line options. 
+     * 
+     * @param modulePackageName
+     *     Full module package name. Example: "com.dell.doradus.db.thrift.ThriftService".
+     * @return
+     *     Module's direct and inherited parameters or null if none are found.
+     * @see
+     *     #getAllModuleParams(String, Map)
+     */
+    public Map<String, Object> getAllModuleParams(String modulePackageName) {
+        return getAllModuleParams(modulePackageName, m_params);
+    }
+    
+    /**
+     * Get the parameters defined for the given module in the given parameter map. This
+     * method first attempts to load the class information for the given module. If it
+     * cannot be loaded, an IllegalArgumentException is thrown. Otherwise, it searches the
+     * given map for parameters defined for the module whose name matches the given class's
+     * "simple name". It also searches for and adds "inherited" parameters belonging to its
+     * superclasses. For example, assume the class hierarchy:
+     * <pre>
+     *      ThriftService extends CassandraService extends DBService
+     * </pre>
+     * A method called for the ThriftService module searches the given paramMap for
+     * parameters defined for ThriftService, CassandraService, or DBService and merges
+     * them into a single map. If a parameter is defined at multiple levels, the
+     * lowest-level value is used. If no parameters are found for the given module class
+     * its superclasses, null is returned.
+     * 
+     * @param   modulePackageName
+     *     Full module package name. Example: "com.dell.doradus.db.thrift.ThriftService".
+     * @param   paramMap
+     *     Parameter map to search. This map should use the same module/parameter format
+     *     as the ServerParams class.
+     * @return
+     *     Module's direct and inherited parameters or null if none are found.
+     */
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> getAllModuleParams(String modulePackageName, Map<String, Object> paramMap) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            Class<?> moduleClass = Class.forName(modulePackageName);
+            while (!moduleClass.getSimpleName().equals("Object")) {
+                Map<String, Object> moduleParams =
+                    (Map<String, Object>) paramMap.get(moduleClass.getSimpleName());
+                if (moduleParams != null) {
+                    for (String paramName : moduleParams.keySet()) {
+                        if (!result.containsKey(paramName)) {
+                            result.put(paramName, moduleParams.get(paramName));
+                        }
+                    }
+                }
+                moduleClass = moduleClass.getSuperclass();
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Could not locate class '" + modulePackageName + "'", e);
+        }
+        return result.size() == 0 ? null : result;
+    }
+    
     /**
      * Get the value of the given parameter name belonging to the given module name. If
      * no such module/parameter name is known, null is returned. Otherwise, the parsed
@@ -223,15 +288,58 @@ public class ServerParams {
      * 
      * @param moduleName    Name of module to get parameter for.
      * @param paramName     Name of parameter to get value of.
-     * @return              Parameter value as an Object or null if known.
+     * @return              Parameter value as an Object or null if unknown.
      */
-    @SuppressWarnings("unchecked")
     public Object getModuleParam(String moduleName, String paramName) {
-        Object moduleParams = getModuleParams(moduleName);
-        if (moduleParams == null || !(moduleParams instanceof Map)) {
+        Map<String, Object> moduleParams = getModuleParams(moduleName);
+        if (moduleParams == null) {
             return null;
         }
-        return ((Map<String, ?>)moduleParams).get(paramName);
+        return moduleParams.get(paramName);
+    }
+    
+    /**
+     * Get the value of the given parameter name belonging to the given module name as a
+     * List of Strings. If no such module/parameter name is known, null is returned. If
+     * the parameter is defined but is not a list, an IllegalArgumentException is thrown. 
+     * 
+     * @param moduleName    Name of module to get parameter for.
+     * @param paramName     Name of parameter to get value of.
+     * @return              Parameter value as a List of Strings or null if unknown.
+     */
+    @SuppressWarnings("unchecked")
+    public List<String> getModuleParamList(String moduleName, String paramName) {
+        Map<String, Object> moduleParams = getModuleParams(moduleName);
+        if (moduleParams == null || !moduleParams.containsKey(paramName)) {
+            return null;
+        }
+        Object paramValue = moduleParams.get(paramName);
+        if (!(paramValue instanceof List)) {
+            throw new IllegalArgumentException("Parameter '" + paramName + "' must be a list: " + paramValue);
+        }
+        return (List<String>)paramValue;
+    }
+    
+    /**
+     * Get the value of the given parameter name belonging to the given module name as a
+     * Map. If no such module/parameter name is known, null is returned. If the parameter
+     * is defined but is not a Map, an IllegalArgumentException is thrown. 
+     * 
+     * @param moduleName    Name of module to get parameter for.
+     * @param paramName     Name of parameter to get value of.
+     * @return              Parameter value as a String/Objec Map or null if unknown.
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getModuleParamMap(String moduleName, String paramName) {
+        Map<String, Object> moduleParams = getModuleParams(moduleName);
+        if (moduleParams == null || !moduleParams.containsKey(paramName)) {
+            return null;
+        }
+        Object paramValue = moduleParams.get(paramName);
+        if (!(paramValue instanceof Map)) {
+            throw new IllegalArgumentException("Parameter '" + paramName + "' must be a map: " + paramValue);
+        }
+        return (Map<String, Object>)paramValue;
     }
     
     /**
@@ -246,13 +354,12 @@ public class ServerParams {
      * @return              True if the module and parameter exist with the value "true"
      *                      (case-insensitive), otherwise false.
      */
-    @SuppressWarnings("unchecked")
     public boolean getModuleParamBoolean(String moduleName, String paramName) {
-        Object moduleParams = getModuleParams(moduleName);
-        if (moduleParams == null || !(moduleParams instanceof Map)) {
+        Map<String, Object> moduleParams = getModuleParams(moduleName);
+        if (moduleParams == null || !moduleParams.containsKey(paramName)) {
             return false;
         }
-        Object value = ((Map<String, ?>)moduleParams).get(paramName);
+        Object value = moduleParams.get(paramName);
         try {
             return Boolean.parseBoolean(value.toString());
         } catch (Exception e) {
@@ -262,30 +369,6 @@ public class ServerParams {
     }
     
     /**
-     * Get the long value of the given parameter name belonging to the given module
-     * name. If no such module/parameter name is known, zero is returned. If the given
-     * value is not a long, a RuntimeException is thrown.
-     * 
-     * @param moduleName    Name of module to get parameter for.
-     * @param paramName     Name of parameter to get value of.
-     * @return              Parameter value as a long or null if known.
-     */
-    @SuppressWarnings("unchecked")
-    public long getModuleParamLong(String moduleName, String paramName) {
-        Object moduleParams = getModuleParams(moduleName);
-        if (moduleParams == null || !(moduleParams instanceof Map)) {
-            return 0;
-        }
-        Object value = ((Map<String, ?>)moduleParams).get(paramName);
-        try {
-            return Long.parseLong(value.toString());
-        } catch (Exception e) {
-            throw new RuntimeException("Configuration parameter '" + moduleName + "." +
-                                       paramName + "' must be a number: " + value);
-        }
-    }
-
-    /**
      * Get the value of the given parameter name belonging to the given module as integer.
      * If no such module/parameter exists, defaultValue is returned.
      * If the given value is not an integer, a RuntimeException is thrown.
@@ -294,14 +377,12 @@ public class ServerParams {
      * @param paramName     Name of parameter to get value of.
      * @return              Parameter value as a integer or defaultValue if tha parameter does not exis.
      */
-    @SuppressWarnings("unchecked")
     public int getModuleParamInt(String moduleName, String paramName, int defaultValue) {
-        Object moduleParams = getModuleParams(moduleName);
-        if (moduleParams == null || !(moduleParams instanceof Map)) {
+        Map<String, Object> moduleParams = getModuleParams(moduleName);
+        if (moduleParams == null || !moduleParams.containsValue(paramName)) {
             return defaultValue;
         }
-        Object value = ((Map<String, ?>)moduleParams).get(paramName);
-        if(value == null) return defaultValue;
+        Object value = moduleParams.get(paramName);
         try {
             return Integer.parseInt(value.toString());
         } catch (Exception e) {
@@ -319,17 +400,12 @@ public class ServerParams {
      * @param paramName     Name of parameter to get value of.
      * @return              Parameter value as a String or null if known.
      */
-    @SuppressWarnings("unchecked")
     public String getModuleParamString(String moduleName, String paramName) {
-        Object moduleParams = getModuleParams(moduleName);
-        if (moduleParams == null || !(moduleParams instanceof Map)) {
+        Map<String, Object> moduleParams = getModuleParams(moduleName);
+        if (moduleParams == null || !moduleParams.containsKey(paramName)) {
             return null;
         }
-        Object value = ((Map<String, ?>)moduleParams).get(paramName);
-        if (value == null) {
-            return null;
-        }
-        return value.toString();
+        return moduleParams.get(paramName).toString();
     }
     
     /**
@@ -407,9 +483,8 @@ public class ServerParams {
         }
     }
     
-    // Set the given parameter name and value. The parameter name could be a dotted
-    // module name (e.g., com.dell.doradus.service.db.DBService) or a legacy YAML file
-    // option (e.g., dbhost).
+    // Set the given parameter name and value. The parameter name could be a module name
+    // (e.g., DBService) or a legacy YAML file option (e.g., dbhost).
     private void addConfigParam(String name, Object value) throws ConfigurationException {
         if (isModuleName(name)) {
             Utils.require(value instanceof Map,
@@ -497,20 +572,40 @@ public class ServerParams {
         }
     }
     
-    // Legacy format: "dbhost foo". New module format: "RESTService.dbhost foo".
+    // Legacy format: "dbhost foo". New module format: "RESTService.dbhost foo" or
+    // "RESTService {restaddr=0.0.0.0,restport=1123}".
     private void setCommandLineParam(String cmdArgName, String cmdArgValue) throws ConfigurationException {
         int dotInx = cmdArgName.indexOf('.');
-        String moduleName = dotInx <= 0 ? null : cmdArgName.substring(0, dotInx);
-        String paramName = dotInx <= 0 ? cmdArgName : cmdArgName.substring(dotInx + 1);
-        String[] values = cmdArgValue.split(",");
-        Object paramValue = values.length <= 1 ? cmdArgValue : Arrays.asList(values); 
-        if (moduleName == null) {
-            setLegacyParam(cmdArgName, paramValue);
+        if (dotInx < 0 && isModuleName(cmdArgName)) {
+            Map<String, Object> paramMap = parseSerialParams(cmdArgValue);
+            updateMap(m_params, cmdArgName, paramMap);
         } else {
-            setModuleParam(moduleName, paramName, paramValue);
+            String moduleName = dotInx <= 0 ? null : cmdArgName.substring(0, dotInx);
+            String paramName = dotInx <= 0 ? cmdArgName : cmdArgName.substring(dotInx + 1);
+            String[] values = cmdArgValue.split(",");
+            Object paramValue = values.length <= 1 ? cmdArgValue : Arrays.asList(values); 
+            if (moduleName == null) {
+                setLegacyParam(cmdArgName, paramValue);
+            } else {
+                setModuleParam(moduleName, paramName, paramValue);
+            }
         }
     }
     
+    private Map<String, Object> parseSerialParams(String serialParams) {
+        // Simplistic support for now: {a=b,c=d,...}
+        Utils.require(serialParams.charAt(0) == '{' && serialParams.charAt(serialParams.length()-1) == '}',
+                      "Value contained in {} expected: " + serialParams);
+        Map<String, Object> paramMap = new HashMap<>();
+        String[] valuePairs = serialParams.substring(1, serialParams.length() - 1).split(",");
+        for (String valuePair : valuePairs) {
+            int eqInx = valuePair.indexOf('=');
+            Utils.require(eqInx > 0, "'key'='value' expected: " + valuePair);
+            paramMap.put(valuePair.substring(0, eqInx), valuePair.substring(eqInx + 1));
+        }
+        return paramMap;
+    }
+
     @SuppressWarnings("unchecked")
     private void parseOverrideFile() throws ConfigurationException {
         String overrideFilename = getModuleParamString("DoradusServer", "param_override_filename");

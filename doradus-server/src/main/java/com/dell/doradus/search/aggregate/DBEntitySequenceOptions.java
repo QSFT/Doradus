@@ -16,7 +16,7 @@
 
 package com.dell.doradus.search.aggregate;
 
-import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.search.util.LRUCache;
 
 
@@ -35,11 +35,11 @@ public class DBEntitySequenceOptions extends EntitySequenceOptions{
     public final int initialScalarBuffer;
 
 	public static final DBEntitySequenceOptions defaultOptions = new DBEntitySequenceOptions(
-	        ServerConfig.getInstance().dbesoptions_entityBuffer,
-	        ServerConfig.getInstance().dbesoptions_linkBuffer,
-	        ServerConfig.getInstance().dbesoptions_initialLinkBuffer,
-	        ServerConfig.getInstance().dbesoptions_initialLinkBufferDimension,
-            ServerConfig.getInstance().dbesoptions_initialScalarBuffer);
+	        ServerParams.instance().getModuleParamInt("DoradusServer", "dbesoptions_entityBuffer", 1000),
+	        ServerParams.instance().getModuleParamInt("DoradusServer", "dbesoptions_linkBuffer", 1000),
+	        ServerParams.instance().getModuleParamInt("DoradusServer", "dbesoptions_initialLinkBuffer", 10),
+	        ServerParams.instance().getModuleParamInt("DoradusServer", "dbesoptions_initialLinkBufferDimension", 100),
+	        ServerParams.instance().getModuleParamInt("DoradusServer", "dbesoptions_initialScalarBuffer", 30));
 
 	/**
 	 * @param scalarBuffer      Number of entities being pre-fetched with scalar values.

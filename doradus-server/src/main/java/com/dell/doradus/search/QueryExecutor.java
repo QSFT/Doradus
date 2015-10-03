@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.core.ObjectID;
-import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.search.aggregate.DBEntitySequenceFactory;
 import com.dell.doradus.search.aggregate.DBEntitySequenceOptions;
 import com.dell.doradus.search.aggregate.EntitySequence;
@@ -45,7 +45,7 @@ public class QueryExecutor {
     
     public QueryExecutor(TableDefinition tableDef) {
     	m_table = tableDef;
-    	m_pageSize = ServerConfig.getInstance().search_default_page_size;
+    	m_pageSize = ServerParams.instance().getModuleParamInt("DoradusServer", "search_default_page_size", 100);
     }
     
     public void setPageSize(int pageSize) {

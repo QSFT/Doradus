@@ -40,6 +40,7 @@ DBService:
     # Defines the concrete DBService that manages the default database.
     dbservice: com.dell.doradus.service.db.thrift.ThriftService
 #   dbservice: com.dell.doradus.service.db.cql.CQLService
+    max_commit_attempts: 10
     max_read_attempts: 7
     retry_wait_millis: 5000
 
@@ -63,7 +64,6 @@ CassandraService:
         strategy_options:
             replication_factor: "1"   # enclose this value in quotes
         durable_writes: true
-    max_commit_attempts: 10
 
 CQLService:
     dbport: 9042
@@ -111,10 +111,6 @@ RESTService:
 
 OLAPService:
     olap_cache_size_mb: 1000
-    olap_cf_defaults:
-        compression_options:
-            sstable_compression:  "" # use empty string for "none"
-        gc_grace_seconds: 3600
     olap_compression_level: -1
     olap_compression_threads: 0
     olap_file_cache_size_mb: 0

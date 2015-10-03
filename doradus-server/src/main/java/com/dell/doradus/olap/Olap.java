@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.olap.aggregate.AggregationRequest;
 import com.dell.doradus.olap.aggregate.AggregationRequestData;
 import com.dell.doradus.olap.aggregate.AggregationResult;
@@ -48,6 +47,7 @@ import com.dell.doradus.search.SearchResultList;
 import com.dell.doradus.search.util.LRUCache;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.Tenant;
+import com.dell.doradus.service.olap.OLAPService;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.tenant.TenantService;
 import com.dell.doradus.utilities.Timer;
@@ -73,13 +73,15 @@ import com.dell.doradus.utilities.Timer;
 
 public class Olap {
     private static Logger LOG = LoggerFactory.getLogger("Olap.Olap");
-    private static ExecutorService search_executor = 
-            ServerConfig.getInstance().olap_search_threads == 0 ?
-                null : Executors.newFixedThreadPool(ServerConfig.getInstance().olap_search_threads);
+    private static final int olap_search_threads = OLAPService.instance().getParamInt("olap_search_threads", 0);
+    private static ExecutorService search_executor =
+            olap_search_threads == 0 ? null : Executors.newFixedThreadPool(olap_search_threads);
 	
     private Map<String, Map<String, VDirectory>> m_tenantAppRoots = new HashMap<>();
-	private FieldsCache m_fieldsCache = new FieldsCache(ServerConfig.getInstance().olap_cache_size_mb * 1024L * 1024);
-	private LRUCache<String, CubeSearcher> m_cachedSearchers = new LRUCache<>(Math.min(8192, ServerConfig.getInstance().olap_loaded_segments));
+	private FieldsCache m_fieldsCache =
+	        new FieldsCache(OLAPService.instance().getParamInt("olap_cache_size_mb", 100) * 1024L * 1024);
+	private LRUCache<String, CubeSearcher> m_cachedSearchers =
+	        new LRUCache<>(Math.min(8192, OLAPService.instance().getParamInt("olap_loaded_segments", 8192)));
 	private Set<String> m_mergedCubes = new HashSet<String>();
 	
 	public Olap() { }

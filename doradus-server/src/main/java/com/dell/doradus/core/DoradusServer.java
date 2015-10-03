@@ -286,7 +286,7 @@ public final class DoradusServer {
 
     // Add configured storage_services to the given set. 
     private void addConfiguredStorageServices(Set<String> serviceSet) {
-        List<String> ssList = ServerConfig.getInstance().storage_services;
+        List<String> ssList = ServerParams.instance().getModuleParamList("DoradusServer", "storage_services");
         if (ssList != null) {
             serviceSet.addAll(ssList);
         }
@@ -294,7 +294,7 @@ public final class DoradusServer {
     
     // Add configured default_services to the given set. 
     private void addDefaultServices(Set<String> serviceSet) {
-        List<String> defaultServices = ServerConfig.getInstance().default_services;
+        List<String> defaultServices = ServerParams.instance().getModuleParamList("DoradusServer", "default_services");
         if (defaultServices != null) {
             serviceSet.addAll(defaultServices);
         }
@@ -355,7 +355,7 @@ public final class DoradusServer {
         initServices(serviceSet);
     }   // initStandaAloneServices
 
-    // Initialize the ServerConfig module, which loads the doradus.yaml file.
+    // Initialize the ServerParams module, which loads the doradus.yaml file.
     private void initConfig(String[] args) {
         try {
             ServerParams.load(args);
@@ -454,7 +454,7 @@ public final class DoradusServer {
         if (m_bRunning) {
             instance().m_logger.info("Doradus Server shutting down");
             stopServices();
-            ServerConfig.unload();
+            ServerParams.unload();
             m_bRunning = false;
             m_bInitialized = false;
         }

@@ -34,7 +34,7 @@ import com.dell.doradus.common.FieldDefinition;
 import com.dell.doradus.common.ObjectResult;
 import com.dell.doradus.common.TableDefinition;
 import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerConfig;
+import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.Tenant;
@@ -42,15 +42,15 @@ import com.dell.doradus.service.db.Tenant;
 /**
  * Performs updates for a batch of objects in a specific table. All updates are accummulated
  * in a {@link SpiderTransaction} and committed together. However, as objects are
- * processed, if the number of updates exceeds the configured limit
- * {@link ServerConfig#batch_mutation_threshold}, the current sub-batch is committed and
- * the DBTransaction is cleared. Further updates will be committed separately but with the
- * same transaction timestamp.
+ * processed, if the number of updates exceeds the configured limit batch_mutation_threshold,
+ * the current sub-batch is committed and the DBTransaction is cleared. Further updates will
+ * be committed separately but with the same transaction timestamp.
  */
 public class BatchObjectUpdater {
     // Members:
     private final SpiderTransaction m_parentTran = new SpiderTransaction();
     private final TableDefinition   m_tableDef;
+    private final int               m_batch_mutation_threshold;
 
     // Logging interface:
     private static Logger m_logger = LoggerFactory.getLogger(BatchObjectUpdater.class.getSimpleName());
@@ -62,6 +62,7 @@ public class BatchObjectUpdater {
      */
     public BatchObjectUpdater(TableDefinition tableDef) {
         m_tableDef = tableDef;
+        m_batch_mutation_threshold = ServerParams.instance().getModuleParamInt("SpiderService", "batch_mutation_threshold", 10000);
     }   // constructor
     
     /**
@@ -233,7 +234,7 @@ public class BatchObjectUpdater {
     
     // Commit all mutations if we've exceeded the threshold.
     private void checkCommit() throws IOException {
-        if (m_parentTran.getUpdateCount() >= ServerConfig.getInstance().batch_mutation_threshold) {
+        if (m_parentTran.getUpdateCount() >= m_batch_mutation_threshold) {
             commitTransaction();
         }
     }   // checkCommit
