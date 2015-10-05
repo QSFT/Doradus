@@ -25,7 +25,7 @@ import java.util.zip.GZIPOutputStream;
 import com.dell.doradus.service.olap.OLAPService;
 
 public class Compressor {
-    private static boolean m_bCompress = OLAPService.instance().getParamBoolean("olap_internal_compression");
+    private static boolean m_bCompress = OLAPService.instance().getParamBoolean("olap_internal_compression", true);
     private static int m_compressionLevel = OLAPService.instance().getParamInt("olap_compression_level", -1);
 	
 	public static byte[] compress(byte[] data) {

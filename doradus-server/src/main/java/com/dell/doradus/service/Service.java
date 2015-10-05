@@ -303,6 +303,21 @@ public abstract class Service {
         }
         return Boolean.parseBoolean(paramValue.toString());
     }
+
+    /**
+     * Get the value of the parameter with the given name belonging to this service as a
+     * boolean. If the parameter is not found, defaultValue is returned.
+     * 
+     * @param paramName Name of parameter to find.
+     * @return          Parameter value found or defaultValue if not found.
+     */
+    public boolean getParamBoolean(String paramName, boolean defaultValue) {
+        Object paramValue = getParam(paramName);
+        if (paramValue == null) {
+            return defaultValue;
+        }
+        return Boolean.parseBoolean(paramValue.toString());
+    }
     
     /**
      * Get the value of the given parameter name belonging to this service as a LIst of
