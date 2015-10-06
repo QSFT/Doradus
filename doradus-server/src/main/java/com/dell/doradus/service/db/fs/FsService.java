@@ -89,6 +89,13 @@ public class FsService extends DBService {
     }
     
     
+    @Override public boolean storeExists(String storeName) {
+        synchronized(m_sync) {
+            File storeDir = new File(ROOT + "/" + getTenant().getName() + "/" + storeName);
+            return storeDir.exists();
+        }
+    }
+    
     @Override public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
         synchronized(m_sync) {
             File storeDir = new File(ROOT + "/" + getTenant().getName() + "/" + storeName);

@@ -124,6 +124,13 @@ public class MemoryService extends DBService {
         return namespaces;
     }
 
+    @Override public boolean storeExists(String storeName) {
+        synchronized (m_sync) {
+            Keyspace ks = m_Keyspaces.get(getTenant().getName());
+            return ks != null && ks.stores.get(storeName) != null;
+        }
+    }
+    
     @Override public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
     	synchronized (m_sync) {
     		Keyspace ks = m_Keyspaces.get(getTenant().getName());

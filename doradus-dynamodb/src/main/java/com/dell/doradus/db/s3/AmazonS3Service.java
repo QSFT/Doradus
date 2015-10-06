@@ -95,6 +95,10 @@ public class AmazonS3Service extends DBService {
         s3_executor.shutdownNow();
     }
     
+    @Override public boolean storeExists(String storeName) {
+        return m_connection.get(getTenant().getName() + "/" + storeName) != null;
+    }
+    
     @Override public boolean supportsNamespaces() {
         return true;
     }

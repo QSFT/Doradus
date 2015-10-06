@@ -140,6 +140,19 @@ public class ThriftService extends CassandraService {
     //----- Public DBService methods: Store management
 
     @Override
+    public boolean storeExists(String storeName) {
+        String keyspace = getTenant().getName();
+        DBConn dbConn = getDBConnection();
+        try {
+            synchronized (m_schemaLock) {
+                return m_schemaMgr.columnFamilyExists(dbConn, keyspace, storeName);
+            }
+        } finally {
+            returnDBConnection(dbConn);
+        }
+    }
+    
+    @Override
     public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
         checkState();
         String keyspace = getTenant().getName();

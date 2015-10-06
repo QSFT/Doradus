@@ -249,13 +249,17 @@ public class TenantDefinition implements JSONable{
     
     /**
      * Set the given option. If the option was previously defined, the value is
-     * overwritten.
+     * overwritten. If the given value is null, the existing option is removed.
      * 
      * @param optName   Option name.
      * @param optValue  Option value, which may be a String or Map&lt;String,Object&gt;.
      */
     public void setOption(String optName, Object optValue) {
-        m_options.put(optName, optValue);
+        if (optValue == null) {
+            m_options.remove(optName);
+        } else {
+            m_options.put(optName, optValue);
+        }
     }
     
     /**

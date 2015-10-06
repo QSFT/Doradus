@@ -126,6 +126,11 @@ public class HybridService extends DBService {
     }
     
     
+    @Override public boolean storeExists(String storeName) {
+        return m_serviceDatastore.storeExists(storeName) ||
+               m_serviceNosql.storeExists(storeName);
+    }
+    
     @Override public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
         m_serviceDatastore.createStoreIfAbsent(storeName, bBinaryValues);
         m_serviceNosql.createStoreIfAbsent(storeName, bBinaryValues);

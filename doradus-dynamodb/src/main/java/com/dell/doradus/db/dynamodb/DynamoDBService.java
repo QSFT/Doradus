@@ -174,6 +174,12 @@ public class DynamoDBService extends DBService {
     //----- Public DBService methods: Store management
     
     @Override
+    public boolean storeExists(String storeName) {
+        checkState();
+        return Tables.doesTableExist(m_ddbClient, storeName);
+    }
+
+    @Override
     public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
         checkState();
         if (!Tables.doesTableExist(m_ddbClient, storeName)) {

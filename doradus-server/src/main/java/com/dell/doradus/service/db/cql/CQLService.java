@@ -150,6 +150,13 @@ public class CQLService extends CassandraService {
     //----- Public DBService methods: Store management
 
     @Override
+    public boolean storeExists(String storeName) {
+        String cqlKeyspace = storeToCQLName(getTenant().getName());
+        String tableName = storeToCQLName(storeName);
+        return storeExists(cqlKeyspace, tableName);
+    }
+
+    @Override
     public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
         checkState();
         String cqlKeyspace = storeToCQLName(getTenant().getName());

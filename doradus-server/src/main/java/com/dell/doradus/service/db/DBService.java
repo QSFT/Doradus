@@ -56,6 +56,7 @@ public abstract class DBService extends Service {
     // Only subclasses can construct an object.
     protected DBService(Tenant tenant) {
         m_tenant = tenant;
+        addTenantDBParameters();
         
         // Give up to 1 second after start() to allow startService() to succeed
         m_startDelayMillis = 1000;
@@ -134,6 +135,15 @@ public abstract class DBService extends Service {
     public abstract void dropNamespace();
     
     //----- Public DBService methods: Store management
+    
+    /**
+     * Return true if the given store already exists for the tenant defined by this
+     * DBService object.
+     * 
+     * @param storeName Store name.
+     * @return          True if the store already exists.
+     */
+    public abstract boolean storeExists(String storeName);
     
     /**
      * Create a new store. Columns hold string or binary values as requested. If the
@@ -336,6 +346,15 @@ public abstract class DBService extends Service {
 
     //----- Private methods
     
+    // As a Service, this object should already have parameters defined for the concrete
+    // DBService object from doradus.yaml. This method adds/overrides any parameters
+    // defined in the TenantDefinition.
+    private void addTenantDBParameters() {
+        if (m_tenant.getDefinition().getOptionMap("DBService") != null) {
+            addParams(m_tenant.getDBServiceParams());
+        }
+    }
+
     // Create a new DBService for the given tenant. This should only be called when a lock
     // is held on g_tenantServiceMap
     private static DBService createTenantDBService(Tenant tenant) {
@@ -352,18 +371,12 @@ public abstract class DBService extends Service {
 
         DBService dbservice = null;
         try {
-            // Find and invoke static method: instance(Tenant). Note that since the DBService is
-            // a Service, all module parameters defined for it are copied from doradus.yaml to the
-            // object in the Service constructor. Hence, it is initialized with all options relevant
-            // to the DBService's type.
+            // Find and invoke static method: instance(Tenant).
             @SuppressWarnings("unchecked")
             Class<DBService> serviceClass = (Class<DBService>) Class.forName(dbServiceName);
             Method instanceMethod = serviceClass.getMethod("instance", new Class<?>[]{Tenant.class});
             dbservice = (DBService)instanceMethod.invoke(null, new Object[]{tenant});
-            
-            // Override the service's params with any defined in the tenant's definition.
-            dbservice.addParams(tenant.getDBServiceParams());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new RuntimeException("Cannot load specified 'dbservice': " + dbServiceName, e);
         }
         return dbservice;

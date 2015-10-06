@@ -444,8 +444,18 @@ public class TenantService extends Service {
         if (dbService.supportsNamespaces()) {
             dbService.createNamespace();
         }
+        verifyNewTenant(tenant);
         initializeTenantStores(tenant);
         storeTenantDefinition(tenantDef);
+    }
+
+    // Verify that this tenant does not already seem to have a tenant.
+    private void verifyNewTenant(Tenant tenant) {
+        TenantDefinition tenantDef = tenant.getDefinition();
+        boolean bForceNewTenant = Boolean.parseBoolean(tenantDef.getOptionString("force_new_tenant"));
+        Utils.require(bForceNewTenant || !DBService.instance(tenant).storeExists(SchemaService.APPS_STORE_NAME),
+                      "Database for Tenant '%s' already has an active tenant", tenant.getName());
+        tenantDef.setOption("force_new_tenant", null);
     }
 
     // Ensure required tenant stores exist.

@@ -102,7 +102,7 @@ public class Tenant implements Comparable<Tenant> {
         }
         String dbservice = (String)tenantDBParamMap.get("dbservice");
         Utils.require(!Utils.isEmpty(dbservice), "'DBService.dbservice' option must be defined for tenant: %s", m_name);
-        Map<String, Object> dbParamMap = ServerParams.getAllModuleParams(dbservice, tenantDBParamMap);
+        Map<String, Object> dbParamMap = ServerParams.getAllModuleParams(dbservice, m_tenantDef.getOptions());
         return dbParamMap;
     }
 

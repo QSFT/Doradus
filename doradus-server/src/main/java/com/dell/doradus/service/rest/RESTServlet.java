@@ -78,7 +78,7 @@ public class RESTServlet extends HttpServlet {
                            (float)(System.nanoTime() - startNano)/1000000, getFullURI(request));
         } catch (IllegalArgumentException e) {
             // 400 Bad Request
-            RESTResponse restResponse = new RESTResponse(HttpCode.BAD_REQUEST, e.getMessage());
+            RESTResponse restResponse = new RESTResponse(HttpCode.BAD_REQUEST, getNestedMessage(e));
             m_logger.info("Returning client error: {}; request: {}",
                           restResponse.toString(), getFullURI(request));
             RESTService.instance().onRequestRejected(restResponse.getCode().toString());
@@ -154,6 +154,18 @@ public class RESTServlet extends HttpServlet {
     
     //----- Private methods
 
+    private String getNestedMessage(Throwable e) {
+        String localMsg = e.getMessage();
+        if (Utils.isEmpty(localMsg)) {
+            localMsg = e.getClass().getSimpleName();
+        }
+        Throwable embeddedException = e.getCause();
+        if (embeddedException == null) {
+            return localMsg;
+        }
+        return localMsg + ": " + getNestedMessage(embeddedException);
+    }
+    
     // Execute the given request and return a RESTResponse or throw an appropriate error.
     private RESTResponse validateAndExecuteRequest(HttpServletRequest request) {
         Map<String, String> variableMap = new HashMap<String, String>();

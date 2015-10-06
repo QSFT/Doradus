@@ -359,6 +359,10 @@ public final class DoradusServer {
     private void initConfig(String[] args) {
         try {
             ServerParams.load(args);
+            if (Utils.isEmpty(ServerParams.instance().getModuleParamString("DoradusServer", "super_user"))) {
+                m_logger.warn("'DoradusServer.super_user' parameter is not defined. " +
+                              "Privileged commands will be available without authentication.");
+            }
         } catch (ConfigurationException e) {
             throw new RuntimeException("Failed to initialize server configuration", e);
         }

@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +52,7 @@ public class ServerParams {
     private static ServerParams INSTANCE;
 
     // Local members:
-    private final Map<String, Object> m_params = new HashMap<>();
+    private final SortedMap<String, Object> m_params = new TreeMap<>();
     private String[] m_commandLineArgs;
     private boolean m_bWarnedLegacyParam;
 
@@ -415,7 +417,7 @@ public class ServerParams {
      * @return The map of the configuration properties.
      */
     public Map<String, Object> toMap() {
-        return new HashMap<String, Object>(m_params);
+        return m_params;
     }
 
     /**

@@ -145,6 +145,13 @@ public class DynamoDBService2 extends DBService {
     }
     
     @Override
+    public boolean storeExists(String storeName) {
+        checkState();
+        Iterable<DRow> rowIter = getAllRows(storeName);
+        return rowIter.iterator().hasNext();
+    }
+
+    @Override
     public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
     	// nothing to do
     }

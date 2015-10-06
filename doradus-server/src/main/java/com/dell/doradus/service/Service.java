@@ -16,9 +16,10 @@
 
 package com.dell.doradus.service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,7 +141,7 @@ public abstract class Service {
     private final Object    m_stateChangeLock = new Object();
     
     // Direct and inherited parameters, visible to subclasses:
-    protected final Map<String, Object> m_serviceParamMap = new HashMap<>();
+    protected final SortedMap<String, Object> m_serviceParamMap = new TreeMap<>();
     
     // Services can set this to wait after serviceStart() is called before start() returns.
     protected int m_startDelayMillis = 0;
@@ -175,6 +176,7 @@ public abstract class Service {
         if (m_state.isInitialized()) {
             m_logger.warn("initialize(): Service is already initialized -- ignoring");
         } else {
+            logParams("Initializing with the following service parameters:");
             this.initService();
             setState(State.INITIALIZED);
         }
@@ -425,5 +427,46 @@ public abstract class Service {
             m_stateChangeLock.notifyAll();
         }
     }   // setState
+    
+    // Print all configuration parameters to the log. 
+    private void logParams(String header) {
+        m_logger.debug(header);
+        for (String paramName : m_serviceParamMap.keySet()) {
+            Object paramValue = m_serviceParamMap.get(paramName);
+            logParam(paramName, paramValue, "   ");
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void logParam(String paramName, Object paramValue, String indent) {
+        if (paramValue instanceof List) {
+            m_logger.debug(indent + paramName + " (list):");
+            logListParams((List<?>)paramValue, indent+"   ");
+        } else if (paramValue instanceof Map) {
+            m_logger.debug(indent + paramName + " (map):");
+            logMapParams((Map<String, ?>)paramValue, indent+"   ");
+        } else {
+            m_logger.debug(indent + paramName + ": " + paramValue);
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void logListParams(List<?> values, String indent) {
+        for (Object value : values) {
+            if (value instanceof Map) {
+                logMapParams((Map<String, ?>)value, indent);
+            } else if (value instanceof List) {
+                logListParams((List<?>)value, indent);
+            } else {
+                m_logger.debug(indent + value.toString());
+            }
+        }
+    }
+    
+    private void logMapParams(Map<String, ?> values, String indent) {
+        for (String subParam : values.keySet()) {
+            logParam(subParam, values.get(subParam), indent);
+        }
+    }
     
 }   // class Service
