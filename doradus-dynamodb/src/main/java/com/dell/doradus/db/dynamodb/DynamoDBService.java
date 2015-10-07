@@ -39,6 +39,7 @@ import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.KeyType;
+import com.amazonaws.services.dynamodbv2.model.ListTablesResult;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughputExceededException;
 import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
@@ -165,7 +166,19 @@ public class DynamoDBService extends DBService {
     
     @Override
     public void dropNamespace() {
-        throw new RuntimeException("Namespaces are not supported");
+        checkState();
+        if (m_tenantPrefix.length() == 0) {
+            m_logger.warn("Drop namespace not supported for legacy DynamoDB instances. "+
+                          "Tables for tenant {} must be deleted manually", m_tenant.getName());
+            return;
+        }
+        ListTablesResult tables = m_ddbClient.listTables();
+        List<String> tableNames = tables.getTableNames();
+        for (String tableName : tableNames) {
+            if (tableName.startsWith(m_tenantPrefix)) {
+                deleteTable(tableName);
+            }
+        }
     }
     
     //----- Public DBService methods: Store management
@@ -199,25 +212,9 @@ public class DynamoDBService extends DBService {
     @Override
     public void deleteStoreIfPresent(String storeName) {
         checkState();
-        String tableName = storeToTableName(storeName);
-        m_logger.info("Deleting table: {}", tableName);
-        try {
-            m_ddbClient.deleteTable(new DeleteTableRequest(tableName));
-            for (int seconds = 0; seconds < 10; seconds++) {
-                try {
-                    m_ddbClient.describeTable(tableName);
-                    Thread.sleep(1000);
-                } catch (ResourceNotFoundException e) {
-                    break;  // Success
-                }   // All other exceptions passed to outer try/catch
-            }
-        } catch (ResourceNotFoundException e) {
-            // Already deleted.
-        } catch (Exception e) {
-            throw new RuntimeException("Error deleting table: " + tableName, e);
-        }
+        deleteTable(storeToTableName(storeName));
     }
-
+    
     //----- Public DBService methods: Updates
     
     /**
@@ -503,4 +500,24 @@ public class DynamoDBService extends DBService {
         return columns;
     }
     
+    // Delete the given table and wait for it to be deleted.
+    private void deleteTable(String tableName) {
+        m_logger.info("Deleting table: {}", tableName);
+        try {
+            m_ddbClient.deleteTable(new DeleteTableRequest(tableName));
+            for (int seconds = 0; seconds < 10; seconds++) {
+                try {
+                    m_ddbClient.describeTable(tableName);
+                    Thread.sleep(1000);
+                } catch (ResourceNotFoundException e) {
+                    break;  // Success
+                }   // All other exceptions passed to outer try/catch
+            }
+        } catch (ResourceNotFoundException e) {
+            // Already deleted.
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting table: " + tableName, e);
+        }
+    }
+
 }   // class DynamoDBService
