@@ -25,7 +25,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.db.ColumnDelete;
 import com.dell.doradus.service.db.ColumnUpdate;
 import com.dell.doradus.service.db.DBService;
@@ -75,11 +74,9 @@ public class HybridService extends DBService {
     }
     
     @Override public void initService() {
-        // TODO: Get parameters from Tenant instead of ServerParams.
-        ServerParams params = ServerParams.instance();
-        String serviceNosqlName = params.getModuleParamString("HybridService", "service-nosql");
-        String serviceDatastoreName = params.getModuleParamString("HybridService", "service-datastore");
-        m_valueThreshold = params.getModuleParamInt("HybridService", "value-threshold", 1024);
+        String serviceNosqlName = getParamString("service-nosql");
+        String serviceDatastoreName = getParamString("service-datastore");
+        m_valueThreshold = getParamInt("value-threshold", 1024);
         
         try {
             Method instanceMethod;
@@ -110,11 +107,6 @@ public class HybridService extends DBService {
         m_serviceNosql.stop();
     }
     
-    
-    @Override public boolean supportsNamespaces() {
-        return m_serviceDatastore.supportsNamespaces() && m_serviceNosql.supportsNamespaces();
-    }
-
     @Override public void createNamespace() {
         m_serviceDatastore.createNamespace();
         m_serviceNosql.createNamespace();
@@ -123,12 +115,6 @@ public class HybridService extends DBService {
     @Override public void dropNamespace() {
         m_serviceDatastore.dropNamespace();
         m_serviceNosql.dropNamespace();
-    }
-    
-    
-    @Override public boolean storeExists(String storeName) {
-        return m_serviceDatastore.storeExists(storeName) ||
-               m_serviceNosql.storeExists(storeName);
     }
     
     @Override public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {

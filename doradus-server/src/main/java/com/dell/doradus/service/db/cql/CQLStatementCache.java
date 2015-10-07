@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.datastax.driver.core.PreparedStatement;
+import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.Tenant;
 
@@ -47,7 +48,11 @@ public class CQLStatementCache {
      */
     public CQLStatementCache(Tenant tenant) {
         m_tenant = tenant;
-        m_keyspace = CQLService.storeToCQLName(m_tenant.getName());
+        if (Utils.isEmpty(m_tenant.getNamespace())) {
+            m_keyspace = CQLService.storeToCQLName(m_tenant.getName());
+        } else {
+            m_keyspace = CQLService.storeToCQLName(m_tenant.getNamespace());
+        }
     }
     
     /**

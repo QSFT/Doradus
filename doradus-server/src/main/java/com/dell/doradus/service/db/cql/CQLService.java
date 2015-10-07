@@ -46,6 +46,7 @@ import com.datastax.driver.core.SocketOptions;
 import com.datastax.driver.core.policies.RoundRobinPolicy;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.db.CassandraService;
+import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
 import com.dell.doradus.service.db.Tenant;
@@ -68,14 +69,20 @@ public class CQLService extends CassandraService {
     private CQLService(Tenant tenant) {
         super(tenant);
         m_statementCache = new CQLStatementCache(tenant);
+        db_connect_retry_wait_millis = getParamInt("db_connect_retry_wait_millis", 1000);
+        if (Utils.isEmpty(tenant.getNamespace())) {
+            m_keyspace = storeToCQLName(tenant.getName());
+        } else {
+            m_keyspace = storeToCQLName(tenant.getNamespace());
+        }
     }
 
     // Members:
     private Cluster m_cluster;
     private Session m_session;
-    private CQLMetadataCache m_metadataCache;
     private final CQLStatementCache m_statementCache;
-    private int db_connect_retry_wait_millis;
+    private final int db_connect_retry_wait_millis;
+    private final String m_keyspace;
     
     //----- Public Service methods
 
@@ -90,7 +97,6 @@ public class CQLService extends CassandraService {
     
     @Override
     protected void initService() {
-        db_connect_retry_wait_millis = getParamInt("db_connect_retry_wait_millis", 1000);
     }
 
     @Override
@@ -108,18 +114,12 @@ public class CQLService extends CassandraService {
     //----- Public DBService methods: Namespace management
 
     @Override
-    public boolean supportsNamespaces() {
-        return true;
-    }
-    
-    @Override
     public void createNamespace() {
         checkState();
-        String cqlKeyspace = storeToCQLName(getTenant().getName());
-        KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(cqlKeyspace);
+        KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(m_keyspace);
         if (ksMetadata == null) {
             Map<String, String> options = getKeyspaceOptions(getTenant());
-            CQLSchemaManager.createKeyspace(getTenant(), options);
+            new CQLSchemaManager(this).createKeyspace(options);
         }
     }
     
@@ -132,7 +132,7 @@ public class CQLService extends CassandraService {
     public void dropNamespace() {
         checkState();
         m_statementCache.clear();
-        CQLSchemaManager.dropKeyspace(getTenant());
+        new CQLSchemaManager(this).dropKeyspace();
     }
     
     public List<String> getDoradusKeyspaces() {
@@ -150,29 +150,20 @@ public class CQLService extends CassandraService {
     //----- Public DBService methods: Store management
 
     @Override
-    public boolean storeExists(String storeName) {
-        String cqlKeyspace = storeToCQLName(getTenant().getName());
-        String tableName = storeToCQLName(storeName);
-        return storeExists(cqlKeyspace, tableName);
-    }
-
-    @Override
     public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
         checkState();
-        String cqlKeyspace = storeToCQLName(getTenant().getName());
         String tableName = storeToCQLName(storeName);
-        if (!storeExists(cqlKeyspace, tableName)) {
-            CQLSchemaManager.createCQLTable(getTenant(), storeName, bBinaryValues);
+        if (!storeExists(tableName)) {
+            new CQLSchemaManager(this).createCQLTable(storeName, bBinaryValues);
         }
     }   // createStoreIfAbsent
     
     @Override
     public void deleteStoreIfPresent(String storeName) {
         checkState();
-        String cqlKeyspace = storeToCQLName(getTenant().getName());
         String tableName = storeToCQLName(storeName);
-        if (storeExists(cqlKeyspace, tableName)) {
-            CQLSchemaManager.dropCQLTable(getTenant(), tableName);
+        if (storeExists(tableName)) {
+            new CQLSchemaManager(this).dropCQLTable(tableName);
         }
     }   // deleteStoreIfPresent
 
@@ -183,7 +174,7 @@ public class CQLService extends CassandraService {
      * @return          True if the given table's column values are binary.
      */
     public boolean columnValueIsBinary(String storeName) {
-        return m_metadataCache.columnValueIsBinary(getTenant().getName(), storeName);
+        return !DBService.isSystemTable(storeName);
     }
 
     //----- Public DBService methods: Updates
@@ -191,7 +182,7 @@ public class CQLService extends CassandraService {
     @Override
     public void commit(DBTransaction dbTran) {
         checkState();
-        CQLTransaction.commit(dbTran);
+        new CQLTransaction(this).commit(dbTran);
     }   // commit
 
     //----- Public DBService methods: Queries
@@ -311,6 +302,16 @@ public class CQLService extends CassandraService {
     }   // getSession
     
     /**
+     * Get the keyspace name used by this DBSevice's tenant. The name is quoted for use in
+     * CQL statements.
+     * 
+     * @return  Quoted keyspace name used by this DBSevice's tenant.
+     */
+    public String getKeyspace() {
+        return m_keyspace;
+    }
+    
+    /**
      * Convert the given store name into a quoted CQL name if it isn't already quoted.
      * 
      * @param storeName Store name, possibly unquoted.
@@ -327,17 +328,15 @@ public class CQLService extends CassandraService {
     //----- Private methods
 
     // Return true if the given table exists in the given keyspace.
-    private boolean storeExists(String cqlKeyspace, String tableName) {
-        assert cqlKeyspace.charAt(0) == '"';
-        KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(cqlKeyspace);
+    private boolean storeExists(String tableName) {
+        KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(m_keyspace);
         return (ksMetadata != null) && (ksMetadata.getTable(tableName) != null);
     }   // storeExists
 
     // Execute the given query for the given table using the given values.
     private ResultSet executeQuery(Query query, String tableName, Object... values) {
-        String cqlKeyspace = storeToCQLName(getTenant().getName());
         m_logger.debug("Executing statement {} on table {}.{}; total params={}",
-                       new Object[]{query, cqlKeyspace, tableName, values.length});
+                       new Object[]{query, m_keyspace, tableName, values.length});
         PreparedStatement prepState = getPreparedQuery(query, tableName);
         BoundStatement boundState = prepState.bind(values);
         return m_session.execute(boundState);
@@ -349,7 +348,6 @@ public class CQLService extends CassandraService {
             try {
                 m_cluster = buildClusterSpecs();
                 connectToCluster();
-                m_metadataCache = new CQLMetadataCache(m_cluster);
                 break;
             } catch (Exception e) {
                 m_cluster = null;

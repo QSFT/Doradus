@@ -16,7 +16,6 @@
 
 package com.dell.doradus.common;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,11 +73,10 @@ public class TenantDefinition implements JSONable{
     /**
      * Get the map of {@link UserDefinition}s keyed by user ID defined for this tenant.
      * 
-     * @return  Map of user IDs to {@link UserDefinition}s. The map will be read-only
-     *          and may be empty but will not be null.
+     * @return  Map of user IDs to {@link UserDefinition}s.
      */
     public Map<String, UserDefinition> getUsers() {
-        return Collections.unmodifiableMap(m_users);
+        return m_users;
     }
     
     /**
@@ -94,11 +92,10 @@ public class TenantDefinition implements JSONable{
      * Get this tenant definition's options, if any. Options are system-defined such as
      * settings for the tenant's keyspace. 
      * 
-     * @return  Tenant definition options as key/value pairs. The map is read-only and
-     *          may be empty but will not be null.
+     * @return  Tenant definition options as key/value pairs.
      */
     public Map<String, Object> getOptions() {
-        return Collections.unmodifiableMap(m_options);
+        return m_options;
     }
     
     /**
@@ -151,11 +148,10 @@ public class TenantDefinition implements JSONable{
      * Get the properties defined for this tenant definition as a key value map. Compared
      * to options, which are system-defined, options are application-defined.
      *  
-     * @return  Defined properties as a key/value map. The map will be unmodifiable and
-     *          may be empty but will not be null.
+     * @return  Defined properties as a key/value map.
      */
     public Map<String, String> getProperties() {
-        return Collections.unmodifiableMap(m_properties);
+        return m_properties;
     }
     
     /**

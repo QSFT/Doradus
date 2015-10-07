@@ -26,6 +26,8 @@ import java.util.Map;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.Service;
+import com.dell.doradus.service.schema.SchemaService;
+import com.dell.doradus.service.taskmanager.TaskManagerService;
 import com.dell.doradus.service.tenant.TenantService;
 
 /**
@@ -110,16 +112,6 @@ public abstract class DBService extends Service {
     //----- Public DBService methods: Namespace management
     
     /**
-     * Indicates if this DBService object supports namespaces. If this method returns
-     * false, {@link #createNamespace(DBContext, String)} and {@link #dropNamespace(String)}
-     * will probably throw an exception.
-     * 
-     * @return True if the database type represented by this DBService object supports
-     *         namespaces.
-     */
-    public abstract boolean supportsNamespaces();
-    
-    /**
      * Create a new namespace for this DBService's Tenant. It is up to the concrete
      * DBService class to decide what, if anything, should be done to prepare the new
      * namespace. This method will throw if {@link #supportsNamespaces()} returns false
@@ -137,13 +129,17 @@ public abstract class DBService extends Service {
     //----- Public DBService methods: Store management
     
     /**
-     * Return true if the given store already exists for the tenant defined by this
-     * DBService object.
+     * Return true if the given store name is a system table, aka metadata table. System
+     * tables store column values as strings. All other tables use binary column values.
      * 
-     * @param storeName Store name.
-     * @return          True if the store already exists.
+     * @param   storeName   Store name to test.
+     * @return              True if the store name is a system table.
      */
-    public abstract boolean storeExists(String storeName);
+    public static boolean isSystemTable(String storeName) {
+        return storeName.equals(SchemaService.APPS_STORE_NAME) ||
+               storeName.equals(TaskManagerService.TASKS_STORE_NAME) ||
+               storeName.equals(TenantService.TENANTS_STORE_NAME);
+    }
     
     /**
      * Create a new store. Columns hold string or binary values as requested. If the

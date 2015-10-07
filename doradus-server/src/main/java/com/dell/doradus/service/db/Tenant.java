@@ -116,6 +116,17 @@ public class Tenant implements Comparable<Tenant> {
     }
 
     /**
+     * Get this tenant's namespace, which is the name in which its data is stored. This
+     * value may be null for older tenants. For newer tenants, this name defaults to the
+     * tenant name but can be explicitly defined in the tenant definition.
+     * 
+     * @return  This tenant's namespace, which may be null if undefined.
+     */
+    public String getNamespace() {
+        return m_tenantDef.getOptionString("namespace");
+    }
+    
+    /**
      * Get the Tenant definition for this tenant.
      * 
      * @return  This tenant's {@link TenantDefinition}.

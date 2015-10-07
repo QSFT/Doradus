@@ -114,12 +114,14 @@ public class DynamoDBService extends DBService {
     private final int m_retry_wait_millis;
     private final int m_max_commit_attempts;
     private final int m_max_read_attempts;
+    private final String m_tenantPrefix;
     
     private DynamoDBService(Tenant tenant) {
         super(tenant);
         m_retry_wait_millis = getParamInt("retry_wait_millis", 5000);
         m_max_commit_attempts = getParamInt("max_commit_attempts", 10);
         m_max_read_attempts = getParamInt("max_read_attempts", 3);
+        m_tenantPrefix = Utils.isEmpty(tenant.getNamespace()) ? "" : tenant.getNamespace() + "_"; 
         
         m_ddbClient = new AmazonDynamoDBClient(getCredentials());
         setRegionOrEndPoint();
@@ -157,13 +159,8 @@ public class DynamoDBService extends DBService {
     //----- Public DBService methods: Namespace management
     
     @Override
-    public boolean supportsNamespaces() {
-        return false;
-    }
-    
-    @Override
     public void createNamespace() {
-        throw new RuntimeException("Namespaces are not supported");
+        // Nothing to do.
     }
     
     @Override
@@ -174,18 +171,13 @@ public class DynamoDBService extends DBService {
     //----- Public DBService methods: Store management
     
     @Override
-    public boolean storeExists(String storeName) {
-        checkState();
-        return Tables.doesTableExist(m_ddbClient, storeName);
-    }
-
-    @Override
     public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
         checkState();
-        if (!Tables.doesTableExist(m_ddbClient, storeName)) {
+        String tableName = storeToTableName(storeName);
+        if (!Tables.doesTableExist(m_ddbClient, tableName)) {
             // Create a table with a primary hash key named '_key', which holds a string
-            m_logger.info("Creating table: {}", storeName);
-            CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(storeName)
+            m_logger.info("Creating table: {}", tableName);
+            CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(tableName)
                 .withKeySchema(new KeySchemaElement()
                     .withAttributeName(ROW_KEY_ATTR_NAME)
                     .withKeyType(KeyType.HASH))
@@ -197,7 +189,7 @@ public class DynamoDBService extends DBService {
                     .withWriteCapacityUnits(WRITE_CAPACITY_UNITS));
             m_ddbClient.createTable(createTableRequest).getTableDescription();
             try {
-                Tables.awaitTableToBecomeActive(m_ddbClient, storeName);
+                Tables.awaitTableToBecomeActive(m_ddbClient, tableName);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);  
             }
@@ -207,12 +199,13 @@ public class DynamoDBService extends DBService {
     @Override
     public void deleteStoreIfPresent(String storeName) {
         checkState();
-        m_logger.info("Deleting table: {}", storeName);
+        String tableName = storeToTableName(storeName);
+        m_logger.info("Deleting table: {}", tableName);
         try {
-            m_ddbClient.deleteTable(new DeleteTableRequest(storeName));
+            m_ddbClient.deleteTable(new DeleteTableRequest(tableName));
             for (int seconds = 0; seconds < 10; seconds++) {
                 try {
-                    m_ddbClient.describeTable(storeName);
+                    m_ddbClient.describeTable(tableName);
                     Thread.sleep(1000);
                 } catch (ResourceNotFoundException e) {
                     break;  // Success
@@ -221,7 +214,7 @@ public class DynamoDBService extends DBService {
         } catch (ResourceNotFoundException e) {
             // Already deleted.
         } catch (Exception e) {
-            throw new RuntimeException("Error deleting table: " + storeName, e);
+            throw new RuntimeException("Error deleting table: " + tableName, e);
         }
     }
 
@@ -246,34 +239,37 @@ public class DynamoDBService extends DBService {
     public List<DColumn> getColumns(String storeName, String rowKey,
                                     String startColumn, String endColumn, int count) {
         checkState();
-        Map<String, AttributeValue> attributeMap = m_ddbClient.getItem(storeName, makeDDBKey(rowKey)).getItem();
+        String tableName = storeToTableName(storeName);
+        Map<String, AttributeValue> attributeMap = m_ddbClient.getItem(tableName, makeDDBKey(rowKey)).getItem();
         List<DColumn> colList =
             loadAttributes(attributeMap,
                            colName -> ((Utils.isEmpty(startColumn) || colName.compareTo(startColumn) >= 0) &&
                                        (Utils.isEmpty(endColumn) || colName.compareTo(endColumn) <= 0))
                           );
         m_logger.debug("getColumns({}, {}, {}, {}) returning {} columns",
-                       new Object[]{storeName, rowKey, startColumn, endColumn, colList.size()});
+                       new Object[]{tableName, rowKey, startColumn, endColumn, colList.size()});
         return colList;
     }
 
     @Override
     public List<DColumn> getColumns(String storeName, String rowKey, Collection<String> columnNames) {
         checkState();
-        Map<String, AttributeValue> attributeMap = m_ddbClient.getItem(storeName, makeDDBKey(rowKey)).getItem();
+        String tableName = storeToTableName(storeName);
+        Map<String, AttributeValue> attributeMap = m_ddbClient.getItem(tableName, makeDDBKey(rowKey)).getItem();
         List<DColumn> colList =
             loadAttributes(attributeMap,
                            colName -> (columnNames == null || columnNames.contains(colName))
                           );
         m_logger.debug("getColumns({}, {}, {} names) returning {} columns",
-                       new Object[]{storeName, rowKey, columnNames.size(), colList.size()});
+                       new Object[]{tableName, rowKey, columnNames.size(), colList.size()});
         return colList;
     }
 
     @Override
     public List<String> getRows(String storeName, String continuationToken, int count) {
         checkState();
-        ScanRequest scanRequest = new ScanRequest(storeName);
+        String tableName = storeToTableName(storeName);
+        ScanRequest scanRequest = new ScanRequest(tableName);
         scanRequest.setAttributesToGet(Arrays.asList(ROW_KEY_ATTR_NAME)); // attributes to get
         if (continuationToken != null) {
             scanRequest.setExclusiveStartKey(makeDDBKey(continuationToken));
@@ -303,11 +299,6 @@ public class DynamoDBService extends DBService {
 
     //----- Package methods
     
-    // TODO: This might not be necessary; see if every column should be considered binary.
-    public boolean columnIsBinary(String name) {
-        return true;
-    }
-
     static String getDDBKey(Map<String, AttributeValue> key) {
         return key.get(ROW_KEY_ATTR_NAME).getS();
     }
@@ -319,7 +310,8 @@ public class DynamoDBService extends DBService {
     }
     
     // Delete row and back off if ProvisionedThroughputExceededException occurs.
-    void deleteRow(String tableName, Map<String, AttributeValue> key) {
+    void deleteRow(String storeName, Map<String, AttributeValue> key) {
+        String tableName = storeToTableName(storeName);
         m_logger.debug("Deleting row from table {}, key={}", tableName, DynamoDBService.getDDBKey(key));
         
         Timer timer = new Timer();
@@ -350,9 +342,10 @@ public class DynamoDBService extends DBService {
     }
     
     // Update item and back off if ProvisionedThroughputExceededException occurs.
-    void updateRow(String tableName,
+    void updateRow(String storeName,
                    Map<String, AttributeValue> key,
                    Map<String, AttributeValueUpdate> attributeUpdates) {
+        String tableName = storeToTableName(storeName);
         m_logger.debug("Updating row in table {}, key={}", tableName, DynamoDBService.getDDBKey(key));
         
         Timer timer = new Timer();
@@ -383,7 +376,12 @@ public class DynamoDBService extends DBService {
     }
 
     //----- Private methods
-    
+
+    // Prefix store name with tenant prefix if any.
+    private String storeToTableName(String storeName) {
+        return m_tenantPrefix + storeName;
+    }
+
     // Set the AWS credentials in m_ddbClient
     private AWSCredentials getCredentials() {
         String awsProfile = getParamString("aws_profile");

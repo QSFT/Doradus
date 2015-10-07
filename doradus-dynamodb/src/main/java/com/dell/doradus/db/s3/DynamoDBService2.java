@@ -104,11 +104,6 @@ public class DynamoDBService2 extends DBService {
     }
 
     @Override
-    public boolean supportsNamespaces() {
-        return true;
-    }
-    
-    @Override
     public void createNamespace() {
         String table = getTenant().getName();
         if(Tables.doesTableExist(m_client, table)) return;
@@ -144,13 +139,6 @@ public class DynamoDBService2 extends DBService {
         m_client.deleteTable(getTenant().getName());
     }
     
-    @Override
-    public boolean storeExists(String storeName) {
-        checkState();
-        Iterable<DRow> rowIter = getAllRows(storeName);
-        return rowIter.iterator().hasNext();
-    }
-
     @Override
     public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
     	// nothing to do

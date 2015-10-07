@@ -352,9 +352,7 @@ public class TenantService extends Service {
     // Ensure that the default tenant and its required metadata tables exist.
     private void initializeDefaultTenant() {
         DBService dbService = DBService.instance();
-        if (dbService.supportsNamespaces()) {
-            dbService.createNamespace();
-        }
+        dbService.createNamespace();
         dbService.createStoreIfAbsent(SchemaService.APPS_STORE_NAME, false);
         dbService.createStoreIfAbsent(TaskManagerService.TASKS_STORE_NAME, false);
         dbService.createStoreIfAbsent(TENANTS_STORE_NAME, false);
@@ -362,13 +360,33 @@ public class TenantService extends Service {
     }
     
     private void modifyTenantOptions(TenantDefinition oldTenantDef, TenantDefinition newTenantDef) {
-        // TODO: Copy over any non-repeated required options.
+        Map<String, Object> oldOptions = oldTenantDef.getOptions();
+        Map<String, Object> newOptions = newTenantDef.getOptions();
+        mergeOptions(oldOptions, newOptions);
+    }
+
+    // Carry over non-repeated options from the old map to the new map.
+    @SuppressWarnings("unchecked")
+    private void mergeOptions(Map<String, Object> oldOptions, Map<String, Object> newOptions) {
+        for (String optName : newOptions.keySet()) {
+            Object newOption = newOptions.get(optName);
+            Object oldOption = oldOptions.get(optName);
+            if (oldOption instanceof Map && newOption instanceof Map) {
+                mergeOptions((Map<String, Object>)oldOption, (Map<String, Object>)newOption);
+            }
+        }
+        for (String optName : oldOptions.keySet()) {
+            Object oldOption = oldOptions.get(optName);
+            if (!newOptions.containsKey(optName)) {
+                newOptions.put(optName, oldOption);
+            }
+        }
     }
 
     /**
      * Copying existing Tenant Definition properties to the new Tenant Definition properties if any given Tenant Definition property hasn't been set during Tenant modification process
      * 
-     * @param   oldTenantDef    Old {@link TenantDefinition}.
+     * @param   oldTenantDef  Old {@link TenantDefinition}.
      * @param   newTenantDef  New {@link TenantDefinition}.
      */
     private void modifyTenantProperties(TenantDefinition oldTenantDef, TenantDefinition newTenantDef) {
@@ -437,31 +455,27 @@ public class TenantService extends Service {
     // Define a new tenant
     private void defineNewTenant(TenantDefinition tenantDef) {
         validateTenantUsers(tenantDef);
+        addTenantOptions(tenantDef);
         addTenantProperties(tenantDef);
         
         Tenant tenant = new Tenant(tenantDef);
         DBService dbService = DBService.instance(tenant);
-        if (dbService.supportsNamespaces()) {
-            dbService.createNamespace();
-        }
-        verifyNewTenant(tenant);
+        dbService.createNamespace();
         initializeTenantStores(tenant);
         storeTenantDefinition(tenantDef);
-    }
-
-    // Verify that this tenant does not already seem to have a tenant.
-    private void verifyNewTenant(Tenant tenant) {
-        TenantDefinition tenantDef = tenant.getDefinition();
-        boolean bForceNewTenant = Boolean.parseBoolean(tenantDef.getOptionString("force_new_tenant"));
-        Utils.require(bForceNewTenant || !DBService.instance(tenant).storeExists(SchemaService.APPS_STORE_NAME),
-                      "Database for Tenant '%s' already has an active tenant", tenant.getName());
-        tenantDef.setOption("force_new_tenant", null);
     }
 
     // Ensure required tenant stores exist.
     private void initializeTenantStores(Tenant tenant) {
         DBService.instance(tenant).createStoreIfAbsent(SchemaService.APPS_STORE_NAME, false);
         DBService.instance(tenant).createStoreIfAbsent(TaskManagerService.TASKS_STORE_NAME, false);
+    }
+    
+    // By default, each tenant's namespace is the same as their tenant name. 
+    private void addTenantOptions(TenantDefinition tenantDef) {
+        if (tenantDef.getOption("namespace") == null) {
+            tenantDef.setOption("namespace", tenantDef.getName());
+        }
     }
     
     private void addTenantProperties(TenantDefinition tenantDef) {

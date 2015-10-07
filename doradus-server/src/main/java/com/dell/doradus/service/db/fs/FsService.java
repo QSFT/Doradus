@@ -70,10 +70,6 @@ public class FsService extends DBService {
         for(FsStore store: m_stores.values()) store.close();
     }
     
-    @Override public boolean supportsNamespaces() {
-        return true;
-    }
-
     @Override public void createNamespace() {
         synchronized (m_sync) {
             File namespaceDir = new File(ROOT + "/" + getTenant().getName());
@@ -85,14 +81,6 @@ public class FsService extends DBService {
         synchronized(m_sync) {
             File namespaceDir = new File(ROOT + "/" + getTenant().getName());
             FileUtils.deleteDirectory(namespaceDir);
-        }
-    }
-    
-    
-    @Override public boolean storeExists(String storeName) {
-        synchronized(m_sync) {
-            File storeDir = new File(ROOT + "/" + getTenant().getName() + "/" + storeName);
-            return storeDir.exists();
         }
     }
     

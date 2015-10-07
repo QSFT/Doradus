@@ -93,10 +93,6 @@ public class MemoryService extends DBService {
     @Override public void startService() { }
     @Override public void stopService() { }
 
-    @Override public boolean supportsNamespaces() {
-        return true;
-    }
-    
     @Override public void createNamespace() {
     	synchronized (m_sync) {
     	    String namespace = getTenant().getName();
@@ -124,13 +120,6 @@ public class MemoryService extends DBService {
         return namespaces;
     }
 
-    @Override public boolean storeExists(String storeName) {
-        synchronized (m_sync) {
-            Keyspace ks = m_Keyspaces.get(getTenant().getName());
-            return ks != null && ks.stores.get(storeName) != null;
-        }
-    }
-    
     @Override public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
     	synchronized (m_sync) {
     		Keyspace ks = m_Keyspaces.get(getTenant().getName());

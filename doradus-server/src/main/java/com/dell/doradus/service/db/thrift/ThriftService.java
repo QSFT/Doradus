@@ -42,6 +42,7 @@ public class ThriftService extends CassandraService {
     private String       m_lastHost;
     private boolean      m_bUseSecondaryHosts;
     private long         m_lastPrimaryHostCheckTimeMillis;
+    private final String m_keyspace;
     
     // DBConn queue:
     private final Queue<DBConn> m_dbConns = new ArrayDeque<>();
@@ -53,6 +54,11 @@ public class ThriftService extends CassandraService {
     private ThriftService(Tenant tenant) {
         super(tenant);
         m_schemaMgr = new CassandraSchemaMgr(this);
+        if (Utils.isEmpty(tenant.getNamespace())) {
+            m_keyspace = tenant.getName();
+        } else {
+            m_keyspace = tenant.getNamespace();
+        }
     }
 
     //----- Public Service methods
@@ -82,26 +88,20 @@ public class ThriftService extends CassandraService {
     //----- Public DBService methods: Namespace management
     
     @Override
-    public boolean supportsNamespaces() {
-        return true;
-    }
-    
-    @Override
     public void createNamespace() {
         checkState();
         // Use a temporary, no-keyspace session
         try (DBConn dbConn = createAndConnectConn(null)) {
             synchronized (m_schemaLock) {
-                String keyspace = getTenant().getName();
-                if (!m_schemaMgr.keyspaceExists(dbConn, keyspace)) {
-                    Map<String, String> options = getKeyspaceOptions(getTenant());
-                    m_schemaMgr.createKeyspace(dbConn, keyspace, options);
+                if (!m_schemaMgr.keyspaceExists(dbConn, m_keyspace)) {
+                    Map<String, String> options = getKeyspaceOptions();
+                    m_schemaMgr.createKeyspace(dbConn, m_keyspace, options);
                 }
             }
         }
     }   // createTenant
 
-    private Map<String, String> getKeyspaceOptions(Tenant tenant) {
+    private Map<String, String> getKeyspaceOptions() {
         // TODO: Get keyspace options from tenant definiton; inherit from default tenant if needed.
         return null;
     }
@@ -112,9 +112,8 @@ public class ThriftService extends CassandraService {
         // Use a temporary, no-keyspace session
         try (DBConn dbConn = createAndConnectConn(null)) {
             synchronized (m_schemaLock) {
-                String keyspace = getTenant().getName();
-                if (m_schemaMgr.keyspaceExists(dbConn, keyspace)) {
-                    m_schemaMgr.dropKeyspace(dbConn, keyspace);
+                if (m_schemaMgr.keyspaceExists(dbConn, m_keyspace)) {
+                    m_schemaMgr.dropKeyspace(dbConn, m_keyspace);
                 }
             }
         }
@@ -135,32 +134,18 @@ public class ThriftService extends CassandraService {
             }
         }
         return keyspaces;
-    }   // getTenantMap
+    }
     
     //----- Public DBService methods: Store management
 
     @Override
-    public boolean storeExists(String storeName) {
-        String keyspace = getTenant().getName();
-        DBConn dbConn = getDBConnection();
-        try {
-            synchronized (m_schemaLock) {
-                return m_schemaMgr.columnFamilyExists(dbConn, keyspace, storeName);
-            }
-        } finally {
-            returnDBConnection(dbConn);
-        }
-    }
-    
-    @Override
     public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
         checkState();
-        String keyspace = getTenant().getName();
         DBConn dbConn = getDBConnection();
         try {
             synchronized (m_schemaLock) {
-                if (!m_schemaMgr.columnFamilyExists(dbConn, keyspace, storeName)) {
-                    m_schemaMgr.createColumnFamily(dbConn, keyspace, storeName, bBinaryValues);
+                if (!m_schemaMgr.columnFamilyExists(dbConn, m_keyspace, storeName)) {
+                    m_schemaMgr.createColumnFamily(dbConn, m_keyspace, storeName, bBinaryValues);
                 }
             }
         } finally {
@@ -171,11 +156,10 @@ public class ThriftService extends CassandraService {
     @Override
     public void deleteStoreIfPresent(String storeName) {
         checkState();
-        String keyspace = getTenant().getName();
         DBConn dbConn = getDBConnection();
         try {
             synchronized (m_schemaLock) {
-                if (m_schemaMgr.columnFamilyExists(dbConn, keyspace, storeName)) {
+                if (m_schemaMgr.columnFamilyExists(dbConn, m_keyspace, storeName)) {
                     m_schemaMgr.deleteColumnFamily(dbConn, storeName);
                 }
             }
@@ -271,7 +255,7 @@ public class ThriftService extends CassandraService {
             if (m_dbConns.size() > 0) {
                 dbConn = m_dbConns.poll();
             } else {
-                dbConn = createAndConnectConn(getTenant().getName());
+                dbConn = createAndConnectConn(m_keyspace);
             }
         }
         return dbConn;
