@@ -19,6 +19,7 @@ package com.dell.doradus.service.tenant;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.TenantDefinition;
 import com.dell.doradus.common.UNode;
+import com.dell.doradus.common.UserDefinition;
 import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.UNodeOutCallback;
 import com.dell.doradus.service.rest.annotation.Description;
@@ -39,6 +40,10 @@ public class ListTenantCmd extends UNodeOutCallback {
         TenantDefinition tenantDef = TenantService.instance().getTenantDefinition(tenantName);
         if (tenantDef == null) {
             throw new NotFoundException("Tenant not found: " + tenantName);
+        }
+        // Strip hash values from users.
+        for (UserDefinition userDef : tenantDef.getUsers().values()) {
+            userDef.setHash(null);
         }
         return tenantDef.toDoc();
     }

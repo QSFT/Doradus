@@ -168,7 +168,7 @@ public class TenantService extends Service {
     
     /**
      * Get the {@link Tenant} object for the tenant with the given name. This is a
-     * convience method that calls {@link #getTenantDefinition(String)} and either
+     * convenience method that calls {@link #getTenantDefinition(String)} and either
      * returns null or calls <code>new Teanant(tenantDef)</code> using the tenant
      * definition found.
      * 
