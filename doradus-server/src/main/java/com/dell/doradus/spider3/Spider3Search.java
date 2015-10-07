@@ -34,6 +34,7 @@ public class Spider3Search {
         
         DocSet set = Spider3Filter.search(tableDef, qu);
         SearchResultList list = new SearchResultList();
+        list.fieldSet = fieldSet;
         for(String id: set.getIDs()) {
             SearchResult r = new SearchResult();
             r.scalars.put("_ID", id);

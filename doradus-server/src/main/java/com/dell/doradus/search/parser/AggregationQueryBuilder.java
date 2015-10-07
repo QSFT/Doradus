@@ -613,6 +613,13 @@ public class AggregationQueryBuilder {
                     fieldDetected = true;
                 }
                 ai.tableDef = tableDef;
+
+                if (item.queryItems != null) {
+                    for (int j = 0; j < item.queryItems.size(); j++) {
+                        ArrayList<GrammarItem> filterItems = item.queryItems.get(j);
+                        ai.query = CompileQuery(tableDef, ai.query, filterItems);
+                    }
+                }
             }
 
         }

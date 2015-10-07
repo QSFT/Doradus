@@ -87,8 +87,9 @@ public class DuplicationDetection {
 			result.put(last_id.toString(), new ArrayList<String>(curShards));
 		}
 		
-		SearchResultList res = new SearchResultList();
 		FieldSet fs = new FieldSet(tableDef);
+		SearchResultList res = new SearchResultList();
+		res.fieldSet = fs;
 		res.documentsCount = documentsCount;
 		StringBuilder sb = new StringBuilder();
 		for(Map.Entry<String, List<String>> elem : result.entrySet()) {

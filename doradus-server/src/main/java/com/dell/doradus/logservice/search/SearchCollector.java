@@ -60,6 +60,7 @@ public class SearchCollector {
     
     public SearchResultList getSearchResult(FieldSet fieldSet, SortOrder[] orders) {
         SearchResultList list = new SearchResultList();
+        list.fieldSet = fieldSet;
         LogEntry[] entries = m_heap.GetValues(LogEntry.class);
         for(LogEntry e: entries) {
             list.results.add(e.createSearchResult(fieldSet, orders));

@@ -89,6 +89,7 @@ public class FieldSetCreator {
 		}
 		
 		SearchResultList resultList = new SearchResultList();
+		resultList.fieldSet = fieldSet;
 		
 		if(orders == null || limit == Integer.MAX_VALUE) {
 	        for(Entity entity: sequence) {
