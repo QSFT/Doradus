@@ -109,6 +109,16 @@ public class SearchResult implements Comparable<SearchResult> {
 			if(item.fieldDef.isLinkField()) {
 				List<SearchResultList> list = links.get(item.fieldDef.getName());
 				SearchResultList ch = list == null || list.size() == 0 ? null : list.get(0);
+				if(list.size() > 1) {
+					String queryStr = item.query == null ? "" : item.query.toString();
+					for(SearchResultList filtered: list) {
+						String filteredStr = filtered.fieldSet.filter == null ? "" : filtered.fieldSet.filter.toString();
+						if(queryStr.equals(filteredStr)) {
+							ch = filtered;
+							break;
+						}
+					}
+				}
 				if(ch != null) {
 					for(SearchResult sr: ch.results) sortedSet.add(new BSTR(sr.id()));
 				}
@@ -149,6 +159,16 @@ public class SearchResult implements Comparable<SearchResult> {
 			Utils.require(item.fieldDef.isLinkField(), "in sort order " + item.fieldDef.getName() + " should be a link field");
 			List<SearchResultList> list = links.get(item.fieldDef.getName());
 			SearchResultList ch = list == null || list.size() == 0 ? null : list.get(0);
+			if(list.size() > 1) {
+				String queryStr = item.query == null ? "" : item.query.toString();
+				for(SearchResultList filtered: list) {
+					String filteredStr = filtered.fieldSet.filter == null ? "" : filtered.fieldSet.filter.toString();
+					if(queryStr.equals(filteredStr)) {
+						ch = filtered;
+						break;
+					}
+				}
+			}
 			if(ch != null) {
 				for(SearchResult sr: ch.results) { sr.loadSortKey(items, index + 1, sortedSet); }
 			}

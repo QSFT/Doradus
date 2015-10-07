@@ -41,6 +41,7 @@ public class SearchResultBuilder {
 	    
 	    if(documents.countSet() == 0) {
 	        SearchResultList empty = new SearchResultList();
+	        empty.fieldSet = fieldSet;
 	        empty.documentsCount = 0;
 	        return empty;
 	    }
@@ -54,6 +55,7 @@ public class SearchResultBuilder {
 		fill(searcher, documents_iter, fvs, fieldSetCreator, iter);
 		fvs.resolve(searcher);
 		SearchResultList list = new SearchResultList();
+		list.fieldSet = fieldSetCreator.fieldSet;
 		list.documentsCount = documents.countSet();
 		for(int doc = 0; doc < documents_iter.count(); doc++) {
 			int d = documents_iter.get(doc);
@@ -153,6 +155,7 @@ public class SearchResultBuilder {
 				IntIterator iter2 = new IntIterator();
 				field_searcher.fields(document, iter);
 				SearchResultList childList = new SearchResultList();
+				childList.fieldSet = linkedSet.fieldSet;
 				int num = 0;
 				for(int doc = 0; doc < iter.count(); doc++) {
 					if(num >= linkedSet.limit) break;

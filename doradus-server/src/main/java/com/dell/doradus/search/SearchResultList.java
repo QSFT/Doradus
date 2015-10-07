@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import com.dell.doradus.common.UNode;
 
 public class SearchResultList {
+	public FieldSet fieldSet;
 	public int documentsCount = -1;
 	public ArrayList<SearchResult> results = new ArrayList<SearchResult>();
 	public String continuation_token;

@@ -68,6 +68,7 @@ public class MergeResult {
 	public static SearchResultList merge(List<SearchResultList> results, FieldSet fieldSet) {
 		if(results.size() == 1) return results.get(0);
 		SearchResultList searchResultList = new SearchResultList();
+		searchResultList.fieldSet = fieldSet;
 		searchResultList.documentsCount = 0;
 		HeapSort<SearchResult> heapSort = new HeapSort<SearchResult>();
 		for(SearchResultList s : results) {
