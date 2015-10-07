@@ -62,6 +62,9 @@ public class CQLStatementCache {
         SELECT_1_ROW_1_COLUMN,
         SELECT_1_ROW_COLUMN_RANGE,
         SELECT_1_ROW_COLUMN_SET,
+        SELECT_1_ROW_ALL_COLUMNS,
+        SELECT_1_ROW_UPPER_COLUMNS,
+        SELECT_1_ROW_LOWER_COLUMNS,
         SELECT_ROWS_RANGE,
     }
 
@@ -158,6 +161,15 @@ public class CQLStatementCache {
         case SELECT_1_ROW_COLUMN_SET:
             cql.append(" WHERE key = ? AND column1 IN ?;");
             break;
+        case SELECT_1_ROW_ALL_COLUMNS:
+            cql.append(" WHERE key = ? LIMIT ?;");
+            break;
+        case SELECT_1_ROW_UPPER_COLUMNS:
+            cql.append(" WHERE key = ? AND column1 >= ? LIMIT ?;");
+            break;
+        case SELECT_1_ROW_LOWER_COLUMNS:
+            cql.append(" WHERE key = ? AND column1 <= ? LIMIT ?;");
+            break;
         case SELECT_ROWS_RANGE:
             //unfortunately I didn't find how to get first column of each row in CQL.
             cql.append(" ;");
@@ -165,7 +177,7 @@ public class CQLStatementCache {
         default: 
             throw new RuntimeException("Not supported: " + query);
         }
-        m_logger.debug("Preparing query statement: {}", cql);
+        m_logger.debug("Preparing query {}: {}", query, cql);
         return ((CQLService)DBService.instance(m_tenant)).getSession().prepare(cql.toString());
     }   // prepareQuery
 

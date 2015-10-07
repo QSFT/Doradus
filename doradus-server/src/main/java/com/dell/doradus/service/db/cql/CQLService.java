@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -191,15 +192,21 @@ public class CQLService extends CassandraService {
     public List<DColumn> getColumns(String storeName, String rowKey, String startColumn, String endColumn, int count) {
         checkState();
         String tableName = storeToCQLName(storeName);
-        boolean isValueBinary = columnValueIsBinary(storeName);
-        ResultSet rs = executeQuery(Query.SELECT_1_ROW_COLUMN_RANGE,
-                                    tableName,
-                                    rowKey,
-                                    startColumn == null ? "" : startColumn,
-                                    endColumn == null ? "" : endColumn,
-                                    new Integer(count));
+        ResultSet rs = null;
+        if (startColumn == null) {
+            if (endColumn == null) {
+                rs = executeQuery(Query.SELECT_1_ROW_ALL_COLUMNS, tableName, rowKey, new Integer(count));
+            } else {
+                rs = executeQuery(Query.SELECT_1_ROW_LOWER_COLUMNS, tableName, rowKey, endColumn, new Integer(count));
+            }
+        } else if (endColumn == null) {
+            rs = executeQuery(Query.SELECT_1_ROW_UPPER_COLUMNS, tableName, rowKey, startColumn, new Integer(count));
+        } else {
+            rs = executeQuery(Query.SELECT_1_ROW_COLUMN_RANGE, tableName, rowKey, startColumn, endColumn, new Integer(count));
+        }
         List<Row> list = rs.all();
         List<DColumn> result = new ArrayList<>(list.size());
+        boolean isValueBinary = columnValueIsBinary(storeName);
         for(Row r: list) {
             DColumn cqlCol = null;
             if (isValueBinary) {
@@ -221,7 +228,7 @@ public class CQLService extends CassandraService {
         ResultSet rs = executeQuery(Query.SELECT_1_ROW_COLUMN_SET,
                                     tableName,
                                     rowKey,
-                                    columnNames);
+                                    new ArrayList<String>(columnNames));    // must be a List
         List<Row> list = rs.all();
         List<DColumn> result = new ArrayList<>(list.size());
         for(Row r: list) {
@@ -244,8 +251,7 @@ public class CQLService extends CassandraService {
         Set<String> rows = new HashSet<String>();
         //unfortunately I don't know how to get one record per row in CQL so we'll read everything
         //and find out the rows
-        ResultSet rs = executeQuery(Query.SELECT_ROWS_RANGE,
-                                    tableName);
+        ResultSet rs = executeQuery(Query.SELECT_ROWS_RANGE, tableName);
         while(true) {
             Row r = rs.one();
             if(r == null) break;
@@ -337,9 +343,16 @@ public class CQLService extends CassandraService {
     private ResultSet executeQuery(Query query, String tableName, Object... values) {
         m_logger.debug("Executing statement {} on table {}.{}; total params={}",
                        new Object[]{query, m_keyspace, tableName, values.length});
-        PreparedStatement prepState = getPreparedQuery(query, tableName);
-        BoundStatement boundState = prepState.bind(values);
-        return m_session.execute(boundState);
+        try {
+            PreparedStatement prepState = getPreparedQuery(query, tableName);
+            BoundStatement boundState = prepState.bind(values);
+            return m_session.execute(boundState);
+        } catch (Exception e) {
+            String params = "[" + Utils.concatenate(Arrays.asList(values), ",") + "]";
+            m_logger.error("Query failed: query={}, keyspace={}, table={}, params={}; error: {}",
+                           query, m_keyspace, tableName, params, e);
+            throw e;
+        }
     }   // executeQuery
     
     // Establish the CQL session
