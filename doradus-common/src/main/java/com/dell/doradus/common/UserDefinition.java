@@ -56,6 +56,7 @@ public class UserDefinition {
     }
     private String m_userID;
     private String m_password;
+    private String m_hash;
     private final Set<Permission> m_permissions = new HashSet<Permission>();
 
     /**
@@ -91,7 +92,17 @@ public class UserDefinition {
     public String getPassword() {
         return m_password;
     }
-    
+
+    /**
+     * Get this user definition's hash value, if one has been set via
+     * {@link #setHash(String)}.
+     * 
+     * @return  This user definition's hash value.
+     */
+    public String getHash() {
+        return m_hash;
+    }
+
     /**
      * Get this user definition's currently defined permissions, if any.
      * 
@@ -123,6 +134,15 @@ public class UserDefinition {
     }
     
     /**
+     * Set this user definition's hash value, which is computed from the password.
+     * 
+     * @param hash  New hash value.
+     */
+    public void setHash(String hash) {
+        m_hash = hash;
+    }
+
+    /**
      * Add the given permission to this user definition. Permissions are stored as a
      * set, so setting the same permission twice is a no-op.
      * 
@@ -144,20 +164,6 @@ public class UserDefinition {
     }
 
     /**
-     * Make a copy of this user definition using the given ID for the copy.
-     * 
-     * @param newUserID New user ID for the copied user.
-     * @return          New {@link UserDefinition} with this definition's password and
-     *                  permissions but with the given user ID.
-     */
-    public UserDefinition makeCopy(String newUserID) {
-        UserDefinition newUserDef = new UserDefinition(newUserID);
-        newUserDef.setPassword(this.m_password);
-        newUserDef.setPermissions(this.m_permissions);
-        return newUserDef;
-    }
-
-    /**
      * Parse a user definition expressed as a UNode tree.
      * 
      * @param userNode  Root {@link UNode}, which must be a "user" node.
@@ -173,6 +179,11 @@ public class UserDefinition {
             case "password":
                 Utils.require(childNode.isValue(), "'password' must be a simple value: " + childNode);
                 m_password = childNode.getValue();
+                break;
+                
+            case "hash":
+                Utils.require(childNode.isValue(), "Invalid 'hash' value");
+                m_hash = childNode.getValue();
                 break;
                 
             case "permissions":
@@ -204,6 +215,9 @@ public class UserDefinition {
         UNode userNode = UNode.createMapNode(m_userID, "user");
         if (!Utils.isEmpty(m_password)) {
             userNode.addValueNode("password", m_password, true);
+        }
+        if (!Utils.isEmpty(m_hash)) {
+            userNode.addValueNode("hash", m_hash, true);
         }
         String permissions = "ALL";
         if (m_permissions.size() > 0) {

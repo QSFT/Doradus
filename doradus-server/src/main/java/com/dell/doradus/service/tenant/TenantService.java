@@ -46,6 +46,7 @@ import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.RESTService;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.taskmanager.TaskManagerService;
+import com.dell.doradus.utilities.PasswordManager;
 
 /**
  * Provides tenant management services such as creating new tenants, listing tenants, and
@@ -277,6 +278,7 @@ public class TenantService extends Service {
         Utils.require(oldTenantDef != null, "Tenant '%s' does not exist", tenantName);
         modifyTenantOptions(oldTenantDef, newTenantDef);
         modifyTenantProperties(oldTenantDef, newTenantDef);
+        validateTenantUsers(newTenantDef);
         validateTenantUpdate(oldTenantDef, newTenantDef);
         storeTenantDefinition(newTenantDef);
         TenantDefinition updatedTenantDef = getTenantDef(tenantName);
@@ -488,7 +490,8 @@ public class TenantService extends Service {
         for (UserDefinition userDef : tenantDef.getUsers().values()) {
             Utils.require(!Utils.isEmpty(userDef.getPassword()),
                           "Password is required; user ID=" + userDef.getID());
-            // TODO: Hash and restore the password.
+            userDef.setHash(PasswordManager.hash(userDef.getPassword()));
+            userDef.setPassword(null);
         }
     }
 
@@ -518,12 +521,19 @@ public class TenantService extends Service {
             return tenant.getName().equals(m_defaultTenantName);
         }
         UserDefinition userDef = tenantDef.getUser(userid);
-        // TODO: Run password through hash algorithm.
-        if (userDef == null || !userDef.getPassword().equals(password)) {
-            return false;
-        } else {
-            return isValidUserAccess(userDef, permNeeded);
+        if (userDef == null || Utils.isEmpty(password)) {
+            return false;   // no such user or no password given
         }
+        if (userDef.getHash() != null) {
+            if (!PasswordManager.checkPassword(password, userDef.getHash())) {
+                return false;   // password is hashed but didn't match
+            }
+        } else {
+            if (!password.equals(userDef.getPassword())) {
+                return false;   // password is plaintext but didn't match
+            }
+        }
+        return isValidUserAccess(userDef, permNeeded);
     }
 
     // Validate user's permission vs. the given required permission.
@@ -595,7 +605,13 @@ public class TenantService extends Service {
                       "Tenant name cannot be changed: %s", newTenantDef.getName());
         Utils.require(oldTenantDef.getProperties().get("_CreatedOn").equals(newTenantDef.getProperties().get("_CreatedOn")),
         		      "Tenant _CreatedOn property cannot be changed: %s", newTenantDef.getProperties().get("_CreatedOn"));
-        // TODO: Verify DBService options have not changed.
+        Map<String, Object> oldDBServiceOpts = oldTenantDef.getOptionMap("DBService");
+        String oldDBService = oldDBServiceOpts == null ? null : (String)oldDBServiceOpts.get("dbservice");
+        Map<String, Object> newDBServiceOpts = newTenantDef.getOptionMap("DBService");
+        String newDBService = newDBServiceOpts == null ? null : (String)newDBServiceOpts.get("dbservice");
+        Utils.require((oldDBService == null && newDBService == null) || oldDBService.equals(newDBService),
+                      "'DBService.dbservice' parameter cannot be changed: tenant=%s, previous=%s, new=%s",
+                      newTenantDef.getName(), oldDBService, newDBService);
     }
 
 }   // class TenantService
