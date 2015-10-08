@@ -61,7 +61,7 @@ public final class DoradusServer {
 
     // Services required in every start (in addition to 1 storage service):
     private static final String[] REQUIRED_SERVICES = new String[] {
-        com.dell.doradus.service.db.DBService.class.getName(),
+        com.dell.doradus.service.db.DBManager.class.getName(),
         com.dell.doradus.service.schema.SchemaService.class.getName(),
         com.dell.doradus.service.tenant.TenantService.class.getName()
     };
@@ -160,16 +160,7 @@ public final class DoradusServer {
      * 
      * @param args      See {@link #main(String[])} for more details.
      * @param services  List of service modules to start. The full package name of each
-     *                  must be provided. Example service names are:
-     * <pre>
-     *      com.dell.doradus.mbeans.MBeanService - Provides JMX interface.
-     *      com.dell.doradus.service.db.DBService - Database layer.
-     *      com.dell.doradus.service.rest.RESTService - Primary REST API service.
-     *      com.dell.doradus.service.schema.SchemaService - Schema definition/access service.
-     *      com.dell.doradus.service.taskmanager.TaskManagerService - Provides the background task service.
-     *      com.dell.doradus.service.spider.SpiderService - Provides the Spider storage service.
-     *      com.dell.doradus.service.olap.OLAPService - Provides the OLAP storage service.
-     * </pre>
+     *                  must be provided.
      */
     public static void startEmbedded(String[] args, String[] services) {
         instance().initEmbedded(args, services);

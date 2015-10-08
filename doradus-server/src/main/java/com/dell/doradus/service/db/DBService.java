@@ -16,15 +16,11 @@
 
 package com.dell.doradus.service.db;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.dell.doradus.common.Utils;
-import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.schema.SchemaService;
 import com.dell.doradus.service.taskmanager.TaskManagerService;
@@ -32,74 +28,68 @@ import com.dell.doradus.service.tenant.TenantService;
 
 /**
  * Provides methods that access a persistence instance (i.e., database). Each object
- * manages data for a specific Tenant. Concrete subclasses must implement the
- * following method to create instances for a specific tenant.
- * <pre>
- *      public static DBService createInstance(Tenant)
- * </pre>
+ * manages data for a specific Tenant. Concrete must implement a construct that accepts
+ * a {@link Tenant} object that connects to the tenant's database.
  */
 public abstract class DBService extends Service {
-    // TODO: Make this an evaporative map in case tenants are deleted by another server.
-    private static final Map<String, DBService> g_tenantServiceMap = new HashMap<>();
-    
-    // Choose service based on doradus.yaml setting
-    private static final DBService INSTANCE = createDefaultDBInstance();
-
-    private static DBService createDefaultDBInstance() {
-        Tenant defaultTenant = TenantService.instance().getDefaultTenant();
-        DBService dbservice = createTenantDBService(defaultTenant);
-        g_tenantServiceMap.put(defaultTenant.getName(), dbservice);
-        return dbservice;
-    }
-    
     // Tenant served by this DBObject:
     protected final Tenant m_tenant;
     
-    // Only subclasses can construct an object.
+    /**
+     * Create a new DBService object for the given Tenant. In DBService subclasses, this
+     * this constructor should connect to the underlying database and throw an exception
+     * if the DB cannot be reached. The DBService parameters for the tenant are copied to
+     * the new object before the subclass's constructor is called, hence methods can be
+     * used such as {@link #getParam(String)}.
+     * 
+     * @param tenant    {@link Tenant} this DBService will serve. 
+     */
     protected DBService(Tenant tenant) {
         m_tenant = tenant;
         addTenantDBParameters();
-        
-        // Give up to 1 second after start() to allow startService() to succeed
         m_startDelayMillis = 1000;
     }
     
     /**
      * Get the default {@link DBService} instance, which is the object that manages the
-     * default database.
+     * default database. This method simply calls {@link DBManager#getDefaultDB()}.
      * 
      * @return  The default DBService object.
      */
     public static DBService instance() {
-        return INSTANCE;
-    }   // instance
+        return DBManager.instance().getDefaultDB();
+    }
 
     /**
-     * Get the {@link DBService} instance that manages data for the given tenant. If a
-     * DBService instance does not yet exist for this tenant, a new one is created based
-     * on the options defined by the tenant. This causes DB-specific parameters to be
-     * copied to the DBService object.
+     * Get the {@link DBService} instance that manages data for the given tenant. This
+     * method simply calls {@link DBManager#getTenantDB(Tenant)}.
      * 
      * @param tenant    Existing or potentially new tenant.
      * @return          {@link DBService} instances that can manage the tenant's data.
      */
     public static DBService instance(Tenant tenant) {
-        synchronized (g_tenantServiceMap) {
-            DBService dbservice = g_tenantServiceMap.get(tenant.getName());
-            if (dbservice == null) {
-                dbservice = createTenantDBService(tenant);
-                // TODO: another way to do this?
-                dbservice.initialize();
-                dbservice.start();
-                dbservice.waitForFullService();
-                g_tenantServiceMap.put(tenant.getName(), dbservice);
-            }
-            return dbservice;
-        }
+        return DBManager.instance().getTenantDB(tenant);
     }
 
     //----- Public Service methods
 
+    /**
+     * This method is "final" in DBService and unneeded in subclasses.
+     */
+    protected final void initService() {}
+    
+    /**
+     * This method is "final" in DBService and unneeded in subclasses.
+     */
+    protected final void startService() {}
+    
+    /**
+     * DBService subclasses should implement this method, disconnecting from the DB.
+     */
+    protected abstract void stopService();
+    
+    //----- Public DBService methods: Namespace management
+    
     /**
      * Get the Tenant that this DBService manages data for.
      * 
@@ -108,8 +98,6 @@ public abstract class DBService extends Service {
     public Tenant getTenant() {
         return m_tenant;
     }
-    
-    //----- Public DBService methods: Namespace management
     
     /**
      * Create a new namespace for this DBService's Tenant. It is up to the concrete
@@ -329,17 +317,6 @@ public abstract class DBService extends Service {
         return rows;
     }
 
-    //----- Protected methods
-    
-    /**
-     * Throw a DBNotAvailableException if we're not running yet.
-     */
-    protected void checkState() {
-        if (!getState().isRunning()) {
-            throw new DBNotAvailableException("Cassandra connection has not been established");
-        }
-    }
-
     //----- Private methods
     
     // As a Service, this object should already have parameters defined for the concrete
@@ -349,33 +326,6 @@ public abstract class DBService extends Service {
         if (m_tenant.getDefinition().getOptionMap("DBService") != null) {
             addParams(m_tenant.getDBServiceParams());
         }
-    }
-
-    // Create a new DBService for the given tenant. This should only be called when a lock
-    // is held on g_tenantServiceMap
-    private static DBService createTenantDBService(Tenant tenant) {
-        Map<String, Object> paramMap = tenant.getDefinition().getOptionMap("DBService");
-        String dbServiceName = null;
-        if (paramMap == null) {
-            dbServiceName = ServerParams.instance().getModuleParamString("DBService", "dbservice");
-            Utils.require(!Utils.isEmpty(dbServiceName), "DBService.dbservice parameter is not defined");
-        } else {
-            dbServiceName = paramMap.get("dbservice").toString();
-            Utils.require(!Utils.isEmpty(dbServiceName),
-                          "Tenant '%s' must define 'dbservice' within 'DBService' option", tenant.getName());
-        }
-
-        DBService dbservice = null;
-        try {
-            // Find and invoke static method: instance(Tenant).
-            @SuppressWarnings("unchecked")
-            Class<DBService> serviceClass = (Class<DBService>) Class.forName(dbServiceName);
-            Method instanceMethod = serviceClass.getMethod("instance", new Class<?>[]{Tenant.class});
-            dbservice = (DBService)instanceMethod.invoke(null, new Object[]{tenant});
-        } catch (Throwable e) {
-            throw new RuntimeException("Cannot load specified 'dbservice': " + dbServiceName, e);
-        }
-        return dbservice;
     }
 
     // Add/override parameters defined for this DBService with those in the given map.

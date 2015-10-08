@@ -81,7 +81,7 @@ public class CQLSchemaManager {
         cql.append(cqlKeyspace);
         cql.append(" WITH REPLICATION = {'class':'");
         String strategyClass = "SimpleStrategy";
-        Map<String, Object> ksDefs = CQLService.instance().getParamMap("ks_defaults");
+        Map<String, Object> ksDefs = m_dbservice.getParamMap("ks_defaults");
         if (ksDefs != null && ksDefs.containsKey("strategy_class")) {
             strategyClass = ksDefs.get("strategy_class").toString();
         }

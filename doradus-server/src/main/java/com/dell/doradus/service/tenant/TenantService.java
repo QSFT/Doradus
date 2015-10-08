@@ -32,6 +32,7 @@ import com.dell.doradus.common.UserDefinition.Permission;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.Service;
+import com.dell.doradus.service.db.DBManager;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
@@ -116,7 +117,7 @@ public class TenantService extends Service {
 
     @Override
     protected void startService() {
-        DBService.instance().waitForFullService();
+        DBManager.instance().waitForFullService();
         initializeDefaultTenant();
         migrateTenantDefinitions();
     }
@@ -261,6 +262,7 @@ public class TenantService extends Service {
         if (updatedTenantDef == null) {
             throw new RuntimeException("Tenant definition could not be retrieved after creation: " + tenantName);
         }
+        removeUserHashes(updatedTenantDef);
         return updatedTenantDef;
     }   // defineTenant
 
@@ -276,7 +278,6 @@ public class TenantService extends Service {
         checkServiceState();
         TenantDefinition oldTenantDef = getTenantDef(tenantName);
         Utils.require(oldTenantDef != null, "Tenant '%s' does not exist", tenantName);
-        modifyTenantOptions(oldTenantDef, newTenantDef);
         modifyTenantProperties(oldTenantDef, newTenantDef);
         validateTenantUsers(newTenantDef);
         validateTenantUpdate(oldTenantDef, newTenantDef);
@@ -285,6 +286,7 @@ public class TenantService extends Service {
         if (updatedTenantDef == null) {
             throw new RuntimeException("Tenant definition could not be retrieved after creation: " + tenantName);
         }
+        removeUserHashes(updatedTenantDef);
         return updatedTenantDef; 
     }   // modifyTenant
     
@@ -361,30 +363,6 @@ public class TenantService extends Service {
         storeInitialDefaultTenantDef();
     }
     
-    private void modifyTenantOptions(TenantDefinition oldTenantDef, TenantDefinition newTenantDef) {
-        Map<String, Object> oldOptions = oldTenantDef.getOptions();
-        Map<String, Object> newOptions = newTenantDef.getOptions();
-        mergeOptions(oldOptions, newOptions);
-    }
-
-    // Carry over non-repeated options from the old map to the new map.
-    @SuppressWarnings("unchecked")
-    private void mergeOptions(Map<String, Object> oldOptions, Map<String, Object> newOptions) {
-        for (String optName : newOptions.keySet()) {
-            Object newOption = newOptions.get(optName);
-            Object oldOption = oldOptions.get(optName);
-            if (oldOption instanceof Map && newOption instanceof Map) {
-                mergeOptions((Map<String, Object>)oldOption, (Map<String, Object>)newOption);
-            }
-        }
-        for (String optName : oldOptions.keySet()) {
-            Object oldOption = oldOptions.get(optName);
-            if (!newOptions.containsKey(optName)) {
-                newOptions.put(optName, oldOption);
-            }
-        }
-    }
-
     /**
      * Copying existing Tenant Definition properties to the new Tenant Definition properties if any given Tenant Definition property hasn't been set during Tenant modification process
      * 
@@ -614,4 +592,11 @@ public class TenantService extends Service {
                       newTenantDef.getName(), oldDBService, newDBService);
     }
 
+    // Remove hash value from user definitions.
+    private void removeUserHashes(TenantDefinition tenantDef) {
+        for (UserDefinition userDef : tenantDef.getUsers().values()) {
+            userDef.setHash(null);
+        }
+    }
+    
 }   // class TenantService

@@ -73,31 +73,25 @@ public class DynamoDBService2 extends DBService {
 	private long m_writeCapacityUnits;
     private AmazonDynamoDBClient m_client;
     
-    private DynamoDBService2(Tenant tenant) { super(tenant); }
-    
-    @Override
-    protected void initService() {
+    public DynamoDBService2(Tenant tenant) { 
+        super(tenant);
+        
         String accessKey = getParamString("ddb-access-key");
         String secretKey = getParamString("ddb-secret-key");
         String endpoint = getParamString("ddb-endpoint");
-    	m_readCapacityUnits = getParamInt("ddb-read-capacity-units", 1);
-    	m_writeCapacityUnits = getParamInt("ddb-write-capacity-units", 1);
-    	
+        m_readCapacityUnits = getParamInt("ddb-read-capacity-units", 1);
+        m_writeCapacityUnits = getParamInt("ddb-write-capacity-units", 1);
+        
         BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey); 
         m_client = new AmazonDynamoDBClient(awsCredentials);
         m_client.setEndpoint(endpoint);
         // try to connect to check the connection
         m_client.listTables();
-    	
+        
         m_logger.info("Started DynamoDB service. Endpoint: {}, read/write capacity units for new namespaces: {}/{}",
-        		new Object[] {endpoint, m_readCapacityUnits, m_writeCapacityUnits});
+                      new Object[] {endpoint, m_readCapacityUnits, m_writeCapacityUnits});
     }
-
-    @Override
-    protected void startService() {
-        // nothing extra todo
-    }
-
+    
     @Override
     protected void stopService() {
         m_client.shutdown();

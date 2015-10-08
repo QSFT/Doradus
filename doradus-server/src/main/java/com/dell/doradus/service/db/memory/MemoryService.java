@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import com.dell.doradus.core.ServerConfig;
 import com.dell.doradus.service.db.ColumnDelete;
 import com.dell.doradus.service.db.ColumnUpdate;
 import com.dell.doradus.service.db.DBService;
@@ -74,23 +73,13 @@ public class MemoryService extends DBService {
     // holds ALL data
     private final Map<String, Keyspace> m_Keyspaces = new HashMap<>();
     
-    private MemoryService(Tenant tenant) {
+    public MemoryService(Tenant tenant) {
         super(tenant);
-    }
 
-    public static MemoryService instance(Tenant tenant) {
-        return new MemoryService(tenant);
-    }
-    
-    @Override public void initService() {
-        // TODO: Get parameters from Tenant
-        ServerConfig config = ServerConfig.getInstance();
         m_logger.info("Using MEMORY API");
         m_logger.warn("Memory API is not persistent and can be used ONLY for testing purposes!");
-        m_logger.debug("Default application keyspace: {}", config.keyspace);
     }
 
-    @Override public void startService() { }
     @Override public void stopService() { }
 
     @Override public void createNamespace() {

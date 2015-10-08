@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.core.DoradusServer;
 import com.dell.doradus.core.ServerParams;
+import com.dell.doradus.service.db.DBManager;
 import com.dell.doradus.service.db.DBNotAvailableException;
 import com.dell.doradus.service.db.DBService;
 
@@ -407,7 +408,7 @@ public abstract class Service {
      * @throws DBNotAvailableException   If the DBService is not yet running.
      */
     protected void checkServiceState() {
-        State dbServiceState = DBService.instance().getState();
+        State dbServiceState = DBManager.instance().getState();
         if (!dbServiceState.isInitialized()) {
             throw new RuntimeException("DBService has not been initialized");
         }

@@ -16,7 +16,7 @@
 
 package com.dell.doradus.service.db.hybrid;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -65,31 +65,25 @@ public class HybridService extends DBService {
     private int m_valueThreshold;
     protected final Logger m_logger = LoggerFactory.getLogger(getClass());
     
-    private HybridService(Tenant tenant) {
+    public HybridService(Tenant tenant) {
         super(tenant);
-    }
-
-    public static HybridService instance(Tenant tenant) { 
-        return new HybridService(tenant);
-    }
-    
-    @Override public void initService() {
+        
         String serviceNosqlName = getParamString("service-nosql");
         String serviceDatastoreName = getParamString("service-datastore");
         m_valueThreshold = getParamInt("value-threshold", 1024);
         
         try {
-            Method instanceMethod;
+            Constructor<?> constructor;
             Class<? extends DBService> serviceNosqlClass = Class.forName(serviceNosqlName).asSubclass(DBService.class);
-            instanceMethod = serviceNosqlClass.getMethod("instance", new Class<?>[]{Tenant.class});
-            m_serviceNosql = (DBService)instanceMethod.invoke(null, new Object[]{getTenant()});
+            constructor = serviceNosqlClass.getConstructor(Tenant.class);
+            m_serviceNosql = (DBService) constructor.newInstance(tenant);
             Class<? extends DBService> serviceDatastoreClass = Class.forName(serviceDatastoreName).asSubclass(DBService.class);
-            instanceMethod = serviceDatastoreClass.getMethod("instance", new Class<?>[]{Tenant.class});
-            m_serviceDatastore = (DBService)instanceMethod.invoke(null, new Object[]{getTenant()});
+            constructor = serviceDatastoreClass.getConstructor(Tenant.class);
+            m_serviceDatastore = (DBService)constructor.newInstance(tenant);
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
-
+        
         m_serviceDatastore.initialize();
         m_serviceNosql.initialize();
         m_logger.info("Using Shared API");
@@ -97,11 +91,6 @@ public class HybridService extends DBService {
         m_logger.info("Datastore service: {}", serviceDatastoreName);
     }
 
-    @Override public void startService() {
-        m_serviceDatastore.start();
-        m_serviceNosql.start();
-    }
-    
     @Override public void stopService() {
         m_serviceDatastore.stop();
         m_serviceNosql.stop();

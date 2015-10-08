@@ -117,7 +117,7 @@ public class DynamoDBService extends DBService {
     private final int m_max_read_attempts;
     private final String m_tenantPrefix;
     
-    private DynamoDBService(Tenant tenant) {
+    public DynamoDBService(Tenant tenant) {
         super(tenant);
         m_retry_wait_millis = getParamInt("retry_wait_millis", 5000);
         m_max_commit_attempts = getParamInt("max_commit_attempts", 10);
@@ -127,30 +127,10 @@ public class DynamoDBService extends DBService {
         m_ddbClient = new AmazonDynamoDBClient(getCredentials());
         setRegionOrEndPoint();
         setDefaultCapacity();
+        // TODO: Do something to test connection?
     }
     
     //----- Service methods
-
-    /**
-     * Return the singleton DynamoDBService service object.
-     * 
-     * @return  Static DynamoDBService object.
-     */
-    public static DynamoDBService instance(Tenant tenant) {
-        return new DynamoDBService(tenant);
-    }
-    
-    /**
-     * Establish a connection to DynamoDB.
-     */
-    @Override
-    protected void initService() {
-    }
-
-    @Override
-    protected void startService() {
-        // nothing extra todo
-    }
 
     @Override
     protected void stopService() {
@@ -166,7 +146,6 @@ public class DynamoDBService extends DBService {
     
     @Override
     public void dropNamespace() {
-        checkState();
         if (m_tenantPrefix.length() == 0) {
             m_logger.warn("Drop namespace not supported for legacy DynamoDB instances. "+
                           "Tables for tenant {} must be deleted manually", m_tenant.getName());
@@ -185,7 +164,6 @@ public class DynamoDBService extends DBService {
     
     @Override
     public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
-        checkState();
         String tableName = storeToTableName(storeName);
         if (!Tables.doesTableExist(m_ddbClient, tableName)) {
             // Create a table with a primary hash key named '_key', which holds a string
@@ -211,7 +189,6 @@ public class DynamoDBService extends DBService {
 
     @Override
     public void deleteStoreIfPresent(String storeName) {
-        checkState();
         deleteTable(storeToTableName(storeName));
     }
     
@@ -226,7 +203,6 @@ public class DynamoDBService extends DBService {
      * @param dbTran    {@link DBTransaction} containing updates to commit.
      */
     public void commit(DBTransaction dbTran) {
-        checkState();
         new DDBTransaction(this).commit(dbTran);
     }
     
@@ -235,7 +211,6 @@ public class DynamoDBService extends DBService {
     @Override
     public List<DColumn> getColumns(String storeName, String rowKey,
                                     String startColumn, String endColumn, int count) {
-        checkState();
         String tableName = storeToTableName(storeName);
         Map<String, AttributeValue> attributeMap = m_ddbClient.getItem(tableName, makeDDBKey(rowKey)).getItem();
         List<DColumn> colList =
@@ -250,7 +225,6 @@ public class DynamoDBService extends DBService {
 
     @Override
     public List<DColumn> getColumns(String storeName, String rowKey, Collection<String> columnNames) {
-        checkState();
         String tableName = storeToTableName(storeName);
         Map<String, AttributeValue> attributeMap = m_ddbClient.getItem(tableName, makeDDBKey(rowKey)).getItem();
         List<DColumn> colList =
@@ -264,7 +238,6 @@ public class DynamoDBService extends DBService {
 
     @Override
     public List<String> getRows(String storeName, String continuationToken, int count) {
-        checkState();
         String tableName = storeToTableName(storeName);
         ScanRequest scanRequest = new ScanRequest(tableName);
         scanRequest.setAttributesToGet(Arrays.asList(ROW_KEY_ATTR_NAME)); // attributes to get

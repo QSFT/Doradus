@@ -48,18 +48,11 @@ public class AmazonS3Service extends DBService {
     private static ExecutorService s3_executor;
     
     
-    private AmazonS3Service(Tenant tenant) {
+    public AmazonS3Service(Tenant tenant) {
         super(tenant);
+        connect();
     }
 
-    public static AmazonS3Service instance(Tenant tenant) {
-        AmazonS3Service instance = new AmazonS3Service(tenant);
-        instance.connect();
-        return instance;
-    }
-    
-    @Override public void initService() { }
-    
     private void connect() {
         String accessKey = getParamString("s3-access-key");
         String secretKey = getParamString("s3-secret-key");
@@ -89,8 +82,6 @@ public class AmazonS3Service extends DBService {
         m_connection = new AmazonConnection(s3service, bucket);
     }
 
-    @Override public void startService() { }
-    
     @Override public void stopService() {
         s3_executor.shutdownNow();
     }

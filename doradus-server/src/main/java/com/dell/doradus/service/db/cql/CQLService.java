@@ -66,44 +66,25 @@ public class CQLService extends CassandraService {
     // Quoted version of Applications CF name:
     private static final String APPS_CQL_NAME = "\"" + SchemaService.APPS_STORE_NAME + "\"";
     
-    // Construction via singleton only
-    private CQLService(Tenant tenant) {
+    public CQLService(Tenant tenant) {
         super(tenant);
         m_statementCache = new CQLStatementCache(tenant);
-        db_connect_retry_wait_millis = getParamInt("db_connect_retry_wait_millis", 1000);
         if (Utils.isEmpty(tenant.getNamespace())) {
             m_keyspace = storeToCQLName(tenant.getName());
         } else {
             m_keyspace = storeToCQLName(tenant.getNamespace());
         }
+        m_cluster = buildClusterSpecs();
+        connectToCluster();
     }
 
     // Members:
     private Cluster m_cluster;
     private Session m_session;
     private final CQLStatementCache m_statementCache;
-    private final int db_connect_retry_wait_millis;
     private final String m_keyspace;
     
     //----- Public Service methods
-
-    /**
-     * Return a new CQLService service object that will manage data for the given tenant.
-     * 
-     * @return  New CQLService object.
-     */
-    public static CQLService instance(Tenant tenant) {
-        return new CQLService(tenant);
-    }
-    
-    @Override
-    protected void initService() {
-    }
-
-    @Override
-    protected void startService() {
-        initializeCluster();
-    }   // startService
 
     @Override
     protected void stopService() {
@@ -116,7 +97,6 @@ public class CQLService extends CassandraService {
 
     @Override
     public void createNamespace() {
-        checkState();
         KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(m_keyspace);
         if (ksMetadata == null) {
             Map<String, String> options = getKeyspaceOptions(getTenant());
@@ -131,13 +111,11 @@ public class CQLService extends CassandraService {
 
     @Override
     public void dropNamespace() {
-        checkState();
         m_statementCache.clear();
         new CQLSchemaManager(this).dropKeyspace();
     }
     
     public List<String> getDoradusKeyspaces() {
-        checkState();
         List<String> keyspaces = new ArrayList<>();
         List<KeyspaceMetadata> keyspaceList = m_cluster.getMetadata().getKeyspaces();
         for (KeyspaceMetadata ksMetadata : keyspaceList) {
@@ -152,7 +130,6 @@ public class CQLService extends CassandraService {
 
     @Override
     public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
-        checkState();
         String tableName = storeToCQLName(storeName);
         if (!storeExists(tableName)) {
             new CQLSchemaManager(this).createCQLTable(storeName, bBinaryValues);
@@ -161,7 +138,6 @@ public class CQLService extends CassandraService {
     
     @Override
     public void deleteStoreIfPresent(String storeName) {
-        checkState();
         String tableName = storeToCQLName(storeName);
         if (storeExists(tableName)) {
             new CQLSchemaManager(this).dropCQLTable(tableName);
@@ -182,7 +158,6 @@ public class CQLService extends CassandraService {
 
     @Override
     public void commit(DBTransaction dbTran) {
-        checkState();
         new CQLTransaction(this).commit(dbTran);
     }   // commit
 
@@ -190,7 +165,6 @@ public class CQLService extends CassandraService {
 
     @Override
     public List<DColumn> getColumns(String storeName, String rowKey, String startColumn, String endColumn, int count) {
-        checkState();
         String tableName = storeToCQLName(storeName);
         ResultSet rs = null;
         if (startColumn == null) {
@@ -222,7 +196,6 @@ public class CQLService extends CassandraService {
 
     @Override
     public List<DColumn> getColumns(String storeName, String rowKey, Collection<String> columnNames) {
-        checkState();
         String tableName = storeToCQLName(storeName);
         boolean isValueBinary = columnValueIsBinary(storeName);
         ResultSet rs = executeQuery(Query.SELECT_1_ROW_COLUMN_SET,
@@ -246,7 +219,6 @@ public class CQLService extends CassandraService {
 
     @Override
     public List<String> getRows(String storeName, String continuationToken, int count) {
-        checkState();
         String tableName = storeToCQLName(storeName);
         Set<String> rows = new HashSet<String>();
         //unfortunately I don't know how to get one record per row in CQL so we'll read everything
@@ -355,25 +327,6 @@ public class CQLService extends CassandraService {
         }
     }   // executeQuery
     
-    // Establish the CQL session
-    private void initializeCluster() {
-        while (true) {
-            try {
-                m_cluster = buildClusterSpecs();
-                connectToCluster();
-                break;
-            } catch (Exception e) {
-                m_cluster = null;
-                m_logger.info("Database is not reachable: {}. Waiting to retry", e);
-                try {
-                    Thread.sleep(db_connect_retry_wait_millis);
-                } catch (InterruptedException ex2) {
-                    // ignore
-                }
-            }
-        }
-    }   // initializeCluster
-
     // Build Cluster object from ServerConfig settings.
     private Cluster buildClusterSpecs() {
         Cluster.Builder builder = Cluster.builder();

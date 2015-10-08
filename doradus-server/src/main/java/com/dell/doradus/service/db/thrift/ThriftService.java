@@ -51,7 +51,7 @@ public class ThriftService extends CassandraService {
     private final Object m_schemaLock = new Object();
     private final CassandraSchemaMgr m_schemaMgr;
 
-    private ThriftService(Tenant tenant) {
+    public ThriftService(Tenant tenant) {
         super(tenant);
         m_schemaMgr = new CassandraSchemaMgr(this);
         if (Utils.isEmpty(tenant.getNamespace())) {
@@ -59,26 +59,14 @@ public class ThriftService extends CassandraService {
         } else {
             m_keyspace = tenant.getNamespace();
         }
+        
+        // Create a no-session DBConn and get keyspaces to verify it.
+        try (DBConn dbConn = createAndConnectConn(null)) {
+            m_schemaMgr.getKeyspaces(dbConn);
+        }
     }
 
     //----- Public Service methods
-
-    /**
-     * Return the singleton ThriftService service object.
-     * 
-     * @return  Static ThriftService object.
-     */
-    public static ThriftService instance(Tenant tenant) {
-        return new ThriftService(tenant);
-    }
-    
-    @Override
-    public void initService() { }
-
-    @Override
-    public void startService() {
-        initializeDBConnections();
-    }   // stopService
 
     @Override
     public void stopService() {
@@ -89,7 +77,6 @@ public class ThriftService extends CassandraService {
     
     @Override
     public void createNamespace() {
-        checkState();
         // Use a temporary, no-keyspace session
         try (DBConn dbConn = createAndConnectConn(null)) {
             synchronized (m_schemaLock) {
@@ -108,7 +95,6 @@ public class ThriftService extends CassandraService {
 
     @Override
     public void dropNamespace() {
-        checkState();
         // Use a temporary, no-keyspace session
         try (DBConn dbConn = createAndConnectConn(null)) {
             synchronized (m_schemaLock) {
@@ -120,7 +106,6 @@ public class ThriftService extends CassandraService {
     }   // dropTenant
     
     public List<String> getDoradusKeyspaces() {
-        checkState();
         List<String> keyspaces = new ArrayList<>();
         // Use a temporary, no-keyspace session
         try (DBConn dbConn = createAndConnectConn(null)) {
@@ -140,7 +125,6 @@ public class ThriftService extends CassandraService {
 
     @Override
     public void createStoreIfAbsent(String storeName, boolean bBinaryValues) {
-        checkState();
         DBConn dbConn = getDBConnection();
         try {
             synchronized (m_schemaLock) {
@@ -155,7 +139,6 @@ public class ThriftService extends CassandraService {
     
     @Override
     public void deleteStoreIfPresent(String storeName) {
-        checkState();
         DBConn dbConn = getDBConnection();
         try {
             synchronized (m_schemaLock) {
@@ -172,7 +155,6 @@ public class ThriftService extends CassandraService {
     
     @Override
     public void commit(DBTransaction dbTran) {
-        checkState();
         assert dbTran.getTenant().getName().equals(this.getTenant().getName());
         DBConn dbConn = getDBConnection();
         try {
@@ -186,7 +168,6 @@ public class ThriftService extends CassandraService {
 
     @Override
     public List<DColumn> getColumns(String storeName, String rowKey, String startColumn, String endColumn, int count) {
-        checkState();
         DBConn dbConn = getDBConnection();
         try {
             List<ColumnOrSuperColumn> columns = dbConn.getSlice(
@@ -205,7 +186,6 @@ public class ThriftService extends CassandraService {
 
     @Override
     public List<DColumn> getColumns(String storeName, String rowKey, Collection<String> columnNames) {
-        checkState();
         DBConn dbConn = getDBConnection();
         try {
             List<byte[]> colNameList = new ArrayList<>(columnNames.size());
@@ -229,7 +209,6 @@ public class ThriftService extends CassandraService {
 
     @Override
     public List<String> getRows(String storeName, String continuationToken, int count) {
-        checkState();
         DBConn dbConn = getDBConnection();
         try {
             List<KeySlice> keys = dbConn.getRangeSlices(
@@ -379,24 +358,24 @@ public class ThriftService extends CassandraService {
     }   // returnGoodConnection
 
     // Initialize the DBConnection pool by creating the first connection to Cassandra.
-    private void initializeDBConnections() {
-        boolean bSuccess = false;
-        while (!bSuccess) {
-            // Create a no-keyspace connection and fetch all keyspaces to prove that the
-            // cluster is really ready.
-            try (DBConn dbConn = createAndConnectConn(null)) {
-                m_schemaMgr.getKeyspaces(dbConn);
-                bSuccess = true;
-            } catch (DBNotAvailableException ex) {
-                m_logger.info("Database is not reachable. Waiting to retry");
-                try {
-                    Thread.sleep(getParamInt("db_connect_retry_wait_millis", 5000));
-                } catch (InterruptedException ex2) {
-                    // ignore
-                }
-            }
-        }
-    }   // initializeDBConnections
+//    private void initializeDBConnections() {
+//        boolean bSuccess = false;
+//        while (!bSuccess) {
+//            // Create a no-keyspace connection and fetch all keyspaces to prove that the
+//            // cluster is really ready.
+//            try (DBConn dbConn = createAndConnectConn(null)) {
+//                m_schemaMgr.getKeyspaces(dbConn);
+//                bSuccess = true;
+//            } catch (DBNotAvailableException ex) {
+//                m_logger.info("Database is not reachable. Waiting to retry");
+//                try {
+//                    Thread.sleep(getParamInt("db_connect_retry_wait_millis", 5000));
+//                } catch (InterruptedException ex2) {
+//                    // ignore
+//                }
+//            }
+//        }
+//    }   // initializeDBConnections
 
     // Close and delete all db connections, e.g., 'cause we're shutting down.
     private void purgeAllConnections() {

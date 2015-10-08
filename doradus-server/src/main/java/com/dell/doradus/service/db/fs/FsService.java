@@ -29,8 +29,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dell.doradus.core.ServerConfig;
-import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
@@ -44,28 +42,16 @@ public class FsService extends DBService {
     
     private final Object m_sync = new Object();
     
-    private FsService(Tenant tenant) {
+    public FsService(Tenant tenant) {
         super(tenant);
-    }
-
-    public static FsService instance(Tenant tenant) { 
-        return new FsService(tenant);
-    }
-    
-    @Override public void initService() {
-        // TODO: Get params from Tenant instead of ServerParams
-        ROOT = ServerParams.instance().getModuleParamString("FsService", "db-path");
+        
+        ROOT = getParamString("db-path");
         if(ROOT == null) throw new RuntimeException("FsService: db-path not defined");
-        ServerConfig config = ServerConfig.getInstance();
         m_logger.info("Using FS API");
-        m_logger.debug("Default application keyspace: {}", config.keyspace);
-    }
-
-    @Override public void startService() {
         File root = new File(ROOT);
         if(!root.exists()) root.mkdirs();
     }
-    
+
     @Override public void stopService() {
         for(FsStore store: m_stores.values()) store.close();
     }
