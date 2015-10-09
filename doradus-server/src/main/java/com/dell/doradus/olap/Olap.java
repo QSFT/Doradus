@@ -88,7 +88,9 @@ public class Olap {
 	
 	public static ExecutorService getSearchThreadPool() { return search_executor; }
 	
-	// For testing: use default keyspace
+	/**
+	 * Danger: only works for default keyspace
+	 */
 	public VDirectory createApplication(String appName) {
         Tenant tenant = new Tenant(TenantService.instance().getDefaultTenantDef());
         return createApplication(tenant, appName);

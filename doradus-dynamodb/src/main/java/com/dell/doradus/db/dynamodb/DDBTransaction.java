@@ -51,12 +51,7 @@ public class DDBTransaction {
             applyUpdates(dbTran);
         } catch (Exception e) {
             // All retries, if needed, failed.
-            if (e instanceof AmazonServiceException) {
-                String rawMessage = ((AmazonServiceException)e).getRawResponseContent();
-                m_logger.error("Commit failed: {}; rawResponseContent={}", e, rawMessage);
-            } else {
-                m_logger.error("Commit failed", e);
-            }
+            m_logger.error("Commit failed", e);
             throw e;
         } finally {
             dbTran.clear();
