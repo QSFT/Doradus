@@ -32,7 +32,7 @@ import com.dell.doradus.common.UserDefinition.Permission;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.Service;
-import com.dell.doradus.service.db.DBManager;
+import com.dell.doradus.service.db.DBManagerService;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
@@ -72,7 +72,8 @@ public class TenantService extends Service {
         ListTenantCmd.class,
         DefineTenantCmd.class,
         ModifyTenantCmd.class,
-        DeleteTenantCmd.class
+        DeleteTenantCmd.class,
+        ActiveTenantsCmd.class
     );
     
     // Singleton creation only.
@@ -117,7 +118,7 @@ public class TenantService extends Service {
 
     @Override
     protected void startService() {
-        DBManager.instance().waitForFullService();
+        DBManagerService.instance().waitForFullService();
         initializeDefaultTenant();
         migrateTenantDefinitions();
     }

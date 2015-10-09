@@ -87,9 +87,9 @@ import com.dell.doradus.utilities.Timer;
  *     </ol>
  * <li>Endpoint: This is required and can be specified by using either of two parameters:
  *     <ol>
- *     <li><code>ddb.region</code>: When this parameter is set, it must define a valid AWS
+ *     <li><code>ddb_region</code>: When this parameter is set, it must define a valid AWS
  *         region name.
- *     <li><code>ddb.endpoint</code>: This is a connection string to a DynamoDB instance.
+ *     <li><code>ddb_endpoint</code>: This is a connection string to a DynamoDB instance.
  *         This technique works when using a local DynamoDB instance for testing.
  *     </ol>
  * <li>Default capacity: These parameters are optional:

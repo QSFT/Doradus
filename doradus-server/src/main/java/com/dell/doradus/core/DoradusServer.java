@@ -61,7 +61,7 @@ public final class DoradusServer {
 
     // Services required in every start (in addition to 1 storage service):
     private static final String[] REQUIRED_SERVICES = new String[] {
-        com.dell.doradus.service.db.DBManager.class.getName(),
+        com.dell.doradus.service.db.DBManagerService.class.getName(),
         com.dell.doradus.service.schema.SchemaService.class.getName(),
         com.dell.doradus.service.tenant.TenantService.class.getName()
     };

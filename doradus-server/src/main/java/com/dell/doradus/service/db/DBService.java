@@ -52,23 +52,23 @@ public abstract class DBService extends Service {
     
     /**
      * Get the default {@link DBService} instance, which is the object that manages the
-     * default database. This method simply calls {@link DBManager#getDefaultDB()}.
+     * default database. This method simply calls {@link DBManagerService#getDefaultDB()}.
      * 
      * @return  The default DBService object.
      */
     public static DBService instance() {
-        return DBManager.instance().getDefaultDB();
+        return DBManagerService.instance().getDefaultDB();
     }
 
     /**
      * Get the {@link DBService} instance that manages data for the given tenant. This
-     * method simply calls {@link DBManager#getTenantDB(Tenant)}.
+     * method simply calls {@link DBManagerService#getTenantDB(Tenant)}.
      * 
      * @param tenant    Existing or potentially new tenant.
      * @return          {@link DBService} instances that can manage the tenant's data.
      */
     public static DBService instance(Tenant tenant) {
-        return DBManager.instance().getTenantDB(tenant);
+        return DBManagerService.instance().getTenantDB(tenant);
     }
 
     //----- Public Service methods

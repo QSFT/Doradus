@@ -20,6 +20,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerParams;
@@ -28,26 +30,28 @@ import com.dell.doradus.service.tenant.TenantService;
 
 /**
  * Managers the DBService objects used by the Doradus Server. Creates tenant-specific
- * DBServices as needed and maintains a map for reuse. When the DBManager service is
+ * DBServices as needed and maintains a map for reuse. When the DBManagerService is
  * started, it creates the DBService for the default database and waits for it to
  * connect. If the service throws a {@link DBNotAvailableException}, it keeps retrying
  * indefinitely. But when secondary DBServices are created, retry logic is not used so
  * to notify the caller that the DBService and therefore the tenant is not available. 
  */
-public class DBManager extends Service {
-    private final static DBManager INSTANCE = new DBManager();
+public class DBManagerService extends Service {
+    private final static DBManagerService INSTANCE = new DBManagerService();
     
-    public static DBManager instance() { return INSTANCE; }
+    public static DBManagerService instance() { return INSTANCE; }
     
     // TODO: Make this an evaporative map in case tenants are deleted by another server.
     private final Map<String, DBService> m_tenantDBMap = new HashMap<>();
     
     private final int db_connect_retry_wait_millis;
 
-    public DBManager() {
+    public DBManagerService() {
         db_connect_retry_wait_millis =
             ServerParams.instance().getModuleParamInt("DBService", "db_connect_retry_wait_millis", 5000);
     }
+    
+    //----- Service public methods
     
     @Override
     protected void initService() { }
@@ -68,9 +72,11 @@ public class DBManager extends Service {
         }
     }
 
+    //----- DBManagerService public methods
+    
     /**
      * Get the DBService for the default database. This object is created when the
-     * DBManager service is started.
+     * DBManagerService is started.
      * 
      * @return {@link DBService} for the defaultdatabase.
      */
@@ -101,6 +107,27 @@ public class DBManager extends Service {
             return dbservice;
         }
     }
+    
+    /**
+     * Get the information about all active tenants, which are those whose DBService has
+     * been created. The is keyed by tenant name, and its value is a map of parameters
+     * configured for the corresponding DBService.
+     *  
+     * @return  Map of information for all active tenants.
+     */
+    public SortedMap<String, SortedMap<String, Object>> getActiveTenantInfo() {
+        SortedMap<String, SortedMap<String, Object>> activeTenantMap = new TreeMap<>();
+        synchronized (m_tenantDBMap) {
+            for (String tenantName : m_tenantDBMap.keySet()) {
+                DBService dbservice = m_tenantDBMap.get(tenantName);
+                Map<String, Object> dbServiceParams = dbservice.getAllParams();
+                activeTenantMap.put(tenantName, new TreeMap<String, Object>(dbServiceParams));
+            }
+        }
+        return activeTenantMap;
+    }
+    
+    //----- Private methods
     
     // Create the default DBService object based on doradus.yaml file settings. If the DBService
     // throws a DBNotAvailableException, keep trying.

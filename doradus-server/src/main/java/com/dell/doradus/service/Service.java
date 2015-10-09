@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.core.DoradusServer;
 import com.dell.doradus.core.ServerParams;
-import com.dell.doradus.service.db.DBManager;
+import com.dell.doradus.service.db.DBManagerService;
 import com.dell.doradus.service.db.DBNotAvailableException;
 import com.dell.doradus.service.db.DBService;
 
@@ -245,6 +245,16 @@ public abstract class Service {
     }   // waitForFullService
     
     /**
+     * Get all parameters configured for this Service. The map's key is a parameter name
+     * and its value may be a String, List, or Map.
+     *  
+     * @return  Map of all parameters configured for this service.
+     */
+    public Map<String, Object> getAllParams() {
+        return m_serviceParamMap;
+    }
+    
+    /**
      * Get the value of the parameter with the given name belonging to this service. If
      * the parameter is not found, null is returned.  
      * 
@@ -408,7 +418,7 @@ public abstract class Service {
      * @throws DBNotAvailableException   If the DBService is not yet running.
      */
     protected void checkServiceState() {
-        State dbServiceState = DBManager.instance().getState();
+        State dbServiceState = DBManagerService.instance().getState();
         if (!dbServiceState.isInitialized()) {
             throw new RuntimeException("DBService has not been initialized");
         }

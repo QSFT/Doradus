@@ -35,7 +35,7 @@ import com.dell.doradus.common.ApplicationDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.Service;
 import com.dell.doradus.service.StorageService;
-import com.dell.doradus.service.db.DBManager;
+import com.dell.doradus.service.db.DBManagerService;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
@@ -112,7 +112,7 @@ public class TaskManagerService extends Service {
 
     @Override
     protected void startService() {
-        DBManager.instance().waitForFullService();
+        DBManagerService.instance().waitForFullService();
         m_taskManager = new Thread("Task Manager") {
             @Override
             public void run() {
