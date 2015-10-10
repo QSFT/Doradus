@@ -47,6 +47,7 @@ import com.datastax.driver.core.SocketOptions;
 import com.datastax.driver.core.policies.RoundRobinPolicy;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.db.CassandraService;
+import com.dell.doradus.service.db.DBNotAvailableException;
 import com.dell.doradus.service.db.DBService;
 import com.dell.doradus.service.db.DBTransaction;
 import com.dell.doradus.service.db.DColumn;
@@ -408,9 +409,14 @@ public class CQLService extends CassandraService {
     // Attempt to connect to the given cluster and throw if it is unavailable.
     private void connectToCluster() {
         assert m_cluster != null;
-        m_cluster.init();     // force connection and throw if unavailable
-        m_session = m_cluster.connect();
-        displayClusterInfo();
+        try {
+            m_cluster.init();     // force connection and throw if unavailable
+            m_session = m_cluster.connect();
+            displayClusterInfo();
+        } catch (Exception e) {
+            m_logger.error("Could not connect to Cassandra cluster", e);
+            throw new DBNotAvailableException(e);
+        }
     }   // connectToCluster
 
     // Display configuration information for the given cluster.

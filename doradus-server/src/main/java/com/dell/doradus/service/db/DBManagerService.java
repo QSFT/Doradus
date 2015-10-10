@@ -168,18 +168,25 @@ public class DBManagerService extends Service {
                 throw new RuntimeException("Could not load dbservice class '" + dbServiceName + "'", e);
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException("Required constructor missing for dbservice class: " + dbServiceName, e);
-            } catch (SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            } catch (SecurityException | InstantiationException | IllegalAccessException e) {
                 throw new RuntimeException("Could not invoke constructor for dbservice class: " + dbServiceName, e);
+            } catch (InvocationTargetException e) {
+                // This is thrown when a constructor is invoked via reflection.
+                if (!(e.getTargetException() instanceof DBNotAvailableException)) {
+                    throw new RuntimeException("Could not invoke constructor for dbservice class: " + dbServiceName, e);
+                }
             } catch (DBNotAvailableException e) {
-                // This is the only one we can retry for the default DB.
+                // Fall through to retry.
+            } catch (Throwable e) {
+                throw new RuntimeException("Failed to initialize default DBService: " + dbServiceName, e);
+            }
+            if (!bDBOpened) {
                 m_logger.info("Database is not reachable. Waiting to retry");
                 try {
                     Thread.sleep(db_connect_retry_wait_millis);
                 } catch (InterruptedException ex2) {
                     // ignore
                 }
-            } catch (Throwable e) {
-                throw new RuntimeException("Failed to initialize default DBService: " + dbServiceName, e);
             }
         }
         return dbservice;

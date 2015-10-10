@@ -357,26 +357,6 @@ public class ThriftService extends CassandraService {
         }
     }   // returnGoodConnection
 
-    // Initialize the DBConnection pool by creating the first connection to Cassandra.
-//    private void initializeDBConnections() {
-//        boolean bSuccess = false;
-//        while (!bSuccess) {
-//            // Create a no-keyspace connection and fetch all keyspaces to prove that the
-//            // cluster is really ready.
-//            try (DBConn dbConn = createAndConnectConn(null)) {
-//                m_schemaMgr.getKeyspaces(dbConn);
-//                bSuccess = true;
-//            } catch (DBNotAvailableException ex) {
-//                m_logger.info("Database is not reachable. Waiting to retry");
-//                try {
-//                    Thread.sleep(getParamInt("db_connect_retry_wait_millis", 5000));
-//                } catch (InterruptedException ex2) {
-//                    // ignore
-//                }
-//            }
-//        }
-//    }   // initializeDBConnections
-
     // Close and delete all db connections, e.g., 'cause we're shutting down.
     private void purgeAllConnections() {
         synchronized (m_dbConns) {
