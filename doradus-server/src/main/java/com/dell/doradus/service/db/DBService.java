@@ -33,7 +33,7 @@ import com.dell.doradus.service.tenant.TenantService;
  */
 public abstract class DBService extends Service {
     // Tenant served by this DBObject:
-    protected final Tenant m_tenant;
+    protected Tenant m_tenant;
     
     /**
      * Create a new DBService object for the given Tenant. In DBService subclasses, this
@@ -97,6 +97,18 @@ public abstract class DBService extends Service {
      */
     public Tenant getTenant() {
         return m_tenant;
+    }
+
+    /**
+     * Update this DBService's Tenant with the given one. This is called when the tenant's
+     * definition has been updated in an upward-compatible way, such as adding or removing
+     * users.
+     * 
+     * @param updatedTenant Updated {@link Tenant}.
+     */
+    public void updateTenant(Tenant updatedTenant) {
+        assert m_tenant.getName().equals(updatedTenant.getName());
+        m_tenant = updatedTenant;
     }
     
     /**
@@ -336,5 +348,5 @@ public abstract class DBService extends Service {
             }
         }
     }
-    
+
 }

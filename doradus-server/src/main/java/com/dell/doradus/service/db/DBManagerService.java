@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import com.dell.doradus.common.TenantDefinition;
 import com.dell.doradus.common.Utils;
 import com.dell.doradus.core.ServerParams;
 import com.dell.doradus.service.Service;
@@ -100,11 +101,35 @@ public class DBManagerService extends Service {
             if (dbservice == null) {
                 dbservice = createTenantDBService(tenant);
                 m_tenantDBMap.put(tenant.getName(), dbservice);
+            } else if (!sameTenantDefs(dbservice.getTenant().getDefinition(), tenant.getDefinition())) {
+                m_logger.info("Purging obsolete DBService for redefined tenant: {}", tenant.getName());
+                dbservice.stop();
+                dbservice = createTenantDBService(tenant);
+                m_tenantDBMap.put(tenant.getName(), dbservice);
             }
             return dbservice;
         }
     }
-    
+
+    /**
+     * Update the corresponding DBService with the given tenant definition. This method is
+     * called when an existing tenant is modified. If the DBService for the tenant has not
+     * yet been cached, this method is a no-op. Otherwise, the cached DBService is updated
+     * with the new tenant definition.
+     *   
+     * @param tenantDef Updated {@link TenantDefinition}.
+     */
+    public void updateTenantDef(TenantDefinition tenantDef) {
+        synchronized (m_tenantDBMap) {
+            DBService dbservice = m_tenantDBMap.get(tenantDef.getName());
+            if (dbservice != null) {
+                Tenant updatedTenant = new Tenant(tenantDef);
+                m_logger.info("Updating DBService for tenant: {}", updatedTenant.getName());
+                dbservice.updateTenant(updatedTenant);
+            }
+        }
+    }
+
     /**
      * Close the DBService for the given tenant, if is has been cached. This is called
      * when a tenant is deleted.
@@ -115,6 +140,7 @@ public class DBManagerService extends Service {
         synchronized (m_tenantDBMap) {
             DBService dbservice = m_tenantDBMap.remove(tenant.getName());
             if (dbservice != null) {
+                m_logger.info("Stopping DBService for deleted tenant: {}", tenant.getName());
                 dbservice.stop();
             }
         }
@@ -144,6 +170,7 @@ public class DBManagerService extends Service {
     // Create the default DBService object based on doradus.yaml file settings. If the DBService
     // throws a DBNotAvailableException, keep trying.
     private DBService createDefaultDBService() {
+        m_logger.info("Creating DBService for default tenant");
         String dbServiceName = ServerParams.instance().getModuleParamString("DBService", "dbservice");
         if (Utils.isEmpty(dbServiceName)) {
             throw new RuntimeException("'DBService.dbservice' parameter is not defined.");
@@ -195,6 +222,7 @@ public class DBManagerService extends Service {
     
     // Create a new DBService for the given tenant.
     private DBService createTenantDBService(Tenant tenant) {
+        m_logger.info("Creating DBService for tenant: {}", tenant.getName());
         Map<String, Object> paramMap = tenant.getDefinition().getOptionMap("DBService");
         String dbServiceName = null;
         if (paramMap == null) {
@@ -229,4 +257,18 @@ public class DBManagerService extends Service {
         return dbservice;
     }
 
+    // Return true if the given definitions have the same created-on and modified-on
+    // stamps, allowing for either property to be null for older definitions.
+    private static boolean sameTenantDefs(TenantDefinition tenantDef1, TenantDefinition tenantDef2) {
+        return isEqual(tenantDef1.getProperty(TenantService.CREATED_ON_PROP),
+                       tenantDef2.getProperty(TenantService.CREATED_ON_PROP)) &&
+               isEqual(tenantDef1.getProperty(TenantService.CREATED_ON_PROP),
+                       tenantDef2.getProperty(TenantService.CREATED_ON_PROP));
+    }
+    
+    // Both strings are null or equal.
+    private static boolean isEqual(String string1, String string2) {
+        return (string1 == null && string2 == null) || (string1 != null && string1.equals(string2));
+    }
+    
 }

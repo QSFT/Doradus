@@ -57,6 +57,10 @@ public class TenantService extends Service {
     // Tenant registry table name:
     public static final String TENANTS_STORE_NAME = "Tenants";
     
+    // System-required properties:
+    public static final String CREATED_ON_PROP = "_CreatedOn";
+    public static final String MODIFIED_ON_PROP = "_ModifiedOn";
+    
     // Singleton object required for the Service pattern:
     private static final TenantService INSTANCE = new TenantService();
 
@@ -280,6 +284,7 @@ public class TenantService extends Service {
         validateTenantUsers(newTenantDef);
         validateTenantUpdate(oldTenantDef, newTenantDef);
         storeTenantDefinition(newTenantDef);
+        DBManagerService.instance().updateTenantDef(newTenantDef);
         TenantDefinition updatedTenantDef = getTenantDef(tenantName);
         if (updatedTenantDef == null) {
             throw new RuntimeException("Tenant definition could not be retrieved after creation: " + tenantName);
@@ -363,15 +368,15 @@ public class TenantService extends Service {
     }
     
     /**
-     * Copying existing Tenant Definition properties to the new Tenant Definition properties if any given Tenant Definition property hasn't been set during Tenant modification process
+     * Set required properties in a new Tenant Definition.
      * 
      * @param   oldTenantDef  Old {@link TenantDefinition}.
      * @param   newTenantDef  New {@link TenantDefinition}.
      */
     private void modifyTenantProperties(TenantDefinition oldTenantDef, TenantDefinition newTenantDef) {
-        if (newTenantDef.getProperties().get("_CreatedOn") == null && oldTenantDef.getProperties().get("_CreatedOn") != null) {
-            newTenantDef.setProperty("_CreatedOn", oldTenantDef.getProperties().get("_CreatedOn"));
-        } 
+        // _CreatedOn must be the same. _ModifiedOn must be updated.
+        newTenantDef.setProperty(CREATED_ON_PROP, oldTenantDef.getProperty(CREATED_ON_PROP));
+        newTenantDef.setProperty(MODIFIED_ON_PROP, Utils.formatDate(new Date().getTime()));
     }
     
     // Create a TenantDefinition that represents the default tenant. This can be used
@@ -457,8 +462,10 @@ public class TenantService extends Service {
         }
     }
     
+    // Set system-defined properties for a new tenant.
     private void addTenantProperties(TenantDefinition tenantDef) {
-    	tenantDef.setProperty("_CreatedOn", Utils.formatDate(new Date().getTime()));
+    	tenantDef.setProperty(CREATED_ON_PROP, Utils.formatDate(new Date().getTime()));
+    	tenantDef.setProperty(MODIFIED_ON_PROP, tenantDef.getProperty(CREATED_ON_PROP));
     }
 
     // Verify that all user definitions have a password and convert the password into
@@ -580,8 +587,6 @@ public class TenantService extends Service {
                                       TenantDefinition newTenantDef) {
         Utils.require(oldTenantDef.getName().equals(newTenantDef.getName()),
                       "Tenant name cannot be changed: %s", newTenantDef.getName());
-        Utils.require(oldTenantDef.getProperties().get("_CreatedOn").equals(newTenantDef.getProperties().get("_CreatedOn")),
-        		      "Tenant _CreatedOn property cannot be changed: %s", newTenantDef.getProperties().get("_CreatedOn"));
         Map<String, Object> oldDBServiceOpts = oldTenantDef.getOptionMap("DBService");
         String oldDBService = oldDBServiceOpts == null ? null : (String)oldDBServiceOpts.get("dbservice");
         Map<String, Object> newDBServiceOpts = newTenantDef.getOptionMap("DBService");
