@@ -38,12 +38,9 @@ import com.dell.doradus.service.tenant.TenantService;
  */
 public class DBManagerService extends Service {
     private final static DBManagerService INSTANCE = new DBManagerService();
-    
     public static DBManagerService instance() { return INSTANCE; }
     
-    // TODO: Make this an evaporative map in case tenants are deleted by another server.
     private final Map<String, DBService> m_tenantDBMap = new HashMap<>();
-    
     private final int db_connect_retry_wait_millis;
 
     public DBManagerService() {
@@ -109,6 +106,21 @@ public class DBManagerService extends Service {
     }
     
     /**
+     * Close the DBService for the given tenant, if is has been cached. This is called
+     * when a tenant is deleted.
+     * 
+     * @param tenant    {@link Tenant} being deleted.
+     */
+    public void deleteTenantDB(Tenant tenant) {
+        synchronized (m_tenantDBMap) {
+            DBService dbservice = m_tenantDBMap.remove(tenant.getName());
+            if (dbservice != null) {
+                dbservice.stop();
+            }
+        }
+    }
+
+    /**
      * Get the information about all active tenants, which are those whose DBService has
      * been created. The is keyed by tenant name, and its value is a map of parameters
      * configured for the corresponding DBService.
@@ -173,6 +185,7 @@ public class DBManagerService extends Service {
         return dbservice;
         
     }
+    
     // Create a new DBService for the given tenant.
     private DBService createTenantDBService(Tenant tenant) {
         Map<String, Object> paramMap = tenant.getDefinition().getOptionMap("DBService");

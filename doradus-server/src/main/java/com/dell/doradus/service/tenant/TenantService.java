@@ -226,10 +226,7 @@ public class TenantService extends Service {
 
     /**
      * Search for the first {@link TenantDefinition} that is selected by the given filter.
-     * This method first searches for cached TenantDefinitions, which have been recently
-     * used. However, if the filter does not select any of these, the tenant cache is
-     * refreshed and searched again. This ensures performant access to recently used
-     * tenants without missing any just-created tenants. 
+     * All current tenant definitions are searched.
      *  
      * @param   filter  {@link TenantFilter} that decides selection criteria.
      * @return          First {@link TenantDefinition} selected by the filter or null if
@@ -312,6 +309,7 @@ public class TenantService extends Service {
         DBTransaction dbTran = new DBTransaction(defaultTenant);
         dbTran.deleteRow(TENANTS_STORE_NAME, tenantName);
         DBService.instance(defaultTenant).commit(dbTran);
+        DBManagerService.instance().deleteTenantDB(tenant);
     }   // deleteTenant
 
     //----- Tenant authorization
