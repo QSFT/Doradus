@@ -60,11 +60,15 @@ CassandraService:
     dbtls_cipher_suites: [TLS_RSA_WITH_AES_128_CBC_SHA]
     dbuser: cassandra
     jmxport: 7199
+    keystore: config/keystore
+    keystorepassword: changeit
     ks_defaults:
         strategy_class: SimpleStrategy
         strategy_options:
             replication_factor: "1"   # enclose this value in quotes
         durable_writes: true
+    truststore: config/truststore
+    truststorepassword: password
 
 # DBService parameters specific to the CQLService: 
 CQLService:
