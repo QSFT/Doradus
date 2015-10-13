@@ -16,9 +16,12 @@
 
 package com.dell.doradus.service.tenant;
 
+import java.util.Map;
+
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
+import com.dell.doradus.common.Utils;
 import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
@@ -26,15 +29,17 @@ import com.dell.doradus.service.rest.annotation.Description;
     name = "DeleteTenant",
     summary = "Deletes a new tenant and its applications.",
     methods = HttpMethod.DELETE,
-    uri = "/_tenants/{tenant}",
+    uri = "/_tenants/{tenant}?{params}",
     privileged = true
 )
 public class DeleteTenantCmd extends RESTCallback {
 
     @Override
     public RESTResponse invoke() {
-        String tenantParam = m_request.getVariableDecoded("tenant");
-        TenantService.instance().deleteTenant(tenantParam);
+        String tenantName = m_request.getVariableDecoded("tenant");
+        String params = m_request.getVariable("params");    // leave encoded
+        Map<String, String> paramMap = Utils.parseURIQuery(params);
+        TenantService.instance().deleteTenant(tenantName, paramMap);
         return new RESTResponse(HttpCode.OK);
     }
 

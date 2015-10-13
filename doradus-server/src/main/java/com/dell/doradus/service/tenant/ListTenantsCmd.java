@@ -38,21 +38,17 @@ public class ListTenantsCmd extends UNodeOutCallback {
     public UNode invokeUNodeOut() {
         UNode rootNode = UNode.createMapNode("tenants");
         for (Tenant tenant : TenantService.instance().getTenants()) {
-            UNode tenantNode = rootNode.addMapNode(stripQuotes(tenant.getName()), "tenant");
+            UNode tenantNode = rootNode.addMapNode(tenant.getName(), "tenant");
             UNode appNode = tenantNode.addArrayNode("applications");
-            for (ApplicationDefinition appDef : SchemaService.instance().getAllApplications(tenant)) {
-                appNode.addValueNode("value", appDef.getAppName());
+            try {
+                for (ApplicationDefinition appDef : SchemaService.instance().getAllApplications(tenant)) {
+                    appNode.addValueNode("value", appDef.getAppName());
+                }
+            } catch (Throwable e) {
+                appNode.addValueNode("value", ">>>Error: Unable to list applications: " + e.toString());
             }
         }
         return rootNode;
     }
 
-    private String stripQuotes(String keyspace) {
-        if (keyspace.charAt(0) == '"' && keyspace.charAt(keyspace.length() - 1) == '"') {
-            return keyspace.substring(1, keyspace.length() - 1);
-        } else {
-            return keyspace;
-        }
-    }
-    
 }   // class ListTenantsCmd

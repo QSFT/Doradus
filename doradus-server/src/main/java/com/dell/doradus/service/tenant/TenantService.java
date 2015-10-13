@@ -293,7 +293,6 @@ public class TenantService extends Service {
         return updatedTenantDef; 
     }   // modifyTenant
     
-    
     /**
      * Delete an existing tenant. The tenant's keyspace is dropped, which deletes all user
      * and system tables, and the tenant's users are deleted. If no tenant exists with the
@@ -303,13 +302,34 @@ public class TenantService extends Service {
      * @throws              NotFoundException if the given tenant does not exist.
      */
     public void deleteTenant(String tenantName) {
+        deleteTenant(tenantName, null);
+    }   // deleteTenant
+
+    /**
+     * Delete an existing tenant with the given options. The tenant's keyspace is dropped,
+     * which deletes all user and system tables, and the tenant's users are deleted. If
+     * no tenant exists with the given name, a {@link NotFoundException} is thrown. The
+     * given options are currently used for testing only.
+     * 
+     * @param tenantName    Name of tenant to delete.
+     * @throws              NotFoundException if the given tenant does not exist.
+     */
+    public void deleteTenant(String tenantName, Map<String, String> options) {
         checkServiceState();
         TenantDefinition tenantDef = getTenantDef(tenantName);
         if (tenantDef == null) {
             throw new NotFoundException("Unknown tenant: " + tenantName);
         }
+        
         Tenant tenant = new Tenant(tenantDef);
-        DBService.instance(tenant).dropNamespace();
+        try {
+            DBService.instance(tenant).dropNamespace();
+        } catch (RuntimeException e) {
+            if (options == null || !"true".equalsIgnoreCase(options.get("ignoreTenantDBNotAvailable"))) {
+                throw e;
+            }
+            m_logger.warn("Drop namespace skipped for tenant '{}'", tenantName);
+        }
         
         // Delete tenant definition in default database.
         Tenant defaultTenant = getDefaultTenant();
@@ -318,7 +338,7 @@ public class TenantService extends Service {
         DBService.instance(defaultTenant).commit(dbTran);
         DBManagerService.instance().deleteTenantDB(tenant);
     }   // deleteTenant
-
+    
     //----- Tenant authorization
     
     /**

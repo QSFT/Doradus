@@ -334,8 +334,8 @@ public class TaskManagerService extends Service {
                     checkTaskForExecution(appDef, task);
                 }
             }
-        } catch (Exception e) {
-            m_logger.warn("Could not check tasks for tenant '" + tenant.getName() + "'", e);
+        } catch (Throwable e) {
+            m_logger.warn("Could not check tasks for tenant '{}': {}", tenant.getName(), e);
         }
     }   // checkTenantTasks
 
@@ -514,11 +514,15 @@ public class TaskManagerService extends Service {
     // Look for hung/abandoned tasks in the given tenant.
     private void checkForDeadTenantTasks(Tenant tenant) {
         m_logger.debug("Checking tenant {} for abandoned tasks", tenant);
-        for(DRow row: DBService.instance(tenant).getAllRows(TaskManagerService.TASKS_STORE_NAME)) {
-            TaskRecord taskRecord = buildTaskRecord(row.getKey(), row.getAllColumns(1024).iterator());
-            if (taskRecord.getStatus() == TaskStatus.IN_PROGRESS) {
-                checkForDeadTask(tenant, taskRecord);
+        try {
+            for(DRow row: DBService.instance(tenant).getAllRows(TaskManagerService.TASKS_STORE_NAME)) {
+                TaskRecord taskRecord = buildTaskRecord(row.getKey(), row.getAllColumns(1024).iterator());
+                if (taskRecord.getStatus() == TaskStatus.IN_PROGRESS) {
+                    checkForDeadTask(tenant, taskRecord);
+                }
             }
+        } catch (Throwable e) {
+            m_logger.warn("Unable to check tenant '{}' for dead tasks: {}", tenant.getName(), e.toString());
         }
     }
 
