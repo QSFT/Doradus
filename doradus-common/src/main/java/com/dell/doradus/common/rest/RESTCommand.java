@@ -138,7 +138,7 @@ public class RESTCommand {
      * @return  Root node of a {@link UNode} tree.
      */
     public UNode toDoc() {
-        UNode rootNode = UNode.createMapNode(m_name);
+        UNode rootNode = UNode.createMapNode(m_name, "command");
         if (!Utils.isEmpty(m_summary)) {
             rootNode.addValueNode("summary", m_summary);
         }

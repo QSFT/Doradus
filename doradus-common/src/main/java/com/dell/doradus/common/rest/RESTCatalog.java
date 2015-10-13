@@ -97,7 +97,7 @@ public class RESTCatalog {
         UNode rootNode = UNode.createMapNode("commands");
         for (String ownerName : m_cmdsByOwnerMap.keySet()) {
             Map<String, RESTCommand> ownerMap = m_cmdsByOwnerMap.get(ownerName);
-            UNode ownerNode = rootNode.addMapNode(ownerName);
+            UNode ownerNode = rootNode.addMapNode(ownerName, "owner");
             for (String cmdName : ownerMap.keySet()) {
                 RESTCommand cmd = ownerMap.get(cmdName);
                 ownerNode.addChildNode(cmd.toDoc());
