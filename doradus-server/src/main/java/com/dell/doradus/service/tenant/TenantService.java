@@ -296,15 +296,17 @@ public class TenantService extends Service {
     
     /**
      * Delete an existing tenant. The tenant's keyspace is dropped, which deletes all user
-     * and system tables, and the tenant's users are deleted.
+     * and system tables, and the tenant's users are deleted. If no tenant exists with the
+     * given name, a {@link NotFoundException} is thrown.
      * 
      * @param tenantName    Name of tenant to delete.
+     * @throws              NotFoundException if the given tenant does not exist.
      */
     public void deleteTenant(String tenantName) {
         checkServiceState();
         TenantDefinition tenantDef = getTenantDef(tenantName);
         if (tenantDef == null) {
-            return; // allow idempotent deletes
+            throw new NotFoundException("Unknown tenant: " + tenantName);
         }
         Tenant tenant = new Tenant(tenantDef);
         DBService.instance(tenant).dropNamespace();
