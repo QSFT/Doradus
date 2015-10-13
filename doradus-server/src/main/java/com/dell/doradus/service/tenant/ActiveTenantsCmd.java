@@ -29,7 +29,7 @@ import com.dell.doradus.service.rest.annotation.Description;
     name = "ActiveTenants",
     summary = "Get information on active Tenants",
     methods = {HttpMethod.GET},
-    uri = "/_activetenants",
+    uri = "/_tenants/_active",
     privileged = true,
     outputEntity = "active-tenants"
 )
