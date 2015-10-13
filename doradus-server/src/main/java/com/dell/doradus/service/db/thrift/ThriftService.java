@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 
@@ -81,17 +80,11 @@ public class ThriftService extends CassandraService {
         try (DBConn dbConn = createAndConnectConn(null)) {
             synchronized (m_schemaLock) {
                 if (!m_schemaMgr.keyspaceExists(dbConn, m_keyspace)) {
-                    Map<String, String> options = getKeyspaceOptions();
-                    m_schemaMgr.createKeyspace(dbConn, m_keyspace, options);
+                    m_schemaMgr.createKeyspace(dbConn, m_keyspace);
                 }
             }
         }
     }   // createTenant
-
-    private Map<String, String> getKeyspaceOptions() {
-        // TODO: Get keyspace options from tenant definiton; inherit from default tenant if needed.
-        return null;
-    }
 
     @Override
     public void dropNamespace() {

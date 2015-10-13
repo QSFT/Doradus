@@ -21,7 +21,9 @@ import java.util.Map;
 import com.dell.doradus.common.HttpCode;
 import com.dell.doradus.common.HttpMethod;
 import com.dell.doradus.common.RESTResponse;
+import com.dell.doradus.common.TenantDefinition;
 import com.dell.doradus.common.Utils;
+import com.dell.doradus.service.rest.NotFoundException;
 import com.dell.doradus.service.rest.RESTCallback;
 import com.dell.doradus.service.rest.annotation.Description;
 
@@ -37,6 +39,10 @@ public class DeleteTenantCmd extends RESTCallback {
     @Override
     public RESTResponse invoke() {
         String tenantName = m_request.getVariableDecoded("tenant");
+        TenantDefinition tenantDef = TenantService.instance().getTenantDefinition(tenantName);
+        if (tenantDef == null) {
+            throw new NotFoundException("Unknown tenant: " + tenantName);
+        }
         String params = m_request.getVariable("params");    // leave encoded
         Map<String, String> paramMap = Utils.parseURIQuery(params);
         TenantService.instance().deleteTenant(tenantName, paramMap);

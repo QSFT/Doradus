@@ -295,11 +295,10 @@ public class TenantService extends Service {
     
     /**
      * Delete an existing tenant. The tenant's keyspace is dropped, which deletes all user
-     * and system tables, and the tenant's users are deleted. If no tenant exists with the
-     * given name, a {@link NotFoundException} is thrown.
+     * and system tables, and the tenant's users are deleted. This method is a no-op if the
+     * given tenant does not exist.
      * 
      * @param tenantName    Name of tenant to delete.
-     * @throws              NotFoundException if the given tenant does not exist.
      */
     public void deleteTenant(String tenantName) {
         deleteTenant(tenantName, null);
@@ -307,18 +306,17 @@ public class TenantService extends Service {
 
     /**
      * Delete an existing tenant with the given options. The tenant's keyspace is dropped,
-     * which deletes all user and system tables, and the tenant's users are deleted. If
-     * no tenant exists with the given name, a {@link NotFoundException} is thrown. The
-     * given options are currently used for testing only.
+     * which deletes all user and system tables, and the tenant's users are deleted. The
+     * given options are currently used for testing only. This method is a no-op if the
+     * given tenant does not exist.
      * 
      * @param tenantName    Name of tenant to delete.
-     * @throws              NotFoundException if the given tenant does not exist.
      */
     public void deleteTenant(String tenantName, Map<String, String> options) {
         checkServiceState();
         TenantDefinition tenantDef = getTenantDef(tenantName);
         if (tenantDef == null) {
-            throw new NotFoundException("Unknown tenant: " + tenantName);
+            return;
         }
         
         Tenant tenant = new Tenant(tenantDef);

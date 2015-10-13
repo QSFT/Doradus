@@ -223,15 +223,13 @@ public class DBManagerService extends Service {
     // Create a new DBService for the given tenant.
     private DBService createTenantDBService(Tenant tenant) {
         m_logger.info("Creating DBService for tenant: {}", tenant.getName());
-        Map<String, Object> paramMap = tenant.getDefinition().getOptionMap("DBService");
+        Map<String, Object> dbServiceParams = tenant.getDefinition().getOptionMap("DBService");
         String dbServiceName = null;
-        if (paramMap == null) {
+        if (dbServiceParams == null || !dbServiceParams.containsKey("dbservice")) {
             dbServiceName = ServerParams.instance().getModuleParamString("DBService", "dbservice");
             Utils.require(!Utils.isEmpty(dbServiceName), "DBService.dbservice parameter is not defined");
         } else {
-            dbServiceName = paramMap.get("dbservice").toString();
-            Utils.require(!Utils.isEmpty(dbServiceName),
-                          "Tenant '%s' must define 'dbservice' within 'DBService' option", tenant.getName());
+            dbServiceName = dbServiceParams.get("dbservice").toString();
         }
 
         DBService dbservice = null;

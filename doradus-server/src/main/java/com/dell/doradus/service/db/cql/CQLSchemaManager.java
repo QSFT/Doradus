@@ -38,22 +38,21 @@ public class CQLSchemaManager {
     //----- Public methods
     
     /**
-     * Create a new keyspace with the given name and optional options. The keyspace is
-     * created with the following CQL command:
+     * Create a new keyspace with the given name. The keyspace is created with options
+     * defined for our DBService object, which come from doradus.yaml or a tenant
+     * definition or both. The keyspace is created with the following CQL command:
      * <pre>
      *      CREATE KEYSPACE "<i>keyspace</i>" WITH <i>prop</i>=<i>value</i> AND ...;
      * </pre>
      * Where the list of <i>prop</i> properties come from defined parameters.
-     * 
-     * @param options   Options to use for new keyspace.
      */
-    public void createKeyspace(Map<String, String> options) {
+    public void createKeyspace() {
         String cqlKeyspace = m_dbservice.getKeyspace();
         m_logger.info("Creating new keyspace: {}", cqlKeyspace);
         StringBuilder cql = new StringBuilder();
         cql.append("CREATE KEYSPACE ");
         cql.append(cqlKeyspace);
-        cql.append(keyspaceDefaultsToCQLString(options));
+        cql.append(keyspaceDefaultsToCQLString());
         cql.append(";");
         executeCQL(cql.toString());
     }   // createKeyspace
@@ -193,14 +192,19 @@ public class CQLSchemaManager {
     //            REPLICATION={'class':'SimpleStrategy', 'replication_factor':'1'}"
     // Allow RF to be overridden with ReplicationFactor in the given options.
     @SuppressWarnings("unchecked")
-    private String keyspaceDefaultsToCQLString(Map<String, String> options) {
-        // Defaults:
+    private String keyspaceDefaultsToCQLString() {
+        // Default defaults:
         boolean durable_writes = true;
         Map<String, Object> replication = new HashMap<String, Object>();
         replication.put("class", "SimpleStrategy");
         replication.put("replication_factor", "1");
 
-        // Override defaults if configured
+        // Legacy support: ReplicationFactor
+        if (m_dbservice.getParam("ReplicationFactor") != null) {
+            replication.put("replication_factor", m_dbservice.getParamString("ReplicationFactor"));
+        }
+        
+        // Override any options specified in ks_defaults
         Map<String, Object> ksDefs = m_dbservice.getParamMap("ks_defaults");
         if (ksDefs != null) {
             if (ksDefs.containsKey("durable_writes")) {
@@ -218,11 +222,6 @@ public class CQLSchemaManager {
                     }
                 }
             }
-        }
-        
-        // Override replication_factor if requested.
-        if (options != null && options.containsKey("ReplicationFactor")) {
-            replication.put("replication_factor", options.get("ReplicationFactor"));
         }
         
         StringBuilder buffer = new StringBuilder();
@@ -263,7 +262,7 @@ public class CQLSchemaManager {
 
     // Execute and optionally log the given CQL statement.
     private ResultSet executeCQL(String cql) {
-        m_logger.trace("Executing CQL: {}", cql);
+        m_logger.debug("Executing CQL: {}", cql);
         try {
             return m_dbservice.getSession().execute(cql);
         } catch (Exception e) {

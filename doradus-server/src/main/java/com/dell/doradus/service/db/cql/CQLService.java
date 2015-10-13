@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -100,16 +99,10 @@ public class CQLService extends CassandraService {
     public void createNamespace() {
         KeyspaceMetadata ksMetadata = m_cluster.getMetadata().getKeyspace(m_keyspace);
         if (ksMetadata == null) {
-            Map<String, String> options = getKeyspaceOptions(getTenant());
-            new CQLSchemaManager(this).createKeyspace(options);
+            new CQLSchemaManager(this).createKeyspace();
         }
     }
     
-    private Map<String, String> getKeyspaceOptions(Tenant tenant) {
-        // TODO: Get keyspace options from tenant definiton; inherit from default tenant if needed.
-        return null;
-    }
-
     @Override
     public void dropNamespace() {
         m_statementCache.clear();

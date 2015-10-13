@@ -70,19 +70,17 @@ public class CassandraSchemaMgr {
     }   // getKeyspaces
 
     /**
-     * Create a new keyspace with the given name and optional options. This method should
-     * be used with a no-keyspace DB connection.
+     * Create a new keyspace with the given name. The keyspace is created with parameters
+     * defined for our DBService instance, if any. This method should be used with a
+     * no-keyspace DB connection.
      * 
      * @param dbConn    Database connection to use.
      * @param keyspace  Name of new keyspace.
-     * @param options   Optional map of new keyspace options, which override ks_defaults
-     *                  in the configuration file.
      */
-    public void createKeyspace(DBConn dbConn, String keyspace, Map<String, String> options) {
+    public void createKeyspace(DBConn dbConn, String keyspace) {
         m_logger.info("Creating Keyspace '{}'", keyspace);
         try {
             KsDef ksDef = setKeySpaceOptions(keyspace);
-            overrideKSOptions(ksDef, options);
             dbConn.getClientSession().system_add_keyspace(ksDef);
             Thread.sleep(1000);  // wait for gossip to other Cassandra nodes
         } catch (Exception ex) {
@@ -230,18 +228,14 @@ public class CassandraSchemaMgr {
 
     //----- Private methods
     
-    // Build KsDef from configuration options and defaults.
+    // Build KsDef from doradus.yaml and DBService-specific options.
     private KsDef setKeySpaceOptions(String keyspace) {
         KsDef ksDef = new KsDef();
         ksDef.setName(keyspace);
-        Map<String, Object> ksOptions = m_service.getParamMap("ks_defaults");
-        if (ksOptions != null) {
-            for (String name : ksOptions.keySet()) {
-                Object value = ksOptions.get(name);
-                if (name.equals("name") && !keyspace.equals(value)) {
-                    m_logger.warn("ks_defaults.name: Keyspace name should be set through 'keyspace' option -- ignored");
-                    continue;
-                }
+        Map<String, Object> ksDefs = m_service.getParamMap("ks_defaults");
+        if (ksDefs != null) {
+            for (String name : ksDefs.keySet()) {
+                Object value = ksDefs.get(name);
                 try {
                     KsDef._Fields field = KsDef._Fields.findByName(name);
                     if (field == null) {
@@ -255,6 +249,13 @@ public class CassandraSchemaMgr {
             }
         }
 
+        // Legacy support: ReplicationFactor -> replication_factor
+        if (m_service.getParam("ReplicationFactor") != null) {
+            Map<String, String> stratOpts = new HashMap<>();
+            stratOpts.put("replication_factor", m_service.getParamString("ReplicationFactor"));
+            ksDef.setStrategy_options(stratOpts);
+        }
+        
         // required: strategy_class, strategy_options, replication_factor, cf_defs, durable_writes
         if (!ksDef.isSetStrategy_class()) {
             ksDef.setStrategy_class(DEFAULT_KS_STRATEGY_CLASS);
@@ -272,17 +273,5 @@ public class CassandraSchemaMgr {
         }
         return ksDef;
     }   // setKeySpaceOptions
-
-    // Override KsDef options recognized in the given option map.
-    private static void overrideKSOptions(KsDef ksDef, Map<String, String> options) {
-        if (options != null) {
-            String rfOpt = options.get("ReplicationFactor");
-            if (rfOpt != null) {
-                Map<String, String> stratOpts = new HashMap<>();
-                stratOpts.put("replication_factor", rfOpt);
-                ksDef.setStrategy_options(stratOpts);
-            }
-        }
-    }   // overrideKSOptions
 
 }   // class CassandraSchemaMgr
