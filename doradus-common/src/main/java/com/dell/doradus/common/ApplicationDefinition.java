@@ -122,12 +122,6 @@ final public class ApplicationDefinition implements JSONable{
                     addTable(tableDef);
                 }
                 
-            // "schedules"
-            } else if (childName.equals("schedules")) {
-                for (UNode schedNode : childNode.getMemberList()) {
-                    parseSchedule(schedNode);
-                }
-                
             // Unrecognized
             } else {
                 Utils.require(false, "Unrecognized 'application' element: " + childName);
@@ -436,108 +430,6 @@ final public class ApplicationDefinition implements JSONable{
     
     ///// Private Methods
     
-    // Support legacy <schedule> for a while. We only support application- and table-level
-    // data-aging, which we convert into application- and table-level options.
-    // TODO: Delete this when <schedule> is no longer parsed in schemas.
-    private void parseSchedule(UNode schedNode) {
-        String tableName = null;
-        String taskType = null;
-        String schedule = null;
-        for (String attrName : schedNode.getMemberNames()) {
-            UNode attrNode = schedNode.getMember(attrName);
-            Utils.require(attrNode.isValue(),
-                          "Schedule attribute value must be a string: " + attrNode);
-            String attrValue = attrNode.getValue();
-            switch (attrName.toLowerCase()) {
-            case "type":
-                Utils.require(taskType == null, "'type' attribute can be specified only once");
-                Utils.require(attrValue.equals("data-aging"), "Unrecognized 'type': " + attrValue);
-                taskType = attrValue;
-                break;
-
-            case "table":
-                Utils.require(tableName == null, "'table' can be specified only once");
-                tableName = attrValue;
-                break;
-                
-            case "value":
-                Utils.require(schedule == null, "'value' can be specified only once");
-                schedule = attrValue;
-                break;
-                
-            default:
-                Utils.require(false, "Unrecognized attribute: " + attrName);
-            }
-        }
-
-        Utils.require(taskType != null, "Schedule is missing 'type': " + schedNode);
-        Utils.require(schedule != null, "Schedule is missing 'value': " + schedNode);
-        String agingFreq = convertCronValue(schedule);
-        if (Utils.isEmpty(tableName)) {
-            setOption(CommonDefs.OPT_AGING_CHECK_FREQ, agingFreq);
-        } else {
-            TableDefinition tableDef = getTableDef(tableName);
-            Utils.require(tableDef != null, "Unknown table in 'schedule': " + tableName);
-            tableDef.setOption(CommonDefs.OPT_AGING_CHECK_FREQ, agingFreq);
-        }
-    }   // parseSchedule
-
-    // Convert the given cron expression into a simple frequency value such as "5 MINUTES".
-    // The cron expression has the following general format:
-    //      <minutes> <hours> <month day> <month> <week day>
-    // For now, we're only going for rough conversions. So:
-    //      "* ..."     becomes "1 MINUTE"
-    //      "5 ..."     becomes "5 MINUTES"
-    //      "0 * ..."   becomes "1 HOUR"
-    //      "0 3 ..."   becomes "3 HOURS"
-    //      "0 0 * ..." becomes "1 DAY"
-    // And so forth.
-    // TODO: Delete this when <schedule> is no longer parsed in schemas.
-    private String convertCronValue(String cronExpr) {
-        if (Utils.isEmpty(cronExpr)) {
-            return "1 DAY";
-        }
-        String[] parts = cronExpr.split(" ");
-        String minutes = convertCronPart(parts, 0);
-        String hours = convertCronPart(parts, 1);
-        String days = convertCronPart(parts, 2);
-        String months = convertCronPart(parts, 3);
-        if (!minutes.equals("0")) {
-            return minutes.equals("*") ? "1 MINUTE" : minutes + " MINUTES";
-        }
-        if (!hours.equals("0")) {
-            return hours.equals("*") ? "1 HOUR" : hours + " HOURS";
-        }
-        if (!days.equals("0")) {
-            return days.equals("*") ? "1 DAY" : days + " DAYS";
-        }
-        if (!months.equals("0")) {
-            return months.equals("*") ? "1 MONTH" : months + " MONTHS";
-        }
-        return "1 DAY"; // no idea what it was
-    }
-    
-    // Convert the given cron part to a number or "*".
-    private String convertCronPart(String[] parts, int index) {
-        if (index >= parts.length) {
-            return "*";
-        }
-        if (isAllDigits(parts[index])) {
-            return parts[index];
-        }
-        return "0";
-    }   // converCronParts
-    
-    // Return true if all chars in the string are digits.
-    private boolean isAllDigits(String str) {
-        for (int index = 0; index < str.length(); index++) {
-            if (!Utils.isDigit(str.charAt(index))) {
-                return false;
-            }
-        }
-        return true;
-    }   // isAllDigits
-
     // Verify that the application is complete by checking that all link fields are
     // complete and in agreement.
     private void verify() {
