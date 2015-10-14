@@ -102,13 +102,11 @@ public class RestDBService extends Service {
             } else {
                 result = DBService.instance(tenant).getColumns(store, row, start, end, count);
             }
-            UNode node = UNode.createArrayNode("columns");
+            UNode node = UNode.createMapNode("columns");
             for(DColumn c: result) {
                 String value = c.getValue();
                 if(value.length() > 100) value = value.substring(0, 100) + "...";
-                UNode cnode = node.addMapNode("column");
-                cnode.addValueNode("name", c.getName());
-                cnode.addValueNode("value", value);
+                node.addValueNode(c.getName(), value, "column");
             }
             return node;
         }
@@ -146,7 +144,8 @@ public class RestDBService extends Service {
             List<String> result = DBService.instance(tenant).getRows(store, c, count);
             UNode node = UNode.createArrayNode("rows");
             for(String r: result) {
-                node.addValueNode("row", r);            }
+                node.addValueNode("value", r);
+            }
             return node;
         }
     }
