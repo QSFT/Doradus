@@ -358,8 +358,8 @@ public class DBObjectBatch implements JSONable{
         /**
          * Add the given list of DBObjects to the builder.
          * 
-         * @param list dbObjectList  New list of {@link DBObject}.
-         * @return          This {@link Builder}.
+         * @param dbObjectList dbObjectList  New list of {@link DBObject}.
+         * @return             This {@link Builder}.
          */
         public Builder withObjects(List<DBObject> dbObjectList) {
         	for (DBObject dbObject: dbObjectList) {
