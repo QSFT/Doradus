@@ -10,20 +10,11 @@
     <property name="release.dir" location="${doradus.dir}/Release" />
 
     <!-- ============================================================================== -->
-    <!-- Set Proxy (if needed)                                                          -->
-    <!-- ============================================================================== -->
-    <target name="_setProxy">
-    <!--
-        <setproxy proxyhost="proxy.sitelocal"
-                  proxyport="8080"/>
-    -->
-    </target>
-    <!-- ============================================================================== -->
     <!-- ============================================================================== -->
     <target name="Build" depends="DoradusVersion,JettyWebServerJar,DynamoDBJar,ClientJar,ClientDoc">
     </target>
     
-    <target name="Cleanup" depends="CommonCleanup,ServerCleanup,JettyWebServerCleanup,ClientCleanup,ClientDocCleanup">
+    <target name="Cleanup" depends="CommonCleanup,ServerCleanup,JettyWebServerCleanup,ClientCleanup,ClientDocCleanup,DynamoDBCleanup">
     </target>
     
     <!-- ============================================================================== -->
@@ -50,21 +41,21 @@
     <property name="common.src.dir"  location="${common.dir}/src/main/java"/>
     <property name="common.jar.file" value="doradus-common.jar"/>
     
-    <target name="CommonLoadLibs" depends="_setProxy">
+    <target name="CommonLoadLibs">
         <delete dir="${common.lib.dir}" failonerror="false"/>
         <mkdir  dir="${common.lib.dir}"/>
         
         <get dest="${common.lib.dir}">
-            <url url="http://repo1.maven.org/maven2/log4j/log4j/1.2.16/log4j-1.2.16.jar"/> 
+            <url url="http://repo1.maven.org/maven2/log4j/log4j/1.2.17/log4j-1.2.17.jar"/> 
         </get>      
         <get dest="${common.lib.dir}">
-            <url url="http://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar"/> 
+            <url url="http://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.2/slf4j-api-1.7.2.jar"/> 
         </get>
         <get dest="${common.lib.dir}">
-            <url url="http://repo1.maven.org/maven2/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar"/> 
+            <url url="http://repo1.maven.org/maven2/org/slf4j/slf4j-log4j12/1.7.12/slf4j-log4j12-1.7.12.jar"/> 
         </get>
         <get dest="${common.lib.dir}">
-            <url url="http://repo1.maven.org/maven2/org/yaml/snakeyaml/1.6/snakeyaml-1.6.jar"/> 
+            <url url="http://repo1.maven.org/maven2/org/yaml/snakeyaml/1.15/snakeyaml-1.15.jar"/> 
         </get>
     </target>
     
@@ -113,11 +104,11 @@
     <property name="dynamodb.src.dir"    location="${dynamodb.dir}/src/main/java"/>
     <property name="dynamodb.jar.file"   value="doradus-dynamodb.jar"/>
     
-    <target name="DynamoDBLoadLibs" depends="_setProxy">
+    <target name="DynamoDBLoadLibs">
         <delete dir="${dynamodb.lib.dir}" failonerror="false"/>
         <mkdir  dir="${dynamodb.lib.dir}"/>
         
-    	<!-- AWS SDK -->
+        <!-- AWS SDK -->
         <get dest="${dynamodb.lib.dir}">
             <url url="http://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk/1.10.5.1/aws-java-sdk-1.10.5.1.jar"/> 
         </get>
@@ -133,11 +124,11 @@
         <get dest="${dynamodb.lib.dir}">
             <url url="http://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-dynamodb/1.10.5.1/aws-java-sdk-dynamodb-1.10.5.1.jar"/> 
         </get>
-    	<!-- commons-logging -->
+        <!-- commons-logging -->
         <get dest="${dynamodb.lib.dir}">
             <url url="http://repo1.maven.org/maven2/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3.jar"/> 
         </get>
-    	<!-- fasterxml/codehaus jackson -->
+        <!-- fasterxml/codehaus jackson -->
         <get dest="${dynamodb.lib.dir}">
             <url url="http://repo1.maven.org/maven2/org/codehaus/jackson/jackson-core-asl/1.9.12/jackson-core-asl-1.9.12.jar"/> 
         </get>
@@ -150,18 +141,18 @@
         <get dest="${dynamodb.lib.dir}">
             <url url="http://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.5.3/jackson-databind-2.5.3.jar"/> 
         </get>
-    	<!-- apache httpcomponents -->
+        <!-- apache httpcomponents -->
         <get dest="${dynamodb.lib.dir}">
-            <url url="http://repo1.maven.org/maven2/org/apache/httpcomponents/httpclient/4.3.6/httpclient-4.3.6.jar"/> 
+            <url url="http://repo1.maven.org/maven2/org/apache/httpcomponents/httpclient/4.1.3/httpclient-4.1.3.jar"/> 
         </get>
         <get dest="${dynamodb.lib.dir}">
             <url url="http://repo1.maven.org/maven2/org/apache/httpcomponents/httpcore/4.3.3/httpcore-4.3.3.jar"/> 
         </get>
-    	<!-- joda-time -->
+        <!-- joda-time -->
         <get dest="${dynamodb.lib.dir}">
             <url url="http://repo1.maven.org/maven2/joda-time/joda-time/2.8.1/joda-time-2.8.1.jar"/> 
         </get>
-        <get dest="${server.lib.dir}">
+        <get dest="${dynamodb.lib.dir}">
             <url url="http://repo1.maven.org/maven2/net/java/dev/jets3t/jets3t/0.9.4/jets3t-0.9.4.jar"/>
         </get>
     </target>
@@ -215,7 +206,7 @@
     <property name="jettywebserver.src.dir"  location="${jettywebserver.dir}/src/main/java"/>
     <property name="jettywebserver.jar.file" value="doradus-jetty.jar"/>
     
-    <target name="JettyWebServerLoadLibs" depends="_setProxy">
+    <target name="JettyWebServerLoadLibs">
         <delete dir="${jettywebserver.lib.dir}" failonerror="false"/>
         <mkdir  dir="${jettywebserver.lib.dir}"/>
         
@@ -257,7 +248,7 @@
         <delete dir="${jettywebserver.bin.dir}" failonerror="false"/>
         <delete dir="${jettywebserver.lib.dir}" failonerror="false"/>
     </target>
-	
+    
     <!-- ============================================================================== -->
     <!--                            Doradus Server                                      -->
     <!-- Public Targets:                                                                -->
@@ -273,10 +264,25 @@
     <property name="server.src.dir"    location="${server.dir}/src/main/java" />
     <property name="server.jar.file"   value="doradus.jar" />
 
-    <target name="ServerLoadLibs" depends="_setProxy">
+    <target name="ServerLoadLibs">
         <delete dir="${server.lib.dir}" failonerror="false"/>
         <mkdir  dir="${server.lib.dir}"/>
         
+        <get dest="${server.lib.dir}">
+            <url url="http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/2.1.2/cassandra-driver-core-2.1.2.jar"/>
+        </get>
+        <get dest="${server.lib.dir}">
+            <url url="http://repo1.maven.org/maven2/org/apache/cassandra/cassandra-thrift/2.0.7/cassandra-thrift-2.0.7.jar"/>
+        </get>
+        <get dest="${server.lib.dir}">
+            <url url="http://repo1.maven.org/maven2/com/google/guava/guava/16.0.1/guava-16.0.1.jar"/>
+        </get>
+        <get dest="${server.lib.dir}">
+            <url url="http://repo1.maven.org/maven2/org/apache/httpcomponents/httpclient/4.1.3/httpclient-4.1.3.jar"/>
+        </get>
+        <get dest="${server.lib.dir}">
+            <url url="http://repo1.maven.org/maven2/org/apache/httpcomponents/httpcore/4.2.4/httpcore-4.2.4.jar"/> 
+        </get>
         <get dest="${server.lib.dir}">
             <url url="http://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/3.0.1/javax.servlet-api-3.0.1.jar"/> 
         </get>          
@@ -284,19 +290,7 @@
             <url url="http://repo1.maven.org/maven2/org/apache/thrift/libthrift/0.9.1/libthrift-0.9.1.jar"/>
         </get>
         <get dest="${server.lib.dir}">
-            <url url="http://repo1.maven.org/maven2/org/apache/cassandra/cassandra-thrift/2.0.7/cassandra-thrift-2.0.7.jar"/>
-        </get>
-        <get dest="${server.lib.dir}">
-            <url url="http://repo1.maven.org/maven2/org/apache/cassandra/cassandra-all/2.0.7/cassandra-all-2.0.7.jar"/>
-        </get>
-        <get dest="${server.lib.dir}">
-            <url url="http://repo1.maven.org/maven2/com/google/guava/guava/15.0/guava-15.0.jar"/>
-        </get>
-        <get dest="${server.lib.dir}">
-            <url url="http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/2.1.2/cassandra-driver-core-2.1.2.jar"/>
-        </get>
-        <get dest="${server.lib.dir}">
-            <url url="http://repo1.maven.org/maven2/net/jpountz/lz4/lz4/1.2.0/lz4-1.2.0.jar"/>
+            <url url="http://repo1.maven.org/maven2/net/jpountz/lz4/lz4/1.3.0/lz4-1.3.0.jar"/>
         </get>
         <get dest="${server.lib.dir}">
             <url url="http://repo1.maven.org/maven2/com/codahale/metrics/metrics-core/3.0.2/metrics-core-3.0.2.jar"/>
@@ -305,10 +299,10 @@
             <url url="http://repo1.maven.org/maven2/io/netty/netty/3.9.0.Final/netty-3.9.0.Final.jar"/>
         </get>
         <get dest="${server.lib.dir}">
-            <url url="http://repo1.maven.org/maven2/org/xerial/snappy/snappy-java/1.1.1-M2/snappy-java-1.1.1-M2.jar"/>
+            <url url="http://repo1.maven.org/maven2/org/eclipse/jgit/org.eclipse.jgit/4.0.0.201506020755-rc3/org.eclipse.jgit-4.0.0.201506020755-rc3.jar"/>
         </get>
         <get dest="${server.lib.dir}">
-            <url url="http://repo1.maven.org/maven2/org/eclipse/jgit/org.eclipse.jgit/4.0.0.201506020755-rc3/org.eclipse.jgit-4.0.0.201506020755-rc3.jar"/>
+            <url url="http://repo1.maven.org/maven2/org/xerial/snappy/snappy-java/1.1.1.7/snappy-java-1.1.1.7.jar"/>
         </get>
     </target>
     
@@ -336,7 +330,24 @@
                 <attribute name="Implementation-Vendor"  value="DELL Inc." />
                 <attribute name="Javac-Target"           value="${ant.build.javac.target}" />
                 <attribute name="Main-class"             value="com.dell.doradus.core.DoradusServer" />
-                <attribute name="Class-path"             value="../config/ cassandra-all-1.2.6.jar cassandra-thrift-1.2.6.jar doradus-common.jar guava-13.0.1.jar javax.servlet-api-3.0.1.jar jetty-all-9.0.6.v20130930.jar libthrift-0.7.0.jar log4j-1.2.16.jar slf4j-api-1.6.1.jar slf4j-log4j12-1.6.1.jar snakeyaml-1.6.jar xml-writer-0.2.jar" />
+                <attribute name="Class-path"             value="../config/ 
+                    cassandra-driver-core-2.1.2.jar
+                    cassandra-thrift-2.0.7.jar
+                    doradus-common.jar
+                    guava-16.0.1.jar
+                	httpclient-4.1.3.jar
+                    httpcore-4.2.4.jar
+                    javax.servlet-api-3.0.1.jar
+                    libthrift-0.9.1.jar
+                    log4j-1.2.17.jar
+                    lz4-1.3.0.jar
+                    metrics-core-3.0.2.jar
+                    netty-3.9.0.Final.jar
+                    org.eclipse.jgit-4.0.0.201506020755-rc3.jar
+                    slf4j-api-1.7.2.jar
+                    slf4j-log4j12-1.7.12.jar
+                    snakeyaml-1.15.jar
+                    snappy-java-1.1.1.7.jar" />
             </manifest>
         </jar>
         <copy todir="${server.lib.dir}">
@@ -429,7 +440,7 @@
     <property name="client.src.dir"    location="${client.dir}/src/main/java" />
     <property name="client.jar.file"   value="doradus-client.jar" />
     
-    <target name="ClientLoadLibs" depends="_setProxy">
+    <target name="ClientLoadLibs">
         <delete dir="${client.lib.dir}" failonerror="false"/>
         <mkdir  dir="${client.lib.dir}"/>
         <get dest="${client.lib.dir}">
@@ -484,11 +495,6 @@
         
         <javadoc access="public" author="true"
             classpath="${common.lib.dir}/doradus-common.jar:
-                       ${common.lib.dir}/xml-writer-0.2.jar:
-                       ${common.lib.dir}/slf4j-log4j12-1.6.1.jar:
-                       ${common.lib.dir}/slf4j-api-1.6.1.jar:
-                       ${common.lib.dir}/snakeyaml-1.6.jar:
-                       ${common.lib.dir}/log4j-1.2.16.jar:
                        ${client.lib.dir}/doradus-client.jar"
             destdir="${client.doc.dir}"
             doctitle="Doradus Client"
@@ -531,16 +537,16 @@
 
     <!-- ============================================================================== -->
     <!--           Doradus version update task                                          -->
-    <!-- ============================================================================== -->	
-	<available file=".git" type="dir" property="git.present"/>
+    <!-- ============================================================================== --> 
+    <available file=".git" type="dir" property="git.present"/>
 
     <target name="DoradusVersion" description="Store doradus version in doradus.ver" if="git.present">
          <exec executable="git" output="${server.dir}/src/main/resources/doradus.ver" failifexecutionfails="false" errorproperty="">
             <arg value="describe"/>
-	        <arg value="--tags"/>
-	        <arg value="--long"/>
-	        <arg value="--always"/>
-	        <arg value="HEAD"/> 	
+            <arg value="--tags"/>
+            <arg value="--long"/>
+            <arg value="--always"/>
+            <arg value="HEAD"/>     
          </exec>
-    </target>	
+    </target>   
 </project>
