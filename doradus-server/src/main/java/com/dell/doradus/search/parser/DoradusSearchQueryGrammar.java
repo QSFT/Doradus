@@ -1296,7 +1296,7 @@ public class DoradusSearchQueryGrammar {
                 AggregationMetricQuery, OptionalMetricAlias, Grammar.InputPointer, Grammar.Semantic("endMetric"), OptWhiteSpaces, AggregationMetricExpressionContinue);
 
         AggregationMetricExpression.body = Grammar.asRule(
-                Grammar.Rule(OptWhiteSpaces, LEFTPAREN, Grammar.SetType("op"), OptWhiteSpaces, AggregationMetricExpression, OptWhiteSpaces, RIGHTPAREN, Grammar.SetType("op"), AggregationMetricExpressionContinue ),
+                Grammar.Rule(OptWhiteSpaces, LEFTPAREN, Grammar.SetType("op"), OptWhiteSpaces, AggregationMetricExpression, OptWhiteSpaces, RIGHTPAREN, Grammar.SetType("op"), AggregationMetricExpressionContinue, OptionalMetricAlias),
                 AggregationMetricQueryTerm
         );
 
