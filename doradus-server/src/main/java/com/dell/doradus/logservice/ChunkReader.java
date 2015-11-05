@@ -112,4 +112,9 @@ public class ChunkReader {
         m_synth.setFields(baseField, chunkFields);
     }
     
+    public void printSize(StringBuilder sb) {
+    	m_timestamps.printSize(sb);
+    	for(ChunkField fld: m_fields) fld.printSize(sb);
+    }
+    
 }

@@ -9,11 +9,14 @@ public class ChunkTimestampField {
     private long[] m_timestamps;
     private MemoryStream m_input;
     
+    private int m_CmpSize;
+    
     public ChunkTimestampField(int size, MemoryStream input) {
         m_size = size;
         m_offset = input.position();
         m_input = input;
         Temp.skipCompressed(input);
+        m_CmpSize = input.position() - m_offset; 
     }
     
     public void readField() {
@@ -39,6 +42,10 @@ public class ChunkTimestampField {
     public long[] getTimestamps() {
         readField();
         return m_timestamps;
+    }
+    
+    public void printSize(StringBuilder sb) {
+    	sb.append("Timestamp: " + m_CmpSize + "\n");
     }
     
 }

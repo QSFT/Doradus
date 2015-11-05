@@ -22,6 +22,10 @@ public class ChunkField {
     private int[] m_indexes;
     private SyntheticFields m_synth;
     
+    private int m_CmpValuesSize;
+    private int m_CmpIndexesSize;
+    private int m_CmpTotalSize;
+    
     public ChunkField(int size, int fieldIndex, MemoryStream input, MemoryStream data) {
         m_size = size;
         m_fieldIndex = fieldIndex;
@@ -44,6 +48,10 @@ public class ChunkField {
         } else {
             Temp.skipCompressed(m_input);
         }
+        
+        m_CmpValuesSize = m_indexesOffset - m_valuesOffset;
+        m_CmpIndexesSize = m_input.position() - m_indexesOffset;
+        m_CmpTotalSize = m_CmpValuesSize + m_CmpIndexesSize;
     }
 
     public ChunkField(SyntheticFields synth, BSTR fieldName, int fieldIndex, MemoryStream data) {
@@ -205,5 +213,8 @@ public class ChunkField {
         value.set(m_data.getBuffer(), m_offsets[valueNumber], m_lengths[valueNumber]);
     }
     
+    public void printSize(StringBuilder sb) {
+    	sb.append("Field: " + m_fieldName.toString() + "; Total: " + m_CmpTotalSize + "; Values: " + m_CmpValuesSize + "; Indexes: " + m_CmpIndexesSize + "\n");
+    }
 }
 
