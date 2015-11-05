@@ -48,5 +48,10 @@ public class RangeQuery implements Query {
 		return String.format("%s IN %s%s - %s%s",
 				field, minInclusive ? "[" : "{", min, max, maxInclusive ? "]" : "}");
 	}
+
+	public String getStringRange() {
+		return String.format("%s%s - %s%s",
+				minInclusive ? "[" : "{", min, max, maxInclusive ? "]" : "}");
+	}
 	
 }

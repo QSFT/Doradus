@@ -104,5 +104,17 @@ public class AggregationGroup {
     // All where queries from items
     public Query whereFilter;
 
+    public String getPathString() {
+    	String str = "";
+    	if(filter != null) {
+    		str += "WHERE(" + filter + ").";
+    	}
+    	for(int i = 0; i < items.size(); i++) {
+    		if(i > 0) str += ".";
+    		str += items.get(i).toString();
+    	}
+    	return str;
+    }
+    
 }
 

@@ -47,4 +47,12 @@ public class AggregationGroupItem {
     	String q2 = item.query != null ? item.query.toString() : "";
     	return name.equals(item.name) && q1.equals(q2);
     };
+    
+    @Override public String toString() {
+    	String str = name;
+    	if(isTransitive) str += "^";
+    	if(transitiveDepth != 0) str += "[" + transitiveDepth + "]";
+    	if(query != null) str += ".WHERE(" + query.toString() + ")";
+		return str;
+	}
 }
