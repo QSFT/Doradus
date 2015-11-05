@@ -567,7 +567,7 @@ public class DoradusSearchQueryGrammar {
 
         GrammarRule ExplicitQuantifierFunction = Grammar.Rule("ExplicitQuantifierFunction",
                 ExplicitFunctionType, OptWhiteSpaces, LEFTPAREN, Grammar.MustMatchAction, OptWhiteSpaces,
-                FieldPath,  OptionalTransitiveFunction, OptWhiteSpaces, RIGHTPAREN, LinkFunctionEndSemantic, OptWhiteSpaces);
+                FieldPath, OptWhiteSpaces, RIGHTPAREN, LinkFunctionEndSemantic, OptWhiteSpaces);
 
         GrammarRule SearchCriteria = new SwitchRule(SwitchRule.First, "SearchCriteria",
                 Grammar.Rule(OptWhiteSpaces, COLON, OptWhiteSpaces, Grammar.MustMatchAction, Value),
@@ -632,32 +632,6 @@ public class DoradusSearchQueryGrammar {
         );
 
 
-        GrammarRule CountExpressionFieldPath = new SwitchRule(SwitchRule.First, "CountExpressionFieldPath",
-                Grammar.Rule(WHERE, Grammar.DropLexem, OptWhiteSpaces, LEFTPAREN, Grammar.DropLexem,
-                        OptWhiteSpaces, FieldPath, OptWhiteSpaces, RIGHTPAREN, Grammar.DropLexem ),
-                FieldPath
-        );
-
-        GrammarRule CountExpression = Grammar.Rule("CountExpression",
-                COUNT, Grammar.MustMatchAction, OptWhiteSpaces, LEFTPAREN,
-                OptWhiteSpaces,  CountExpressionFieldPath, OptWhiteSpaces, RIGHTPAREN, LinkFunctionEndSemantic,
-                OptWhiteSpaces, CountExpressionContinue
-        );
-
-
-        GrammarRule QuantifierToken = new SwitchRule("QuantifierToken", 
-                new Keyword("EQUALS", WORD),
-                new Keyword("INTERSECTS", WORD),
-                new Keyword("CONTAINS", WORD),
-                new Keyword("DISJOINT", WORD)
-        );
-        
-        GrammarRule EqualsExpression = Grammar.Rule("EqualsExpression",
-                QuantifierToken, Grammar.MustMatchAction, OptWhiteSpaces, LEFTPAREN, Grammar.DropLexem, OptWhiteSpaces,
-                CountExpressionFieldPath, OptWhiteSpaces, COMMA, Grammar.DropLexem, OptWhiteSpaces, CountExpressionFieldPath, RIGHTPAREN, Grammar.DropLexem
-        );
-        
-        
         GrammarRule NextClause = new SwitchRule("NextClause",
                 Grammar.Rule(Grammar.WhiteSpaces, OptionalLogicOperation, Query),
                 Grammar.emptyRule
@@ -672,7 +646,7 @@ public class DoradusSearchQueryGrammar {
         );
 
         SwitchRule FieldPathContinue = new SwitchRule("FieldPathContinue");
-        GrammarRule FieldPathNext = Grammar.Rule("FieldPathNext", FieldName, DotSemantic, FieldPathContinue);
+        GrammarRule FieldPathNext = Grammar.Rule("FieldPathNext", FieldName, OptionalTransitiveFunction, DotSemantic, FieldPathContinue);
 
 
         FieldPathContinue.body = Grammar.asRule(
@@ -682,7 +656,7 @@ public class DoradusSearchQueryGrammar {
                 Grammar.emptyRule
         );
 
-        FieldPath.body = Grammar.asRule(FieldName, FieldPathContinue);
+        FieldPath.body = Grammar.asRule(FieldName, OptionalTransitiveFunction, FieldPathContinue);
 
         SwitchRule WhereContinue = new SwitchRule("WhereContinue");
         WhereContinue.setMode(SwitchRule.First);
@@ -707,7 +681,38 @@ public class DoradusSearchQueryGrammar {
 
         );
 
+        GrammarRule CountExpressionFieldPath = new SwitchRule(SwitchRule.First, "CountExpressionFieldPath",
+                Grammar.Rule(WHERE, Grammar.DropLexem, OptWhiteSpaces, LEFTPAREN, Grammar.DropLexem,
+                        OptWhiteSpaces, FieldPath, OptionalTransitiveFunction, OptWhiteSpaces, RIGHTPAREN, Grammar.DropLexem ),
+                Grammar.Rule(FieldPath, OptionalTransitiveFunction)
+        );
 
+        GrammarRule CountExpression = Grammar.Rule("CountExpression",
+                COUNT, Grammar.MustMatchAction, OptWhiteSpaces, LEFTPAREN,
+                OptWhiteSpaces,  CountExpressionFieldPath, OptWhiteSpaces, RIGHTPAREN, LinkFunctionEndSemantic,
+                OptWhiteSpaces, CountExpressionContinue
+        );
+
+
+        GrammarRule QuantifierToken = new SwitchRule("QuantifierToken", 
+                new Keyword("EQUALS", WORD),
+                new Keyword("INTERSECTS", WORD),
+                new Keyword("CONTAINS", WORD),
+                new Keyword("DISJOINT", WORD)
+        );
+        
+        GrammarRule EqualsExpression = Grammar.Rule("EqualsExpression",
+                QuantifierToken, Grammar.MustMatchAction, OptWhiteSpaces, LEFTPAREN, Grammar.DropLexem, OptWhiteSpaces,
+                CountExpressionFieldPath, OptWhiteSpaces, COMMA, Grammar.DropLexem, OptWhiteSpaces, CountExpressionFieldPath, RIGHTPAREN, Grammar.DropLexem
+        );
+
+        GrammarRule DCountExpression = Grammar.Rule("DCountExpression",
+                new Keyword("DCOUNT", WORD), Grammar.MustMatchAction, OptWhiteSpaces, LEFTPAREN, Grammar.DropLexem, OptWhiteSpaces,
+                CountExpressionFieldPath, OptWhiteSpaces, RIGHTPAREN, Grammar.DropLexem, CountExpressionContinue
+        );
+        
+        
+        
         /*
         List<GrammarRule> body = new ArrayList<>();
             body.add(Grammar.Rule(DOT, TimestampSubfield, Grammar.MustMatchAction, Grammar.SetType("lexem"), DotSemantic, SearchCriteria));
@@ -730,6 +735,7 @@ public class DoradusSearchQueryGrammar {
         GrammarRule Expression = new SwitchRule(SwitchRule.First, "Expression",
                 CountExpression,
                 EqualsExpression,
+                DCountExpression,
                 StartingWhereClause,
                 NowFunction,
                 FloatPointNumber,

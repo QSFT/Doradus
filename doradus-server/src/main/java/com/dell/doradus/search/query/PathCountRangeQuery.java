@@ -18,27 +18,26 @@ package com.dell.doradus.search.query;
 
 import com.dell.doradus.search.aggregate.AggregationGroup;
 
-
 /**
- * Query that filters a document based on whether
- * any of its linked documents satisfies the query specified 
+ * Query that filters a document based on the number of objects
+ * it is linked to 
  */
-public class PathComparisonQuery implements Query {
-    public String quantifier;
-    public AggregationGroup group1;
-    public AggregationGroup group2;
+public class PathCountRangeQuery implements Query {
+	//link path
+	public AggregationGroup path;
+	// the count of the linked objects
+	public RangeQuery range;
 	
-	public PathComparisonQuery() { }
-
-    public PathComparisonQuery(String quantifier, AggregationGroup group1, AggregationGroup group2) {
-        this.quantifier = quantifier;
-        this.group1 = group1;
-        this.group2 = group2;
-    }
+	public PathCountRangeQuery() { }
+	
+	public PathCountRangeQuery(AggregationGroup path, RangeQuery range) {
+		this.path = path;
+		this.range = range;
+	}
 	
 	@Override
 	public String toString() {
-		return String.format("%s(%s,%s)", quantifier, group1.getPathString(), group2.getPathString());
+		return String.format("DCOUNT(%s) IN %s", path.getPathString(), range.getStringRange());
 	}
 	
 }

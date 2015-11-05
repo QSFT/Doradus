@@ -44,7 +44,6 @@ import com.dell.doradus.search.query.AllQuery;
 import com.dell.doradus.search.query.AndQuery;
 import com.dell.doradus.search.query.BinaryQuery;
 import com.dell.doradus.search.query.DatePartBinaryQuery;
-import com.dell.doradus.search.query.PathComparisonQuery;
 import com.dell.doradus.search.query.FieldCountQuery;
 import com.dell.doradus.search.query.FieldCountRangeQuery;
 import com.dell.doradus.search.query.IdInQuery;
@@ -58,6 +57,8 @@ import com.dell.doradus.search.query.MVSBinaryQuery;
 import com.dell.doradus.search.query.NoneQuery;
 import com.dell.doradus.search.query.NotQuery;
 import com.dell.doradus.search.query.OrQuery;
+import com.dell.doradus.search.query.PathComparisonQuery;
+import com.dell.doradus.search.query.PathCountRangeQuery;
 import com.dell.doradus.search.query.Query;
 import com.dell.doradus.search.query.RangeQuery;
 import com.dell.doradus.search.query.TransitiveLinkQuery;
@@ -703,6 +704,37 @@ public class ResultBuilder {
                     sets[1].clear();
                 }
             } else throw new IllegalArgumentException("Unknown quantifier: " + eq.quantifier);
+            
+        } else if(query instanceof PathCountRangeQuery) {
+        	PathCountRangeQuery qu = (PathCountRangeQuery)query;
+            ArrayList<AggregationGroup> groups = new ArrayList<>();
+            groups.add(qu.path);
+            MFCollectorSet collector = new MFCollectorSet(searcher, groups, false);
+            BdLongSet[] sets = new BdLongSet[1];
+            for(int i = 0; i < sets.length; i++) {
+                sets[i] = new BdLongSet(1024);
+                sets[i].enableClearBuffer();
+            }
+            
+            long min = Long.MIN_VALUE;
+            long max = Long.MAX_VALUE;
+            if(qu.range.min != null) {
+            	min = Long.parseLong(qu.range.min);
+            	if(!qu.range.minInclusive) min++;
+            }
+            if(qu.range.max != null) {
+            	max = Long.parseLong(qu.range.max);
+            	if(qu.range.maxInclusive) max++;
+            }
+            
+            for(int i = 0; i < r.size(); i++) {
+                collector.collect(i, sets);
+                int count = sets[0].size();
+                if(min <= count && count < max) {
+                    r.set(i);
+                }
+                sets[0].clear();
+            }
             
 		} else throw new IllegalArgumentException("Query " + query.getClass().getSimpleName() + " not supported");
 		return r;

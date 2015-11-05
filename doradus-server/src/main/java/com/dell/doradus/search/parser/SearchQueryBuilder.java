@@ -36,6 +36,7 @@ import com.dell.doradus.search.query.LinkQuery;
 import com.dell.doradus.search.query.MVSBinaryQuery;
 import com.dell.doradus.search.query.NotQuery;
 import com.dell.doradus.search.query.OrQuery;
+import com.dell.doradus.search.query.PathCountRangeQuery;
 import com.dell.doradus.search.query.Query;
 import com.dell.doradus.search.query.RangeQuery;
 import com.dell.doradus.search.query.TransitiveLinkQuery;
@@ -308,6 +309,14 @@ public class SearchQueryBuilder {
 
     private static void PerformCompare1(BuilderContext builderContext, Query q, Query first, String op) {
 
+        if(first instanceof PathCountRangeQuery) {
+        	PathCountRangeQuery pcrq = (PathCountRangeQuery)first;
+            pcrq.range = CreateRangeQuery(op, (BinaryQuery) q, "");
+            builderContext.queries.push(first);
+            return;
+        }
+    	
+    	
         String field = "";
         if (QueryUtils.HasInnerQuery(first)) {
             Query iq = QueryUtils.GetLastChild(first);
@@ -546,6 +555,22 @@ public class SearchQueryBuilder {
     private static boolean LinkQueryAssign(BuilderContext builderContext, Query first, Query second, String op) {
 
         Query lq = second;
+        
+        if(lq instanceof PathCountRangeQuery) {
+        	PathCountRangeQuery pcrq = (PathCountRangeQuery)lq;
+            if (first instanceof BinaryQuery) {
+                int countValue = Integer.parseInt(((BinaryQuery)first).value);
+                pcrq.range = new RangeQuery(null, "" + countValue, true, "" + countValue, true);
+            }
+            else if (first instanceof RangeQuery) {
+                RangeQuery rq = (RangeQuery) first;
+                pcrq.range = rq;
+            }
+            else throw new IllegalArgumentException("Invalid DCOUNT expression");
+            builderContext.queries.push(second);
+            return false;
+        }
+        
         ArrayList<String> path = QueryUtils.GetPath(lq, builderContext.definition);
 
         QueryFieldType fieldType = QueryUtils.GetFieldType(path, builderContext.definition);
@@ -1018,6 +1043,13 @@ public class SearchQueryBuilder {
                     i += 2;
                     continue;
                 }
+                if("DCOUNT".equals(value)) {
+                    AggregationGroup path = getLinkPath(items.get(i + 1), builderContext);
+                    pushQuery(builderContext, new PathCountRangeQuery(path, null));
+                    i += 1;
+                    continue;
+                }
+                
                 pushOperation(builderContext, grammarItem.getValue());
             }
         }
@@ -1093,6 +1125,15 @@ public class SearchQueryBuilder {
             }
             it.query = filter;
         }
+        
+        if (child.transitive != null && child.transitive.equals("^")) {
+        	it.isTransitive = true;
+            if (child.value != null) {
+                int tValue = Integer.parseInt(child.value.getValue());
+                it.transitiveDepth = tValue;
+            }
+        }
+        
         return it;
     }
     
