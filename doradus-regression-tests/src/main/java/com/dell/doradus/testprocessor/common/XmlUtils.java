@@ -36,6 +36,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+@SuppressWarnings("restriction")
 public class XmlUtils
 {
     static public String unescapeXml(String src)
