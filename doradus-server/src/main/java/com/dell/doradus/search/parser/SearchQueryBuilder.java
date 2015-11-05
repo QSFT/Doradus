@@ -1099,7 +1099,8 @@ public class SearchQueryBuilder {
             LinkItem child = item.items.get(i);
             AggregationGroupItem it = createItem(child, currentTable);
             if(i != item.items.size() - 1) {
-                Utils.require(it.fieldDef.isLinkField(), "Not a link: " + it.name);
+                Utils.require(it.fieldDef.isLinkField() || it.fieldDef.isXLinkField(), "Not a link: " + it.name);
+                if(it.fieldDef.isXLinkField() && it.isTransitive) throw new IllegalArgumentException("XLink cannot be transitive");
                 currentTable = it.fieldDef.getInverseTableDef();
             }
             group.items.add(it);

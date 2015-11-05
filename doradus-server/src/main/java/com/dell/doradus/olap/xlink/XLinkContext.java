@@ -16,6 +16,7 @@
 
 package com.dell.doradus.olap.xlink;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.dell.doradus.common.FieldDefinition;
@@ -30,6 +31,8 @@ import com.dell.doradus.search.query.LinkIdQuery;
 import com.dell.doradus.search.query.LinkQuery;
 import com.dell.doradus.search.query.NotQuery;
 import com.dell.doradus.search.query.OrQuery;
+import com.dell.doradus.search.query.PathComparisonQuery;
+import com.dell.doradus.search.query.PathCountRangeQuery;
 import com.dell.doradus.search.query.Query;
 
 // class representing structures needed during the search/aggregate, if external links are present 
@@ -86,6 +89,14 @@ public class XLinkContext {
 			FieldDefinition fieldDef = tableDef.getFieldDef(lq.link);
 			Utils.require(fieldDef != null, "Field " + lq.link + " does not exist");
 			if(fieldDef.isXLinkField()) return true;
+		}
+		else if(query instanceof PathCountRangeQuery) {
+			PathCountRangeQuery lq = (PathCountRangeQuery)query;
+			return XLinkGroupContext.hasXLink(lq.path);
+		}
+		else if(query instanceof PathComparisonQuery) {
+			PathComparisonQuery lq = (PathComparisonQuery)query;
+			return XLinkGroupContext.hasXLink(lq.group1) || XLinkGroupContext.hasXLink(lq.group2);
 		}
 		return false;
 	}
@@ -170,6 +181,23 @@ public class XLinkContext {
 				lq.xlink = new InverseXLinkQueryCount(this, tableDef, lq);
 			} else {
 				lq.xlink = new DirectXLinkQueryCount(this, tableDef, lq);
+			}
+		}
+		else if(query instanceof PathCountRangeQuery) {
+			PathCountRangeQuery lq = (PathCountRangeQuery)query;
+			XLinkGroupContext gctx = new XLinkGroupContext(this);
+			gctx.setupXLinkGroup(lq.path);
+		}
+		else if(query instanceof PathComparisonQuery) {
+			PathComparisonQuery lq = (PathComparisonQuery)query;
+			XLinkGroupContext gctx = new XLinkGroupContext(this);
+			XGroups g1 = gctx.setupXLinkGroup(lq.group1);
+			XGroups g2 = gctx.setupXLinkGroup(lq.group2);
+			if(g1 != null && g2 != null) {
+				List<XGroups> list = new ArrayList<>();
+				list.add(g1);
+				list.add(g2);
+				XGroups.mergeGroups(list);
 			}
 		}
 	}
