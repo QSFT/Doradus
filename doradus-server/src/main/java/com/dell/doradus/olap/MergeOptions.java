@@ -50,6 +50,7 @@ public class MergeOptions {
         m_expireDate = parsedQuery.getDate("expire-date");
         m_timeout = parsedQuery.getInt("timeout", 0);
         m_forceMerge = parsedQuery.getBoolean("force-merge", false);
+        parsedQuery.checkInvalidParameters();
     }
     
     public MergeOptions(String queryParam) throws IllegalArgumentException {
@@ -58,6 +59,7 @@ public class MergeOptions {
         m_expireDate = parsedQuery.getDate("expire-date");
         m_timeout = parsedQuery.getInt("timeout", 0);
         m_forceMerge = parsedQuery.getBoolean("force-merge", false);
+        parsedQuery.checkInvalidParameters();
     }
     
 }
