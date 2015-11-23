@@ -40,7 +40,11 @@ public class BuilderId extends SearchBuilder {
         fields.add("_ID");
         Map<ObjectID, Map<String, String>> result = SpiderHelper.getScalarValues(m_table, ids, fields);
         ids.clear();
-        ids.addAll(result.keySet());
+        for(ObjectID key: result.keySet()) {
+        	if(result.get(key).size() == 0) continue;
+        	ids.add(key);
+        }
+        //ids.addAll(result.keySet());
         return create(ids, null);
 	}
 	
