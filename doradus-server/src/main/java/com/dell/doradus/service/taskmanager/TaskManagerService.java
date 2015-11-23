@@ -403,6 +403,8 @@ public class TaskManagerService extends Service {
         writeTaskClaim(tenant, claimID, claimStamp);
         if (taskClaimedByUs(tenant, claimID)) {
             startTask(appDef, task, taskRecord);
+        } else {
+        	m_logger.info("Will not start task: it was claimed by another service");
         }
     }
 
@@ -431,6 +433,11 @@ public class TaskManagerService extends Service {
             DColumn col = colIter.next();
             try {
                 long claimStamp = Long.parseLong(col.getValue());
+                // otarakanov: sometimes, the task writes a claim but does not start. The claim remains the lowest
+                // and makes future tries to write new claims but not start.  
+                // we disregard claims older that ten minutes.
+                long secondsSinceClaim = (System.currentTimeMillis() - claimStamp) / 1000;
+                if(secondsSinceClaim > 600) continue;
                 String claimHost = col.getName();
                 if (claimStamp < earliestClaim) {
                     claimingHost = claimHost;
