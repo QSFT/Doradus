@@ -685,6 +685,15 @@ public class ResultBuilder {
                     sets[0].clear();
                     sets[1].clear();
                 }
+            } else if("DIFFERS".equals(eq.quantifier)) {
+                for(int i = 0; i < r.size(); i++) {
+                    collector.collect(i, sets);
+                    if(sets[0].differs(sets[1])) {
+                        r.set(i);
+                    }
+                    sets[0].clear();
+                    sets[1].clear();
+                }
             } else if("CONTAINS".equals(eq.quantifier)) {
                 for(int i = 0; i < r.size(); i++) {
                     collector.collect(i, sets);

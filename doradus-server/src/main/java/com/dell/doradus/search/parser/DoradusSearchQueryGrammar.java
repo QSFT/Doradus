@@ -696,6 +696,7 @@ public class DoradusSearchQueryGrammar {
 
         GrammarRule QuantifierToken = new SwitchRule("QuantifierToken", 
                 new Keyword("EQUALS", WORD),
+                new Keyword("DIFFERS", WORD),
                 new Keyword("INTERSECTS", WORD),
                 new Keyword("CONTAINS", WORD),
                 new Keyword("DISJOINT", WORD)

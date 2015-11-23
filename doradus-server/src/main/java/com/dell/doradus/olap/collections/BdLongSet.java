@@ -136,6 +136,10 @@ public class BdLongSet {
         return !intersects(other);
     }
     
+    public boolean differs(BdLongSet other) {
+    	return !equals(other);
+    }
+    
 	private int findSlot(long value) {
 		int hash = getHash(value);
 		int pos = hash & m_mask;

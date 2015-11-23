@@ -1036,7 +1036,7 @@ public class SearchQueryBuilder {
 
             if (grammarItem.getType().equals("token")) {
                 String value = grammarItem.getValue();
-                if("EQUALS".equals(value) || "INTERSECTS".equals(value) || "CONTAINS".equals(value) || "DISJOINT".equals(value)) {
+                if("EQUALS".equals(value) || "INTERSECTS".equals(value) || "CONTAINS".equals(value) || "DISJOINT".equals(value) || "DIFFERS".equals(value)) {
                     AggregationGroup group1 = getLinkPath(items.get(i + 1), builderContext);
                     AggregationGroup group2 = getLinkPath(items.get(i + 2), builderContext);
                     pushQuery(builderContext, new PathComparisonQuery(value, group1, group2));
