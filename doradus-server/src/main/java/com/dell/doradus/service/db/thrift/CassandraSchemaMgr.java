@@ -82,6 +82,7 @@ public class CassandraSchemaMgr {
         try {
             KsDef ksDef = setKeySpaceOptions(keyspace);
             dbConn.getClientSession().system_add_keyspace(ksDef);
+            waitForSchemaPropagation(dbConn);
             Thread.sleep(1000);  // wait for gossip to other Cassandra nodes
         } catch (Exception ex) {
             String errMsg = "Failed to create Keyspace '" + keyspace + "'"; 
@@ -89,6 +90,7 @@ public class CassandraSchemaMgr {
             throw new RuntimeException(errMsg, ex);
         }
     }   // createKeyspace
+    
     
     /**
      * Return true if a keyspace with the given name exists. This method can be used with
@@ -117,6 +119,7 @@ public class CassandraSchemaMgr {
         m_logger.info("Deleting Keyspace '{}'", keyspace);
         try {
             dbConn.getClientSession().system_drop_keyspace(keyspace);
+            waitForSchemaPropagation(dbConn);
         } catch (Exception ex) {
             String errMsg = "Failed to delete Keyspace '" + keyspace + "'"; 
             m_logger.error(errMsg, ex);
@@ -174,6 +177,7 @@ public class CassandraSchemaMgr {
         for (int attempt = 1; !columnFamilyExists(dbConn, keyspace, cfName); attempt++) {
             try {
                 dbConn.getClientSession().system_add_column_family(cfDef);
+                waitForSchemaPropagation(dbConn);
             } catch (Exception ex) {
                 if (attempt > m_service.getParamInt("max_commit_attempts", 10)) {
                     String msg = String.format("%d attempts to create ColumnFamily %s:%s failed",
@@ -221,6 +225,7 @@ public class CassandraSchemaMgr {
         m_logger.info("Deleting ColumnFamily: {}", cfName);
         try {
             dbConn.getClientSession().system_drop_column_family(cfName);
+            waitForSchemaPropagation(dbConn);
         } catch (Exception ex) {
             throw new RuntimeException("drop_column_family failed", ex);
         }
@@ -274,4 +279,22 @@ public class CassandraSchemaMgr {
         return ksDef;
     }   // setKeySpaceOptions
 
+    
+    // in a multi-node cluster, updating schema does not wait for it to be propagated to other nodes.
+    // This method waits until all the nodes have the same schema
+    private void waitForSchemaPropagation(DBConn dbConn) {
+    	for(int i = 0; i < 5; i++) {
+    		try {
+	    		Map<String, List<String>> versions = dbConn.getClientSession().describe_schema_versions();
+	    		if(versions.size() <= 1) return;
+	    		m_logger.info("Schema versions are not synchronized yet. Retrying");
+	            Thread.sleep(500 + 1000 * i);
+    		}catch(Exception ex) {
+    			m_logger.warn("Error waiting for schema propagation: {}", ex.getMessage());
+    		}
+    		m_logger.error("Schema versions have not been synchronized");
+    	}
+    }
+    
+    
 }   // class CassandraSchemaMgr
