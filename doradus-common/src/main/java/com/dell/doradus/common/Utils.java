@@ -1708,7 +1708,7 @@ final public class Utils {
      * @throws IllegalArgumentException If a parameter is specified twice.
      */
     public static Map<String, String> parseURIQuery(String uriQuery) throws IllegalArgumentException {
-    	if (uriQuery == null) {
+    	if (uriQuery == null || uriQuery.isEmpty()) {
     	    return new HashMap<String, String>(0);
     	}
         String[] queryParts = Utils.splitURIQuery(uriQuery);
