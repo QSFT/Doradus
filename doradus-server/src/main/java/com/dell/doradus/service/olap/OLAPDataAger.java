@@ -39,6 +39,7 @@ public class OLAPDataAger extends Task {
         List<String> shards = olap.listShards(m_appDef);
         for (String shardName : shards) {
             Date expirationDate = olap.getExpirationDate(m_appDef, shardName);
+            m_logger.debug("shard '{}' has expiration date '{}'", shardName, expirationDate);
             if (expirationDate != null && expirationDate.before(now)) {
                 olap.deleteShard(m_appDef, shardName);
                 m_logger.info("Deleted expired shard '{}' for {}", shardName, m_appDef.getAppName());
