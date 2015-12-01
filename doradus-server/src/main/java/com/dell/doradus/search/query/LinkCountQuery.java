@@ -37,6 +37,12 @@ public class LinkCountQuery implements Query {
 		this.link = link;
 		this.count = count;
 	}
+
+	public LinkCountQuery(String link, int count, Query filter) {
+		this.link = link;
+		this.count = count;
+		this.filter = filter;
+	}
 	
 	@Override
 	public String toString() {

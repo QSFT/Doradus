@@ -1,8 +1,14 @@
 package com.dell.doradus.olap.search;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dell.doradus.common.CommonDefs;
 import com.dell.doradus.common.FieldDefinition;
@@ -18,39 +24,70 @@ import com.dell.doradus.search.query.OrQuery;
 import com.dell.doradus.search.query.Query;
 
 public class XLinksInFields {
+    private static Logger LOG = LoggerFactory.getLogger(XLinksInFields.class.getSimpleName());
+	
     public static void updateXLinksInFields(Olap olap, OlapQueryRequest olapQuery, SearchResultList result) {
-        for(SearchResult searchResult: result.results) {
-            updateXLinksInFields(olap, olapQuery, searchResult);
-        }
+    	List<SearchResult> results = new ArrayList<>();
+    	results.addAll(result.results);
+    	updateXLinksInFields(olap, olapQuery, results);
     }
-    
-    private static void updateXLinksInFields(Olap olap, OlapQueryRequest olapQuery, SearchResult searchResult) {
-        FieldSet fieldSet = searchResult.fieldSet;
+
+    private static void updateXLinksInFields(Olap olap, OlapQueryRequest olapQuery, List<SearchResult> results) {
+    	if(results.size() == 0) return;
+        FieldSet fieldSet = results.get(0).fieldSet;
         for(String linkField: fieldSet.getLinks()) {
             FieldDefinition linkDef = fieldSet.tableDef.getFieldDef(linkField);
-            if(linkDef.isLinkField()) {
-                List<SearchResultList> list = searchResult.links.get(linkField);
-                for(SearchResultList resultList: list) {
-                    updateXLinksInFields(olap, olapQuery, resultList);
-                }
-                continue;
-            }
-            if(!linkDef.isXLinkField()) continue;
             int pos = 0;
-            for(FieldSet fs: fieldSet.getLinks(linkField)) {
-                String junction = linkDef.getXLinkJunction();
-                String value = searchResult.scalars.get(junction);
-                if(value == null) continue;
-                Set<String> values = Utils.split(value, CommonDefs.MV_SCALAR_SEP_CHAR);
-                SearchResultList result = searchForXlink(values, olap, fs, linkDef, olapQuery);
-                List<SearchResultList> list = searchResult.links.get(linkField);
-                list.set(pos++, result);
-            }
+        	for(FieldSet fs: fieldSet.getLinks(linkField)) {
+        		
+                if(linkDef.isXLinkField()) {
+                    String junction = linkDef.getXLinkJunction();
+                    Set<String> keys = new HashSet<>();
+                    for(SearchResult r: results) {
+                        String value = r.scalars.get(junction);
+                        if(value == null) continue;
+                        Set<String> values = Utils.split(value, CommonDefs.MV_SCALAR_SEP_CHAR);
+                        keys.addAll(values);
+                    }
+                    
+                    Map<String, List<SearchResult>> map = searchForXlink(keys, olap, fs, linkDef, olapQuery);
+                    
+                    for(SearchResult r: results) {
+                        String value = r.scalars.get(junction);
+                        if(value == null) continue;
+                        Set<String> values = Utils.split(value, CommonDefs.MV_SCALAR_SEP_CHAR);
+                        SearchResultList list = new SearchResultList();
+                        list.fieldSet = fs;
+                        list.results = new ArrayList<>();
+                        for(String key: values) {
+                        	List<SearchResult> mappedResults = map.get(key);
+                        	if(mappedResults == null) continue;
+                        	list.results.addAll(mappedResults);
+                        }
+                        list.documentsCount = list.results.size();
+                        r.links.get(linkField).set(pos, list);
+                    }
+                }
+             
+                
+                if(linkDef.isLinkField() || linkDef.isXLinkField()) {
+                    List<SearchResult> children = new ArrayList<>();
+                    for(SearchResult result: results) {
+                    	children.addAll(result.links.get(linkField).get(pos).results);
+                    }
+                    updateXLinksInFields(olap, olapQuery, children);
+                }
+                
+                pos++;
+        	}
         }
+        
+
     }
     
     
-    private static SearchResultList searchForXlink(Set<String> values, Olap olap, FieldSet fieldSet, FieldDefinition fieldDef, OlapQueryRequest olapQuery) {
+    private static Map<String, List<SearchResult>> searchForXlink(Set<String> values, Olap olap, FieldSet fieldSet, FieldDefinition fieldDef, OlapQueryRequest olapQuery) {
+    	LOG.info("Searching for xlink {} for {} values", fieldDef.getName(), values.size());
         OlapQueryRequest xRequest = new OlapQueryRequest();
         String refField = fieldDef.getInverseLinkDef().getXLinkJunction();
         Query query = null;
@@ -68,9 +105,9 @@ public class XLinksInFields {
             query = new AndQuery(query, fieldSet.filter);
         }
         
-        int pageSize = fieldSet.limit;
-        if(pageSize <= 0 || pageSize > 100000) pageSize = 100000; // arbitrarily chosen limitation
+        int pageSize = 1000000; // arbitrarily chosen limitation
         List<String> shards = olapQuery.getXShards(); // x-shards are used as shards for X-links
+        if(!"_ID".equals(refField)) fieldSet.ScalarFields.add(refField);
         
         xRequest.setTableDef(fieldDef.getInverseTableDef());
         xRequest.setFieldSet(fieldSet);
@@ -82,6 +119,21 @@ public class XLinksInFields {
         
         SearchResultList result = Searcher.search(olap, xRequest);
         
-        return result;
+        Map<String, List<SearchResult>> map = new HashMap<>();
+        for(SearchResult r: result.results) {
+        	String key = r.scalars.get(refField);
+        	if(key == null) continue;
+            Set<String> keys = Utils.split(key, CommonDefs.MV_SCALAR_SEP_CHAR);
+            for(String k: keys) {
+            	List<SearchResult> value = map.get(k);
+            	if(value == null) {
+            		value = new ArrayList<>();
+            		map.put(k, value);
+            	}
+            	value.add(r);
+            }
+        }
+        
+        return map;
     }
 }
