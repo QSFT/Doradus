@@ -114,15 +114,18 @@ public class Olap {
 	// Returns $root/applications/<appName> from correct keyspace/OLAP CF
 	public VDirectory getRoot(ApplicationDefinition appDef) {
 	    VDirectory root = null;
-	    Tenant tenant = Tenant.getTenant(appDef);
+	    String tenantName = appDef.getTenantName();
+	    if(Utils.isEmpty(tenantName)) tenantName = TenantService.instance().getDefaultTenantName();
+	    //Tenant tenant = Tenant.getTenant(appDef);
 	    synchronized (m_tenantAppRoots) {
-	        Map<String, VDirectory> appRoots = m_tenantAppRoots.get(tenant.getName());
+	        Map<String, VDirectory> appRoots = m_tenantAppRoots.get(tenantName);
 	        if (appRoots == null) {
 	            appRoots = new HashMap<>();
-	            m_tenantAppRoots.put(tenant.getName(), appRoots);
+	            m_tenantAppRoots.put(tenantName, appRoots);
 	        }
             root = appRoots.get(appDef.getAppName());
 	        if (root == null) {
+	    	    Tenant tenant = Tenant.getTenant(appDef);
 	            root = new VDirectory(tenant, "OLAP").getDirectory("applications").getDirectory(appDef.getAppName());
 	            assert root != null;
 	            appRoots.put(appDef.getAppName(), root);
