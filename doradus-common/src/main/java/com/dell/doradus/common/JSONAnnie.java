@@ -326,7 +326,7 @@ public class JSONAnnie {
     // JSONInput specialization that reads chars from a reader.
     private static class JSONInputReader extends JSONInput {
         final Reader reader;
-        char pushBack = EOF;
+        int pushBack = -1;
 
         // Wrap the given Reader. Note that we don't close it when we're done.
         JSONInputReader(Reader reader) {
@@ -336,25 +336,25 @@ public class JSONAnnie {
         // Use the push back char if present, otherwise use the Reader.
         @Override
         char nextChar(boolean isEOFAllowed) {
-            char ch;
-            if (pushBack != EOF) {
+            int ch;
+            if (pushBack != -1) {
                 ch = pushBack;
-                pushBack = EOF;
+                pushBack = -1;
             } else {
                 try {
-                    ch = (char) reader.read();
+                    ch = reader.read();
                 } catch (IOException e) {
-                    ch = EOF;
+                    ch = -1;
                 }
             }
-            check(ch != EOF || isEOFAllowed, "Unexpected EOF");
-            return ch;
+            check(ch != -1 || isEOFAllowed, "Unexpected EOF");
+            return (char)ch;
         }   // nextChar
 
         // Push back 1 char, which must be read next.
         @Override
         void pushBack(char ch) {
-            assert pushBack == EOF : "Only 1 char can be pushed back";
+            assert pushBack == -1 : "Only 1 char can be pushed back";
             pushBack = ch;
         }   // pushBack
     }   // class JSONInputReader
