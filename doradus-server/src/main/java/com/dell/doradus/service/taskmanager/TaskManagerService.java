@@ -431,6 +431,11 @@ public class TaskManagerService extends Service {
             DColumn col = colIter.next();
             try {
                 long claimStamp = Long.parseLong(col.getValue());
+                // otarakanov: sometimes, the task writes a claim but does not start. The claim remains the lowest
+                // and makes future tries to write new claims but not start.  
+                // we disregard claims older that ten minutes.
+                long secondsSinceClaim = (System.currentTimeMillis() - claimStamp) / 1000;
+                if(secondsSinceClaim > 600) continue;
                 String claimHost = col.getName();
                 if (claimStamp < earliestClaim) {
                     claimingHost = claimHost;
