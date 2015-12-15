@@ -79,6 +79,7 @@ public class FsService extends DBService {
     
     @Override public void deleteStoreIfPresent(String storeName) {
         synchronized(m_sync) {
+        	closeStore(getTenant().getName(), storeName);
             File storeDir = new File(ROOT + "/" + getTenant().getName() + "/" + storeName);
             if(storeDir.exists()) FileUtils.deleteDirectory(storeDir);
         }
@@ -145,4 +146,13 @@ public class FsService extends DBService {
         }
         return store;
     }
+    
+    private void closeStore(String namespace, String storeName) {
+        String path = ROOT + "/" + namespace + "/" + storeName;
+        FsStore store = m_stores.get(path);
+        if(store == null) return;
+        store.close();
+        m_stores.remove(path);
+    }
+    
 }
