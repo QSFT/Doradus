@@ -10,15 +10,13 @@ import com.dell.doradus.olap.io.BSTR;
 
 public class FsRow implements Comparable<FsRow> {
     private BSTR m_name;
-    private FsDataStore m_dataStore;
     private HashMap<BSTR, FsColumn> m_columnsMap = new HashMap<>();
     private List<FsColumn> m_columnsList = new ArrayList<>();
     private boolean m_bSorted = true;
     private boolean m_bDeleted;
 
-    public FsRow(BSTR name, FsDataStore dataStore) {
+    public FsRow(BSTR name) {
         m_name = name;
-        m_dataStore = dataStore;
     }
     
     public BSTR getName() { return m_name; }
@@ -81,9 +79,6 @@ public class FsRow implements Comparable<FsRow> {
             m_columnsList.add(c);
             m_bSorted = false;
         } else {
-            if(c.isExternalValue() && operation != FsMutation.UPDATE_LARGE_COLUMN) {
-                m_dataStore.delete(m_name.toString(), columnName.toString());
-            }
             c.set(operation, columnName, value);
         }
         return c;
@@ -94,7 +89,6 @@ public class FsRow implements Comparable<FsRow> {
         m_columnsList.clear();
         m_bSorted = true;
         m_bDeleted = true;
-        m_dataStore.deleteRow(m_name.toString());
     }
     
     public boolean isDeleted() { return m_bDeleted; }

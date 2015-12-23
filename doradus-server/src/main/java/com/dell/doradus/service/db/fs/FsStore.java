@@ -38,7 +38,7 @@ public class FsStore {
             if(!m_root.exists()) m_root.mkdir();
             m_logFile = new File(m_root, "Log");
             m_dataStore = new FsDataStore(m_root);
-            m_memTable = new FsMemTable(storeName, m_dataStore);
+            m_memTable = new FsMemTable(storeName);
             for(File f: m_root.listFiles()) {
                 if(f.getName().startsWith("table") && !f.getName().endsWith(".idx")) {
                     m_tables.add(new FsTable(f, m_dataStore));
@@ -100,8 +100,18 @@ public class FsStore {
                 if(m_logFile.length() > LOGFILE_THRESHOLD) {
                     flushTable();
                 }
+                
+                //delete all files after we committed the transactions
+                for(String row: columnDeletes.keySet()) {
+                    for(String columnName: columnDeletes.get(row)) {
+                        m_dataStore.delete(row, columnName);
+                    }
+                }
+                for(String row: rowDeletes) {
+                    m_dataStore.deleteRow(row);
+                }
             }
-        
+            
         }catch(IOException e) {
             throw new RuntimeException(e);
         }
@@ -132,7 +142,7 @@ public class FsStore {
         index.write(indexFile);
         m_tables.add(new FsTable(tableFile, m_dataStore));
         m_logFile.delete();
-        m_memTable = new FsMemTable(m_name, m_dataStore);
+        m_memTable = new FsMemTable(m_name);
         m_log.info("Store {} flushed table in {}", m_name, t);
     }
 

@@ -10,12 +10,10 @@ import com.dell.doradus.olap.io.BSTR;
 
 public class FsMemStore {
     private String m_name;
-    private FsDataStore m_dataStore;
     private HashMap<BSTR, FsRow> m_rows = new HashMap<>();
 
-    public FsMemStore(String name, FsDataStore dataStore) {
+    public FsMemStore(String name) {
         m_name = name;
-        m_dataStore = dataStore;
     }
     
     public String getName() { return m_name; }
@@ -27,7 +25,7 @@ public class FsMemStore {
     public FsRow getOrCreateRow(BSTR row) {
         FsRow r = m_rows.get(row);
         if(r == null) {
-            r = new FsRow(row, m_dataStore);
+            r = new FsRow(row);
             m_rows.put(row, r);
         }
         return r;

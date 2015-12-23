@@ -15,7 +15,6 @@ import com.dell.doradus.olap.io.Compressor;
 public class FsTable {
     private FsTableIndex m_index;
     private File m_tableFile;
-    private FsDataStore m_dataStore;
     
     private List<FsColumn> m_lastRead;
     private long m_lastPosition = -1;
@@ -83,7 +82,7 @@ public class FsTable {
     
     public void getRows(Set<FsRow> rows, BSTR continuationToken) {
         for(FsTableIndex.Row row: m_index.getRows()) {
-            FsRow fsr = new FsRow(row.getKey(), m_dataStore);
+            FsRow fsr = new FsRow(row.getKey());
             if(row.isDeleted()) fsr.deleteRow();
             if(rows.contains(fsr)) continue;
             if(continuationToken != null && continuationToken.compareTo(fsr.getName()) >= 0) continue;

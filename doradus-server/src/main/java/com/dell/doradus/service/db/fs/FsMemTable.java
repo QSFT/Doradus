@@ -10,8 +10,8 @@ import com.dell.doradus.olap.io.Compressor;
 public class FsMemTable {
     private FsMemStore m_memStore;
     
-    public FsMemTable(String store, FsDataStore dataStore) {
-        m_memStore = new FsMemStore(store, dataStore);
+    public FsMemTable(String store) {
+        m_memStore = new FsMemStore(store);
     }
     
     public void deleteRow(BSTR row) {
