@@ -16,6 +16,8 @@
 
 package com.dell.doradus.testprocessor;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -65,8 +67,8 @@ public class RestClient
             SocketAddress addr = new InetSocketAddress(m_host, m_port);
             m_socket.connect(addr);
 
-            m_inStream  = m_socket.getInputStream();
-            m_outStream = m_socket.getOutputStream();
+            m_inStream  = new BufferedInputStream(m_socket.getInputStream(), NET_BUFFER_SIZE);
+            m_outStream = new BufferedOutputStream(m_socket.getOutputStream(), NET_BUFFER_SIZE);
         }
         catch(Exception ex) {
             disconnect();
